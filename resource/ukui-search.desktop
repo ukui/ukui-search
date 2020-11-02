@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=UKui Search
+Name[zh_CN]=全局搜索
+Comment=ukui-search
+Comment[zh_CN]=ukui桌面环境全局搜索
+Exec=ukui-search
+Icon=preference-system-search-symbolic
+NoDisplay=true
+Terminal=false
+Type=Application
+Categories=GTK;Core;Utility;
+OnlyShowIn=MATE;UKUI;
+
