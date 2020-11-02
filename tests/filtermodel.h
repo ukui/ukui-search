@@ -5,7 +5,7 @@
 #include <QSortFilterProxyModel>
 #include <KRunner/RunnerManager>
 #include <QTimer>
-#include "runmodel/runnermodel.h"
+#include "declarative/runnermodel.h"
 
 namespace Plasma
 {
@@ -38,6 +38,9 @@ public:
     bool filterAcceptsRow(int source_row,const QModelIndex & source_parent)const override;
     QVariant headerData(int section,Qt::Orientation orientation ,int role) const override;
     RunnerModel *runnerModel1;
+
+    bool state();
+    bool x;
 
 
 

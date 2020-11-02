@@ -15,6 +15,7 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
+
 include(ECMGenerateExportHeader)
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)
@@ -32,10 +33,6 @@ ecm_setup_version(PROJECT
     VARIABLE_PREFIX KRUNNER
     VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/krunner_version.h"
     PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5RunnerConfigVersion.cmake"
-)
-
-set(apptemplate_DIRS
-    runner
 )
 
 # Dependencies
@@ -62,7 +59,42 @@ add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x054300)
 add_definitions(-DPLASMA_DISABLE_DEPRECATED_BEFORE_AND_AT=0x050500) # needed because we use Plasma::Package in the API
 add_definitions(-DQT_NO_FOREACH)
 
-
+# Subdirectories
 add_subdirectory(src)
 add_subdirectory(tests)
 
+# Create a Config.cmake and a ConfigVersion.cmake file and install them
+set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5Runner")
+
+if (BUILD_QCH)
+    ecm_install_qch_export(
+        TARGETS KF5Runner_QCH
+        FILE KF5RunnerQchTargets.cmake
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel
+    )
+    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF5RunnerQchTargets.cmake\")")
+endif()
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/KF5RunnerConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/KF5RunnerConfig.cmake"
+    INSTALL_DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+)
+
+install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/KF5RunnerConfig.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/KF5RunnerConfigVersion.cmake"
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel)
+
+install(EXPORT KF5RunnerTargets
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        FILE KF5RunnerTargets.cmake
+        NAMESPACE KF5::)
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/krunner_version.h"
+        DESTINATION "${KF5_INCLUDE_INSTALL_DIR}"
+        COMPONENT Devel)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

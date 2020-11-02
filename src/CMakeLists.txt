@@ -1,4 +1,4 @@
-add_subdirectory(runmodel)
+add_subdirectory(declarative)
 
 set (KF5Runner_SRCS
     abstractrunner.cpp

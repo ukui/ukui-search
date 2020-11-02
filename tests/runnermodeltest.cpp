@@ -1,15 +1,17 @@
 #include <QAction>
 #include <QApplication>
-#include <QLineEdit>
-#include <QTreeView>
-#include <QVBoxLayout>
-#include "seachwidget.h"
-#include "runmodel/runnermodel.h"
+
+#include "mainrunner.h"
+
+
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    seachwidget *widget = new seachwidget;
-    widget->show();
+
+    mainrunner xxx;
+    xxx.show();
+    xxx.move ((QApplication::desktop()->width() - xxx.width())/2,(QApplication::desktop()->height() - xxx.height())/2);
+
     return app.exec();
 }

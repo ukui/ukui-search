@@ -38,6 +38,7 @@ RunnerModel::RunnerModel(QObject *parent)
     connect(m_startQueryTimer, SIGNAL(timeout()), this, SLOT(startQuery()));
 
     //FIXME: HACK: some runners stay in a running but finished state, not possible to say if it's actually over
+    //有些跑步者处于跑步状态，但已完成，不可能说它是否真的结束了
     m_runningChangedTimeout->setSingleShot(true);
     connect(m_runningChangedTimeout, SIGNAL(timeout()), this, SLOT(queryHasFinished()));
 }
@@ -79,6 +80,7 @@ QStringList RunnerModel::runners() const
 void RunnerModel::setRunners(const QStringList &allowedRunners)
 {
     //use sets to ensure comparison is order-independent
+    //使用集合确保比较与顺序无关
     if (allowedRunners.toSet() == runners().toSet()) {
         return;
     }
@@ -86,6 +88,7 @@ void RunnerModel::setRunners(const QStringList &allowedRunners)
         m_manager->setAllowedRunners(allowedRunners);
 
         //automagically enter single runner mode if there's only 1 allowed runner
+        //如果只允许一个流道，则自动进入单流道模式
         m_manager->setSingleMode(allowedRunners.count() == 1);
     } else {
         m_pendingRunnersList = allowedRunners;
@@ -163,8 +166,9 @@ QString RunnerModel::currentQuery() const
 
 void RunnerModel::scheduleQuery(const QString &query)
 {
-    m_pendingQuery = query;
+    m_pendingQuery = query; // 输入值
     m_startQueryTimer->start();
+
 }
 
 void RunnerModel::startQuery()
@@ -179,9 +183,8 @@ void RunnerModel::startQuery()
     //qCDebug(KRUNNER) << "!!!!!!!!!!!!!" << m_pendingQuery << m_manager;
 
     if (createManager() || m_pendingQuery != m_manager->query()) {
-        //qDebug() << "running query" << m_pendingQuery << m_manager;
+        //qCDebug(KRUNNER) << "running query" << m_pendingQuery << m_manager;
         m_manager->launchQuery(m_pendingQuery, m_singleRunnerId);
-        //qDebug() <<m_manager;
         emit queryChanged();
         m_running = true;
         emit runningChanged(true);
@@ -250,10 +253,4 @@ void RunnerModel::queryHasFinished()
     emit runningChanged(false);
 }
 
-QVariant RunnerModel::headerData(int section,Qt::Orientation orientation ,int role){
-    if(orientation == Qt::Vertical){
 
-    }
-
-    return QAbstractItemModel::headerData(section,orientation,role);
-}

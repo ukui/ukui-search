@@ -35,6 +35,7 @@ class QTimer;
 
 /**
  * This model provides bindings to use KRunner from QML
+ * 此模型提供绑定以使用QML中的KRunner
  *
  * @author Aaron Seigo <aseigo@kde.org>
  */
@@ -44,27 +45,32 @@ class RunnerModel : public QAbstractListModel
 
     /**
      * @property string set the KRunner query
+     * 字符串设置KRunner查询
      */
     Q_PROPERTY(QString query WRITE scheduleQuery READ currentQuery NOTIFY queryChanged)
 
     /**
      * @property Array The list of all allowed runner plugins that will be executed
+     * 数组将要执行的所有允许的运行程序插件的列表
      */
     Q_PROPERTY(QStringList runners WRITE setRunners READ runners NOTIFY runnersChanged)
 
     /**
      * @property int The number of rows of the model
+     * int模型的行数
      */
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
     /**
      * @property bool running: true when queries are in execution
+     * bool running：在执行查询时为true
      */
     Q_PROPERTY(bool running READ isRunning NOTIFY runningChanged)
 
 public:
     /**
      * @enum Roles of the model, they will be accessible from delegates
+     * 模型的角色，可以从代表处访问
      */
     enum Roles {
         Type = Qt::UserRole + 1,
@@ -95,7 +101,7 @@ public:
     int rowCount(const QModelIndex&) const override;
     int count() const;
     QVariant data(const QModelIndex&, int) const override;
-    QVariant headerData(int section,Qt::Orientation orientation ,int role);
+
 public Q_SLOTS:
     void scheduleQuery(const QString &query);
 

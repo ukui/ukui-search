@@ -29,7 +29,9 @@ filefiltermodel::filefiltermodel()
 
 bool filefiltermodel::filterAcceptsRow(int source_row,const QModelIndex & source_parent)const{
     QModelIndex source_index = sourceModel()->index(source_row, 0, source_parent);
- if(sourceModel()->data(source_index,runnerModel1->RunnerId)==QString::fromLocal8Bit("baloosearch")){
+
+    if(sourceModel()->data(source_index,runnerModel1->RunnerId)==QString::fromLocal8Bit("baloosearch")){
+
      return true;
  }
      return false;
@@ -41,5 +43,7 @@ QVariant filefiltermodel::headerData(int section,Qt::Orientation orientation ,in
     }
     return QAbstractItemModel::headerData(section,orientation,role);
 }
+//bool filefiltermodel::state()
+//{
 
-
+//}

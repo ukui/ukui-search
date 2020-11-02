@@ -73,7 +73,6 @@ bool correctLastComponentCase(const QString &path, QString &correctCasePath, con
 
     const QDir fileDir = pathInfo.dir();
     //qCDebug(KRUNNER) << "Directory is" << fileDir;
-
     const QString filename = pathInfo.fileName();
     //qCDebug(KRUNNER) << "Filename is" << filename;
 

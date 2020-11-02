@@ -51,12 +51,13 @@ class KRUNNER_EXPORT QueryMatch
         /**
          * The type of match. Value is important here as it is used for sorting
          */
-        enum Type {
-            NoMatch = 0,         /**< Null match */
-            CompletionMatch = 10, /**< Possible completion for the data of the query */
-            PossibleMatch = 30,   /**< Something that may match the query */
+        enum Type {              //是否为模糊搜索？
+            NoMatch = 0,         /**< Null match  空匹配*/
+            CompletionMatch = 10, /**< Possible completion for the data of the query  查询的数据可能完成*/
+            PossibleMatch = 30,   /**< Something that may match the query  可能与查询匹配的内容*/
             InformationalMatch = 50, /**< A purely informational, non-actionable match,
-                                       such as the answer to a question or calculation*/
+                                       such as the answer to a question or calculation
+                                       纯粹的信息性的、不可操作的匹配，如对问题或计算的回答*/
             HelperMatch = 70, /**< A match that represents an action not directly related
                                  to activating the given search term, such as a search
                                  in an external tool or a command learning trigger. Helper
@@ -64,13 +65,22 @@ class KRUNNER_EXPORT QueryMatch
                                  be autoactivated just because the user hits "Enter"
                                  while typing. They must be explicitly selected to
                                  be activated, but unlike InformationalMatch cause
-                                 an action to be triggered. */
-            ExactMatch = 100 /**< An exact match to the query */
+                                 an action to be triggered.
+                                表示不直接相关操作的匹配项
+                                激活激活给定的搜索词，如搜索
+                                在外部工具或命令学习触发器中。帮手
+                                匹配往往是查询的泛型，而不应该
+                                因为用户点击“回车”就自动激活
+                                打字的时候。必须明确选择它们来
+                                被激活，但不同于信息匹配原因
+                                要触发的操作*/
+            ExactMatch = 100 /**< An exact match to the query 与查询完全匹配 */
         };
 
         /**
          * Constructs a PossibleMatch associated with a given RunnerContext
          * and runner.
+         * 构造与给定RunnerContext关联的PossibleMatch
          *
          * @param runner the runner this match belongs to
          */
@@ -90,14 +100,15 @@ class KRUNNER_EXPORT QueryMatch
 
         /**
          * @return the runner associated with this action
+         * 与此操作关联的运行程序
          */
         AbstractRunner *runner() const;
 
         /**
          * Requests this match to activae using the given context
-         *
+         *请求使用给定上下文激活此匹配项
          * @param context the context to use in conjunction with this run
-         *
+         *上下文与此运行一起使用的上下文
          * @sa AbstractRunner::run
          */
         void run(const RunnerContext &context) const;
@@ -105,16 +116,19 @@ class KRUNNER_EXPORT QueryMatch
         /**
          * @return true if the match is valid and can therefore be run,
          *         an invalid match does not have an associated AbstractRunner
+         * 如果匹配有效并且因此可以运行，则为true，无效匹配没有关联的AbstractRunner
          */
         bool isValid() const;
 
         /**
          * Sets the type of match this action represents.
+         * 设置此操作表示的匹配类型
          */
         void setType(Type type);
 
         /**
          * The type of action this is. Defaults to PossibleMatch.
+         * 动作就是这样。默认为PossibleMatch
          */
         Type type() const;
 
@@ -124,6 +138,7 @@ class KRUNNER_EXPORT QueryMatch
          *
          * This string should be translated as it can be displayed
          * in an UI
+         * 设置有关可用于分类匹配的匹配类型的信息。此字符串应转换为可以显示在UI中
          */
         void setMatchCategory(const QString& category);
 
