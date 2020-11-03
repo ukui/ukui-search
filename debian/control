@@ -1,0 +1,40 @@
+Source: ukui-menu
+Section: x11
+Priority: optional
+Maintainer: Kylin Team <team+kylin@tracker.debian.org>
+Uploaders: Aron Xu <aron@debian.org>,
+           handsome_feng <jianfengli@ubuntukylin.com>
+Build-Depends: debhelper-compat (=12),
+               qtbase5-dev,
+               libqt5svg5-dev,
+               libqt5x11extras5-dev,
+               libglib2.0-dev (>= 2.36),
+               libgsettings-qt-dev,
+               qttools5-dev-tools,
+               libbamf3-dev,
+               libxrandr-dev,
+               libxtst-dev,
+               libx11-dev,
+               libkf5windowsystem-dev
+Standards-Version: 4.5.0
+Rules-Requires-Root: no
+Homepage: https://github.com/ukui/ukui-menu
+Vcs-Git: https://github.com/ukui/ukui-menu
+Vcs-Browser: https://github.com/ukui/ukui-menu
+
+Package: ukui-menu
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         accountsservice,
+         libgsettings-qt1,
+         libqt5x11extras5,
+         bamfdaemon,
+         libxrandr2,
+         libxtst6,
+         libx11-6
+Description: Advanced ukui menu
+ UKUI menu provides start menu development library and advanced
+ graphical user interface.
+ .
+ The package contains executable file.
