@@ -60,7 +60,6 @@ SOURCES += \
     src/SearchResultWidget/fullsearchresultwidget.cpp \
     src/SearchResultWidget/searchappthread.cpp \
     src/SearchResultWidget/searchresultwidget.cpp \
-    src/SideBarWidget/sidebarwidget.cpp \
     src/Style/style.cpp \
     src/UtilityFunction/classifyscrollarea.cpp \
     src/UtilityFunction/fullitemdelegate.cpp \
@@ -94,7 +93,6 @@ HEADERS  += \
     src/SearchResultWidget/fullsearchresultwidget.h \
     src/SearchResultWidget/searchappthread.h \
     src/SearchResultWidget/searchresultwidget.h \
-    src/SideBarWidget/sidebarwidget.h \
     src/Style/style.h \
     src/UtilityFunction/classifyscrollarea.h \
     src/UtilityFunction/fullitemdelegate.h \

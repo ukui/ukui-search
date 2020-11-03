@@ -59,7 +59,6 @@ void MainWindow::initUi()
 
     m_frame=new QFrame;
     m_mainViewWid=new MainViewWidget;
-    m_sideBarWid=new SideBarWidget;
 
     this->setCentralWidget(m_frame);
     QHBoxLayout *mainlayout=new QHBoxLayout;
@@ -75,27 +74,10 @@ void MainWindow::initUi()
     char linestyle[100];
     sprintf(linestyle, "background-color:%s;",LineBackground);
     m_line->setStyleSheet(linestyle);
-    mainlayout->addWidget(m_sideBarWid);
 
     m_animation = new QPropertyAnimation(this, "geometry");
     connect(m_animation, &QPropertyAnimation::valueChanged, this, &MainWindow::animationValueChangedSlot);
     connect(m_animation,&QPropertyAnimation::finished,this,&MainWindow::animationValueFinishedSlot);
-
-    connect(m_sideBarWid, &SideBarWidget::sendCommonUseBtnSignal, m_mainViewWid, &MainViewWidget::loadCommonUseWidget);
-    connect(m_sideBarWid,&SideBarWidget::sendLetterBtnSignal, m_mainViewWid, &MainViewWidget::loadLetterWidget);
-    connect(m_sideBarWid, &SideBarWidget::sendFunctionBtnSignal, m_mainViewWid, &MainViewWidget::loadFunctionWidget);
-
-    connect(m_sideBarWid,&SideBarWidget::sendFullScreenCommonUseBtnSignal,
-            m_mainViewWid,&MainViewWidget::loadFullCommonUseWidget);
-    connect(m_sideBarWid,&SideBarWidget::sendFullScreenLetterBtnSignal,
-            m_mainViewWid,&MainViewWidget::loadFullLetterWidget);
-    connect(m_sideBarWid,&SideBarWidget::sendFullScreenFunctionBtnSignal,
-            m_mainViewWid,&MainViewWidget::loadFullFunctionWidget);
-
-    connect(m_sideBarWid,&SideBarWidget::sendFullScreenBtnSignal,this,&MainWindow::showFullScreenWidget);
-    connect(m_sideBarWid,&SideBarWidget::sendDefaultBtnSignal,this,&MainWindow::showDefaultWidget);
-    connect(m_mainViewWid,&MainViewWidget::sendHideMainWindowSignal,this,&MainWindow::recvHideMainWindowSlot);
-    connect(m_sideBarWid,&SideBarWidget::sendHideMainWindowSignal,this,&MainWindow::recvHideMainWindowSlot);
 
     connect(QApplication::primaryScreen(),&QScreen::geometryChanged,
             this,&MainWindow::monitorResolutionChange);
@@ -181,8 +163,6 @@ void MainWindow::showFullScreenWidget()
     m_mainViewWid->setParent(nullptr);
     this->centralWidget()->layout()->removeWidget(m_line);
     m_line->setParent(nullptr);
-    this->centralWidget()->layout()->removeWidget(m_sideBarWid);
-    m_sideBarWid->setParent(nullptr);
 
     m_animation->setDuration(100);//动画总时间
     m_animation->setStartValue(startRect);
@@ -244,8 +224,6 @@ void MainWindow::showDefaultWidget()
 
     this->centralWidget()->layout()->removeWidget(m_mainViewWid);
     m_mainViewWid->setParent(nullptr);
-    this->centralWidget()->layout()->removeWidget(m_sideBarWid);
-    m_sideBarWid->setParent(nullptr);
 
     m_animation->setDuration(100);//动画总时间
     m_animation->setStartValue(startRect);
@@ -269,17 +247,12 @@ void MainWindow::animationValueFinishedSlot()
     if(m_isFullScreen)
     {
         this->centralWidget()->layout()->addWidget(m_mainViewWid);
-        this->centralWidget()->layout()->addWidget(m_sideBarWid);
-        m_sideBarWid->loadMaxSidebar();
         m_mainViewWid->loadMaxMainView();
-        m_sideBarWid->enterAnimation();
     }
     else
     {
         this->centralWidget()->layout()->addWidget(m_mainViewWid);
         this->centralWidget()->layout()->addWidget(m_line);
-        this->centralWidget()->layout()->addWidget(m_sideBarWid);
-        m_sideBarWid->loadMinSidebar();
         m_mainViewWid->loadMinMainView();
     }
     setFrameStyle();
@@ -296,7 +269,6 @@ bool MainWindow::event ( QEvent * event )
         {
             this->hide();
             m_mainViewWid->widgetMakeZero();
-//            m_sideBarWid->widgetMakeZero();
         }
    }
    return QWidget::event(event);
@@ -455,8 +427,6 @@ void MainWindow::loadMainWindow()
             this->setGeometry(QRect(x+panelSize,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height()));
         else
             this->setGeometry(QRect(x,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height()));
-        m_sideBarWid->loadMaxSidebar();
-        m_sideBarWid->setSideBarBtnGeometry();
         m_mainViewWid->loadMaxMainView();
         QPainterPath path;
         path.addRect(this->rect());
@@ -474,8 +444,6 @@ void MainWindow::loadMainWindow()
         else
             this->setGeometry(QRect(x+QApplication::primaryScreen()->geometry().width()-panelSize-Style::minw,y,
                                       Style::minw,Style::minh));
-
-        m_sideBarWid->loadMinSidebar();
         m_mainViewWid->loadMinMainView();
     }
     setFrameStyle();
@@ -608,8 +576,6 @@ void MainWindow::repaintWidget()
                 this->setGeometry(QRect(x+panelSize,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height()));
             else
                 this->setGeometry(QRect(x,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height()));
-            m_sideBarWid->loadMaxSidebar();
-            m_sideBarWid->setSideBarBtnGeometry();
             m_mainViewWid->resizeControl();
             QPainterPath path;
             path.addRect(this->rect());
@@ -630,7 +596,6 @@ void MainWindow::repaintWidget()
 
 //            QHBoxLayout *mainLayout=qobject_cast<QHBoxLayout*>(this->centralWidget()->layout());
 //            mainLayout->insertWidget(1,m_line);
-            m_sideBarWid->loadMinSidebar();
             m_mainViewWid->resizeControl();
         }
         setFrameStyle();

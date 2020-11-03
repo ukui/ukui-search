@@ -35,7 +35,6 @@
 #include <QPropertyAnimation>
 #include <QFileInfo>
 #include "src/Style/style.h"
-#include "src/SideBarWidget/sidebarwidget.h"
 #include "src/MainViewWidget/mainviewwidget.h"
 
 class MainWindow : public QMainWindow
@@ -62,7 +61,6 @@ private:
 
     QFrame *m_line=nullptr;//Vertical dividing line
     QFrame *m_frame=nullptr;
-    SideBarWidget *m_sideBarWid=nullptr;
     MainViewWidget *m_mainViewWid=nullptr;
 
     QPropertyAnimation *m_animation=nullptr;
