@@ -402,6 +402,18 @@ void MainViewWidget::loadMinMainView()
         }
         QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
         layout->insertWidget(1,m_searchResultWid);
+
+        QPushButton *btn;
+        btn=new QPushButton(this);
+        btn->setFixedHeight(300);
+        btn->setText("文件搜索的位置");
+        layout->insertWidget(2,btn);
+
+        QPushButton *btn2;
+        btn2=new QPushButton(this);
+        btn2->setFixedHeight(200);
+        btn2->setText("控制面板搜索的位置");
+        layout->insertWidget(3,btn2);
 //    }
 //    else if(m_widgetState==1)
 //        loadCommonUseWidget();
