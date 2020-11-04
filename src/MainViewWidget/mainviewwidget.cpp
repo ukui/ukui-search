@@ -68,13 +68,13 @@ void MainViewWidget::initUi()
 
     this->setFocusPolicy(Qt::NoFocus);
 
-    m_commonUseWid=new CommonUseWidget;
-    m_fullCommonUseWid=new FullCommonUseWidget;
-    m_letterWid=new LetterWidget;
-    m_functionWid=new FunctionWidget;
-    m_fullLetterWid=new FullLetterWidget;
-    m_fullFunctionWid=new FullFunctionWidget;
-    m_fullSearchResultWid=new FullSearchResultWidget;
+//    m_commonUseWid=new CommonUseWidget;
+//    m_fullCommonUseWid=new FullCommonUseWidget;
+//    m_letterWid=new LetterWidget;
+//    m_functionWid=new FunctionWidget;
+//    m_fullLetterWid=new FullLetterWidget;
+//    m_fullFunctionWid=new FullFunctionWidget;
+//    m_fullSearchResultWid=new FullSearchResultWidget;
     m_searchResultWid=new SearchResultWidget;
 
     m_ukuiMenuInterface=new UkuiMenuInterface;
@@ -86,22 +86,22 @@ void MainViewWidget::initUi()
     m_directoryChangedThread=new DirectoryChangedThread;
     connect(this,&MainViewWidget::sendDirectoryPath,m_directoryChangedThread,&DirectoryChangedThread::recvDirectoryPath);
     connect(m_directoryChangedThread,&DirectoryChangedThread::requestUpdateSignal,this,&MainViewWidget::requestUpdateSlot);
-    connect(this,&MainViewWidget::directoryChangedSignal,m_letterWid,&LetterWidget::updateAppListView);
-    connect(this,&MainViewWidget::directoryChangedSignal,m_fullLetterWid,&FullLetterWidget::updateAppListView);
-    connect(this,&MainViewWidget::directoryChangedSignal,m_functionWid,&FunctionWidget::updateAppListView);
-    connect(this,&MainViewWidget::directoryChangedSignal,m_fullFunctionWid,&FullFunctionWidget::updateAppListView);
-    connect(this,&MainViewWidget::directoryChangedSignal,m_commonUseWid,&CommonUseWidget::updateListViewSlot);
-    connect(this,&MainViewWidget::directoryChangedSignal,m_fullCommonUseWid,&FullCommonUseWidget::updateListViewSlot);
+//    connect(this,&MainViewWidget::directoryChangedSignal,m_letterWid,&LetterWidget::updateAppListView);
+//    connect(this,&MainViewWidget::directoryChangedSignal,m_fullLetterWid,&FullLetterWidget::updateAppListView);
+//    connect(this,&MainViewWidget::directoryChangedSignal,m_functionWid,&FunctionWidget::updateAppListView);
+//    connect(this,&MainViewWidget::directoryChangedSignal,m_fullFunctionWid,&FullFunctionWidget::updateAppListView);
+//    connect(this,&MainViewWidget::directoryChangedSignal,m_commonUseWid,&CommonUseWidget::updateListViewSlot);
+//    connect(this,&MainViewWidget::directoryChangedSignal,m_fullCommonUseWid,&FullCommonUseWidget::updateListViewSlot);
 
     //发送隐藏主界面信号
-    connect(m_commonUseWid,&CommonUseWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-    connect(m_fullCommonUseWid,&FullCommonUseWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-    connect(m_letterWid,&LetterWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-    connect(m_fullLetterWid,&FullLetterWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-    connect(m_functionWid,&FunctionWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-    connect(m_fullFunctionWid,&FullFunctionWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
+//    connect(m_commonUseWid,&CommonUseWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
+//    connect(m_fullCommonUseWid,&FullCommonUseWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
+//    connect(m_letterWid,&LetterWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
+//    connect(m_fullLetterWid,&FullLetterWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
+//    connect(m_functionWid,&FunctionWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
+//    connect(m_fullFunctionWid,&FullFunctionWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
     connect(m_searchResultWid,&SearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-    connect(m_fullSearchResultWid,&FullSearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
+//    connect(m_fullSearchResultWid,&FullSearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
 
     addTopControl();
     //加载默认视图
@@ -115,21 +115,22 @@ void MainViewWidget::initUi()
     m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
                                   m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
     m_queryWid->show();
-    mainLayout->insertWidget(1,m_commonUseWid);
+//    mainLayout->insertWidget(1,m_commonUseWid);
+    mainLayout->insertWidget(1,m_searchResultWid);
 
     //监控应用进程开启
-    bamf_matcher_get_default();
-    QDBusConnection::sessionBus().connect("org.ayatana.bamf","/org/ayatana/bamf/matcher","org.ayatana.bamf.matcher",
-                                         QString("ViewOpened"),this,SLOT(ViewOpenedSlot(QDBusMessage)));
+//    bamf_matcher_get_default();
+//    QDBusConnection::sessionBus().connect("org.ayatana.bamf","/org/ayatana/bamf/matcher","org.ayatana.bamf.matcher",
+//                                         QString("ViewOpened"),this,SLOT(ViewOpenedSlot(QDBusMessage)));
 
-    QString path=QDir::homePath()+"/.config/ukui/ukui-menu.ini";
-    m_setting=new QSettings(path,QSettings::IniFormat);
+//    QString path=QDir::homePath()+"/.config/ukui/ukui-menu.ini";
+//    m_setting=new QSettings(path,QSettings::IniFormat);
 
-    if(QGSettings::isSchemaInstalled(QString("org.ukui.style").toLocal8Bit()))
-    {
-        m_gsetting=new QGSettings(QString("org.ukui.style").toLocal8Bit());
-        connect(m_gsetting,&QGSettings::changed,this,&MainViewWidget::iconThemeChangeSlot);
-    }
+//    if(QGSettings::isSchemaInstalled(QString("org.ukui.style").toLocal8Bit()))
+//    {
+//        m_gsetting=new QGSettings(QString("org.ukui.style").toLocal8Bit());
+//        connect(m_gsetting,&QGSettings::changed,this,&MainViewWidget::iconThemeChangeSlot);
+//    }
 }
 
 /**
@@ -268,31 +269,31 @@ void MainViewWidget::setLineEditFocus(QString arg)
  */
 void MainViewWidget::searchAppSlot(QString arg)
 {
-    if(!m_isHiden)
-    {
-        if(!arg.isEmpty())
-        {
-            if(m_widgetState!=0)
-            {
-                QLayoutItem* child;
-                if((child=this->layout()->takeAt(1))!=nullptr)
-                {
-                    QWidget* childWid=child->widget();
-                    if(childWid!=nullptr)
-                    {
-                        this->layout()->removeWidget(childWid);
-                        childWid->setParent(nullptr);
-                    }
-                }
-                m_widgetState=0;
-                QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-                if(!m_isFullScreen)
-                    layout->insertWidget(1,m_searchResultWid);
-                else
-                    layout->insertWidget(1,m_fullSearchResultWid);
-            }
-        }
-        else{
+//    if(!m_isHiden)
+//    {
+//        if(!arg.isEmpty())
+//        {
+//            if(m_widgetState!=0)
+//            {
+//                QLayoutItem* child;
+//                if((child=this->layout()->takeAt(1))!=nullptr)
+//                {
+//                    QWidget* childWid=child->widget();
+//                    if(childWid!=nullptr)
+//                    {
+//                        this->layout()->removeWidget(childWid);
+//                        childWid->setParent(nullptr);
+//                    }
+//                }
+//                m_widgetState=0;
+//                QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
+////                if(!m_isFullScreen)
+//                    layout->insertWidget(1,m_searchResultWid);
+//                else
+//                    layout->insertWidget(1,m_fullSearchResultWid);
+//            }
+//        }
+//        else{
 //            QLayoutItem* child;
 //            if((child=this->layout()->takeAt(2))!=nullptr)
 //            {
@@ -303,49 +304,49 @@ void MainViewWidget::searchAppSlot(QString arg)
 //                    childWid->setParent(nullptr);
 //                }
 //            }
-            if(m_isFullScreen)
-            {
-                switch (m_saveCurrentWidState) {
-                case 1:
-                    loadFullCommonUseWidget();
-                    break;
-                case 2:
-                    loadFullLetterWidget();
-                    break;
-                case 3:
-                    loadFullFunctionWidget();
-                default:
-                    break;
-                }
-            }
-            else {
-                switch (m_saveCurrentWidState) {
-                case 1:
-                    loadCommonUseWidget();
-                    break;
-                case 2:
-                    loadLetterWidget();
-                    break;
-                case 3:
-                    loadFunctionWidget();
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
+//            if(m_isFullScreen)
+//            {
+//                switch (m_saveCurrentWidState) {
+//                case 1:
+//                    loadFullCommonUseWidget();
+//                    break;
+//                case 2:
+//                    loadFullLetterWidget();
+//                    break;
+//                case 3:
+//                    loadFullFunctionWidget();
+//                default:
+//                    break;
+//                }
+//            }
+//            else {
+//                switch (m_saveCurrentWidState) {
+//                case 1:
+//                    loadCommonUseWidget();
+//                    break;
+//                case 2:
+//                    loadLetterWidget();
+//                    break;
+//                case 3:
+//                    loadFunctionWidget();
+//                    break;
+//                default:
+//                    break;
+//                }
+//            }
+//        }
 
         Q_EMIT sendSearchKeyword(arg);
         m_searchAppThread->start();
-    }
-    else
-        m_widgetState=m_saveCurrentWidState;
+//    }
+//    else
+//        m_widgetState=m_saveCurrentWidState;
 }
 
 void MainViewWidget::recvSearchResult(QVector<QStringList> arg)
 {
     m_searchAppThread->quit();
-    m_fullSearchResultWid->updateAppListView(arg);
+//    m_fullSearchResultWid->updateAppListView(arg);
     m_searchResultWid->updateAppListView(arg);
 }
 
@@ -387,8 +388,8 @@ void MainViewWidget::loadMinMainView()
         m_queryWid->show();
     }
 
-    if(m_widgetState==0)
-    {
+//    if(m_widgetState==0)
+//    {
         QLayoutItem* child;
         if((child=this->layout()->takeAt(1))!=nullptr)
         {
@@ -401,15 +402,15 @@ void MainViewWidget::loadMinMainView()
         }
         QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
         layout->insertWidget(1,m_searchResultWid);
-    }
-    else if(m_widgetState==1)
-        loadCommonUseWidget();
-    else if(m_widgetState==2)
-        loadLetterWidget();
-    else if(m_widgetState==3)
-        loadFunctionWidget();
-    m_isFullScreen=false;
-    m_isHiden=false;
+//    }
+//    else if(m_widgetState==1)
+//        loadCommonUseWidget();
+//    else if(m_widgetState==2)
+//        loadLetterWidget();
+//    else if(m_widgetState==3)
+//        loadFunctionWidget();
+//    m_isFullScreen=false;
+//    m_isHiden=false;
 }
 
 /**
@@ -417,59 +418,59 @@ void MainViewWidget::loadMinMainView()
  */
 void MainViewWidget::loadMaxMainView()
 {
-    this->setFixedSize(Style::MainViewWidWidth,
-                       Style::heightavailable);
-    m_topWidget->setFixedSize(this->width(),Style::TopWidgetHeight);
-    m_queryLineEdit->setFixedSize(Style::QueryLineEditWidth,Style::QueryLineEditHeight);
+//    this->setFixedSize(Style::MainViewWidWidth,
+//                       Style::heightavailable);
+//    m_topWidget->setFixedSize(this->width(),Style::TopWidgetHeight);
+//    m_queryLineEdit->setFixedSize(Style::QueryLineEditWidth,Style::QueryLineEditHeight);
 
-    m_topLayout->setContentsMargins((m_topWidget->width()-Style::LeftWidWidth-m_queryLineEdit->width())/2+Style::LeftWidWidth,
-                                  0,
-                                  (m_topWidget->width()-Style::LeftWidWidth-m_queryLineEdit->width())/2,
-                                  0);
+//    m_topLayout->setContentsMargins((m_topWidget->width()-Style::LeftWidWidth-m_queryLineEdit->width())/2+Style::LeftWidWidth,
+//                                  0,
+//                                  (m_topWidget->width()-Style::LeftWidWidth-m_queryLineEdit->width())/2,
+//                                  0);
 
-    if(m_queryLineEdit->text().isEmpty())
-    {
-        if(m_queryWid->layout()->count()==1)
-            m_queryWid->layout()->addWidget(m_queryText);
-        m_queryText->adjustSize();
-        m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-                                      m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
-        m_queryWid->show();
-    }
+//    if(m_queryLineEdit->text().isEmpty())
+//    {
+//        if(m_queryWid->layout()->count()==1)
+//            m_queryWid->layout()->addWidget(m_queryText);
+//        m_queryText->adjustSize();
+//        m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
+//                                      m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
+//        m_queryWid->show();
+//    }
 
-    if(m_widgetState==0)
-    {
-        QLayoutItem* child;
-        if((child=this->layout()->takeAt(1))!=nullptr)
-        {
-            QWidget* childWid=child->widget();
-            if(childWid!=nullptr)
-            {
-                this->layout()->removeWidget(childWid);
-                childWid->setParent(nullptr);
-            }
-        }
-        QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-        layout->insertWidget(1,m_fullSearchResultWid);
-    }
-    else if(m_widgetState==1)
-        loadFullCommonUseWidget();
-    else if(m_widgetState==2)
-        loadFullLetterWidget();
-    else if(m_widgetState==3)
-        loadFullFunctionWidget();
-    m_isFullScreen=true;
-    m_isHiden=false;
+//    if(m_widgetState==0)
+//    {
+//        QLayoutItem* child;
+//        if((child=this->layout()->takeAt(1))!=nullptr)
+//        {
+//            QWidget* childWid=child->widget();
+//            if(childWid!=nullptr)
+//            {
+//                this->layout()->removeWidget(childWid);
+//                childWid->setParent(nullptr);
+//            }
+//        }
+//        QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
+//        layout->insertWidget(1,m_fullSearchResultWid);
+//    }
+//    else if(m_widgetState==1)
+//        loadFullCommonUseWidget();
+//    else if(m_widgetState==2)
+//        loadFullLetterWidget();
+//    else if(m_widgetState==3)
+//        loadFullFunctionWidget();
+//    m_isFullScreen=true;
+//    m_isHiden=false;
 }
 
 void MainViewWidget::resizeControl()
 {
     if(m_isFullScreen)
     {
-        if(m_widgetState==2)
-            m_fullLetterWid->setLetterBtnGeometry();
-        if(m_widgetState==3)
-            m_fullFunctionWid->setFunctionBtnGeometry();
+//        if(m_widgetState==2)
+//            m_fullLetterWid->setLetterBtnGeometry();
+//        if(m_widgetState==3)
+//            m_fullFunctionWid->setFunctionBtnGeometry();
 
         this->setFixedSize(Style::MainViewWidWidth,
                            Style::heightavailable);
@@ -797,26 +798,26 @@ void MainViewWidget::iconThemeChangeSlot(QString key)
 void MainViewWidget::repaintWidget()
 {
     this->setMinimumSize(Style::minw,Style::minh);
-    m_commonUseWid->repaintWidget();
-    m_fullCommonUseWid->repaintWidget();
-    m_letterWid->repaintWidget();
-    m_fullLetterWid->repaintWidget();
-    m_functionWid->repaintWidget();
-    m_fullFunctionWid->repaintWidget();
+//    m_commonUseWid->repaintWidget();
+//    m_fullCommonUseWid->repaintWidget();
+//    m_letterWid->repaintWidget();
+//    m_fullLetterWid->repaintWidget();
+//    m_functionWid->repaintWidget();
+//    m_fullFunctionWid->repaintWidget();
     m_searchResultWid->repaintWidget();
-    m_fullSearchResultWid->repaintWidget();
+//    m_fullSearchResultWid->repaintWidget();
 }
 
 void MainViewWidget::widgetMakeZero()
 {
-    m_isHiden=true;
-    m_isSearching=false;
-    m_commonUseWid->widgetMakeZero();
-    m_fullCommonUseWid->widgetMakeZero();
-    m_letterWid->widgetMakeZero();
-    m_fullLetterWid->widgetMakeZero();
-    m_functionWid->widgetMakeZero();
-    m_fullFunctionWid->widgetMakeZero();
+//    m_isHiden=true;
+//    m_isSearching=false;
+//    m_commonUseWid->widgetMakeZero();
+//    m_fullCommonUseWid->widgetMakeZero();
+//    m_letterWid->widgetMakeZero();
+//    m_fullLetterWid->widgetMakeZero();
+//    m_functionWid->widgetMakeZero();
+//    m_fullFunctionWid->widgetMakeZero();
     m_queryLineEdit->clear();
     m_queryLineEdit->clearFocus();
     char style[100];
@@ -827,34 +828,34 @@ void MainViewWidget::widgetMakeZero()
 
 void MainViewWidget::moveScrollBar(int type)
 {
-    if(m_widgetState==0)
-    {
-        if(m_isFullScreen)
-            m_fullSearchResultWid->moveScrollBar(type);
-        else
-            m_searchResultWid->moveScrollBar(type);
-    }
-    if(m_widgetState==1)
-    {
-        if(m_isFullScreen)
-            m_fullCommonUseWid->moveScrollBar(type);
-        else
-            m_commonUseWid->moveScrollBar(type);
-    }
-    if(m_widgetState==2)
-    {
-        if(m_isFullScreen)
-            m_fullLetterWid->moveScrollBar(type);
-        else
-            m_letterWid->moveScrollBar(type);
-    }
-    if(m_widgetState==3)
-    {
-        if(m_isFullScreen)
-            m_fullFunctionWid->moveScrollBar(type);
-        else
-            m_functionWid->moveScrollBar(type);
-    }
+//    if(m_widgetState==0)
+//    {
+//        if(m_isFullScreen)
+//            m_fullSearchResultWid->moveScrollBar(type);
+//        else
+//            m_searchResultWid->moveScrollBar(type);
+//    }
+//    if(m_widgetState==1)
+//    {
+//        if(m_isFullScreen)
+//            m_fullCommonUseWid->moveScrollBar(type);
+//        else
+//            m_commonUseWid->moveScrollBar(type);
+//    }
+//    if(m_widgetState==2)
+//    {
+//        if(m_isFullScreen)
+//            m_fullLetterWid->moveScrollBar(type);
+//        else
+//            m_letterWid->moveScrollBar(type);
+//    }
+//    if(m_widgetState==3)
+//    {
+//        if(m_isFullScreen)
+//            m_fullFunctionWid->moveScrollBar(type);
+//        else
+//            m_functionWid->moveScrollBar(type);
+//    }
 }
 
 //void MainViewWidget::mousePressEvent(QMouseEvent *event)
