@@ -32,9 +32,8 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
 MainViewWidget::~MainViewWidget()
 {
-//    delete m_commonUseWid;
-//    delete m_fullCommonUseWid;
-//    delete m_letterWid;
+
+    //    delete m_letterWid;
 //    delete m_fullLetterWid;
 //    delete m_functionWid;
 //    delete m_fullFunctionWid;
@@ -68,13 +67,6 @@ void MainViewWidget::initUi()
 
     this->setFocusPolicy(Qt::NoFocus);
 
-//    m_commonUseWid=new CommonUseWidget;
-//    m_fullCommonUseWid=new FullCommonUseWidget;
-//    m_letterWid=new LetterWidget;
-//    m_functionWid=new FunctionWidget;
-//    m_fullLetterWid=new FullLetterWidget;
-//    m_fullFunctionWid=new FullFunctionWidget;
-//    m_fullSearchResultWid=new FullSearchResultWidget;
     m_searchResultWid=new SearchResultWidget;
 
     m_ukuiMenuInterface=new UkuiMenuInterface;
@@ -86,20 +78,7 @@ void MainViewWidget::initUi()
     m_directoryChangedThread=new DirectoryChangedThread;
     connect(this,&MainViewWidget::sendDirectoryPath,m_directoryChangedThread,&DirectoryChangedThread::recvDirectoryPath);
     connect(m_directoryChangedThread,&DirectoryChangedThread::requestUpdateSignal,this,&MainViewWidget::requestUpdateSlot);
-//    connect(this,&MainViewWidget::directoryChangedSignal,m_letterWid,&LetterWidget::updateAppListView);
-//    connect(this,&MainViewWidget::directoryChangedSignal,m_fullLetterWid,&FullLetterWidget::updateAppListView);
-//    connect(this,&MainViewWidget::directoryChangedSignal,m_functionWid,&FunctionWidget::updateAppListView);
-//    connect(this,&MainViewWidget::directoryChangedSignal,m_fullFunctionWid,&FullFunctionWidget::updateAppListView);
-//    connect(this,&MainViewWidget::directoryChangedSignal,m_commonUseWid,&CommonUseWidget::updateListViewSlot);
-//    connect(this,&MainViewWidget::directoryChangedSignal,m_fullCommonUseWid,&FullCommonUseWidget::updateListViewSlot);
-
     //发送隐藏主界面信号
-//    connect(m_commonUseWid,&CommonUseWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-//    connect(m_fullCommonUseWid,&FullCommonUseWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-//    connect(m_letterWid,&LetterWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-//    connect(m_fullLetterWid,&FullLetterWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-//    connect(m_functionWid,&FunctionWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-//    connect(m_fullFunctionWid,&FullFunctionWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
     connect(m_searchResultWid,&SearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
 //    connect(m_fullSearchResultWid,&FullSearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
 
@@ -115,7 +94,7 @@ void MainViewWidget::initUi()
     m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
                                   m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
     m_queryWid->show();
-//    mainLayout->insertWidget(1,m_commonUseWid);
+
     mainLayout->insertWidget(1,m_searchResultWid);
 
     //监控应用进程开启
@@ -308,7 +287,7 @@ void MainViewWidget::searchAppSlot(QString arg)
 //            {
 //                switch (m_saveCurrentWidState) {
 //                case 1:
-//                    loadFullCommonUseWidget();
+//                    loadFullCommonUseWidget();//加载全屏常用 界面  ，文件夹已经删除
 //                    break;
 //                case 2:
 //                    loadFullLetterWidget();
@@ -466,7 +445,7 @@ void MainViewWidget::loadMaxMainView()
 //        layout->insertWidget(1,m_fullSearchResultWid);
 //    }
 //    else if(m_widgetState==1)
-//        loadFullCommonUseWidget();
+//        loadFullCommonUseWidget(); //加载全屏常用 界面  ，文件夹已经删除
 //    else if(m_widgetState==2)
 //        loadFullLetterWidget();
 //    else if(m_widgetState==3)
@@ -509,7 +488,6 @@ void MainViewWidget::resizeControl()
  */
 void MainViewWidget::loadCommonUseWidget()
 {
-    m_fullCommonUseWid->widgetMakeZero();
     m_letterWid->widgetMakeZero();
     m_fullLetterWid->widgetMakeZero();
     m_functionWid->widgetMakeZero();
@@ -525,8 +503,8 @@ void MainViewWidget::loadCommonUseWidget()
 
     }
     QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-    layout->insertWidget(1,m_commonUseWid);
-    m_commonUseWid->updateListView();
+
+
     m_widgetState=1;
     m_saveCurrentWidState=1;
 }
@@ -536,8 +514,7 @@ void MainViewWidget::loadCommonUseWidget()
  */
 void MainViewWidget::loadLetterWidget()
 {
-    m_commonUseWid->widgetMakeZero();
-    m_fullCommonUseWid->widgetMakeZero();
+
     m_fullLetterWid->widgetMakeZero();
     m_functionWid->widgetMakeZero();
     m_fullFunctionWid->widgetMakeZero();
@@ -562,8 +539,7 @@ void MainViewWidget::loadLetterWidget()
  */
 void MainViewWidget::loadFunctionWidget()
 {
-    m_commonUseWid->widgetMakeZero();
-    m_fullCommonUseWid->widgetMakeZero();
+
     m_letterWid->widgetMakeZero();
     m_fullLetterWid->widgetMakeZero();
     m_fullFunctionWid->widgetMakeZero();
@@ -583,41 +559,11 @@ void MainViewWidget::loadFunctionWidget()
     m_saveCurrentWidState=3;
 }
 
-
-/**
- * 加载全屏常用分类界面
- */
-void MainViewWidget::loadFullCommonUseWidget()
-{
-    m_commonUseWid->widgetMakeZero();
-    m_letterWid->widgetMakeZero();
-    m_fullLetterWid->widgetMakeZero();
-    m_functionWid->widgetMakeZero();
-    m_fullFunctionWid->widgetMakeZero();
-    QLayoutItem *child;
-    if((child = this->layout()->takeAt(1)) != nullptr) {
-        QWidget* childwid=child->widget();
-        if(childwid!=nullptr)
-        {
-            this->layout()->removeWidget(childwid);
-            childwid->setParent(nullptr);
-        }
-
-    }
-    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-    layout->insertWidget(1,m_fullCommonUseWid);
-    m_fullCommonUseWid->updateListView();
-    m_widgetState=1;
-    m_saveCurrentWidState=1;
-}
-
 /**
  * 加载全屏字母分类界面
  */
 void MainViewWidget::loadFullLetterWidget()
 {
-    m_commonUseWid->widgetMakeZero();
-    m_fullCommonUseWid->widgetMakeZero();
     m_letterWid->widgetMakeZero();
     m_functionWid->widgetMakeZero();
     m_fullFunctionWid->widgetMakeZero();
@@ -643,8 +589,6 @@ void MainViewWidget::loadFullLetterWidget()
  */
 void MainViewWidget::loadFullFunctionWidget()
 {
-    m_commonUseWid->widgetMakeZero();
-    m_fullCommonUseWid->widgetMakeZero();
     m_letterWid->widgetMakeZero();
     m_fullLetterWid->widgetMakeZero();
     m_functionWid->widgetMakeZero();
@@ -810,9 +754,7 @@ void MainViewWidget::iconThemeChangeSlot(QString key)
 void MainViewWidget::repaintWidget()
 {
     this->setMinimumSize(Style::minw,Style::minh);
-//    m_commonUseWid->repaintWidget();
-//    m_fullCommonUseWid->repaintWidget();
-//    m_letterWid->repaintWidget();
+    //    m_letterWid->repaintWidget();
 //    m_fullLetterWid->repaintWidget();
 //    m_functionWid->repaintWidget();
 //    m_fullFunctionWid->repaintWidget();
@@ -824,8 +766,6 @@ void MainViewWidget::widgetMakeZero()
 {
 //    m_isHiden=true;
 //    m_isSearching=false;
-//    m_commonUseWid->widgetMakeZero();
-//    m_fullCommonUseWid->widgetMakeZero();
 //    m_letterWid->widgetMakeZero();
 //    m_fullLetterWid->widgetMakeZero();
 //    m_functionWid->widgetMakeZero();

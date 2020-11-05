@@ -31,10 +31,8 @@
 #include <QFileSystemWatcher>
 #include <QSettings>
 #include "src/Interface/ukuimenuinterface.h"
-#include "src/CommonUseWidget/commonusewidget.h"
 #include "src/LetterWidget/letterwidget.h"
 #include "src/FunctionWidget/functionwidget.h"
-#include "src/CommonUseWidget/fullcommonusewidget.h"
 #include "src/FunctionWidget/fullfunctionwidget.h"
 #include "src/LetterWidget/fullletterwidget.h"
 #include "src/SearchResultWidget/fullsearchresultwidget.h"
@@ -101,10 +99,8 @@ private:
     FullSearchResultWidget *m_fullSearchResultWid=nullptr;
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
-    CommonUseWidget *m_commonUseWid=nullptr;
     LetterWidget *m_letterWid=nullptr;
     FunctionWidget *m_functionWid=nullptr;
-    FullCommonUseWidget *m_fullCommonUseWid=nullptr;
     FullLetterWidget *m_fullLetterWid=nullptr;
     FullFunctionWidget *m_fullFunctionWid=nullptr;
 
@@ -152,10 +148,6 @@ public Q_SLOTS:
      * @brief Load function classification interface
      */
     void loadFunctionWidget();
-    /**
-     * @brief Load full screen common classification interface
-     */
-    void loadFullCommonUseWidget();
     /**
      * @brief Load the full screen letter classification interface
      */
