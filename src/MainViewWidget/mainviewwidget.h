@@ -49,10 +49,6 @@ public:
      */
     void loadMinMainView();
     /**
-     * @brief Load the full screen main view
-     */
-    void loadMaxMainView();
-    /**
      * @brief Initializes the interface state
      */
     void widgetMakeZero();

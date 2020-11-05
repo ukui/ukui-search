@@ -271,7 +271,7 @@ void MainWindow::animationValueFinishedSlot()
     if(m_isFullScreen)
     {
         this->centralWidget()->layout()->addWidget(m_mainViewWid);
-        m_mainViewWid->loadMaxMainView();
+//        m_mainViewWid->loadMaxMainView();
     }
     else
     {
