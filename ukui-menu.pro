@@ -48,7 +48,6 @@ SOURCES += \
     src/MainViewWidget/directorychangedthread.cpp \
     src/MainViewWidget/mainviewwidget.cpp \
     src/MainWindow/mainwindow.cpp \
-    src/RightClickMenu/rightclickmenu.cpp \
     src/SearchResultWidget/fullsearchresultwidget.cpp \
     src/SearchResultWidget/searchappthread.cpp \
     src/SearchResultWidget/searchresultwidget.cpp \
@@ -73,7 +72,6 @@ HEADERS  += \
     src/MainViewWidget/directorychangedthread.h \
     src/MainViewWidget/mainviewwidget.h \
     src/MainWindow/mainwindow.h \
-    src/RightClickMenu/rightclickmenu.h \
     src/SearchResultWidget/fullsearchresultwidget.h \
     src/SearchResultWidget/searchappthread.h \
     src/SearchResultWidget/searchresultwidget.h \

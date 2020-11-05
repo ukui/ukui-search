@@ -24,7 +24,7 @@
 #include <QScrollBar>
 #include <QStandardItemModel>
 #include "src/Style/style.h"
-#include "src/RightClickMenu/rightclickmenu.h"
+//#include "src/RightClickMenu/rightclickmenu.h"
 #include <QSettings>
 #include <QEvent>
 #include <QKeyEvent>
@@ -53,7 +53,7 @@ private:
     int module=0;
     UkuiMenuInterface* pUkuiMenuInterface=nullptr;
 
-    RightClickMenu* menu=nullptr;//右键菜单
+//    RightClickMenu* menu=nullptr;//右键菜单
     QSettings *setting=nullptr;
     QVector<QStringList> data;
     ItemDelegate* m_delegate=nullptr;

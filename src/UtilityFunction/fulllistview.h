@@ -20,7 +20,7 @@
 #define FULLLISTVIEW_H
 #include <QListView>
 #include <QSettings>
-#include "src/RightClickMenu/rightclickmenu.h"
+//#include "src/RightClickMenu/rightclickmenu.h"
 #include "src/Interface/ukuimenuinterface.h"
 #include <QEvent>
 #include <QScrollBar>
@@ -50,7 +50,7 @@ private:
     QStandardItemModel* listmodel=nullptr;
     int module=0;
 
-    RightClickMenu* menu=nullptr;//右键菜单
+//    RightClickMenu* menu=nullptr;//右键菜单
     QSettings *setting=nullptr;
     QStringList data;
 

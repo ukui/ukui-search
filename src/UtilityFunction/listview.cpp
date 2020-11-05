@@ -28,7 +28,7 @@ ListView::ListView(QWidget *parent, int width, int height, int module):
     initWidget();
 
     pUkuiMenuInterface=new UkuiMenuInterface;
-    menu=new RightClickMenu;
+//    menu=new RightClickMenu;
 
     QString path=QDir::homePath()+"/.config/ukui/ukui-menu.ini";
     setting=new QSettings(path,QSettings::IniFormat);
@@ -36,7 +36,7 @@ ListView::ListView(QWidget *parent, int width, int height, int module):
 }
 ListView::~ListView()
 {
-    delete menu;
+//    delete menu;
     delete pUkuiMenuInterface;
 }
 
@@ -127,41 +127,41 @@ void ListView::rightClickedSlot()
         QStringList strlist=var.value<QStringList>();
         if(strlist.at(1).toInt()==1)
         {
-            int ret=menu->showAppBtnMenu(strlist.at(0));
-            if(module>0)
-            {
-                if(strlist.at(1).toInt()==1)
-                {
-                    switch (ret) {
-                    case 6:
-                        Q_EMIT sendHideMainWindowSignal();
-                        break;
-                    case 7:
-                        Q_EMIT sendHideMainWindowSignal();
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-            else{
-                switch (ret) {
-                case 1:
-                    Q_EMIT sendUpdateAppListSignal();
-                    break;
-                case 2:
-                    Q_EMIT sendUpdateAppListSignal();
-                    break;
-                case 6:
-                    Q_EMIT sendHideMainWindowSignal();
-                    break;
-                case 7:
-                    Q_EMIT sendHideMainWindowSignal();
-                    break;
-                default:
-                    break;
-                }
-            }
+//            int ret=menu->showAppBtnMenu(strlist.at(0));
+//            if(module>0)
+//            {
+//                if(strlist.at(1).toInt()==1)
+//                {
+//                    switch (ret) {
+//                    case 6:
+//                        Q_EMIT sendHideMainWindowSignal();
+//                        break;
+//                    case 7:
+//                        Q_EMIT sendHideMainWindowSignal();
+//                        break;
+//                    default:
+//                        break;
+//                    }
+//                }
+//            }
+//            else{
+//                switch (ret) {
+//                case 1:
+//                    Q_EMIT sendUpdateAppListSignal();
+//                    break;
+//                case 2:
+//                    Q_EMIT sendUpdateAppListSignal();
+//                    break;
+//                case 6:
+//                    Q_EMIT sendHideMainWindowSignal();
+//                    break;
+//                case 7:
+//                    Q_EMIT sendHideMainWindowSignal();
+//                    break;
+//                default:
+//                    break;
+//                }
+//            }
 
             this->selectionModel()->clear();
         }
