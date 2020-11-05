@@ -115,17 +115,8 @@ public Q_SLOTS:
      */
     bool eventFilter(QObject *watched, QEvent *event);
     /**
-     * @brief Load the letter classification interface
-     */
-    void loadLetterWidget();
-    /**
      * @brief Load the full screen letter classification interface
      */
-    void loadFullLetterWidget();
-    /**
-     * @brief Load the full screen function classification interface
-     */
-    void loadFullFunctionWidget();
     /**
      * @brief Respond to search box
      * @param arg: Search keywords
