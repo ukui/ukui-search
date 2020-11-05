@@ -54,8 +54,6 @@ public:
     void loadMainWindow();
 
 private:
-
-    bool m_isFullScreen=false;
     UkuiMenuInterface *m_ukuiMenuInterface=nullptr;
     QSettings *m_setting=nullptr;
 
@@ -63,7 +61,6 @@ private:
     QFrame *m_frame=nullptr;
     MainViewWidget *m_mainViewWid=nullptr;
 
-    QPropertyAnimation *m_animation=nullptr;
     bool m_winFlag = false;
 
 protected:
@@ -112,8 +109,6 @@ public Q_SLOTS:
      * @param key: Key
      */
     void panelChangedSlot(QString key);
-    void animationValueChangedSlot(const QVariant &value);//动画当前值变化监控
-    void animationValueFinishedSlot();
 
     /**
      * @brief Open the start menu by signaling
