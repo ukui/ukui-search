@@ -45,9 +45,6 @@ INSTALLS += qm_files
 DEFINES += QM_FILES_INSTALL_PATH='\\"$${QM_FILES_INSTALL_PATH}\\"'
 
 SOURCES += \
-    src/FunctionWidget/fullfunctionwidget.cpp \
-    src/FunctionWidget/functionbuttonwidget.cpp \
-    src/FunctionWidget/functionwidget.cpp \
     src/LetterWidget/fullletterwidget.cpp \
     src/LetterWidget/letterbuttonwidget.cpp \
     src/LetterWidget/letterwidget.cpp \
@@ -76,9 +73,6 @@ SOURCES += \
     src/XEventMonitor/xeventmonitor.cpp
 
 HEADERS  += \
-    src/CommonUseWidget/fullcommonusewidget.h \
-    src/FunctionWidget/functionbuttonwidget.h \
-    src/FunctionWidget/functionwidget.h \
     src/LetterWidget/fullletterwidget.h \
     src/LetterWidget/letterbuttonwidget.h \
     src/LetterWidget/letterwidget.h \

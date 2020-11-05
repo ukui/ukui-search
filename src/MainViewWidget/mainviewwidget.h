@@ -32,8 +32,6 @@
 #include <QSettings>
 #include "src/Interface/ukuimenuinterface.h"
 #include "src/LetterWidget/letterwidget.h"
-#include "src/FunctionWidget/functionwidget.h"
-#include "src/FunctionWidget/fullfunctionwidget.h"
 #include "src/LetterWidget/fullletterwidget.h"
 #include "src/SearchResultWidget/fullsearchresultwidget.h"
 #include "src/SearchResultWidget/searchresultwidget.h"
@@ -100,10 +98,7 @@ private:
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
     LetterWidget *m_letterWid=nullptr;
-    FunctionWidget *m_functionWid=nullptr;
     FullLetterWidget *m_fullLetterWid=nullptr;
-    FullFunctionWidget *m_fullFunctionWid=nullptr;
-
     DirectoryChangedThread *m_directoryChangedThread=nullptr;
 
     int m_widgetState=1;//Classification window number
@@ -144,10 +139,6 @@ public Q_SLOTS:
      * @brief Load the letter classification interface
      */
     void loadLetterWidget();
-    /**
-     * @brief Load function classification interface
-     */
-    void loadFunctionWidget();
     /**
      * @brief Load the full screen letter classification interface
      */

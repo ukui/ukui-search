@@ -36,7 +36,6 @@ MainViewWidget::~MainViewWidget()
     //    delete m_letterWid;
 //    delete m_fullLetterWid;
 //    delete m_functionWid;
-//    delete m_fullFunctionWid;
 //    delete m_searchResultWid;
 //    delete m_fullSearchResultWid;
 
@@ -490,8 +489,6 @@ void MainViewWidget::loadCommonUseWidget()
 {
     m_letterWid->widgetMakeZero();
     m_fullLetterWid->widgetMakeZero();
-    m_functionWid->widgetMakeZero();
-    m_fullFunctionWid->widgetMakeZero();
     QLayoutItem *child;
     if((child = this->layout()->takeAt(1)) != nullptr) {
         QWidget* childwid=child->widget();
@@ -516,8 +513,6 @@ void MainViewWidget::loadLetterWidget()
 {
 
     m_fullLetterWid->widgetMakeZero();
-    m_functionWid->widgetMakeZero();
-    m_fullFunctionWid->widgetMakeZero();
     QLayoutItem *child;
     if((child = this->layout()->takeAt(1)) != nullptr) {
         QWidget* childwid=child->widget();
@@ -535,38 +530,11 @@ void MainViewWidget::loadLetterWidget()
 }
 
 /**
- * 加载功能分类界面
- */
-void MainViewWidget::loadFunctionWidget()
-{
-
-    m_letterWid->widgetMakeZero();
-    m_fullLetterWid->widgetMakeZero();
-    m_fullFunctionWid->widgetMakeZero();
-    QLayoutItem *child;
-    if((child = this->layout()->takeAt(1)) != nullptr) {
-        QWidget* childwid=child->widget();
-        if(childwid!=nullptr)
-        {
-            this->layout()->removeWidget(childwid);
-            childwid->setParent(nullptr);
-        }
-
-    }
-    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-    layout->insertWidget(1,m_functionWid);
-    m_widgetState=3;
-    m_saveCurrentWidState=3;
-}
-
-/**
  * 加载全屏字母分类界面
  */
 void MainViewWidget::loadFullLetterWidget()
 {
     m_letterWid->widgetMakeZero();
-    m_functionWid->widgetMakeZero();
-    m_fullFunctionWid->widgetMakeZero();
     QLayoutItem *child;
     if((child = this->layout()->takeAt(1)) != nullptr) {
         QWidget* childwid=child->widget();
@@ -589,25 +557,24 @@ void MainViewWidget::loadFullLetterWidget()
  */
 void MainViewWidget::loadFullFunctionWidget()
 {
-    m_letterWid->widgetMakeZero();
-    m_fullLetterWid->widgetMakeZero();
-    m_functionWid->widgetMakeZero();
-    QLayoutItem *child;
-    if((child = this->layout()->takeAt(1)) != nullptr) {
-        QWidget* childwid=child->widget();
-        if(childwid!=nullptr)
-        {
-            this->layout()->removeWidget(childwid);
-            childwid->setParent(nullptr);
-        }
+//    m_letterWid->widgetMakeZero();
+//    m_fullLetterWid->widgetMakeZero();
+//    QLayoutItem *child;
+//    if((child = this->layout()->takeAt(1)) != nullptr) {
+//        QWidget* childwid=child->widget();
+//        if(childwid!=nullptr)
+//        {
+//            this->layout()->removeWidget(childwid);
+//            childwid->setParent(nullptr);
+//        }
 
-    }
-    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-    layout->insertWidget(1,m_fullFunctionWid);
-    if(!m_isFullScreen || (m_isFullScreen && m_saveCurrentWidState!=3))
-        m_fullFunctionWid->enterAnimation();
-    m_widgetState=3;
-    m_saveCurrentWidState=3;
+//    }
+//    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
+//    layout->insertWidget(1,m_fullFunctionWid);
+//    if(!m_isFullScreen || (m_isFullScreen && m_saveCurrentWidState!=3))
+//        m_fullFunctionWid->enterAnimation();
+//    m_widgetState=3;
+//    m_saveCurrentWidState=3;
 }
 
 /**
