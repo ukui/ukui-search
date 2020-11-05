@@ -142,7 +142,8 @@ void MainViewWidget::initQueryLineEdit()
     queryWidLayout->setContentsMargins(5,0,0,0);
     queryWidLayout->setSpacing(5);
     m_queryWid->setLayout(queryWidLayout);
-    QPixmap pixmap=loadSvg(QString(":/data/img/mainviewwidget/search.svg"),16);
+    //输入框的搜索图标，不清楚loadSvg为什么不能用了
+    QPixmap pixmap/*=loadSvg(QString(":/data/img/mainviewwidget/search.svg"),16)*/;
     m_queryIcon=new QLabel;
     m_queryIcon->setStyleSheet("background:transparent");
     m_queryIcon->setFixedSize(pixmap.size());
@@ -483,36 +484,10 @@ void MainViewWidget::resizeControl()
 }
 
 /**
- * 加载常用分类界面
- */
-void MainViewWidget::loadCommonUseWidget()
-{
-    m_letterWid->widgetMakeZero();
-    m_fullLetterWid->widgetMakeZero();
-    QLayoutItem *child;
-    if((child = this->layout()->takeAt(1)) != nullptr) {
-        QWidget* childwid=child->widget();
-        if(childwid!=nullptr)
-        {
-            this->layout()->removeWidget(childwid);
-            childwid->setParent(nullptr);
-        }
-
-    }
-    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-
-
-    m_widgetState=1;
-    m_saveCurrentWidState=1;
-}
-
-/**
  * 加载字母分类界面
  */
 void MainViewWidget::loadLetterWidget()
 {
-
-    m_fullLetterWid->widgetMakeZero();
     QLayoutItem *child;
     if((child = this->layout()->takeAt(1)) != nullptr) {
         QWidget* childwid=child->widget();
@@ -524,7 +499,7 @@ void MainViewWidget::loadLetterWidget()
 
     }
     QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-    layout->insertWidget(1,m_letterWid);
+//    layout->insertWidget(1,m_letterWid);
     m_widgetState=2;
     m_saveCurrentWidState=2;
 }
@@ -534,7 +509,6 @@ void MainViewWidget::loadLetterWidget()
  */
 void MainViewWidget::loadFullLetterWidget()
 {
-    m_letterWid->widgetMakeZero();
     QLayoutItem *child;
     if((child = this->layout()->takeAt(1)) != nullptr) {
         QWidget* childwid=child->widget();
@@ -545,9 +519,9 @@ void MainViewWidget::loadFullLetterWidget()
         }
     }
     QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-    layout->insertWidget(1,m_fullLetterWid);
-    if(!m_isFullScreen || (m_isFullScreen && m_saveCurrentWidState!=2))
-        m_fullLetterWid->enterAnimation();
+//    layout->insertWidget(1,m_fullLetterWid);
+//    if(!m_isFullScreen || (m_isFullScreen && m_saveCurrentWidState!=2))
+//        m_fullLetterWid->enterAnimation();
     m_widgetState=2;
     m_saveCurrentWidState=2;
 }

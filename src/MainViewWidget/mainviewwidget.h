@@ -31,8 +31,6 @@
 #include <QFileSystemWatcher>
 #include <QSettings>
 #include "src/Interface/ukuimenuinterface.h"
-#include "src/LetterWidget/letterwidget.h"
-#include "src/LetterWidget/fullletterwidget.h"
 #include "src/SearchResultWidget/fullsearchresultwidget.h"
 #include "src/SearchResultWidget/searchresultwidget.h"
 #include "src/SearchResultWidget/searchappthread.h"
@@ -97,8 +95,6 @@ private:
     FullSearchResultWidget *m_fullSearchResultWid=nullptr;
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
-    LetterWidget *m_letterWid=nullptr;
-    FullLetterWidget *m_fullLetterWid=nullptr;
     DirectoryChangedThread *m_directoryChangedThread=nullptr;
 
     int m_widgetState=1;//Classification window number
@@ -131,10 +127,6 @@ public Q_SLOTS:
      * @brief Search box focus event filtering
      */
     bool eventFilter(QObject *watched, QEvent *event);
-    /**
-     * @brief Load the common classification interface
-     */
-    void loadCommonUseWidget();
     /**
      * @brief Load the letter classification interface
      */
