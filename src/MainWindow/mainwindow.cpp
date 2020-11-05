@@ -207,6 +207,7 @@ void MainWindow::showDefaultWidget()
         panelSize=46;
     }
 
+    //主界面位置
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
     int desk_x = desk_rect.width();
@@ -214,40 +215,6 @@ void MainWindow::showDefaultWidget()
     int x = this->width();
     int y = this->height();
     this->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
-
-    //    int x=QApplication::primaryScreen()->geometry().x();
-    //    int y=QApplication::primaryScreen()->geometry().y();
-    //    QRect startRect;
-    //    QRect endRect;
-    //    if(position==0)
-    //    {
-    //        endRect.setRect(x,y+QApplication::primaryScreen()->geometry().height()-panelSize-Style::minh,Style::minw,Style::minh);
-    //        startRect.setRect(x,y,QApplication::primaryScreen()->geometry().width(),QApplication::primaryScreen()->geometry().height()-panelSize);
-    //    }
-    //    else if(position==1)
-    //    {
-    //        endRect.setRect(x,y+panelSize,Style::minw,Style::minh);
-    //        startRect.setRect(x,y+panelSize,QApplication::primaryScreen()->geometry().width(),QApplication::primaryScreen()->geometry().height()-panelSize);
-    //    }
-    //    else if(position==2)
-    //    {
-    //        endRect.setRect(x+panelSize,y,Style::minw,Style::minh);
-    //        startRect.setRect(x+panelSize,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height());
-    //    }
-    //    else
-    //    {
-    //        endRect.setRect(x+QApplication::primaryScreen()->geometry().width()-panelSize-Style::minw,y,Style::minw,Style::minh);
-    //        startRect.setRect(x,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height());
-    //    }
-
-    //    this->centralWidget()->layout()->removeWidget(m_mainViewWid);
-    //    m_mainViewWid->setParent(nullptr);
-
-    //    m_animation->setDuration(100);//动画总时间
-    //    m_animation->setStartValue(startRect);
-    //    m_animation->setEndValue(endRect);
-    //    m_animation->setEasingCurve(QEasingCurve::Linear);
-    //    m_animation->start();
 }
 
 

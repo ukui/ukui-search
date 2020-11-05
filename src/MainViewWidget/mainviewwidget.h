@@ -62,13 +62,6 @@ public:
      */
     void repaintWidget();
     /**
-     * @brief Move the scroll bar
-     * @param type: Scroll way,Only the following parameters can be entered:
-     *  0: moving up
-     *  1: moving down
-     */
-    void moveScrollBar(int type);
-    /**
      * @brief Resize the control
      */
     void resizeControl();
@@ -98,8 +91,6 @@ private:
 
     bool m_isFullScreen=false;
     bool m_isHiden=false;
-
-    QFileSystemWatcher *m_fileWatcher=nullptr;//Monitor desktop folder status
 
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
@@ -149,10 +140,6 @@ public Q_SLOTS:
      * @param msg: Application information
      */
     void ViewOpenedSlot(QDBusMessage msg);
-    /**
-     * @brief Monitor desktop file directory changes
-     */
-    void directoryChangedSlot();
     /**
      * @brief Receive search results
      * @param arg: Search results

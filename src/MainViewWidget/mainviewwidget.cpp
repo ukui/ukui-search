@@ -32,19 +32,10 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
 MainViewWidget::~MainViewWidget()
 {
-
-    //    delete m_letterWid;
-    //    delete m_fullLetterWid;
-    //    delete m_functionWid;
-    //    delete m_searchResultWid;
-    //    delete m_fullSearchResultWid;
-
     delete m_ukuiMenuInterface;
-    delete m_fileWatcher;
     delete m_directoryChangedThread;
     delete m_animation;
     delete m_searchAppThread;
-
 }
 
 void MainViewWidget::initUi()
@@ -70,11 +61,6 @@ void MainViewWidget::initUi()
 
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
-    //监控.desktop文件目录
-    m_fileWatcher=new QFileSystemWatcher;
-    m_fileWatcher->addPaths(QStringList()<<"/usr/share/applications"<<QDir::homePath()+"/.local/share/applications/");
-    connect(m_fileWatcher,&QFileSystemWatcher::directoryChanged,this,&MainViewWidget::directoryChangedSlot);
-    m_directoryChangedThread=new DirectoryChangedThread;
     connect(this,&MainViewWidget::sendDirectoryPath,m_directoryChangedThread,&DirectoryChangedThread::recvDirectoryPath);
     connect(m_directoryChangedThread,&DirectoryChangedThread::requestUpdateSignal,this,&MainViewWidget::requestUpdateSlot);
     //发送隐藏主界面信号
@@ -95,20 +81,6 @@ void MainViewWidget::initUi()
     m_queryWid->show();
 
     mainLayout->insertWidget(1,m_searchResultWid);
-
-    //监控应用进程开启
-    //    bamf_matcher_get_default();
-    //    QDBusConnection::sessionBus().connect("org.ayatana.bamf","/org/ayatana/bamf/matcher","org.ayatana.bamf.matcher",
-    //                                         QString("ViewOpened"),this,SLOT(ViewOpenedSlot(QDBusMessage)));
-
-    //    QString path=QDir::homePath()+"/.config/ukui/ukui-menu.ini";
-    //    m_setting=new QSettings(path,QSettings::IniFormat);
-
-    //    if(QGSettings::isSchemaInstalled(QString("org.ukui.style").toLocal8Bit()))
-    //    {
-    //        m_gsetting=new QGSettings(QString("org.ukui.style").toLocal8Bit());
-    //        connect(m_gsetting,&QGSettings::changed,this,&MainViewWidget::iconThemeChangeSlot);
-    //    }
 }
 
 /**
@@ -468,86 +440,6 @@ void MainViewWidget::ViewOpenedSlot(QDBusMessage msg)
     }
 }
 
-/**
- * desktop文件目录改变信号槽
- */
-void MainViewWidget::directoryChangedSlot()
-{
-    Q_EMIT sendDirectoryPath(QString("/usr/share/applications"));
-    m_directoryChangedThread->start();
-
-    //    QStringList desktopfpList=pUkuiMenuInterface->getDesktopFilePath();
-    //    if(desktopfpList.size() > UkuiMenuInterface::desktopfpVector.size())//有新的应用安装
-    //    {
-    //        m_setting->beginGroup("recentapp");
-    //        for(int i=0;i<desktopfpList.count();i++)
-    //        {
-    //            if(!UkuiMenuInterface::desktopfpVector.contains(desktopfpList.at(i)))
-    //            {
-    //                //获取当前时间戳
-    //                QDateTime dt=QDateTime::currentDateTime();
-    //                int datetime=dt.toTime_t();
-    ////                QString appname=pUkuiMenuInterface->getAppName(desktopfpList.at(i));
-    //                QFileInfo fileInfo(desktopfpList.at(i));
-    //                QString desktopfn=fileInfo.fileName();
-    //                m_setting->setValue(desktopfn,datetime);
-    //                qDebug()<<"安装:"<<desktopfn;
-    //                break;
-    //            }
-
-    //        }
-    //        m_setting->endGroup();
-    //        UkuiMenuInterface::appInfoVector.clear();
-    //        UkuiMenuInterface::alphabeticVector.clear();
-    //        UkuiMenuInterface::functionalVector.clear();
-    //        UkuiMenuInterface::commonUseVector.clear();
-    //        UkuiMenuInterface::appInfoVector=pUkuiMenuInterface->createAppInfoVector();
-    //        UkuiMenuInterface::alphabeticVector=pUkuiMenuInterface->getAlphabeticClassification();
-    //        UkuiMenuInterface::functionalVector=pUkuiMenuInterface->getFunctionalClassification();
-    //        UkuiMenuInterface::commonUseVector=pUkuiMenuInterface->getCommonUseApp();
-    //        Q_EMIT directoryChangedSignal();
-    //    }
-    //    else//软件卸载
-    //    {
-    //        for(int i=0;i<UkuiMenuInterface::desktopfpVector.size();i++)
-    //        {
-    //            if(!desktopfpList.contains(UkuiMenuInterface::desktopfpVector.at(i)))
-    //            {
-    //                QString desktopfp=UkuiMenuInterface::appInfoVector.at(i).at(0);
-    //                QFileInfo fileInfo(desktopfp);
-    //                QString desktopfn=fileInfo.fileName();
-    //                m_setting->beginGroup("lockapplication");
-    //                m_setting->remove(desktopfn);
-    //                m_setting->sync();
-    //                m_setting->endGroup();
-    //                m_setting->beginGroup("application");
-    //                m_setting->remove(desktopfn);
-    //                m_setting->sync();
-    //                m_setting->endGroup();
-    //                m_setting->beginGroup("datetime");
-    //                m_setting->remove(desktopfn);
-    //                m_setting->sync();
-    //                m_setting->endGroup();
-    //                m_setting->beginGroup("recentapp");
-    //                m_setting->remove(desktopfn);
-    //                m_setting->sync();
-    //                m_setting->endGroup();
-    //                qDebug()<<"卸载:"<<desktopfn;
-    //                break;
-    //            }
-    //        }
-    //        UkuiMenuInterface::appInfoVector.clear();
-    //        UkuiMenuInterface::alphabeticVector.clear();
-    //        UkuiMenuInterface::functionalVector.clear();
-    //        UkuiMenuInterface::commonUseVector.clear();
-    //        UkuiMenuInterface::appInfoVector=pUkuiMenuInterface->createAppInfoVector();
-    //        UkuiMenuInterface::alphabeticVector=pUkuiMenuInterface->getAlphabeticClassification();
-    //        UkuiMenuInterface::functionalVector=pUkuiMenuInterface->getFunctionalClassification();
-    //        UkuiMenuInterface::commonUseVector=pUkuiMenuInterface->getCommonUseApp();
-    //        Q_EMIT directoryChangedSignal();
-    //    }
-}
-
 void MainViewWidget::requestUpdateSlot()
 {
     m_directoryChangedThread->quit();
@@ -563,22 +455,11 @@ void MainViewWidget::iconThemeChangeSlot(QString key)
 void MainViewWidget::repaintWidget()
 {
     this->setMinimumSize(Style::minw,Style::minh);
-    //    m_letterWid->repaintWidget();
-    //    m_fullLetterWid->repaintWidget();
-    //    m_functionWid->repaintWidget();
-    //    m_fullFunctionWid->repaintWidget();
     m_searchResultWid->repaintWidget();
-    //    m_fullSearchResultWid->repaintWidget();
 }
 
 void MainViewWidget::widgetMakeZero()
 {
-    //    m_isHiden=true;
-    //    m_isSearching=false;
-    //    m_letterWid->widgetMakeZero();
-    //    m_fullLetterWid->widgetMakeZero();
-    //    m_functionWid->widgetMakeZero();
-    //    m_fullFunctionWid->widgetMakeZero();
     m_queryLineEdit->clear();
     m_queryLineEdit->clearFocus();
     char style[100];
@@ -586,41 +467,3 @@ void MainViewWidget::widgetMakeZero()
     m_queryLineEdit->setStyleSheet(style);
     m_queryLineEdit->setTextMargins(0,1,0,1);
 }
-
-void MainViewWidget::moveScrollBar(int type)
-{
-    //    if(m_widgetState==0)
-    //    {
-    //        if(m_isFullScreen)
-    //            m_fullSearchResultWid->moveScrollBar(type);
-    //        else
-    //            m_searchResultWid->moveScrollBar(type);
-    //    }
-    //    if(m_widgetState==1)
-    //    {
-    //        if(m_isFullScreen)
-    //            m_fullCommonUseWid->moveScrollBar(type);
-    //        else
-    //            m_commonUseWid->moveScrollBar(type);
-    //    }
-    //    if(m_widgetState==2)
-    //    {
-    //        if(m_isFullScreen)
-    //            m_fullLetterWid->moveScrollBar(type);
-    //        else
-    //            m_letterWid->moveScrollBar(type);
-    //    }
-    //    if(m_widgetState==3)
-    //    {
-    //        if(m_isFullScreen)
-    //            m_fullFunctionWid->moveScrollBar(type);
-    //        else
-    //            m_functionWid->moveScrollBar(type);
-    //    }
-}
-
-//void MainViewWidget::mousePressEvent(QMouseEvent *event)
-//{
-//    if(m_isFullScreen && event->button()==Qt::LeftButton)
-//        Q_EMIT sendHideMainWindowSignal();
-//}
