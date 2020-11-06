@@ -1,0 +1,8 @@
+文件搜索命令调研
+
+Linux的五个查找命令：find,locate,whereis,which,type 及其区别:https://www.cnblogs.com/kex1n/p/5233821.html
+
+从中最终选择locate的原因：
+locate命令其实是“find -name”的另一种写法，但是要比后者快得多，原因在于它不搜索具体目录，而是搜索一个数据库（/var/lib/locatedb），这个数据库中含有本地所有文件信息
+
+
