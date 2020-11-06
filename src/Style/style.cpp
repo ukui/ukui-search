@@ -140,7 +140,7 @@ void Style::initWidStyle()
     if(QApplication::primaryScreen()->geometry().width()==800 &&
             QApplication::primaryScreen()->geometry().height()==600)
     {
-        minw=320;
+        minw=222;
         minh=500;
         defaultMainViewWidWidth=264;
         defaultTopWidHeight=54;
@@ -151,7 +151,7 @@ void Style::initWidStyle()
     }
     else
     {
-        minw=376;
+        minw=222;
         minh=590;
         defaultMainViewWidWidth=320;
         defaultTopWidHeight=54;

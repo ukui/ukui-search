@@ -21,6 +21,7 @@ public:
     QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
     void matchstart(const QString &source);
     void run(int index);
+    int listenchanged();
 
 private:
     void matching();
@@ -34,6 +35,7 @@ private:
     QList<QString> runresult;
     QList<QString> lockresult;
     QProcess *cmd;
+    int m_filenum;
 };
 
 #endif // FILEMODEL_H

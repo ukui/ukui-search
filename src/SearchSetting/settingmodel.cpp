@@ -7,6 +7,7 @@
 settingModel::settingModel():
     startmatchTimer(new QTimer(this))
 {
+    m_settingsnum=0;
 
     startmatchTimer->setSingleShot(true);
     startmatchTimer->setInterval(10);
@@ -95,12 +96,15 @@ void settingModel::XmlElement(){
 
 //匹配初始化
 void settingModel::matchstart(const QString &source){
+
+        m_settingsnum=0;
         sourcetext=source;
         returnresult.clear();
         commandresult.clear();
         iconresult.clear();
         if(sourcetext.isEmpty())
         {
+             matchesChanged();
             return ;
         }
         startmatchTimer->start();
@@ -123,15 +127,19 @@ void settingModel::matching(){
                 QString str="/home/li/setting/"+settingkey+".svg";
                 iconresult.append(QIcon(str));
 
+
             }
         }
     }
+   m_settingsnum=commandresult.count();
+//   qDebug()<<"设置选项有："<<m_settingsnum;
     matchesChanged();
 }
 
 //编辑栏内容改变，将model重新刷新
 void settingModel::matchesChanged()
 {
+
     bool fullReset = false;
     int newCount = returnresult.count();
     int oldCount = lockresult.count();
@@ -154,4 +162,11 @@ void settingModel::matchesChanged()
         endResetModel();
     }
     lockresult=returnresult;
+
+}
+
+int settingModel::listenchanged()
+{
+
+    return m_settingsnum;
 }

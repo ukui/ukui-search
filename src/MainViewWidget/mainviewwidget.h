@@ -70,6 +70,7 @@ public:
     void resizeControl();
 
 private:
+    QTimer *startmatchTimer;
     UkuiMenuInterface *m_ukuiMenuInterface=nullptr;
     QWidget *m_topWidget=nullptr;
     QHBoxLayout *m_topLayout=nullptr;
@@ -122,6 +123,8 @@ protected:
      * @brief Initializes the query box
      */
     void initQueryLineEdit();
+
+    void changesize();
 
 public Q_SLOTS:
     /**

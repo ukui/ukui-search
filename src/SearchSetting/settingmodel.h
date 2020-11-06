@@ -29,11 +29,13 @@ public:
     QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
     void run(int index);
     void matchstart(const QString &source);
+    int listenchanged();
 
 private:
     void XmlElement();
     void matching();
     void matchesChanged();
+
     QString sourcetext;
     QStringList keylist;
     QList<QString> settinglist;
@@ -50,6 +52,9 @@ private:
     QList<QString> commandresult;
     QList<QString> lockresult;
     QList<QIcon> iconresult;
+
+
+    int m_settingsnum;
 
    // QPixmap map;
 };

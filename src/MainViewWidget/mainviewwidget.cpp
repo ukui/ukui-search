@@ -27,11 +27,22 @@
 MainViewWidget::MainViewWidget(QWidget *parent) :
     QWidget(parent)
 {
+    startmatchTimer =new  QTimer;
     m_fileview =new QTreeView;
     m_settingview = new QTreeView;
+    m_fileview->setVisible(false);
+    m_settingview->setVisible(false);
 
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;
+
+    startmatchTimer->setSingleShot(true);
+    startmatchTimer->setInterval(10);
+
+    connect(startmatchTimer,&QTimer::timeout,this,[=](){
+            changesize();
+
+    });
 
     initUi();
 }
@@ -87,6 +98,35 @@ void MainViewWidget::initUi()
     m_queryWid->show();
 
     mainLayout->insertWidget(1,m_searchResultWid);
+}
+
+
+/**
+ * 监听treeview改变窗口大小
+ */
+void MainViewWidget::changesize()
+{
+
+    if(m_filemodel->listenchanged()==0)
+    {
+        m_fileview->setVisible(false);
+    } else {
+        if(m_filemodel->listenchanged()>10){
+            m_fileview->setVisible(true);
+            m_fileview->setFixedSize(300,5*60);
+        } else {
+            m_fileview->setVisible(true);
+            m_fileview->setFixedSize(300,m_filemodel->listenchanged());
+        }
+    }
+
+    if(m_settingmodel->listenchanged()==0){
+        m_settingview->setVisible(false);
+    }else{
+        m_settingview->setVisible(true);
+        m_settingview->setFixedSize(300,m_settingmodel->listenchanged()*60);
+    }
+
 }
 
 /**
@@ -148,13 +188,14 @@ void MainViewWidget::initQueryLineEdit()
     connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::searchAppSlot);
 
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
-                m_settingmodel->matchstart(search);
+            m_settingmodel->matchstart(search);
+            startmatchTimer->start();
 
     });
 
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_filemodel,[=](const QString &search){
                 m_filemodel->matchstart(search);
-           qDebug()<<"ok";
+
     });
 
 

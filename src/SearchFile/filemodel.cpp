@@ -55,6 +55,7 @@ void filemodel::matching(){
 
 void filemodel::matchesChanged()
 {
+    m_filenum = 0;
     bool fullReset = false;
     int newCount = returnresult.count();
     int oldCount = lockresult.count();
@@ -77,6 +78,8 @@ void filemodel::matchesChanged()
         endResetModel();
     }
     lockresult=returnresult;
+
+
 }
 
 void filemodel::commandsearch(){
@@ -109,6 +112,8 @@ void filemodel::showResult(QString result){
          if(str1.at(str1.count()-1).size()<20){
          returnresult.append(str1.at(str1.count()-1));
          runresult.append(pathresult.at(i));
+         m_filenum=runresult.count();
+
          }else{
              return;
          }
@@ -128,4 +133,9 @@ void filemodel::run(int index){
     app.startDetached(app.program());
     app.waitForFinished(-1);
 
+}
+
+int filemodel::listenchanged()
+{
+   return m_filenum;
 }
