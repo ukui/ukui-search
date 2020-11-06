@@ -27,6 +27,23 @@
 MainViewWidget::MainViewWidget(QWidget *parent) :
     QWidget(parent)
 {
+    startmatchTimer =new  QTimer;
+    m_fileview =new QTreeView;
+    m_settingview = new QTreeView;
+    m_fileview->setVisible(false);
+    m_settingview->setVisible(false);
+
+    m_filemodel = new filemodel;
+    m_settingmodel = new settingModel;
+
+    startmatchTimer->setSingleShot(true);
+    startmatchTimer->setInterval(10);
+
+    connect(startmatchTimer,&QTimer::timeout,this,[=](){
+            changesize();
+
+    });
+
     initUi();
 }
 
@@ -81,6 +98,35 @@ void MainViewWidget::initUi()
     m_queryWid->show();
 
     mainLayout->insertWidget(1,m_searchResultWid);
+}
+
+
+/**
+ * 监听treeview改变窗口大小
+ */
+void MainViewWidget::changesize()
+{
+
+    if(m_filemodel->listenchanged()==0)
+    {
+        m_fileview->setVisible(false);
+    } else {
+        if(m_filemodel->listenchanged()>10){
+            m_fileview->setVisible(true);
+            m_fileview->setFixedSize(300,5*60);
+        } else {
+            m_fileview->setVisible(true);
+            m_fileview->setFixedSize(300,m_filemodel->listenchanged());
+        }
+    }
+
+    if(m_settingmodel->listenchanged()==0){
+        m_settingview->setVisible(false);
+    }else{
+        m_settingview->setVisible(true);
+        m_settingview->setFixedSize(300,m_settingmodel->listenchanged()*60);
+    }
+
 }
 
 /**
@@ -140,6 +186,32 @@ void MainViewWidget::initQueryLineEdit()
     connect(m_searchAppThread,&SearchAppThread::sendSearchResult,
             this,&MainViewWidget::recvSearchResult);
     connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::searchAppSlot);
+
+    connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
+            m_settingmodel->matchstart(search);
+            startmatchTimer->start();
+
+    });
+
+    connect(m_queryLineEdit,&QLineEdit::textChanged,m_filemodel,[=](const QString &search){
+                m_filemodel->matchstart(search);
+
+    });
+
+
+    connect(m_settingview,&QTreeView::clicked,this,[=](){
+        m_settingmodel->run(m_settingview->currentIndex().row());
+
+    });
+
+    connect(m_fileview,&QTreeView::clicked,this,[=](){
+        m_filemodel->run(m_fileview->currentIndex().row());
+    });
+
+
+
+
+
 }
 
 bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
@@ -280,17 +352,12 @@ void MainViewWidget::loadMinMainView()
     QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
     layout->insertWidget(1,m_searchResultWid);
 
-    QPushButton *btn;
-    btn=new QPushButton(this);
-    btn->setFixedHeight(300);
-    btn->setText("文件搜索的位置");
-    layout->insertWidget(2,btn);
+    m_fileview->setModel(m_filemodel);
+    layout->insertWidget(2,m_fileview);
 
-    QPushButton *btn2;
-    btn2=new QPushButton(this);
-    btn2->setFixedHeight(200);
-    btn2->setText("控制面板搜索的位置");
-    layout->insertWidget(3,btn2);
+    m_settingview->setModel(m_settingmodel);
+    layout->insertWidget(3,m_settingview);
+
 
 }
 

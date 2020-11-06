@@ -36,6 +36,9 @@
 #include "src/SearchResultWidget/searchappthread.h"
 #include "directorychangedthread.h"
 #include "src/Style/style.h"
+#include "../SearchFile/filemodel.h"
+#include "../SearchSetting/settingmodel.h"
+#include <QTreeView>
 
 class MainViewWidget : public QWidget
 {
@@ -67,6 +70,7 @@ public:
     void resizeControl();
 
 private:
+    QTimer *startmatchTimer;
     UkuiMenuInterface *m_ukuiMenuInterface=nullptr;
     QWidget *m_topWidget=nullptr;
     QHBoxLayout *m_topLayout=nullptr;
@@ -95,6 +99,17 @@ private:
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
 
+    QTreeView *m_fileview;
+    QTreeView *m_settingview;
+
+    filemodel *m_filemodel;
+
+    settingModel *m_settingmodel;
+
+
+
+
+
 protected:
     /**
      * @brief Initializes UI
@@ -108,6 +123,8 @@ protected:
      * @brief Initializes the query box
      */
     void initQueryLineEdit();
+
+    void changesize();
 
 public Q_SLOTS:
     /**

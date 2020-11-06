@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui svg dbus x11extras KWindowSystem
+QT       += core gui svg dbus x11extras KWindowSystem xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include(src/QtSingleApplication/qtsingleapplication.pri)
@@ -48,9 +48,11 @@ SOURCES += \
     src/MainViewWidget/directorychangedthread.cpp \
     src/MainViewWidget/mainviewwidget.cpp \
     src/MainWindow/mainwindow.cpp \
+    src/SearchFile/filemodel.cpp \
     src/SearchResultWidget/fullsearchresultwidget.cpp \
     src/SearchResultWidget/searchappthread.cpp \
     src/SearchResultWidget/searchresultwidget.cpp \
+    src/SearchSetting/settingmodel.cpp \
     src/Style/style.cpp \
     src/UtilityFunction/classifyscrollarea.cpp \
     src/UtilityFunction/fullitemdelegate.cpp \
@@ -72,9 +74,11 @@ HEADERS  += \
     src/MainViewWidget/directorychangedthread.h \
     src/MainViewWidget/mainviewwidget.h \
     src/MainWindow/mainwindow.h \
+    src/SearchFile/filemodel.h \
     src/SearchResultWidget/fullsearchresultwidget.h \
     src/SearchResultWidget/searchappthread.h \
     src/SearchResultWidget/searchresultwidget.h \
+    src/SearchSetting/settingmodel.h \
     src/Style/style.h \
     src/UtilityFunction/classifyscrollarea.h \
     src/UtilityFunction/fullitemdelegate.h \
