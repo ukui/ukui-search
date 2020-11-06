@@ -36,6 +36,9 @@
 #include "src/SearchResultWidget/searchappthread.h"
 #include "directorychangedthread.h"
 #include "src/Style/style.h"
+#include "../SearchFile/filemodel.h"
+#include "../SearchSetting/settingmodel.h"
+#include <QTreeView>
 
 class MainViewWidget : public QWidget
 {
@@ -94,6 +97,17 @@ private:
 
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
+
+    QTreeView *m_fileview;
+    QTreeView *m_settingview;
+
+    filemodel *m_filemodel;
+
+    settingModel *m_settingmodel;
+
+
+
+
 
 protected:
     /**
