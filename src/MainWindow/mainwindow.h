@@ -118,6 +118,8 @@ public Q_SLOTS:
      * @brief Monitor win-key-release key value.
      */
     void winKeyReleaseSlot(const QString &key);
+
+    void bootOptionsFilter(QString opt);                              // 过滤终端命令
 };
 
 #endif // MAINWINDOW_H

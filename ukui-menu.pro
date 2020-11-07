@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include(src/QtSingleApplication/qtsingleapplication.pri)
 QMAKE_CXXFLAGS += -g
 
-TARGET = ukui-menu
+TARGET = ukui-menu-search
 TEMPLATE = app
 
 target.path = /usr/bin
@@ -68,7 +68,8 @@ SOURCES += \
     src/Interface/ukuimenuinterface.cpp \
     main.cpp \
     src/UtilityFunction/utility.cpp \
-    src/XEventMonitor/xeventmonitor.cpp
+    src/XEventMonitor/xeventmonitor.cpp \
+
 
 HEADERS  += \
     src/MainViewWidget/directorychangedthread.h \

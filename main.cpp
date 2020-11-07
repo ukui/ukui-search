@@ -26,6 +26,9 @@
 #include <KWindowEffects>
 #include <X11/Xlib.h>
 #include <syslog.h>
+#include <QObject>
+#include "qtsingleapplication.h"
+#include "qtlocalpeer.h"
 
 void centerToScreen(QWidget* widget) {
     if (!widget)
@@ -52,8 +55,19 @@ int main(int argc, char *argv[])
 
     if(app.isRunning())
     {
-        app.sendMessage("raise_window_noop");
+//        app.sendMessage("raise_window_noop");
+//        return EXIT_SUCCESS;
+
+        app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
+        qDebug() << QObject::tr("ukui-search is already running!");
         return EXIT_SUCCESS;
+    }else {
+        QCommandLineParser parser;
+        QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
+        QCommandLineOption showsearch({"s", "show"}, QObject::tr("show search widget"));
+
+        parser.addOptions({debugOption, showsearch});
+        parser.process(app);
     }
 
     QTranslator translator;
@@ -70,8 +84,54 @@ int main(int argc, char *argv[])
     w->activateWindow();
     w->loadMainWindow();
     app.setActivationWindow(w);
+    QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
 
-    KWindowEffects::enableBlurBehind(w->winId(),true);
+//    KWindowEffects::enableBlurBehind(w->winId(),true);
 
     return app.exec();
+
+
+//    /* 如果系统中有实例在运行则退出 */
+//    QtSingleApplication a(argc, argv);
+//    if (a.isRunning()) {
+//        a.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : a.applicationFilePath());
+//        qDebug() << QObject::tr("ukui-sidebar is already running!");
+//        return EXIT_SUCCESS;
+//    } else {
+//        QCommandLineParser parser;
+//        QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
+//        QCommandLineOption showSidebar({"s", "show"}, QObject::tr("show sidebar widget"));
+
+//        parser.addOptions({debugOption, showSidebar});
+//        parser.process(a);
+
+//        if (parser.isSet(debugOption)) {                                    /* 根据命令行设定日志等级 */
+//            setLogLevel(QtDebugMsg);
+//            setLogPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + LOG_FILE_NAME);  /* 绑定打印日志文件路径 */
+//            qInstallMessageHandler(customLogMessageHandler);
+//        } else {
+//            setLogLevel(QtWarningMsg);
+//        }
+
+//        QApplication::setQuitOnLastWindowClosed(false);
+
+//        mostGrandWidget::mostGrandWidgetInit();                         /* 初始化最里层Widget空白界面 */
+
+
+//        Widget *w = new Widget;
+//        w->setObjectName("SidebarWidget");
+//        w->setAttribute(Qt::WA_TranslucentBackground);
+//        w->setFixedWidth(392);
+//        mostGrandWidget::getInstancemostGrandWidget()->m_pmostGrandWidgetVLaout->addWidget(w);
+
+//        mostGrandWidget::getInstancemostGrandWidget()->LaoutSidebarWidget();
+//        mostGrandWidget::getInstancemostGrandWidget()->setMostGrandwidgetCoordinates(-500, 0);
+//        mostGrandWidget::getInstancemostGrandWidget()->setProperty("useSystemStyleBlur", true);
+//        mostGrandWidget::getInstancemostGrandWidget()->setVisible(true);
+//    //    KWindowEffects::enableBlurBehind(mostGrandWidget::getInstancemostGrandWidget()->winId(), true);
+//        w->m_bfinish = true;
+//        w->showAnimation();
+//        QObject::connect(&a, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
+//        return a.exec();
+//    }
 }

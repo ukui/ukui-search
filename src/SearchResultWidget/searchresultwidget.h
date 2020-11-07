@@ -56,6 +56,8 @@ public:
      */
     void repaintWidget();
 
+    void changeListView(int rows);
+
 private:
     UkuiMenuInterface* m_ukuiMenuInterface=nullptr;
     ListView* m_listView=nullptr;

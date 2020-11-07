@@ -40,9 +40,11 @@ public:
 
     void addData(QVector<QStringList> data);
     void updateData(QVector<QStringList> data);
+    void setsize(int x,int y);
 
 protected:
     void initWidget();
+
     void enterEvent(QEvent* e) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent* e) Q_DECL_OVERRIDE;
 
