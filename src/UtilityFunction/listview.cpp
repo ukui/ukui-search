@@ -72,6 +72,11 @@ void ListView::initWidget()
     connect(this,&ListView::clicked,this,&ListView::onClicked);
 }
 
+void ListView::setsize(int x,int y)
+{
+    this->setFixedSize(x,y);
+}
+
 void ListView::addData(QVector<QStringList> data)
 {
     listmodel=new QStandardItemModel(this);

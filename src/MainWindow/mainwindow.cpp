@@ -104,6 +104,18 @@ void MainWindow::initUi()
     //                                         QString("sendStartMenuSignal"),this,SLOT(recvStartMenuSlot()));
 }
 
+/* 过滤终端命令 */
+void MainWindow::bootOptionsFilter(QString opt)
+{
+
+    if (opt == "-s" || opt == "-show") {
+        qDebug() << "哈哈哈哈，第一次用命令进入这";
+
+    }
+}
+
+
+
 /**
  * 显示全屏窗口
  */

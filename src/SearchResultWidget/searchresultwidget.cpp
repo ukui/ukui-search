@@ -42,6 +42,8 @@ void SearchResultWidget::initUi()
 
     m_listView=new ListView(this,this->width()-4,this->height(),3);
     m_listView->setGeometry(QRect(0,0,this->width()-4,200));
+//    m_listView->setVisible(false);
+//    m_listView->setsize(300,300);
     m_listView->show();
 
     m_data.clear();
@@ -69,9 +71,19 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
     m_data.clear();
     Q_FOREACH(QStringList appinfo,arg)
         m_data.append(QStringList()<<appinfo.at(0)<<"1");
+
     m_listView->updateData(m_data);
+    changeListView(m_data.count());
+
 }
 
+void SearchResultWidget::changeListView(int rows)
+{
+
+    if(rows!=0){
+        m_listView->setsize(300,rows*50);
+    }
+}
 void SearchResultWidget::moveScrollBar(int type)
 {
     if(type==0)
