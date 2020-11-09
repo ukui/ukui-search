@@ -27,22 +27,23 @@
 MainViewWidget::MainViewWidget(QWidget *parent) :
     QWidget(parent)
 {
-    startmatchTimer =new  QTimer;
+
+
     m_fileview =new QTreeView;
     m_settingview = new QTreeView;
-//    m_fileview->setVisible(false);
-//    m_settingview->setVisible(false);
+
+    //初始化文件与设置view为隐藏
+    m_fileview->setVisible(false);
+    m_settingview->setVisible(false);
 
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;
 
-    startmatchTimer->setSingleShot(true);
-    startmatchTimer->setInterval(10);
 
-    connect(startmatchTimer,&QTimer::timeout,this,[=](){
-            changesize();
+    //通过信号监听内容并设置宽度
+    connect(m_filemodel,&filemodel::requestUpdateSignal,this,&MainViewWidget::setFileView);
 
-    });
+    connect(m_settingmodel,&settingModel::requestUpdateSignal,this,&MainViewWidget::setSettingView);
 
     initUi();
 }
@@ -107,25 +108,25 @@ void MainViewWidget::initUi()
 void MainViewWidget::changesize()
 {
 
-//    if(m_filemodel->listenchanged()==0)
-//    {
-//        m_fileview->setVisible(false);
-//    } else {
-//        if(m_filemodel->listenchanged()>10){
-//            m_fileview->setVisible(true);
-//            m_fileview->setFixedSize(300,5*60);
-//        } else {
-//            m_fileview->setVisible(true);
-//            m_fileview->setFixedSize(300,m_filemodel->listenchanged());
-//        }
-//    }
+    if(fileNum==0)
+    {
+        m_fileview->setVisible(false);
+    } else {
+        if(fileNum>10){
+            m_fileview->setVisible(true);
+            m_fileview->setFixedSize(300,5*60);
+        } else {
+            m_fileview->setVisible(true);
+            m_fileview->setFixedSize(300,fileNum);
+        }
+    }
 
-//    if(m_settingmodel->listenchanged()==0){
-//        m_settingview->setVisible(false);
-//    }else{
-//        m_settingview->setVisible(true);
-//        m_settingview->setFixedSize(300,m_settingmodel->listenchanged()*60);
-//    }
+    if(SettingNum==0){
+        m_settingview->setVisible(false);
+    }else{
+        m_settingview->setVisible(true);
+        m_settingview->setFixedSize(300,SettingNum*60);
+    }
 
 }
 
@@ -189,7 +190,7 @@ void MainViewWidget::initQueryLineEdit()
 
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
             m_settingmodel->matchstart(search);
-            startmatchTimer->start();
+//            startmatchTimer->start();
 
     });
 
@@ -466,4 +467,16 @@ void MainViewWidget::widgetMakeZero()
     sprintf(style, "QLineEdit{border:0px;background-color:%s;border-radius:2px;}",QueryLineEditBackground);
     m_queryLineEdit->setStyleSheet(style);
     m_queryLineEdit->setTextMargins(0,1,0,1);
+}
+
+void MainViewWidget::setFileView(int row)
+{
+    fileNum=row;
+    changesize();
+}
+
+void MainViewWidget::setSettingView(int row)
+{
+    SettingNum=row;
+    changesize();
 }

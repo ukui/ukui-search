@@ -70,7 +70,7 @@ public:
     void resizeControl();
 
 private:
-    QTimer *startmatchTimer;
+
     UkuiMenuInterface *m_ukuiMenuInterface=nullptr;
     QWidget *m_topWidget=nullptr;
     QHBoxLayout *m_topLayout=nullptr;
@@ -105,6 +105,9 @@ private:
     filemodel *m_filemodel;
 
     settingModel *m_settingmodel;
+
+    int fileNum;
+    int SettingNum;
 
 
 
@@ -162,6 +165,12 @@ public Q_SLOTS:
      * @brief Request for updating the application list
      */
     void requestUpdateSlot();
+
+    void setFileView(int row);
+
+    void setSettingView(int row);
+
+
 
 Q_SIGNALS:
     /**

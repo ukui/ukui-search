@@ -79,10 +79,17 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
 
 void SearchResultWidget::changeListView(int rows)
 {
+    qDebug()<<rows;
 
-    if(rows!=0){
-        m_listView->setsize(300,rows*50);
-    }
+//    if(rows!=0){
+////        if(rows<=3){
+////
+////        }
+//        m_listView->setsize(300,rows*50);
+//    }else
+//    {
+//        m_listView->setsize(300,0);
+//    }
 }
 void SearchResultWidget::moveScrollBar(int type)
 {

@@ -29,7 +29,7 @@ public:
     QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
     void run(int index);
     void matchstart(const QString &source);
-    int listenchanged();
+
 
 private:
     void XmlElement();
@@ -54,9 +54,14 @@ private:
     QList<QIcon> iconresult;
 
 
-    int m_settingsnum;
 
-   // QPixmap map;
+Q_SIGNALS:
+    /**
+     * @brief Request update signal
+     */
+    void requestUpdateSignal(int row);
+
+
 };
 
 #endif // SETTINGMODEL_H

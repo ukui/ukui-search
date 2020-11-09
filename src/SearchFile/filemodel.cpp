@@ -6,6 +6,7 @@ filemodel::filemodel():
     startmatchTimer(new QTimer(this)),
     cmd(new QProcess(this))
 {
+
     header<<tr("File")<<tr("")<<tr("");
     startmatchTimer->setSingleShot(true);
     startmatchTimer->setInterval(10);
@@ -93,9 +94,11 @@ return QVariant();
 }
 
 void filemodel::matchstart(const QString &source){
+
         returnresult.clear();
         pathresult.clear();
         runresult.clear();
+        Q_EMIT requestUpdateSignal(runresult.count());
         iconresult.clear();
         openPathresult.clear();
         showresult.clear();
@@ -116,6 +119,7 @@ void filemodel::matching(){
 
 void filemodel::matchesChanged()
 {
+
         beginResetModel();
         endResetModel();
 }
@@ -166,8 +170,11 @@ void filemodel::showResult(QString result){
          }else{
              return;
          }
-     }
 
+
+
+     }
+     Q_EMIT requestUpdateSignal(runresult.count());
      showresult.clear();
      if(returnresult.size()<4){
          showresult=returnresult;
@@ -211,3 +218,5 @@ void filemodel::run(int row,int column){
         p.waitForFinished(-1);
     }
 }
+
+

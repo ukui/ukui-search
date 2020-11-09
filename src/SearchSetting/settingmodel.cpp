@@ -7,7 +7,7 @@
 settingModel::settingModel():
     startmatchTimer(new QTimer(this))
 {
-    m_settingsnum=0;
+
 
     startmatchTimer->setSingleShot(true);
     startmatchTimer->setInterval(10);
@@ -97,10 +97,11 @@ void settingModel::XmlElement(){
 //匹配初始化
 void settingModel::matchstart(const QString &source){
 
-        m_settingsnum=0;
+
         sourcetext=source;
         returnresult.clear();
         commandresult.clear();
+        Q_EMIT requestUpdateSignal(commandresult.count());
         iconresult.clear();
         if(sourcetext.isEmpty())
         {
@@ -131,7 +132,7 @@ void settingModel::matching(){
             }
         }
     }
-   m_settingsnum=commandresult.count();
+    Q_EMIT requestUpdateSignal(commandresult.count());
 //   qDebug()<<"设置选项有："<<m_settingsnum;
     matchesChanged();
 }
@@ -165,8 +166,3 @@ void settingModel::matchesChanged()
 
 }
 
-int settingModel::listenchanged()
-{
-
-    return m_settingsnum;
-}

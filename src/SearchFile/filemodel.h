@@ -27,7 +27,6 @@ public:
     void matchstart(const QString &source);
     void run(int row,int column);
 
-
 private:
     void matching();
     void matchesChanged();
@@ -49,6 +48,14 @@ private:
     QList<QString> m_timeResult;
     QProcess *cmd;
     QMap<QString,QList<QString>> m_showMap;
+
+
+Q_SIGNALS:
+    /**
+     * @brief Request update signal
+     */
+    void requestUpdateSignal(int row);
+
 };
 
 #endif // FILEMODEL_H
