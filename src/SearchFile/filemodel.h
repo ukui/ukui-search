@@ -1,27 +1,32 @@
 #ifndef FILEMODEL_H
 #define FILEMODEL_H
 
+#include <peony-qt/file-utils.h>
 #include <QObject>
 #include <QAbstractListModel>
-#include <QDir>
 #include <QDebug>
-#include <QRegExp>
 #include <QTimer>
 #include <QProcess>
-#include <QDesktopServices>
-#include <QUrl>
+#include <QIcon>
+#include <QMap>
+#include <QFont>
+#include <QFileInfo>
+#include <QDateTime>
+
 
 class filemodel : public QAbstractListModel
 {
     Q_OBJECT
 public:
+
     filemodel();
     int rowCount(const QModelIndex&) const override;
+    int columnCount(const QModelIndex&) const override;
     QVariant data(const QModelIndex&, int) const override;
     QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
     void matchstart(const QString &source);
-    void run(int index);
-    int listenchanged();
+    void run(int row,int column);
+
 
 private:
     void matching();
@@ -30,12 +35,20 @@ private:
     void showResult(QString result);
     QTimer *startmatchTimer;
     QString sourcetext;
+    QString peonyText;
+    QStringList header;
+
     QList<QString> returnresult;
+    QList<QString> showresult;
+
     QList<QString> pathresult;
+    QList<QString> openPathresult;
+
     QList<QString> runresult;
-    QList<QString> lockresult;
+    QList<QPixmap> iconresult;
+    QList<QString> m_timeResult;
     QProcess *cmd;
-    int m_filenum;
+    QMap<QString,QList<QString>> m_showMap;
 };
 
 #endif // FILEMODEL_H
