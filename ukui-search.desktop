@@ -1,12 +1,12 @@
 [Desktop Entry]
-Name=ukui-menu
-comment=ukui-menu
-Comment[zh_CN]=开始菜单
+Name=ukui-search
+comment=ukui-search
+Comment[zh_CN]=全局搜索
 Comment[tr_TR]=Başlangıç menüsü
-Exec=/usr/bin/ukui-menu
+Exec=/usr/bin/ukui-search
 Terminal=false
 Type=Application
-Icon=ukui-menu
+Icon=ukui-search
 X-UKUI-AutoRestart=true
 OnlyShowIn=UKUI
 X-UKUI-Autostart-Phase=Application
