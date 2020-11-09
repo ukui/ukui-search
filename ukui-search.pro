@@ -10,17 +10,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include(src/QtSingleApplication/qtsingleapplication.pri)
 QMAKE_CXXFLAGS += -g
 
-TARGET = ukui-menu-search
+TARGET = ukui-search
 TEMPLATE = app
 
 target.path = /usr/bin
 
-TRANSLATIONS+=\
-    translations/ukui-menu_bo.ts \
-    translations/ukui-menu_zh_CN.ts \
-    translations/ukui-menu_tr.ts
+#TRANSLATIONS+=\
+#    translations/ukui-menu_bo.ts \
+#    translations/ukui-menu_zh_CN.ts \
+#    translations/ukui-menu_tr.ts
 
-QM_FILES_INSTALL_PATH = /usr/share/ukui-menu/translations/
+#QM_FILES_INSTALL_PATH = /usr/share/ukui-menu/translations/
 
 # CONFIG += lrelase not work for qt5.6, add those from lrelease.prf for compatibility
 qtPrepareTool(QMAKE_LRELEASE, lrelease)
@@ -103,7 +103,7 @@ RESOURCES += \
 CONFIG += no_keywords link_pkgconfig
 PKGCONFIG+=glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst peony
 
-desktop_file.files = ukui-menu.desktop
+desktop_file.files = ukui-search.desktop
 desktop_file.path = /etc/xdg/autostart
 
 INSTALLS += \
