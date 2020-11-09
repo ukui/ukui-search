@@ -116,7 +116,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
                     }
                 }
                 icon.paint(painter,iconRect,Qt::AlignLeft);
-                painter->setPen(QPen(Qt::white));
+                painter->setPen(QPen(Qt::black));
                 QString appname=pUkuiMenuInterface->getAppName(strlist.at(0));
                 painter->drawText(QRect(iconRect.right()+15,rect.y(),
                                         rect.width()-62,rect.height()),Qt::AlignVCenter,appname);
@@ -133,7 +133,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
             }
             else
             {
-                painter->setPen(QPen(Qt::white));
+                painter->setPen(QPen(Qt::black));
                 QRect textRect=QRect(rect.x()+11,rect.y()+12,rect.width(),rect.height());
                 painter->drawText(textRect,Qt::AlignLeft,strlist.at(0));
                 painter->setRenderHint(QPainter::Antialiasing, true);
@@ -195,7 +195,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
             }
             setting->endGroup();
             painter->setOpacity(1);
-            painter->setPen(QPen(Qt::white));
+            painter->setPen(QPen(Qt::black));
             painter->drawText(QRect(iconRect.right()+15,rect.y(),
                                     rect.width()-62,rect.height()),Qt::AlignVCenter,appname);
         }

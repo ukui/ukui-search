@@ -38,6 +38,7 @@ void SearchResultWidget::initUi()
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setStyleSheet("border:0px;background:transparent;");
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    this->setFixedWidth(Style::defaultMainViewWidWidth);
     this->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultContentWidHeight);
 
     m_listView=new ListView(this,this->width()-4,this->height(),3);
@@ -81,15 +82,18 @@ void SearchResultWidget::changeListView(int rows)
 {
     qDebug()<<rows;
 
-//    if(rows!=0){
-////        if(rows<=3){
-////
-////        }
-//        m_listView->setsize(300,rows*50);
-//    }else
-//    {
-//        m_listView->setsize(300,0);
-//    }
+    if(rows!=0){
+        if(rows<=3){
+          m_listView->setsize(300,rows*43);
+        } else {
+          m_listView->setsize(300,3*43);
+        }
+
+    }else
+    {
+        m_listView->setsize(300,0);
+    }
+
 }
 void SearchResultWidget::moveScrollBar(int type)
 {

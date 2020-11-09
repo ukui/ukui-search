@@ -42,6 +42,8 @@ public:
     void updateData(QVector<QStringList> data);
     void setsize(int x,int y);
 
+//    QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
+
 protected:
     void initWidget();
 
@@ -54,6 +56,7 @@ private:
     int h=0;
     int module=0;
     UkuiMenuInterface* pUkuiMenuInterface=nullptr;
+    QStringList header;
 
 //    RightClickMenu* menu=nullptr;//右键菜单
     QSettings *setting=nullptr;

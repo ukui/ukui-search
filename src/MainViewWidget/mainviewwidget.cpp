@@ -30,8 +30,9 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
 
     m_fileview =new QTreeView;
+    m_fileview->setStyleSheet("QTreeView { background-color : white; border: 0px none;border-radius: 10px;}");
     m_settingview = new QTreeView;
-
+    m_settingview->setStyleSheet("QTreeView { background-color : white; border: 0px none;border-radius: 10px;}");
     //初始化文件与设置view为隐藏
     m_fileview->setVisible(false);
     m_settingview->setVisible(false);
@@ -59,8 +60,7 @@ MainViewWidget::~MainViewWidget()
 void MainViewWidget::initUi()
 {
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-    this->setAttribute(Qt::WA_StyledBackground,true);
-    this->setStyleSheet("border:0px;background:transparent;");
+    this->setAttribute(Qt::WA_StyledBackground,false);
 
     QVBoxLayout* mainLayout=new QVBoxLayout;
     mainLayout->setContentsMargins(0,0,0,0);
@@ -76,7 +76,10 @@ void MainViewWidget::initUi()
     this->setFocusPolicy(Qt::NoFocus);
 
     m_searchResultWid=new SearchResultWidget;
-
+    m_searchResultWid->setStyleSheet("background-color : white; border: 0px none;border-radius: 10px;");
+//    m_searchResultWid->setFixedSize(300,100);
+//    m_searchResultWid->setStyleSheet("border:0px;background:white;");
+//    m_searchResultWid->setStyleSheet("QWidget{border:1px solid rgba(255,0,0,1);}");//测试用，画出边界线
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(this,&MainViewWidget::sendDirectoryPath,m_directoryChangedThread,&DirectoryChangedThread::recvDirectoryPath);
@@ -98,7 +101,18 @@ void MainViewWidget::initUi()
                                   m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
     m_queryWid->show();
 
-    mainLayout->insertWidget(1,m_searchResultWid);
+    mainLayout->addWidget(m_searchResultWid);
+    mainLayout->addWidget(m_fileview);
+    mainLayout->addWidget(m_settingview);
+    m_fileview->setModel(m_filemodel);
+    m_settingview->setModel(m_settingmodel);
+
+//    mainLayout->insertWidget(1,m_searchResultWid);
+//    mainLayout->addWidget(m_searchResultWid);
+//    layout->insertWidget(1,m_searchResultWid);
+//    layout->insertWidget(2,m_fileview);
+//    layout->insertWidget(3,m_settingview);
+
 }
 
 
@@ -114,10 +128,10 @@ void MainViewWidget::changesize()
     } else {
         if(fileNum>10){
             m_fileview->setVisible(true);
-            m_fileview->setFixedSize(300,5*60);
+            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,5*60);
         } else {
             m_fileview->setVisible(true);
-            m_fileview->setFixedSize(300,fileNum);
+            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,fileNum);
         }
     }
 
@@ -125,7 +139,7 @@ void MainViewWidget::changesize()
         m_settingview->setVisible(false);
     }else{
         m_settingview->setVisible(true);
-        m_settingview->setFixedSize(300,SettingNum*60);
+         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
     }
 
 }
@@ -350,14 +364,17 @@ void MainViewWidget::loadMinMainView()
             childWid->setParent(nullptr);
         }
     }
-    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-    layout->insertWidget(1,m_searchResultWid);
+//    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
+//    layout->addWidget(m_searchResultWid);
+//    layout->insertWidget(1,m_searchResultWid);
 
-    m_fileview->setModel(m_filemodel);
-    layout->insertWidget(2,m_fileview);
+//    m_fileview->setModel(m_filemodel);
+////    layout->insertWidget(2,m_fileview);
+//    layout->addWidget(m_fileview);
 
-    m_settingview->setModel(m_settingmodel);
-    layout->insertWidget(3,m_settingview);
+//    m_settingview->setModel(m_settingmodel);
+////    layout->insertWidget(3,m_settingview);
+//    layout->addWidget(m_settingview);
 
 
 }

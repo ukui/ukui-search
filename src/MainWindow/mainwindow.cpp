@@ -546,7 +546,8 @@ void MainWindow::setFrameStyle()
 //    else {
 //        sprintf(style, "border:0px;background-color:%s;border-radius:0px;",m_defaultBackground.toLocal8Bit().data());
 //    }
-    m_frame->setStyleSheet(style);
+//    m_frame->setStyleSheet(style);//跟主题变化的style，暂时先不用，先设定透明
+     m_frame->setStyleSheet("border:0px;background:transparent;");
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)

@@ -26,7 +26,7 @@ ListView::ListView(QWidget *parent, int width, int height, int module):
     this->h=height;
     this->module=module;
     initWidget();
-
+    header<<tr("File");
     pUkuiMenuInterface=new UkuiMenuInterface;
 //    menu=new RightClickMenu;
 
@@ -42,7 +42,7 @@ ListView::~ListView()
 
 void ListView::initWidget()
 {
-//    this->setFixedSize(w,h);
+    this->setFixedSize(w,h);
 
     this->verticalScrollBar()->setStyleSheet("QScrollBar{padding-top:0px;padding-bottom:0px;background:transparent;width:3px;border-radius:1.5px;}"
                                              "QScrollBar::handle{background-color:rgba(255,255,255,0.25); width:3px;border-radius:1.5px;}"
@@ -80,6 +80,8 @@ void ListView::setsize(int x,int y)
 void ListView::addData(QVector<QStringList> data)
 {
     listmodel=new QStandardItemModel(this);
+    listmodel->setHorizontalHeaderLabels(QStringList()<<QStringLiteral("应用"));
+
     this->setModel(listmodel);
     Q_FOREACH(QStringList desktopfp,data)
     {
@@ -184,3 +186,10 @@ void ListView::leaveEvent(QEvent *e)
     Q_UNUSED(e);
     this->verticalScrollBar()->setVisible(false);
 }
+
+//QVariant ListView::headerData(int section,Qt::Orientation orientation ,int role) const {
+//    if(role == Qt::DisplayRole&&orientation==Qt::Horizontal){
+//        return header[section];
+//    }
+//    return QAbstractItemModel::headerData(section,orientation,role);
+//}
