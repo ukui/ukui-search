@@ -1,4 +1,4 @@
-Source: ukui-menu
+Source: ukui-search
 Section: x11
 Priority: optional
 Maintainer: Kylin Team <team+kylin@tracker.debian.org>
@@ -22,7 +22,7 @@ Homepage: https://github.com/ukui/ukui-menu
 Vcs-Git: https://github.com/ukui/ukui-menu
 Vcs-Browser: https://github.com/ukui/ukui-menu
 
-Package: ukui-menu
+Package: ukui-search
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
