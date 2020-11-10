@@ -48,7 +48,7 @@ void SearchResultWidget::initUi()
     m_listView->show();
 
     m_data.clear();
-    m_listView->addData(m_data);
+    m_listView->addData(m_data);//添加应用数据
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(m_listView,&ListView::sendItemClickedSignal,this,&SearchResultWidget::execApplication);

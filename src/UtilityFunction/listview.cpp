@@ -42,7 +42,7 @@ ListView::~ListView()
 
 void ListView::initWidget()
 {
-    this->setFixedSize(w,h);
+    this->setFixedSize(w,h); //设置窗口大小
 
     this->verticalScrollBar()->setStyleSheet("QScrollBar{padding-top:0px;padding-bottom:0px;background:transparent;width:3px;border-radius:1.5px;}"
                                              "QScrollBar::handle{background-color:rgba(255,255,255,0.25); width:3px;border-radius:1.5px;}"

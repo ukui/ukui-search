@@ -40,7 +40,7 @@ public:
 
     void addData(QVector<QStringList> data);
     void updateData(QVector<QStringList> data);
-    void setsize(int x,int y);
+    void setsize(int x,int y); //留出接口让外部调用，设置应用窗口大小
 
 //    QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
 

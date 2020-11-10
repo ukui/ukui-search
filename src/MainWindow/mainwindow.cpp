@@ -55,7 +55,7 @@ void MainWindow::initUi()
     this->setFocusPolicy(Qt::StrongFocus);
 
     this->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    this->setMinimumSize(Style::minw,Style::minh);
+    this->setMinimumSize(Style::minw,Style::minh);//可设置本窗口的大小，调整见style文件参数
     this->setContentsMargins(0,0,0,0);
 
     m_frame=new QFrame;

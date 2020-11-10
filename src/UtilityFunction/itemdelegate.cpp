@@ -195,7 +195,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
             }
             setting->endGroup();
             painter->setOpacity(1);
-            painter->setPen(QPen(Qt::black));
+            painter->setPen(QPen(Qt::black));//可更改应用字体颜色，不止这一处？？？
             painter->drawText(QRect(iconRect.right()+15,rect.y(),
                                     rect.width()-62,rect.height()),Qt::AlignVCenter,appname);
         }
