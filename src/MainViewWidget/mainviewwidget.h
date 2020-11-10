@@ -99,15 +99,15 @@ private:
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
 
-    QTreeView *m_fileview;
-    QTreeView *m_settingview;
+    QTreeView *m_fileview; //文件view
+    QTreeView *m_settingview;//设置view
 
-    filemodel *m_filemodel;
+    filemodel *m_filemodel;//文件model
 
-    settingModel *m_settingmodel;
+    settingModel *m_settingmodel;//设置model
 
-    int fileNum;
-    int SettingNum;
+    int fileNum; //记录搜索出来的文件数量
+    int SettingNum;//记录搜索出来的设置数量
 
 
 
@@ -127,7 +127,7 @@ protected:
      */
     void initQueryLineEdit();
 
-    void changesize();
+    void changesize(); //实现改变文件与设置view大小的方法
 
 public Q_SLOTS:
     /**
@@ -166,9 +166,9 @@ public Q_SLOTS:
      */
     void requestUpdateSlot();
 
-    void setFileView(int row);
+    void setFileView(int row); //改变文件view大小的槽函数
 
-    void setSettingView(int row);
+    void setSettingView(int row);//改变设置view大小的槽函数
 
 
 
