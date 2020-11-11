@@ -85,13 +85,6 @@ void MainWindow::initUi()
     connect(XEventMonitor::instance(), SIGNAL(keyPress(QString)),
             this,SLOT(XkbEventsPress(QString)));
 
-    if(QGSettings::isSchemaInstalled(QString("org.ukui.panel.settings").toLocal8Bit()))
-    {
-        QGSettings* gsetting=new QGSettings(QString("org.ukui.panel.settings").toLocal8Bit());
-        connect(gsetting,&QGSettings::changed,
-                this,&MainWindow::panelChangedSlot);
-    }
-
     if(QGSettings::isSchemaInstalled(QString("org.ukui.session").toLocal8Bit()))
     {
         QGSettings* gsetting=new QGSettings(QString("org.ukui.session").toLocal8Bit());
@@ -123,43 +116,6 @@ void MainWindow::bootOptionsFilter(QString opt)
 //    int y = widget->height();
 //    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 //}
-
-/**
- * 显示默认窗口
- */
-void MainWindow::showDefaultWidget()
-{
-    this->setContentsMargins(0,0,0,0);
-    int position=0;
-    int panelSize=0;
-    if(QGSettings::isSchemaInstalled(QString("org.ukui.panel.settings").toLocal8Bit()))
-    {
-        QGSettings* gsetting=new QGSettings(QString("org.ukui.panel.settings").toLocal8Bit());
-        if(gsetting->keys().contains(QString("panelposition")))
-            position=gsetting->get("panelposition").toInt();
-        else
-            position=0;
-        if(gsetting->keys().contains(QString("panelsize")))
-            panelSize=gsetting->get("panelsize").toInt();
-        else
-            panelSize=46;
-    }
-    else
-    {
-        position=0;
-        panelSize=46;
-    }
-
-    //主界面位置
-    QDesktopWidget* m = QApplication::desktop();
-    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
-    int desk_x = desk_rect.width();
-    int desk_y = desk_rect.height();
-    int x = this->width();
-    int y = this->height();
-    this->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
-}
-
 
 /**
  * 鼠标点击窗口外部事件
@@ -290,6 +246,7 @@ void MainWindow::recvHideMainWindowSlot()
 
 void MainWindow::loadMainWindow()
 {
+    qDebug()<<"loadMainWindow";
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
     int desk_x = desk_rect.width();
@@ -315,14 +272,9 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 
 }
 
-void MainWindow::panelChangedSlot(QString key)
-{
-    Q_UNUSED(key);
-    repaintWidget();
-}
-
 void MainWindow::repaintWidget()
 {
+#if 0
     Style::initWidStyle();
     this->setMinimumSize(Style::minw,Style::minh);
     m_line->setFixedSize(1,this->height());
@@ -367,29 +319,12 @@ void MainWindow::repaintWidget()
         m_mainViewWid->resizeControl();
         setFrameStyle();
     }
+#endif
 }
 
 void MainWindow::setFrameStyle()
 {
-    int position=0;
-    int panelSize=0;
-    if(QGSettings::isSchemaInstalled(QString("org.ukui.panel.settings").toLocal8Bit()))
-    {
-        QGSettings* gsetting=new QGSettings(QString("org.ukui.panel.settings").toLocal8Bit());
-        if(gsetting->keys().contains(QString("panelposition")))
-            position=gsetting->get("panelposition").toInt();
-        else
-            position=0;
-        if(gsetting->keys().contains(QString("panelsize")))
-            panelSize=gsetting->get("panelsize").toInt();
-        else
-            panelSize=46;
-    }
-    else
-    {
-        position=0;
-        panelSize=46;
-    }
+#if 1
     char style[100];
 
     QString m_defaultBackground;
@@ -407,72 +342,31 @@ void MainWindow::setFrameStyle()
     else
         m_defaultBackground=QString("rgba(19, 19, 20, 0.7)");
 
-//    if(!m_isFullScreen)
-//    {
     //不是全屏的情况
-        QRectF rect;
-        rect.setX(this->rect().x()+1);
-        rect.setY(this->rect().y()+1);
-        rect.setWidth(this->rect().width()-2);
-        rect.setHeight(this->rect().height()-2);
-        const qreal radius = 6;
-        QPainterPath path;
-
-        if(position==0)
-        {
-            //右上角
-            sprintf(style, "border:0px;background-color:%s;border-top-right-radius:6px;",m_defaultBackground.toLocal8Bit().data());
-            path.moveTo(rect.topRight() - QPointF(radius, 0));
-            path.lineTo(rect.topLeft());
-            path.lineTo(rect.bottomLeft());
-            path.lineTo(rect.bottomRight());
-            path.lineTo(rect.topRight() + QPointF(0, radius));
-            path.quadTo(rect.topRight(), rect.topRight() + QPointF(-radius, -0));
-        }
-        else if(position==1)
-        {
-            //右下角
-            sprintf(style, "border:0px;background-color:%s;border-bottom-right-radius:6px;",m_defaultBackground.toLocal8Bit().data());
-            path.moveTo(rect.topRight());
-            path.lineTo(rect.topLeft());
-            path.lineTo(rect.bottomLeft());
-            path.lineTo(rect.bottomRight() - QPointF(radius, 0));
-            path.quadTo(rect.bottomRight(), rect.bottomRight() + QPointF(0, -radius));
-            path.lineTo(rect.topRight());
-        }
-        else if(position==2)
-        {
-            //右下角
-            sprintf(style, "border:0px;background-color:%s;border-bottom-right-radius:6px;",m_defaultBackground.toLocal8Bit().data());
-            path.moveTo(rect.topRight());
-            path.lineTo(rect.topLeft());
-            path.lineTo(rect.bottomLeft());
-            path.lineTo(rect.bottomRight() - QPointF(radius, 0));
-            path.quadTo(rect.bottomRight(), rect.bottomRight() + QPointF(0, -radius));
-            path.lineTo(rect.topRight());
-        }
-        else
-        {
-            //左下角
-            sprintf(style, "border:0px;background-color:%s;border-bottom-left-radius:6px;",m_defaultBackground.toLocal8Bit().data());
-            path.moveTo(rect.topRight());
-            path.lineTo(rect.topLeft());
-            path.lineTo(rect.bottomLeft() + QPointF(0, -radius));
-            path.quadTo(rect.bottomLeft(), rect.bottomLeft() + QPointF(radius, 0));
-            path.lineTo(rect.bottomRight());
-            path.lineTo(rect.topRight());
-        }
-        setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
-//    }
-//    else {
-//        sprintf(style, "border:0px;background-color:%s;border-radius:0px;",m_defaultBackground.toLocal8Bit().data());
-//    }
+    QRectF rect;
+    rect.setX(this->rect().x()+1);
+    rect.setY(this->rect().y()+1);
+    rect.setWidth(this->rect().width()-2);
+    rect.setHeight(this->rect().height()-2);
+    const qreal radius = 6;
+    QPainterPath path;
+    //样式
+    sprintf(style, "border:0px;background-color:%s;border-top-right-radius:6px;",m_defaultBackground.toLocal8Bit().data());
+    path.moveTo(rect.topRight() - QPointF(radius, 0));
+    path.lineTo(rect.topLeft());
+    path.lineTo(rect.bottomLeft());
+    path.lineTo(rect.bottomRight());
+    path.lineTo(rect.topRight() + QPointF(0, radius));
+    path.quadTo(rect.topRight(), rect.topRight() + QPointF(-radius, -0));
+    setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
     m_frame->setStyleSheet(style);//跟主题变化的style，暂时先不用，先设定透明
-//     m_frame->setStyleSheet("border:0px;background:transparent;");
+    //     m_frame->setStyleSheet("border:0px;background:transparent;");
+#endif
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
+#if 0
     if(e->type()==KeyPress+4)
     {
         QKeyEvent* ke=static_cast<QKeyEvent*>(e);
@@ -480,16 +374,6 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         {
             m_mainViewWid->setLineEditFocus(e->text());
         }
-
-        //        switch(e->key()){
-        //        case Qt::Key_Up:
-        //            m_mainViewWid->moveScrollBar(0);
-        //            break;
-        //        case Qt::Key_Down:
-        //            m_mainViewWid->moveScrollBar(1);
-        //            break;
-        //        default:
-        //            break;
-        //        }
     }
+#endif
 }

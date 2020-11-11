@@ -84,10 +84,6 @@ public Q_SLOTS:
      */
     void XkbEventsPress(const QString &keycode);
     void XkbEventsRelease(const QString &keycode);
-    /**
-     * @brief Load the default window
-     */
-    void showDefaultWidget();
     void recvHideMainWindowSlot();//接收隐藏主窗口信号
     /**
      * @brief Monitor screen resolution
@@ -99,11 +95,6 @@ public Q_SLOTS:
      * @param screen: Primary screen
      */
     void primaryScreenChangedSlot(QScreen *screen);
-    /**
-     * @brief Monitor taskbar key changes
-     * @param key: Key
-     */
-    void panelChangedSlot(QString key);
 
     /**
      * @brief Open the start menu by signaling
