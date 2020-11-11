@@ -55,7 +55,7 @@ void MainWindow::initUi()
     this->setFocusPolicy(Qt::StrongFocus);
 
     this->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    this->setMinimumSize(Style::minw,Style::minh);
+    this->setMinimumSize(Style::minw,Style::minh);//可设置本窗口的大小，调整见style文件参数
     this->setContentsMargins(0,0,0,0);
 
     m_frame=new QFrame;
@@ -546,7 +546,8 @@ void MainWindow::setFrameStyle()
 //    else {
 //        sprintf(style, "border:0px;background-color:%s;border-radius:0px;",m_defaultBackground.toLocal8Bit().data());
 //    }
-    m_frame->setStyleSheet(style);
+    m_frame->setStyleSheet(style);//跟主题变化的style，暂时先不用，先设定透明
+//     m_frame->setStyleSheet("border:0px;background:transparent;");
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)

@@ -39,7 +39,7 @@ void FullSearchResultWidget::initUi()
     this->setStyleSheet("border:0px;background:transparent;");
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedSize(Style::MainViewWidWidth,
-                       Style::AppListWidHeight);
+                       Style::AppListWidHeight); //可由style控制大小
 
     QHBoxLayout* mainLayout=new QHBoxLayout;
     mainLayout->setContentsMargins(0,0,0,0);
@@ -51,7 +51,7 @@ void FullSearchResultWidget::initUi()
     this->setLayout(mainLayout);
 
     m_data.clear();
-    m_listView->addData(m_data);
+    m_listView->addData(m_data);//添加应用数据
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(m_listView,&FullListView::sendItemClickedSignal,this,&FullSearchResultWidget::execApplication);

@@ -36,8 +36,9 @@ void SearchResultWidget::initUi()
 {
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
-    this->setStyleSheet("border:0px;background:transparent;");
+//    this->setStyleSheet("border:0px;background:transparent;");
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    this->setFixedWidth(Style::defaultMainViewWidWidth);
     this->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultContentWidHeight);
 
     m_listView=new ListView(this,this->width()-4,this->height(),3);
@@ -47,7 +48,7 @@ void SearchResultWidget::initUi()
     m_listView->show();
 
     m_data.clear();
-    m_listView->addData(m_data);
+    m_listView->addData(m_data);//添加应用数据
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(m_listView,&ListView::sendItemClickedSignal,this,&SearchResultWidget::execApplication);
@@ -79,10 +80,20 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
 
 void SearchResultWidget::changeListView(int rows)
 {
+    qDebug()<<rows;
 
     if(rows!=0){
-        m_listView->setsize(300,rows*50);
+        if(rows<=3){
+          m_listView->setsize(300,rows*43);
+        } else {
+          m_listView->setsize(300,3*43);
+        }
+
+    }else
+    {
+        m_listView->setsize(300,0);
     }
+
 }
 void SearchResultWidget::moveScrollBar(int type)
 {

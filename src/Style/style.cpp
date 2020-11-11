@@ -141,23 +141,23 @@ void Style::initWidStyle()
             QApplication::primaryScreen()->geometry().height()==600)
     {
         minw=222;
-        minh=500;
+        minh=600;
         defaultMainViewWidWidth=264;
         defaultTopWidHeight=54;
         defaultQueryLineEditWidth=245;
         defaultQueryLineEditHeight=30;
-        defaultContentWidHeight=446;
+        defaultContentWidHeight=600;
         defaultSideBarWidWidth=55;
     }
     else
     {
         minw=222;
-        minh=590;
+        minh=600;
         defaultMainViewWidWidth=320;
         defaultTopWidHeight=54;
         defaultQueryLineEditWidth=288;
         defaultQueryLineEditHeight=30;
-        defaultContentWidHeight=536;
+        defaultContentWidHeight=600;
         defaultSideBarWidWidth=55;
     }
 
