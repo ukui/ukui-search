@@ -246,61 +246,65 @@ bool MainWindow::event ( QEvent * event )
     return QWidget::event(event);
 }
 
+/*XkbEventsPress 和XkbEventsRelease 为设置快捷键的函数
+ * 采用先注释，验证结束再删除的方式
+ * 经过两轮（两周）测试验证无问题后删除这两个函数及调用
+*/
 void MainWindow::XkbEventsPress(const QString &keycode)
 {
-    QString KeyName;
-    if (keycode.length() >= 8){
-        KeyName = keycode.left(8);
-    }
-    if(KeyName.compare("Super_L+")==0){
-        m_winFlag = true;
-    }
-    if(m_winFlag && keycode == "Super_L"){
-        m_winFlag = false;
-        return;
-    }
+//    QString KeyName;
+//    if (keycode.length() >= 8){
+//        KeyName = keycode.left(8);
+//    }
+//    if(KeyName.compare("Super_L+")==0){
+//        m_winFlag = true;
+//    }
+//    if(m_winFlag && keycode == "Super_L"){
+//        m_winFlag = false;
+//        return;
+//    }
 
 }
 
 void MainWindow::XkbEventsRelease(const QString &keycode)
 {
-    QString KeyName;
-    static bool winFlag=false;
-    if (keycode.length() >= 8){
-        KeyName = keycode.left(8);
-    }
-    if(KeyName.compare("Super_L+")==0){
-        winFlag = true;
-    }
-    if(winFlag && keycode == "Super_L"){
-        winFlag = false;
-        return;
-    }else if(m_winFlag && keycode == "Super_L")
-        return;
+//    QString KeyName;
+//    static bool winFlag=false;
+//    if (keycode.length() >= 8){
+//        KeyName = keycode.left(8);
+//    }
+//    if(KeyName.compare("Super_L+")==0){
+//        winFlag = true;
+//    }
+//    if(winFlag && keycode == "Super_L"){
+//        winFlag = false;
+//        return;
+//    }else if(m_winFlag && keycode == "Super_L")
+//        return;
 
-    if((keycode == "Super_L") || (keycode == "Super_R"))
-    {
-        //        if(this->isVisible())
-        if(QApplication::activeWindow() == this)
-        {
-            this->hide();
-            m_mainViewWid->widgetMakeZero();
-            //            m_sideBarWid->widgetMakeZero();
-        }
-        else{
-            this->loadMainWindow();
-            this->show();
-            this->raise();
-            this->activateWindow();
-        }
-    }
+//    if((keycode == "Super_L") || (keycode == "Super_R"))
+//    {
+//        //        if(this->isVisible())
+//        if(QApplication::activeWindow() == this)
+//        {
+//            this->hide();
+//            m_mainViewWid->widgetMakeZero();
+//            //            m_sideBarWid->widgetMakeZero();
+//        }
+//        else{
+//            this->loadMainWindow();
+//            this->show();
+//            this->raise();
+//            this->activateWindow();
+//        }
+//    }
 
-    if(keycode == "Escape")
-    {
-        this->hide();
-        m_mainViewWid->widgetMakeZero();
-        //        m_sideBarWid->widgetMakeZero();
-    }
+//    if(keycode == "Escape")
+//    {
+//        this->hide();
+//        m_mainViewWid->widgetMakeZero();
+//        //        m_sideBarWid->widgetMakeZero();
+//    }
 }
 
 void MainWindow::winKeyReleaseSlot(const QString &key)
