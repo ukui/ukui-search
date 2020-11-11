@@ -56,15 +56,6 @@ public:
      */
     void widgetMakeZero();
     /**
-     * @brief Set the focus of the search box
-     * @param arg: Text
-     */
-    void setLineEditFocus(QString arg);
-    /**
-     * @brief Repaint window
-     */
-    void repaintWidget();
-    /**
      * @brief Resize the control
      */
     void resizeControl();

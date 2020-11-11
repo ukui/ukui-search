@@ -24,6 +24,12 @@
 #include <syslog.h>
 #include <QDebug>
 
+/*MainViewWidget界面
+ * 包含 m_queryLineEdit 搜索框界面
+ * searchResultWidget 应用搜索结果界面
+ * m_queryLineEdit ：QLineEdit搜索框
+ *
+*/
 MainViewWidget::MainViewWidget(QWidget *parent) :
     QWidget(parent)
 {
@@ -62,7 +68,8 @@ MainViewWidget::~MainViewWidget()
 void MainViewWidget::initUi()
 {
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-    this->setAttribute(Qt::WA_StyledBackground,false);
+    this->setAttribute(Qt::WA_StyledBackground,true);
+    this->setStyleSheet("border:0px;background:transparent;");
 
     QVBoxLayout* mainLayout=new QVBoxLayout;
     mainLayout->setContentsMargins(0,0,0,0);
@@ -80,17 +87,12 @@ void MainViewWidget::initUi()
     this->setFocusPolicy(Qt::NoFocus);
 
     m_searchResultWid=new SearchResultWidget;
-//    m_searchResultWid->setStyleSheet("background-color : white; border: 0px none;border-radius: 10px;");
-//    m_searchResultWid->setFixedSize(300,100);
-//    m_searchResultWid->setStyleSheet("border:0px;background:white;");
-//    m_searchResultWid->setStyleSheet("QWidget{border:1px solid rgba(255,0,0,1);}");//测试用，画出边界线
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(this,&MainViewWidget::sendDirectoryPath,m_directoryChangedThread,&DirectoryChangedThread::recvDirectoryPath);
     connect(m_directoryChangedThread,&DirectoryChangedThread::requestUpdateSignal,this,&MainViewWidget::requestUpdateSlot);
     //发送隐藏主界面信号
     connect(m_searchResultWid,&SearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
-    //    connect(m_fullSearchResultWid,&FullSearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
 
     addTopControl();
     //加载默认视图
@@ -171,6 +173,7 @@ void MainViewWidget::addTopControl()
  */
 void MainViewWidget::initQueryLineEdit()
 {
+    //搜索框ui
     m_queryWid=new QWidget;
     m_queryWid->setParent(m_queryLineEdit);
     m_queryWid->setFocusPolicy(Qt::NoFocus);
@@ -195,10 +198,12 @@ void MainViewWidget::initQueryLineEdit()
     m_queryLineEdit->installEventFilter(this);
     m_queryLineEdit->setContextMenuPolicy(Qt::NoContextMenu);
 
+    //点击搜索框的动画效果
     m_animation= new QPropertyAnimation(m_queryWid,"geometry");
     m_animation->setDuration(100);
     connect(m_animation,&QPropertyAnimation::finished,this,&MainViewWidget::animationFinishedSlot);
 
+    //跑一个线程执行应用搜索
     m_searchAppThread=new SearchAppThread;
     connect(this,&MainViewWidget::sendSearchKeyword,
             m_searchAppThread,&SearchAppThread::recvSearchKeyword);
@@ -214,25 +219,18 @@ void MainViewWidget::initQueryLineEdit()
 
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_filemodel,[=](const QString &search){
                 m_filemodel->matchstart(search);
-
     });
-
 
     connect(m_settingview,&QTreeView::clicked,this,[=](){
         m_settingmodel->run(m_settingview->currentIndex().row());
-
     });
 
     connect(m_fileview,&QTreeView::clicked,this,[=](){
         m_filemodel->run(m_fileview->currentIndex().row(),m_fileview->currentIndex().column());
     });
-
-
-
-
-
 }
 
+/*事件过滤*/
 bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
 {
     if(watched==m_queryLineEdit)
@@ -295,17 +293,6 @@ bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
     return QWidget::eventFilter(watched,event);     // 最后将事件交给上层对话框
 }
 
-void MainViewWidget::setLineEditFocus(QString arg)
-{
-    if(!m_queryLineEdit->hasFocus())
-    {
-        m_searchKeyWords=arg;
-        m_queryLineEdit->setFocus();
-        if(!m_queryLineEdit->text().isEmpty())
-            m_queryLineEdit->setText(arg);
-    }
-}
-
 /**
  * 搜索程序和文件槽函数
  */
@@ -321,6 +308,9 @@ void MainViewWidget::recvSearchResult(QVector<QStringList> arg)
     m_searchResultWid->updateAppListView(arg);
 }
 
+/*
+ * 点击搜索框的动画效果
+*/
 void MainViewWidget::animationFinishedSlot()
 {
     if(m_isSearching)
@@ -340,6 +330,8 @@ void MainViewWidget::animationFinishedSlot()
 
 /**
  * 加载默认主视图
+ * 在加载主视图的时候，主视图上需要有搜索到的应用程序，搜索到的文件，搜索到的控制面板选项等
+ * 采用默认加载全部视图，各个搜索结果的视图的高度根据搜索结果进行自适应，默认高度均为0
  */
 void MainViewWidget::loadMinMainView()
 {
@@ -474,12 +466,11 @@ void MainViewWidget::iconThemeChangeSlot(QString key)
         Q_EMIT directoryChangedSignal();
 }
 
-void MainViewWidget::repaintWidget()
-{
-    this->setMinimumSize(Style::minw,Style::minh);
-    m_searchResultWid->repaintWidget();
-}
-
+/*
+ * 鼠标点击窗口外部事件
+ * 会触发MainWindow::event
+ * 调用widgetMakeZero，执行清空输入框的操作
+*/
 void MainViewWidget::widgetMakeZero()
 {
     m_queryLineEdit->clear();
