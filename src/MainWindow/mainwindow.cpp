@@ -36,8 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
     UkuiMenuInterface::functionalVector=m_ukuiMenuInterface->getFunctionalClassification();
     UkuiMenuInterface::allAppVector=m_ukuiMenuInterface->getAllApp();
     Style::initWidStyle();
-    QString path=QDir::homePath()+"/.config/ukui/ukui-menu.ini";
-    m_setting=new QSettings(path,QSettings::IniFormat);
     initUi();
 }
 
@@ -113,73 +111,6 @@ void MainWindow::bootOptionsFilter(QString opt)
 
     }
 }
-
-
-
-/**
- * 显示全屏窗口
- */
-void MainWindow::showFullScreenWidget()
-{
-    //    m_isFullScreen=true;
-    //    this->setContentsMargins(0,0,0,0);
-    //    int position=0;
-    //    int panelSize=0;
-    //    if(QGSettings::isSchemaInstalled(QString("org.ukui.panel.settings").toLocal8Bit()))
-    //    {
-    //        QGSettings* gsetting=new QGSettings(QString("org.ukui.panel.settings").toLocal8Bit());
-    //        if(gsetting->keys().contains(QString("panelposition")))
-    //            position=gsetting->get("panelposition").toInt();
-    //        else
-    //            position=0;
-    //        if(gsetting->keys().contains(QString("panelsize")))
-    //            panelSize=gsetting->get("panelsize").toInt();
-    //        else
-    //            panelSize=46;
-    //    }
-    //    else
-    //    {
-    //        position=0;
-    //        panelSize=46;
-    //    }
-
-    //    int x=QApplication::primaryScreen()->geometry().x();
-    //    int y=QApplication::primaryScreen()->geometry().y();
-    //    QRect startRect;
-    //    QRect endRect;
-    //    if(position==0)
-    //    {
-    //        startRect.setRect(x,y+QApplication::primaryScreen()->geometry().height()-panelSize-Style::minh,Style::minw,Style::minh);
-    //        endRect.setRect(x,y,QApplication::primaryScreen()->geometry().width(),QApplication::primaryScreen()->geometry().height()-panelSize);
-    //    }
-    //    else if(position==1)
-    //    {
-    //        startRect.setRect(x,y+panelSize,Style::minw,Style::minh);
-    //        endRect.setRect(x,y+panelSize,QApplication::primaryScreen()->geometry().width(),QApplication::primaryScreen()->geometry().height()-panelSize);
-    //    }
-    //    else if(position==2)
-    //    {
-    //        startRect.setRect(x+panelSize,y,Style::minw,Style::minh);
-    //        endRect.setRect(x+panelSize,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height());
-    //    }
-    //    else
-    //    {
-    //        startRect.setRect(x+QApplication::primaryScreen()->geometry().width()-panelSize-Style::minw,y,Style::minw,Style::minh);
-    //        endRect.setRect(x,y,QApplication::primaryScreen()->geometry().width()-panelSize,QApplication::primaryScreen()->geometry().height());
-    //    }
-
-    //    this->centralWidget()->layout()->removeWidget(m_mainViewWid);
-    //    m_mainViewWid->setParent(nullptr);
-    //    this->centralWidget()->layout()->removeWidget(m_line);
-    //    m_line->setParent(nullptr);
-
-    //    m_animation->setDuration(100);//动画总时间
-    //    m_animation->setStartValue(startRect);
-    //    m_animation->setEndValue(endRect);
-    //    m_animation->setEasingCurve(QEasingCurve::Linear);
-    //    m_animation->start();
-}
-
 
 //void centerToScreen(QWidget* widget) {
 //    if (!widget)
@@ -359,20 +290,6 @@ void MainWindow::recvHideMainWindowSlot()
 
 void MainWindow::loadMainWindow()
 {
-    QDateTime dt=QDateTime::currentDateTime();
-    int currentDateTime=dt.toTime_t();
-    int nDaySec=24*60*60;
-    m_setting->beginGroup("recentapp");
-    QStringList recentAppKeys=m_setting->allKeys();
-    for(int i=0;i<recentAppKeys.count();i++)
-    {
-        if((currentDateTime-m_setting->value(recentAppKeys.at(i)).toInt())/nDaySec >= 3)
-            m_setting->remove(recentAppKeys.at(i));
-    }
-    m_setting->sync();
-    m_setting->endGroup();
-
-
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
     int desk_x = desk_rect.width();

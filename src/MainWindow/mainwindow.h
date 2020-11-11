@@ -55,7 +55,6 @@ public:
 
 private:
     UkuiMenuInterface *m_ukuiMenuInterface=nullptr;
-    QSettings *m_setting=nullptr;
 
     QFrame *m_line=nullptr;//Vertical dividing line
     QFrame *m_frame=nullptr;
@@ -85,10 +84,6 @@ public Q_SLOTS:
      */
     void XkbEventsPress(const QString &keycode);
     void XkbEventsRelease(const QString &keycode);
-    /**
-     * @brief Load the full screen window
-     */
-    void showFullScreenWidget();
     /**
      * @brief Load the default window
      */
