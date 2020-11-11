@@ -84,7 +84,6 @@ public Q_SLOTS:
      */
     void XkbEventsPress(const QString &keycode);
     void XkbEventsRelease(const QString &keycode);
-    void recvHideMainWindowSlot();//接收隐藏主窗口信号
     /**
      * @brief Monitor screen resolution
      * @param rect: Screen resolution
@@ -95,11 +94,6 @@ public Q_SLOTS:
      * @param screen: Primary screen
      */
     void primaryScreenChangedSlot(QScreen *screen);
-
-    /**
-     * @brief Open the start menu by signaling
-     */
-    void recvStartMenuSlot();
     /**
      * @brief Monitor win-key-release key value.
      */

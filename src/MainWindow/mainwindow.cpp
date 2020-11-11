@@ -26,7 +26,18 @@
 #include "src/XEventMonitor/xeventmonitor.h"
 #include "src/Style/style.h"
 
-/*主界面*/
+/*主界面
+ * 函数分析：
+ * initUi:初始化ui
+ * setFrameStyle：设置样式
+ * bootOptionsFilter：过滤终端命令
+ * event：鼠标点击窗口外部事件
+ * loadMainWindow：加载主界面
+ *
+ * primaryScreenChangedSlot：监听屏幕改变
+ * monitorResolutionChange： 监听分辨率改变
+ *
+*/
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -84,15 +95,6 @@ void MainWindow::initUi()
             this,SLOT(XkbEventsRelease(QString)));
     connect(XEventMonitor::instance(), SIGNAL(keyPress(QString)),
             this,SLOT(XkbEventsPress(QString)));
-
-    if(QGSettings::isSchemaInstalled(QString("org.ukui.session").toLocal8Bit()))
-    {
-        QGSettings* gsetting=new QGSettings(QString("org.ukui.session").toLocal8Bit());
-        connect(gsetting,&QGSettings::changed,this,&MainWindow::winKeyReleaseSlot);
-    }
-
-    //    QDBusConnection::sessionBus().connect("com.ukui.menu","/com/ukui/menu","local.test.MainWindow",
-    //                                         QString("sendStartMenuSignal"),this,SLOT(recvStartMenuSlot()));
 }
 
 /* 过滤终端命令 */
@@ -196,6 +198,7 @@ void MainWindow::XkbEventsRelease(const QString &keycode)
 
 void MainWindow::winKeyReleaseSlot(const QString &key)
 {
+#if 0
     if(key=="winKeyRelease" || key=="win-key-release")
     {
         QGSettings gsetting(QString("org.ukui.session").toLocal8Bit());
@@ -214,34 +217,7 @@ void MainWindow::winKeyReleaseSlot(const QString &key)
                     this,SLOT(XkbEventsPress(QString)));
         }
     }
-}
-
-void MainWindow::recvStartMenuSlot()
-{
-    if(this->isVisible())
-    {
-        this->hide();
-        m_mainViewWid->widgetMakeZero();
-        //        m_sideBarWid->widgetMakeZero();
-    }
-    else{
-        m_mainViewWid->widgetMakeZero();
-        //        m_sideBarWid->widgetMakeZero();
-        this->loadMainWindow();
-        this->show();
-        this->raise();
-        this->activateWindow();
-    }
-}
-
-/**
- * 隐藏窗口
- */
-void MainWindow::recvHideMainWindowSlot()
-{
-    this->hide();
-    //    m_mainViewWid->widgetMakeZero();
-    //    m_sideBarWid->widgetMakeZero();
+#endif
 }
 
 void MainWindow::loadMainWindow()
