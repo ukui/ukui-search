@@ -69,6 +69,8 @@ SOURCES += \
     main.cpp \
     src/UtilityFunction/utility.cpp \
     src/XEventMonitor/xeventmonitor.cpp \
+    src/SearchFile/file-utils.cpp\
+    src/SearchFile/gobject-template.cpp
 
 
 HEADERS  += \
@@ -94,14 +96,16 @@ HEADERS  += \
     src/Interface/ukuichineseletter.h \
     src/Interface/ukuimenuinterface.h \
     src/UtilityFunction/utility.h \
-    src/XEventMonitor/xeventmonitor.h
+    src/XEventMonitor/xeventmonitor.h\
+    src/SearchFile/file-utils.h\
+    src/SearchFile/gobject-template.h
 
 RESOURCES += \
     res.qrc
 
 
 CONFIG += no_keywords link_pkgconfig
-PKGCONFIG+=glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst peony
+PKGCONFIG+=glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst
 
 desktop_file.files = ukui-search.desktop
 desktop_file.path = /etc/xdg/autostart
