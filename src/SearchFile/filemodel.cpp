@@ -4,7 +4,8 @@
 #include <unistd.h>
 filemodel::filemodel():
     startmatchTimer(new QTimer(this)),
-    cmd(new QProcess(this))
+    cmd(new QProcess(this)),
+    fileutils(new FileUtils)
 {
 
     header<<tr("File")<<tr("")<<tr("");
@@ -125,6 +126,8 @@ void filemodel::matchesChanged()
 }
 
 void filemodel::commandsearch(){
+    if(sourcetext.size()<6)
+        return;
     struct passwd *pwd;
     pwd=getpwuid(getuid());
         QString str =sourcetext;
@@ -160,7 +163,7 @@ void filemodel::showResult(QString result){
              openPathresult.append(str2);
 
              QString str= QString::fromLocal8Bit("file://")+pathresult.at(i);
-             QIcon icon= QIcon::fromTheme(Peony::FileUtils::getFileIconName(str));
+             QIcon icon= QIcon::fromTheme(fileutils->getFileIconName(str));
              QPixmap pixmap = icon.pixmap(QSize(40,40));
              iconresult.append(pixmap);
 

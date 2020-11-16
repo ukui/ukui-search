@@ -1,7 +1,7 @@
 #ifndef FILEMODEL_H
 #define FILEMODEL_H
 
-#include <peony-qt/file-utils.h>
+#include "file-utils.h"
 #include <QObject>
 #include <QAbstractListModel>
 #include <QDebug>
@@ -36,6 +36,7 @@ private:
     QString sourcetext;
     QString peonyText;
     QStringList header;
+    FileUtils *fileutils;
 
     QList<QString> returnresult;
     QList<QString> showresult;
