@@ -24,10 +24,11 @@
 #include <syslog.h>
 #include <QDebug>
 
-/*MainViewWidget界面
+/* MainViewWidget界面
  * 包含 m_queryLineEdit 搜索框界面
  * searchResultWidget 应用搜索结果界面
  * m_queryLineEdit ：QLineEdit搜索框
+ * m_topWidget  顶部搜索框所在的界面
  *
 */
 MainViewWidget::MainViewWidget(QWidget *parent) :
@@ -37,9 +38,6 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
     m_fileview =new QTreeView;
     m_settingview = new QTreeView;
-
-//    m_fileview->setStyleSheet("QTreeView { background-color : white; border: 0px none;border-radius: 10px;}");
-//    m_settingview->setStyleSheet("QTreeView { background-color : white; border: 0px none;border-radius: 10px;}");
 
     //初始化文件与设置view为隐藏
     m_fileview->setVisible(false);
@@ -60,28 +58,29 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 MainViewWidget::~MainViewWidget()
 {
     delete m_ukuiMenuInterface;
-    delete m_directoryChangedThread;
+//    delete m_directoryChangedThread;
     delete m_animation;
     delete m_searchAppThread;
 }
 
+/*
+ * MainViewWidget 初始化
+ * QWidget *m_queryWid   -> QLineEdit *m_queryLineEdit
+*/
 void MainViewWidget::initUi()
 {
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setStyleSheet("border:0px;background:transparent;");
 
-    QVBoxLayout* mainLayout=new QVBoxLayout;
+    mainLayout=new QVBoxLayout;
     mainLayout->setContentsMargins(0,0,0,0);
     mainLayout->setSpacing(0);
 
     //顶部搜索框的widget
     m_topWidget=new QWidget;
-//    m_topWidget->setStyleSheet("border:0px;background:transparent;");
 
-    m_verticalSpacer=new QSpacerItem(20,40, QSizePolicy::Fixed, QSizePolicy::Expanding);
     mainLayout->addWidget(m_topWidget);
-    mainLayout->addItem(m_verticalSpacer);
     this->setLayout(mainLayout);
 
     this->setFocusPolicy(Qt::NoFocus);
@@ -89,8 +88,6 @@ void MainViewWidget::initUi()
     m_searchResultWid=new SearchResultWidget;
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
-    connect(this,&MainViewWidget::sendDirectoryPath,m_directoryChangedThread,&DirectoryChangedThread::recvDirectoryPath);
-    connect(m_directoryChangedThread,&DirectoryChangedThread::requestUpdateSignal,this,&MainViewWidget::requestUpdateSlot);
     //发送隐藏主界面信号
     connect(m_searchResultWid,&SearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
 
@@ -98,27 +95,14 @@ void MainViewWidget::initUi()
     //加载默认视图
     //    loadMinMainView();
     this->setFixedSize(Style::defaultMainViewWidWidth,Style::minh);
-    m_topWidget->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
+    m_topWidget->setFixedSize(30,30);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
     m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,Style::defaultQueryLineEditHeight);
     m_queryText->adjustSize();
-    m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-                                  m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
-    m_queryWid->show();
-
-//    mainLayout->addWidget(m_searchResultWid);
-//    mainLayout->addWidget(m_fileview);
-//    mainLayout->addWidget(m_settingview);
-//    m_fileview->setModel(m_filemodel);
-//    m_settingview->setModel(m_settingmodel);
-
-    mainLayout->insertWidget(1,m_searchResultWid);
-//    mainLayout->addWidget(m_searchResultWid);
-//    layout->insertWidget(1,m_searchResultWid);
-//    layout->insertWidget(2,m_fileview);
-//    layout->insertWidget(3,m_settingview);
-
+//    m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
+//                                  m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
+//    m_queryWid->show();
 }
 
 
@@ -169,7 +153,7 @@ void MainViewWidget::addTopControl()
 }
 
 /**
- * 添加搜索框
+ * 添加搜索框  m_queryWid -> queryWidLayout -> m_queryIcon + m_queryText
  */
 void MainViewWidget::initQueryLineEdit()
 {
@@ -177,7 +161,9 @@ void MainViewWidget::initQueryLineEdit()
     m_queryWid=new QWidget;
     m_queryWid->setParent(m_queryLineEdit);
     m_queryWid->setFocusPolicy(Qt::NoFocus);
-    m_queryWid->setStyleSheet("border:0px;background:transparent");
+    m_queryWid->setStyleSheet("border:10px;background:transparent;#ff0000;");
+
+    //queryWidLayout 搜索图标和文字所在的布局
     QHBoxLayout* queryWidLayout=new QHBoxLayout;
     queryWidLayout->setContentsMargins(5,0,0,0);
     queryWidLayout->setSpacing(5);
@@ -345,9 +331,9 @@ void MainViewWidget::loadMinMainView()
         if(m_queryWid->layout()->count()==1)
             m_queryWid->layout()->addWidget(m_queryText);
         m_queryText->adjustSize();
-        m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-                                      m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
-        m_queryWid->show();
+//        m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
+//                                      m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
+//        m_queryWid->show();
     }
 
     QLayoutItem* child;
@@ -360,19 +346,16 @@ void MainViewWidget::loadMinMainView()
             childWid->setParent(nullptr);
         }
     }
-    QVBoxLayout *layout=qobject_cast<QVBoxLayout*>(this->layout());
-//    layout->addWidget(m_searchResultWid);
-    layout->insertWidget(1,m_searchResultWid);
+    mainLayout->addWidget(m_searchResultWid);
 
     m_fileview->setModel(m_filemodel);
-    layout->insertWidget(2,m_fileview);
-//    layout->addWidget(m_fileview);
+    mainLayout->addWidget(m_fileview);
 
     m_settingview->setModel(m_settingmodel);
-    layout->insertWidget(3,m_settingview);
-//    layout->addWidget(m_settingview);
+    mainLayout->addWidget(m_settingview);
 
-
+    //添加伸缩因子
+    mainLayout->addStretch();
 }
 
 void MainViewWidget::resizeControl()
@@ -456,7 +439,7 @@ void MainViewWidget::ViewOpenedSlot(QDBusMessage msg)
 
 void MainViewWidget::requestUpdateSlot()
 {
-    m_directoryChangedThread->quit();
+//    m_directoryChangedThread->quit();
     Q_EMIT directoryChangedSignal();
 }
 

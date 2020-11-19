@@ -31,10 +31,8 @@
 #include <QFileSystemWatcher>
 #include <QSettings>
 #include "src/Interface/ukuimenuinterface.h"
-#include "src/SearchResultWidget/fullsearchresultwidget.h"
 #include "src/SearchResultWidget/searchresultwidget.h"
 #include "src/SearchResultWidget/searchappthread.h"
-#include "directorychangedthread.h"
 #include "src/Style/style.h"
 #include "../SearchFile/filemodel.h"
 #include "../SearchSetting/settingmodel.h"
@@ -63,6 +61,7 @@ public:
 private:
 
     UkuiMenuInterface *m_ukuiMenuInterface=nullptr;
+    QVBoxLayout* mainLayout;
     QWidget *m_topWidget=nullptr;
     QHBoxLayout *m_topLayout=nullptr;
 
@@ -76,10 +75,8 @@ private:
     QString m_searchKeyWords;
     QPropertyAnimation *m_animation=nullptr;
 
-    FullSearchResultWidget *m_fullSearchResultWid=nullptr;
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
-    DirectoryChangedThread *m_directoryChangedThread=nullptr;
 
     int m_widgetState=1;//Classification window number
     int m_saveCurrentWidState=-1;//Store the current category window number
