@@ -49,7 +49,6 @@ SOURCES += \
     src/MainViewWidget/mainviewwidget.cpp \
     src/MainWindow/mainwindow.cpp \
     src/SearchFile/filemodel.cpp \
-    src/SearchResultWidget/fullsearchresultwidget.cpp \
     src/SearchResultWidget/searchappthread.cpp \
     src/SearchResultWidget/searchresultwidget.cpp \
     src/SearchSetting/settingmodel.cpp \
@@ -78,7 +77,6 @@ HEADERS  += \
     src/MainViewWidget/mainviewwidget.h \
     src/MainWindow/mainwindow.h \
     src/SearchFile/filemodel.h \
-    src/SearchResultWidget/fullsearchresultwidget.h \
     src/SearchResultWidget/searchappthread.h \
     src/SearchResultWidget/searchresultwidget.h \
     src/SearchSetting/settingmodel.h \
