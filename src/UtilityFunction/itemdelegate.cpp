@@ -101,22 +101,9 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
                     iconstr.remove(".png");
                     iconstr.remove(".svg");
                     icon=QIcon::fromTheme(iconstr);
-                    if(icon.isNull())
-                    {
-                        if(QFile::exists(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("svg")))
-                            icon=QIcon(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("svg"));
-                        else if(QFile::exists(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("png")))
-                            icon=QIcon(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("png"));
-                        else if(QFile::exists(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("svg")))
-                            icon=QIcon(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("svg"));
-                        else if(QFile::exists(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("png")))
-                            icon=QIcon(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("png"));
-                        else
-                            icon=QIcon::fromTheme(QString("application-x-desktop"));
-                    }
                 }
                 icon.paint(painter,iconRect,Qt::AlignLeft);
-                painter->setPen(QPen(Qt::black));
+                painter->setPen(QPen(Qt::white));
                 QString appname=pUkuiMenuInterface->getAppName(strlist.at(0));
                 painter->drawText(QRect(iconRect.right()+15,rect.y(),
                                         rect.width()-62,rect.height()),Qt::AlignVCenter,appname);
@@ -131,73 +118,6 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
                 }
                 setting->endGroup();
             }
-            else
-            {
-                painter->setPen(QPen(Qt::black));
-                QRect textRect=QRect(rect.x()+11,rect.y()+12,rect.width(),rect.height());
-                painter->drawText(textRect,Qt::AlignLeft,strlist.at(0));
-                painter->setRenderHint(QPainter::Antialiasing, true);
-                painter->setPen(QPen(QColor("#FFFFFF"),1));
-                painter->setOpacity(0.06);
-                painter->drawLine(QPoint(5,rect.bottom()),QPoint(rect.right(),rect.bottom()));
-            }
-
-        }
-        else
-        {
-            painter->setOpacity(1);
-            QRect iconRect=QRect(rect.left()+11,rect.y()+(rect.height()-32)/2,32,32);
-            QString iconstr=pUkuiMenuInterface->getAppIcon(strlist.at(0));
-            QIcon icon;
-            QFileInfo iconFileInfo(iconstr);
-            if(iconFileInfo.isFile() && (iconstr.endsWith(".png") || iconstr.endsWith(".svg")))
-                icon=QIcon(iconstr);
-            else
-            {
-                iconstr.remove(".png");
-                iconstr.remove(".svg");
-                icon=QIcon::fromTheme(iconstr);
-                if(icon.isNull())
-                {
-                    if(pUkuiMenuInterface->getAppName(strlist.at(0))=="baidunetdisk")
-                        syslog(LOG_LOCAL0 | LOG_DEBUG ,"---2---");
-                    if(QFile::exists(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("svg")))
-                        icon=QIcon(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("svg"));
-                    else if(QFile::exists(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("png")))
-                        icon=QIcon(QString("/usr/share/icons/hicolor/scalable/apps/%1.%2").arg(iconstr).arg("png"));
-                    else if(QFile::exists(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("png")))
-                        icon=QIcon(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("png"));
-                    else if(QFile::exists(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("svg")))
-                        icon=QIcon(QString("/usr/share/icons/hicolor/32x32/apps/%1.%2").arg(iconstr).arg("svg"));
-                    else
-                        icon=QIcon::fromTheme(QString("application-x-desktop"));
-                }
-            }
-            icon.paint(painter,iconRect,Qt::AlignLeft);
-            QString appname=pUkuiMenuInterface->getAppName(strlist.at(0));
-            QFileInfo fileInfo(strlist.at(0));
-            QString desktopfn=fileInfo.fileName();
-            bool is_locked=false;
-            setting->beginGroup("lockapplication");
-            if(setting->contains(desktopfn))
-            {
-                is_locked=true;
-                QIcon icon(QString(":/data/img/mainviewwidget/lock.svg"));
-                icon.paint(painter,QRect(rect.topRight().x()-22,rect.y()+(rect.height()-16)/2,16,16));
-            }
-            setting->endGroup();
-            setting->beginGroup("recentapp");
-            if(setting->contains(desktopfn) && !is_locked)
-            {
-                painter->setPen(QPen(Qt::NoPen));
-                painter->setBrush(QColor("#4d94ff"));
-                painter->drawEllipse(QPoint(rect.topRight().x()-22,rect.y()+(rect.height()-8)/2+4),4,4);
-            }
-            setting->endGroup();
-            painter->setOpacity(1);
-            painter->setPen(QPen(Qt::black));//可更改应用字体颜色，不止这一处？？？
-            painter->drawText(QRect(iconRect.right()+15,rect.y(),
-                                    rect.width()-62,rect.height()),Qt::AlignVCenter,appname);
         }
         painter->restore();
     }
