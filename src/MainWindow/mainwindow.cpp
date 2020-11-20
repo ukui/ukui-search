@@ -100,18 +100,6 @@ void MainWindow::bootOptionsFilter(QString opt)
     }
 }
 
-//void centerToScreen(QWidget* widget) {
-//    if (!widget)
-//      return;
-//    QDesktopWidget* m = QApplication::desktop();
-//    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
-//    int desk_x = desk_rect.width();
-//    int desk_y = desk_rect.height();
-//    int x = widget->width();
-//    int y = widget->height();
-//    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
-//}
-
 /**
  * 鼠标点击窗口外部事件
  */
@@ -127,91 +115,6 @@ bool MainWindow::event ( QEvent * event )
         }
     }
     return QWidget::event(event);
-}
-
-/*XkbEventsPress 和XkbEventsRelease 为设置快捷键的函数
- * 采用先注释，验证结束再删除的方式
- * 经过两轮（两周）测试验证无问题后删除这两个函数及调用
-*/
-void MainWindow::XkbEventsPress(const QString &keycode)
-{
-//    QString KeyName;
-//    if (keycode.length() >= 8){
-//        KeyName = keycode.left(8);
-//    }
-//    if(KeyName.compare("Super_L+")==0){
-//        m_winFlag = true;
-//    }
-//    if(m_winFlag && keycode == "Super_L"){
-//        m_winFlag = false;
-//        return;
-//    }
-
-}
-
-void MainWindow::XkbEventsRelease(const QString &keycode)
-{
-//    QString KeyName;
-//    static bool winFlag=false;
-//    if (keycode.length() >= 8){
-//        KeyName = keycode.left(8);
-//    }
-//    if(KeyName.compare("Super_L+")==0){
-//        winFlag = true;
-//    }
-//    if(winFlag && keycode == "Super_L"){
-//        winFlag = false;
-//        return;
-//    }else if(m_winFlag && keycode == "Super_L")
-//        return;
-
-//    if((keycode == "Super_L") || (keycode == "Super_R"))
-//    {
-//        //        if(this->isVisible())
-//        if(QApplication::activeWindow() == this)
-//        {
-//            this->hide();
-//            m_mainViewWid->widgetMakeZero();
-//            //            m_sideBarWid->widgetMakeZero();
-//        }
-//        else{
-//            this->loadMainWindow();
-//            this->show();
-//            this->raise();
-//            this->activateWindow();
-//        }
-//    }
-
-//    if(keycode == "Escape")
-//    {
-//        this->hide();
-//        m_mainViewWid->widgetMakeZero();
-//        //        m_sideBarWid->widgetMakeZero();
-//    }
-}
-
-void MainWindow::winKeyReleaseSlot(const QString &key)
-{
-#if 0
-    if(key=="winKeyRelease" || key=="win-key-release")
-    {
-        QGSettings gsetting(QString("org.ukui.session").toLocal8Bit());
-        if(gsetting.get(QString("win-key-release")).toBool())
-        {
-            disconnect(XEventMonitor::instance(), SIGNAL(keyRelease(QString)),
-                       this,SLOT(XkbEventsRelease(QString)));
-            disconnect(XEventMonitor::instance(), SIGNAL(keyPress(QString)),
-                       this,SLOT(XkbEventsPress(QString)));
-        }
-        else
-        {
-            connect(XEventMonitor::instance(), SIGNAL(keyRelease(QString)),
-                    this,SLOT(XkbEventsRelease(QString)));
-            connect(XEventMonitor::instance(), SIGNAL(keyPress(QString)),
-                    this,SLOT(XkbEventsPress(QString)));
-        }
-    }
-#endif
 }
 
 void MainWindow::loadMainWindow()
@@ -232,64 +135,12 @@ void MainWindow::loadMainWindow()
 void MainWindow::monitorResolutionChange(QRect rect)
 {
     Q_UNUSED(rect);
-    repaintWidget();
 }
 
 void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 {
     Q_UNUSED(screen);
-    repaintWidget();
 
-}
-
-void MainWindow::repaintWidget()
-{
-#if 0
-    Style::initWidStyle();
-    this->setMinimumSize(Style::minw,Style::minh);
-    m_line->setFixedSize(1,this->height());
-    m_mainViewWid->repaintWidget();
-
-    if(QApplication::activeWindow() == this)
-    {
-        int position=0;
-        int panelSize=0;
-        if(QGSettings::isSchemaInstalled(QString("org.ukui.panel.settings").toLocal8Bit()))
-        {
-            QGSettings* gsetting=new QGSettings(QString("org.ukui.panel.settings").toLocal8Bit());
-            if(gsetting->keys().contains(QString("panelposition")))
-                position=gsetting->get("panelposition").toInt();
-            else
-                position=0;
-            if(gsetting->keys().contains(QString("panelsize")))
-                panelSize=gsetting->get("panelsize").toInt();
-            else
-                panelSize=46;
-        }
-        else
-        {
-            position=0;
-            panelSize=46;
-        }
-        int x=QApplication::primaryScreen()->geometry().x();
-        int y=QApplication::primaryScreen()->geometry().y();
-        if(position==0)
-            this->setGeometry(QRect(x,y+QApplication::primaryScreen()->geometry().height()-panelSize-Style::minh,
-                                    Style::minw,Style::minh));
-        else if(position==1)
-            this->setGeometry(QRect(x,y+panelSize,Style::minw,Style::minh));
-        else if(position==2)
-            this->setGeometry(QRect(x+panelSize,y,Style::minw,Style::minh));
-        else
-            this->setGeometry(QRect(x+QApplication::primaryScreen()->geometry().width()-panelSize-Style::minw,y,
-                                    Style::minw,Style::minh));
-
-        //            QHBoxLayout *mainLayout=qobject_cast<QHBoxLayout*>(this->centralWidget()->layout());
-        //            mainLayout->insertWidget(1,m_line);
-        m_mainViewWid->resizeControl();
-        setFrameStyle();
-    }
-#endif
 }
 
 void MainWindow::setFrameStyle()
@@ -331,19 +182,5 @@ void MainWindow::setFrameStyle()
     setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
     m_frame->setStyleSheet(style);//跟主题变化的style，暂时先不用，先设定透明
     //     m_frame->setStyleSheet("border:0px;background:transparent;");
-#endif
-}
-
-void MainWindow::keyPressEvent(QKeyEvent *e)
-{
-#if 0
-    if(e->type()==KeyPress+4)
-    {
-        QKeyEvent* ke=static_cast<QKeyEvent*>(e);
-        if((ke->key()>=0x30 && ke->key()<=0x39) || (ke->key()>=0x41 && ke->key()<=0x5a))
-        {
-            m_mainViewWid->setLineEditFocus(e->text());
-        }
-    }
 #endif
 }

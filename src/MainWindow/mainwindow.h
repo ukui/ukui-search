@@ -68,22 +68,8 @@ protected:
      * @brief Handle events clicking on the outside of the window
      */
     bool event(QEvent *event);
-//    void paintEvent(QPaintEvent*);
-    /**
-     * @brief The query box responds to keyboard events
-     */
-    void keyPressEvent(QKeyEvent* e);
-    /**
-     * @brief Repaint window
-     */
-    void repaintWidget();
 
 public Q_SLOTS:
-    /**
-     * @brief Monitor win key events
-     */
-    void XkbEventsPress(const QString &keycode);
-    void XkbEventsRelease(const QString &keycode);
     /**
      * @brief Monitor screen resolution
      * @param rect: Screen resolution
@@ -94,10 +80,6 @@ public Q_SLOTS:
      * @param screen: Primary screen
      */
     void primaryScreenChangedSlot(QScreen *screen);
-    /**
-     * @brief Monitor win-key-release key value.
-     */
-    void winKeyReleaseSlot(const QString &key);
 
     void bootOptionsFilter(QString opt);                              // 过滤终端命令
 };

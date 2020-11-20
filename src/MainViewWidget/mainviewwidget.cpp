@@ -363,10 +363,6 @@ void MainViewWidget::resizeControl()
 {
     if(m_isFullScreen)
     {
-        //        if(m_widgetState==2)
-        //            m_fullLetterWid->setLetterBtnGeometry();
-        //        if(m_widgetState==3)
-        //            m_fullFunctionWid->setFunctionBtnGeometry();
 
         this->setFixedSize(Style::MainViewWidWidth,
                            0);
