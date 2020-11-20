@@ -98,7 +98,7 @@ void MainViewWidget::initUi()
     m_topWidget->setFixedSize(30,30);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,Style::defaultQueryLineEditHeight);
+    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
     m_queryText->adjustSize();
 //    m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
 //                                  m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
@@ -219,6 +219,7 @@ void MainViewWidget::initQueryLineEdit()
 /*事件过滤*/
 bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
 {
+#if 1
     if(watched==m_queryLineEdit)
     {
         if(event->type()==QEvent::FocusIn)
@@ -236,12 +237,11 @@ bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
             {
                 m_animation->stop();
                 m_animation->setStartValue(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-                                                 m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
+                                                 m_queryIcon->width()+m_queryText->width()+10,0));
                 m_animation->setEndValue(QRect(0,0,
-                                               m_queryIcon->width()+5,Style::QueryLineEditHeight));
+                                               m_queryIcon->width()+5,0));
                 m_animation->setEasingCurve(QEasingCurve::OutQuad);
                 m_animation->start();
-                //                 m_queryLineEdit->setReadOnly(true);
                 m_queryLineEdit->setTextMargins(-5,1,0,1);
             }
             m_isSearching=true;
@@ -259,9 +259,9 @@ bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
                     m_queryLineEdit->setStyleSheet(style);
                     m_queryText->adjustSize();
                     m_animation->setStartValue(QRect(0,0,
-                                                     m_queryIcon->width()+5,Style::QueryLineEditHeight));
+                                                     m_queryIcon->width()+5,0));
                     m_animation->setEndValue(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-                                                   m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
+                                                   m_queryIcon->width()+m_queryText->width()+10,0));
                     m_animation->setEasingCurve(QEasingCurve::InQuad);
                     m_animation->start();
                 }
@@ -277,6 +277,7 @@ bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QWidget::eventFilter(watched,event);     // 最后将事件交给上层对话框
+#endif
 }
 
 /**
@@ -325,7 +326,7 @@ void MainViewWidget::loadMinMainView()
     m_topWidget->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,Style::defaultQueryLineEditHeight);
+    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
     if(m_queryLineEdit->text().isEmpty())
     {
         if(m_queryWid->layout()->count()==1)
@@ -368,9 +369,9 @@ void MainViewWidget::resizeControl()
         //            m_fullFunctionWid->setFunctionBtnGeometry();
 
         this->setFixedSize(Style::MainViewWidWidth,
-                           Style::heightavailable);
+                           0);
         m_topWidget->setFixedSize(this->width(),Style::TopWidgetHeight);
-        m_queryLineEdit->setFixedSize(Style::QueryLineEditWidth,Style::QueryLineEditHeight);
+        m_queryLineEdit->setFixedSize(Style::QueryLineEditWidth,0);
 
         m_topLayout->setContentsMargins((m_topWidget->width()-Style::LeftWidWidth-m_queryLineEdit->width())/2+Style::LeftWidWidth,
                                         0,

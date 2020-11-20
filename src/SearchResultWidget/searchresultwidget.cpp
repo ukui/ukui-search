@@ -39,7 +39,7 @@ void SearchResultWidget::initUi()
 //    this->setStyleSheet("border:0px;background:transparent;");
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedWidth(Style::defaultMainViewWidWidth);
-    this->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultContentWidHeight);
+    this->setFixedSize(Style::defaultMainViewWidWidth,200);
 
     m_listView=new ListView(this,this->width()-4,this->height(),3);
     m_listView->setGeometry(QRect(0,0,this->width()-4,200));

@@ -52,34 +52,6 @@
 #define QueryLineEditClickedBorder "rgba(61, 107, 229, 1)" //搜索框背景选中边框
 #define AppBtnHover "#ffffff" //按钮悬浮
 
-/**
- * 大小(全屏)
- */
-////左侧栏
-//#define LeftWidSize leftsize //大小
-//#define LeftMarginLeftSize Leftmarginleftsize //内左侧边距
-//#define LeftFontSize leftfontsize //字体大小
-//#define LeftIconSize lefticonsize //图标大小
-//#define LeftSpaceIconLeft leftspaceiconleft //按钮内左侧边距
-//#define LeftSpaceIconText leftspaceicontext //按钮图标与文字内边距
-//#define LeftSpaceBetweenItem leftspacebetweenitem //item间距
-
-////应用列表栏
-//#define AppListWidSize applistwidsize //大小
-//#define AppListFontSize applistfontsize //字体大小
-//#define AppListIconSize applisticonsize //图标大小
-//#define AppListSpaceBetweenItem applistspacebetweenitem //item间距
-//#define SliderSize slidersize //滑块大小
-
-////右侧栏
-//#define RightWidSize rightsize //大小
-//#define RightMarginLeftSize rightmarginleftsize //内右侧边距
-//#define RightFontSize rightfontsize //字体大小
-//#define RightIconSize righticonsize //图标大小
-//#define RightSpaceIconLeft rightspaceiconleft //按钮内左侧边距
-//#define RightSpaceIconText rightspaceicontext //按钮图标与文字内边距
-//#define RightSpaceBetweenItem rightspacebetweenitem //item间距
-
 class Style
 {
 public:
@@ -99,15 +71,11 @@ public:
     /**
       * 全屏
       */
-    //主窗口
-    static int widthavailable;
-    static int heightavailable;
     //主视图
     static int MainViewWidWidth;//宽度
     //搜索栏
     static int TopWidgetHeight;//高度
     static int QueryLineEditWidth;//搜索框宽度
-    static int QueryLineEditHeight;//搜索框高度
     static int QueryLineEditIconSize;//搜索框图标
     static int QueryLineEditFontSize;//搜索框字体大小
     //左侧栏
@@ -136,23 +104,6 @@ public:
     static int AppSpaceBetweenIconText;//图标与文字边距
     static int AppBottomSpace;//下侧边距
     static int SliderSize; //滑块大小
-
-    /**
-     * 侧边栏
-     */
-    static int SideBarWidWidth; //宽度
-    static int SideBarMargin; //内右侧边距
-    static int MinMaxWidWidth; //放大缩小界面宽度
-    static int MinMaxWidHeight; //放大缩小界面高度
-    static int MinMaxBtnWidth; //放大缩小按钮宽度
-    static int MinMaxIconSize; //放大缩小按钮大小
-    static int SideBarBtnWidth;//按钮宽度
-    static int SideBarBtnHeight;//按钮高度
-    static int SideBarFontSize; //字体大小
-    static int SideBarIconSize; //图标大小
-    static int SideBarSpaceIconLeft; //按钮内左侧边距
-    static int SideBarSpaceIconText; //按钮图标与文字内边距
-    static int SideBarSpaceBetweenItem; //item间距
 
 };
 

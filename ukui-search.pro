@@ -45,7 +45,6 @@ INSTALLS += qm_files
 DEFINES += QM_FILES_INSTALL_PATH='\\"$${QM_FILES_INSTALL_PATH}\\"'
 
 SOURCES += \
-    src/MainViewWidget/directorychangedthread.cpp \
     src/MainViewWidget/mainviewwidget.cpp \
     src/MainWindow/mainwindow.cpp \
     src/SearchFile/filemodel.cpp \
@@ -73,7 +72,6 @@ SOURCES += \
 
 
 HEADERS  += \
-    src/MainViewWidget/directorychangedthread.h \
     src/MainViewWidget/mainviewwidget.h \
     src/MainWindow/mainwindow.h \
     src/SearchFile/filemodel.h \

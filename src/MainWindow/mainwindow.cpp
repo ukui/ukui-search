@@ -77,13 +77,6 @@ void MainWindow::initUi()
     m_frame->setLayout(mainlayout);
 
     mainlayout->addWidget(m_mainViewWid);
-    m_line=new QFrame;
-    m_line->setFrameShape(QFrame::VLine);
-    m_line->setFixedSize(1,this->height());
-    mainlayout->addWidget(m_line);
-    char linestyle[100];
-    sprintf(linestyle, "background-color:%s;",LineBackground);
-    m_line->setStyleSheet(linestyle);
 
     connect(QApplication::primaryScreen(),&QScreen::geometryChanged,
             this,&MainWindow::monitorResolutionChange);
