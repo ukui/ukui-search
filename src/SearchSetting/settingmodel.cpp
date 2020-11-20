@@ -125,7 +125,7 @@ void settingModel::matching(){
             if(rx.exactMatch(*it)){
                 returnresult.append(*it);//中文名
                 commandresult.append(settingkey);//命令
-                QString str="/home/li/setting/"+settingkey+".svg";
+                QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
                 iconresult.append(QIcon(str));
 
 

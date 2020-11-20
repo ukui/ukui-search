@@ -126,13 +126,13 @@ void filemodel::matchesChanged()
 }
 
 void filemodel::commandsearch(){
-    if(sourcetext.size()<6)
+    if(sourcetext.size()<3)
         return;
     struct passwd *pwd;
     pwd=getpwuid(getuid());
         QString str =sourcetext;
-        QString name =QString::fromLocal8Bit(pwd->pw_name)+QString::fromLocal8Bit("/");
-        QString command=QString::fromLocal8Bit("locate /home/")+name+str;
+        QString name =QString::fromLocal8Bit(pwd->pw_name)+QString::fromLocal8Bit("/ -name ");
+        QString command=QString::fromLocal8Bit("find /home/")+name+str;
         cmd->setReadChannel(QProcess::StandardOutput);
         cmd->start(command);
         cmd->startDetached(cmd->program());

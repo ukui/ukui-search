@@ -336,13 +336,14 @@ void MainViewWidget::loadMinMainView()
             childWid->setParent(nullptr);
         }
     }
-    mainLayout->addWidget(m_searchResultWid);
 
-    m_fileview->setModel(m_filemodel);
+
     mainLayout->addWidget(m_fileview);
-
-    m_settingview->setModel(m_settingmodel);
+    mainLayout->addWidget(m_searchResultWid);
     mainLayout->addWidget(m_settingview);
+    m_fileview->setModel(m_filemodel);
+    m_settingview->setModel(m_settingmodel);
+
 
     //添加伸缩因子
     mainLayout->addStretch();
