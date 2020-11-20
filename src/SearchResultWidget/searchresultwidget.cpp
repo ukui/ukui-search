@@ -68,4 +68,6 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
         m_data.append(QStringList()<<appinfo.at(0)<<"1");
 
     m_listView->updateData(m_data);
+    //根据获取的应用数量，刷新界面高度
+    this->setFixedSize(Style::defaultMainViewWidWidth,m_data.size()*46);
 }
