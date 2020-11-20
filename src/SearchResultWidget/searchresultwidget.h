@@ -44,13 +44,6 @@ public:
      * @brief Update application list
      */
     void updateAppListView(QVector<QStringList> arg);
-    /**
-     * @brief Move the scroll bar
-     * @param type: Scroll way,Only the following parameters can be entered:
-     *  0: moving up
-     *  1: moving down
-     */
-    void moveScrollBar(int type);
 private:
     UkuiMenuInterface* m_ukuiMenuInterface=nullptr;
     ListView* m_listView=nullptr;

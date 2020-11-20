@@ -36,7 +36,6 @@ void SearchResultWidget::initUi()
 {
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
-//    this->setStyleSheet("border:0px;background:transparent;");
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedSize(Style::defaultMainViewWidWidth,200);
 
@@ -69,12 +68,4 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
         m_data.append(QStringList()<<appinfo.at(0)<<"1");
 
     m_listView->updateData(m_data);
-}
-
-void SearchResultWidget::moveScrollBar(int type)
-{
-    if(type==0)
-        m_listView->verticalScrollBar()->setSliderPosition(m_listView->verticalScrollBar()->sliderPosition()-100);
-    else
-        m_listView->verticalScrollBar()->setSliderPosition(m_listView->verticalScrollBar()->sliderPosition()+100);
 }
