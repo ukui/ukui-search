@@ -36,8 +36,25 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 {
 
 
+    search1 = QString::fromLocal8Bit("");
     m_fileview =new QTreeView;
     m_settingview = new QTreeView;
+
+    search_web_page = new QPushButton;
+
+    search_web_page->setStyleSheet("QPushButton{background-color:rgba(0,0,0,100%);color: white;border-radius: 10px;border: 2px groove gray;border-style: outset;}");
+
+    search_web_page->setText("请使用百度搜索");
+
+    search_web_page->setVisible(false);
+    connect(search_web_page,&QPushButton::clicked,this,[=](){
+           QString str = QString::fromLocal8Bit("https://www.baidu.com/baidu?tn=ubuntuu_cb&ie=utf-8&wd=").append(search1);
+           QProcess p;
+           p.setProgram(QString::fromLocal8Bit("chromium-browser"));
+           p.setArguments(QStringList()<<str);
+           p.startDetached(p.program(), p.arguments());
+           p.waitForFinished(-1);
+       });
 
     //初始化文件与设置view为隐藏
     m_fileview->setVisible(false);
@@ -195,6 +212,22 @@ void MainViewWidget::initQueryLineEdit()
 
     });
 
+    //网页搜索
+    connect(m_queryLineEdit, &QLineEdit::textChanged, search_web_page,[=](){
+        QString search=QString::fromLocal8Bit("使用百度搜索").append(QString::fromLocal8Bit(" ")).append(QString::fromLocal8Bit("\"")).append(m_queryLineEdit->text()).append(QString::fromLocal8Bit("\""));
+//        QString search = QString::fromLocal8Bit(QString("使用百度搜索 1%2%3%").arg(QString::fromLocal8Bit("")).arg(input->text().arg(QString::fromLocal8Bit(""))));
+        search_web_page->setText(search);
+        search1=m_queryLineEdit->text();
+        qDebug()<<"search"<<search;
+        //根据判断来隐藏与显示网页搜索
+        if(search1 != QString::fromLocal8Bit("")){
+            search_web_page->setVisible(true);
+        } else {
+            search_web_page->setVisible(false);
+        }
+    });
+
+
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_filemodel,[=](const QString &search){
                 m_filemodel->matchstart(search);
     });
@@ -341,6 +374,7 @@ void MainViewWidget::loadMinMainView()
     mainLayout->addWidget(m_fileview);
     mainLayout->addWidget(m_searchResultWid);
     mainLayout->addWidget(m_settingview);
+    mainLayout->addWidget(search_web_page);
     m_fileview->setModel(m_filemodel);
     m_settingview->setModel(m_settingmodel);
 

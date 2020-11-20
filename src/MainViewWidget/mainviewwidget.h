@@ -97,6 +97,10 @@ private:
     int fileNum; //记录搜索出来的文件数量
     int SettingNum;//记录搜索出来的设置数量
 
+   QPushButton *search_web_page;
+
+   QString search1;
+
 
 
 
