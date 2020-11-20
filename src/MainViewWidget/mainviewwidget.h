@@ -135,11 +135,6 @@ public Q_SLOTS:
      */
     void animationFinishedSlot();
     /**
-     * @brief Monitor application startup
-     * @param msg: Application information
-     */
-    void ViewOpenedSlot(QDBusMessage msg);
-    /**
      * @brief Receive search results
      * @param arg: Search results
      */

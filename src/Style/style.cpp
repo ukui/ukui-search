@@ -84,9 +84,9 @@ void Style::initWidStyle()
     else
         len=10;
 
-    minw=222;
+    minw=678;
     minh=600;
-    defaultMainViewWidWidth=320;
+    defaultMainViewWidWidth=678;
     defaultTopWidHeight=54;
     defaultQueryLineEditWidth=288;
     defaultContentWidHeight=600;

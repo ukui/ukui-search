@@ -49,7 +49,6 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
     //通过信号监听内容并设置宽度
     connect(m_filemodel,&filemodel::requestUpdateSignal,this,&MainViewWidget::setFileView);
-
     connect(m_settingmodel,&settingModel::requestUpdateSignal,this,&MainViewWidget::setSettingView);
 
     initUi();
@@ -58,7 +57,6 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 MainViewWidget::~MainViewWidget()
 {
     delete m_ukuiMenuInterface;
-//    delete m_directoryChangedThread;
     delete m_animation;
     delete m_searchAppThread;
 }
@@ -88,21 +86,15 @@ void MainViewWidget::initUi()
     m_searchResultWid=new SearchResultWidget;
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
-    //发送隐藏主界面信号
-    connect(m_searchResultWid,&SearchResultWidget::sendHideMainWindowSignal,this,&MainViewWidget::sendHideMainWindowSignal);
 
     addTopControl();
     //加载默认视图
-    //    loadMinMainView();
     this->setFixedSize(Style::defaultMainViewWidWidth,Style::minh);
     m_topWidget->setFixedSize(30,30);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
     m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
     m_queryText->adjustSize();
-//    m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-//                                  m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
-//    m_queryWid->show();
 }
 
 
@@ -332,9 +324,6 @@ void MainViewWidget::loadMinMainView()
         if(m_queryWid->layout()->count()==1)
             m_queryWid->layout()->addWidget(m_queryText);
         m_queryText->adjustSize();
-//        m_queryWid->setGeometry(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-//                                      m_queryIcon->width()+m_queryText->width()+10,Style::QueryLineEditHeight));
-//        m_queryWid->show();
     }
 
     QLayoutItem* child;
@@ -382,56 +371,6 @@ void MainViewWidget::resizeControl()
         m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
     }
 
-}
-
-
-/**
- * 进程开启监控槽函数
- */
-void MainViewWidget::ViewOpenedSlot(QDBusMessage msg)
-{
-    QString path=msg.arguments().at(0).value<QString>();
-    QString type=msg.arguments().at(1).value<QString>();
-    if(QString::compare(type,"application")==0)
-    {
-        QDBusInterface ifaceapp("org.ayatana.bamf",path,
-                                "org.ayatana.bamf.application",QDBusConnection::sessionBus());
-        QDBusReply<QString> replyapp =ifaceapp.call("DesktopFile");
-        QString desktopfp=replyapp.value();
-        QStringList desktopfpList=m_ukuiMenuInterface->getDesktopFilePath();
-        if(desktopfpList.contains(desktopfp))
-        {
-            QFileInfo fileInfo(desktopfp);
-            QString desktopfn=fileInfo.fileName();
-
-            QString dateTimeKey;
-            dateTimeKey.clear();
-            if(!desktopfn.isEmpty())
-            {
-                m_setting->beginGroup("lockapplication");
-                bool ret=m_setting->contains(desktopfn);
-                m_setting->endGroup();
-                if(!ret)
-                {
-                    m_setting->beginGroup("application");
-                    m_setting->setValue(desktopfn,m_setting->value(desktopfn).toInt()+1);
-                    dateTimeKey=desktopfn;
-                    m_setting->sync();
-                    m_setting->endGroup();
-                }
-            }
-
-            if(!dateTimeKey.isEmpty())
-            {
-                QDateTime dt=QDateTime::currentDateTime();
-                int datetime=dt.toTime_t();
-                m_setting->beginGroup("datetime");
-                m_setting->setValue(dateTimeKey,datetime);
-                m_setting->sync();
-                m_setting->endGroup();
-            }
-        }
-    }
 }
 
 void MainViewWidget::requestUpdateSlot()

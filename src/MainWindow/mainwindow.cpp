@@ -181,6 +181,5 @@ void MainWindow::setFrameStyle()
     path.quadTo(rect.topRight(), rect.topRight() + QPointF(-radius, -0));
     setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
     m_frame->setStyleSheet(style);//跟主题变化的style，暂时先不用，先设定透明
-    //     m_frame->setStyleSheet("border:0px;background:transparent;");
 #endif
 }

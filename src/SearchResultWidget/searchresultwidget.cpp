@@ -38,13 +38,10 @@ void SearchResultWidget::initUi()
     this->setAttribute(Qt::WA_StyledBackground,true);
 //    this->setStyleSheet("border:0px;background:transparent;");
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    this->setFixedWidth(Style::defaultMainViewWidWidth);
     this->setFixedSize(Style::defaultMainViewWidWidth,200);
 
     m_listView=new ListView(this,this->width()-4,this->height(),3);
     m_listView->setGeometry(QRect(0,0,this->width()-4,200));
-//    m_listView->setVisible(false);
-//    m_listView->setsize(300,300);
     m_listView->show();
 
     m_data.clear();
@@ -52,7 +49,6 @@ void SearchResultWidget::initUi()
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(m_listView,&ListView::sendItemClickedSignal,this,&SearchResultWidget::execApplication);
-    connect(m_listView,&ListView::sendHideMainWindowSignal,this,&SearchResultWidget::sendHideMainWindowSignal);
 }
 
 /**
@@ -60,7 +56,6 @@ void SearchResultWidget::initUi()
  */
 void SearchResultWidget::execApplication(QStringList arg)
 {
-    Q_EMIT sendHideMainWindowSignal();
     QString desktopfp=arg.at(0);
     GDesktopAppInfo * desktopAppInfo=g_desktop_app_info_new_from_filename(desktopfp.toLocal8Bit().data());
     g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
@@ -74,38 +69,12 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
         m_data.append(QStringList()<<appinfo.at(0)<<"1");
 
     m_listView->updateData(m_data);
-    changeListView(m_data.count());
-
 }
 
-void SearchResultWidget::changeListView(int rows)
-{
-    qDebug()<<rows;
-
-    if(rows!=0){
-        if(rows<=3){
-          m_listView->setsize(300,rows*43);
-        } else {
-          m_listView->setsize(300,3*43);
-        }
-
-    }else
-    {
-        m_listView->setsize(300,0);
-    }
-
-}
 void SearchResultWidget::moveScrollBar(int type)
 {
     if(type==0)
         m_listView->verticalScrollBar()->setSliderPosition(m_listView->verticalScrollBar()->sliderPosition()-100);
     else
         m_listView->verticalScrollBar()->setSliderPosition(m_listView->verticalScrollBar()->sliderPosition()+100);
-}
-
-void SearchResultWidget::repaintWidget()
-{
-    this->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultContentWidHeight);
-    m_listView->setGeometry(QRect(0,0,this->width()-4,this->height()));
-    m_listView->show();
 }
