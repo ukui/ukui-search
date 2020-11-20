@@ -53,14 +53,11 @@ public:
      * @brief Initializes the interface state
      */
     void widgetMakeZero();
-    /**
-     * @brief Resize the control
-     */
-    void resizeControl();
+
+    void initSearchWidget();
+    void AddSearchWidget();
 
 private:
-
-    UkuiMenuInterface *m_ukuiMenuInterface=nullptr;
     QVBoxLayout* mainLayout;
     QWidget *m_topWidget=nullptr;
     QHBoxLayout *m_topLayout=nullptr;
@@ -143,15 +140,6 @@ public Q_SLOTS:
      * @param arg: Search results
      */
     void recvSearchResult(QVector<QStringList> arg);
-    /**
-     * @brief Monitor icon theme changes
-     * @param key: Key
-     */
-    void iconThemeChangeSlot(QString key);
-    /**
-     * @brief Request for updating the application list
-     */
-    void requestUpdateSlot();
 
     void setFileView(int row); //改变文件view大小的槽函数
 
@@ -161,23 +149,10 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     /**
-     * @brief Desktop file directory change signal
-     */
-    void directoryChangedSignal();
-    /**
      * @brief Send the search keyword to the SearchAppThread
      * @param arg: Search keyword
      */
     void sendSearchKeyword(QString arg);
-    /**
-     * @brief Send the changed directory to DirectoryChangedThread
-     * @param arg: Desktop file directory
-     */
-    void sendDirectoryPath(QString arg);
-    /**
-     * @brief Send a hidden main window signal to the MainViewWidget
-     */
-    void sendHideMainWindowSignal();
 };
 
 #endif // MAINVIEWWIDGET_H

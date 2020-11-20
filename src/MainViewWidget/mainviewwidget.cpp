@@ -34,8 +34,6 @@
 MainViewWidget::MainViewWidget(QWidget *parent) :
     QWidget(parent)
 {
-
-
     search1 = QString::fromLocal8Bit("");
     m_fileview =new QTreeView;
     m_settingview = new QTreeView;
@@ -56,24 +54,14 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
            p.waitForFinished(-1);
        });
 
-    //初始化文件与设置view为隐藏
-    m_fileview->setVisible(false);
-    m_settingview->setVisible(false);
-
-    m_filemodel = new filemodel;
-    m_settingmodel = new settingModel;
-
-
-    //通过信号监听内容并设置宽度
-    connect(m_filemodel,&filemodel::requestUpdateSignal,this,&MainViewWidget::setFileView);
-    connect(m_settingmodel,&settingModel::requestUpdateSignal,this,&MainViewWidget::setSettingView);
-
+    //初始化搜索的配置，包括信号监听
+    initSearchWidget();
+    //初始化ui
     initUi();
 }
 
 MainViewWidget::~MainViewWidget()
 {
-    delete m_ukuiMenuInterface;
     delete m_animation;
     delete m_searchAppThread;
 }
@@ -99,10 +87,6 @@ void MainViewWidget::initUi()
     this->setLayout(mainLayout);
 
     this->setFocusPolicy(Qt::NoFocus);
-
-    m_searchResultWid=new SearchResultWidget;
-    m_ukuiMenuInterface=new UkuiMenuInterface;
-
 
     addTopControl();
     //加载默认视图
@@ -370,54 +354,43 @@ void MainViewWidget::loadMinMainView()
         }
     }
 
+    //所有的搜索界面添加入口
+    AddSearchWidget();
+}
 
-    mainLayout->addWidget(m_fileview);
-    mainLayout->addWidget(m_searchResultWid);
-    mainLayout->addWidget(m_settingview);
-    mainLayout->addWidget(search_web_page);
+//搜索到的界面（包括应用搜索，文件搜索，设置搜索）的初始化
+void MainViewWidget::initSearchWidget()
+{
+    //初始化文件与设置view为隐藏
+    m_fileview->setVisible(false);
+    m_settingview->setVisible(false);
+
+    m_filemodel = new filemodel;
+    m_settingmodel = new settingModel;
+
+    //通过信号监听内容并设置宽度
+    connect(m_filemodel,&filemodel::requestUpdateSignal,this,&MainViewWidget::setFileView);
+    connect(m_settingmodel,&settingModel::requestUpdateSignal,this,&MainViewWidget::setSettingView);
+
+    m_searchResultWid=new SearchResultWidget;
+}
+//添加搜索到的界面
+void MainViewWidget::AddSearchWidget()
+{
     m_fileview->setModel(m_filemodel);
     m_settingview->setModel(m_settingmodel);
 
+    //添加已经安装的应用界面
+    mainLayout->addWidget(m_searchResultWid);
+    //添加文件搜索界面
+    mainLayout->addWidget(m_fileview);
+    //添加控制面板搜索项目界面
+    mainLayout->addWidget(m_settingview);
+    //网页搜索界面
+    mainLayout->addWidget(search_web_page);
 
     //添加伸缩因子
     mainLayout->addStretch();
-}
-
-void MainViewWidget::resizeControl()
-{
-    if(m_isFullScreen)
-    {
-
-        this->setFixedSize(Style::MainViewWidWidth,
-                           0);
-        m_topWidget->setFixedSize(this->width(),Style::TopWidgetHeight);
-        m_queryLineEdit->setFixedSize(Style::QueryLineEditWidth,0);
-
-        m_topLayout->setContentsMargins((m_topWidget->width()-Style::LeftWidWidth-m_queryLineEdit->width())/2+Style::LeftWidWidth,
-                                        0,
-                                        (m_topWidget->width()-Style::LeftWidWidth-m_queryLineEdit->width())/2,
-                                        0);
-    }
-    else
-    {
-        this->setFixedSize(Style::defaultMainViewWidWidth,Style::minh);
-        m_topWidget->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
-        m_topLayout->setContentsMargins(0,0,0,0);
-        m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-    }
-
-}
-
-void MainViewWidget::requestUpdateSlot()
-{
-//    m_directoryChangedThread->quit();
-    Q_EMIT directoryChangedSignal();
-}
-
-void MainViewWidget::iconThemeChangeSlot(QString key)
-{
-    if(key=="iconThemeName" || key=="icon-theme-name")
-        Q_EMIT directoryChangedSignal();
 }
 
 /*
