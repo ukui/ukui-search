@@ -8,7 +8,7 @@ filemodel::filemodel():
     fileutils(new FileUtils)
 {
 
-    header<<tr("File")<<tr("")<<tr("");
+    header<<tr("文件")<<tr("")<<tr("");
     startmatchTimer->setSingleShot(true);
     startmatchTimer->setInterval(10);
     connect(startmatchTimer,&QTimer::timeout,this,[=](){
@@ -31,6 +31,11 @@ QVariant filemodel::headerData(int section,Qt::Orientation orientation ,int role
     if(role == Qt::DisplayRole&&orientation==Qt::Horizontal){
         return header[section];
     }
+     switch(role){
+     case Qt::TextColorRole:
+            return QColor(Qt::white);
+            }
+
     return QAbstractItemModel::headerData(section,orientation,role);
 }
 
@@ -88,7 +93,7 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
         return QSize(200,40);
     case Qt::TextColorRole:
         if(index.column()==0){
-            return QColor(Qt::blue);
+            return QColor(Qt::white);
         }
     }
 return QVariant();

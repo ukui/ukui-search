@@ -40,9 +40,11 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
     search_web_page = new QPushButton;
 
-    search_web_page->setStyleSheet("QPushButton{background-color:rgba(0,0,0,100%);color: white;border-radius: 10px;border: 2px groove gray;border-style: outset;}");
+    search_web_page->setStyleSheet("QPushButton{background-color:rgba(0,0,0,100%);color: white;border-radius: 10px;border: 1px white;text-align: left;}");
 
-    search_web_page->setText("请使用百度搜索");
+
+    search_web_page->setText("   请使用百度搜索");
+    search_web_page->setFixedHeight(40);
 
     search_web_page->setVisible(false);
     connect(search_web_page,&QPushButton::clicked,this,[=](){
@@ -105,25 +107,25 @@ void MainViewWidget::initUi()
 void MainViewWidget::changesize()
 {
 
-    if(fileNum==0)
-    {
-        m_fileview->setVisible(false);
-    } else {
-        if(fileNum>10){
-            m_fileview->setVisible(true);
-            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,5*60);
-        } else {
-            m_fileview->setVisible(true);
-            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,fileNum);
-        }
-    }
+//    if(fileNum==0)
+//    {
+//        m_fileview->setVisible(false);
+//    } else {
+//        if(fileNum>10){
+//            m_fileview->setVisible(true);
+//            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,5*60);
+//        } else {
+//            m_fileview->setVisible(true);
+//            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,fileNum);
+//        }
+//    }
 
-    if(SettingNum==0){
-        m_settingview->setVisible(false);
-    }else{
-        m_settingview->setVisible(true);
-         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
-    }
+//    if(SettingNum==0){
+//        m_settingview->setVisible(false);
+//    }else{
+//        m_settingview->setVisible(true);
+//         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
+//    }
 
 }
 
@@ -198,7 +200,7 @@ void MainViewWidget::initQueryLineEdit()
 
     //网页搜索
     connect(m_queryLineEdit, &QLineEdit::textChanged, search_web_page,[=](){
-        QString search=QString::fromLocal8Bit("使用百度搜索").append(QString::fromLocal8Bit(" ")).append(QString::fromLocal8Bit("\"")).append(m_queryLineEdit->text()).append(QString::fromLocal8Bit("\""));
+        QString search=QString::fromLocal8Bit("   使用百度搜索").append(QString::fromLocal8Bit(" ")).append(QString::fromLocal8Bit("\"")).append(m_queryLineEdit->text()).append(QString::fromLocal8Bit("\""));
 //        QString search = QString::fromLocal8Bit(QString("使用百度搜索 1%2%3%").arg(QString::fromLocal8Bit("")).arg(input->text().arg(QString::fromLocal8Bit(""))));
         search_web_page->setText(search);
         search1=m_queryLineEdit->text();
@@ -362,8 +364,8 @@ void MainViewWidget::loadMinMainView()
 void MainViewWidget::initSearchWidget()
 {
     //初始化文件与设置view为隐藏
-    m_fileview->setVisible(false);
-    m_settingview->setVisible(false);
+//    m_fileview->setVisible(false);
+//    m_settingview->setVisible(false);
 
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;
