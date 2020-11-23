@@ -31,10 +31,10 @@
 #include <QFileSystemWatcher>
 #include <QSettings>
 #include "src/Interface/ukuimenuinterface.h"
-#include "src/SearchResultWidget/searchresultwidget.h"
-#include "src/SearchResultWidget/searchappthread.h"
+#include "src/AppSearch/searchresultwidget.h"
+#include "src/AppSearch/searchappthread.h"
 #include "src/Style/style.h"
-#include "../SearchFile/filemodel.h"
+#include "../FileSearch/filemodel.h"
 #include "../SearchSetting/settingmodel.h"
 #include <QTreeView>
 
