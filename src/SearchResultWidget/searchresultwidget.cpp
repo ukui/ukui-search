@@ -39,8 +39,8 @@ void SearchResultWidget::initUi()
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedSize(Style::defaultMainViewWidWidth,200);
 
-    m_listView=new ListView(this,this->width()-4,this->height(),3);
-    m_listView->setGeometry(QRect(0,0,this->width()-4,200));
+    m_listView=new ListView(this,this->width()-6,this->height()-6,3);
+    m_listView->setGeometry(QRect(6,0,this->width()-6,this->height()-6));
     m_listView->show();
 
     m_data.clear();

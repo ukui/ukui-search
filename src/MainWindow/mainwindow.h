@@ -68,6 +68,7 @@ protected:
      * @brief Handle events clicking on the outside of the window
      */
     bool event(QEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 public Q_SLOTS:
     /**

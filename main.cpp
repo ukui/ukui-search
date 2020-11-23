@@ -77,7 +77,6 @@ int main(int argc, char *argv[])
         qDebug() << "Load translations file" << QLocale() << "failed!";
 
     MainWindow *w=new MainWindow;
-    w->setFrameStyle();
     centerToScreen(w);
     w->show();
     w->raise();

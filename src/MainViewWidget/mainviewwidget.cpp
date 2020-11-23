@@ -76,7 +76,7 @@ void MainViewWidget::initUi()
 {
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
-    this->setStyleSheet("border:0px;background:transparent;");
+    this->setAttribute(Qt::WA_TranslucentBackground);
 
     mainLayout=new QVBoxLayout;
     mainLayout->setContentsMargins(0,0,0,0);
@@ -137,9 +137,9 @@ void MainViewWidget::addTopControl()
     m_topLayout=new QHBoxLayout;
     m_topLayout->setSpacing(0);
     m_queryLineEdit=new QLineEdit;
-    char style[100];
-    sprintf(style, "QLineEdit{border:0px;background-color:%s;border-radius:4px;}",QueryLineEditBackground);
-    m_queryLineEdit->setStyleSheet(style);
+//    char style[100];
+//    sprintf(style, "QLineEdit{border:0px;background-color:%s;border-radius:4px;}",QueryLineEditBackground);
+//    m_queryLineEdit->setStyleSheet(style);
     m_topLayout->addWidget(m_queryLineEdit);
     m_topWidget->setLayout(m_topLayout);
 
@@ -156,22 +156,28 @@ void MainViewWidget::initQueryLineEdit()
     m_queryWid=new QWidget;
     m_queryWid->setParent(m_queryLineEdit);
     m_queryWid->setFocusPolicy(Qt::NoFocus);
-    m_queryWid->setStyleSheet("border:10px;background:transparent;#ff0000;");
+//    m_queryWid->setStyleSheet("border:10px;background:transparent;#ff0000;");
 
     //queryWidLayout 搜索图标和文字所在的布局
     QHBoxLayout* queryWidLayout=new QHBoxLayout;
-    queryWidLayout->setContentsMargins(5,0,0,0);
+    queryWidLayout->setContentsMargins(5,3,0,2);
     queryWidLayout->setSpacing(5);
     m_queryWid->setLayout(queryWidLayout);
     //输入框的搜索图标，不清楚loadSvg为什么不能用了
     QPixmap pixmap/*=loadSvg(QString(":/data/img/mainviewwidget/search.svg"),16)*/;
+
+//    QGSettings gsetting(QString("org.ukui.style").toLocal8Bit());
+//    if(gsetting.get("style-name").toString()=="ukui-light")//反黑
+//        pixmap=drawSymbolicBlackColoredPixmap(pixmap);
+//    else
+//        pixmap=drawSymbolicColoredPixmap(pixmap);//反白
+//    pixmap.setDevicePixelRatio(qApp->devicePixelRatio());
+
     m_queryIcon=new QLabel;
-    m_queryIcon->setStyleSheet("background:transparent");
     m_queryIcon->setFixedSize(pixmap.size());
     m_queryIcon->setPixmap(pixmap);
     m_queryText=new QLabel;
     m_queryText->setText(tr("Search"));
-    m_queryText->setStyleSheet("background:transparent;color:#626c6e;");
     m_queryText->adjustSize();
     queryWidLayout->addWidget(m_queryIcon);
     queryWidLayout->addWidget(m_queryText);
@@ -235,10 +241,6 @@ bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
     {
         if(event->type()==QEvent::FocusIn)
         {
-            char style[200];
-            sprintf(style, "QLineEdit{border:1px solid %s;background-color:%s;border-radius:4px;color:#ffffff;}",
-                    QueryLineEditClickedBorder,QueryLineEditClickedBackground);
-            m_queryLineEdit->setStyleSheet(style);
             if(!m_queryLineEdit->text().isEmpty())
             {
                 if(m_searchKeyWords.isEmpty())
@@ -264,10 +266,7 @@ bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
             {
                 if(m_isSearching)
                 {
-                    char style[100];
-                    sprintf(style, "QLineEdit{border:0px;background-color:%s;border-radius:4px;}",QueryLineEditBackground);
                     m_animation->stop();
-                    m_queryLineEdit->setStyleSheet(style);
                     m_queryText->adjustSize();
                     m_animation->setStartValue(QRect(0,0,
                                                      m_queryIcon->width()+5,0));
@@ -276,12 +275,6 @@ bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
                     m_animation->setEasingCurve(QEasingCurve::InQuad);
                     m_animation->start();
                 }
-            }
-            else {
-                char style[100];
-                sprintf(style, "QLineEdit{border:0px;background-color:%s;border-radius:4px;color:#ffffff;}",
-                        QueryLineEditBackground);
-                m_queryLineEdit->setStyleSheet(style);
             }
             m_isSearching=false;
         }
@@ -404,9 +397,6 @@ void MainViewWidget::widgetMakeZero()
 {
     m_queryLineEdit->clear();
     m_queryLineEdit->clearFocus();
-    char style[100];
-    sprintf(style, "QLineEdit{border:0px;background-color:%s;border-radius:2px;}",QueryLineEditBackground);
-    m_queryLineEdit->setStyleSheet(style);
     m_queryLineEdit->setTextMargins(0,1,0,1);
 }
 
