@@ -24,7 +24,6 @@
 #include <QScrollBar>
 #include <QStandardItemModel>
 #include "src/Style/style.h"
-//#include "src/RightClickMenu/rightclickmenu.h"
 #include <QSettings>
 #include <QEvent>
 #include <QKeyEvent>
@@ -40,15 +39,13 @@ public:
 
     void addData(QVector<QStringList> data);
     void updateData(QVector<QStringList> data);
-    void setsize(int x,int y); //留出接口让外部调用，设置应用窗口大小
-
-//    QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
+    void setsize(int x,int y);
 
 protected:
     void initWidget();
-
     void enterEvent(QEvent* e) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent* e) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *e) override;
 
 private:
     QStandardItemModel* listmodel=nullptr;
@@ -58,14 +55,12 @@ private:
     UkuiMenuInterface* pUkuiMenuInterface=nullptr;
     QStringList header;
 
-//    RightClickMenu* menu=nullptr;//右键菜单
     QSettings *setting=nullptr;
     QVector<QStringList> data;
     ItemDelegate* m_delegate=nullptr;
 
 private Q_SLOTS:
     void onClicked(QModelIndex index);//点击item
-    void rightClickedSlot();//右键菜单
 Q_SIGNALS:
     void sendItemClickedSignal(QStringList arg);//发送item点击信号
     void sendHideMainWindowSignal();

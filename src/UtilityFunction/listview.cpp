@@ -27,34 +27,21 @@ ListView::ListView(QWidget *parent, int width, int height, int module):
     this->module=module;
     initWidget();
     header<<tr("File");
+
     pUkuiMenuInterface=new UkuiMenuInterface;
-//    menu=new RightClickMenu;
-
-    QString path=QDir::homePath()+"/.config/ukui/ukui-menu.ini";
-    setting=new QSettings(path,QSettings::IniFormat);
-
 }
 ListView::~ListView()
 {
-//    delete menu;
     delete pUkuiMenuInterface;
 }
 
 void ListView::initWidget()
 {
-    this->setFixedSize(w,h); //设置窗口大小
-
-    this->verticalScrollBar()->setStyleSheet("QScrollBar{padding-top:0px;padding-bottom:0px;background:transparent;width:3px;border-radius:1.5px;}"
-                                             "QScrollBar::handle{background-color:rgba(255,255,255,0.25); width:3px;border-radius:1.5px;}"
-                                             "QScrollBar::handle:hover{background-color:#697883;width:3px;border-radius:1.5px;}"
-                                             "QScrollBar::handle:pressed{background-color:#8897a3;width:3px;border-radius:1.5px;}"
-                                             "QScrollBar::sub-line{background-color:transparent;height:0px;width:0px;}"
-                                             "QScrollBar::add-line{background-color:transparent;height:0px;width:0px;}"
-                                             );
+    setAttribute(Qt::WA_TranslucentBackground);
+    viewport()->setAttribute(Qt::WA_TranslucentBackground);
     this->setSelectionMode(QAbstractItemView::SingleSelection);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    this->setGridSize(QSize(310,48));
     this->setResizeMode(QListView::Adjust);
     this->setTextElideMode(Qt::ElideRight);
     this->setViewMode(QListView::ListMode);
@@ -63,12 +50,11 @@ void ListView::initWidget()
     this->setMovement(QListView::Static);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setUpdatesEnabled(true);
-//    this->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     this->setSpacing(0);
     this->setContentsMargins(0, 0, 0, 0);
     this->setMouseTracking(true);
     this->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
-    connect(this,&ListView::customContextMenuRequested,this,&ListView::rightClickedSlot);
+    this->setFrameShape(QFrame::NoFrame);
     connect(this,&ListView::clicked,this,&ListView::onClicked);
 }
 
@@ -125,56 +111,6 @@ void ListView::onClicked(QModelIndex index)
      }
 }
 
-void ListView::rightClickedSlot()
-{
-    if(!this->selectionModel()->selectedIndexes().isEmpty())
-    {
-        QModelIndex index=this->currentIndex();
-        QVariant var=listmodel->data(index, Qt::DisplayRole);
-        QStringList strlist=var.value<QStringList>();
-        if(strlist.at(1).toInt()==1)
-        {
-//            int ret=menu->showAppBtnMenu(strlist.at(0));
-//            if(module>0)
-//            {
-//                if(strlist.at(1).toInt()==1)
-//                {
-//                    switch (ret) {
-//                    case 6:
-//                        Q_EMIT sendHideMainWindowSignal();
-//                        break;
-//                    case 7:
-//                        Q_EMIT sendHideMainWindowSignal();
-//                        break;
-//                    default:
-//                        break;
-//                    }
-//                }
-//            }
-//            else{
-//                switch (ret) {
-//                case 1:
-//                    Q_EMIT sendUpdateAppListSignal();
-//                    break;
-//                case 2:
-//                    Q_EMIT sendUpdateAppListSignal();
-//                    break;
-//                case 6:
-//                    Q_EMIT sendHideMainWindowSignal();
-//                    break;
-//                case 7:
-//                    Q_EMIT sendHideMainWindowSignal();
-//                    break;
-//                default:
-//                    break;
-//                }
-//            }
-
-            this->selectionModel()->clear();
-        }
-    }
-}
-
 void ListView::enterEvent(QEvent *e)
 {
     Q_UNUSED(e);
@@ -187,9 +123,14 @@ void ListView::leaveEvent(QEvent *e)
     this->verticalScrollBar()->setVisible(false);
 }
 
-//QVariant ListView::headerData(int section,Qt::Orientation orientation ,int role) const {
-//    if(role == Qt::DisplayRole&&orientation==Qt::Horizontal){
-//        return header[section];
-//    }
-//    return QAbstractItemModel::headerData(section,orientation,role);
-//}
+void ListView::paintEvent(QPaintEvent *e)
+{
+    QGSettings* gsetting=new QGSettings(QString("org.ukui.control-center.personalise").toLocal8Bit());
+    double transparency=gsetting->get("transparency").toDouble();
+    QPainter painter(this->viewport());
+    painter.setOpacity(transparency);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(this->palette().base());
+    painter.fillRect(this->rect(), this->palette().base());
+    QListView::paintEvent(e);
+}
