@@ -99,6 +99,7 @@ HEADERS  += \
 RESOURCES += \
     res.qrc
 
+include(src/WebSearch/websearch.pri)
 
 CONFIG += no_keywords link_pkgconfig
 PKGCONFIG+=glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst
