@@ -55,7 +55,7 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
 
     switch(role){
     case Qt::TextColorRole:
-           return QColor(Qt::white);
+           return QColor(Qt::red);
            }
     return QVariant();
 }
@@ -143,7 +143,6 @@ void settingModel::matching(){
         }
     }
     Q_EMIT requestUpdateSignal(commandresult.count());
-//   qDebug()<<"设置选项有："<<m_settingsnum;
     matchesChanged();
 }
 

@@ -3,17 +3,11 @@
 #include <pwd.h>
 #include <unistd.h>
 filemodel::filemodel():
-    startmatchTimer(new QTimer(this)),
     cmd(new QProcess(this)),
     fileutils(new FileUtils)
 {
 
-    header<<tr("文件")<<tr("")<<tr("");
-    startmatchTimer->setSingleShot(true);
-    startmatchTimer->setInterval(10);
-    connect(startmatchTimer,&QTimer::timeout,this,[=](){
-        matching();
-    });
+    header<<tr("File")<<tr("")<<tr("");
 
 }
 
@@ -31,11 +25,6 @@ QVariant filemodel::headerData(int section,Qt::Orientation orientation ,int role
     if(role == Qt::DisplayRole&&orientation==Qt::Horizontal){
         return header[section];
     }
-     switch(role){
-     case Qt::TextColorRole:
-            return QColor(Qt::white);
-            }
-
     return QAbstractItemModel::headerData(section,orientation,role);
 }
 
@@ -93,7 +82,7 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
         return QSize(200,40);
     case Qt::TextColorRole:
         if(index.column()==0){
-            return QColor(Qt::white);
+            return QColor(Qt::blue);
         }
     }
 return QVariant();
@@ -115,12 +104,6 @@ void filemodel::matchstart(const QString &source){
             matchesChanged();
             return;
         }
-        startmatchTimer->start();
-}
-
-void filemodel::matching(){
-    sourcetext=QString::fromLocal8Bit("*")+sourcetext+QString::fromLocal8Bit("*");
-    commandsearch();
 }
 
 void filemodel::matchesChanged()
@@ -130,30 +113,8 @@ void filemodel::matchesChanged()
         endResetModel();
 }
 
-void filemodel::commandsearch(){
-    if(sourcetext.size()<3)
-        return;
-    struct passwd *pwd;
-    pwd=getpwuid(getuid());
-        QString str =sourcetext;
-        QString name =QString::fromLocal8Bit(pwd->pw_name)+QString::fromLocal8Bit("/ -name ");
-        QString command=QString::fromLocal8Bit("find /home/")+name+str;
-        cmd->setReadChannel(QProcess::StandardOutput);
-        cmd->start(command);
-        cmd->startDetached(cmd->program());
-        cmd->waitForFinished();
-
-        connect(cmd,&QProcess::readyReadStandardOutput,this,[=](){
-            QString result=QString::fromLocal8Bit(cmd->readAllStandardOutput());
-            if(!result.isEmpty()){
-                showResult(result);
-            }
-        });
-        cmd->close();
-}
-
-void filemodel::showResult(QString result){
-    pathresult=result.split(QString::fromLocal8Bit("\n"));
+void filemodel::showResult(QStringList result){
+    pathresult=result;
      for(int i=0;i<pathresult.count();i++)
      {
          QList<QString> str1=pathresult.at(i).split(QString::fromLocal8Bit("/"));

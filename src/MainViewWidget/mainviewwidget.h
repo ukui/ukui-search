@@ -33,10 +33,9 @@
 #include "src/Interface/ukuimenuinterface.h"
 #include "src/AppSearch/searchresultwidget.h"
 #include "src/AppSearch/searchappthread.h"
-#include "../FileSearch/searchfilethread.h"
 #include "src/Style/style.h"
-#include "src/FileSearch/filemodel.h"
-#include "src/ControlCenterSettingsSearch/settingmodel.h"
+#include "../FileSearch/filemodel.h"
+#include "../SearchSetting/settingmodel.h"
 #include <QTreeView>
 
 class MainViewWidget : public QWidget
@@ -75,7 +74,6 @@ private:
 
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
-    SearchFileThread *m_searchFileThread=nullptr;
 
     int m_widgetState=1;//Classification window number
     int m_saveCurrentWidState=-1;//Store the current category window number
@@ -142,7 +140,6 @@ public Q_SLOTS:
      * @param arg: Search results
      */
     void recvSearchResult(QVector<QStringList> arg);
-    void recvFileSearchResult(QStringList arg);
 
     void setFileView(int row); //改变文件view大小的槽函数
 
