@@ -33,8 +33,13 @@ int settingModel::rowCount(const QModelIndex& index) const
 //重写设置搜索的model标头
 QVariant settingModel::headerData(int section,Qt::Orientation orientation ,int role) const {
     if(role == 0){
-        return tr("Settings");
+        return tr("控制面板");
     }
+
+    switch(role){
+    case Qt::TextColorRole:
+           return QColor(Qt::white);
+           }
     return QAbstractItemModel::headerData(section,orientation,role);
 }
 
@@ -47,6 +52,11 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
     }else if(role == Qt::DecorationRole){
         return iconresult.at(index.row());
     }
+
+    switch(role){
+    case Qt::TextColorRole:
+           return QColor(Qt::white);
+           }
     return QVariant();
 }
 
