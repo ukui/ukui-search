@@ -47,10 +47,10 @@ DEFINES += QM_FILES_INSTALL_PATH='\\"$${QM_FILES_INSTALL_PATH}\\"'
 include(src/MainWindow/mainwindow.pri)  #主界面
 include(src/AppSearch/appsearch.pri)    #应用搜索
 include(src/FileSearch/filesearch.pri)  #文件搜索
+include(src/ControlCenterSettingsSearch/controlcentersearch.pri) #控制面板搜索
 include(src/WebSearch/websearch.pri)    #网页搜索
 
 SOURCES += \
-    src/SearchSetting/settingmodel.cpp \
     src/Style/style.cpp \
     src/UtilityFunction/itemdelegate.cpp \
     src/UtilityFunction/listview.cpp \
@@ -60,7 +60,6 @@ SOURCES += \
 
 
 HEADERS  += \
-    src/SearchSetting/settingmodel.h \
     src/Style/style.h \
     src/UtilityFunction/itemdelegate.h \
     src/UtilityFunction/listview.h \

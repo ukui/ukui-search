@@ -35,7 +35,7 @@
 #include "src/AppSearch/searchappthread.h"
 #include "src/Style/style.h"
 #include "src/FileSearch/filemodel.h"
-#include "src/SearchSetting/settingmodel.h"
+#include "src/ControlCenterSettingsSearch/settingmodel.h"
 #include <QTreeView>
 
 class MainViewWidget : public QWidget

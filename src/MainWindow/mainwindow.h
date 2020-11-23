@@ -35,7 +35,7 @@
 #include <QPropertyAnimation>
 #include <QFileInfo>
 #include "src/Style/style.h"
-#include "src/MainViewWidget/mainviewwidget.h"
+#include "src/MainWindow/mainviewwidget.h"
 
 class MainWindow : public QMainWindow
 {
