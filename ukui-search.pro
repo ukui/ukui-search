@@ -48,8 +48,6 @@ SOURCES += \
     src/MainViewWidget/mainviewwidget.cpp \
     src/MainWindow/mainwindow.cpp \
     src/SearchFile/filemodel.cpp \
-    src/SearchResultWidget/searchappthread.cpp \
-    src/SearchResultWidget/searchresultwidget.cpp \
     src/SearchSetting/settingmodel.cpp \
     src/Style/style.cpp \
     src/UtilityFunction/itemdelegate.cpp \
@@ -66,8 +64,6 @@ HEADERS  += \
     src/MainViewWidget/mainviewwidget.h \
     src/MainWindow/mainwindow.h \
     src/SearchFile/filemodel.h \
-    src/SearchResultWidget/searchappthread.h \
-    src/SearchResultWidget/searchresultwidget.h \
     src/SearchSetting/settingmodel.h \
     src/Style/style.h \
     src/UtilityFunction/itemdelegate.h \
@@ -81,7 +77,9 @@ HEADERS  += \
 RESOURCES += \
     res.qrc
 
+#include(src/MainWindow/mainwindow.pri)
 include(src/WebSearch/websearch.pri)
+include(src/AppSearch/appsearch.pri)
 
 CONFIG += no_keywords link_pkgconfig
 PKGCONFIG+=glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst
