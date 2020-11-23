@@ -52,20 +52,11 @@ SOURCES += \
     src/SearchResultWidget/searchresultwidget.cpp \
     src/SearchSetting/settingmodel.cpp \
     src/Style/style.cpp \
-    src/UtilityFunction/classifyscrollarea.cpp \
-    src/UtilityFunction/fullitemdelegate.cpp \
-    src/UtilityFunction/fulllistview.cpp \
-    src/UtilityFunction/functionclassifybutton.cpp \
     src/UtilityFunction/itemdelegate.cpp \
-    src/UtilityFunction/letterclassifybutton.cpp \
     src/UtilityFunction/listview.cpp \
-    src/UtilityFunction/pushbutton.cpp \
-    src/UtilityFunction/scrollarea.cpp \
-    src/UtilityFunction/toolbutton.cpp \
     src/Interface/ukuichineseletter.cpp \
     src/Interface/ukuimenuinterface.cpp \
     main.cpp \
-    src/UtilityFunction/utility.cpp \
     src/XEventMonitor/xeventmonitor.cpp \
     src/SearchFile/file-utils.cpp\
     src/SearchFile/gobject-template.cpp
@@ -79,19 +70,10 @@ HEADERS  += \
     src/SearchResultWidget/searchresultwidget.h \
     src/SearchSetting/settingmodel.h \
     src/Style/style.h \
-    src/UtilityFunction/classifyscrollarea.h \
-    src/UtilityFunction/fullitemdelegate.h \
-    src/UtilityFunction/fulllistview.h \
-    src/UtilityFunction/functionclassifybutton.h \
     src/UtilityFunction/itemdelegate.h \
-    src/UtilityFunction/letterclassifybutton.h \
     src/UtilityFunction/listview.h \
-    src/UtilityFunction/pushbutton.h \
-    src/UtilityFunction/scrollarea.h \
-    src/UtilityFunction/toolbutton.h \
     src/Interface/ukuichineseletter.h \
     src/Interface/ukuimenuinterface.h \
-    src/UtilityFunction/utility.h \
     src/XEventMonitor/xeventmonitor.h\
     src/SearchFile/file-utils.h\
     src/SearchFile/gobject-template.h
