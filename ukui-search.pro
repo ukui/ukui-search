@@ -44,26 +44,22 @@ INSTALLS += qm_files
 # So we can access it from main.cpp
 DEFINES += QM_FILES_INSTALL_PATH='\\"$${QM_FILES_INSTALL_PATH}\\"'
 
+include(src/MainWindow/mainwindow.pri)  #主界面
+include(src/AppSearch/appsearch.pri)    #应用搜索
+include(src/FileSearch/filesearch.pri)  #文件搜索
+include(src/WebSearch/websearch.pri)    #网页搜索
+
 SOURCES += \
-    src/MainViewWidget/mainviewwidget.cpp \
-    src/MainWindow/mainwindow.cpp \
-    src/SearchFile/filemodel.cpp \
     src/SearchSetting/settingmodel.cpp \
     src/Style/style.cpp \
     src/UtilityFunction/itemdelegate.cpp \
     src/UtilityFunction/listview.cpp \
     src/Interface/ukuichineseletter.cpp \
     src/Interface/ukuimenuinterface.cpp \
-    main.cpp \
     src/XEventMonitor/xeventmonitor.cpp \
-    src/SearchFile/file-utils.cpp\
-    src/SearchFile/gobject-template.cpp
 
 
 HEADERS  += \
-    src/MainViewWidget/mainviewwidget.h \
-    src/MainWindow/mainwindow.h \
-    src/SearchFile/filemodel.h \
     src/SearchSetting/settingmodel.h \
     src/Style/style.h \
     src/UtilityFunction/itemdelegate.h \
@@ -71,15 +67,9 @@ HEADERS  += \
     src/Interface/ukuichineseletter.h \
     src/Interface/ukuimenuinterface.h \
     src/XEventMonitor/xeventmonitor.h\
-    src/SearchFile/file-utils.h\
-    src/SearchFile/gobject-template.h
 
 RESOURCES += \
     res.qrc
-
-#include(src/MainWindow/mainwindow.pri)
-include(src/WebSearch/websearch.pri)
-include(src/AppSearch/appsearch.pri)
 
 CONFIG += no_keywords link_pkgconfig
 PKGCONFIG+=glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst
