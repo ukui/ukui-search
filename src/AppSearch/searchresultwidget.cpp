@@ -38,7 +38,7 @@ void SearchResultWidget::initUi()
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedSize(Style::defaultMainViewWidWidth,200);
-
+    this->setStyleSheet("background:white;");
     m_listView=new ListView(this,this->width()-6,this->height()-6,3);
     m_listView->setGeometry(QRect(6,0,this->width()-6,this->height()-6));
     m_listView->show();
@@ -67,6 +67,7 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
     Q_FOREACH(QStringList appinfo,arg)
         m_data.append(QStringList()<<appinfo.at(0)<<"1");
 
+    Q_EMIT changeAppNum(m_data.count());
     m_listView->updateData(m_data);
     //根据获取的应用数量，刷新界面高度
     this->setFixedSize(Style::defaultMainViewWidWidth,m_data.size()*46);

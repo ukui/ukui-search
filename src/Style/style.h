@@ -48,7 +48,7 @@
 #define ClassifyBtnHoverBackground "rgba(255, 255, 255, 0.14)" //分类按钮悬浮背景
 #define MMBtnHoverBackground "rgba(255, 255, 255, 0.14)" //最大化最小化按钮悬浮背景
 #define QueryLineEditBackground "rgba(0, 0, 0,0.4)" //搜索框背景
-#define QueryLineEditClickedBackground "rgba(0, 0, 0,0.5)" //搜索框背景选中
+#define QueryLineEditClickedBackground "rgba(255, 255, 255,0.5)" //搜索框背景选中
 #define QueryLineEditClickedBorder "rgba(61, 107, 229, 1)" //搜索框背景选中边框
 #define AppBtnHover "#ffffff" //按钮悬浮
 

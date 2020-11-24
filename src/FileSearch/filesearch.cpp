@@ -9,7 +9,8 @@
     struct passwd *pwd;
     pwd=getpwuid(getuid());
     QString path="/home/"+QString(pwd->pw_name);
-    this->FindFile(path);
+    if(!test.isEmpty())
+        this->FindFile(path);
 }
 
 filesearch::~filesearch()

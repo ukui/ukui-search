@@ -3,4 +3,5 @@
 fileview::fileview()
 {
 
+    this->setStyleSheet("background:white;");
 }

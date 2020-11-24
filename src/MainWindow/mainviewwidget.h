@@ -96,6 +96,7 @@ private:
 
     settingModel *m_settingmodel;//设置model
 
+    int appNum; //记录搜索出来的APP数量
     int fileNum; //记录搜索出来的文件数量
     int SettingNum;//记录搜索出来的设置数量
 
@@ -146,6 +147,8 @@ public Q_SLOTS:
      */
     void recvSearchResult(QVector<QStringList> arg);
     void recvFileSearchResult(QStringList arg);
+
+    void setAppView(int row);//改变app大小的槽函数
 
     void setFileView(int row); //改变文件view大小的槽函数
 

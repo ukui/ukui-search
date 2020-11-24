@@ -2,5 +2,5 @@
 
 settingview::settingview()
 {
-
+    this->setStyleSheet("background:white;");
 }
