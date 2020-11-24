@@ -85,26 +85,30 @@ void MainViewWidget::initUi()
  */
 void MainViewWidget::changesize()
 {
-
-//    if(fileNum==0)
-//    {
-//        m_fileview->setVisible(false);
-//    } else {
-//        if(fileNum>10){
-//            m_fileview->setVisible(true);
+    qDebug()<<"1:"<<fileNum;
+    if(fileNum==0)
+    {
+        qDebug()<<"2:"<<fileNum;
+        m_fileview->setVisible(false);
+    } else {
+        qDebug()<<"3:"<<fileNum;
+        if(fileNum>10){
+            m_fileview->setVisible(true);
 //            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,5*60);
-//        } else {
-//            m_fileview->setVisible(true);
+            qDebug()<<"4:"<<fileNum;
+        } else {
+            m_fileview->setVisible(true);
+            qDebug()<<"5:"<<fileNum;
 //            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,fileNum);
-//        }
-//    }
+        }
+    }
 
-//    if(SettingNum==0){
-//        m_settingview->setVisible(false);
-//    }else{
-//        m_settingview->setVisible(true);
-//         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
-//    }
+    if(SettingNum==0){
+        m_settingview->setVisible(false);
+    }else{
+        m_settingview->setVisible(true);
+         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
+    }
 
 }
 
@@ -370,8 +374,8 @@ void MainViewWidget::initSearchWidget()
        });
 
     //初始化文件与设置view为隐藏
-//    m_fileview->setVisible(false);
-//    m_settingview->setVisible(false);
+    m_fileview->setVisible(false);
+    m_settingview->setVisible(false);
 
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;

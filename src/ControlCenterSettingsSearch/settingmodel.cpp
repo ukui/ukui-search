@@ -38,7 +38,7 @@ QVariant settingModel::headerData(int section,Qt::Orientation orientation ,int r
 
     switch(role){
     case Qt::TextColorRole:
-           return QColor(Qt::white);
+           return QColor(Qt::black);
            }
     return QAbstractItemModel::headerData(section,orientation,role);
 }
@@ -55,7 +55,7 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
 
     switch(role){
     case Qt::TextColorRole:
-           return QColor(Qt::red);
+           return QColor(Qt::black);
            }
     return QVariant();
 }
