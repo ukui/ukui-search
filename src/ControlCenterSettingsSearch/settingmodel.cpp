@@ -11,7 +11,7 @@ settingModel::settingModel():
 
     startmatchTimer->setSingleShot(true);
     startmatchTimer->setInterval(10);
-    setting = new QSettings(QString::fromLocal8Bit(":/src/SearchSetting/assets/search.conf"),QSettings::IniFormat);
+    setting = new QSettings(QString::fromLocal8Bit(":/src/ControlCenterSettingsSearch/assets/search.conf"),QSettings::IniFormat);
     keylist<<setting->allKeys();
     for(int i = 0; i< keylist.size();++i)
     {
@@ -73,7 +73,7 @@ void settingModel::run(int index)
 
 //按字段解析xml文件，将设置插件的中文提取出来
 void settingModel::XmlElement(){
-    QFile file(QString::fromLocal8Bit(":/src/SearchSetting/assets/search.xml"));
+    QFile file(QString::fromLocal8Bit(":/src/ControlCenterSettingsSearch/assets/search.xml"));
     if (!file.open(QIODevice::ReadOnly)){
         return;
     }
@@ -107,7 +107,6 @@ void settingModel::XmlElement(){
 //匹配初始化
 void settingModel::matchstart(const QString &source){
 
-
         sourcetext=source;
         returnresult.clear();
         commandresult.clear();
@@ -138,7 +137,7 @@ void settingModel::matching(){
                 QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
                 iconresult.append(QIcon(str));
 
-
+                qDebug()<<sourcetext;
             }
         }
     }
