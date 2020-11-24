@@ -34,30 +34,9 @@
 MainViewWidget::MainViewWidget(QWidget *parent) :
     QWidget(parent)
 {
-    search1 = QString::fromLocal8Bit("");
-    m_fileview =new QTreeView;
-    m_settingview = new QTreeView;
-
-    search_web_page = new QPushButton;
-
-    search_web_page->setStyleSheet("QPushButton{background-color:rgba(0,0,0,100%);color: white;border-radius: 10px;border: 1px white;text-align: left;}");
-
-
-    search_web_page->setText("   请使用百度搜索");
-    search_web_page->setFixedHeight(40);
-
-    search_web_page->setVisible(false);
-    connect(search_web_page,&QPushButton::clicked,this,[=](){
-           QString str = QString::fromLocal8Bit("https://www.baidu.com/baidu?tn=ubuntuu_cb&ie=utf-8&wd=").append(search1);
-           QProcess p;
-           p.setProgram(QString::fromLocal8Bit("chromium-browser"));
-           p.setArguments(QStringList()<<str);
-           p.startDetached(p.program(), p.arguments());
-           p.waitForFinished(-1);
-       });
-
     //初始化搜索的配置，包括信号监听
     initSearchWidget();
+
     //初始化ui
     initUi();
 }
@@ -106,26 +85,30 @@ void MainViewWidget::initUi()
  */
 void MainViewWidget::changesize()
 {
-
-//    if(fileNum==0)
-//    {
-//        m_fileview->setVisible(false);
-//    } else {
-//        if(fileNum>10){
-//            m_fileview->setVisible(true);
+    qDebug()<<"1:"<<fileNum;
+    if(fileNum==0)
+    {
+        qDebug()<<"2:"<<fileNum;
+        m_fileview->setVisible(false);
+    } else {
+        qDebug()<<"3:"<<fileNum;
+        if(fileNum>10){
+            m_fileview->setVisible(true);
 //            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,5*60);
-//        } else {
-//            m_fileview->setVisible(true);
+            qDebug()<<"4:"<<fileNum;
+        } else {
+            m_fileview->setVisible(true);
+            qDebug()<<"5:"<<fileNum;
 //            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,fileNum);
-//        }
-//    }
+        }
+    }
 
-//    if(SettingNum==0){
-//        m_settingview->setVisible(false);
-//    }else{
-//        m_settingview->setVisible(true);
-//         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
-//    }
+    if(SettingNum==0){
+        m_settingview->setVisible(false);
+    }else{
+        m_settingview->setVisible(true);
+         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
+    }
 
 }
 
@@ -205,18 +188,18 @@ void MainViewWidget::initQueryLineEdit()
     connect(m_searchAppThread,&SearchAppThread::sendSearchResult,
             this,&MainViewWidget::recvSearchResult);
 
+    //搜索应用
     connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::searchAppSlot);
 
-
+    //把搜索的设置信息传入settingModel
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
             m_settingmodel->matchstart(search);
-//            startmatchTimer->start();
+
     });
 
     //网页搜索
     connect(m_queryLineEdit, &QLineEdit::textChanged, search_web_page,[=](){
         QString search=QString::fromLocal8Bit("   使用百度搜索").append(QString::fromLocal8Bit(" ")).append(QString::fromLocal8Bit("\"")).append(m_queryLineEdit->text()).append(QString::fromLocal8Bit("\""));
-//        QString search = QString::fromLocal8Bit(QString("使用百度搜索 1%2%3%").arg(QString::fromLocal8Bit("")).arg(input->text().arg(QString::fromLocal8Bit(""))));
         search_web_page->setText(search);
         search1=m_queryLineEdit->text();
         //根据判断来隐藏与显示网页搜索
@@ -227,15 +210,17 @@ void MainViewWidget::initQueryLineEdit()
         }
     });
 
-
+    //把搜索的文件信息传入settingModel
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_filemodel,[=](const QString &search){
                 m_filemodel->matchstart(search);
     });
 
+    //监听点击事件，打开对应的设置选项
     connect(m_settingview,&QTreeView::clicked,this,[=](){
         m_settingmodel->run(m_settingview->currentIndex().row());
     });
 
+    //监听点击事件，打开对应的文件
     connect(m_fileview,&QTreeView::clicked,this,[=](){
         m_filemodel->run(m_fileview->currentIndex().row(),m_fileview->currentIndex().column());
     });
@@ -371,9 +356,26 @@ void MainViewWidget::loadMinMainView()
 //搜索到的界面（包括应用搜索，文件搜索，设置搜索）的初始化
 void MainViewWidget::initSearchWidget()
 {
+
+
+    search1 = "";
+    m_fileview =new fileview;
+    m_settingview = new settingview;
+
+    search_web_page = new websearch;
+    search_web_page->setVisible(false);
+    connect(search_web_page,&QPushButton::clicked,this,[=](){
+           QString str = QString::fromLocal8Bit("https://www.baidu.com/baidu?tn=ubuntuu_cb&ie=utf-8&wd=").append(search1);
+           QProcess p;
+           p.setProgram(QString::fromLocal8Bit("chromium-browser"));
+           p.setArguments(QStringList()<<str);
+           p.startDetached(p.program(), p.arguments());
+           p.waitForFinished(-1);
+       });
+
     //初始化文件与设置view为隐藏
-//    m_fileview->setVisible(false);
-//    m_settingview->setVisible(false);
+    m_fileview->setVisible(false);
+    m_settingview->setVisible(false);
 
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;
