@@ -38,6 +38,9 @@
 #include "src/FileSearch/filemodel.h"
 #include "src/ControlCenterSettingsSearch/settingmodel.h"
 #include <QTreeView>
+#include "../WebSearch/websearch.h"
+#include "../FileSearch/fileview.h"
+#include "../ControlCenterSettingsSearch/settingview.h"
 
 class MainViewWidget : public QWidget
 {
@@ -86,8 +89,8 @@ private:
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
 
-    QTreeView *m_fileview; //文件view
-    QTreeView *m_settingview;//设置view
+    fileview *m_fileview; //文件view
+    settingview *m_settingview;//设置view
 
     filemodel *m_filemodel;//文件model
 
@@ -96,7 +99,7 @@ private:
     int fileNum; //记录搜索出来的文件数量
     int SettingNum;//记录搜索出来的设置数量
 
-   QPushButton *search_web_page;
+   websearch *search_web_page;
 
    QString search1;
 
