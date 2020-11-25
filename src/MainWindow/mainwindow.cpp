@@ -26,6 +26,7 @@
 #include "src/XEventMonitor/xeventmonitor.h"
 #include "src/Style/style.h"
 #include <QPalette>
+#include "kwindowsystem.h"
 
 /*主界面
  * 函数分析：
@@ -49,10 +50,12 @@ MainWindow::MainWindow(QWidget *parent) :
     UkuiMenuInterface::allAppVector=m_ukuiMenuInterface->getAllApp();
     Style::initWidStyle();
     initUi();
+    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
 }
 
 MainWindow::~MainWindow()
 {
+    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
     XEventMonitor::instance()->quit();
     delete m_ukuiMenuInterface;
 }
@@ -63,7 +66,7 @@ void MainWindow::initUi()
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
-    this->setStyleSheet("background:transparent;");
+//    this->setStyleSheet("background:transparent;");
     this->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     this->setMinimumSize(Style::minw,Style::minh);//可设置本窗口的大小，调整见style文件参数
     this->setContentsMargins(0,0,0,0);
@@ -132,7 +135,7 @@ void MainWindow::bootOptionsFilter(QString opt)
 {
 
     if (opt == "-s" || opt == "-show") {
-        qDebug() << "哈哈哈哈，第一次用命令进入这";
+//        qDebug() << "哈哈哈哈，第一次用命令进入这";
 
     }
 }

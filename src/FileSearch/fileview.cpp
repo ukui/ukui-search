@@ -2,9 +2,6 @@
 
 fileview::fileview()
 {
-
-
-    this->setStyleSheet("background:white;");
-    this->header()->setStyleSheet("BorderColor :2px solid #f0ff1f; ");
-
+//    this->setStyleSheet("background:transparent;");
+    this->setAttribute(Qt::WA_TranslucentBackground);//"透明背景"
 }

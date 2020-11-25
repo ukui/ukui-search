@@ -38,7 +38,7 @@ void SearchResultWidget::initUi()
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedSize(Style::defaultMainViewWidWidth,200);
-    this->setStyleSheet("background:white;");
+//    this->setStyleSheet("background:white;");
     m_listView=new ListView(this,this->width()-6,this->height()-6,3);
     m_listView->setGeometry(QRect(6,0,this->width()-6,this->height()-6));
     m_listView->show();

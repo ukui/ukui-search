@@ -93,7 +93,6 @@ void filemodel::matchstart(const QString &source){
         returnresult.clear();
         pathresult.clear();
         runresult.clear();
-        qDebug()<<runresult.count();
         Q_EMIT requestUpdateSignal(runresult.count());
         iconresult.clear();
         openPathresult.clear();
@@ -144,7 +143,6 @@ void filemodel::showResult(QStringList result){
 
 
      }
-     qDebug()<<runresult.count();
      Q_EMIT requestUpdateSignal(runresult.count());
      showresult.clear();
      if(returnresult.size()<4){
