@@ -32,6 +32,7 @@
 //#include "searchappthread.h"
 #include "src/UtilityFunction/listview.h"
 #include "src/UtilityFunction/itemdelegate.h"
+#include <QVBoxLayout>
 
 class SearchResultWidget : public QWidget
 {
@@ -48,6 +49,9 @@ private:
     UkuiMenuInterface* m_ukuiMenuInterface=nullptr;
     ListView* m_listView=nullptr;
     QVector<QStringList> m_data;
+
+    QVBoxLayout *m_listLayout;
+    QLabel * applabel;
 
 protected:
     /**

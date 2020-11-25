@@ -382,8 +382,6 @@ void MainViewWidget::initSearchWidget()
     m_fileview->setVisible(false);
     m_settingview->setVisible(false);
 
-//    m_fileview-
-
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;
 
