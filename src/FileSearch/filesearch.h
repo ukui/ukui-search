@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QRegExp>
+#include <src/Interface/ukuichineseletter.h>
 
 class filesearch :public QObject
 {

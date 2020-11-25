@@ -48,10 +48,23 @@ int filesearch::FindFile(const QString& _filePath)
         }
         else{
             for(int m = 0; m <infolist.size(); m++) {
-                                //这里是获取当前要处理的文件名
-                QString str=infolist.at(m);
-                if(str.contains(test)){
-                    searchResult.insert(_filePath,str);
+
+                //这里是获取当前要处理的文件名，原文匹配
+                QString sourceText=infolist.at(m);
+                if(sourceText.contains(test)){
+                    searchResult.insert(_filePath,sourceText);
+                }
+
+                //拼音匹配
+                QString pinyin=UkuiChineseLetter::getPinyins(sourceText).toLower(); // 中文转英文
+                if(pinyin.contains(test,Qt::CaseInsensitive)){
+                    searchResult.insert(_filePath,sourceText);
+                }
+
+                //首字母匹配
+                QString pinyinFrist=UkuiChineseLetter::getFirstLettersAll(sourceText).toLower();// 中文转首字母
+                if(pinyinFrist.contains(test,Qt::CaseInsensitive)){
+                    searchResult.insert(_filePath,sourceText);
                 }
             }
             break;

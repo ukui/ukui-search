@@ -122,50 +122,31 @@ void settingModel::XmlElement(){
          QDomNodeList list=element.childNodes();
          for(int i=0;i<list.count();++i){
              QDomNode n=list.at(i);
-              if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
-                  index=n.toElement().text();
-              }
-              if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
-                  index+=QString::fromLocal8Bit(":")+n.toElement().text();
+
+             if(n.nodeName()==QString::fromLocal8Bit("pinyinPlugin")){
+                 index1=n.toElement().text();
+             }
+             if(n.nodeName()==QString::fromLocal8Bit("pinyinfunc")){
+                 index1+=QString::fromLocal8Bit(":")+n.toElement().text();
+                 pinyin_searchresult.append(index1);
+             }
+
+             if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
+                 index=n.toElement().text();
+             }
+             if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
+                 index+=QString::fromLocal8Bit(":")+n.toElement().text();
 
              chine_searchresult.append(index);
              }
          }
+        pinyin_searchlist.insert(key,pinyin_searchresult);
         chine_searchlist.insert(key,chine_searchresult);
 
         node=node.nextSibling();
     }
-
-
-
-    node=root.firstChild();
-    while(!node.isNull()){
-        QDomElement element=node.toElement();
-        QString key=element.attribute("name");;
-        chine_searchresult=chine_searchlist.value(key);
-        pinyin_searchresult=pinyin_searchlist.value(key);
-        QDomNodeList list=element.childNodes();
-         for(int i=0;i<list.count();++i){
-             QDomNode n=list.at(i);
-              if(n.nodeName()==QString::fromLocal8Bit("pinyinPlugin")){
-                  index1=n.toElement().text();
-              }
-              if(n.nodeName()==QString::fromLocal8Bit("pinyinfunc")){
-                  index1+=QString::fromLocal8Bit(":")+n.toElement().text();
-                  pinyin_searchresult.append(index1);
-             }
-         }
-
-        pinyin_searchlist.insert(key,pinyin_searchresult);
-
-        node=node.nextSibling();
-    }
-
     file.close();
 }
-
-
-
 
 //匹配初始化
 void settingModel::matchstart(const QString &source){
