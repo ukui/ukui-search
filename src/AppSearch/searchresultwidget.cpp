@@ -34,11 +34,16 @@ SearchResultWidget::~SearchResultWidget()
 
 void SearchResultWidget::initUi()
 {
+    m_listLayout = new QVBoxLayout;
+    applabel = new QLabel;
+    applabel->setText("     应用");
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedSize(Style::defaultMainViewWidWidth,200);
 //    this->setStyleSheet("background:white;");
+
+
     m_listView=new ListView(this,this->width()-6,this->height()-6,3);
     m_listView->setGeometry(QRect(6,0,this->width()-6,this->height()-6));
     m_listView->show();
@@ -48,6 +53,10 @@ void SearchResultWidget::initUi()
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(m_listView,&ListView::sendItemClickedSignal,this,&SearchResultWidget::execApplication);
+
+    m_listLayout->addWidget(applabel);
+    m_listLayout->addWidget(m_listView);
+    this->setLayout(m_listLayout);
 }
 
 /**
