@@ -161,11 +161,6 @@ void settingModel::XmlElement(){
         node=node.nextSibling();
     }
 
-
-    qDebug()<<"------------------------";
-    qDebug()<<chine_searchlist;
-    qDebug()<<"------------------------";
-    qDebug()<<pinyin_searchlist;
     file.close();
 }
 

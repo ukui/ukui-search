@@ -123,7 +123,7 @@ void MainViewWidget::addTopControl()
     m_queryLineEdit=new QLineEdit;
 //    char style[100];
 //    sprintf(style, "QLineEdit{border:2px;background-color:%s;border-radius:4px;}",QueryLineEditBackground);
-    m_queryLineEdit->setStyleSheet("QLineEdit{border:2px;background-color:white;border-radius:4px;}");
+//    m_queryLineEdit->setStyleSheet("QLineEdit{border:2px;background-color:white;border-radius:4px;}");
     m_topLayout->addWidget(m_queryLineEdit);
     m_topWidget->setLayout(m_topLayout);
 
