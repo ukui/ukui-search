@@ -73,6 +73,37 @@ void settingModel::run(int index)
 
 //按字段解析xml文件，将设置插件的中文提取出来
 void settingModel::XmlElement(){
+//    QFile file(QString::fromLocal8Bit(":/src/ControlCenterSettingsSearch/assets/search.xml"));
+//    if (!file.open(QIODevice::ReadOnly)){
+//        return;
+//    }
+//    QDomDocument doc;
+//    doc.setContent(&file);
+//    QDomElement root=doc.documentElement();
+//    QDomNode node = root.previousSibling();
+//    node=root.firstChild();
+//    file.close();
+
+//    while(!node.isNull()){
+//        QDomElement element=node.toElement();
+//        QString key=element.attribute("name");;
+//        searchresult=searchlist.value(key);
+//         QDomNodeList list=element.childNodes();
+//         for(int i=0;i<list.count();++i){
+//             QDomNode n=list.at(i);
+//             if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
+//                 index=n.toElement().text();
+//             }
+//             if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
+//                 index+=QString::fromLocal8Bit(":")+n.toElement().text();
+//             searchresult.append(index);
+//             }
+//         }
+//        searchlist.insert(key,searchresult);
+//        node=node.nextSibling();
+//    }
+
+
     QFile file(QString::fromLocal8Bit(":/src/ControlCenterSettingsSearch/assets/search.xml"));
     if (!file.open(QIODevice::ReadOnly)){
         return;
@@ -82,27 +113,64 @@ void settingModel::XmlElement(){
     QDomElement root=doc.documentElement();
     QDomNode node = root.previousSibling();
     node=root.firstChild();
-    file.close();
 
     while(!node.isNull()){
         QDomElement element=node.toElement();
         QString key=element.attribute("name");;
-        searchresult=searchlist.value(key);
+        chine_searchresult=chine_searchlist.value(key);
+        pinyin_searchresult=pinyin_searchlist.value(key);
          QDomNodeList list=element.childNodes();
          for(int i=0;i<list.count();++i){
              QDomNode n=list.at(i);
-             if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
-                 index=n.toElement().text();
-             }
-             if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
-                 index+=QString::fromLocal8Bit(":")+n.toElement().text();
-             searchresult.append(index);
+              if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
+                  index=n.toElement().text();
+              }
+              if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
+                  index+=QString::fromLocal8Bit(":")+n.toElement().text();
+
+             chine_searchresult.append(index);
              }
          }
-        searchlist.insert(key,searchresult);
+        chine_searchlist.insert(key,chine_searchresult);
+
         node=node.nextSibling();
     }
+
+
+
+    node=root.firstChild();
+    while(!node.isNull()){
+        QDomElement element=node.toElement();
+        QString key=element.attribute("name");;
+        chine_searchresult=chine_searchlist.value(key);
+        pinyin_searchresult=pinyin_searchlist.value(key);
+        QDomNodeList list=element.childNodes();
+         for(int i=0;i<list.count();++i){
+             QDomNode n=list.at(i);
+              if(n.nodeName()==QString::fromLocal8Bit("pinyinPlugin")){
+                  index1=n.toElement().text();
+              }
+              if(n.nodeName()==QString::fromLocal8Bit("pinyinfunc")){
+                  index1+=QString::fromLocal8Bit(":")+n.toElement().text();
+                  pinyin_searchresult.append(index1);
+             }
+         }
+
+        pinyin_searchlist.insert(key,pinyin_searchresult);
+
+        node=node.nextSibling();
+    }
+
+
+    qDebug()<<"------------------------";
+    qDebug()<<chine_searchlist;
+    qDebug()<<"------------------------";
+    qDebug()<<pinyin_searchlist;
+    file.close();
 }
+
+
+
 
 //匹配初始化
 void settingModel::matchstart(const QString &source){
@@ -125,7 +193,7 @@ void settingModel::matching(){
     sourcetext+=QString::fromLocal8Bit(".*");
     QRegExp rx(sourcetext);
     QMap<QString, QStringList>::const_iterator i;
-    for(i=searchlist.constBegin();i!=searchlist.constEnd();++i){
+    for(i=chine_searchlist.constBegin();i!=chine_searchlist.constEnd();++i){
         regmatch=*i;
         settingkey=i.key();
         QList<QString>::Iterator it = regmatch.begin(),itend = regmatch.end();
@@ -134,13 +202,39 @@ void settingModel::matching(){
             if(rx.exactMatch(*it)){
                 returnresult.append(*it);//中文名
                 commandresult.append(settingkey);//命令
+
+
                 QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
                 iconresult.append(QIcon(str));
 
-                qDebug()<<sourcetext;
+//                qDebug()<<sourcetext;
             }
         }
     }
+
+
+
+    for(i=pinyin_searchlist.constBegin();i!=pinyin_searchlist.constEnd();++i){
+        regmatch=*i;
+        settingkey=i.key();
+        QList<QString>::Iterator it = regmatch.begin(),itend = regmatch.end();
+        int n = 0;
+        for (;it != itend; it++,n++){
+            if(rx.exactMatch(*it)){
+
+                QStringList val=chine_searchlist.value(settingkey);
+
+                returnresult.append(val.at(n));//pinyin
+                commandresult.append(settingkey);//命令
+
+                QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
+                iconresult.append(QIcon(str));
+
+//                qDebug()<<sourcetext;
+            }
+        }
+    }
+
     Q_EMIT requestUpdateSignal(commandresult.count());
     matchesChanged();
 }

@@ -44,14 +44,19 @@ private:
     QSettings *setting;
     QString settingkey;
 
-    QMap<QString,QStringList> searchlist;
-    QStringList searchresult;
+    QMap<QString,QStringList> pinyin_searchlist;
+    QMap<QString,QStringList> chine_searchlist;
+    QStringList pinyin_searchresult;
+    QStringList chine_searchresult;
+    QString index1;
     QString index;
+    QString index2;
     QStringList regmatch;
     QList<QString> returnresult;
     QList<QString> commandresult;
     QList<QString> lockresult;
     QList<QIcon> iconresult;
+
 
 
 

@@ -2,6 +2,7 @@
 #define FILEVIEW_H
 
 #include <QTreeView>
+#include <QHeaderView>
 
 class fileview : public QTreeView
 {

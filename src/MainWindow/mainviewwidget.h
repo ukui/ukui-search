@@ -41,6 +41,9 @@
 #include "../WebSearch/websearch.h"
 #include "../FileSearch/fileview.h"
 #include "../ControlCenterSettingsSearch/settingview.h"
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include "../ukui-search/src/Interface/ukuichineseletter.h"
 
 class MainViewWidget : public QWidget
 {
@@ -100,9 +103,15 @@ private:
     int fileNum; //记录搜索出来的文件数量
     int SettingNum;//记录搜索出来的设置数量
 
-   websearch *search_web_page;
+    websearch *search_web_page;
 
-   QString search1;
+    QString search1;
+
+
+
+
+
+
 
 
 

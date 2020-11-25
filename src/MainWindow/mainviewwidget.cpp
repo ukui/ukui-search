@@ -195,6 +195,7 @@ void MainViewWidget::initQueryLineEdit()
 
     //把搜索的设置信息传入settingModel
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
+//            qDebug()<<"m_queryLineEdit"<<UkuiChineseLetter::getPinyins(search); // 中文转英文
             m_settingmodel->matchstart(search);
 
     });
@@ -376,12 +377,12 @@ void MainViewWidget::initSearchWidget()
        });
 
     //初始化文件与设置view为隐藏
-
     m_searchResultWid=new SearchResultWidget;
-
     m_searchResultWid->setVisible(false);
     m_fileview->setVisible(false);
     m_settingview->setVisible(false);
+
+//    m_fileview-
 
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;
@@ -400,6 +401,8 @@ void MainViewWidget::AddSearchWidget()
     m_fileview->setColumnWidth(0,300);
     m_fileview->setColumnWidth(1,150);
     m_fileview->setColumnWidth(2,150);
+
+//m_fileview->header()->
     m_settingview->setModel(m_settingmodel);
 
     //添加已经安装的应用界面
