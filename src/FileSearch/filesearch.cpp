@@ -49,9 +49,13 @@ int filesearch::FindFile(const QString& _filePath)
         else{
             for(int m = 0; m <infolist.size(); m++) {
                                 //这里是获取当前要处理的文件名
-                QString str=infolist.at(m);
-                if(str.contains(test)){
-                    searchResult.insert(_filePath,str);
+                QString sourceText=infolist.at(m);
+                if(sourceText.contains(test)){
+                    searchResult.insert(_filePath,sourceText);
+                }
+                QString pinyin=UkuiChineseLetter::getPinyins(sourceText).toLower(); // 中文转英文
+                if(pinyin.contains(test)){
+                    searchResult.insert(_filePath,sourceText);
                 }
             }
             break;
