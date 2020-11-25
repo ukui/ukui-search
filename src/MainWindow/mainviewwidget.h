@@ -41,6 +41,9 @@
 #include "../WebSearch/websearch.h"
 #include "../FileSearch/fileview.h"
 #include "../ControlCenterSettingsSearch/settingview.h"
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include "../ukui-search/src/Interface/ukuichineseletter.h"
 
 class MainViewWidget : public QWidget
 {
@@ -96,12 +99,19 @@ private:
 
     settingModel *m_settingmodel;//设置model
 
+    int appNum; //记录搜索出来的APP数量
     int fileNum; //记录搜索出来的文件数量
     int SettingNum;//记录搜索出来的设置数量
 
-   websearch *search_web_page;
+    websearch *search_web_page;
 
-   QString search1;
+    QString search1;
+
+
+
+
+
+
 
 
 
@@ -146,6 +156,8 @@ public Q_SLOTS:
      */
     void recvSearchResult(QVector<QStringList> arg);
     void recvFileSearchResult(QStringList arg);
+
+    void setAppView(int row);//改变app大小的槽函数
 
     void setFileView(int row); //改变文件view大小的槽函数
 

@@ -61,6 +61,8 @@ private Q_SLOTS:
      * @param arg: The desktop file information that the application contains
      */
     void execApplication(QStringList arg);
+Q_SIGNALS:
+    void changeAppNum(int num);
 };
 
 #endif // SEARCHRESULTWIDGET_H

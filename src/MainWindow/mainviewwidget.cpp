@@ -72,10 +72,10 @@ void MainViewWidget::initUi()
     addTopControl();
     //加载默认视图
     this->setFixedSize(Style::defaultMainViewWidWidth,Style::minh);
-    m_topWidget->setFixedSize(30,30);
+//    m_topWidget->setFixedSize(30,30);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
+//    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
     m_queryText->adjustSize();
 }
 
@@ -85,29 +85,30 @@ void MainViewWidget::initUi()
  */
 void MainViewWidget::changesize()
 {
-    qDebug()<<"1:"<<fileNum;
-    if(fileNum==0)
+    if(fileNum == 0)
     {
-        qDebug()<<"2:"<<fileNum;
         m_fileview->setVisible(false);
     } else {
-        qDebug()<<"3:"<<fileNum;
-        if(fileNum>10){
+        if(fileNum > 10){
             m_fileview->setVisible(true);
 //            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,5*60);
-            qDebug()<<"4:"<<fileNum;
         } else {
             m_fileview->setVisible(true);
-            qDebug()<<"5:"<<fileNum;
 //            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,fileNum);
         }
     }
 
-    if(SettingNum==0){
+    if(SettingNum == 0){
         m_settingview->setVisible(false);
     }else{
         m_settingview->setVisible(true);
          m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
+    }
+
+    if(appNum == 0){
+        m_searchResultWid->setVisible(false);
+    }else {
+        m_searchResultWid->setVisible(true);
     }
 
 }
@@ -121,8 +122,8 @@ void MainViewWidget::addTopControl()
     m_topLayout->setSpacing(0);
     m_queryLineEdit=new QLineEdit;
 //    char style[100];
-//    sprintf(style, "QLineEdit{border:0px;background-color:%s;border-radius:4px;}",QueryLineEditBackground);
-//    m_queryLineEdit->setStyleSheet(style);
+//    sprintf(style, "QLineEdit{border:2px;background-color:%s;border-radius:4px;}",QueryLineEditBackground);
+    m_queryLineEdit->setStyleSheet("QLineEdit{border:2px;background-color:white;border-radius:4px;}");
     m_topLayout->addWidget(m_queryLineEdit);
     m_topWidget->setLayout(m_topLayout);
 
@@ -167,6 +168,7 @@ void MainViewWidget::initQueryLineEdit()
     m_queryLineEdit->setFocusPolicy(Qt::ClickFocus);
     m_queryLineEdit->installEventFilter(this);
     m_queryLineEdit->setContextMenuPolicy(Qt::NoContextMenu);
+    m_queryLineEdit->setFixedSize(678,35);
 
     //点击搜索框的动画效果
     m_animation= new QPropertyAnimation(m_queryWid,"geometry");
@@ -193,6 +195,7 @@ void MainViewWidget::initQueryLineEdit()
 
     //把搜索的设置信息传入settingModel
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
+//            qDebug()<<"m_queryLineEdit"<<UkuiChineseLetter::getPinyins(search); // 中文转英文
             m_settingmodel->matchstart(search);
 
     });
@@ -330,7 +333,7 @@ void MainViewWidget::loadMinMainView()
     m_topWidget->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
+//    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
     if(m_queryLineEdit->text().isEmpty())
     {
         if(m_queryWid->layout()->count()==1)
@@ -374,17 +377,22 @@ void MainViewWidget::initSearchWidget()
        });
 
     //初始化文件与设置view为隐藏
+    m_searchResultWid=new SearchResultWidget;
+    m_searchResultWid->setVisible(false);
     m_fileview->setVisible(false);
     m_settingview->setVisible(false);
+
+//    m_fileview-
 
     m_filemodel = new filemodel;
     m_settingmodel = new settingModel;
 
     //通过信号监听内容并设置宽度
+    connect(m_searchResultWid,&SearchResultWidget::changeAppNum,this,&MainViewWidget::setAppView);
     connect(m_filemodel,&filemodel::requestUpdateSignal,this,&MainViewWidget::setFileView);
     connect(m_settingmodel,&settingModel::requestUpdateSignal,this,&MainViewWidget::setSettingView);
 
-    m_searchResultWid=new SearchResultWidget;
+
 }
 //添加搜索到的界面
 void MainViewWidget::AddSearchWidget()
@@ -393,10 +401,13 @@ void MainViewWidget::AddSearchWidget()
     m_fileview->setColumnWidth(0,300);
     m_fileview->setColumnWidth(1,150);
     m_fileview->setColumnWidth(2,150);
+
+//m_fileview->header()->
     m_settingview->setModel(m_settingmodel);
 
     //添加已经安装的应用界面
     mainLayout->addWidget(m_searchResultWid);
+
     //添加文件搜索界面
     mainLayout->addWidget(m_fileview);
     //添加控制面板搜索项目界面
@@ -430,4 +441,11 @@ void MainViewWidget::setSettingView(int row)
 {
     SettingNum=row;
     changesize();
+}
+
+void MainViewWidget::setAppView(int row)
+{
+    appNum=row;
+    changesize();
+
 }
