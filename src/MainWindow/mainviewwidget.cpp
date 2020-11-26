@@ -81,30 +81,25 @@ void MainViewWidget::initUi()
 
 
 /**
- * 监听treeview改变窗口大小
+ * 监听treeview隐藏或显示
  */
 void MainViewWidget::changesize()
 {
+    //文件模块
     if(fileNum == 0)
     {
         m_fileview->setVisible(false);
     } else {
-        if(fileNum > 10){
-            m_fileview->setVisible(true);
-//            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,5*60);
-        } else {
-            m_fileview->setVisible(true);
-//            m_fileview->setFixedSize(Style::defaultMainViewWidWidth,fileNum);
-        }
+        m_fileview->setVisible(true);
     }
 
+    //设置模块
     if(SettingNum == 0){
         m_settingview->setVisible(false);
     }else{
         m_settingview->setVisible(true);
-         m_settingview->setFixedSize(Style::defaultMainViewWidWidth,SettingNum*60);
     }
-
+    //应用模块
     if(appNum == 0){
         m_searchResultWid->setVisible(false);
     }else {
@@ -121,9 +116,6 @@ void MainViewWidget::addTopControl()
     m_topLayout=new QHBoxLayout;
     m_topLayout->setSpacing(0);
     m_queryLineEdit=new QLineEdit;
-//    char style[100];
-//    sprintf(style, "QLineEdit{border:2px;background-color:%s;border-radius:4px;}",QueryLineEditBackground);
-//    m_queryLineEdit->setStyleSheet("QLineEdit{border:2px;background-color:white;border-radius:4px;}");
     m_topLayout->addWidget(m_queryLineEdit);
     m_topWidget->setLayout(m_topLayout);
 
@@ -386,6 +378,10 @@ void MainViewWidget::initSearchWidget()
     m_settingmodel = new settingModel;
 
     //通过信号监听内容并设置宽度
+    connect(m_settingmodel,&settingModel::requestUpdateSignal,m_settingview,&settingview::changesize);
+
+
+    //通过信号监听内容并选择是否隐藏
     connect(m_searchResultWid,&SearchResultWidget::changeAppNum,this,&MainViewWidget::setAppView);
     connect(m_filemodel,&filemodel::requestUpdateSignal,this,&MainViewWidget::setFileView);
     connect(m_settingmodel,&settingModel::requestUpdateSignal,this,&MainViewWidget::setSettingView);

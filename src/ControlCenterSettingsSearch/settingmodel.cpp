@@ -56,7 +56,11 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
     switch(role){
     case Qt::TextColorRole:
            return QColor(Qt::black);
-           }
+    case Qt::FontRole:
+            if(index.column()==0){
+            return QFont("宋体",11,QFont::Bold);
+            }
+        }
     return QVariant();
 }
 
@@ -73,36 +77,6 @@ void settingModel::run(int index)
 
 //按字段解析xml文件，将设置插件的中文提取出来
 void settingModel::XmlElement(){
-//    QFile file(QString::fromLocal8Bit(":/src/ControlCenterSettingsSearch/assets/search.xml"));
-//    if (!file.open(QIODevice::ReadOnly)){
-//        return;
-//    }
-//    QDomDocument doc;
-//    doc.setContent(&file);
-//    QDomElement root=doc.documentElement();
-//    QDomNode node = root.previousSibling();
-//    node=root.firstChild();
-//    file.close();
-
-//    while(!node.isNull()){
-//        QDomElement element=node.toElement();
-//        QString key=element.attribute("name");;
-//        searchresult=searchlist.value(key);
-//         QDomNodeList list=element.childNodes();
-//         for(int i=0;i<list.count();++i){
-//             QDomNode n=list.at(i);
-//             if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
-//                 index=n.toElement().text();
-//             }
-//             if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
-//                 index+=QString::fromLocal8Bit(":")+n.toElement().text();
-//             searchresult.append(index);
-//             }
-//         }
-//        searchlist.insert(key,searchresult);
-//        node=node.nextSibling();
-//    }
-
 
     QFile file(QString::fromLocal8Bit(":/src/ControlCenterSettingsSearch/assets/search.xml"));
     if (!file.open(QIODevice::ReadOnly)){
@@ -178,10 +152,10 @@ void settingModel::matching(){
             if(rx.exactMatch(*it)){
                 returnresult.append(*it);//中文名
                 commandresult.append(settingkey);//命令
-
-
                 QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
-                iconresult.append(QIcon(str));
+                QIcon icon = QIcon::fromTheme(str);
+                QPixmap pixmap = icon.pixmap(QSize(25,25));
+                iconresult.append(pixmap);
 
 //                qDebug()<<sourcetext;
             }
@@ -204,7 +178,9 @@ void settingModel::matching(){
                 commandresult.append(settingkey);//命令
 
                 QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
-                iconresult.append(QIcon(str));
+                QIcon icon = QIcon::fromTheme(str);
+                QPixmap pixmap = icon.pixmap(QSize(25,25));
+                iconresult.append(pixmap);
 
 //                qDebug()<<sourcetext;
             }

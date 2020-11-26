@@ -19,6 +19,7 @@
 #include <QFile>
 #include <QIcon>
 #include <QPixmap>
+#include <QFont>
 class settingModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -55,7 +56,7 @@ private:
     QList<QString> returnresult;
     QList<QString> commandresult;
     QList<QString> lockresult;
-    QList<QIcon> iconresult;
+    QList<QPixmap> iconresult;
 
 
 

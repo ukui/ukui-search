@@ -130,7 +130,7 @@ void filemodel::showResult(QStringList result){
 
              QString str= QString::fromLocal8Bit("file://")+pathresult.at(i);
              QIcon icon= QIcon::fromTheme(fileutils->getFileIconName(str));
-             QPixmap pixmap = icon.pixmap(QSize(40,40));
+             QPixmap pixmap = icon.pixmap(QSize(30,30));
              iconresult.append(pixmap);
 
              QFileInfo f(pathresult.at(i));
