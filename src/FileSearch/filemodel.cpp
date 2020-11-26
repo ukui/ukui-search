@@ -7,7 +7,7 @@ filemodel::filemodel():
     fileutils(new FileUtils)
 {
 
-    header<<tr("File")<<tr("")<<tr("");
+    header<<tr("文档")<<tr("")<<tr("");
 
 }
 
@@ -82,7 +82,7 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
         return QSize(200,40);
     case Qt::TextColorRole:
         if(index.column()==0){
-            return QColor(Qt::black);
+//            return QColor(Qt::black);
         }
     }
 return QVariant();

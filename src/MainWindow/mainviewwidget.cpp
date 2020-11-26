@@ -396,16 +396,17 @@ void MainViewWidget::AddSearchWidget()
     m_fileview->setColumnWidth(1,150);
     m_fileview->setColumnWidth(2,150);
 
-//m_fileview->header()->
     m_settingview->setModel(m_settingmodel);
+
+    //添加文件搜索界面
+    mainLayout->addWidget(m_fileview);
 
     //添加已经安装的应用界面
     mainLayout->addWidget(m_searchResultWid);
 
-    //添加文件搜索界面
-    mainLayout->addWidget(m_fileview);
     //添加控制面板搜索项目界面
     mainLayout->addWidget(m_settingview);
+
     //网页搜索界面
     mainLayout->addWidget(search_web_page);
 

@@ -14,7 +14,6 @@ settingview::~settingview()
 
 void settingview::changesize(int row)
 {
-    qDebug()<<"changesize:"<<row;
     if(row<3){
         this->setFixedSize(Style::defaultMainViewWidWidth,row*28+30);
     } else {

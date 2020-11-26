@@ -33,13 +33,9 @@ int settingModel::rowCount(const QModelIndex& index) const
 //重写设置搜索的model标头
 QVariant settingModel::headerData(int section,Qt::Orientation orientation ,int role) const {
     if(role == 0){
-        return tr("控制面板");
+        return tr("系统设置");
     }
 
-    switch(role){
-    case Qt::TextColorRole:
-           return QColor(Qt::black);
-           }
     return QAbstractItemModel::headerData(section,orientation,role);
 }
 
@@ -55,7 +51,7 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
 
     switch(role){
     case Qt::TextColorRole:
-           return QColor(Qt::black);
+//           return QColor(Qt::black);
     case Qt::FontRole:
             if(index.column()==0){
             return QFont("宋体",11,QFont::Bold);
@@ -156,8 +152,6 @@ void settingModel::matching(){
                 QIcon icon = QIcon::fromTheme(str);
                 QPixmap pixmap = icon.pixmap(QSize(25,25));
                 iconresult.append(pixmap);
-
-//                qDebug()<<sourcetext;
             }
         }
     }

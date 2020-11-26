@@ -36,7 +36,7 @@ void SearchResultWidget::initUi()
 {
     m_listLayout = new QVBoxLayout;
     applabel = new QLabel;
-    applabel->setText("     应用");
+    applabel->setText("应用程序");
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);

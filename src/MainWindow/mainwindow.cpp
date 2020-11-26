@@ -50,12 +50,12 @@ MainWindow::MainWindow(QWidget *parent) :
     UkuiMenuInterface::allAppVector=m_ukuiMenuInterface->getAllApp();
     Style::initWidStyle();
     initUi();
-//    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
+    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
 }
 
 MainWindow::~MainWindow()
 {
-//    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
+    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
     XEventMonitor::instance()->quit();
     delete m_ukuiMenuInterface;
 }
