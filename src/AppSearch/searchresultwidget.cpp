@@ -36,7 +36,7 @@ void SearchResultWidget::initUi()
 {
     m_listLayout = new QVBoxLayout;
     applabel = new QLabel;
-    applabel->setText("     应用");
+    applabel->setText("应用程序");
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -79,5 +79,9 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
     Q_EMIT changeAppNum(m_data.count());
     m_listView->updateData(m_data);
     //根据获取的应用数量，刷新界面高度
-    this->setFixedSize(Style::defaultMainViewWidWidth,m_data.size()*46);
+    if(m_data.size()<=3){
+        this->setFixedSize(Style::defaultMainViewWidWidth,m_data.size()*46+46);
+    } else {
+        this->setFixedSize(Style::defaultMainViewWidWidth,3*46+46);
+    }
 }
