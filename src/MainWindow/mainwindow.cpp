@@ -149,7 +149,7 @@ bool MainWindow::event ( QEvent * event )
     {
         if(QApplication::activeWindow() != this)
         {
-            this->deleteLater();
+            this->hide();
             m_mainViewWid->widgetMakeZero();
         }
     }
