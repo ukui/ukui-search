@@ -43,7 +43,6 @@
 #include "../ControlCenterSettingsSearch/settingview.h"
 #include <QVBoxLayout>
 #include <QHeaderView>
-#include "../ukui-search/src/Interface/ukuichineseletter.h"
 
 class MainViewWidget : public QWidget
 {
