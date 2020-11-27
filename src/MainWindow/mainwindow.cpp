@@ -23,7 +23,6 @@
 #include <QtSingleApplication>
 #include <QtX11Extras/QX11Info>
 #include <syslog.h>
-#include "src/XEventMonitor/xeventmonitor.h"
 #include "src/Style/style.h"
 #include <QPalette>
 #include "kwindowsystem.h"
@@ -56,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
 //    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
-    XEventMonitor::instance()->quit();
     delete m_ukuiMenuInterface;
 }
 
@@ -86,12 +84,6 @@ void MainWindow::initUi()
             this,&MainWindow::monitorResolutionChange);
     connect(qApp,&QApplication::primaryScreenChanged,this,
             &MainWindow::primaryScreenChangedSlot);
-
-    XEventMonitor::instance()->start();
-    connect(XEventMonitor::instance(), SIGNAL(keyRelease(QString)),
-            this,SLOT(XkbEventsRelease(QString)));
-    connect(XEventMonitor::instance(), SIGNAL(keyPress(QString)),
-            this,SLOT(XkbEventsPress(QString)));
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)

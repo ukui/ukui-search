@@ -50,23 +50,18 @@ include(src/AppSearch/appsearch.pri)                                 #应用搜�
 include(src/FileSearch/filesearch.pri)                               #文件搜索
 include(src/ControlCenterSettingsSearch/controlcentersearch.pri)     #控制面板搜索
 include(src/WebSearch/websearch.pri)                                 #网页搜索
+include(src/Interface/interface.pri)                                 #接口
 
 SOURCES += \
     src/Style/style.cpp \
     src/UtilityFunction/itemdelegate.cpp \
     src/UtilityFunction/listview.cpp \
-    src/Interface/ukuichineseletter.cpp \
-    src/Interface/ukuimenuinterface.cpp \
-    src/XEventMonitor/xeventmonitor.cpp \
 
 
 HEADERS  += \
     src/Style/style.h \
     src/UtilityFunction/itemdelegate.h \
     src/UtilityFunction/listview.h \
-    src/Interface/ukuichineseletter.h \
-    src/Interface/ukuimenuinterface.h \
-    src/XEventMonitor/xeventmonitor.h\
 
 RESOURCES += \
     res.qrc
