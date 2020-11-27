@@ -7,7 +7,7 @@
 QT       += core gui svg dbus x11extras KWindowSystem xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-include(src/QtSingleApplication/qtsingleapplication.pri)
+
 QMAKE_CXXFLAGS += -g
 
 TARGET = ukui-search
@@ -44,11 +44,12 @@ INSTALLS += qm_files
 # So we can access it from main.cpp
 DEFINES += QM_FILES_INSTALL_PATH='\\"$${QM_FILES_INSTALL_PATH}\\"'
 
-include(src/MainWindow/mainwindow.pri)  #主界面
-include(src/AppSearch/appsearch.pri)    #应用搜索
-include(src/FileSearch/filesearch.pri)  #文件搜索
-include(src/ControlCenterSettingsSearch/controlcentersearch.pri) #控制面板搜索
-include(src/WebSearch/websearch.pri)    #网页搜索
+include(src/QtSingleApplication/qtsingleapplication.pri)             #单例
+include(src/MainWindow/mainwindow.pri)                               #主界面
+include(src/AppSearch/appsearch.pri)                                 #应用搜索
+include(src/FileSearch/filesearch.pri)                               #文件搜索
+include(src/ControlCenterSettingsSearch/controlcentersearch.pri)     #控制面板搜索
+include(src/WebSearch/websearch.pri)                                 #网页搜索
 
 SOURCES += \
     src/Style/style.cpp \
