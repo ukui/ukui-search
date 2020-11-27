@@ -14,6 +14,13 @@ public:
 public Q_SLOTS:
     void changesize(int row);
 
+private:
+    //控制style的gsetting
+    QGSettings *style_settings;
+    //用来判断style
+    QStringList stylelist;
+    void styleChange();
+
 };
 
 #endif // SETTINGVIEW_H
