@@ -52,18 +52,27 @@ int filesearch::FindFile(const QString& _filePath)
                 //这里是获取当前要处理的文件名，原文匹配
                 QString sourceText=infolist.at(m);
                 if(sourceText.contains(test)){
+                    if(searchResult.size()>20){
+                        break;
+                    }
                     searchResult.insert(_filePath,sourceText);
                 }
 
                 //拼音匹配
                 QString pinyin=UkuiChineseLetter::getPinyins(sourceText).toLower(); // 中文转英文
                 if(pinyin.contains(test,Qt::CaseInsensitive)){
+                    if(searchResult.size()>20){
+                        break;
+                    }
                     searchResult.insert(_filePath,sourceText);
                 }
 
                 //首字母匹配
                 QString pinyinFrist=UkuiChineseLetter::getFirstLettersAll(sourceText).toLower();// 中文转首字母
                 if(pinyinFrist.contains(test,Qt::CaseInsensitive)){
+                    if(searchResult.size()>20){
+                        break;
+                    }
                     searchResult.insert(_filePath,sourceText);
                 }
             }
