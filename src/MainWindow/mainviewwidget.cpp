@@ -161,6 +161,7 @@ void MainViewWidget::initQueryLineEdit()
     m_queryLineEdit->installEventFilter(this);
     m_queryLineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_queryLineEdit->setFixedSize(678,35);
+    m_queryLineEdit->setMaxLength(100);
 
     //点击搜索框的动画效果
     m_animation= new QPropertyAnimation(m_queryWid,"geometry");
@@ -181,6 +182,7 @@ void MainViewWidget::initQueryLineEdit()
 
     connect(m_searchAppThread,&SearchAppThread::sendSearchResult,
             this,&MainViewWidget::recvSearchResult);
+
 
     //搜索应用
     connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::searchAppSlot);
