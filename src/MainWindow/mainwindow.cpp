@@ -23,7 +23,6 @@
 #include <QtSingleApplication>
 #include <QtX11Extras/QX11Info>
 #include <syslog.h>
-#include "src/XEventMonitor/xeventmonitor.h"
 #include "src/Style/style.h"
 #include <QPalette>
 #include "kwindowsystem.h"
@@ -50,13 +49,13 @@ MainWindow::MainWindow(QWidget *parent) :
     UkuiMenuInterface::allAppVector=m_ukuiMenuInterface->getAllApp();
     Style::initWidStyle();
     initUi();
-    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
+
+//    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
 }
 
 MainWindow::~MainWindow()
 {
-    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
-    XEventMonitor::instance()->quit();
+//    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
     delete m_ukuiMenuInterface;
 }
 
@@ -66,9 +65,9 @@ void MainWindow::initUi()
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
-//    this->setStyleSheet("background:transparent;");
     this->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    this->setMinimumSize(Style::minw,Style::minh);//可设置本窗口的大小，调整见style文件参数
+    this->setFixedWidth(Style::minw);//可设置本窗口的大小，调整见style文件参数]
+//    this->setSizePolicy(QSizePolicy::ExpandFlag);
     this->setContentsMargins(0,0,0,0);
 
     m_frame=new QFrame;
@@ -86,12 +85,6 @@ void MainWindow::initUi()
             this,&MainWindow::monitorResolutionChange);
     connect(qApp,&QApplication::primaryScreenChanged,this,
             &MainWindow::primaryScreenChangedSlot);
-
-    XEventMonitor::instance()->start();
-    connect(XEventMonitor::instance(), SIGNAL(keyRelease(QString)),
-            this,SLOT(XkbEventsRelease(QString)));
-    connect(XEventMonitor::instance(), SIGNAL(keyPress(QString)),
-            this,SLOT(XkbEventsPress(QString)));
 }
 
 void MainWindow::paintEvent(QPaintEvent *event)

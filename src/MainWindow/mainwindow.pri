@@ -1,5 +1,5 @@
 SOURCES  += \
-            main.cpp \
+            src/MainWindow/main.cpp \
             src/MainWindow/mainwindow.cpp \
             src/MainWindow/mainviewwidget.cpp
 HEADERS  += src/MainWindow/mainwindow.h \

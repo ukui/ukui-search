@@ -156,6 +156,7 @@ public Q_SLOTS:
     void recvSearchResult(QVector<QStringList> arg);
     void recvFileSearchResult(QStringList arg);
 
+
     void setAppView(int row);//改变app大小的槽函数
 
     void setFileView(int row); //改变文件view大小的槽函数
