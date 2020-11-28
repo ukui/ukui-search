@@ -44,7 +44,6 @@ private:
     QList<QString> runresult;
     QList<QPixmap> iconresult;
     QList<QString> m_timeResult;
-    QProcess *cmd;
     QMap<QString,QList<QString>> m_showMap;
 
 
