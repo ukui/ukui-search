@@ -11,20 +11,18 @@ public:
     SearchFileThread();
     ~SearchFileThread();
     void run();
-    QString mSearchline;
-    QStringList returnResult;
+
 
 Q_SIGNALS:
-    void message(QList<QString> arg);
     void sendSearchResult(QStringList arg);
 
 public Q_SLOTS:
-    void slotFunc(QString arg);
     void recvSearchKeyword(QString arg);
 
 private:
-    QString m_keyWord;
-    QMap<QString,QString> recMap;
+    QString m_keyWord; //编辑栏输入
+    QMap<QString,QString> recMap; //接收filesearch类返回的文件名字和文件路径
+    QStringList returnResult; //返回给model的字符串列表，文件的绝对路径
 };
 
 #endif // SEARCHFILETHREAD_H

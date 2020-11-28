@@ -15,10 +15,15 @@ class filesearch :public QObject
 public:
     filesearch(QString searchInput);
     ~filesearch();
-    int FindFile(const QString& _filePath);
-    QMap<QString,QString> searchResult;
-    QString test;
     QMap<QString,QString> returnResult();
+
+private:
+    int FindFile(const QString& _filePath);
+
+private:
+    QMap<QString,QString> searchResult; //返回结果
+    QString test; //输入内容
+
 
 };
 #endif // FILESEARCH_H

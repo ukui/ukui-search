@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <pwd.h>
 #include <unistd.h>
+
+/**
+ * @brief filemodel::filemodel 显示文件结果的model
+ */
 filemodel::filemodel():
-    cmd(new QProcess(this)),
     fileutils(new FileUtils)
 {
 
@@ -11,16 +14,33 @@ filemodel::filemodel():
 
 }
 
+/**
+ * @brief filemodel::rowCount 重写的model行数函数
+ * @param index 条目的索引
+ * @return model显示的行数
+ */
 int filemodel::rowCount(const QModelIndex& index) const
 {
     return index.isValid() ? 0 : showresult.count();
 }
 
+/**
+ * @brief filemodel::columnCount 重写的model列数函数
+ * @param index 条目的索引
+ * @return model显示的列数
+ */
 int filemodel::columnCount(const QModelIndex& index) const
 {
     return index.isValid() ? 0 :3;
 }
 
+/**
+ * @brief filemodel::headerData filemodel::columnCount 重写的model标头函数
+ * @param section 列
+ * @param orientation 显示方式
+ * @param role 显示内容类型
+ * @return 标头数据
+ */
 QVariant filemodel::headerData(int section,Qt::Orientation orientation ,int role) const {
     if(role == Qt::DisplayRole&&orientation==Qt::Horizontal){
         return header[section];
@@ -28,6 +48,12 @@ QVariant filemodel::headerData(int section,Qt::Orientation orientation ,int role
     return QAbstractItemModel::headerData(section,orientation,role);
 }
 
+/**
+ * @brief filemodel::data model每条条目的数据，有显示内容，图片，内容字体字号等
+ * @param index 条目索引
+ * @param role 显示内容的类型
+ * @return 显示内容数据
+ */
 QVariant filemodel::data(const QModelIndex &index, int role) const
 {
     if(!index.isValid())
@@ -88,8 +114,11 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
 return QVariant();
 }
 
+/**
+ * @brief filemodel::matchstart 匹配前将model中各成员变量进行初始化
+ * @param source 现在无意义
+ */
 void filemodel::matchstart(const QString &source){
-
         returnresult.clear();
         pathresult.clear();
         runresult.clear();
@@ -106,13 +135,19 @@ void filemodel::matchstart(const QString &source){
         }
 }
 
+/**
+ * @brief filemodel::matchesChanged 更新model内容
+ */
 void filemodel::matchesChanged()
 {
-
         beginResetModel();
         endResetModel();
 }
 
+/**
+ * @brief filemodel::showResult 将路径等数据分别给各成员变量
+ * @param result
+ */
 void filemodel::showResult(QStringList result){
     matchstart("clear");
     pathresult=result;
@@ -140,9 +175,6 @@ void filemodel::showResult(QStringList result){
          }else{
              return;
          }
-
-
-
      }
      Q_EMIT requestUpdateSignal(runresult.count());
      showresult.clear();
@@ -161,6 +193,11 @@ void filemodel::showResult(QStringList result){
     matchesChanged();
 }
 
+/**
+ * @brief filemodel::run 运行点击条目对应的文件
+ * @param row 条目行数
+ * @param column 条目列数
+ */
 void filemodel::run(int row,int column){
     if(row<3){
         QString file;

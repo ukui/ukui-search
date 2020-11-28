@@ -3,6 +3,10 @@
 #include <pwd.h>
 #include <unistd.h>
 
+/**
+  * @brief filesearch::filesearch 文件搜索的实现类，将输入的内容在用户目录下进行匹配
+  * @param searchInput 匹配文件名字的输入
+  */
  filesearch::filesearch(QString searchInput)
 {
     test=searchInput;
@@ -17,7 +21,11 @@ filesearch::~filesearch()
 {
 }
 
-
+/**
+ * @brief filesearch::FindFile 文件递归遍历，在遍历的过程中匹配
+ * @param _filePath 文件遍历的路径
+ * @return 目前没有用
+ */
 int filesearch::FindFile(const QString& _filePath)
 {
     QDir dir(_filePath);
@@ -74,6 +82,10 @@ int filesearch::FindFile(const QString& _filePath)
     return 1;
 }
 
+/**
+ * @brief filesearch::returnResult 将遍历匹配得到的结果进行返回
+ * @return 匹配文件的路径和名字
+ */
 QMap<QString,QString> filesearch::returnResult(){
     return searchResult;
 }
