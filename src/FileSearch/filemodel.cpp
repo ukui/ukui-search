@@ -114,6 +114,7 @@ void filemodel::matchesChanged()
 }
 
 void filemodel::showResult(QStringList result){
+    matchstart("clear");
     pathresult=result;
      for(int i=0;i<pathresult.count();i++)
      {

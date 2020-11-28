@@ -11,7 +11,7 @@ void SearchFileThread::run(){
     QMap<QString, QString>::const_iterator i;
 
     for(i=recMap.constBegin();i!=recMap.constEnd();++i){
-       QString str=i.key()+"/"+i.value();
+       QString str=i.value()+"/"+i.key();
        returnResult.append(str);
     }
     Q_EMIT sendSearchResult(returnResult);
