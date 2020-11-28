@@ -41,6 +41,7 @@
 #include "../WebSearch/websearch.h"
 #include "../FileSearch/fileview.h"
 #include "../ControlCenterSettingsSearch/settingview.h"
+#include "src/SearchBar/inputbox.h"
 #include <QVBoxLayout>
 #include <QHeaderView>
 
@@ -66,12 +67,13 @@ public:
 private:
     QVBoxLayout* mainLayout;
     QWidget *m_topWidget=nullptr;
-    QHBoxLayout *m_topLayout=nullptr;
+    //顶部搜索框所在的布局
+    UkuiSearchBarHLayout *m_topLayout=nullptr;
 
     QSpacerItem *m_verticalSpacer=nullptr;
 
     QLineEdit *m_queryLineEdit=nullptr;
-    QWidget *m_queryWid=nullptr;
+    UKuiSeachBar *m_queryWid=nullptr;
     QLabel *m_queryIcon=nullptr;
     QLabel *m_queryText=nullptr;
     bool m_isSearching;

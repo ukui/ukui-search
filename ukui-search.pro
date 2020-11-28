@@ -51,6 +51,7 @@ include(src/FileSearch/filesearch.pri)                               #文件搜�
 include(src/ControlCenterSettingsSearch/controlcentersearch.pri)     #控制面板搜索
 include(src/WebSearch/websearch.pri)                                 #网页搜索
 include(src/Interface/interface.pri)                                 #接口
+include(src/SearchBar/searchbar.pri)                                 #搜索框
 
 SOURCES += \
     src/Style/style.cpp \
