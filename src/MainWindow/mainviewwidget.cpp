@@ -71,7 +71,7 @@ void MainViewWidget::initUi()
 
     addTopControl();
     //加载默认视图
-    this->setFixedSize(Style::defaultMainViewWidWidth,Style::minh);
+    this->setFixedWidth(Style::defaultMainViewWidWidth);
 //    m_topWidget->setFixedSize(30,30);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
@@ -323,7 +323,7 @@ void MainViewWidget::animationFinishedSlot()
  */
 void MainViewWidget::loadMinMainView()
 {
-    this->setFixedSize(Style::defaultMainViewWidWidth,Style::minh);
+    this->setFixedWidth(Style::defaultMainViewWidWidth);
     m_topWidget->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
