@@ -43,7 +43,6 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
 MainViewWidget::~MainViewWidget()
 {
-    delete m_animation;
     delete m_searchAppThread;
 }
 
@@ -62,7 +61,7 @@ void MainViewWidget::initUi()
     mainLayout->setSpacing(0);
 
     //顶部搜索框的widget
-    m_topWidget=new QWidget;
+    m_topWidget=new UKuiSeachBarWidget;
 
     mainLayout->addWidget(m_topWidget);
     this->setLayout(mainLayout);
@@ -72,11 +71,8 @@ void MainViewWidget::initUi()
     addTopControl();
     //加载默认视图
     this->setFixedWidth(Style::defaultMainViewWidWidth);
-//    m_topWidget->setFixedSize(30,30);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-//    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
-    m_queryText->adjustSize();
 }
 
 
@@ -135,28 +131,17 @@ void MainViewWidget::initQueryLineEdit()
     //queryWidLayout 搜索图标和文字所在的布局
     QHBoxLayout* queryWidLayout=new QHBoxLayout;
     m_queryWid->setLayout(queryWidLayout);
-    //输入框的搜索图标，不清楚loadSvg为什么不能用了
-    QPixmap pixmap/*=loadSvg(QString(":/data/img/mainviewwidget/search.svg"),16)*/;
 
-
-    m_queryIcon=new QLabel;
-    m_queryIcon->setFixedSize(pixmap.size());
-    m_queryIcon->setPixmap(pixmap);
     m_queryText=new QLabel;
-    m_queryText->setText(tr("Search"));
+//    m_queryText->setText(tr("Search"));
     m_queryText->adjustSize();
-    queryWidLayout->addWidget(m_queryIcon);
-    queryWidLayout->addWidget(m_queryText);
+//    queryWidLayout->addWidget(m_queryText);
     m_queryLineEdit->setFocusPolicy(Qt::ClickFocus);
     m_queryLineEdit->installEventFilter(this);
     m_queryLineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_queryLineEdit->setFixedSize(678,35);
     m_queryLineEdit->setMaxLength(100);
 
-    //点击搜索框的动画效果
-    m_animation= new QPropertyAnimation(m_queryWid,"geometry");
-    m_animation->setDuration(100);
-    connect(m_animation,&QPropertyAnimation::finished,this,&MainViewWidget::animationFinishedSlot);
 
     //跑一个线程执行应用搜索
     m_searchAppThread=new SearchAppThread;
@@ -213,56 +198,6 @@ void MainViewWidget::initQueryLineEdit()
     });
 }
 
-/*事件过滤*/
-bool MainViewWidget::eventFilter(QObject *watched, QEvent *event)
-{
-#if 1
-    if(watched==m_queryLineEdit)
-    {
-        if(event->type()==QEvent::FocusIn)
-        {
-            if(!m_queryLineEdit->text().isEmpty())
-            {
-                if(m_searchKeyWords.isEmpty())
-                    searchAppSlot(m_queryLineEdit->text());
-            }
-            else
-            {
-                m_animation->stop();
-                m_animation->setStartValue(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-                                                 m_queryIcon->width()+m_queryText->width()+10,0));
-                m_animation->setEndValue(QRect(0,0,
-                                               m_queryIcon->width()+5,0));
-                m_animation->setEasingCurve(QEasingCurve::OutQuad);
-                m_animation->start();
-                m_queryLineEdit->setTextMargins(-5,1,0,1);
-            }
-            m_isSearching=true;
-        }
-        else if(event->type()==QEvent::FocusOut)
-        {
-            m_searchKeyWords.clear();
-            if(m_queryLineEdit->text().isEmpty())
-            {
-                if(m_isSearching)
-                {
-                    m_animation->stop();
-                    m_queryText->adjustSize();
-                    m_animation->setStartValue(QRect(0,0,
-                                                     m_queryIcon->width()+5,0));
-                    m_animation->setEndValue(QRect((m_queryLineEdit->width()-(m_queryIcon->width()+m_queryText->width()+10))/2,0,
-                                                   m_queryIcon->width()+m_queryText->width()+10,0));
-                    m_animation->setEasingCurve(QEasingCurve::InQuad);
-                    m_animation->start();
-                }
-            }
-            m_isSearching=false;
-        }
-    }
-
-    return QWidget::eventFilter(watched,event);     // 最后将事件交给上层对话框
-#endif
-}
 
 /**
  * 搜索程序和文件槽函数
@@ -286,25 +221,6 @@ void MainViewWidget::recvFileSearchResult(QStringList arg)
     m_filemodel->showResult(arg);
 }
 
-/*
- * 点击搜索框的动画效果
-*/
-void MainViewWidget::animationFinishedSlot()
-{
-    if(m_isSearching)
-    {
-        m_queryWid->layout()->removeWidget(m_queryText);
-        m_queryText->setParent(nullptr);
-        m_queryLineEdit->setTextMargins(20,1,0,1);
-        if(!m_searchKeyWords.isEmpty())
-        {
-            m_queryLineEdit->setText(m_searchKeyWords);
-            m_searchKeyWords.clear();
-        }
-    }
-    else
-        m_queryWid->layout()->addWidget(m_queryText);
-}
 
 /**
  * 加载默认主视图
@@ -317,13 +233,6 @@ void MainViewWidget::loadMinMainView()
     m_topWidget->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
     m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-//    m_queryLineEdit->setFixedSize(Style::defaultQueryLineEditWidth,30);
-    if(m_queryLineEdit->text().isEmpty())
-    {
-        if(m_queryWid->layout()->count()==1)
-            m_queryWid->layout()->addWidget(m_queryText);
-        m_queryText->adjustSize();
-    }
 
     QLayoutItem* child;
     if((child=this->layout()->takeAt(1))!=nullptr)

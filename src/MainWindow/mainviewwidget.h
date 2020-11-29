@@ -66,7 +66,7 @@ public:
 
 private:
     QVBoxLayout* mainLayout;
-    QWidget *m_topWidget=nullptr;
+    UKuiSeachBarWidget *m_topWidget=nullptr;
     //顶部搜索框所在的布局
     UkuiSearchBarHLayout *m_topLayout=nullptr;
 
@@ -74,11 +74,9 @@ private:
 
     QLineEdit *m_queryLineEdit=nullptr;
     UKuiSeachBar *m_queryWid=nullptr;
-    QLabel *m_queryIcon=nullptr;
     QLabel *m_queryText=nullptr;
     bool m_isSearching;
     QString m_searchKeyWords;
-    QPropertyAnimation *m_animation=nullptr;
 
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
@@ -136,10 +134,6 @@ protected:
 
 public Q_SLOTS:
     /**
-     * @brief Search box focus event filtering
-     */
-    bool eventFilter(QObject *watched, QEvent *event);
-    /**
      * @brief Load the full screen letter classification interface
      */
     /**
@@ -147,10 +141,6 @@ public Q_SLOTS:
      * @param arg: Search keywords
      */
     void searchAppSlot(QString arg);
-    /**
-     * @brief Respond to search box animation finish
-     */
-    void animationFinishedSlot();
     /**
      * @brief Receive search results
      * @param arg: Search results
