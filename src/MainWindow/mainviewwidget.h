@@ -49,6 +49,12 @@ class MainViewWidget : public QWidget
 {
     Q_OBJECT
 
+    /*
+     * 负责与ukui桌面环境应用通信的dbus
+     * 搜索框文本改变的时候发送信号
+　　　*/
+    Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
+
 public:
     explicit MainViewWidget(QWidget *parent = nullptr);
     ~MainViewWidget();
@@ -72,9 +78,8 @@ private:
 
     QSpacerItem *m_verticalSpacer=nullptr;
 
-    QLineEdit *m_queryLineEdit=nullptr;
+    UKuiSearchLineEdit *m_queryLineEdit=nullptr;
     UKuiSeachBar *m_queryWid=nullptr;
-    QLabel *m_queryText=nullptr;
     bool m_isSearching;
     QString m_searchKeyWords;
 
@@ -104,18 +109,6 @@ private:
 
     websearch *search_web_page;
 
-    QString search1;
-
-
-
-
-
-
-
-
-
-
-
 protected:
     /**
      * @brief Initializes UI
@@ -133,6 +126,7 @@ protected:
     void changesize(); //实现改变文件与设置view大小的方法
 
 public Q_SLOTS:
+    void lineEditTextChanged(QString arg);
     /**
      * @brief Load the full screen letter classification interface
      */
@@ -163,6 +157,7 @@ Q_SIGNALS:
      * @param arg: Search keyword
      */
     void sendSearchKeyword(QString arg);
+    void textChanged(QString arg);
 };
 
 #endif // MAINVIEWWIDGET_H

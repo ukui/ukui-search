@@ -142,8 +142,8 @@ bool MainWindow::event ( QEvent * event )
     {
         if(QApplication::activeWindow() != this)
         {
-            this->hide();
-            m_mainViewWid->widgetMakeZero();
+//            this->hide();
+//            m_mainViewWid->widgetMakeZero();
         }
     }
     return QWidget::event(event);

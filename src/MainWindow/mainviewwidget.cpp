@@ -39,6 +39,12 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
 
     //初始化ui
     initUi();
+
+
+    /*发送输入框文字改变的dbus*/
+    QDBusConnection::sessionBus().unregisterService("org.ukui.search.service");
+    QDBusConnection::sessionBus().registerService("org.ukui.search.service");
+    QDBusConnection::sessionBus().registerObject("/lineEdit/textChanged", this,QDBusConnection :: ExportAllSlots | QDBusConnection :: ExportAllSignals);
 }
 
 MainViewWidget::~MainViewWidget()
@@ -66,7 +72,7 @@ void MainViewWidget::initUi()
     mainLayout->addWidget(m_topWidget);
     this->setLayout(mainLayout);
 
-    this->setFocusPolicy(Qt::NoFocus);
+//    this->setFocusPolicy(Qt::NoFocus);
 
     addTopControl();
     //加载默认视图
@@ -111,7 +117,7 @@ void MainViewWidget::addTopControl()
 {
     m_topLayout=new UkuiSearchBarHLayout;
     m_topLayout->setSpacing(0);
-    m_queryLineEdit=new QLineEdit;
+    m_queryLineEdit=new UKuiSearchLineEdit;
     m_topLayout->addWidget(m_queryLineEdit);
     m_topWidget->setLayout(m_topLayout);
 
@@ -132,16 +138,6 @@ void MainViewWidget::initQueryLineEdit()
     QHBoxLayout* queryWidLayout=new QHBoxLayout;
     m_queryWid->setLayout(queryWidLayout);
 
-    m_queryText=new QLabel;
-//    m_queryText->setText(tr("Search"));
-    m_queryText->adjustSize();
-//    queryWidLayout->addWidget(m_queryText);
-    m_queryLineEdit->setFocusPolicy(Qt::ClickFocus);
-    m_queryLineEdit->installEventFilter(this);
-    m_queryLineEdit->setContextMenuPolicy(Qt::NoContextMenu);
-    m_queryLineEdit->setFixedSize(678,35);
-    m_queryLineEdit->setMaxLength(100);
-
 
     //跑一个线程执行应用搜索
     m_searchAppThread=new SearchAppThread;
@@ -158,6 +154,8 @@ void MainViewWidget::initQueryLineEdit()
     connect(m_searchAppThread,&SearchAppThread::sendSearchResult,
             this,&MainViewWidget::recvSearchResult);
 
+    //输入框文本更新
+    connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::lineEditTextChanged);
 
     //搜索应用
     connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::searchAppSlot);
@@ -167,19 +165,6 @@ void MainViewWidget::initQueryLineEdit()
 //            qDebug()<<"m_queryLineEdit"<<UkuiChineseLetter::getPinyins(search); // 中文转英文
             m_settingmodel->matchstart(search);
 
-    });
-
-    //网页搜索
-    connect(m_queryLineEdit, &QLineEdit::textChanged, search_web_page,[=](){
-        QString search=QString::fromLocal8Bit("   使用百度搜索").append(QString::fromLocal8Bit(" ")).append(QString::fromLocal8Bit("\"")).append(m_queryLineEdit->text()).append(QString::fromLocal8Bit("\""));
-        search_web_page->setText(search);
-        search1=m_queryLineEdit->text();
-        //根据判断来隐藏与显示网页搜索
-        if(search1 != QString::fromLocal8Bit("")){
-            search_web_page->setVisible(true);
-        } else {
-            search_web_page->setVisible(false);
-        }
     });
 
     //把搜索的文件信息传入settingModel
@@ -198,7 +183,18 @@ void MainViewWidget::initQueryLineEdit()
     });
 }
 
-
+void MainViewWidget::lineEditTextChanged(QString arg)
+{
+    /*创建QT的DBus信号*/
+    QDBusMessage message =QDBusMessage::createSignal("/lineEdit/textChanged", "org.ukui.search.inputbox", "InputBoxTextChanged");
+    message<<arg;
+    /*
+     * 需要此点击信号的应用需要做如下绑定
+     * QDBusConnection::sessionBus().connect(QString(), QString("/lineEdit/textChanged"), "org.ukui.search.inputbox", "InputBoxTextChanged", this, SLOT(client_get(QString)));
+     * 在槽函数client_get(void)　中处理接受到的点击信号
+　　　*/
+    QDBusConnection::sessionBus().send(message);
+}
 /**
  * 搜索程序和文件槽函数
  */
@@ -231,7 +227,6 @@ void MainViewWidget::loadMinMainView()
 {
     this->setFixedWidth(Style::defaultMainViewWidWidth);
     m_topWidget->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
-    m_topLayout->setContentsMargins(0,0,0,0);
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
 
     QLayoutItem* child;
@@ -252,22 +247,10 @@ void MainViewWidget::loadMinMainView()
 //搜索到的界面（包括应用搜索，文件搜索，设置搜索）的初始化
 void MainViewWidget::initSearchWidget()
 {
-
-
-    search1 = "";
     m_fileview =new fileview;
     m_settingview = new settingview;
 
     search_web_page = new websearch;
-    search_web_page->setVisible(false);
-    connect(search_web_page,&QPushButton::clicked,this,[=](){
-           QString str = QString::fromLocal8Bit("https://www.baidu.com/baidu?tn=ubuntuu_cb&ie=utf-8&wd=").append(search1);
-           QProcess p;
-           p.setProgram(QString::fromLocal8Bit("chromium-browser"));
-           p.setArguments(QStringList()<<str);
-           p.startDetached(p.program(), p.arguments());
-           p.waitForFinished(-1);
-       });
 
     //初始化文件与设置view为隐藏
     m_searchResultWid=new SearchResultWidget;
@@ -314,6 +297,7 @@ void MainViewWidget::AddSearchWidget()
     //添加伸缩因子
     mainLayout->addStretch();
 }
+
 
 /*
  * 鼠标点击窗口外部事件
