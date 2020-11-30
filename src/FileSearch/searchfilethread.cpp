@@ -16,11 +16,13 @@ SearchFileThread::SearchFileThread()
 void SearchFileThread::run(){
     filesearch *Fsearch= new filesearch(m_keyWord);
     recMap=Fsearch->returnResult();
-    QMap<QString, QString>::const_iterator i;
+    QMap<QString, QStringList>::const_iterator i;
 
     for(i=recMap.constBegin();i!=recMap.constEnd();++i){
-       QString str=i.value()+"/"+i.key();
+        for(int j=0;j<i.value().size();++j){
+       QString str=i.value().at(j)+"/"+i.key();
        returnResult.append(str);
+        }
     }
     Q_EMIT sendSearchResult(returnResult);
 }

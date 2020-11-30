@@ -149,7 +149,7 @@ void filemodel::matchesChanged()
  * @param result
  */
 void filemodel::showResult(QStringList result){
-    matchstart("clear");
+    matchstart(peonyText);
     pathresult=result;
      for(int i=0;i<pathresult.count();i++)
      {
