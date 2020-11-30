@@ -56,23 +56,37 @@ int filesearch::FindFile(const QString& _filePath)
         }
         else{
             for(int m = 0; m <infolist.size(); m++) {
-
+                QStringList pathList;
                 //这里是获取当前要处理的文件名，原文匹配
                 QString sourceText=infolist.at(m);
                 if(sourceText.contains(test)){
-                    searchResult.insert(sourceText,_filePath);
-                }
+                    if(!searchResult.value(sourceText).isEmpty()){
+                        pathList=searchResult.value(sourceText);
+                    }
+                    pathList.append(_filePath);
+                    searchResult.insert(sourceText,pathList);
+                }else{
 
-                //拼音匹配
-                QString pinyin=UkuiChineseLetter::getPinyins(sourceText).toLower(); // 中文转英文
-                if(pinyin.contains(test,Qt::CaseInsensitive)){
-                    searchResult.insert(sourceText,_filePath);
-                }
+                    //拼音匹配
+                    QString pinyin=UkuiChineseLetter::getPinyins(sourceText).toLower(); // 中文转英文
+                    if(pinyin.contains(test,Qt::CaseInsensitive)){
+                        if(!searchResult.value(sourceText).isEmpty()){
+                            pathList=searchResult.value(sourceText);
+                        }
+                        pathList.append(_filePath);
+                        searchResult.insert(sourceText,pathList);
+                    }else{
 
-                //首字母匹配
-                QString pinyinFrist=UkuiChineseLetter::getFirstLettersAll(sourceText).toLower();// 中文转首字母
-                if(pinyinFrist.contains(test,Qt::CaseInsensitive)){
-                    searchResult.insert(sourceText,_filePath);
+                        //首字母匹配
+                        QString pinyinFrist=UkuiChineseLetter::getFirstLettersAll(sourceText).toLower();// 中文转首字母
+                        if(pinyinFrist.contains(test,Qt::CaseInsensitive)){
+                            if(!searchResult.value(sourceText).isEmpty()){
+                                pathList=searchResult.value(sourceText);
+                            }
+                            pathList.append(_filePath);
+                            searchResult.insert(sourceText,pathList);
+                        }
+                    }
                 }
             }
             break;
@@ -86,7 +100,7 @@ int filesearch::FindFile(const QString& _filePath)
  * @brief filesearch::returnResult 将遍历匹配得到的结果进行返回
  * @return 匹配文件的路径和名字
  */
-QMap<QString,QString> filesearch::returnResult(){
+QMap<QString,QStringList> filesearch::returnResult(){
     return searchResult;
 }
 
