@@ -29,6 +29,8 @@ ListView::ListView(QWidget *parent, int width, int height, int module):
     header<<tr("File");
 
     pUkuiMenuInterface=new UkuiMenuInterface;
+    QString path = QDir::homePath()+"/.config/ukui/ukui-menu.ini";
+    setting = new QSettings(path,QSettings::IniFormat);
 }
 ListView::~ListView()
 {
