@@ -44,7 +44,7 @@
 #include "src/SearchBar/inputbox.h"
 #include <QVBoxLayout>
 #include <QHeaderView>
-
+#include "../FileSearch/searchfilewidget.h"
 class MainViewWidget : public QWidget
 {
     Q_OBJECT
@@ -85,7 +85,7 @@ private:
 
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
-    SearchFileThread *m_searchFileThread=nullptr;
+
 
     int m_widgetState=1;//Classification window number
     int m_saveCurrentWidState=-1;//Store the current category window number
@@ -96,7 +96,7 @@ private:
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
 
-    fileview *m_fileview; //文件view
+    SearchFileWidget *m_fileview; //文件view
     settingview *m_settingview;//设置view
 
     filemodel *m_filemodel;//文件model
@@ -104,7 +104,7 @@ private:
     settingModel *m_settingmodel;//设置model
 
     int appNum; //记录搜索出来的APP数量
-    int fileNum; //记录搜索出来的文件数量
+
     int SettingNum;//记录搜索出来的设置数量
 
     websearch *search_web_page;
@@ -123,7 +123,7 @@ protected:
      */
     void initQueryLineEdit();
 
-    void changesize(); //实现改变文件与设置view大小的方法
+
 
 public Q_SLOTS:
     void lineEditTextChanged(QString arg);
@@ -140,14 +140,10 @@ public Q_SLOTS:
      * @param arg: Search results
      */
     void recvSearchResult(QVector<QStringList> arg);
-    void recvFileSearchResult(QStringList arg);
 
 
-    void setAppView(int row);//改变app大小的槽函数
 
-    void setFileView(int row); //改变文件view大小的槽函数
 
-    void setSettingView(int row);//改变设置view大小的槽函数
 
 
 
