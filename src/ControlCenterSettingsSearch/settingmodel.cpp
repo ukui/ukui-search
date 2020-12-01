@@ -176,7 +176,6 @@ void settingModel::matching(){
                 QPixmap pixmap = icon.pixmap(QSize(25,25));
                 iconresult.append(pixmap);
 
-//                qDebug()<<sourcetext;
             }
         }
     }

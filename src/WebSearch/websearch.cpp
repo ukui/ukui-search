@@ -16,6 +16,6 @@ websearch::websearch()
  */
 void websearch::webSearchTextRefresh(QString mSearchText)
 {
-    qDebug()<<"webSearchTextRefresh :"<<mSearchText;
+
     this->setText(mSearchText);
 }
