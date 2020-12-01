@@ -142,7 +142,7 @@ bool MainWindow::event ( QEvent * event )
     {
         if(QApplication::activeWindow() != this)
         {
-            this->hide();
+            this->close();
             m_mainViewWid->widgetMakeZero();
         }
     }
@@ -170,4 +170,8 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 {
     Q_UNUSED(screen);
 
+}
+
+void MainWindow::searchContent(QString searchcontent){
+    m_mainViewWid->searchContent(searchcontent);
 }

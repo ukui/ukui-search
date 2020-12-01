@@ -133,7 +133,9 @@ void MainViewWidget::initQueryLineEdit()
     m_queryWid->setLayout(queryWidLayout);
 
     m_queryText=new QLabel;
+
 //    m_queryText->setText(tr("Search"));
+
     m_queryText->adjustSize();
 //    queryWidLayout->addWidget(m_queryText);
     m_queryLineEdit->setFocusPolicy(Qt::ClickFocus);
@@ -344,4 +346,8 @@ void MainViewWidget::setAppView(int row)
     appNum=row;
     changesize();
 
+}
+
+void MainViewWidget::searchContent(QString searchcontent){
+    m_queryLineEdit->setText(searchcontent);
 }
