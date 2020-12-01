@@ -54,9 +54,24 @@ void SearchResultWidget::initUi()
 
     connect(m_listView,&ListView::sendItemClickedSignal,this,&SearchResultWidget::execApplication);
 
+    //监听输入框的改变，刷新界面
+    QDBusConnection::sessionBus().connect(QString(), QString("/lineEdit/textChanged"), "org.ukui.search.inputbox", "InputBoxTextChanged", this, SLOT(appTextRefresh(QString)));
+
+
+    //跑一个线程执行应用搜索
+    m_searchAppThread=new SearchAppThread;
+
+    connect(this,&SearchResultWidget::sendSearchKeyword,
+            m_searchAppThread,&SearchAppThread::recvSearchKeyword);
+
+    connect(m_searchAppThread,&SearchAppThread::sendSearchResult,
+            this,&SearchResultWidget::recvSearchResult);
+
+
     m_listLayout->addWidget(applabel);
     m_listLayout->addWidget(m_listView);
     this->setLayout(m_listLayout);
+    this->setVisible(false);
 }
 
 /**
@@ -79,9 +94,26 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
     Q_EMIT changeAppNum(m_data.count());
     m_listView->updateData(m_data);
     //根据获取的应用数量，刷新界面高度
-    if(m_data.size()<=3){
+    if(m_data.size()<=0){
+        this->setVisible(false);
+    } else if(m_data.size()<=3){
+        this->setVisible(true);
         this->setFixedSize(Style::defaultMainViewWidWidth,m_data.size()*46+46);
     } else {
+        this->setVisible(true);
         this->setFixedSize(Style::defaultMainViewWidWidth,3*46+46);
     }
+
 }
+
+void SearchResultWidget::appTextRefresh(QString mSearchText)
+{
+    m_searchAppThread->start();
+    Q_EMIT sendSearchKeyword(mSearchText);
+}
+void SearchResultWidget::recvSearchResult(QVector<QStringList> arg)
+{
+    m_searchAppThread->quit();
+    updateAppListView(arg);
+}
+

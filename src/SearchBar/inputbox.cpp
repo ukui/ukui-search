@@ -5,7 +5,6 @@
  */
 UKuiSeachBarWidget::UKuiSeachBarWidget()
 {
-
 }
 
 UKuiSeachBarWidget::~UKuiSeachBarWidget()
@@ -53,6 +52,8 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
     initUI();
 //    retouchLineEdit();
 
+    this->setContentsMargins(0,0,0,0);
+
 }
 
 UkuiSearchBarHLayout::~UkuiSearchBarHLayout()
@@ -91,7 +92,11 @@ void UkuiSearchBarHLayout::retouchLineEdit()
 
 UKuiSearchLineEdit::UKuiSearchLineEdit()
 {
-
+    this->setFocusPolicy(Qt::ClickFocus);
+    this->installEventFilter(this);
+    this->setContextMenuPolicy(Qt::NoContextMenu);
+    this->setFixedSize(678,35);
+    this->setMaxLength(100);
 }
 
 UKuiSearchLineEdit::~UKuiSearchLineEdit()

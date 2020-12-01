@@ -44,10 +44,17 @@
 #include "src/SearchBar/inputbox.h"
 #include <QVBoxLayout>
 #include <QHeaderView>
-
+#include "../FileSearch/searchfilewidget.h"
+#include "../ControlCenterSettingsSearch/settingwidget.h"
 class MainViewWidget : public QWidget
 {
     Q_OBJECT
+
+    /*
+     * 负责与ukui桌面环境应用通信的dbus
+     * 搜索框文本改变的时候发送信号
+　　　*/
+    Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
 
 public:
     explicit MainViewWidget(QWidget *parent = nullptr);
@@ -73,15 +80,14 @@ private:
 
     QSpacerItem *m_verticalSpacer=nullptr;
 
-    QLineEdit *m_queryLineEdit=nullptr;
+    UKuiSearchLineEdit *m_queryLineEdit=nullptr;
     UKuiSeachBar *m_queryWid=nullptr;
-    QLabel *m_queryText=nullptr;
     bool m_isSearching;
     QString m_searchKeyWords;
 
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
-    SearchFileThread *m_searchFileThread=nullptr;
+
 
     int m_widgetState=1;//Classification window number
     int m_saveCurrentWidState=-1;//Store the current category window number
@@ -92,30 +98,18 @@ private:
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
 
-    fileview *m_fileview; //文件view
-    settingview *m_settingview;//设置view
+    SearchFileWidget *m_fileview; //文件view
+    SettingWidget *m_settingview;//设置view
 
     filemodel *m_filemodel;//文件model
 
-    settingModel *m_settingmodel;//设置model
+
 
     int appNum; //记录搜索出来的APP数量
-    int fileNum; //记录搜索出来的文件数量
+
     int SettingNum;//记录搜索出来的设置数量
 
     websearch *search_web_page;
-
-    QString search1;
-
-
-
-
-
-
-
-
-
-
 
 protected:
     /**
@@ -131,9 +125,10 @@ protected:
      */
     void initQueryLineEdit();
 
-    void changesize(); //实现改变文件与设置view大小的方法
+
 
 public Q_SLOTS:
+    void lineEditTextChanged(QString arg);
     /**
      * @brief Load the full screen letter classification interface
      */
@@ -141,20 +136,11 @@ public Q_SLOTS:
      * @brief Respond to search box
      * @param arg: Search keywords
      */
-    void searchAppSlot(QString arg);
-    /**
-     * @brief Receive search results
-     * @param arg: Search results
-     */
-    void recvSearchResult(QVector<QStringList> arg);
-    void recvFileSearchResult(QStringList arg);
 
 
-    void setAppView(int row);//改变app大小的槽函数
 
-    void setFileView(int row); //改变文件view大小的槽函数
 
-    void setSettingView(int row);//改变设置view大小的槽函数
+
 
 
 
@@ -164,6 +150,7 @@ Q_SIGNALS:
      * @param arg: Search keyword
      */
     void sendSearchKeyword(QString arg);
+    void textChanged(QString arg);
 };
 
 #endif // MAINVIEWWIDGET_H

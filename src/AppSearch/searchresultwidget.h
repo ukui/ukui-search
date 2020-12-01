@@ -33,6 +33,7 @@
 #include "src/UtilityFunction/listview.h"
 #include "src/UtilityFunction/itemdelegate.h"
 #include <QVBoxLayout>
+#include "searchappthread.h"
 
 class SearchResultWidget : public QWidget
 {
@@ -49,6 +50,8 @@ private:
     UkuiMenuInterface* m_ukuiMenuInterface=nullptr;
     ListView* m_listView=nullptr;
     QVector<QStringList> m_data;
+    SearchAppThread *m_searchAppThread=nullptr;
+
 
     QVBoxLayout *m_listLayout;
     QLabel * applabel;
@@ -65,8 +68,11 @@ private Q_SLOTS:
      * @param arg: The desktop file information that the application contains
      */
     void execApplication(QStringList arg);
+    void appTextRefresh(QString);
+    void recvSearchResult(QVector<QStringList> arg);
 Q_SIGNALS:
     void changeAppNum(int num);
+    void sendSearchKeyword(QString arg);
 };
 
 #endif // SEARCHRESULTWIDGET_H
