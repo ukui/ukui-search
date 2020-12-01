@@ -81,35 +81,6 @@ void MainViewWidget::initUi()
     m_topLayout->setAlignment(m_queryLineEdit,Qt::AlignCenter);
 }
 
-
-/**
- * 监听treeview隐藏或显示
- */
-void MainViewWidget::changesize()
-{
-    //文件模块
-    if(fileNum == 0)
-    {
-        m_fileview->setVisible(false);
-    } else {
-        m_fileview->setVisible(true);
-    }
-
-    //设置模块
-    if(SettingNum == 0){
-        m_settingview->setVisible(false);
-    }else{
-        m_settingview->setVisible(true);
-    }
-    //应用模块
-    if(appNum == 0){
-        m_searchResultWid->setVisible(false);
-    }else {
-        m_searchResultWid->setVisible(true);
-    }
-
-}
-
 /**
  * 添加顶部控件
  */
@@ -141,15 +112,9 @@ void MainViewWidget::initQueryLineEdit()
 
     //跑一个线程执行应用搜索
     m_searchAppThread=new SearchAppThread;
-    m_searchFileThread=new SearchFileThread;
-    connect(this,&MainViewWidget::sendSearchKeyword,
-            m_searchFileThread,&SearchFileThread::recvSearchKeyword);
 
     connect(this,&MainViewWidget::sendSearchKeyword,
             m_searchAppThread,&SearchAppThread::recvSearchKeyword);
-
-    connect(m_searchFileThread,&SearchFileThread::sendSearchResult,
-            this,&MainViewWidget::recvFileSearchResult);
 
     connect(m_searchAppThread,&SearchAppThread::sendSearchResult,
             this,&MainViewWidget::recvSearchResult);
@@ -162,25 +127,17 @@ void MainViewWidget::initQueryLineEdit()
 
     //把搜索的设置信息传入settingModel
     connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
-//            qDebug()<<"m_queryLineEdit"<<UkuiChineseLetter::getPinyins(search); // 中文转英文
             m_settingmodel->matchstart(search);
 
     });
 
-    //把搜索的文件信息传入settingModel
-    connect(m_queryLineEdit,&QLineEdit::textChanged,m_filemodel,[=](const QString &search){
-                m_filemodel->matchstart(search);
-    });
 
     //监听点击事件，打开对应的设置选项
     connect(m_settingview,&QTreeView::clicked,this,[=](){
         m_settingmodel->run(m_settingview->currentIndex().row());
     });
 
-    //监听点击事件，打开对应的文件
-    connect(m_fileview,&QTreeView::clicked,this,[=](){
-        m_filemodel->run(m_fileview->currentIndex().row(),m_fileview->currentIndex().column());
-    });
+
 }
 
 void MainViewWidget::lineEditTextChanged(QString arg)
@@ -202,7 +159,7 @@ void MainViewWidget::searchAppSlot(QString arg)
 {
     Q_EMIT sendSearchKeyword(arg);
     m_searchAppThread->start();
-    m_searchFileThread->start();
+
 }
 
 void MainViewWidget::recvSearchResult(QVector<QStringList> arg)
@@ -211,11 +168,6 @@ void MainViewWidget::recvSearchResult(QVector<QStringList> arg)
     m_searchResultWid->updateAppListView(arg);
 }
 
-void MainViewWidget::recvFileSearchResult(QStringList arg)
-{
-    m_searchFileThread->quit();
-    m_filemodel->showResult(arg);
-}
 
 
 /**
@@ -247,38 +199,20 @@ void MainViewWidget::loadMinMainView()
 //搜索到的界面（包括应用搜索，文件搜索，设置搜索）的初始化
 void MainViewWidget::initSearchWidget()
 {
-    m_fileview =new fileview;
+    m_fileview    = new SearchFileWidget;
     m_settingview = new settingview;
 
-    search_web_page = new websearch;
-
-    //初始化文件与设置view为隐藏
-    m_searchResultWid=new SearchResultWidget;
-    m_searchResultWid->setVisible(false);
-    m_fileview->setVisible(false);
-    m_settingview->setVisible(false);
-
-    m_filemodel = new filemodel;
-    m_settingmodel = new settingModel;
-
-    //通过信号监听内容并设置宽度
-    connect(m_settingmodel,&settingModel::requestUpdateSignal,m_settingview,&settingview::changesize);
+    search_web_page   = new websearch;
+    m_searchResultWid = new SearchResultWidget;
+    m_settingmodel    = new settingModel;
 
 
-    //通过信号监听内容并选择是否隐藏
-    connect(m_searchResultWid,&SearchResultWidget::changeAppNum,this,&MainViewWidget::setAppView);
-    connect(m_filemodel,&filemodel::requestUpdateSignal,this,&MainViewWidget::setFileView);
-    connect(m_settingmodel,&settingModel::requestUpdateSignal,this,&MainViewWidget::setSettingView);
 
 
 }
 //添加搜索到的界面
 void MainViewWidget::AddSearchWidget()
 {
-    m_fileview->setModel(m_filemodel);
-    m_fileview->setColumnWidth(0,300);
-    m_fileview->setColumnWidth(1,150);
-    m_fileview->setColumnWidth(2,150);
 
     m_settingview->setModel(m_settingmodel);
 
@@ -311,21 +245,4 @@ void MainViewWidget::widgetMakeZero()
     m_queryLineEdit->setTextMargins(0,1,0,1);
 }
 
-void MainViewWidget::setFileView(int row)
-{
-    fileNum=row;
-    changesize();
-}
 
-void MainViewWidget::setSettingView(int row)
-{
-    SettingNum=row;
-    changesize();
-}
-
-void MainViewWidget::setAppView(int row)
-{
-    appNum=row;
-    changesize();
-
-}
