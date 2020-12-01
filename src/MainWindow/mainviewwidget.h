@@ -45,6 +45,7 @@
 #include <QVBoxLayout>
 #include <QHeaderView>
 #include "../FileSearch/searchfilewidget.h"
+#include "../ControlCenterSettingsSearch/settingwidget.h"
 class MainViewWidget : public QWidget
 {
     Q_OBJECT
@@ -97,11 +98,11 @@ private:
     QGSettings *m_gsetting=nullptr;
 
     SearchFileWidget *m_fileview; //文件view
-    settingview *m_settingview;//设置view
+    SettingWidget *m_settingview;//设置view
 
     filemodel *m_filemodel;//文件model
 
-    settingModel *m_settingmodel;//设置model
+
 
     int appNum; //记录搜索出来的APP数量
 
@@ -134,12 +135,7 @@ public Q_SLOTS:
      * @brief Respond to search box
      * @param arg: Search keywords
      */
-    void searchAppSlot(QString arg);
-    /**
-     * @brief Receive search results
-     * @param arg: Search results
-     */
-    void recvSearchResult(QVector<QStringList> arg);
+
 
 
 

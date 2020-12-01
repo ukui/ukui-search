@@ -66,7 +66,8 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
 {
     m_filemodel->showResult(arg);
     m_searchFileThread->quit();
-    qDebug()<<arg.count();
+
+    //根据数据的大小隐藏或显示
     if(arg.count()>0) {
         this->setVisible(true);
     } else {

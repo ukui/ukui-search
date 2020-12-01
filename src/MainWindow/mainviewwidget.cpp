@@ -40,7 +40,6 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
     //初始化ui
     initUi();
 
-
     /*发送输入框文字改变的dbus*/
     QDBusConnection::sessionBus().unregisterService("org.ukui.search.service");
     QDBusConnection::sessionBus().registerService("org.ukui.search.service");
@@ -109,34 +108,8 @@ void MainViewWidget::initQueryLineEdit()
     QHBoxLayout* queryWidLayout=new QHBoxLayout;
     m_queryWid->setLayout(queryWidLayout);
 
-
-    //跑一个线程执行应用搜索
-    m_searchAppThread=new SearchAppThread;
-
-    connect(this,&MainViewWidget::sendSearchKeyword,
-            m_searchAppThread,&SearchAppThread::recvSearchKeyword);
-
-    connect(m_searchAppThread,&SearchAppThread::sendSearchResult,
-            this,&MainViewWidget::recvSearchResult);
-
     //输入框文本更新
     connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::lineEditTextChanged);
-
-    //搜索应用
-    connect(m_queryLineEdit, &QLineEdit::textChanged, this, &MainViewWidget::searchAppSlot);
-
-    //把搜索的设置信息传入settingModel
-    connect(m_queryLineEdit,&QLineEdit::textChanged,m_settingmodel,[=](const QString &search){
-            m_settingmodel->matchstart(search);
-
-    });
-
-
-    //监听点击事件，打开对应的设置选项
-    connect(m_settingview,&QTreeView::clicked,this,[=](){
-        m_settingmodel->run(m_settingview->currentIndex().row());
-    });
-
 
 }
 
@@ -152,23 +125,6 @@ void MainViewWidget::lineEditTextChanged(QString arg)
 　　　*/
     QDBusConnection::sessionBus().send(message);
 }
-/**
- * 搜索程序和文件槽函数
- */
-void MainViewWidget::searchAppSlot(QString arg)
-{
-    Q_EMIT sendSearchKeyword(arg);
-    m_searchAppThread->start();
-
-}
-
-void MainViewWidget::recvSearchResult(QVector<QStringList> arg)
-{
-    m_searchAppThread->quit();
-    m_searchResultWid->updateAppListView(arg);
-}
-
-
 
 /**
  * 加载默认主视图
@@ -200,21 +156,16 @@ void MainViewWidget::loadMinMainView()
 void MainViewWidget::initSearchWidget()
 {
     m_fileview    = new SearchFileWidget;
-    m_settingview = new settingview;
+    m_settingview = new SettingWidget;
 
     search_web_page   = new websearch;
     m_searchResultWid = new SearchResultWidget;
-    m_settingmodel    = new settingModel;
-
-
 
 
 }
 //添加搜索到的界面
 void MainViewWidget::AddSearchWidget()
 {
-
-    m_settingview->setModel(m_settingmodel);
 
     //添加文件搜索界面
     mainLayout->addWidget(m_fileview);
@@ -244,5 +195,3 @@ void MainViewWidget::widgetMakeZero()
     m_queryLineEdit->clearFocus();
     m_queryLineEdit->setTextMargins(0,1,0,1);
 }
-
-
