@@ -70,6 +70,7 @@ public:
 
     void initSearchWidget();
     void AddSearchWidget();
+    void searchContent(QString searchcontent);
 
 private:
     QVBoxLayout* mainLayout;

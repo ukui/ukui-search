@@ -52,6 +52,7 @@ public:
      * @brief Load the main window
      */
     void loadMainWindow();
+    void searchContent(QString searchcontent);
 
 private:
     UkuiMenuInterface *m_ukuiMenuInterface=nullptr;

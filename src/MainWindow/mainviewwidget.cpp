@@ -195,3 +195,7 @@ void MainViewWidget::widgetMakeZero()
     m_queryLineEdit->clearFocus();
     m_queryLineEdit->setTextMargins(0,1,0,1);
 }
+
+void MainViewWidget::searchContent(QString searchcontent){
+    m_queryLineEdit->setText(searchcontent);
+}
