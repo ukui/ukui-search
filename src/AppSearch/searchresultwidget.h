@@ -34,6 +34,7 @@
 #include "src/UtilityFunction/itemdelegate.h"
 #include <QVBoxLayout>
 #include "searchappthread.h"
+#include <QPainter>
 
 class SearchResultWidget : public QWidget
 {
@@ -51,7 +52,7 @@ private:
     ListView* m_listView=nullptr;
     QVector<QStringList> m_data;
     SearchAppThread *m_searchAppThread=nullptr;
-
+    void paintEvent(QPaintEvent *e);
 
     QVBoxLayout *m_listLayout;
     QLabel * applabel;

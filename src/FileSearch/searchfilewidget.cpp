@@ -1,4 +1,7 @@
 #include "searchfilewidget.h"
+#include <QApplication>
+//#include <QPalette>
+#include <QPalette>
 
 SearchFileWidget::SearchFileWidget()
 {
@@ -14,6 +17,8 @@ void SearchFileWidget::initFilesearchUI()
     //添加表头
     fileHead = new QLabel(this);
     fileHead->setText("文档");
+
+    fileHead->setAttribute(Qt::WA_TranslucentBackground);//"透明背景"
 
 
     //创建view与model
@@ -47,6 +52,8 @@ void SearchFileWidget::initFilesearchUI()
     m_listLayout->addWidget(fileHead);
     m_listLayout->addWidget(fileView);
     this->setLayout(m_listLayout);
+
+
     this->setVisible(false);
 
 }
@@ -74,4 +81,18 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
         this->setVisible(false);
     }
 }
+
+void SearchFileWidget::paintEvent(QPaintEvent *e)
+{
+    QPainter p(this);
+    QRect rect = this->rect();
+    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+    p.setBrush(qApp->palette().color(QPalette::Base));
+//    p.setBrush(QBrush(QColor(255,255,255)));
+    p.setOpacity(1);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(rect,12,12);
+    QWidget::paintEvent(e);
+}
+
 
