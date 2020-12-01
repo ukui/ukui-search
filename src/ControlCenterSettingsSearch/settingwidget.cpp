@@ -50,3 +50,17 @@ void SettingWidget::recvSettingSearchResult(int row)
         this->setVisible(true);
     }
 }
+
+
+void SettingWidget::paintEvent(QPaintEvent *e)
+{
+    QPainter p(this);
+    QRect rect = this->rect();
+    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+    p.setBrush(qApp->palette().color(QPalette::Base));
+//    p.setBrush(QBrush(QColor(255,255,255)));
+    p.setOpacity(1);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(rect,12,12);
+    QWidget::paintEvent(e);
+}

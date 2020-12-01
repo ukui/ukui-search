@@ -7,6 +7,7 @@
 #include <QtDBus/QtDBus>
 #include <QDebug>
 #include <QString>
+#include <QPainter>
 #include "fileview.h"
 #include "filemodel.h"
 #include "searchfilethread.h"
@@ -23,6 +24,8 @@ public:
      SearchFileThread *m_searchFileThread=nullptr;
 private:
      void initFilesearchUI();
+     void paintEvent(QPaintEvent *e);
+
 
 private Q_SLOTS:
      void fileTextRefresh(QString);
