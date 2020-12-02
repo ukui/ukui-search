@@ -65,7 +65,6 @@ int main(int argc, char *argv[])
         QCommandLineParser parser;
         QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
         QCommandLineOption showsearch({"s", "show"}, QObject::tr("show search widget"));
-
         parser.addOptions({debugOption, showsearch});
         parser.process(app);
     }
@@ -77,12 +76,15 @@ int main(int argc, char *argv[])
         qDebug() << "Load translations file" << QLocale() << "failed!";
 
     MainWindow *w=new MainWindow;
+    QStringList arguments = QCoreApplication::arguments();
     centerToScreen(w);
     w->show();
     w->raise();
     w->activateWindow();
     w->loadMainWindow();
     app.setActivationWindow(w);
+    if(arguments.size()>1)
+    w->searchContent(arguments.at(1));
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
 
     KWindowEffects::enableBlurBehind(w->winId(),true);

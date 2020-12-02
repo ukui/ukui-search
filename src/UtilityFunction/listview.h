@@ -29,6 +29,7 @@
 #include <QKeyEvent>
 #include "src/Interface/ukuimenuinterface.h"
 #include "itemdelegate.h"
+#include <QGSettings>
 
 class ListView : public QListView
 {
@@ -58,6 +59,14 @@ private:
     QSettings *setting=nullptr;
     QVector<QStringList> data;
     ItemDelegate* m_delegate=nullptr;
+
+
+    //控制style的gsetting
+    QGSettings *style_settings;
+    //用来判断style
+    QStringList stylelist;
+
+    void styleChange();
 
 private Q_SLOTS:
     void onClicked(QModelIndex index);//点击item

@@ -9,6 +9,7 @@
 #include <QString>
 #include "settingmodel.h"
 #include "settingview.h"
+#include <QPainter>
 
 class SettingWidget : public QWidget
 {
@@ -22,6 +23,7 @@ public:
 
 private:
      void initSettingsearchUI();
+     void paintEvent(QPaintEvent *e);
 
 private Q_SLOTS:
      void settingTextRefresh(QString);
