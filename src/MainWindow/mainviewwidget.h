@@ -50,12 +50,6 @@ class MainViewWidget : public QWidget
 {
     Q_OBJECT
 
-    /*
-     * 负责与ukui桌面环境应用通信的dbus
-     * 搜索框文本改变的时候发送信号
-　　　*/
-    Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
-
 public:
     explicit MainViewWidget(QWidget *parent = nullptr);
     ~MainViewWidget();
@@ -63,10 +57,6 @@ public:
      * @brief Load the default main view
      */
     void loadMinMainView();
-    /**
-     * @brief Initializes the interface state
-     */
-    void widgetMakeZero();
 
     void initSearchWidget();
     void AddSearchWidget();
@@ -79,34 +69,20 @@ private:
 
     QSpacerItem *m_verticalSpacer=nullptr;
 
-    UKuiSearchLineEdit *m_queryLineEdit=nullptr;
-    UKuiSeachBar *m_queryWid=nullptr;
-    bool m_isSearching;
     QString m_searchKeyWords;
 
     SearchResultWidget *m_searchResultWid=nullptr;
     SearchAppThread *m_searchAppThread=nullptr;
 
-
-    int m_widgetState=1;//Classification window number
-    int m_saveCurrentWidState=-1;//Store the current category window number
-
-    bool m_isFullScreen=false;
     bool m_isHiden=false;
 
     QSettings *m_setting=nullptr;
     QGSettings *m_gsetting=nullptr;
 
     SearchFileWidget *m_fileview; //文件view
-    SettingWidget *m_settingview;//设置view
+    SettingWidget *m_settingview; //设置view
 
-    filemodel *m_filemodel;//文件model
-
-
-
-    int appNum; //记录搜索出来的APP数量
-
-    int SettingNum;//记录搜索出来的设置数量
+    filemodel *m_filemodel;       //文件model
 
     websearch *search_web_page;
 
@@ -119,29 +95,6 @@ protected:
      * @brief Add a top window control
      */
     void addTopControl();
-    /**
-     * @brief Initializes the query box
-     */
-    void initQueryLineEdit();
-
-
-
-public Q_SLOTS:
-    void lineEditTextChanged(QString arg);
-    /**
-     * @brief Load the full screen letter classification interface
-     */
-    /**
-     * @brief Respond to search box
-     * @param arg: Search keywords
-     */
-
-
-
-
-
-
-
 
 Q_SIGNALS:
     /**
