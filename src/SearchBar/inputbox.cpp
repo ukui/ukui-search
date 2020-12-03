@@ -99,6 +99,10 @@ void UkuiSearchBarHLayout::retouchLineEdit()
 //    addWidget(m_queryText);
 }
 
+void UkuiSearchBarHLayout::searchContent(QString searchcontent){
+    m_queryLineEdit->setText(searchcontent);
+}
+
 /**
  * @brief UKuiSearchLineEdit  全局搜索的输入框
  */

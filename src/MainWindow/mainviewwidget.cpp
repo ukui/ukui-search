@@ -116,5 +116,5 @@ void MainViewWidget::AddSearchWidget()
 }
 
 void MainViewWidget::searchContent(QString searchcontent){
-//    m_queryLineEdit->setText(searchcontent);
+    m_topLayout->searchContent(searchcontent);
 }

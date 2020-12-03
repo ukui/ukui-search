@@ -28,6 +28,7 @@ class UkuiSearchBarHLayout : public QHBoxLayout
 public:
     UkuiSearchBarHLayout();
     ~UkuiSearchBarHLayout();
+    void searchContent(QString searchcontent);
 private:
     void initUI();
     void retouchLineEdit();
