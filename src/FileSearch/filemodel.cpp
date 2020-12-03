@@ -98,12 +98,12 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
         }else{
             break;
         }
-    case Qt::FontRole:
-        if(index.column()==0){
-            return QFont("宋体",12,QFont::Bold);
-        }else{
-            return QFont("黑体",8,QFont::Bold);
-        }
+//    case Qt::FontRole:
+//        if(index.column()==0){
+//            return QFont("宋体",12,QFont::Bold);
+//        }else{
+//            return QFont("黑体",8,QFont::Bold);
+//        }
     case Qt::SizeHintRole:
         return QSize(200,40);
     case Qt::TextColorRole:
@@ -184,7 +184,7 @@ void filemodel::showResult(QStringList result){
          for (int h=0;h<3;h++) {
              showresult.append(returnresult.at(h));
          }
-         showresult.append(QString::fromLocal8Bit("更多"));
+         showresult.append(QString::fromLocal8Bit("显示更多"));
      }
 
      m_showMap.insert(QString::fromLocal8Bit("FileName"),showresult);

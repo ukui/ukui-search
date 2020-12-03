@@ -49,14 +49,14 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
         return iconresult.at(index.row());
     }
 
-    switch(role){
-    case Qt::TextColorRole:
-//           return QColor(Qt::black);
-    case Qt::FontRole:
-            if(index.column()==0){
-            return QFont("宋体",11,QFont::Bold);
-            }
-        }
+//    switch(role){
+//    case Qt::TextColorRole:
+////           return QColor(Qt::black);
+//    case Qt::FontRole:
+//            if(index.column()==0){
+//            return QFont("宋体",11,QFont::Bold);
+//            }
+//        }
     return QVariant();
 }
 

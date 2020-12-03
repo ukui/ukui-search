@@ -3,6 +3,18 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QtDBus/QtDBus>
+#include <QPainter>
+#include <QAction>
+#include <QGSettings>
+
+
+#define ORG_UKUI_STYLE            "org.ukui.style"
+#define STYLE_NAME                "styleName"
+#define STYLE_NAME_KEY_DARK       "ukui-dark"
+#define STYLE_NAME_KEY_DEFAULT    "ukui-default"
+#define STYLE_NAME_KEY_BLACK       "ukui-black"
+#define STYLE_NAME_KEY_LIGHT       "ukui-light"
+#define STYLE_NAME_KEY_WHITE       "ukui-white"
 
 class UKuiSearchLineEdit;
 
@@ -11,6 +23,7 @@ class UKuiSeachBarWidget:public QWidget
 public:
   UKuiSeachBarWidget();
   ~UKuiSeachBarWidget();
+  void paintEvent(QPaintEvent *e);
 };
 
 class UKuiSeachBar:public QWidget
@@ -60,6 +73,12 @@ class UKuiSearchLineEdit:public QLineEdit
 public:
     UKuiSearchLineEdit();
     ~UKuiSearchLineEdit();
+
+    //控制style的gsetting
+    QGSettings *style_settings;
+    //用来判断style
+    QStringList stylelist;
+    void styleChange();
 
 private Q_SLOTS:
     void  lineEditTextChanged(QString arg);

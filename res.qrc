@@ -83,5 +83,6 @@
         <file>data/img/mainviewwidget/Mobile-Normal.svg</file>
         <file>src/ControlCenterSettingsSearch/assets/search.conf</file>
         <file>src/ControlCenterSettingsSearch/assets/search.xml</file>
+        <file>data/img/mainviewwidget/edit-find-symbolic.svg</file>
     </qresource>
 </RCC>
