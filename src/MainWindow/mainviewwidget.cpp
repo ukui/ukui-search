@@ -108,9 +108,13 @@ void MainViewWidget::initSearchWidget()
  */
 void MainViewWidget::AddSearchWidget()
 {
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(m_fileview);
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(m_searchResultWid);
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(m_settingview);
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(search_web_page);
     mainLayout->addStretch();
 }
