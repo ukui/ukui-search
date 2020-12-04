@@ -6,11 +6,25 @@
 UKuiSeachBarWidget::UKuiSeachBarWidget()
 {
     this->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
+
 }
 
 UKuiSeachBarWidget::~UKuiSeachBarWidget()
 {
 
+}
+
+void UKuiSeachBarWidget::paintEvent(QPaintEvent *e)
+{
+    QPainter p(this);
+    QRect rect = this->rect();
+    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+    p.setBrush(qApp->palette().color(QPalette::Base));
+//    p.setBrush(QBrush(QColor(255,255,255)));
+    p.setOpacity(1);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(rect,12,12);
+    QWidget::paintEvent(e);
 }
 
 /**
@@ -54,14 +68,11 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
     initUI();
 //    retouchLineEdit();
 
-        m_queryLineEdit=new UKuiSearchLineEdit;
+    m_queryLineEdit=new UKuiSearchLineEdit;
 
     this->setContentsMargins(0,0,0,0);
     this->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-
-
     this->addWidget(m_queryLineEdit);
-
 
 }
 
@@ -104,11 +115,38 @@ void UkuiSearchBarHLayout::retouchLineEdit()
  */
 UKuiSearchLineEdit::UKuiSearchLineEdit()
 {
+    const QByteArray style_id(ORG_UKUI_STYLE);
+
+    /*
+     * ukui-defalt 主题时，应用为黑色模式或白色模式取决于设计稿
+     * 例如 ukui-panel,ukui-menu,ukui-sidebar 等应用为黑色模式
+    */
+    stylelist<<STYLE_NAME_KEY_DARK<<STYLE_NAME_KEY_BLACK;
+    if(QGSettings::isSchemaInstalled(style_id)){
+        style_settings = new QGSettings(style_id);
+        styleChange();
+    }
+
+    connect(style_settings, &QGSettings::changed, this, [=] (const QString &key){
+        if(key==STYLE_NAME){
+            styleChange();
+        }
+    });
+
+
+
     this->setFocusPolicy(Qt::ClickFocus);
     this->installEventFilter(this);
     this->setContextMenuPolicy(Qt::NoContextMenu);
     this->setFixedSize(678,35);
     this->setMaxLength(100);
+
+
+    QAction *searchAction = new QAction(this);
+    searchAction->setIcon(QIcon(":/data/img/mainviewwidget/edit-find-symbolic.svg"));
+    this->addAction(searchAction,QLineEdit::LeadingPosition);
+
+
 
     /*发送输入框文字改变的dbus*/
     QDBusConnection::sessionBus().unregisterService("org.ukui.search.service");
@@ -137,3 +175,18 @@ void UKuiSearchLineEdit::lineEditTextChanged(QString arg)
     message<<arg;
     QDBusConnection::sessionBus().send(message);
 }
+
+/**
+ * @brief settingview::styleChange  用qss绘制两套QTreeView的样式
+ */
+void UKuiSearchLineEdit::styleChange()
+{
+    if(stylelist.contains(style_settings->get(STYLE_NAME).toString())){
+        //黑色主题下需要进行的处理
+ this->setStyleSheet("QLineEdit{border-width:1px;border-radius:4px;font-size:20px;color:white;border:1px solid transparent;}");
+    }else{
+        //白色主题下需要进行的处理
+ this->setStyleSheet("QLineEdit{border-width:1px;border-radius:4px;font-size:20px;color:black;border:1px solid transparent;}");
+    }
+}
+

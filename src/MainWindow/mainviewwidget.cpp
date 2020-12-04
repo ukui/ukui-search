@@ -103,14 +103,18 @@ void MainViewWidget::initSearchWidget()
  * 添加文件搜索界面
  * 添加已经安装的应用界面
  * 添加控制面板搜索项目界面
- * 网页搜索界面
- * 添加伸缩因子
+ * 网页搜索界面缩因子
+ * 添加伸
  */
 void MainViewWidget::AddSearchWidget()
 {
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(m_fileview);
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(m_searchResultWid);
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(m_settingview);
+    mainLayout->addItem(new QSpacerItem(10,5));
     mainLayout->addWidget(search_web_page);
     mainLayout->addStretch();
 }
