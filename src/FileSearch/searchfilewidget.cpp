@@ -64,9 +64,9 @@ void SearchFileWidget::initFilesearchUI()
  */
 void SearchFileWidget::fileTextRefresh(QString mSearchText)
 {
-     m_searchFileThread->start();
-     Q_EMIT sendSearchKeyword(mSearchText);
-
+    m_filemodel->matchstart(mSearchText);
+    m_searchFileThread->start();
+    Q_EMIT sendSearchKeyword(mSearchText);
 }
 
 void SearchFileWidget::recvFileSearchResult(QStringList arg)

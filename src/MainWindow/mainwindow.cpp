@@ -142,7 +142,7 @@ bool MainWindow::event ( QEvent * event )
     {
         if(QApplication::activeWindow() != this)
         {
-            this->hide();
+            this->close();
         }
     }
     return QWidget::event(event);
