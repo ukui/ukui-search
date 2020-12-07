@@ -36,8 +36,9 @@
 #include <QFileInfo>
 #include "src/Style/style.h"
 #include "src/MainWindow/mainviewwidget.h"
+#include "src/Interface/ukuicontrolstyle.h"
 
-class MainWindow : public QMainWindow
+class MainWindow : public UKuiMainWindow
 {
     Q_OBJECT
 
@@ -69,7 +70,6 @@ protected:
      * @brief Handle events clicking on the outside of the window
      */
     bool event(QEvent *event);
-    void paintEvent(QPaintEvent *event);
 
 public Q_SLOTS:
     /**

@@ -40,7 +40,7 @@
  *
 */
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+    UKuiMainWindow(parent)
 {
     m_ukuiMenuInterface=new UkuiMenuInterface;
     UkuiMenuInterface::appInfoVector=m_ukuiMenuInterface->createAppInfoVector();
@@ -61,13 +61,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::initUi()
 {
-    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
-    this->setAttribute(Qt::WA_TranslucentBackground, true);
-    this->setAutoFillBackground(false);
-    this->setFocusPolicy(Qt::StrongFocus);
-    this->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     this->setFixedWidth(Style::minw);//可设置本窗口的大小，调整见style文件参数]
-//    this->setSizePolicy(QSizePolicy::ExpandFlag);
     this->setContentsMargins(0,0,0,0);
 
     m_frame=new QFrame;
@@ -85,42 +79,6 @@ void MainWindow::initUi()
             this,&MainWindow::monitorResolutionChange);
     connect(qApp,&QApplication::primaryScreenChanged,this,
             &MainWindow::primaryScreenChangedSlot);
-}
-
-void MainWindow::paintEvent(QPaintEvent *event)
-{
-    QGSettings* gsetting=new QGSettings(QString("org.ukui.control-center.personalise").toLocal8Bit());
-    double transparency=gsetting->get("transparency").toDouble();
-    qreal radius = 0;
-    QRect rect = this->rect();
-    rect.setWidth(rect.width());
-    rect.setHeight(rect.height());
-    rect.setX(this->rect().x());
-    rect.setY(this->rect().y());
-    rect.setWidth(this->rect().width());
-    rect.setHeight(this->rect().height());
-    radius=12;
-
-    QPainterPath path;
-    path.moveTo(rect.topRight() - QPointF(radius, 0));
-    path.lineTo(rect.topLeft() + QPointF(radius, 0));
-    path.quadTo(rect.topLeft(), rect.topLeft() + QPointF(0, radius));
-    path.lineTo(rect.bottomLeft() + QPointF(0, -radius));
-    path.quadTo(rect.bottomLeft(), rect.bottomLeft() + QPointF(radius, 0));
-    path.lineTo(rect.bottomRight() - QPointF(radius, 0));
-    path.quadTo(rect.bottomRight(), rect.bottomRight() + QPointF(0, -radius));
-    path.lineTo(rect.topRight() + QPointF(0, radius));
-    path.quadTo(rect.topRight(), rect.topRight() + QPointF(-radius, -0));
-
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    painter.setBrush(this->palette().base());
-    painter.setPen(Qt::transparent);
-    painter.setOpacity(transparency);
-
-    painter.drawPath(path);
-    setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
-    QMainWindow::paintEvent(event);
 }
 
 /* 过滤终端命令 */
