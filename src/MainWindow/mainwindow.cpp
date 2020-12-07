@@ -94,12 +94,15 @@ void MainWindow::bootOptionsFilter(QString opt)
  */
 bool MainWindow::event ( QEvent * event )
 {
-    if (event->type() == QEvent::ActivationChange)
-    {
-        if(QApplication::activeWindow() != this)
-        {
+    switch (event->type()){
+    case QEvent::ActivationChange:
+        if(QApplication::activeWindow() != this){
             this->close();
         }
+        break;
+    case QEvent::MouseButtonPress:
+        this->close();
+        break;
     }
     return QWidget::event(event);
 }
