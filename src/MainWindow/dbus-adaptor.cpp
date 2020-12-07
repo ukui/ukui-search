@@ -24,18 +24,15 @@
 FilectrlAdaptor::FilectrlAdaptor(QObject *parent)
     : QDBusAbstractAdaptor(parent)
 {
-    // constructor
     setAutoRelaySignals(true);
 }
 
 FilectrlAdaptor::~FilectrlAdaptor()
 {
-    // destructor
 }
 
 bool FilectrlAdaptor::GetApplicationDesktop(const QString &arg)
 {
-    // handle method call com.kylin.security.controller.filectrl.AddToTaskbar
     bool out0;
     QMetaObject::invokeMethod(parent(), "GetApplicationDesktop", Q_RETURN_ARG(bool, out0), Q_ARG(QString, arg));
     return out0;
@@ -43,7 +40,6 @@ bool FilectrlAdaptor::GetApplicationDesktop(const QString &arg)
 
 bool FilectrlAdaptor::CheckIfExist(const QString &arg)
 {
-    // handle method call com.kylin.security.controller.filectrl.CheckIfExist
     bool out0;
     QMetaObject::invokeMethod(parent(), "CheckIfExist", Q_RETURN_ARG(bool, out0), Q_ARG(QString, arg));
     return out0;
@@ -51,7 +47,6 @@ bool FilectrlAdaptor::CheckIfExist(const QString &arg)
 
 bool FilectrlAdaptor::GetSearchResult(const QStringList &arg)
 {
-    // handle method call com.kylin.security.controller.filectrl.RemoveFromTaskbar
     bool out0;
     QMetaObject::invokeMethod(parent(), "GetSearchResult", Q_RETURN_ARG(bool, out0), Q_ARG(QStringList, arg));
     return out0;
