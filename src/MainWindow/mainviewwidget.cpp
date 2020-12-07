@@ -23,18 +23,31 @@
 #include <libbamf/bamf-matcher.h>
 #include <syslog.h>
 #include <QDebug>
-
+#include "dbus-adaptor.h"
+#include "dbus.h"
 /**
  * @brief MainViewWidget界面
  * @param parent
  * 初始化ui：initUi
  * initSearchWidget ：初始化搜索的配置，包括信号监听
+ * org.ukui.search.searchresult :注册dbus
  */
 MainViewWidget::MainViewWidget(QWidget *parent) :
     QWidget(parent)
 {
     initSearchWidget();
     initUi();
+
+    DBus* dbus=new DBus;
+    new FilectrlAdaptor(dbus);
+    QDBusConnection con=QDBusConnection::sessionBus();
+    if(!con.registerService("org.ukui.search.searchresult") ||
+            !con.registerObject("/",dbus))
+    {
+        qDebug()<<"fail";
+    }
+
+
 }
 
 MainViewWidget::~MainViewWidget()
