@@ -27,18 +27,13 @@
 #include <QPalette>
 #include "kwindowsystem.h"
 
-/*主界面
- * 函数分析：
- * initUi:初始化ui
- * setFrameStyle：设置样式
- * bootOptionsFilter：过滤终端命令
- * event：鼠标点击窗口外部事件
- * loadMainWindow：加载主界面
+/**
+ * @brief MainWindow 主界面
+ * @param parent
  *
- * primaryScreenChangedSlot：监听屏幕改变
- * monitorResolutionChange： 监听分辨率改变
- *
-*/
+ * 慎用KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
+ * 可能造成窗口属性的混乱
+ */
 MainWindow::MainWindow(QWidget *parent) :
     UKuiMainWindow(parent)
 {
@@ -49,19 +44,20 @@ MainWindow::MainWindow(QWidget *parent) :
     UkuiMenuInterface::allAppVector=m_ukuiMenuInterface->getAllApp();
     Style::initWidStyle();
     initUi();
-
-//    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
 }
 
 MainWindow::~MainWindow()
 {
-//    KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
     delete m_ukuiMenuInterface;
 }
 
+/**
+ * @brief initUi
+ * 设置本窗口的大小 this->setFixedSize(Style::minw,Style::minh);
+ */
 void MainWindow::initUi()
 {
-    this->setFixedSize(Style::minw,Style::minh);//可设置本窗口的大小，调整见style文件参数]
+    this->setFixedSize(Style::minw,Style::minh);
 
     m_frame=new QFrame;
     m_mainViewWid=new MainViewWidget(this);
@@ -79,13 +75,15 @@ void MainWindow::initUi()
             &MainWindow::primaryScreenChangedSlot);
 }
 
-/* 过滤终端命令 */
+/**
+ * @brief bootOptionsFilter 过滤终端命令
+ * @param opt
+ */
 void MainWindow::bootOptionsFilter(QString opt)
 {
 
     if (opt == "-s" || opt == "-show") {
-//        qDebug() << "哈哈哈哈，第一次用命令进入这";
-
+//        qDebug() << "第一次用命令进入";
     }
 }
 
@@ -107,6 +105,10 @@ bool MainWindow::event ( QEvent * event )
     return QWidget::event(event);
 }
 
+/**
+ * @brief loadMainWindow 加载主界面的函数
+ * 不删除的原因是在单例和main函数里面需要用
+ */
 void MainWindow::loadMainWindow()
 {
     QDesktopWidget* m = QApplication::desktop();
@@ -116,15 +118,22 @@ void MainWindow::loadMainWindow()
     int x = this->width();
     int y = this->height();
 //    this->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
-    this->showFullScreen();
     m_mainViewWid->loadMinMainView();
 }
 
+/**
+ * @brief monitorResolutionChange  监听屏幕改变
+ * @param rect
+ */
 void MainWindow::monitorResolutionChange(QRect rect)
 {
     Q_UNUSED(rect);
 }
 
+/**
+ * @brief primaryScreenChangedSlot 监听分辨率改变
+ * @param screen
+ */
 void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 {
     Q_UNUSED(screen);
