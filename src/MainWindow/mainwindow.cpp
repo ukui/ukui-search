@@ -61,16 +61,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::initUi()
 {
-    this->setFixedWidth(Style::minw);//可设置本窗口的大小，调整见style文件参数]
-    this->setContentsMargins(0,0,0,0);
+    this->setFixedSize(Style::minw,Style::minh);//可设置本窗口的大小，调整见style文件参数]
 
     m_frame=new QFrame;
-    m_mainViewWid=new MainViewWidget;
+    m_mainViewWid=new MainViewWidget(this);
 
     this->setCentralWidget(m_frame);
-    QVBoxLayout *mainlayout=new QVBoxLayout;
-    mainlayout->setContentsMargins(0,0,0,0);
-    mainlayout->setSpacing(0);
+    QHBoxLayout *mainlayout=new QHBoxLayout;
+    mainlayout->setContentsMargins(0,80,0,0);
     m_frame->setLayout(mainlayout);
 
     mainlayout->addWidget(m_mainViewWid);
@@ -114,7 +112,8 @@ void MainWindow::loadMainWindow()
     int desk_y = desk_rect.height();
     int x = this->width();
     int y = this->height();
-    this->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
+//    this->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
+    this->showFullScreen();
     m_mainViewWid->loadMinMainView();
 }
 

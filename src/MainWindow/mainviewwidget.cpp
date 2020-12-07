@@ -63,7 +63,6 @@ void MainViewWidget::initUi()
     this->setLayout(mainLayout);
 
     addTopControl();
-    this->setFixedWidth(Style::defaultMainViewWidWidth);
 }
 
 /**
@@ -83,6 +82,7 @@ void MainViewWidget::addTopControl()
 void MainViewWidget::loadMinMainView()
 {
     this->setFixedWidth(Style::defaultMainViewWidWidth);
+    this->showFullScreen();
     AddSearchWidget();
 }
 

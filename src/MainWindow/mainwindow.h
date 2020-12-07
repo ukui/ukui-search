@@ -46,10 +46,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     /**
-     * @brief Set the QFrame style
-     */
-    void setFrameStyle();
-    /**
      * @brief Load the main window
      */
     void loadMainWindow();
