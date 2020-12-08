@@ -172,8 +172,6 @@ void filemodel::showResult(QStringList result){
              QFileInfo f(pathresult.at(i));
              QDateTime createTime=f.created();
              m_timeResult.append(createTime.toString());
-         }else{
-             return;
          }
      }
      Q_EMIT requestUpdateSignal(runresult.count());
