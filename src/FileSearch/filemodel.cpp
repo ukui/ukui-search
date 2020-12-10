@@ -164,14 +164,17 @@ void filemodel::showResult(QStringList result){
              runresult.append(pathresult.at(i));
              openPathresult.append(str2);
 
+             //添加文件图标
              QString str= QString::fromLocal8Bit("file://")+pathresult.at(i);
              QIcon icon= QIcon::fromTheme(fileutils->getFileIconName(str));
              QPixmap pixmap = icon.pixmap(QSize(30,30));
              iconresult.append(pixmap);
 
+             //添加文件创建时间
              QFileInfo f(pathresult.at(i));
              QDateTime createTime=f.created();
-             m_timeResult.append(createTime.toString());
+             QStringList createTimeList=createTime.toString(Qt::ISODate).split("T");
+             m_timeResult.append(createTimeList.at(0));
          }
      }
      Q_EMIT requestUpdateSignal(runresult.count());
