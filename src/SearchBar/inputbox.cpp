@@ -145,10 +145,14 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     this->setFixedSize(678,35);
     this->setMaxLength(100);
 
-
+    /*添加默认文字和图标*/
     QAction *searchAction = new QAction(this);
     searchAction->setIcon(QIcon(":/data/img/mainviewwidget/edit-find-symbolic.svg"));
     this->addAction(searchAction,QLineEdit::LeadingPosition);
+
+    editLabel=new QLabel("全局搜素");
+    QHBoxLayout *editLayout=new QHBoxLayout(this);
+    editLayout->addWidget(editLabel,0,Qt::AlignHCenter);
 
 
 
@@ -191,6 +195,12 @@ void UKuiSearchLineEdit::styleChange()
     }else{
         //白色主题下需要进行的处理
  this->setStyleSheet("QLineEdit{border-width:1px;border-radius:4px;font-size:20px;color:black;border:1px solid transparent;}");
+    }
+}
+
+void UKuiSearchLineEdit::mousePressEvent(QMouseEvent *event){
+    if(this->text().isEmpty()){
+        editLabel->hide();
     }
 }
 

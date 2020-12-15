@@ -69,6 +69,8 @@ void SearchFileWidget::fileTextRefresh(QString mSearchText)
         m_searchFileThread->quit();
         m_searchFileThread->start();
         Q_EMIT sendSearchKeyword(mSearchText);
+    }else{
+        this->hide();
     }
 }
 

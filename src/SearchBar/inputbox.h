@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QAction>
 #include <QGSettings>
+#include <QMouseEvent>
 
 
 #define ORG_UKUI_STYLE            "org.ukui.style"
@@ -80,6 +81,9 @@ public:
     //用来判断style
     QStringList stylelist;
     void styleChange();
+    QLabel *editLabel;
+protected:
+        void mousePressEvent(QMouseEvent *event);
 
 private Q_SLOTS:
     void  lineEditTextChanged(QString arg);
