@@ -27,6 +27,9 @@
 #include <QPalette>
 #include "kwindowsystem.h"
 
+#define MODEL_SETTINGS      "org.ukui.SettingsDaemon.plugins.tablet-mode"
+#define MODEL              "tablet-mode"
+
 /**
  * @brief MainWindow 主界面
  * @param parent
@@ -37,6 +40,11 @@
 MainWindow::MainWindow(QWidget *parent) :
     UKuiMainWindow(parent)
 {
+    const QByteArray panelmodel_id(MODEL_SETTINGS);
+    //开机第一次检测模式执行对应的任务栏
+    if(QGSettings::isSchemaInstalled(panelmodel_id)){
+        gsetting = new QGSettings(panelmodel_id);
+    }
     m_ukuiMenuInterface=new UkuiMenuInterface;
     UkuiMenuInterface::appInfoVector=m_ukuiMenuInterface->createAppInfoVector();
     UkuiMenuInterface::alphabeticVector=m_ukuiMenuInterface->getAlphabeticClassification();
@@ -58,7 +66,8 @@ MainWindow::~MainWindow()
 void MainWindow::initUi()
 {
     this->setFixedSize(Style::minw,Style::minh);
-
+    this->setAttribute(Qt::WA_AcceptTouchEvents);
+    this->setWindowFlags(Qt::Popup);
     m_frame=new QFrame;
     m_mainViewWid=new MainViewWidget(this);
 
@@ -92,15 +101,24 @@ void MainWindow::bootOptionsFilter(QString opt)
  */
 bool MainWindow::event ( QEvent * event )
 {
-    switch (event->type()){
-    case QEvent::ActivationChange:
-        if(QApplication::activeWindow() != this){
-            this->close();
+    qDebug()<<event->type();
+    const QByteArray panelmodel_id(MODEL_SETTINGS);
+    if(QGSettings::isSchemaInstalled(panelmodel_id))
+    if(event->type()==QEvent::MouseButtonPress){
+        if(QGSettings::isSchemaInstalled(panelmodel_id))
+        {
+            if(!gsetting->get(MODEL).toBool()){
+                this->close();
+                return true;
+            }
         }
-        break;
-    case QEvent::MouseButtonPress:
+    }
+    if(event->type()==QEvent::GestureOverride){
+        return false;
+    }
+    if(event->type()==QEvent::MouseButtonRelease){
         this->close();
-        break;
+        return true;
     }
     return QWidget::event(event);
 }

@@ -57,6 +57,7 @@ private:
     QFrame *m_line=nullptr;//Vertical dividing line
     QFrame *m_frame=nullptr;
     MainViewWidget *m_mainViewWid=nullptr;
+    QGSettings *gsetting;
 
     bool m_winFlag = false;
 
