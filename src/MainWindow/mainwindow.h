@@ -58,6 +58,7 @@ private:
     QFrame *m_frame=nullptr;
     MainViewWidget *m_mainViewWid=nullptr;
     QGSettings *gsetting;
+    QGSettings *gsetting_position;
 
     bool m_winFlag = false;
 

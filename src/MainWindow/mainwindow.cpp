@@ -30,6 +30,9 @@
 #define MODEL_SETTINGS      "org.ukui.SettingsDaemon.plugins.tablet-mode"
 #define MODEL              "tablet-mode"
 
+#define POSITION_SETTINGS  "org.ukui.SettingsDaemon.plugins.xrandr"
+#define POSITION_KEY       "xrandr-rotations"
+
 /**
  * @brief MainWindow 主界面
  * @param parent
@@ -52,6 +55,22 @@ MainWindow::MainWindow(QWidget *parent) :
     UkuiMenuInterface::allAppVector=m_ukuiMenuInterface->getAllApp();
     Style::initWidStyle();
     initUi();
+    const QByteArray position(POSITION_SETTINGS);
+    //开机第一次检测模式执行对应的任务栏
+    if(QGSettings::isSchemaInstalled(position)){
+        gsetting_position = new QGSettings(position);
+    }
+    connect(gsetting_position, &QGSettings::changed,this, [=](const QString &key) {
+        QString direction=gsetting_position->get("xrandr-rotations").toString();
+        qDebug()<<"direction:"<<direction;
+        if(direction=="left" || direction=="right")
+        {
+            this->setFixedSize(QApplication::primaryScreen()->geometry().height(),QApplication::primaryScreen()->geometry().width());
+        }
+        else{
+            this->setFixedSize(QApplication::primaryScreen()->geometry().width(),QApplication::primaryScreen()->geometry().height());
+        }
+     });
 }
 
 MainWindow::~MainWindow()
@@ -101,7 +120,7 @@ void MainWindow::bootOptionsFilter(QString opt)
  */
 bool MainWindow::event ( QEvent * event )
 {
-    qDebug()<<event->type();
+//    qDebug()<<event->type();
     const QByteArray panelmodel_id(MODEL_SETTINGS);
     if(QGSettings::isSchemaInstalled(panelmodel_id))
     if(event->type()==QEvent::MouseButtonPress){
