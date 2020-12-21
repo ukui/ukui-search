@@ -1,6 +1,6 @@
 #include "inotify-manager.h"
 #include "index-generator.h"
-#include "messagelistmanager.h"
+#include "messagelist-manager.h"
 
 bool InotifyManager::Traverse_BFS(const QString& path, const bool& CREATORDELETE){
     qDebug() << "BFS start-----------------------------";
