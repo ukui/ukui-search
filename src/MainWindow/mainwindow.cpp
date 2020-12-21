@@ -22,6 +22,7 @@
 #include <QDesktopWidget>
 #include <QtSingleApplication>
 #include <QtX11Extras/QX11Info>
+#include <QApplication>
 #include <syslog.h>
 #include "src/Style/style.h"
 #include <QPalette>
@@ -62,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     connect(gsetting_position, &QGSettings::changed,this, [=](const QString &key) {
         QString direction=gsetting_position->get("xrandr-rotations").toString();
-        qDebug()<<"direction:"<<direction;
         if(direction=="left" || direction=="right")
         {
             this->setFixedSize(QApplication::primaryScreen()->geometry().height(),QApplication::primaryScreen()->geometry().width());
@@ -127,7 +127,7 @@ bool MainWindow::event ( QEvent * event )
         if(QGSettings::isSchemaInstalled(panelmodel_id))
         {
             if(!gsetting->get(MODEL).toBool()){
-                this->close();
+                qApp->exit(0);
                 return true;
             }
         }
@@ -136,7 +136,7 @@ bool MainWindow::event ( QEvent * event )
         return false;
     }
     if(event->type()==QEvent::MouseButtonRelease){
-        this->close();
+        qApp->exit(0);
         return true;
     }
     return QWidget::event(event);

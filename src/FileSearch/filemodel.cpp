@@ -165,8 +165,17 @@ void filemodel::showResult(QStringList result){
              openPathresult.append(str2);
 
              //添加文件图标
-             QString str= QString::fromLocal8Bit("file://")+pathresult.at(i);
+              QString str= QString::fromLocal8Bit("file://")+pathresult.at(i);
+             if(str1.at(str1.count()-1).contains("#")){
+                 QString str3=str1.at(str1.count()-1);
+                 str3.replace("#","%23");
+                 str="file://"+str2+"/"+str3;
+             }
+             qDebug()<<fileutils->getFileIconName(str);
              QIcon icon= QIcon::fromTheme(fileutils->getFileIconName(str));
+             if(icon.isNull()){
+                 icon= QIcon::fromTheme("text-plain");
+             }
              QPixmap pixmap = icon.pixmap(QSize(30,30));
              iconresult.append(pixmap);
 
@@ -205,7 +214,10 @@ void filemodel::run(int row,int column){
         QString m_szHelpDoc;
         if(column==0){
             file=runresult.at(row);
-            m_szHelpDoc = QString(QString::fromLocal8Bit("file:///")) + file;
+            if(file.contains("#")){
+                file.replace("#","%23");
+            }
+            m_szHelpDoc = QString(QString::fromLocal8Bit("file://")) + file;
         }else{
             file=openPathresult.at(row);
             m_szHelpDoc = QString(QString::fromLocal8Bit("file://")) + file;
@@ -226,5 +238,4 @@ void filemodel::run(int row,int column){
         p.waitForFinished(-1);
     }
 }
-
 
