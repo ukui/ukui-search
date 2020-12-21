@@ -171,7 +171,6 @@ void filemodel::showResult(QStringList result){
                  str3.replace("#","%23");
                  str="file://"+str2+"/"+str3;
              }
-             qDebug()<<fileutils->getFileIconName(str);
              QIcon icon= QIcon::fromTheme(fileutils->getFileIconName(str));
              if(icon.isNull()){
                  icon= QIcon::fromTheme("text-plain");
