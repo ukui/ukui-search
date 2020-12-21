@@ -1,4 +1,4 @@
-#include "messagelistmanager.h"
+#include "messagelist-manager.h"
 #include <QDebug>
 MessageListManager::MessageListManager(){
     this->messageList = new QStringList();
