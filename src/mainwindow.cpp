@@ -29,6 +29,9 @@
 #include <KWindowEffects>
 #include "kwindowsystem.h"
 
+#include "file-utils.h"
+#include "index-generator.h"
+#include "inotify-manager.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
