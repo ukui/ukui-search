@@ -34,6 +34,7 @@
 #include <QSettings>
 #include <QPropertyAnimation>
 #include <QFileInfo>
+#include <QPixmap>
 #include "src/Style/style.h"
 #include "src/MainWindow/mainviewwidget.h"
 #include "src/Interface/ukuicontrolstyle.h"
@@ -57,11 +58,21 @@ private:
     QFrame *m_line=nullptr;//Vertical dividing line
     QFrame *m_frame=nullptr;
     MainViewWidget *m_mainViewWid=nullptr;
-
+    QGSettings *gsetting;
+    QGSettings *gsetting_position;
+    QGSettings *bg_setting;
+    QString bgPath;
+    QString bgOption;
+    QPixmap pixmap1;
+    QPixmap *pixmap=nullptr;
     bool m_winFlag = false;
 
 protected:
     void initUi();
+    QPixmap * blurPixmap(QPixmap *pixmap);
+    void paintEvent(QPaintEvent *event);
+    void backgroundPic();
+    void ways();
     /**
      * @brief Handle events clicking on the outside of the window
      */
