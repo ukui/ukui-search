@@ -148,7 +148,7 @@ void filemodel::matchesChanged()
  * @brief filemodel::showResult 将路径等数据分别给各成员变量
  * @param result
  */
-void filemodel::showResult(QStringList result){
+int filemodel::showResult(QStringList result){
     matchstart(peonyText);
     pathresult=result;
      for(int i=0;i<pathresult.count();i++)
@@ -200,6 +200,7 @@ void filemodel::showResult(QStringList result){
      m_showMap.insert(QString::fromLocal8Bit("PathName"),runresult);
      m_showMap.insert(QString::fromLocal8Bit("FileTime"),m_timeResult);
     matchesChanged();
+    return showresult.size();
 }
 
 /**

@@ -26,7 +26,7 @@ public:
     QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
     void matchstart(const QString &source);
     void run(int row,int column);
-    void showResult(QStringList result);
+    int showResult(QStringList result);
 
 private:
     void matchesChanged();
