@@ -20,6 +20,7 @@ include(index/index.pri)
 include(model/model.pri)
 include(control/control.pri))
 include(singleapplication/qt-single-application.pri)
+include(settingsmatch/setting-match.pri)
 
 LIBS = -lxapian -lgsettings-qt
 # Default rules for deployment.
