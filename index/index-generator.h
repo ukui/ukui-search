@@ -27,10 +27,10 @@ private:
     explicit IndexGenerator(QObject *parent = nullptr);
     void HandlePathList(QStringList *pathlist);
     //add one data in database
-    void insertIntoDatabase(QString *indexText,QString *doc);
+    void insertIntoDatabase(QStringList *indexText,QString *doc);
     ~IndexGenerator();
 
-    QMap<QString,QString> *m_index_map;
+    QMap<QString,QStringList> *m_index_map;
     QCryptographicHash *m_cryp;
     QString *m_index_data_path;
     Xapian::WritableDatabase *m_datebase;

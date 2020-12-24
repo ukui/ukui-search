@@ -45,6 +45,9 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    //testBackServe
+    testTraverse();
+
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);

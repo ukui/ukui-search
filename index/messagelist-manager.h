@@ -13,14 +13,17 @@ public:
 
     void AddMessage(const QString&);
     bool SendMessage();
+    bool SendDeleteMessage();
     void SetAutoSendMessageLength(const size_t&);
 
 private:
     QStringList* messageList;
     size_t length = 0;
     IndexGenerator* ig;
-Q_SIGNALS:
+    QThread* indexGeneratorThread;
 
+Q_SIGNALS:
+    bool Send(QStringList*);
 };
 
 #endif // MESSAGELISTMANAGER_H
