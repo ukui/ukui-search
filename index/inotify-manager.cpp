@@ -2,11 +2,9 @@
 #include "index-generator.h"
 #include "messagelist-manager.h"
 
-bool InotifyManager::Traverse_BFS(const QString& path, const bool& CREATORDELETE){
+bool InotifyManager::Traverse_BFS(const QString& path, int autoSendMessageLength){
     qDebug() << "BFS start-----------------------------";
-    int total = 0;
-    MessageListManager mlm;
-    mlm.SetAutoSendMessageLength(80000);
+    this->mlm->SetAutoSendMessageLength(autoSendMessageLength);
     QQueue<QString> bfs;
     bfs.enqueue(path);
     QFileInfoList list;
@@ -23,19 +21,19 @@ bool InotifyManager::Traverse_BFS(const QString& path, const bool& CREATORDELETE
                 bfs.enqueue(i.absoluteFilePath());
             }
             else{
-                mlm.AddMessage(i.absoluteFilePath());
-                 total++;
+                this->mlm->AddMessage(i.absoluteFilePath());
                 //continue;
             }
         }
     }
-    mlm.SendMessage();
-    qDebug()<<total;
+    this->mlm->SendMessage();
     qDebug() << "BFS end-----------------------------";
     return true;
 }
 
-bool InotifyManager::Traverse(const QString& path, const bool& CREATORDELETE){
+
+//the DFS method is aborted
+bool InotifyManager::Traverse_DFS(const QString& path, const bool& CREATORDELETE){
 
     QDir dir(path);
     if (!dir.exists()) {
@@ -60,7 +58,7 @@ bool InotifyManager::Traverse(const QString& path, const bool& CREATORDELETE){
                 if (CREATORDELETE){
                     AddWatch(fileInfo.filePath());
                 }
-                Traverse(fileInfo.filePath(), CREATORDELETE);
+                Traverse_DFS(fileInfo.filePath(), CREATORDELETE);
                 if (!CREATORDELETE){
                     RemoveWatch(fileInfo.filePath());
                 }
@@ -69,6 +67,7 @@ bool InotifyManager::Traverse(const QString& path, const bool& CREATORDELETE){
                 //                         .arg(fileInfo.path())
                 //                         .arg(fileInfo.fileName());
                 //IndexGenerator::getInstance()->creatAllIndex(new QStringList(fileInfo.filePath()));
+
             }
         }
         i++;
@@ -82,6 +81,7 @@ bool InotifyManager::AddWatch(const QString &path){
     //int ret = inotify_add_watch(m_fd, path.toStdString().c_str(), IN_ALL_EVENTS);
     int ret = inotify_add_watch(m_fd, path.toStdString().c_str(), (IN_MOVED_FROM | IN_MOVED_TO | IN_CREATE | IN_DELETE));
     if (ret == -1) {
+        qDebug() << "AddWatch error:" << path;
         return false;
     }
     currentPath[ret] = path;
@@ -169,10 +169,12 @@ void InotifyManager::run(){
                     //添加监视要先序遍历，先添加top节点
                     if (event->mask & IN_ISDIR){
                         AddWatch(currentPath[event->wd] + '/' + event->name);
-                        Traverse_BFS(currentPath[event->wd] + '/' + event->name, true);
+                        Traverse_BFS(currentPath[event->wd] + '/' + event->name);
                     }
                     else {
                         //IndexGenerator::getInstance()->creatAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
+                        this->mlm->AddMessage(currentPath[event->wd] + '/' + event->name);
+                        this->mlm->SendMessage();
                     }
                 }
                 else if((event->mask & IN_DELETE) | (event->mask & IN_MOVED_FROM)){
@@ -181,7 +183,9 @@ void InotifyManager::run(){
                     }
                     else {
                         //这里调用删除索引
-                        IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
+                        this->mlm->AddMessage(currentPath[event->wd] + '/' + event->name);
+                        this->mlm->SendDeleteMessage();
+//                        IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
                     }
                 }
                 /*--------------------------------*/
@@ -214,6 +218,7 @@ InotifyManager::InotifyManager()
     num2string.insert(IN_UNMOUNT, "IN_UNMOUNT");
     num2string.insert(IN_Q_OVERFLOW, "IN_Q_OVERFLOW");
     num2string.insert(IN_IGNORED, "IN_IGNORED");
+    this->mlm = new MessageListManager();
     return;
 
 }
