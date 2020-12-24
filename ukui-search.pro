@@ -2,7 +2,7 @@ QT       += core gui svg dbus x11extras KWindowSystem xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11 no_keywords
+CONFIG += link_pkgconfig c++11 no_keywords
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -28,12 +28,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    file-utils.h
+    file-utils.h \
+    gobject-template.h \
 
 SOURCES += \
-    file-utils.cpp
+    file-utils.cpp \
+    gobject-template.cpp \
 
-PKGCONFIG += glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst
+PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst
 
 RESOURCES += \
     resource.qrc

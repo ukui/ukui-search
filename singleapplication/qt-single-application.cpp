@@ -332,7 +332,7 @@ void QtSingleApplication::activateWindow()
         {
             MainWindow* w=qobject_cast<MainWindow*>(actWin);
 //            w->loadMainWindow();
-//            w->clearSearchResult();
+            w->clearSearchResult();
             actWin->setWindowState(actWin->windowState() & ~Qt::WindowMinimized);
             actWin->raise();
             actWin->showNormal();

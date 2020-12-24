@@ -27,6 +27,7 @@
 #include <QScreen>
 #include <QStyleOption>
 #include <KWindowEffects>
+#include <QPixmap>
 #include "kwindowsystem.h"
 
 #include "file-utils.h"
@@ -143,7 +144,6 @@ void MainWindow::bootOptionsFilter(QString opt)
 {
 
     if (opt == "-s" || opt == "-show") {
-//        qDebug() << "第一次用命令进入";
         clearSearchResult();
         this->show();
     }
@@ -167,10 +167,7 @@ bool MainWindow::event ( QEvent * event )
             this->hide();
         }
         break;
-//    case QEvent::MouseButtonPress:
-//        this->close();
-//        break;
-    }
+        }
     return QWidget::event(event);
 }
 

@@ -23,7 +23,6 @@
 #include <QScreen>
 #include <QTranslator>
 #include <QLocale>
-#include <KWindowEffects>
 #include <X11/Xlib.h>
 #include <syslog.h>
 #include <QObject>
@@ -58,13 +57,13 @@ int main(int argc, char *argv[])
         app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
         qDebug() << QObject::tr("ukui-search is already running!");
         return EXIT_SUCCESS;
-    }else {
-//        QCommandLineParser parser;
-//        QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
-//        QCommandLineOption showsearch({"s", "show"}, QObject::tr("show search widget"));
-//        parser.addOptions({debugOption, showsearch});
-//        parser.process(app);
-    }
+    }/*else {
+        QCommandLineParser parser;
+        QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
+        QCommandLineOption showsearch({"s", "show"}, QObject::tr("show search widget"));
+        parser.addOptions({debugOption, showsearch});
+        parser.process(app);
+    }*/
 
     // 加载国际化文件
     QTranslator translator;
@@ -86,8 +85,6 @@ int main(int argc, char *argv[])
     if(arguments.size()>1)
     w->searchContent(arguments.at(1));
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
-
-//    KWindowEffects::enableBlurBehind(w->winId(),true);
 
     return app.exec();
 }
