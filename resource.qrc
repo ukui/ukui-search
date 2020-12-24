@@ -6,6 +6,7 @@
         <file>res/translations/tr.ts</file>
         <file>res/translations/zh_CN.ts</file>
         <file>res/icons/desktop.png</file>
+        <file>res/search.xml</file>
         <file>index/pinyinWithTone.txt</file>
         <file>index/pinyinWithoutTone.txt</file>
     </qresource>
