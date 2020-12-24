@@ -7,35 +7,37 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QScrollArea>
+#include "control/search-list-view.h"
 
 class ContentWidget : public QStackedWidget
 {
     Q_OBJECT
 public:
-    ContentWidget(QWidget * parent);
+    ContentWidget(QWidget *);
     ~ContentWidget();
 
-    enum SearchType {
-        All,
-        Apps,
-        Settings,
-        Files
-    };
-
-    void setPageType(int type);
+    void setPageType(const int&);
     int currentType();
 private:
     void initUI();
-    QWidget * homePage = nullptr;
-    QVBoxLayout * homePageLyt = nullptr;
-    QWidget * resultPage = nullptr;
-    QHBoxLayout * resultPageLyt = nullptr;
-    QScrollArea * resultListArea = nullptr;
-    QScrollArea * resultDetailArea = nullptr;
-    QWidget * resultList = nullptr;
-    QWidget * resultDetail = nullptr;
+    QWidget * m_homePage = nullptr;
+    QVBoxLayout * m_homePageLyt = nullptr;
+    QWidget * m_resultPage = nullptr;
+    QHBoxLayout * m_resultPageLyt = nullptr;
+    QScrollArea * m_resultListArea = nullptr;
+    QScrollArea * m_resultDetailArea = nullptr;
+    QWidget * m_resultList = nullptr;
+    QVBoxLayout * m_listLyt = nullptr;
+    QWidget * m_resultDetail = nullptr;
+    QVBoxLayout * m_detailLyt = nullptr;
 
-    int m_current_type = 0;
+    int m_currentType = 0;
+
+    QString getTitleName(const int&);
+
+private Q_SLOTS:
+    void refreshSearchList(const QVector<int>&, const QVector<QStringList>&);
+    void clearSearchList();
 };
 
 #endif // CONTENTWIDGET_H
