@@ -1,5 +1,6 @@
 #include "app-match.h"
 #include <glib.h>
+#include "chinesecharacterstopinyin.h"
 AppMatch::AppMatch(QObject *parent) : QObject(parent)
 {
     this->getDesktopFilePath();
@@ -188,9 +189,11 @@ void AppMatch::appNameMatch(QString appname,QString desktoppath){
     if(appname.contains(m_soureText)){
         m_returnResult.append(desktoppath);
     }
-    QString pinyin=UkuiChineseLetter::getPinyins(appname).toLower(); // 中文转拼音
+    QString pinyin=chineseCharactersToPinyin::find(appname).toLower(); // 中文转拼音
     if(pinyin.contains(m_soureText,Qt::CaseInsensitive)){
         m_returnResult.append(desktoppath);
     }
 
 }
+
+

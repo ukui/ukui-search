@@ -5,7 +5,6 @@
 #include <QDir>
 #include <QLocale>
 #include <QDebug>
-#include <ukuichineseletter.h>
 class AppMatch : public QObject
 {
     Q_OBJECT
