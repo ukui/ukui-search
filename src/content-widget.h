@@ -2,12 +2,9 @@
 #define CONTENTWIDGET_H
 
 #include <QObject>
-#include <QWidget>
 #include <QStackedWidget>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QScrollArea>
-#include "control/search-list-view.h"
+#include "control/search-detail-view.h"
 
 class ContentWidget : public QStackedWidget
 {
@@ -18,6 +15,7 @@ public:
 
     void setPageType(const int&);
     int currentType();
+    void refreshSearchList(const QVector<int>&, const QVector<QStringList>&);
 private:
     void initUI();
     QWidget * m_homePage = nullptr;
@@ -31,12 +29,13 @@ private:
     QWidget * m_resultDetail = nullptr;
     QVBoxLayout * m_detailLyt = nullptr;
 
+    SearchDetailView * m_detailView = nullptr;
+
     int m_currentType = 0;
 
     QString getTitleName(const int&);
 
 private Q_SLOTS:
-    void refreshSearchList(const QVector<int>&, const QVector<QStringList>&);
     void clearSearchList();
 };
 

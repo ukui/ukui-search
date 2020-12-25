@@ -1,0 +1,176 @@
+#include "search-detail-view.h"
+#include <QPainter>
+#include <QStyleOption>
+#include <QDebug>
+
+SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
+{
+    m_layout = new QVBoxLayout(this);
+    this->setLayout(m_layout);
+    m_layout->setContentsMargins(16, 60, 16, 24);
+    this->setObjectName("detailView");
+    this->setStyleSheet("QWidget#detailView{background:transparent;}");
+}
+
+SearchDetailView::~SearchDetailView()
+{
+    if (m_layout) {
+        clearLayout();
+        delete m_layout;
+        m_layout = NULL;
+    }
+}
+
+/**
+ * @brief SearchDetailView::clearLayout 清空布局
+ */
+void SearchDetailView::clearLayout() {
+    QLayoutItem * child;
+    while ((child = m_layout->takeAt(0)) != 0) {
+        if(child->widget())
+        {
+            child->widget()->setParent(NULL); //防止删除后窗口看上去没有消失
+        }
+        delete child;
+    }
+    child = NULL;
+}
+
+/**
+ * @brief SearchDetailView::setupWidget 构建右侧搜索结果详情区域
+ * @param type 搜索类型
+ * @param path 结果路径
+ */
+void SearchDetailView::setupWidget(const int& type, const QString& path) {
+    clearLayout();
+
+    //图标和名称、分割线区域
+    QLabel * iconLabel = new QLabel(this);
+    iconLabel->setAlignment(Qt::AlignCenter);
+    iconLabel->setFixedHeight(120);
+
+    QFrame * nameFrame = new QFrame(this);
+    QHBoxLayout * nameLayout = new QHBoxLayout(nameFrame);
+    QLabel * nameLabel = new QLabel(nameFrame);
+    QLabel * typeLabel = new QLabel(nameFrame);
+    nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
+    typeLabel->setStyleSheet("QLabel{font-size: 14px; color: rgba(0, 0, 0, 0.43);}");
+    nameFrame->setFixedHeight(48);
+    nameLabel->setMaximumWidth(240);
+    nameLayout->addWidget(nameLabel);
+    nameLayout->addStretch();
+    nameLayout->addWidget(typeLabel);
+    nameFrame->setLayout(nameLayout);
+
+    QFrame * hLine = new QFrame(this);
+    hLine->setLineWidth(0);
+    hLine->setFixedHeight(1);
+    hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+
+    OptionView * optionView = new OptionView(this, type);
+    connect(optionView, &OptionView::onOptionClicked, this, [ = ](const int& option) {
+        execActions(type, option, path);
+    });
+
+    m_layout->addWidget(iconLabel);
+    m_layout->addWidget(nameFrame);
+    m_layout->addWidget(hLine);
+    m_layout->addWidget(optionView);
+    m_layout->addStretch();
+
+    //根据不同类型的搜索结果切换加载图片和名称的方式
+    switch (type) {
+        case SearchListView::ResType::App : {
+            QIcon icon = FileUtils::getAppIcon(path);
+            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+            nameLabel->setText(FileUtils::getAppName(path));
+            typeLabel->setText(tr("Application"));
+            break;
+        }
+        case SearchListView::ResType::File : {
+            QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
+            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(100, 100))));
+            nameLabel->setText(FileUtils::getFileName(path));
+            typeLabel->setText(tr("Document"));
+            break;
+        }
+        case SearchListView::ResType::Setting : {
+            QIcon icon = FileUtils::getSettingIcon(path, true);
+            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(100, 100))));
+            QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
+            nameLabel->setText(settingType);
+            typeLabel->setText(FileUtils::getSettingName(path));
+            break;
+        }
+        case SearchListView::ResType::Dir :
+            break;
+        default:
+            break;
+    }
+}
+
+/**
+ * @brief SearchDetailView::execActions 根据点击的选项执行指定动作
+ * @param type 选中的类型
+ */
+void SearchDetailView::execActions(const int& type, const int& option, const QString& path) {
+    switch (option) {
+        case OptionView::Options::Open: {
+            openAction(type, path);
+            break;
+        }
+        case OptionView::Options::Shortcut: {
+            addDesktopShortcut(path);
+            break;
+        }
+        case OptionView::Options::Panel: {
+            addPanelShortcut(path);
+            break;
+        }
+        case OptionView::Options::OpenPath: {
+            openPathAction(path);
+            break;
+        }
+        case OptionView::Options::CopyPath: {
+            copyPathAction(path);
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+/**
+ * @brief SearchDetailView::openAction 执行“打开”动作
+ * @return
+ */
+bool SearchDetailView::openAction(const int&, const QString&) {
+}
+
+/**
+ * @brief SearchDetailView::addDesktopShortcut 添加到桌面快捷方式
+ * @return
+ */
+bool SearchDetailView::addDesktopShortcut(const QString&) {
+}
+
+/**
+ * @brief SearchDetailView::addPanelShortcut 添加到任务栏
+ * @return
+ */
+bool SearchDetailView::addPanelShortcut(const QString&) {
+}
+
+/**
+ * @brief SearchDetailView::openPathAction 打开文件所在路径
+ * @return
+ */
+bool SearchDetailView::openPathAction(const QString&) {
+}
+
+/**
+ * @brief SearchDetailView::copyPathAction 复制文件所在路径
+ * @return
+ */
+bool SearchDetailView::copyPathAction(const QString&) {
+}

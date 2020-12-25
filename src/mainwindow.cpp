@@ -167,7 +167,7 @@ bool MainWindow::event ( QEvent * event )
     switch (event->type()){
     case QEvent::ActivationChange:
         if(QApplication::activeWindow() != this){
-            this->hide();
+            this->close();
         }
         break;
         }
@@ -203,7 +203,31 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
  * @param searchcontent
  */
 void MainWindow::searchContent(QString searchcontent){
-    Q_UNUSED(searchcontent);
+    QVector<int> types;
+    QVector<QStringList> lists;
+
+    //测试用数据
+    QStringList list;
+    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/fcitx.desktop"<<"/usr/share/applications/info.desktop";
+    QStringList list2;
+    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
+    QStringList list3;
+    list3<<"About/关于/计算机属性"<<"Area/语言和地区/货币单位"<<"Datetime/时间和日期/手动更改时间"<<"Theme/主题/图标主题";
+    types.append(SearchItem::SearchType::Apps);
+    types.append(SearchItem::SearchType::Settings);
+    types.append(SearchItem::SearchType::Files);
+
+    lists.append(list);
+    lists.append(list3);
+    lists.append(list2);
+
+    //文件搜索
+//    QStringList res = IndexGenerator::IndexSearch(searchcontent);
+//    types.append(SearchItem::SearchType::Files);
+//    lists.append(res);
+
+    //将搜索结果加入列表
+    m_contentFrame->refreshSearchList(types, lists);
 }
 
 //使用GSetting获取当前窗口应该使用的透明度

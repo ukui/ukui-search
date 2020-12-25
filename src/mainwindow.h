@@ -39,6 +39,7 @@
 #include <QGSettings/QGSettings>
 #include "content-widget.h"
 #include "input-box.h"
+#include "index/index-generator.h"
 
 class MainWindow : public QMainWindow
 {
