@@ -27,7 +27,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid)
                               nullptr,
                               nullptr));
     if (!G_IS_FILE_INFO (info.get()->get()))
-        return QIcon("");
+        return QIcon::fromTheme("unknown");
     GIcon *g_icon = g_file_info_get_icon (info.get()->get());
     QString icon_name;
     //do not unref the GIcon from info.
@@ -50,6 +50,9 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid)
             }
         }
     }
+    if (QIcon::fromTheme(icon_name).isNull()) {
+        return QIcon::fromTheme("unknown");
+    }
     return QIcon::fromTheme(icon_name);
 }
 
@@ -65,7 +68,7 @@ QIcon FileUtils::getAppIcon(const QString &path) {
     keyfile = g_key_file_new();
     if (!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)){
         g_key_file_free (keyfile);
-        return QIcon("");
+        return QIcon::fromTheme("unknown");
     }
     QString icon = QString(g_key_file_get_locale_string(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, NULL, NULL));
     g_key_file_free(keyfile);
@@ -78,16 +81,26 @@ QIcon FileUtils::getAppIcon(const QString &path) {
 /**
  * @brief FileUtils::getSettingIcon 获取设置图标
  * @param setting 设置项传入参数，格式为 About/About->Properties
+ * @param is_white 选择是否返回白色图标
  * @return
  */
-QIcon FileUtils::getSettingIcon(const QString& setting) {
+QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
     QString name = setting.left(setting.indexOf("/"));
-    QString path = QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1.svg").arg(name);
+    QString path;
+    if (is_white) {
+        path = QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg(name);
+    } else {
+        path = QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1.svg").arg(name);
+    }
     QFile file(path);
     if (file.exists()) {
         return QIcon(path);
     } else {
-        return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1.svg").arg("About"));
+        if (is_white) {
+            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg("About"));
+        } else {
+            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1.svg").arg("About"));
+        }
     }
 }
 
@@ -98,6 +111,9 @@ QIcon FileUtils::getSettingIcon(const QString& setting) {
  */
 QString FileUtils::getFileName(const QString& uri) {
     QUrl url = uri;
+    if (url.fileName().isEmpty()) {
+        return "Unknown File";
+    }
     return url.fileName();
 }
 
@@ -126,5 +142,5 @@ QString FileUtils::getAppName(const QString& path) {
  * @return
  */
 QString FileUtils::getSettingName(const QString& setting) {
-    return setting.right(setting.length() - setting.indexOf("/") - 1);
+    return setting.right(setting.length() - setting.lastIndexOf("/") - 1);
 }

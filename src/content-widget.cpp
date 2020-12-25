@@ -5,21 +5,6 @@
 ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
 {
     initUI();
-    QVector<int> types;
-    QVector<QStringList> lists;
-    QStringList list;
-    list<<"/usr/share/applications/code.desktop"<<"/usr/share/applications/fcitx.desktop"<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/info.desktop"<<"/usr/share/applications/yelp.desktop";
-    QStringList list2;
-    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/u=1747586012,2959413014&fm=26&gp=0.jpg"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
-    QStringList list3;
-    list3<<"About/设置->功能点"<<"Area/设置->功能点"<<"Datetime/设置->功能点"<<"Theme/设置->功能点"<<"233/设置->功能点";
-    types.append(SearchItem::SearchType::Apps);
-    types.append(SearchItem::SearchType::Files);
-    types.append(SearchItem::SearchType::Settings);
-    lists.append(list);
-    lists.append(list2);
-    lists.append(list3);
-    refreshSearchList(types, lists);
 }
 
 ContentWidget::~ContentWidget()
@@ -35,8 +20,7 @@ ContentWidget::~ContentWidget()
 }
 
 /**
- * @brief initUI
- * 初始化homepage和resultpage
+ * @brief initUI 初始化homepage和resultpage
  */
 void ContentWidget::initUI() {
     m_homePage = new QWidget;
@@ -69,9 +53,12 @@ void ContentWidget::initUI() {
     m_listLyt->setSpacing(0);
     m_resultListArea->setWidget(m_resultList);
     m_resultListArea->setWidgetResizable(true);
+    m_detailView = new SearchDetailView(m_resultDetailArea);
+    m_resultDetailArea->setWidget(m_detailView);
+    m_resultDetailArea->setWidgetResizable(true);
     m_homePage->setStyleSheet("QWidget{background:pink;}");
     m_resultListArea->setStyleSheet("QScrollArea{background:transparent;}");
-    m_resultDetailArea->setStyleSheet("QScrollArea{background:yellow;}");
+    m_resultDetailArea->setStyleSheet("QScrollArea{background: rgba(0,0,0,0.05); border-radius: 4px;}");
     this->addWidget(m_homePage);
     this->addWidget(m_resultPage);
 
@@ -107,11 +94,19 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         SearchListView * searchList = new SearchListView(m_resultList, lists.at(i), types.at(i)); //Treeview
         QLabel * titleLabel = new QLabel(m_resultList); //表头
         titleLabel->setContentsMargins(8, 0, 0, 0);
-        titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1)}");
+        titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
         titleLabel->setText(getTitleName(types.at(i)));
         m_listLyt->addWidget(titleLabel);
         m_listLyt->addWidget(searchList);
         m_resultList->setFixedHeight(m_resultList->height() + searchList->height() + titleLabel->height());
+
+        if (i == 0) {
+            searchList->setCurrentIndex(searchList->model()->index(0,1, QModelIndex()));
+            m_detailView->setupWidget(searchList->getCurrentType(), lists.at(0).at(0));
+        }
+        connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
+            m_detailView->setupWidget(type, path);
+        });
     }
 }
 

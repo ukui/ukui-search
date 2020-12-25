@@ -9,6 +9,7 @@
 class SearchItem : public QObject
 {
     friend class SearchItemModel;
+    friend class SearchListView;
     Q_OBJECT
 public:
     explicit SearchItem(QObject *parent = nullptr);
@@ -19,6 +20,7 @@ public:
         Apps,
         Settings,
         Files,
+        Dirs,
         Best
     };
 
@@ -33,8 +35,6 @@ private:
 
     QIcon getIcon(int);
     QString getName(int);
-
-    FileUtils * m_util = nullptr;
 
 Q_SIGNALS:
 
