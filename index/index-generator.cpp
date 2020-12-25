@@ -103,7 +103,7 @@ void IndexGenerator::HandlePathList(QStringList *pathlist)
         auto info = new QFileInfo(list->at(i));
         //提取文件名并用空格分割,同时去除'.'
         QString filename = info->fileName();
-        QString index_test = filename.replace(".","").replace(""," ");
+        QString index_test = filename.replace(".","").replace("+", "%2B").replace(""," ");
         QString pinyin_test = chineseCharactersToPinyin::find(filename.replace(".", "")).replace("", " ");
 
 
