@@ -11,13 +11,15 @@ public:
     explicit MessageListManager();
     ~MessageListManager();
 
-    void AddMessage(const QString&);
+    void AddMessage(const QVector<QString>&);
     bool SendMessage();
     bool SendDeleteMessage();
     void SetAutoSendMessageLength(const size_t&);
 
 private:
-    QStringList* messageList;
+//    QStringList* messageList;
+    QList<QVector<QString>>* messageList;
+
     size_t length = 0;
     IndexGenerator* ig;
     QThread* indexGeneratorThread;

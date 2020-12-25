@@ -3,6 +3,7 @@
 #include "src/mainwindow.h"
 #include "inotify-manager.h"
 #include "chinesecharacterstopinyin.h"
+#include "inotify.h"
 
 void testTraverse(void){
     /*-------------Inotify Test Start---------------*/
@@ -18,12 +19,23 @@ void testTraverse(void){
 
     /*-------------PinyinSearch Test Start---------------*/
     QTime t1 = QTime::currentTime();
-    QString test("gongzuo");
+    QString test("test");
     qDebug() << IndexGenerator::IndexSearch(test);
     QTime t2 = QTime::currentTime();
     qDebug() << t1;
     qDebug() << t2;
     /*-------------PinyinSearch Test End-----------------*/
+
+    /*-------------InotyifyRefact Test Start---------------*/
+//    QTime t1 = QTime::currentTime();
+//    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
+//    imr->AddWatch("/home");
+//    imr->setPath("/home");
+//    imr->Traverse();
+//    QTime t2 = QTime::currentTime();
+//    qDebug() << t1;
+//    qDebug() << t2;
+    /*-------------InotyifyRefact Test End-----------------*/
 
 
 

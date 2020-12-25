@@ -27,8 +27,8 @@ MessageListManager::~MessageListManager(){
     this->indexGeneratorThread = nullptr;
 }
 
-void MessageListManager::AddMessage(const QString& path){
-    this->messageList->append(path);
+void MessageListManager::AddMessage(const QVector<QString>& pathVec){
+    this->messageList->append(pathVec);
     if (static_cast<size_t>(this->messageList->length()) >= this->length){
         this->SendMessage();
     }
