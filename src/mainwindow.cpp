@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     //testBackServe
-    testTraverse();
+//    testTraverse();
 
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
@@ -208,7 +208,7 @@ void MainWindow::searchContent(QString searchcontent){
 
     //测试用数据
     QStringList list;
-    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/fcitx.desktop"<<"/usr/share/applications/info.desktop";
+    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
     QStringList list2;
     list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
     QStringList list3;

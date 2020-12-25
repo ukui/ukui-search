@@ -2,6 +2,15 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QDebug>
+#include <gio/gdesktopappinfo.h>
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QStandardPaths>
+#include <QFile>
+#include <QFileInfo>
+#include <QProcess>
+#include <QClipboard>
+#include <QApplication>
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
 {
@@ -75,7 +84,8 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_layout->addWidget(iconLabel);
     m_layout->addWidget(nameFrame);
     m_layout->addWidget(hLine);
-    m_layout->addWidget(optionView);
+    m_layout->
+            addWidget(optionView);
     m_layout->addStretch();
 
     //根据不同类型的搜索结果切换加载图片和名称的方式
@@ -144,33 +154,96 @@ void SearchDetailView::execActions(const int& type, const int& option, const QSt
  * @brief SearchDetailView::openAction 执行“打开”动作
  * @return
  */
-bool SearchDetailView::openAction(const int&, const QString&) {
+bool SearchDetailView::openAction(const int& type, const QString& path) {
+    switch (type) {
+        case SearchListView::ResType::App: {
+            GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
+            g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
+            g_object_unref(desktopAppInfo);
+            return true;
+            break;
+        }
+        case SearchListView::ResType::Dir:
+        case SearchListView::ResType::File: {
+            QProcess * process = new QProcess;
+            process->start(QString("xdg-open %1").arg(path));
+            connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
+                process->deleteLater();
+            });
+            return true;
+            break;
+        }
+        case SearchListView::ResType::Setting: {
+            //打开控制面板对应页面
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 /**
  * @brief SearchDetailView::addDesktopShortcut 添加到桌面快捷方式
  * @return
  */
-bool SearchDetailView::addDesktopShortcut(const QString&) {
+bool SearchDetailView::addDesktopShortcut(const QString& path) {
+    QString dirpath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QFileInfo fileInfo(path);
+    QString desktopfn = fileInfo.fileName();
+    QFile file(path);
+    QString newName = QString(dirpath+"/"+desktopfn);
+    bool ret = file.copy(QString(dirpath+"/"+desktopfn));
+    if(ret)
+    {
+        QProcess * process = new QProcess;
+        process->start(QString("chmod a+x %1").arg(newName));
+        connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
+            process->deleteLater();
+        });
+        return true;
+    }
+    return false;
 }
 
 /**
  * @brief SearchDetailView::addPanelShortcut 添加到任务栏
  * @return
  */
-bool SearchDetailView::addPanelShortcut(const QString&) {
+bool SearchDetailView::addPanelShortcut(const QString& path) {
+    QDBusInterface iface("com.ukui.panel.desktop",
+                         "/",
+                         "com.ukui.panel.desktop",
+                         QDBusConnection::sessionBus());
+    if (iface.isValid()) {
+        QDBusReply<bool> isExist = iface.call("CheckIfExist",path);
+        if (isExist) {
+            qDebug()<<"qDebug: Add shortcut to panel failed, because it is already existed!";
+            return false;
+        }
+        QDBusReply<QVariant> ret = iface.call("AddToTaskbar",path);
+        qDebug()<<"qDebug: Add shortcut to panel successed!";
+        return true;
+    }
 }
 
 /**
  * @brief SearchDetailView::openPathAction 打开文件所在路径
  * @return
  */
-bool SearchDetailView::openPathAction(const QString&) {
+bool SearchDetailView::openPathAction(const QString& path) {
+    QProcess * process = new QProcess;
+    process->start(QString("xdg-open %1").arg(path.left(path.length() - path.lastIndexOf("/") + 1)));
+    connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
+        process->deleteLater();
+    });
+    return true;
 }
 
 /**
  * @brief SearchDetailView::copyPathAction 复制文件所在路径
  * @return
  */
-bool SearchDetailView::copyPathAction(const QString&) {
+bool SearchDetailView::copyPathAction(const QString& path) {
+    QClipboard * clipboard = QApplication::clipboard();   //获取系统剪贴板指针
+    clipboard->setText(path);
 }
