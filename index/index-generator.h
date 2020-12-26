@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QMap>
 #include <QCryptographicHash>
+#include "document.h"
 
 class IndexGenerator : public QObject
 {
@@ -20,17 +21,20 @@ Q_SIGNALS:
     void transactionFinished();
     void searchFinish();
 public Q_SLOTS:
-    bool creatAllIndex(QStringList *pathlist);
+    bool creatAllIndex(QList<QVector<QString>> *messageList);
     bool deleteAllIndex(QStringList *pathlist);
 
 private:
     explicit IndexGenerator(QObject *parent = nullptr);
-    void HandlePathList(QStringList *pathlist);
+    void HandlePathList(QList<QVector<QString>> *messageList);
+    static Document GenerateDocument(const QVector<QString> &list);
     //add one data in database
-    void insertIntoDatabase(QStringList *indexText,QString *doc);
+    void insertIntoDatabase(Document doc);
     ~IndexGenerator();
 
     QMap<QString,QStringList> *m_index_map;
+    QList<Document> *m_doc_list;
+
     QCryptographicHash *m_cryp;
     QString *m_index_data_path;
     Xapian::WritableDatabase *m_datebase;

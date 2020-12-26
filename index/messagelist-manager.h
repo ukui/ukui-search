@@ -20,7 +20,7 @@ private:
 //    QStringList* messageList;
     QList<QVector<QString>>* messageList;
 
-    size_t length = 0;
+    size_t length = 80000;
     IndexGenerator* ig;
     QThread* indexGeneratorThread;
 

@@ -80,12 +80,14 @@ bool InotifyManager::AddWatch(const QString &path){
 //    qDebug() << "m_fd: " <<m_fd;
     //int ret = inotify_add_watch(m_fd, path.toStdString().c_str(), IN_ALL_EVENTS);
     int ret = inotify_add_watch(m_fd, path.toStdString().c_str(), (IN_MOVED_FROM | IN_MOVED_TO | IN_CREATE | IN_DELETE));
+    Q_ASSERT(ret!=-1);
     if (ret == -1) {
         qDebug() << "AddWatch error:" << path;
         return false;
     }
     currentPath[ret] = path;
-//    qDebug() << "Watch:" << path;
+    qDebug() << "ret: " <<ret;
+    qDebug() << "Watch:" << path;
     return true;
 }
 

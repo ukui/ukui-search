@@ -2,8 +2,11 @@
 #include <QStandardPaths>
 #include <QFileInfo>
 #include <QDebug>
+#include "file-utils.h"
 #include "index-generator.h"
 #include "chinesecharacterstopinyin.h"
+#include <QtConcurrent>
+#include <QFuture>
 
 using namespace std;
 
@@ -23,34 +26,40 @@ bool IndexGenerator::setIndexdataPath()
     return true;
 }
 
-bool IndexGenerator::creatAllIndex(QStringList *pathlist)
+bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
 {
-    HandlePathList(pathlist);
+    HandlePathList(messageList);
     try
     {
         m_indexer = new Xapian::TermGenerator();
         m_indexer->set_database(*m_datebase);
+        //可以实现拼写纠正
 //        m_indexer->set_flags(Xapian::TermGenerator::FLAG_SPELLING);
         m_indexer->set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
 
-        QMap<QString, QStringList>::const_iterator i;
-        QStringList *indexStrList;
-        QString *docStr;
-        for(i=m_index_map->constBegin();i!=m_index_map->constEnd();++i)
-//        for(auto i : *m_index_map)
+
+
+        int count =0;
+        for(int i = 0;i < m_doc_list->size(); i++)
         {
-            docStr = new QString(i.key());
-            indexStrList = new QStringList(i.value());
-            insertIntoDatabase(indexStrList,docStr);
+            insertIntoDatabase(m_doc_list->at(i));
+
+            if(++count == 9999)
+            {
+                count = 0;
+                m_datebase->commit();
+            }
         }
         m_datebase->commit();
+
+
     }
     catch(const Xapian::Error &e)
     {
         qDebug()<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
         return false;
     }
-    m_index_map->clear();
+    m_doc_list->clear();
     Q_EMIT this->transactionFinished();
 
     return true;
@@ -66,55 +75,68 @@ IndexGenerator::~IndexGenerator()
 {
 }
 
-void IndexGenerator::insertIntoDatabase(QStringList *indexTextList,QString *doc)
+void IndexGenerator::insertIntoDatabase(Document doc)
 {
     qDebug()<< "--index start--";
-    m_docstr = doc->toStdString();
-    //m_index_text_str = indexTextList->toStdString();
-
-    std::string uniqueterm = m_cryp->hash(doc->toUtf8(),QCryptographicHash::Md5).toStdString();
-
-    Xapian::Document document;
-    document.set_data(m_docstr);
-    document.add_term(uniqueterm);
+    Xapian::Document document = doc.getXapianDocument();
     m_indexer->set_document(document);
+    qDebug()<<doc.getIndexText();
 
-    for(auto i : *indexTextList){
+    for(auto i : doc.getIndexText()){
         m_indexer->index_text(i.toStdString());
     }
-//    m_indexer->index_text(m_index_text_str);
 
-    Xapian::docid innerId= m_datebase->replace_document(uniqueterm,document);
-
-    //        qDebug()<<"replace doc uniqueterm="<<QString::fromStdString(uniqueterm);
+    Xapian::docid innerId= m_datebase->replace_document(doc.getUniqueTerm(),document);
     qDebug()<<"replace doc docid="<<static_cast<int>(innerId);
     qDebug()<< "--index finish--";
     return;
-
 }
 
-void IndexGenerator::HandlePathList(QStringList *pathlist)
+void IndexGenerator::HandlePathList(QList<QVector<QString>> *messageList)
 {
     qDebug()<<"Begin HandlePathList!";
-    m_index_map = new QMap<QString,QStringList>;
-    QStringList *list = pathlist;
-    for(int i = 0;i<list->size();i++)
-    {
-        auto info = new QFileInfo(list->at(i));
-        //提取文件名并用空格分割,同时去除'.'
-        QString filename = info->fileName();
-        QString index_test = filename.replace(".","").replace("+", "%2B").replace(""," ");
-        QString pinyin_test = chineseCharactersToPinyin::find(filename.replace(".", "")).replace("", " ");
+//    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
+    QFuture<Document> future = QtConcurrent::mapped(*messageList,&IndexGenerator::GenerateDocument);
 
+    future.waitForFinished();
 
-//        index_text.simplified();
-        //            qDebug()<<"index_test"<<index_test;
-        m_index_map->insert(info->absoluteFilePath(),QStringList() << index_test << pinyin_test);
-        //            qDebug()<<m_index_map->value(index_test);
-    }
+    QList<Document> docList = future.results();
+    m_doc_list = new QList<Document>(docList);
+    qDebug()<<m_doc_list;
 
     qDebug()<<"Finish HandlePathList!";
     return;
+}
+
+Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
+{
+//    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
+    //0-filename 1-filepathname 2-file or dir
+    QString index_text = list.at(0);
+    QString sourcePath = list.at(1);   
+    index_text = index_text.replace(".","").replace(""," ");
+    index_text = index_text.simplified();
+//    QString pinyin_text = chineseCharactersToPinyin::find(filename.replace(".", "")).replace("", " ");
+//    pinyin_text = pinyin_text.simplified();
+    QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
+//    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
+/*--------------------------------------------------------------------*/
+    //QByteArray 和  QString 之间会进行隐式转换，造成字符串被截断等意想不到的后果！！！！！！！ zpf
+    //    if(uniqueterm1!=uniqueterm){
+//        qDebug()<<"-----------------------------------------start";
+//        qDebug()<<uniqueterm1;
+//        qDebug()<<uniqueterm;
+//        qDebug()<<"------------------------------------------finish";
+//    }
+/*--------------------------------------------------------------------*/
+    Document doc;
+    doc.setData(sourcePath);
+    doc.setUniqueTerm(uniqueterm);
+    doc.addValue(list.at(2));
+//    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
+    doc.setIndexText(QStringList()<<index_text);
+    return doc;
+
 }
 
 bool IndexGenerator::isIndexdataExist()
