@@ -7,8 +7,12 @@ AppMatch::AppMatch(QObject *parent) : QObject(parent)
 }
 
 QStringList AppMatch::startMatchApp(QString input){
+    input.replace(" ","");
     m_soureText=input;
     m_returnResult.clear();
+    if(input.isEmpty()){
+        return m_returnResult;
+    }
     this->getAppName();
     m_returnResult=m_midResult;
     m_midResult.clear();
@@ -42,8 +46,15 @@ void AppMatch::getAllDesktopFilePath(QString path){
             getAllDesktopFilePath(fileInfo.filePath());
         }
         else{
-            //过滤后缀不是.desktop的文件
+            //过滤LXQt、KDE
             QString filePathStr=fileInfo.filePath();
+            if(filePathStr.contains("KDE",Qt::CaseInsensitive)||
+               filePathStr.contains("mate",Qt::CaseInsensitive)||
+               filePathStr.contains("LX",Qt::CaseInsensitive) ){
+                i++;
+                continue;
+            }
+            //过滤后缀不是.desktop的文件
             if(!filePathStr.endsWith(".desktop"))
             {
                 i++;
@@ -67,17 +78,6 @@ void AppMatch::getAllDesktopFilePath(QString path){
             {
                 QString str=QString::fromLocal8Bit(ret_2);
                 if(str.contains("UKUI"))
-                {
-                    i++;
-                    continue;
-                }
-            }
-            //过滤LXQt、KDE
-            char* ret=g_key_file_get_locale_string(keyfile,"Desktop Entry","OnlyShowIn", nullptr, nullptr);
-            if(ret!=nullptr)
-            {
-                QString str=QString::fromLocal8Bit(ret);
-                if(str.contains("LXQt") || str.contains("KDE"))
                 {
                     i++;
                     continue;
