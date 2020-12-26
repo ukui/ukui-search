@@ -8,7 +8,7 @@
 class  FileUtils
 {
 public:
-    static std::string makeDocUterm(QString *);
+    static std::string makeDocUterm(QString );
 
     static QIcon getFileIcon(const QString &, bool checkValid = true);
     static QIcon getAppIcon(const QString &);
