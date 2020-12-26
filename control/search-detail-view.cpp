@@ -84,8 +84,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_layout->addWidget(iconLabel);
     m_layout->addWidget(nameFrame);
     m_layout->addWidget(hLine);
-    m_layout->
-            addWidget(optionView);
+    m_layout->addWidget(optionView);
     m_layout->addStretch();
 
     //根据不同类型的搜索结果切换加载图片和名称的方式
