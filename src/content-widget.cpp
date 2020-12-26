@@ -25,6 +25,7 @@ ContentWidget::~ContentWidget()
 void ContentWidget::initUI() {
     m_homePage = new QWidget;
     m_homePageLyt = new QVBoxLayout(m_homePage);
+    m_homePageLyt->setSpacing(0);
     m_homePage->setLayout(m_homePageLyt);
 
     m_resultPage = new QWidget;
@@ -56,20 +57,59 @@ void ContentWidget::initUI() {
     m_detailView = new SearchDetailView(m_resultDetailArea);
     m_resultDetailArea->setWidget(m_detailView);
     m_resultDetailArea->setWidgetResizable(true);
-    m_homePage->setStyleSheet("QWidget{background:pink;}");
     m_resultListArea->setStyleSheet("QScrollArea{background:transparent;}");
     m_resultDetailArea->setStyleSheet("QScrollArea{background: rgba(0,0,0,0.05); border-radius: 4px;}");
     this->addWidget(m_homePage);
     this->addWidget(m_resultPage);
 
-    setPageType(SearchItem::SearchType::All);//初始化按“全部”加载
+    setPage(SearchItem::SearchType::All);//初始化按“全部”加载
+}
+
+/**
+ * @brief ContentWidget::initHomePage 向homepage填充内容
+ * @param lists 三个列表：常用，最近，快捷
+ */
+void ContentWidget::initHomePage(const QVector<QStringList>& lists) {
+    for (int i = 0; i < lists.count(); i++) {
+        QWidget * listWidget = new QWidget(m_homePage);
+        QVBoxLayout * itemWidgetLyt = new QVBoxLayout(listWidget);
+        QLabel * titleLabel = new QLabel(listWidget);
+        QWidget * itemWidget = new QWidget(listWidget);
+        if (i == 1) {
+            titleLabel->setText(tr("Recently Opened"));
+            QGridLayout * layout = new QGridLayout(itemWidget);
+            layout->setSpacing(8);
+            layout->setContentsMargins(0, 0, 0, 0);
+            itemWidget->setLayout(layout);
+            for (int j = 0; j < lists.at(i).count(); j++) {
+                HomePageItem * item = new HomePageItem(itemWidget, i, lists.at(i).at(j));
+                layout->addWidget(item, j / 2, j % 2);
+            }
+        } else {
+            if (i) titleLabel->setText(tr("Commonly Used"));
+            else titleLabel->setText(tr("Open Quickly"));
+            QHBoxLayout * layout = new QHBoxLayout(itemWidget);
+            layout->setSpacing(8);
+            layout->setContentsMargins(0, 0, 0, 0);
+            itemWidget->setLayout(layout);
+            Q_FOREACH(QString path, lists.at(i)){
+                HomePageItem * item = new HomePageItem(itemWidget, i, path);
+                layout->addWidget(item);
+            }
+        }
+        itemWidgetLyt->setSpacing(6);
+        titleLabel->setFixedHeight(24);
+        itemWidgetLyt->addWidget(titleLabel);
+        itemWidgetLyt->addWidget(itemWidget);
+        m_homePageLyt->addWidget(listWidget);
+    }
 }
 
 /**
  * @brief setPageType 预留的接口，为指定类别搜索调整界面内容
  * @param type
  */
-void ContentWidget::setPageType(const int& type){
+void ContentWidget::setPage(const int& type){
     m_currentType = type;
 }
 
@@ -77,7 +117,7 @@ void ContentWidget::setPageType(const int& type){
  * @brief ContentWidget::currentType 返回当前内容页（home或searchresult）
  * @return
  */
-int ContentWidget::currentType() {
+int ContentWidget::currentPage() {
     return m_currentType;
 }
 
@@ -91,6 +131,9 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         clearSearchList();
     }
     for (int i = 0; i < types.count(); i ++) {
+        if (lists.at(i).isEmpty()) {
+            continue;
+        }
         SearchListView * searchList = new SearchListView(m_resultList, lists.at(i), types.at(i)); //Treeview
         QLabel * titleLabel = new QLabel(m_resultList); //表头
         titleLabel->setContentsMargins(8, 0, 0, 0);

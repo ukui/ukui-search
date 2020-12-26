@@ -14,7 +14,8 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setHeaderHidden(true);
     this->setColumnWidth(0, 20);
     this->setColumnWidth(1, 80);
-    this->setFixedHeight(list.count() * 47 + 2);
+    int rowHeight = this->rowHeight(this->model()->index(0,1, QModelIndex())) + 1;
+    this->setFixedHeight(list.count() * rowHeight + 2);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");

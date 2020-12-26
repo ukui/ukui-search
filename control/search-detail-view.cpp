@@ -98,14 +98,14 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         }
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
-            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(100, 100))));
+            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
             nameLabel->setText(FileUtils::getFileName(path));
             typeLabel->setText(tr("Document"));
             break;
         }
         case SearchListView::ResType::Setting : {
             QIcon icon = FileUtils::getSettingIcon(path, true);
-            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(100, 100))));
+            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
             QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
             nameLabel->setText(settingType);
             typeLabel->setText(FileUtils::getSettingName(path));
