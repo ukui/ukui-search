@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QFile>
 #include <QUrl>
+#include <QMap>
+QMap<QString, QStringList> FileUtils::map_chinese2pinyin = QMap<QString, QStringList>();
 
 FileUtils::FileUtils()
 {
@@ -143,4 +145,42 @@ QString FileUtils::getAppName(const QString& path) {
  */
 QString FileUtils::getSettingName(const QString& setting) {
     return setting.right(setting.length() - setting.lastIndexOf("/") - 1);
+}
+
+
+void FileUtils::loadHanziTable(const QString &fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        qDebug("File: '%s' open failed!", file.fileName().toStdString().c_str());
+        return;
+    }
+
+    /* 读取汉字对照表文件并转换为QMap存储 */
+    while(!file.atEnd()) {
+        QString content = QString::fromUtf8(file.readLine());
+        FileUtils::map_chinese2pinyin[content.split(" ").last().trimmed()] = content.split(" ").first().split(",");
+    }
+
+    file.close();
+
+    return;
+}
+
+QString FileUtils::find(const QString &hanzi)
+{
+//        static QMap<QString, QStringList> map = loadHanziTable("://index/pinyinWithoutTone.txt");
+//        static QMap<QString, QStringList> map;
+    QString output;
+    QStringList stringList = hanzi.split("");
+
+    /* 遍历查找汉字-拼音对照表的内容并将汉字替换为拼音 */
+    for (const QString &str : stringList) {
+        if (FileUtils::map_chinese2pinyin.contains(str))
+            output += FileUtils::map_chinese2pinyin[str].first();
+        else
+            output += str;
+    }
+
+    return output;
 }

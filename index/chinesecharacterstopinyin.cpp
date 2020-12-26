@@ -2,7 +2,7 @@
 
 chineseCharactersToPinyin::chineseCharactersToPinyin(QObject *parent) : QObject(parent)
 {
-
+    map = loadHanziTable("://index/pinyinWithoutTone.txt");
 }
 
 

@@ -4,6 +4,10 @@
 #include <QString>
 #include <QCryptographicHash>
 #include <QIcon>
+#include <QMap>
+
+
+
 
 class  FileUtils
 {
@@ -17,6 +21,13 @@ public:
     static QString getFileName(const QString &);
     static QString getAppName(const QString &);
     static QString getSettingName(const QString &);
+
+    static QMap<QString, QStringList> map_chinese2pinyin;
+
+    //chinese character to pinyin
+    static QString find(const QString&);
+    static void loadHanziTable(const QString&);
+
 private:
     FileUtils();
 };

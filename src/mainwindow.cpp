@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
+
     /*-------------InotyifyRefact Test Start---------------*/
     QTime t1 = QTime::currentTime();
     InotifyManagerRefact* imr = new InotifyManagerRefact("/home");

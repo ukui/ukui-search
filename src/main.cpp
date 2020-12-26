@@ -45,6 +45,9 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    //load chinese character and pinyin file to a Map
+    FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
+
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
