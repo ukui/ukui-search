@@ -23,6 +23,11 @@ InotifyManagerRefact::InotifyManagerRefact(const QString& path) : Traverse_BFS(p
     num2string.insert(IN_Q_OVERFLOW, "IN_Q_OVERFLOW");
     num2string.insert(IN_IGNORED, "IN_IGNORED");
     this->mlm = new MessageListManager();
+
+    this->AddWatch("/home");
+    this->Traverse();
+    this->SendRestMessage();
+
     return;
 
 }
@@ -42,7 +47,12 @@ void InotifyManagerRefact::DoSomething(const QFileInfo& fileInfo){
     }
 //    else{
 //        this->mlm->AddMessage(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(bool((fileInfo.isDir()))));
-//    }
+    //    }
+}
+
+void InotifyManagerRefact::SendRestMessage()
+{
+    this->mlm->SendMessage();
 }
 
 bool InotifyManagerRefact::AddWatch(const QString &path){
@@ -142,9 +152,9 @@ void InotifyManagerRefact::run(){
                     }
 //                    else {
                         //这里调用删除索引
-                        this->mlm->AddMessage(QVector<QString>() << event->name << (currentPath[event->wd] + '/' + event->name) << QString(bool((event->mask & IN_ISDIR))));
-                        this->mlm->SendDeleteMessage();
-//                        IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
+//                        this->mlm->AddMessage(QVector<QString>() << event->name << (currentPath[event->wd] + '/' + event->name) << QString(bool((event->mask & IN_ISDIR))));
+//                        this->mlm->SendDeleteMessage();
+                        IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
 //                    }
                 }
                 /*--------------------------------*/

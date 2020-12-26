@@ -19,6 +19,7 @@ public:
     bool AddWatch(const QString&);
     bool RemoveWatch(const QString&);
     virtual void DoSomething(const QFileInfo &) final;
+    void SendRestMessage();
 Q_SIGNALS:
 protected:
     void run() override;
