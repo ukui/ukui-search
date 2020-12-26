@@ -8,12 +8,12 @@ Document::Document()
 
 Document::~Document()
 {
-    if(m_document)
-        delete m_document;
-    if(m_index_text)
-	delete m_index_text;
-    if(m_unique_term)
-	delete m_unique_term;
+//    if(m_document)
+//        delete m_document;
+//    if(m_index_text)
+//	delete m_index_text;
+//    if(m_unique_term)
+//	delete m_unique_term;
 }
 
 void Document::setData(QString data)

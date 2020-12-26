@@ -45,16 +45,6 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
-    /*-------------InotyifyRefact Test Start---------------*/
-    QTime t1 = QTime::currentTime();
-    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
-    imr->AddWatch("/home");
-    imr->setPath("/home");
-    imr->Traverse();
-    QTime t2 = QTime::currentTime();
-    qDebug() << t1;
-    qDebug() << t2;
-    /*-------------InotyifyRefact Test End-----------------*/
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
