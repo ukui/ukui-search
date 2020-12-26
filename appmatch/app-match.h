@@ -22,6 +22,7 @@ private:
     QString m_soureText;
     QStringList m_filePathList;
     QStringList m_returnResult;
+    QStringList m_midResult;
 
 };
 

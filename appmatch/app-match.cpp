@@ -8,13 +8,15 @@ AppMatch::AppMatch(QObject *parent) : QObject(parent)
 
 QStringList AppMatch::startMatchApp(QString input){
     m_soureText=input;
+    m_returnResult.clear();
     this->getAppName();
+    m_returnResult=m_midResult;
+    m_midResult.clear();
     return m_returnResult;
 }
 
 void AppMatch::getAllDesktopFilePath(QString path){
 
-    GError** error=nullptr;
     GKeyFileFlags flags=G_KEY_FILE_NONE;
     GKeyFile* keyfile=g_key_file_new ();
 
@@ -49,7 +51,7 @@ void AppMatch::getAllDesktopFilePath(QString path){
             }
             QByteArray fpbyte=filePathStr.toLocal8Bit();
             char* filepath=fpbyte.data();
-            g_key_file_load_from_file(keyfile,filepath,flags,error);
+            g_key_file_load_from_file(keyfile,filepath,flags,nullptr);
             char* ret_1=g_key_file_get_locale_string(keyfile,"Desktop Entry","NoDisplay", nullptr, nullptr);
             if(ret_1!=nullptr)
             {
@@ -108,6 +110,8 @@ void AppMatch::getAllDesktopFilePath(QString path){
         i++;
 
     } while(i < list.size());
+
+    g_key_file_free(keyfile);
 }
 
 void AppMatch::getDesktopFilePath()
@@ -162,7 +166,6 @@ void AppMatch::getDesktopFilePath()
 
 void AppMatch::getAppName()
 {
-    GError** error=nullptr;
     GKeyFileFlags flags=G_KEY_FILE_NONE;
     GKeyFile* keyfile=g_key_file_new ();
 
@@ -175,25 +178,23 @@ void AppMatch::getAppName()
         str=m_filePathList.at(i);
         fpbyte=str.toLocal8Bit();
         filepath=fpbyte.data();
-        g_key_file_load_from_file(keyfile,filepath,flags,error);
+        g_key_file_load_from_file(keyfile,filepath,flags,nullptr);
         name=g_key_file_get_locale_string(keyfile,"Desktop Entry","Name", nullptr, nullptr);
         namestr=QString::fromLocal8Bit(name);
         appNameMatch(namestr,str);
     }
 
-    g_key_file_load_from_file(keyfile,filepath,flags,error);
+    g_key_file_load_from_file(keyfile,filepath,flags,nullptr);
     g_key_file_free(keyfile);
 }
 
 void AppMatch::appNameMatch(QString appname,QString desktoppath){
     if(appname.contains(m_soureText)){
-        m_returnResult.append(desktoppath);
+        m_midResult.append(desktoppath);
     }
     QString pinyin=chineseCharactersToPinyin::find(appname).toLower(); // 中文转拼音
     if(pinyin.contains(m_soureText,Qt::CaseInsensitive)){
-        m_returnResult.append(desktoppath);
+        m_midResult.append(desktoppath);
     }
 
 }
-
-
