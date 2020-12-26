@@ -46,8 +46,6 @@ MainViewWidget::MainViewWidget(QWidget *parent) :
     {
         qDebug()<<"fail";
     }
-
-
 }
 
 MainViewWidget::~MainViewWidget()

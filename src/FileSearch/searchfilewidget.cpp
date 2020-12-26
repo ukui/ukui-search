@@ -52,8 +52,6 @@ void SearchFileWidget::initFilesearchUI()
     m_listLayout->addWidget(fileHead);
     m_listLayout->addWidget(fileView);
     this->setLayout(m_listLayout);
-
-
     this->setVisible(false);
 
 }
@@ -76,9 +74,12 @@ void SearchFileWidget::fileTextRefresh(QString mSearchText)
 
 void SearchFileWidget::recvFileSearchResult(QStringList arg)
 {
-    m_filemodel->showResult(arg);
+    int count=m_filemodel->showResult(arg);
     m_searchFileThread->quit();
+    this->setFixedHeight((count+1)*40);
 
+
+    fileView->setCurrentIndex(m_filemodel->index(0,0,m_filemodel->index(0,0,m_filemodel->index(0))));
     //根据数据的大小隐藏或显示
     if(arg.count()>0) {
         this->setVisible(true);
@@ -99,5 +100,3 @@ void SearchFileWidget::paintEvent(QPaintEvent *e)
     p.drawRoundedRect(rect,12,12);
     QWidget::paintEvent(e);
 }
-
-

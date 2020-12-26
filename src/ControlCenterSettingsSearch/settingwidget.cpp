@@ -11,7 +11,7 @@ void SettingWidget::initSettingsearchUI()
 
     m_listLayout = new QVBoxLayout(this);
     settingHead = new QLabel(this);
-    settingHead->setText("控制面板");
+    settingHead->setText("系统设置");
 
     settingView = new settingview;
     m_settingmodel = new settingModel;
