@@ -28,6 +28,8 @@
 #include <QObject>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
+//#include "inotify-manager.h"
+#include "inotify.h"
 
 void centerToScreen(QWidget* widget) {
     if (!widget)
@@ -43,6 +45,16 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    /*-------------InotyifyRefact Test Start---------------*/
+    QTime t1 = QTime::currentTime();
+    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
+    imr->AddWatch("/home");
+    imr->setPath("/home");
+    imr->Traverse();
+    QTime t2 = QTime::currentTime();
+    qDebug() << t1;
+    qDebug() << t2;
+    /*-------------InotyifyRefact Test End-----------------*/
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -85,6 +97,7 @@ int main(int argc, char *argv[])
     if(arguments.size()>1)
     w->searchContent(arguments.at(1));
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
+
 
     return app.exec();
 }

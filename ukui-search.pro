@@ -1,4 +1,4 @@
-QT       += core gui svg dbus x11extras KWindowSystem xml
+QT       += core gui svg dbus x11extras KWindowSystem xml concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,7 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(src/src.pri)
 include(index/index.pri)
 include(model/model.pri)
-include(control/control.pri))
+include(control/control.pri)
+include(appsearch/appsearch.pri)
 include(singleapplication/qt-single-application.pri)
 include(settingsmatch/setting-match.pri)
 

@@ -6,7 +6,7 @@
 //#include <unistd.h>
 
 MessageListManager::MessageListManager(){
-    this->messageList = new QStringList();
+    this->messageList = new QList<QVector<QString>>();
     this->ig = IndexGenerator::getInstance();
 //    indexGeneratorThread = new QThread();
 //    this->ig->moveToThread(indexGeneratorThread);
@@ -54,7 +54,7 @@ bool MessageListManager::SendDeleteMessage(){
         return true;
     }
 
-    this->ig->deleteAllIndex(this->messageList);
+//    this->ig->deleteAllIndex(this->messageList);
     this->messageList->clear();
     return true;
 }
