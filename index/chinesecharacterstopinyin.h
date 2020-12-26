@@ -12,8 +12,8 @@ public:
     explicit chineseCharactersToPinyin(QObject *parent = nullptr);
     static QString find(const QString &hanzi)
     {
-//        static QMap<QString, QStringList> map = loadHanziTable("://index/pinyinWithoutTone.txt");
-        static QMap<QString, QStringList> map;
+        static QMap<QString, QStringList> map = loadHanziTable("://index/pinyinWithoutTone.txt");
+//        static QMap<QString, QStringList> map;
         QString output;
         QStringList stringList = hanzi.split("");
 
@@ -30,6 +30,7 @@ public:
 
 Q_SIGNALS:
 private:
+    static QMap<QString, QStringList> map;
     /* 加载汉字对照表 */
     static QMap<QString, QStringList> loadHanziTable(const QString &fileName)
     {

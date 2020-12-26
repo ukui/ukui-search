@@ -1,7 +1,7 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-    $$PWD/chinesecharacterstopinyin.h \
+#    $$PWD/chinesecharacterstopinyin.h \
     $$PWD/document.h \
     $$PWD/index-generator.h \
 #    $$PWD/inotify-manager.h \
@@ -12,7 +12,7 @@ HEADERS += \
     $$PWD/text-content-indexer.h
 
 SOURCES += \
-    $$PWD/chinesecharacterstopinyin.cpp \
+#    $$PWD/chinesecharacterstopinyin.cpp \
     $$PWD/document.cpp \
     $$PWD/index-generator.cpp \
 #    $$PWD/inotify-manager.cpp \

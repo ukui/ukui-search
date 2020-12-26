@@ -116,8 +116,8 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     QString sourcePath = list.at(1);   
     index_text = index_text.replace(".","").replace(""," ");
     index_text = index_text.simplified();
-//    QString pinyin_text = chineseCharactersToPinyin::find(filename.replace(".", "")).replace("", " ");
-//    pinyin_text = pinyin_text.simplified();
+    QString pinyin_text = FileUtils::find(index_text.replace(".", "")).replace("", " ");
+    pinyin_text = pinyin_text.simplified();
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
 //    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
 /*--------------------------------------------------------------------*/
@@ -133,7 +133,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addValue(list.at(2));
-//    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
+    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
     doc.setIndexText(QStringList()<<index_text);
     return doc;
 
