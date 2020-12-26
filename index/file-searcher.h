@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <xapian.h>
+#include <QStandardPaths>
+#include <QVector>
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/index_data").toStdString()
 
 
@@ -13,12 +15,12 @@ public:
     explicit FileSearcher(QObject *parent = nullptr);
 
 public Q_SLOTS:
-    void onKeywordSearch(QString keyword);
+    void onKeywordSearch(QString keyword, int begin, int num);
 
 Q_SIGNALS:
-    void result(QStringList resultList);
-
-
+    void result(QVector<QStringList> resultV);
+private:
+    QStringList getResult(Xapian::MSet &result);
 };
 
 #endif // FILESEARCHER_H
