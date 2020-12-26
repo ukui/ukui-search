@@ -9,7 +9,8 @@ HEADERS += \
     $$PWD/messagelist-manager.h \
     $$PWD/traverse_bfs.h \
     $$PWD/messagelist-manager.h \
-    $$PWD/text-content-indexer.h
+    $$PWD/text-content-indexer.h \
+    $$PWD/file-searcher.h
 
 SOURCES += \
 #    $$PWD/chinesecharacterstopinyin.cpp \
@@ -20,5 +21,6 @@ SOURCES += \
     $$PWD/messagelist-manager.cpp \
     $$PWD/test-Inotify-Manager.cpp \
     $$PWD/traverse_bfs.cpp \
-    $$PWD/text-content-indexer.cpp
+    $$PWD/text-content-indexer.cpp \
+    $$PWD/file-searcher.cpp
 
