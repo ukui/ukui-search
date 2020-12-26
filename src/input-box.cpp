@@ -1,4 +1,5 @@
 #include "input-box.h"
+
 /**
  * @brief ukui-search顶部搜索界面
  */
@@ -62,12 +63,35 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
     this->setAlignment(m_queryLineEdit,Qt::AlignCenter);
     this->addWidget(m_queryLineEdit);
 
-    connect(m_queryLineEdit, SIGNAL(textChanged(QString)), SIGNAL(textChanged(QString)));
+//    connect(m_queryLineEdit, SIGNAL(textChanged(QString)), SIGNAL(textChanged(QString)));
+    m_timer = new QTimer;
+    QObject::connect(m_timer, &QTimer::timeout, this, [ = ](){
+        m_timer->stop();
+        Q_EMIT this->textChanged(m_queryLineEdit->text());
+    });
+    connect(m_queryLineEdit, &UKuiSearchLineEdit::textChanged, this, [ = ](QString text) {
+        if (m_isEmpty) {
+            m_isEmpty = false;
+            Q_EMIT this->textChanged(text);
+        } else {
+            if (text == "") {
+                m_isEmpty = true;
+                Q_EMIT this->textChanged(m_queryLineEdit->text());
+                m_timer->stop();
+                return;
+            }
+            m_timer->stop();
+            m_timer->start(0.2 * 1000);
+        }
+    });
 }
 
 UkuiSearchBarHLayout::~UkuiSearchBarHLayout()
 {
-
+    if (m_timer) {
+        delete m_timer;
+        m_timer = NULL;
+    }
 }
 
 /**

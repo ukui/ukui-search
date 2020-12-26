@@ -28,6 +28,8 @@
 #include <QStyleOption>
 #include <KWindowEffects>
 #include <QPixmap>
+#include "setting-match.h"
+#include "app-match.h"
 #include "kwindowsystem.h"
 
 #include "file-utils.h"
@@ -215,13 +217,18 @@ void MainWindow::searchContent(QString searchcontent){
     QVector<int> types;
     QVector<QStringList> lists;
 
+    AppMatch * appMatchor = new AppMatch(this);
+    SettingsMatch * settingMatchor = new SettingsMatch(this);
+
     //测试用数据
     QStringList list;
-    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
+    list = appMatchor->startMatchApp(searchcontent);
+//    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
     QStringList list2;
     list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
     QStringList list3;
-    list3<<"About/关于/计算机属性"<<"Area/语言和地区/货币单位"<<"Datetime/时间和日期/手动更改时间"<<"Theme/主题/图标主题";
+    list3 = settingMatchor->matchstart(searchcontent);
+//    list3<<"About/关于/计算机属性"<<"Area/语言和地区/货币单位"<<"Datetime/时间和日期/手动更改时间"<<"Theme/主题/图标主题";
     types.append(SearchItem::SearchType::Apps);
     types.append(SearchItem::SearchType::Settings);
     types.append(SearchItem::SearchType::Files);
