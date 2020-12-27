@@ -16,7 +16,7 @@ class SettingsMatch : public QObject
     Q_OBJECT
 public:
     explicit SettingsMatch(QObject *parent = nullptr);
-    QStringList matchstart(const QString &source);
+    QStringList startMatchApp(const QString &source);
 
 private:
     void XmlElement();

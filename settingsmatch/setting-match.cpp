@@ -5,7 +5,7 @@ SettingsMatch::SettingsMatch(QObject *parent) : QObject(parent)
     XmlElement();
 }
 
-QStringList SettingsMatch::matchstart(const QString &source){
+QStringList SettingsMatch::startMatchApp(const QString &source){
     m_sourceText=source;
 //    qDebug()<<m_sourceText;
     QStringList settingList=matching();
@@ -16,7 +16,7 @@ void SettingsMatch::XmlElement(){
     QString pinyinIndex;
     QString ChineseIndex;
 
-    QFile file(QString::fromLocal8Bit("::/res/search.xml"));
+    QFile file(QString::fromLocal8Bit(":/res/search.xml"));
     if (!file.open(QIODevice::ReadOnly)){
         return;
     }
