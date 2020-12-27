@@ -21,7 +21,7 @@ public:
     };
 
     int getCurrentType();
-    int getResType(const QString&);
+    static int getResType(const QString&);
 
 private:
     SearchItemModel * m_model = nullptr;

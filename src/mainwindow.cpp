@@ -36,6 +36,7 @@
 #include "index-generator.h"
 //#include "inotify-manager.h"
 #include "inotify.h"
+#include "file-searcher.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
@@ -48,17 +49,6 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-
-
-    /*-------------InotyifyRefact Test Start---------------*/
-    QTime t1 = QTime::currentTime();
-    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
-    imr->start();
-    QTime t2 = QTime::currentTime();
-    qDebug() << t1;
-    qDebug() << t2;
-    /*-------------InotyifyRefact Test End-----------------*/
-
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
@@ -148,6 +138,22 @@ void MainWindow::initUi()
             searchContent(text);
         }
     });
+
+    //初始化homepage
+    QVector<QStringList> lists;
+
+    //测试用数据
+    QStringList list;
+    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ukui-clock.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
+    QStringList list2;
+    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
+
+    lists.append(list);
+    lists.append(list2);
+    lists.append(list);
+
+    //将搜索结果加入列表
+    m_contentFrame->initHomePage(lists);
 }
 
 /**
@@ -214,36 +220,50 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
  * @param searchcontent
  */
 void MainWindow::searchContent(QString searchcontent){
-    QVector<int> types;
-    QVector<QStringList> lists;
+//    QVector<int> types;
+//    QVector<QStringList> lists;
 
     AppMatch * appMatchor = new AppMatch(this);
     SettingsMatch * settingMatchor = new SettingsMatch(this);
 
     //测试用数据
-    QStringList list;
-    list = appMatchor->startMatchApp(searchcontent);
+//    QStringList list;
 //    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
-    QStringList list2;
-    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
-    QStringList list3;
-    list3 = settingMatchor->matchstart(searchcontent);
+//    QStringList list2;
+//    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
+//    QStringList list3;
 //    list3<<"About/关于/计算机属性"<<"Area/语言和地区/货币单位"<<"Datetime/时间和日期/手动更改时间"<<"Theme/主题/图标主题";
-    types.append(SearchItem::SearchType::Apps);
-    types.append(SearchItem::SearchType::Settings);
-    types.append(SearchItem::SearchType::Files);
+//    types.append(SearchItem::SearchType::Apps);
+//    types.append(SearchItem::SearchType::Settings);
+//    types.append(SearchItem::SearchType::Files);
 
-    lists.append(list);
-    lists.append(list3);
-    lists.append(list2);
+//    lists.append(list);
+//    lists.append(list3);
+//    lists.append(list2);
 
     //文件搜索
+
+    FileSearcher *searcher = new FileSearcher();
+
+    connect(searcher,&FileSearcher::result,[=](QVector<QStringList> resultV){
+
+        QStringList list1 = resultV.at(0);
+//        QStringList list2 = resultV.at(1);
+
+        QVector<QStringList> lists;
+        lists.append(list1);
+        QVector<int> types;
+        types.append(SearchItem::SearchType::Files);
+//        types.append(SearchItem::SearchType::Files);
+        m_contentFrame->refreshSearchList(types, lists);
+    });
+    searcher->onKeywordSearch(searchcontent,0,10);
 //    QStringList res = IndexGenerator::IndexSearch(searchcontent);
 //    types.append(SearchItem::SearchType::Files);
 //    lists.append(res);
 
     //将搜索结果加入列表
-    m_contentFrame->refreshSearchList(types, lists);
+//    m_contentFrame->refreshSearchList(types, lists);
 }
 
 //使用GSetting获取当前窗口应该使用的透明度

@@ -134,8 +134,10 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addValue(list.at(2));
+    if(list.at(2) == QString("1"))
+        qDebug()<<"value!!!"<<list.at(2);
     doc.setIndexText(QStringList()<<index_text<<pinyin_text);
-    doc.setIndexText(QStringList()<<index_text);
+//    doc.setIndexText(QStringList()<<index_text);
     return doc;
 
 }
@@ -169,7 +171,7 @@ QStringList IndexGenerator::IndexSearch(QString indexText)
         qDebug()<<"queryStr!"<<QString::fromStdString(queryStr);
         //Creat a query
         Xapian::Query queryPhrase = qp.parse_query(queryStr,Xapian::QueryParser::FLAG_PHRASE);
-        vector<Xapian::Query> v;
+        std::vector<Xapian::Query> v;
         for(int i=0;i<userInput.size();i++)
         {
             v.push_back(Xapian::Query(QString(userInput.at(i)).toStdString()));
