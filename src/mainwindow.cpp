@@ -28,6 +28,8 @@
 #include <QStyleOption>
 #include <KWindowEffects>
 #include <QPixmap>
+#include "setting-match.h"
+#include "app-match.h"
 #include "kwindowsystem.h"
 
 #include "file-utils.h"
@@ -220,6 +222,9 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 void MainWindow::searchContent(QString searchcontent){
 //    QVector<int> types;
 //    QVector<QStringList> lists;
+
+    AppMatch * appMatchor = new AppMatch(this);
+    SettingsMatch * settingMatchor = new SettingsMatch(this);
 
     //测试用数据
 //    QStringList list;

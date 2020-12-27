@@ -5,6 +5,7 @@
 #include <QtDBus/QtDBus>
 #include <QPainter>
 #include <QAction>
+#include <QTimer>
 
 class UKuiSearchLineEdit;
 
@@ -36,6 +37,8 @@ public:
     void clearText();
 private:
     void initUI();
+    bool m_isEmpty = true;
+    QTimer * m_timer = nullptr;
 
     UKuiSearchLineEdit *m_queryLineEdit=nullptr;
 
