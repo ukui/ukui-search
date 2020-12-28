@@ -25,6 +25,7 @@ void SettingWidget::initSettingsearchUI()
     //监听点击事件，打开对应的设置选项
     connect(settingView,&QTreeView::clicked,this,[=](){
         m_settingmodel->run(settingView->currentIndex().row());
+        qApp->exit(0);
     });
 
 
