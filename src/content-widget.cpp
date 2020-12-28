@@ -1,6 +1,7 @@
 #include "content-widget.h"
 #include <QDebug>
 #include <QLabel>
+#include <QTimer>
 
 ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
 {
@@ -158,6 +159,16 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
 //        }
         connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
             m_detailView->setupWidget(type, path);
+            searchList->is_current_list = true;
+            Q_EMIT this->currentItemChanged();
+            searchList->is_current_list = false;
+        });
+        connect(this, &ContentWidget::currentItemChanged, searchList, [ = ]() {
+            if (! searchList->is_current_list) {
+                searchList->blockSignals(true);
+                searchList->clearSelection();
+                searchList->blockSignals(false);
+            }
         });
     }
 
@@ -173,10 +184,20 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
     m_listLyt->insertWidget(0, searchList);
     m_listLyt->insertWidget(0, titleLabel);
     m_resultList->setFixedHeight(m_resultList->height() + searchList->height() + titleLabel->height());
-    searchList->setCurrentIndex(searchList->model()->index(0,1, QModelIndex()));
+    searchList->setCurrentIndex(searchList->model()->index(0, 0, QModelIndex()));
     m_detailView->setupWidget(searchList->getCurrentType(), bestList.at(0));
     connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
         m_detailView->setupWidget(type, path);
+        searchList->is_current_list = true;
+        Q_EMIT this->currentItemChanged();
+        searchList->is_current_list = false;
+    });
+    connect(this, &ContentWidget::currentItemChanged, searchList, [ = ]() {
+        if (! searchList->is_current_list) {
+            searchList->blockSignals(true);
+            searchList->clearSelection();
+            searchList->blockSignals(false);
+        }
     });
 }
 

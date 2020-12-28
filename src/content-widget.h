@@ -38,6 +38,9 @@ private:
 
     QString getTitleName(const int&);
 
+Q_SIGNALS:
+    void currentItemChanged();
+
 private Q_SLOTS:
     void clearSearchList();
 };
