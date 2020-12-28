@@ -73,6 +73,9 @@ private:
     QGSettings * m_transparency_gsettings = nullptr;
     double getTransparentData();
 
+    QVector<int> m_types;
+    QVector<QStringList> m_lists;
+
 protected:
     void paintEvent(QPaintEvent *);
     void initUi();

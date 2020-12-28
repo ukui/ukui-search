@@ -147,10 +147,12 @@ void MainWindow::initUi()
     list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ukui-clock.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
     QStringList list2;
     list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
+    QStringList list3;
+    list3<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Theme/主题/更改壁纸";
 
     lists.append(list);
     lists.append(list2);
-    lists.append(list);
+    lists.append(list3);
 
     //将搜索结果加入列表
     m_contentFrame->initHomePage(lists);
@@ -222,24 +224,29 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 void MainWindow::searchContent(QString searchcontent){
 //    QVector<int> types;
 //    QVector<QStringList> lists;
+    m_lists.clear();
+    m_types.clear();
 
     AppMatch * appMatchor = new AppMatch(this);
     SettingsMatch * settingMatchor = new SettingsMatch(this);
 
     //测试用数据
-//    QStringList list;
+    QStringList list;
+    list = appMatchor->startMatchApp(searchcontent);
 //    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
 //    QStringList list2;
 //    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
-//    QStringList list3;
+    QStringList list3;
+    list3 = settingMatchor->startMatchApp(searchcontent);
 //    list3<<"About/关于/计算机属性"<<"Area/语言和地区/货币单位"<<"Datetime/时间和日期/手动更改时间"<<"Theme/主题/图标主题";
-//    types.append(SearchItem::SearchType::Apps);
-//    types.append(SearchItem::SearchType::Settings);
+    m_types.append(SearchItem::SearchType::Apps);
+    m_types.append(SearchItem::SearchType::Settings);
 //    types.append(SearchItem::SearchType::Files);
 
-//    lists.append(list);
-//    lists.append(list3);
+    m_lists.append(list);
+    m_lists.append(list3);
 //    lists.append(list2);
+//    m_contentFrame->refreshSearchList(m_types, m_lists);
 
     //文件搜索
 
@@ -248,14 +255,15 @@ void MainWindow::searchContent(QString searchcontent){
     connect(searcher,&FileSearcher::result,[=](QVector<QStringList> resultV){
 
         QStringList list1 = resultV.at(0);
-//        QStringList list2 = resultV.at(1);
+        QStringList list2 = resultV.at(1);
 
-        QVector<QStringList> lists;
-        lists.append(list1);
-        QVector<int> types;
-        types.append(SearchItem::SearchType::Files);
-//        types.append(SearchItem::SearchType::Files);
-        m_contentFrame->refreshSearchList(types, lists);
+//        QVector<QStringList> lists;
+        m_lists.append(list1);
+        m_lists.append(list2);
+//        QVector<int> types;
+        m_types.append(SearchItem::SearchType::Dirs);
+        m_types.append(SearchItem::SearchType::Files);
+        m_contentFrame->refreshSearchList(m_types, m_lists);
     });
     searcher->onKeywordSearch(searchcontent,0,10);
 //    QStringList res = IndexGenerator::IndexSearch(searchcontent);
