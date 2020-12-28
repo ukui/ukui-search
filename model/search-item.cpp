@@ -1,5 +1,6 @@
 #include "search-item.h"
 #include <QDebug>
+#include <QFileInfo>
 
 SearchItem::SearchItem(QObject *parent) : QObject(parent)
 {
@@ -25,8 +26,16 @@ QIcon SearchItem::getIcon(int index) {
             return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
         case Apps : //应用，返回应用图标
             return FileUtils::getAppIcon(m_pathlist.at(index));
-        case Best : //最佳匹配，含全部类型，需要自己判断，返回不同类型的图标
-            return QIcon(":/res/icons/edit-find-symbolic.svg");
+        case Best : {//最佳匹配，含全部类型，需要自己判断，返回不同类型的图标
+//            return QIcon(":/res/icons/edit-find-symbolic.svg");
+            if (m_pathlist.at(index).endsWith(".desktop")) {
+                return FileUtils::getAppIcon(m_pathlist.at(index));
+            } else if (QFileInfo(m_pathlist.at(index)).isFile() || QFileInfo(m_pathlist.at(index)).isDir()) {
+                return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
+            } else {
+                return FileUtils::getSettingIcon(m_pathlist.at(index), false);
+            }
+        }
         default:
             return QIcon(":/res/icons/edit-find-symbolic.svg");
     }
@@ -49,7 +58,14 @@ QString SearchItem::getName(int index) {
         case Apps : //应用，返回应用名
             return FileUtils::getAppName(m_pathlist.at(index));
         case Best : //最佳匹配，含全部类型，需要自己判断，返回不同类型的名称
-            return m_pathlist.at(index);
+//            return m_pathlist.at(index);
+            if (m_pathlist.at(index).endsWith(".desktop")) {
+                return FileUtils::getAppName(m_pathlist.at(index));
+            } else if (QFileInfo(m_pathlist.at(index)).isFile() || QFileInfo(m_pathlist.at(index)).isDir()) {
+                return FileUtils::getFileName(m_pathlist.at(index));
+            } else {
+                return FileUtils::getSettingName(m_pathlist.at(index));
+            }
         default:
             return m_pathlist.at(index);
     }
