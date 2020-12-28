@@ -54,6 +54,8 @@ public:
     void searchContent(QString searchcontent);
 
 private:
+    bool nativeEvent(const QByteArray&, void *, long *);
+
     QFrame * m_line = nullptr;//Vertical dividing line
     QFrame * m_frame = nullptr;
 
@@ -75,14 +77,9 @@ private:
 
     QVector<int> m_types;
     QVector<QStringList> m_lists;
-
 protected:
     void paintEvent(QPaintEvent *);
     void initUi();
-    /**
-     * @brief Handle events clicking on the outside of the window
-     */
-    bool event(QEvent *event);
 
 public Q_SLOTS:
     /**

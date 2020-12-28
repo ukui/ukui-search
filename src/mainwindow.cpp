@@ -179,21 +179,6 @@ void MainWindow::clearSearchResult() {
 }
 
 /**
- * 鼠标点击窗口外部事件
- */
-bool MainWindow::event ( QEvent * event )
-{
-    switch (event->type()){
-    case QEvent::ActivationChange:
-        if(QApplication::activeWindow() != this){
-            this->close();
-        }
-        break;
-        }
-    return QWidget::event(event);
-}
-
-/**
  * @brief loadMainWindow 加载主界面的函数
  * 不删除的原因是在单例和main函数里面需要用
  */
@@ -288,6 +273,32 @@ double MainWindow::getTransparentData()
     } else {
         return 0.7;
     }
+}
+
+/**
+ * @brief MainWindow::nativeEvent 处理窗口失焦事件
+ * @param eventType
+ * @param message
+ * @param result
+ * @return
+ */
+bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
+{
+    Q_UNUSED(result);
+    if (eventType != "xcb_generic_event_t") {
+        return false;
+    }
+
+    xcb_generic_event_t *event = (xcb_generic_event_t*)message;
+
+    switch (event->response_type & ~0x80) {
+    qDebug()<<"YYF - event->response_type : "<<event->response_type;//YYF 20200922
+    case XCB_FOCUS_OUT:
+        this->close();
+        break;
+    }
+
+    return false;
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {

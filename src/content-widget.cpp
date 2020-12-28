@@ -38,7 +38,7 @@ void ContentWidget::initUI() {
     m_resultDetailArea = new QScrollArea(m_resultPage);
     m_resultDetailArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultDetailArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    m_resultListArea->setFixedWidth(240);
+    m_resultListArea->setFixedWidth(244);
     m_resultPageLyt->addWidget(m_resultListArea);
     m_resultPageLyt->addWidget(m_resultDetailArea);
     m_resultPage->setLayout(m_resultPageLyt);
@@ -50,7 +50,7 @@ void ContentWidget::initUI() {
     m_resultList->setFixedWidth(240);
     m_resultList->setFixedHeight(0);
     m_resultList->setStyleSheet("QWidget{background:transparent;}");
-    m_listLyt->setContentsMargins(0, 0, 20, 0);
+    m_listLyt->setContentsMargins(0, 0, 15, 0);
     m_listLyt->setSpacing(0);
     m_resultListArea->setWidget(m_resultList);
     m_resultListArea->setWidgetResizable(true);
@@ -136,10 +136,12 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         clearSearchList();
     }
     bool isEmpty = true;
+    QStringList bestList;
     for (int i = 0; i < types.count(); i ++) {
         if (lists.at(i).isEmpty()) {
             continue;
         }
+        bestList << lists.at(i).at(0);
         isEmpty = false;
         SearchListView * searchList = new SearchListView(m_resultList, lists.at(i), types.at(i)); //Treeview
         QLabel * titleLabel = new QLabel(m_resultList); //表头
@@ -150,17 +152,32 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         m_listLyt->addWidget(searchList);
         m_resultList->setFixedHeight(m_resultList->height() + searchList->height() + titleLabel->height());
 
-        if (i == 0) {
-            searchList->setCurrentIndex(searchList->model()->index(0,1, QModelIndex()));
-            m_detailView->setupWidget(searchList->getCurrentType(), lists.at(0).at(0));
-        }
+//        if (i == 0) {
+//            searchList->setCurrentIndex(searchList->model()->index(0,1, QModelIndex()));
+//            m_detailView->setupWidget(searchList->getCurrentType(), lists.at(0).at(0));
+//        }
         connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
             m_detailView->setupWidget(type, path);
         });
     }
+
     if (isEmpty) {
         m_detailView->clearLayout(); //没有搜到结果，清空详情页
+        return;
     }
+    SearchListView * searchList = new SearchListView(m_resultList, bestList, SearchItem::SearchType::Best); //Treeview
+    QLabel * titleLabel = new QLabel(m_resultList); //表头
+    titleLabel->setContentsMargins(8, 0, 0, 0);
+    titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+    titleLabel->setText(getTitleName(SearchItem::SearchType::Best));
+    m_listLyt->insertWidget(0, searchList);
+    m_listLyt->insertWidget(0, titleLabel);
+    m_resultList->setFixedHeight(m_resultList->height() + searchList->height() + titleLabel->height());
+    searchList->setCurrentIndex(searchList->model()->index(0,1, QModelIndex()));
+    m_detailView->setupWidget(searchList->getCurrentType(), bestList.at(0));
+    connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
+        m_detailView->setupWidget(type, path);
+    });
 }
 
 /**
