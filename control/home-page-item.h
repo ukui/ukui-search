@@ -21,6 +21,9 @@ public:
         Quick
     };
 
+protected:
+    bool eventFilter(QObject *, QEvent *);
+
 private:
     void setupUi(const int&, const QString&);
 
@@ -31,7 +34,7 @@ private:
     QLabel * m_namelabel = nullptr;
 
 Q_SIGNALS:
-
+    void onItemClicked();
 };
 
 #endif // HOMEPAGEITEM_H

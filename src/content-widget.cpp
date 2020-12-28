@@ -86,8 +86,6 @@ void ContentWidget::initHomePage(const QVector<QStringList>& lists) {
                 layout->addWidget(item, j / 2, j % 2);
             }
         } else {
-            if (i) titleLabel->setText(tr("Commonly Used"));
-            else titleLabel->setText(tr("Open Quickly"));
             QHBoxLayout * layout = new QHBoxLayout(itemWidget);
             layout->setSpacing(8);
             layout->setContentsMargins(0, 0, 0, 0);
@@ -96,6 +94,13 @@ void ContentWidget::initHomePage(const QVector<QStringList>& lists) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, path);
                 layout->addWidget(item);
             }
+            if (i) {
+                titleLabel->setText(tr("Open Quickly"));
+                QWidget * emptyItem = new QWidget(itemWidget);
+                emptyItem->setFixedSize(136, 136); //占位用widget,若后续快捷打开有扩展项，可删除此widget
+                layout->addWidget(emptyItem);
+            }
+            else titleLabel->setText(tr("Commonly Used"));
         }
         itemWidgetLyt->setSpacing(6);
         titleLabel->setFixedHeight(24);
@@ -166,6 +171,8 @@ QString ContentWidget::getTitleName(const int& type) {
             return tr("Settings");
         case SearchItem::SearchType::Files :
             return tr("Files");
+        case SearchItem::SearchType::Dirs :
+            return tr("Dirs");
         case SearchItem::SearchType::Best :
             return tr("Best Matches");
         default :

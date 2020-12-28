@@ -20,6 +20,7 @@ QIcon SearchItem::getIcon(int index) {
     switch (m_searchtype) {
         case Settings : //设置项，返回控制面板对应插件的图标
             return FileUtils::getSettingIcon(m_pathlist.at(index), false);
+        case Dirs :
         case Files : //文件，返回文件图标
             return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
         case Apps : //应用，返回应用图标
@@ -42,6 +43,7 @@ QString SearchItem::getName(int index) {
     switch (m_searchtype) {
         case Settings : //设置项，返回功能点名
             return FileUtils::getSettingName(m_pathlist.at(index));
+        case Dirs :
         case Files : //文件，返回文件名
             return FileUtils::getFileName(m_pathlist.at(index));
         case Apps : //应用，返回应用名

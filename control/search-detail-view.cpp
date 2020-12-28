@@ -11,6 +11,8 @@
 #include <QProcess>
 #include <QClipboard>
 #include <QApplication>
+#include <QFileInfo>
+#include <QDateTime>
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
 {
@@ -76,14 +78,54 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     hLine->setFixedHeight(1);
     hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
 
+    m_layout->addWidget(iconLabel);
+    m_layout->addWidget(nameFrame);
+    m_layout->addWidget(hLine);
+
+    //文件和文件夹有一个额外的详情区域
+    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File) {
+        QFrame * detailFrame = new QFrame(this);
+        QVBoxLayout * detailLyt = new QVBoxLayout(detailFrame);
+        detailLyt->setContentsMargins(0,0,0,0);
+        QFrame * pathFrame = new QFrame(detailFrame);
+        QFrame * timeFrame = new QFrame(detailFrame);
+        QHBoxLayout * pathLyt = new QHBoxLayout(pathFrame);
+        QHBoxLayout * timeLyt = new QHBoxLayout(timeFrame);
+        QLabel * pathLabel_1 = new QLabel(pathFrame);
+        QLabel * pathLabel_2 = new QLabel(pathFrame);
+        pathLabel_1->setText(tr("Path"));
+        pathLabel_2->setText(path);
+        pathLabel_2->setMaximumWidth(500);
+        pathLabel_2->setWordWrap(true);
+        pathLyt->addWidget(pathLabel_1);
+        pathLyt->addStretch();
+        pathLyt->addWidget(pathLabel_2);
+        QLabel * timeLabel_1 = new QLabel(timeFrame);
+        QLabel * timeLabel_2 = new QLabel(timeFrame);
+        timeLabel_1->setText(tr("Last time modified"));
+        QFileInfo fileInfo(path);
+        timeLabel_2->setText(fileInfo.lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+        timeLyt->addWidget(timeLabel_1);
+        timeLyt->addStretch();
+        timeLyt->addWidget(timeLabel_2);
+        detailLyt->addWidget(pathFrame);
+        detailLyt->addWidget(timeFrame);
+
+        QFrame * hLine_2 = new QFrame(this);
+        hLine_2->setLineWidth(0);
+        hLine_2->setFixedHeight(1);
+        hLine_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+
+        m_layout->addWidget(detailFrame);
+        m_layout->addWidget(hLine_2);
+    }
+
+    //可执行操作区域
     OptionView * optionView = new OptionView(this, type);
     connect(optionView, &OptionView::onOptionClicked, this, [ = ](const int& option) {
         execActions(type, option, path);
     });
 
-    m_layout->addWidget(iconLabel);
-    m_layout->addWidget(nameFrame);
-    m_layout->addWidget(hLine);
     m_layout->addWidget(optionView);
     m_layout->addStretch();
 
@@ -96,6 +138,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             typeLabel->setText(tr("Application"));
             break;
         }
+        case SearchListView::ResType::Dir :
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
             iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
@@ -111,8 +154,6 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             typeLabel->setText(FileUtils::getSettingName(path));
             break;
         }
-        case SearchListView::ResType::Dir :
-            break;
         default:
             break;
     }
@@ -174,6 +215,12 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
         }
         case SearchListView::ResType::Setting: {
             //打开控制面板对应页面
+            QProcess * process = new QProcess;
+            process->start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
+            connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
+                process->deleteLater();
+            });
+            return true;
             break;
         }
         default:
@@ -231,7 +278,7 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
  */
 bool SearchDetailView::openPathAction(const QString& path) {
     QProcess * process = new QProcess;
-    process->start(QString("xdg-open %1").arg(path.left(path.length() - path.lastIndexOf("/") + 1)));
+    process->start(QString("xdg-open %1").arg(path.left(path.lastIndexOf("/"))));
     connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
         process->deleteLater();
     });
