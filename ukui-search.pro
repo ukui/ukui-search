@@ -22,6 +22,7 @@ include(control/control.pri)
 include(appsearch/appsearch.pri)
 include(singleapplication/qt-single-application.pri)
 include(settingsmatch/setting-match.pri)
+include(appmatch/app-match.pri)
 
 LIBS = -lxapian -lgsettings-qt
 # Default rules for deployment.

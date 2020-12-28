@@ -40,7 +40,9 @@ InotifyManagerRefact::~InotifyManagerRefact(){
 }
 
 void InotifyManagerRefact::DoSomething(const QFileInfo& fileInfo){
-    this->mlm->AddMessage(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(bool((fileInfo.isDir()))));
+    this->mlm->AddMessage(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir()?"1":"0"));
+//    if(QString(bool((fileInfo.isDir()))) == QString("1"))
+//        qDebug()<<"bool((fileInfo.isDir())"<<QString(fileInfo.isDir());
 //    this->mlm->AddMessage(QVector<QString>() << "PLog" << "/home/zpf/baidunetdisk/PLog" << "1");
     if(fileInfo.isDir()){
         this->AddWatch(fileInfo.absoluteFilePath());

@@ -77,24 +77,25 @@ IndexGenerator::~IndexGenerator()
 
 void IndexGenerator::insertIntoDatabase(Document doc)
 {
-    qDebug()<< "--index start--";
+//    qDebug()<< "--index start--";
     Xapian::Document document = doc.getXapianDocument();
     m_indexer->set_document(document);
-    qDebug()<<doc.getIndexText();
+//    qDebug()<<doc.getIndexText();
 
     for(auto i : doc.getIndexText()){
         m_indexer->index_text(i.toStdString());
     }
 
     Xapian::docid innerId= m_datebase->replace_document(doc.getUniqueTerm(),document);
-    qDebug()<<"replace doc docid="<<static_cast<int>(innerId);
-    qDebug()<< "--index finish--";
+//    qDebug()<<"replace doc docid="<<static_cast<int>(innerId);
+//    qDebug()<< "--index finish--";
     return;
 }
 
 void IndexGenerator::HandlePathList(QList<QVector<QString>> *messageList)
 {
     qDebug()<<"Begin HandlePathList!";
+    qDebug()<<messageList->size();
 //    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
     QFuture<Document> future = QtConcurrent::mapped(*messageList,&IndexGenerator::GenerateDocument);
 
@@ -133,8 +134,10 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addValue(list.at(2));
+    if(list.at(2) == QString("1"))
+        qDebug()<<"value!!!"<<list.at(2);
     doc.setIndexText(QStringList()<<index_text<<pinyin_text);
-    doc.setIndexText(QStringList()<<index_text);
+//    doc.setIndexText(QStringList()<<index_text);
     return doc;
 
 }
@@ -168,7 +171,7 @@ QStringList IndexGenerator::IndexSearch(QString indexText)
         qDebug()<<"queryStr!"<<QString::fromStdString(queryStr);
         //Creat a query
         Xapian::Query queryPhrase = qp.parse_query(queryStr,Xapian::QueryParser::FLAG_PHRASE);
-        vector<Xapian::Query> v;
+        std::vector<Xapian::Query> v;
         for(int i=0;i<userInput.size();i++)
         {
             v.push_back(Xapian::Query(QString(userInput.at(i)).toStdString()));
@@ -227,7 +230,7 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
     for(int i = 0;i<list->size();i++)
     {
         QString doc = list->at(i);
-        std::string uniqueterm = m_cryp->hash(doc.toUtf8(),QCryptographicHash::Md5).toStdString();;
+        std::string uniqueterm = FileUtils::makeDocUterm(doc);
         try
         {
             qDebug()<<"--delete start--";

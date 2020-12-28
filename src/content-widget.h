@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QStackedWidget>
 #include <QScrollArea>
+#include <QGridLayout>
 #include "control/search-detail-view.h"
+#include "home-page-item.h"
 
 class ContentWidget : public QStackedWidget
 {
@@ -13,9 +15,10 @@ public:
     ContentWidget(QWidget *);
     ~ContentWidget();
 
-    void setPageType(const int&);
-    int currentType();
+    void setPage(const int&);
+    int currentPage();
     void refreshSearchList(const QVector<int>&, const QVector<QStringList>&);
+    void initHomePage(const QVector<QStringList>&);
 private:
     void initUI();
     QWidget * m_homePage = nullptr;

@@ -12,11 +12,11 @@ public:
     ~SearchDetailView();
 
     void setupWidget(const int&, const QString&);
+    void clearLayout();
 
 private:
     QVBoxLayout * m_layout = nullptr;
 
-    void clearLayout();
     bool openAction(const int&, const QString&);
     bool addDesktopShortcut(const QString&);
     bool addPanelShortcut(const QString&);
