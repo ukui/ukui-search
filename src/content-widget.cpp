@@ -135,10 +135,12 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
     if (!m_listLyt->isEmpty()) {
         clearSearchList();
     }
+    bool isEmpty = true;
     for (int i = 0; i < types.count(); i ++) {
         if (lists.at(i).isEmpty()) {
             continue;
         }
+        isEmpty = false;
         SearchListView * searchList = new SearchListView(m_resultList, lists.at(i), types.at(i)); //Treeview
         QLabel * titleLabel = new QLabel(m_resultList); //表头
         titleLabel->setContentsMargins(8, 0, 0, 0);
@@ -155,6 +157,9 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
             m_detailView->setupWidget(type, path);
         });
+    }
+    if (isEmpty) {
+        m_detailView->clearLayout(); //没有搜到结果，清空详情页
     }
 }
 
