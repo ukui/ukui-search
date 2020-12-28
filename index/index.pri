@@ -2,7 +2,9 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
 #    $$PWD/chinesecharacterstopinyin.h \
+    $$PWD/blockdirs.h \
     $$PWD/document.h \
+    $$PWD/filetypefilter.h \
     $$PWD/index-generator.h \
 #    $$PWD/inotify-manager.h \
     $$PWD/inotify.h \
@@ -13,7 +15,9 @@ HEADERS += \
 
 SOURCES += \
 #    $$PWD/chinesecharacterstopinyin.cpp \
+    $$PWD/blockdirs.cpp \
     $$PWD/document.cpp \
+    $$PWD/filetypefilter.cpp \
     $$PWD/index-generator.cpp \
 #    $$PWD/inotify-manager.cpp \
     $$PWD/inotify.cpp \

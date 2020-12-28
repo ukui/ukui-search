@@ -83,7 +83,7 @@ bool InotifyManagerRefact::RemoveWatch(const QString &path){
                 qDebug() << i.value();
                 /*--------------------------------*/
                 //在此调用删除索引
-//                IndexGenerator::getInstance()->deleteAllIndex(new QStringList(path));
+                IndexGenerator::getInstance()->deleteAllIndex(new QStringList(path));
                 /*--------------------------------*/
                 currentPath.erase(i++);
             }

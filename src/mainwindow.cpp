@@ -34,6 +34,7 @@
 #include "index-generator.h"
 //#include "inotify-manager.h"
 #include "inotify.h"
+#include "filetypefilter.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
@@ -46,15 +47,16 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-
+    FileTypeFilter* ftf = new FileTypeFilter("/home");
+    ftf->getTargetFileAbsolutePath();
 
     /*-------------InotyifyRefact Test Start---------------*/
-    QTime t1 = QTime::currentTime();
-    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
-    imr->start();
-    QTime t2 = QTime::currentTime();
-    qDebug() << t1;
-    qDebug() << t2;
+//    QTime t1 = QTime::currentTime();
+//    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
+//    imr->start();
+//    QTime t2 = QTime::currentTime();
+//    qDebug() << t1;
+//    qDebug() << t2;
     /*-------------InotyifyRefact Test End-----------------*/
 
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);

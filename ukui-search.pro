@@ -31,10 +31,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     file-utils.h \
+    globalsettings.h \
     gobject-template.h \
 
 SOURCES += \
     file-utils.cpp \
+    globalsettings.cpp \
     gobject-template.cpp \
 
 PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt libbamf3 x11 xrandr xtst
