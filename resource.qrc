@@ -9,5 +9,6 @@
         <file>res/search.xml</file>
         <file>index/pinyinWithTone.txt</file>
         <file>index/pinyinWithoutTone.txt</file>
+        <file>res/icons/close.svg</file>
     </qresource>
 </RCC>

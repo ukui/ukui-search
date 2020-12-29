@@ -40,6 +40,7 @@
 #include "content-widget.h"
 #include "input-box.h"
 #include "index/index-generator.h"
+#include "settings-widget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -64,6 +65,7 @@ private:
     QLabel * m_iconLabel = nullptr;
     QLabel * m_titleLabel = nullptr;
     QPushButton * m_menuBtn = nullptr;
+    SettingsWidget * m_settingsWidget = nullptr;
 
     ContentWidget * m_contentFrame = nullptr;//内容栏
 

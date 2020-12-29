@@ -228,6 +228,8 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
     stitchMultiToneWordsDFS(hanzi, tempAllPinYin, tempFirst, output);
 //    qDebug() << output;
     return output;
+}
+
 /**
  * @brief FileUtils::getDocxTextContent
  * @param path: abs path
