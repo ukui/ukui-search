@@ -18,12 +18,12 @@ void testTraverse(void){
     /*-------------Inotify Test End-----------------*/
 
     /*-------------PinyinSearch Test Start---------------*/
-    QTime t1 = QTime::currentTime();
-    QString test("test");
-    qDebug() << IndexGenerator::IndexSearch(test);
-    QTime t2 = QTime::currentTime();
-    qDebug() << t1;
-    qDebug() << t2;
+//    QTime t1 = QTime::currentTime();
+//    QString test("test");
+//    qDebug() << IndexGenerator::IndexSearch(test);
+//    QTime t2 = QTime::currentTime();
+//    qDebug() << t1;
+//    qDebug() << t2;
     /*-------------PinyinSearch Test End-----------------*/
 
     /*-------------InotyifyRefact Test Start---------------*/
