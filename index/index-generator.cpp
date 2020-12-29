@@ -117,8 +117,18 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     QString sourcePath = list.at(1);   
     index_text = index_text.replace(".","").replace(""," ");
     index_text = index_text.simplified();
-    QString pinyin_text = FileUtils::find(index_text.replace(".", "")).replace("", " ");
-    pinyin_text = pinyin_text.simplified();
+    //这个应该是写错了
+//    QString pinyin_text = FileUtils::find(index_text.replace(".", "")).replace("", " ");
+
+    //不带多音字版
+//    QString pinyin_text = FileUtils::find(QString(list.at(0)).replace(".","")).replace("", " ").simplified();
+
+    //多音字版
+    QStringList pintin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
+    for (QString& i : pintin_text_list){
+        i.replace("", " ");
+    }
+
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
 //    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
 /*--------------------------------------------------------------------*/
@@ -136,7 +146,11 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     doc.addValue(list.at(2));
     if(list.at(2) == QString("1"))
         qDebug()<<"value!!!"<<list.at(2);
-    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
+    QStringList temp;
+    temp.append(index_text);
+    temp.append(pintin_text_list);
+    doc.setIndexText(temp);
+//    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
 //    doc.setIndexText(QStringList()<<index_text);
     return doc;
 

@@ -184,3 +184,30 @@ QString FileUtils::find(const QString &hanzi)
 
     return output;
 }
+
+void stitchMultiToneWordsDFS(const QString& hanzi, const QString& result, QStringList& resultList){
+    if (hanzi.size() == 0){
+        resultList.append(result);
+        return;
+    }
+    if (FileUtils::map_chinese2pinyin.contains(hanzi.at(0))){
+        for (auto i : FileUtils::map_chinese2pinyin[hanzi.at(0)]){
+            stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), result + i, resultList);
+        }
+    }
+    else{
+        stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), result + hanzi.at(0), resultList);
+    }
+}
+
+QStringList FileUtils::findMultiToneWords(const QString& hanzi)
+{
+//    QStringList* output = new QStringList();
+    QStringList output;
+    QString temp;
+    QStringList stringList = hanzi.split("");
+
+    stitchMultiToneWordsDFS(hanzi, temp, output);
+//    qDebug() << output;
+    return output;
+}

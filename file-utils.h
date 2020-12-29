@@ -26,6 +26,7 @@ public:
 
     //chinese character to pinyin
     static QString find(const QString&);
+    static QStringList findMultiToneWords(const QString&);
     static void loadHanziTable(const QString&);
 
 private:
