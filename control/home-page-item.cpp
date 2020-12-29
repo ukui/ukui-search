@@ -55,6 +55,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
     });
     m_iconlabel = new QLabel(m_widget);
     m_namelabel = new QLabel(m_widget);
+    m_namelabel->setStyleSheet("QLabel{color: palette(text);}");
     if (type == ItemType::Recent) {
         m_widget->setFixedSize(265, 48);
         QIcon icon;

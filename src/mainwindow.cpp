@@ -38,6 +38,7 @@
 #include "inotify.h"
 #include "filetypefilter.h"
 #include "file-searcher.h"
+#include "settings-widget.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
@@ -91,6 +92,10 @@ MainWindow::~MainWindow()
         delete m_searchLayout;
         m_searchLayout = NULL;
     }
+    if (m_settingsWidget) {
+        delete m_settingsWidget;
+        m_settingsWidget = NULL;
+    }
 }
 
 /**
@@ -107,6 +112,7 @@ void MainWindow::initUi()
     QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
     mainlayout->setContentsMargins(16, 0, 16, 16);
     m_frame->setLayout(mainlayout);
+    m_frame->setStyleSheet("QLabel{color: palette(text);}");
 
     m_titleFrame = new QFrame(m_frame);//标题栏
     m_titleFrame->setFixedHeight(48);
@@ -121,7 +127,20 @@ void MainWindow::initUi()
     m_menuBtn->setFixedSize(24, 24);
     m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
     m_menuBtn->setStyleSheet("QPushButton{background: transparent;}"
-                             "QPushButton:hover{background: transparent;}");
+                             "QPushButton:hover:!pressed{background: transparent;}");
+    connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
+        if (m_settingsWidget) { //当此窗口已存在时，仅需置顶
+            Qt::WindowFlags flags = m_settingsWidget->windowFlags();
+            flags |= Qt::WindowStaysOnTopHint;
+            m_settingsWidget->setWindowFlags(flags);
+            flags &= ~Qt::WindowStaysOnTopHint;
+            m_settingsWidget->setWindowFlags(flags);
+            m_settingsWidget->show();
+            return;
+        }
+        m_settingsWidget = new SettingsWidget();
+        m_settingsWidget->show();
+    });
     m_titleLyt->addWidget(m_iconLabel);
     m_titleLyt->addWidget(m_titleLabel);
     m_titleLyt->addStretch();
