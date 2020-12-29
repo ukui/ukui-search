@@ -5,6 +5,7 @@ HEADERS += \
     $$PWD/blockdirs.h \
     $$PWD/document.h \
     $$PWD/filetypefilter.h \
+    $$PWD/file-reader.h \
     $$PWD/index-generator.h \
 #    $$PWD/inotify-manager.h \
     $$PWD/inotify.h \
@@ -19,6 +20,7 @@ SOURCES += \
     $$PWD/blockdirs.cpp \
     $$PWD/document.cpp \
     $$PWD/filetypefilter.cpp \
+    $$PWD/file-reader.cpp \
     $$PWD/index-generator.cpp \
 #    $$PWD/inotify-manager.cpp \
     $$PWD/inotify.cpp \
