@@ -19,14 +19,14 @@ public:
     QStringList startMatchApp(const QString &source);
 
 private:
-    void XmlElement();
+    void xmlElement();
     QStringList matching();
 
 private:
-    QMap<QString,QStringList> m_Pinyin_searchList;
-    QMap<QString,QStringList> m_Chine_searchList;
-    QStringList m_Pinyin_searchResult;
-    QStringList m_Chine_searchResult;
+    QMap<QString,QStringList> m_pinyin_searchList;
+    QMap<QString,QStringList> m_chine_searchList;
+    QStringList m_pinyin_searchResult;
+    QStringList m_chine_searchResult;
     QString m_sourceText;
 
 };
