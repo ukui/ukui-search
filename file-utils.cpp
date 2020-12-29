@@ -185,18 +185,19 @@ QString FileUtils::find(const QString &hanzi)
     return output;
 }
 
-void stitchMultiToneWordsDFS(const QString& hanzi, const QString& result, QStringList& resultList){
+void stitchMultiToneWordsDFS(const QString& hanzi, const QString& resultAllPinYin, const QString& resultFirst, QStringList& resultList){
     if (hanzi.size() == 0){
-        resultList.append(result);
+        resultList.append(resultAllPinYin);
+        resultList.append(resultFirst);
         return;
     }
     if (FileUtils::map_chinese2pinyin.contains(hanzi.at(0))){
         for (auto i : FileUtils::map_chinese2pinyin[hanzi.at(0)]){
-            stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), result + i, resultList);
+            stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), resultAllPinYin + i, resultFirst + i.at(0), resultList);
         }
     }
     else{
-        stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), result + hanzi.at(0), resultList);
+        stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), resultAllPinYin + hanzi.at(0), resultFirst + hanzi.at(0), resultList);
     }
 }
 
@@ -204,10 +205,10 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
 {
 //    QStringList* output = new QStringList();
     QStringList output;
-    QString temp;
+    QString tempAllPinYin, tempFirst;
     QStringList stringList = hanzi.split("");
 
-    stitchMultiToneWordsDFS(hanzi, temp, output);
+    stitchMultiToneWordsDFS(hanzi, tempAllPinYin, tempFirst, output);
 //    qDebug() << output;
     return output;
 }

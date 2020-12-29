@@ -124,8 +124,9 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
 //    QString pinyin_text = FileUtils::find(QString(list.at(0)).replace(".","")).replace("", " ").simplified();
 
     //多音字版
-    QStringList pintin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
-    for (QString& i : pintin_text_list){
+    //现加入首字母
+    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
+    for (QString& i : pinyin_text_list){
         i.replace("", " ");
     }
 
@@ -148,7 +149,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
         qDebug()<<"value!!!"<<list.at(2);
     QStringList temp;
     temp.append(index_text);
-    temp.append(pintin_text_list);
+    temp.append(pinyin_text_list);
     doc.setIndexText(temp);
 //    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
 //    doc.setIndexText(QStringList()<<index_text);
