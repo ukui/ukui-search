@@ -147,7 +147,9 @@ void MainWindow::initUi()
             m_contentFrame->setCurrentIndex(0);
         } else {
             m_contentFrame->setCurrentIndex(1);
-            searchContent(text);
+            QTimer::singleShot(50,this,[=](){
+               searchContent(text);
+            });
         }
     });
 

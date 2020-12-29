@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
     w->activateWindow();
 //    w->loadMainWindow();
     app.setActivationWindow(w);
-    if(arguments.size()>1)
-    w->searchContent(arguments.at(1));
+//    if(arguments.size()>1)
+//    w->searchContent(arguments.at(1));
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
 
 
