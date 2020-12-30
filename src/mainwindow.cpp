@@ -173,7 +173,7 @@ void MainWindow::initUi()
     QStringList list;
     list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ukui-clock.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
     QStringList list2;
-    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
+    list2<<QString("%1/下载").arg(QDir::homePath())<<"/home/zjp/ukui/NM/v10/kylin-nm/README.md"<<"Theme/主题/更改壁纸"<<"/home/zjp/下载/WiFi_AP选择.docx";
     QStringList list3;
     list3<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Theme/主题/更改壁纸";
 

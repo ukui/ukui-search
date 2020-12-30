@@ -6,7 +6,6 @@
         <file>res/translations/tr.ts</file>
         <file>res/translations/zh_CN.ts</file>
         <file>res/icons/desktop.png</file>
-        <file>res/search.xml</file>
         <file>res/icons/close.svg</file>
     </qresource>
 </RCC>

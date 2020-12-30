@@ -23,6 +23,7 @@ public:
 
 private:
     void initUi();
+    void setupBlackList(const QStringList&);
     void paintEvent(QPaintEvent *event);
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
@@ -45,6 +46,8 @@ private:
     QHBoxLayout * m_indexBtnLyt = nullptr;
     QPushButton * m_addDirBtn = nullptr;
     QScrollArea * m_dirListArea = nullptr;
+    QWidget * m_dirListWidget = nullptr;
+    QVBoxLayout * m_dirListLyt = nullptr;
 
     //搜索引擎设置
     QLabel * m_searchEngineLabel = nullptr;

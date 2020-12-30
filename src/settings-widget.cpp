@@ -1,6 +1,10 @@
 #include "settings-widget.h"
 #include <QPainter>
 #include <QPainterPath>
+#include <QFileDialog>
+#include <QDir>
+#include <QDebug>
+#include "floder-list-item.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
@@ -8,6 +12,12 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     initUi();
+    QStringList list;
+    list<<"/usr/share/applications"<<"/usr/share/icons"<<
+          "/usr/libs"<<"/home/zjp/UKUI/SEARCH"<<
+          "/home/zjp/UKUI/UKCC"<<"/home/zjp/UKUI/SD/intel/ukui-settings-daemon"<<
+          "/home/zjp/下载"<<"/home/zjp/code";
+    setupBlackList(list);
 }
 
 SettingsWidget::~SettingsWidget()
@@ -88,6 +98,15 @@ void SettingsWidget::initUi() {
     m_indexBtnLyt->addWidget(m_addDirBtn);
     m_indexBtnLyt->addStretch();
     m_dirListArea = new QScrollArea(this);
+    m_dirListArea->setStyleSheet("QScrollArea{background:transparent;}");
+    m_dirListWidget = new QWidget(this);
+    m_dirListWidget->setStyleSheet("QWidget{background:transparent;}");
+    m_dirListLyt = new QVBoxLayout(m_dirListWidget);
+    m_dirListLyt->setContentsMargins(0, 0, 0, 0);
+    m_dirListLyt->setSpacing(0);
+    m_dirListWidget->setLayout(m_dirListLyt);
+    m_dirListArea->setWidget(m_dirListWidget);
+    m_dirListArea->setWidgetResizable(true);
     m_mainLyt->addWidget(m_indexSettingLabel);
     m_mainLyt->addWidget(m_indexDescLabel);
     m_mainLyt->addWidget(m_indexBtnFrame);
@@ -154,6 +173,19 @@ void SettingsWidget::initUi() {
 }
 
 /**
+ * @brief SettingsWidget::setupBlackList 创建黑名单列表
+ * @param list 文件夹路径列表
+ */
+void SettingsWidget::setupBlackList(const QStringList& list) {
+    Q_FOREACH(QString path, list) {
+        FloderListItem * item = new FloderListItem(m_dirListWidget, path);
+        m_dirListLyt->addWidget(item);
+        item->setMaximumWidth(470);
+    }
+    m_dirListLyt->addStretch();
+}
+
+/**
  * @brief setIndexState 设置当前索引状态
  * @param isCreatingIndex 是否正在创建索引
  */
@@ -191,9 +223,24 @@ void SettingsWidget::onBtnCancelClicked() {
  * @brief SettingsWidget::onBtnAddClicked 点击添加黑名单按钮的槽函数
  */
 void SettingsWidget::onBtnAddClicked() {
-
+    QFileDialog * fileDialog = new QFileDialog(this);
+//    fileDialog->setFileMode(QFileDialog::Directory); //允许查看文件和文件夹，但只允许选择文件夹
+    fileDialog->setFileMode(QFileDialog::DirectoryOnly); //只允许查看文件夹
+    fileDialog->setViewMode(QFileDialog::Detail);
+    fileDialog->setDirectory(QDir::homePath());
+    if (fileDialog->exec() != QDialog::Accepted) {
+        fileDialog->deleteLater();
+        return;
+    }
+    QString selectedDir;
+    selectedDir = fileDialog->selectedFiles().first();
+    qDebug()<<selectedDir;
 }
 
+/**
+ * @brief SettingsWidget::paintEvent 绘制弹窗阴影
+ * @param event
+ */
 void SettingsWidget::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
 

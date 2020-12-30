@@ -1,4 +1,5 @@
 #include "gobject-template.h"
+#include "glib-object.h"
 
 std::shared_ptr<gobjecttemplate<GFile>> wrapGFile(GFile *file) {
     return std::make_shared<gobjecttemplate<GFile>>(file);
