@@ -45,15 +45,15 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-//    FileUtils::findMultiToneWords("翟康宁test");
+//    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
     /*-------------Inotify Test Start---------------*/
-//    QTime t1 = QTime::currentTime();
-//    InotifyManagerRefact* im = new InotifyManagerRefact("/home");
-//    im->Traverse();
-//    QTime t2 = QTime::currentTime();
-//    qDebug() << t1;
-//    qDebug() << t2;
-//    im->start();
+    QTime t1 = QTime::currentTime();
+    InotifyManagerRefact* im = new InotifyManagerRefact("/home");
+    im->Traverse();
+    QTime t2 = QTime::currentTime();
+    qDebug() << t1;
+    qDebug() << t2;
+    im->start();
     /*-------------Inotify Test End-----------------*/
 
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
