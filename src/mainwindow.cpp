@@ -28,16 +28,11 @@
 #include <QStyleOption>
 #include <KWindowEffects>
 #include <QPixmap>
-#include "setting-match.h"
-#include "app-match.h"
+#include "libsearch.h"
 #include "kwindowsystem.h"
 
 #include "file-utils.h"
-#include "index-generator.h"
 //#include "inotify-manager.h"
-#include "inotify.h"
-#include "filetypefilter.h"
-#include "file-searcher.h"
 #include "settings-widget.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
