@@ -23,6 +23,8 @@ public:
     int getCurrentType();
     static int getResType(const QString&);
 
+    bool is_current_list = false;
+
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;

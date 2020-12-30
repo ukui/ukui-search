@@ -21,7 +21,7 @@ HomePageItem::~HomePageItem()
 void HomePageItem::setupUi(const int& type, const QString& path) {
     m_widget = new QWidget(this);
     m_widget->setObjectName("MainWidget");
-    m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.1); border-radius: 4px;}");
+    m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.05); border-radius: 4px;}");
     m_widget->installEventFilter(this);
     connect(this, &HomePageItem::onItemClicked, this, [ = ]() {
         switch (SearchListView::getResType(path)) {
@@ -55,6 +55,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
     });
     m_iconlabel = new QLabel(m_widget);
     m_namelabel = new QLabel(m_widget);
+    m_namelabel->setStyleSheet("QLabel{color: palette(text);}");
     if (type == ItemType::Recent) {
         m_widget->setFixedSize(265, 48);
         QIcon icon;
@@ -116,10 +117,10 @@ bool HomePageItem::eventFilter(QObject *watched, QEvent *event){
     if (watched == m_widget){
         if (event->type() == QEvent::MouseButtonPress) {
             Q_EMIT this->onItemClicked();
-            m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.2); border-radius: 4px;}");
+            m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.1); border-radius: 4px;}");
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
-            m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.1); border-radius: 4px;}");
+            m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.05); border-radius: 4px;}");
             return true;
         }
     }

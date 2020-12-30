@@ -65,7 +65,8 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     QLabel * nameLabel = new QLabel(nameFrame);
     QLabel * typeLabel = new QLabel(nameFrame);
     nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
-    typeLabel->setStyleSheet("QLabel{font-size: 14px; color: rgba(0, 0, 0, 0.43);}");
+//    typeLabel->setStyleSheet("QLabel{font-size: 14px; color: rgba(0, 0, 0, 0.43);}");
+    typeLabel->setStyleSheet("QLabel{font-size: 14px; color: palette(mid);}");
     nameFrame->setFixedHeight(48);
     nameLabel->setMaximumWidth(240);
     nameLayout->addWidget(nameLabel);

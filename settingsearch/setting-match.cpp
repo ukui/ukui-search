@@ -2,7 +2,7 @@
 
 SettingsMatch::SettingsMatch(QObject *parent) : QObject(parent)
 {
-    XmlElement();
+    xmlElement();
 }
 
 QStringList SettingsMatch::startMatchApp(const QString &source){
@@ -12,7 +12,7 @@ QStringList SettingsMatch::startMatchApp(const QString &source){
     return settingList;
 }
 
-void SettingsMatch::XmlElement(){
+void SettingsMatch::xmlElement(){
     QString pinyinIndex;
     QString ChineseIndex;
 
@@ -29,8 +29,8 @@ void SettingsMatch::XmlElement(){
     while(!node.isNull()){
         QDomElement element=node.toElement();
         QString key=element.attribute("name");;
-        m_Chine_searchResult=m_Chine_searchList.value(key);
-        m_Pinyin_searchResult=m_Pinyin_searchList.value(key);
+        m_chine_searchResult=m_chine_searchList.value(key);
+        m_pinyin_searchResult=m_pinyin_searchList.value(key);
          QDomNodeList list=element.childNodes();
          for(int i=0;i<list.count();++i){
              QDomNode n=list.at(i);
@@ -40,7 +40,7 @@ void SettingsMatch::XmlElement(){
              }
              if(n.nodeName()==QString::fromLocal8Bit("pinyinfunc")){
                  pinyinIndex+=QString::fromLocal8Bit(":")+n.toElement().text();
-                 m_Pinyin_searchResult.append(pinyinIndex);
+                 m_pinyin_searchResult.append(pinyinIndex);
              }
 
              if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
@@ -49,11 +49,11 @@ void SettingsMatch::XmlElement(){
              if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
                  ChineseIndex+=QString::fromLocal8Bit("/")+n.toElement().text();
 
-             m_Chine_searchResult.append(ChineseIndex);
+             m_chine_searchResult.append(ChineseIndex);
              }
          }
-        m_Pinyin_searchList.insert(key,m_Pinyin_searchResult);
-        m_Chine_searchList.insert(key,m_Chine_searchResult);
+        m_pinyin_searchList.insert(key,m_pinyin_searchResult);
+        m_chine_searchList.insert(key,m_chine_searchResult);
 
         node=node.nextSibling();
     }
@@ -67,7 +67,7 @@ QStringList SettingsMatch::matching(){
     QStringList regmatch;
     QString key;
     QMap<QString, QStringList>::const_iterator i;
-    for(i=m_Chine_searchList.constBegin();i!=m_Chine_searchList.constEnd();++i){
+    for(i=m_chine_searchList.constBegin();i!=m_chine_searchList.constEnd();++i){
         regmatch=*i;
         key=i.key();
 //        qDebug()<<key;

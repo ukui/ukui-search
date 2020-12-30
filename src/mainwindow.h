@@ -40,6 +40,7 @@
 #include "content-widget.h"
 #include "input-box.h"
 #include "index/index-generator.h"
+#include "settings-widget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -54,6 +55,8 @@ public:
     void searchContent(QString searchcontent);
 
 private:
+    bool nativeEvent(const QByteArray&, void *, long *);
+
     QFrame * m_line = nullptr;//Vertical dividing line
     QFrame * m_frame = nullptr;
 
@@ -62,6 +65,7 @@ private:
     QLabel * m_iconLabel = nullptr;
     QLabel * m_titleLabel = nullptr;
     QPushButton * m_menuBtn = nullptr;
+    SettingsWidget * m_settingsWidget = nullptr;
 
     ContentWidget * m_contentFrame = nullptr;//内容栏
 
@@ -75,14 +79,9 @@ private:
 
     QVector<int> m_types;
     QVector<QStringList> m_lists;
-
 protected:
     void paintEvent(QPaintEvent *);
     void initUi();
-    /**
-     * @brief Handle events clicking on the outside of the window
-     */
-    bool event(QEvent *event);
 
 public Q_SLOTS:
     /**

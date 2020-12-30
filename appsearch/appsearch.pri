@@ -1,5 +1,7 @@
 INCLUDEPATH += $$PWD
 
-HEADERS +=
+HEADERS += \
+    $$PWD/app-match.h \
 
-SOURCES +=
+SOURCES += \
+    $$PWD/app-match.cpp \

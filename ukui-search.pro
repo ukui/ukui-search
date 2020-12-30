@@ -21,10 +21,9 @@ include(model/model.pri)
 include(control/control.pri)
 include(appsearch/appsearch.pri)
 include(singleapplication/qt-single-application.pri)
-include(settingsmatch/setting-match.pri)
-include(appmatch/app-match.pri)
+include(settingsearch/settingsearch.pri)
 
-LIBS = -lxapian -lgsettings-qt
+LIBS = -lxapian -lgsettings-qt -lquazip5
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

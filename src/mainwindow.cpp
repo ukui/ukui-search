@@ -38,6 +38,7 @@
 #include "inotify.h"
 #include "filetypefilter.h"
 #include "file-searcher.h"
+#include "settings-widget.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
@@ -91,6 +92,10 @@ MainWindow::~MainWindow()
         delete m_searchLayout;
         m_searchLayout = NULL;
     }
+    if (m_settingsWidget) {
+        delete m_settingsWidget;
+        m_settingsWidget = NULL;
+    }
 }
 
 /**
@@ -107,6 +112,7 @@ void MainWindow::initUi()
     QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
     mainlayout->setContentsMargins(16, 0, 16, 16);
     m_frame->setLayout(mainlayout);
+    m_frame->setStyleSheet("QLabel{color: palette(text);}");
 
     m_titleFrame = new QFrame(m_frame);//标题栏
     m_titleFrame->setFixedHeight(48);
@@ -121,7 +127,20 @@ void MainWindow::initUi()
     m_menuBtn->setFixedSize(24, 24);
     m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
     m_menuBtn->setStyleSheet("QPushButton{background: transparent;}"
-                             "QPushButton:hover{background: transparent;}");
+                             "QPushButton:hover:!pressed{background: transparent;}");
+    connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
+        if (m_settingsWidget) { //当此窗口已存在时，仅需置顶
+            Qt::WindowFlags flags = m_settingsWidget->windowFlags();
+            flags |= Qt::WindowStaysOnTopHint;
+            m_settingsWidget->setWindowFlags(flags);
+            flags &= ~Qt::WindowStaysOnTopHint;
+            m_settingsWidget->setWindowFlags(flags);
+            m_settingsWidget->show();
+            return;
+        }
+        m_settingsWidget = new SettingsWidget();
+        m_settingsWidget->show();
+    });
     m_titleLyt->addWidget(m_iconLabel);
     m_titleLyt->addWidget(m_titleLabel);
     m_titleLyt->addStretch();
@@ -147,7 +166,9 @@ void MainWindow::initUi()
             m_contentFrame->setCurrentIndex(0);
         } else {
             m_contentFrame->setCurrentIndex(1);
-            searchContent(text);
+            QTimer::singleShot(50,this,[=](){
+               searchContent(text);
+            });
         }
     });
 
@@ -188,21 +209,6 @@ void MainWindow::bootOptionsFilter(QString opt)
  */
 void MainWindow::clearSearchResult() {
     m_searchLayout->clearText();
-}
-
-/**
- * 鼠标点击窗口外部事件
- */
-bool MainWindow::event ( QEvent * event )
-{
-    switch (event->type()){
-    case QEvent::ActivationChange:
-        if(QApplication::activeWindow() != this){
-            this->close();
-        }
-        break;
-        }
-    return QWidget::event(event);
 }
 
 /**
@@ -300,6 +306,32 @@ double MainWindow::getTransparentData()
     } else {
         return 0.7;
     }
+}
+
+/**
+ * @brief MainWindow::nativeEvent 处理窗口失焦事件
+ * @param eventType
+ * @param message
+ * @param result
+ * @return
+ */
+bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
+{
+    Q_UNUSED(result);
+    if (eventType != "xcb_generic_event_t") {
+        return false;
+    }
+
+    xcb_generic_event_t *event = (xcb_generic_event_t*)message;
+
+    switch (event->response_type & ~0x80) {
+    qDebug()<<"YYF - event->response_type : "<<event->response_type;//YYF 20200922
+    case XCB_FOCUS_OUT:
+        this->close();
+        break;
+    }
+
+    return false;
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {

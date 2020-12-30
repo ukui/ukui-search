@@ -1,9 +1,16 @@
 #include "file-utils.h"
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 #include <QUrl>
 #include <QMap>
 #include <QQueue>
+#include "quazip/quazip.h"
+#include <quazip/quazipfile.h>
+#include <QDomDocument>
+#include <QMimeDatabase>
+#include <QMimeType>
+
 QMap<QString, QStringList> FileUtils::map_chinese2pinyin = QMap<QString, QStringList>();
 
 FileUtils::FileUtils()
@@ -166,6 +173,16 @@ void FileUtils::loadHanziTable(const QString &fileName)
     file.close();
 
     return;
+}
+
+QString FileUtils::getMimetype(QString &path, bool getsuffix)
+{
+    QMimeDatabase mdb;
+    QMimeType type = mdb.mimeTypeForFile(path,QMimeDatabase::MatchContent);
+    if(getsuffix)
+        return type.name();
+    else
+        return type.preferredSuffix();
 }
 
 QString FileUtils::find(const QString &hanzi)
@@ -367,4 +384,53 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
     stitchMultiToneWordsBFSHeapLess3(hanzi, output);
 //    qDebug() << output;
     return output;
+}
+
+/**
+ * @brief FileUtils::getDocxTextContent
+ * @param path: abs path
+ * @return docx to QString
+ */
+QString *FileUtils::getDocxTextContent(QString &path)
+{
+    QFileInfo info = QFileInfo(path);
+    if(!info.exists()||info.isDir())
+        return nullptr;
+    QuaZip file("path");
+    if(file.open(QuaZip::mdUnzip))
+        return nullptr;
+
+    if(file.setCurrentFile("word/document.xml",QuaZip::csSensitive))
+        return nullptr;
+    QuaZipFile fileR(&file);
+
+    fileR.open(QIODevice::ReadOnly);        //读取方式打开
+
+    QString *allText = new QString();
+    QDomDocument doc;
+    doc.setContent(fileR.readAll());
+    QDomElement first = doc.firstChildElement("w:document");
+    first = first.firstChildElement().firstChildElement();
+    while(!first.isNull())
+    {
+        QDomElement wr= first.firstChildElement("w:r");
+        while(!wr.isNull())
+        {
+            QDomElement wt = wr.firstChildElement("w:t");
+            allText->append(wt.text());
+            wr = wr.nextSiblingElement();
+        }
+        first = first.nextSiblingElement();
+    }
+    qDebug()<<"size!!!"<<allText->size();
+    return allText;
+}
+
+QString *FileUtils::getTxtContent(QString &path)
+{
+    QFile file(path);
+    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
+        return nullptr;
+    QString *allText = new QString(file.readAll());
+    return allText;
 }
