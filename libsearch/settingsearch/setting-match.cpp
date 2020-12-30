@@ -1,10 +1,17 @@
 #include "setting-match.h"
-
+#include "file-utils.h"
 SettingsMatch::SettingsMatch(QObject *parent) : QObject(parent)
 {
     xmlElement();
 }
 
+/**
+ * @brief SettingsMatch::startMatchApp
+ * 返回给页面
+ * @param source
+ * 获取的字符串
+ * @return
+ */
 QStringList SettingsMatch::startMatchApp(const QString &source){
     m_sourceText=source;
 //    qDebug()<<m_sourceText;
@@ -12,6 +19,10 @@ QStringList SettingsMatch::startMatchApp(const QString &source){
     return settingList;
 }
 
+/**
+ * @brief SettingsMatch::xmlElement
+ * 将xml文件内容读到内存
+ */
 void SettingsMatch::xmlElement(){
     QString pinyinIndex;
     QString ChineseIndex;
@@ -39,7 +50,7 @@ void SettingsMatch::xmlElement(){
                  pinyinIndex=n.toElement().text();
              }
              if(n.nodeName()==QString::fromLocal8Bit("pinyinfunc")){
-                 pinyinIndex+=QString::fromLocal8Bit(":")+n.toElement().text();
+                 pinyinIndex+=QString::fromLocal8Bit("/")+n.toElement().text();
                  m_pinyin_searchResult.append(pinyinIndex);
              }
 
@@ -62,6 +73,11 @@ void SettingsMatch::xmlElement(){
 //    qDebug()<<chine_searchlist;
 }
 
+/**
+ * @brief SettingsMatch::matching
+ * 进行关键字匹配
+ * @return
+ */
 QStringList SettingsMatch::matching(){
     QStringList returnresult;
     QStringList regmatch;
@@ -79,6 +95,16 @@ QStringList SettingsMatch::matching(){
                 str=key+"/"+str;
                 returnresult.append(str);//中文名
             }
+             QString pinyin=FileUtils::findMultiToneWords(str).at(0);// 中文转拼音
+             if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
+                 str=key+"/"+str;
+                 returnresult.append(str);
+             }
+             QString shouzimu=FileUtils::findMultiToneWords(str).at(1);// 中文转首字母
+             if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
+                 str=key+"/"+str;
+                 returnresult.append(str);
+             }
         }
     }
 //    qDebug()<<returnresult;

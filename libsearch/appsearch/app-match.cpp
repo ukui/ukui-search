@@ -1,6 +1,6 @@
 #include "app-match.h"
 #include <glib.h>
-#include "chinesecharacterstopinyin.h"
+#include "file-utils.h"
 AppMatch::AppMatch(QObject *parent) : QObject(parent)
 {
     this->getDesktopFilePath();
@@ -8,7 +8,7 @@ AppMatch::AppMatch(QObject *parent) : QObject(parent)
 
 QStringList AppMatch::startMatchApp(QString input){
     input.replace(" ","");
-    m_soureText=input;
+    m_sourceText=input;
     m_returnResult.clear();
     if(input.isEmpty()){
         return m_returnResult;
@@ -19,6 +19,10 @@ QStringList AppMatch::startMatchApp(QString input){
     return m_returnResult;
 }
 
+/**
+ * @brief AppMatch::getAllDesktopFilePath 遍历所有desktop文件
+ * @param path 存放desktop文件夹
+ */
 void AppMatch::getAllDesktopFilePath(QString path){
 
     GKeyFileFlags flags=G_KEY_FILE_NONE;
@@ -110,10 +114,13 @@ void AppMatch::getAllDesktopFilePath(QString path){
         i++;
 
     } while(i < list.size());
-
     g_key_file_free(keyfile);
 }
 
+/**
+ * @brief AppMatch::getDesktopFilePath
+ * 对遍历结果处理
+ */
 void AppMatch::getDesktopFilePath()
 {
     m_filePathList.clear();
@@ -164,6 +171,10 @@ void AppMatch::getDesktopFilePath()
     m_filePathList.removeAll("/usr/share/applications/wps-office-misc.desktop");
 }
 
+/**
+ * @brief AppMatch::getAppName
+ * 获取应用名字
+ */
 void AppMatch::getAppName()
 {
     GKeyFileFlags flags=G_KEY_FILE_NONE;
@@ -188,13 +199,26 @@ void AppMatch::getAppName()
     g_key_file_free(keyfile);
 }
 
+/**
+ * @brief AppMatch::appNameMatch
+ * 进行匹配
+ * @param appname
+ * 应用名字
+ * @param desktoppath
+ * desktop路径
+ */
 void AppMatch::appNameMatch(QString appname,QString desktoppath){
-    if(appname.contains(m_soureText)){
+    if(appname.contains(m_sourceText)){
+        m_midResult.append(desktoppath);
+        return;
+    }
+    QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
+    if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
+        m_midResult.append(desktoppath);
+        return;
+    }
+    QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
+    if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
         m_midResult.append(desktoppath);
     }
-    QString pinyin=chineseCharactersToPinyin::find(appname).toLower(); // 中文转拼音
-    if(pinyin.contains(m_soureText,Qt::CaseInsensitive)){
-        m_midResult.append(desktoppath);
-    }
-
 }

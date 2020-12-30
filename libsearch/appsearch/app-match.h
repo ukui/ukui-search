@@ -19,7 +19,7 @@ private:
     void appNameMatch(QString appname,QString desktoppath);
 
 private:
-    QString m_soureText;
+    QString m_sourceText;
     QStringList m_filePathList;
     QStringList m_returnResult;
     QStringList m_midResult;
