@@ -11,7 +11,6 @@ HEADERS += \
     $$PWD/inotify.h \
     $$PWD/messagelist-manager.h \
     $$PWD/traverse_bfs.h \
-    $$PWD/messagelist-manager.h \
     $$PWD/text-content-indexer.h \
     $$PWD/file-searcher.h
 

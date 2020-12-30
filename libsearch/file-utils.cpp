@@ -95,6 +95,9 @@ QIcon FileUtils::getAppIcon(const QString &path) {
  */
 QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
     QString name = setting.left(setting.indexOf("/"));
+    if (! name.isEmpty()) {
+        name.replace(QString(name.at(0)), QString(name.at(0).toUpper()));
+    }
     QString path;
     if (is_white) {
         path = QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg(name);

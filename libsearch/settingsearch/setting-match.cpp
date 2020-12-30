@@ -16,7 +16,7 @@ void SettingsMatch::xmlElement(){
     QString pinyinIndex;
     QString ChineseIndex;
 
-    QFile file(QString::fromLocal8Bit(":/res/search.xml"));
+    QFile file(QString::fromLocal8Bit("/usr/share/ukui-control-center/shell/res/search.xml"));
     if (!file.open(QIODevice::ReadOnly)){
         return;
     }
