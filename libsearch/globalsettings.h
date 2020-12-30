@@ -2,8 +2,9 @@
 #define GLOBALSETTINGS_H
 
 #include <QObject>
+#include "libsearch_global.h"
 
-class GlobalSettings : public QObject
+class LIBSEARCH_EXPORT GlobalSettings : public QObject
 {
     Q_OBJECT
 public:

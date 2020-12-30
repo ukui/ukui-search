@@ -16,7 +16,7 @@
  *
  */
 
-#include "src/mainwindow.h"
+#include "mainwindow.h"
 #include <QtSingleApplication>
 #include <QDesktopWidget>
 #include <QFile>
@@ -29,7 +29,7 @@
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
-#include "inotify.h"
+#include "../libsearch/index/inotify.h"
 
 void centerToScreen(QWidget* widget) {
     if (!widget)

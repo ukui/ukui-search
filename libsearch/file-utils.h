@@ -5,11 +5,9 @@
 #include <QCryptographicHash>
 #include <QIcon>
 #include <QMap>
+#include "libsearch_global.h"
 
-
-
-
-class  FileUtils
+class  LIBSEARCH_EXPORT FileUtils
 {
 public:
     static std::string makeDocUterm(QString );
