@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/icons/commonuse.svg</file>
+        <file>res/icons/edit-find-symbolic.svg</file>
+        <file>res/translations/bo.ts</file>
+        <file>res/translations/tr.ts</file>
+        <file>res/translations/zh_CN.ts</file>
+        <file>res/icons/desktop.png</file>
+        <file>res/search.xml</file>
+        <file>res/icons/close.svg</file>
+    </qresource>
+</RCC>
