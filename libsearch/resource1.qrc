@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>index/pinyinWithTone.txt</file>
+        <file>index/pinyinWithoutTone.txt</file>
+    </qresource>
+</RCC>

@@ -31,7 +31,6 @@
 #include "libsearch.h"
 #include "kwindowsystem.h"
 
-#include "file-utils.h"
 //#include "inotify-manager.h"
 #include "settings-widget.h"
 

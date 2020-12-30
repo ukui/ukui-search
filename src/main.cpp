@@ -29,7 +29,7 @@
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
-#include "../libsearch/index/inotify.h"
+#include "libsearch.h"
 
 void centerToScreen(QWidget* widget) {
     if (!widget)
