@@ -4,63 +4,63 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../../src/content-widget.cpp" line="80"/>
+        <location filename="../../content-widget.cpp" line="80"/>
         <source>Recently Opened</source>
         <translation type="unfinished">最近</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="99"/>
+        <location filename="../../content-widget.cpp" line="99"/>
         <source>Open Quickly</source>
         <translation type="unfinished">快速</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="104"/>
+        <location filename="../../content-widget.cpp" line="104"/>
         <source>Commonly Used</source>
         <translation type="unfinished">常用</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="212"/>
+        <location filename="../../content-widget.cpp" line="212"/>
         <source>Apps</source>
         <translation type="unfinished">应用</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="214"/>
+        <location filename="../../content-widget.cpp" line="214"/>
         <source>Settings</source>
         <translation type="unfinished">配置项</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="216"/>
+        <location filename="../../content-widget.cpp" line="216"/>
         <source>Files</source>
         <translation type="unfinished">文件</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="218"/>
+        <location filename="../../content-widget.cpp" line="218"/>
         <source>Dirs</source>
         <translation type="unfinished">文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="220"/>
+        <location filename="../../content-widget.cpp" line="220"/>
         <source>Best Matches</source>
         <translation type="unfinished">最佳匹配</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="222"/>
+        <location filename="../../content-widget.cpp" line="222"/>
         <source>Unknown</source>
         <translation type="unfinished">未知</translation>
     </message>
 </context>
 <context>
-    <name>FloderListItem</name>
+    <name>FolderListItem</name>
     <message>
-        <location filename="../../control/floder-list-item.cpp" line="36"/>
-        <source>Delete the floder out of blacklist</source>
+        <location filename="../../control/folder-list-item.cpp" line="36"/>
+        <source>Delete the folder out of blacklist</source>
         <translation type="unfinished">删除</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="125"/>
+        <location filename="../../mainwindow.cpp" line="119"/>
         <source>Search</source>
         <translation type="unfinished">从列表搜索</translation>
     </message>
@@ -96,7 +96,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/main.cpp" line="71"/>
+        <location filename="../../main.cpp" line="71"/>
         <source>ukui-search is already running!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -127,88 +127,88 @@
 <context>
     <name>SettingsWidget</name>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="49"/>
+        <location filename="../../settings-widget.cpp" line="49"/>
         <source>Search</source>
         <translation type="unfinished">搜索</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="66"/>
+        <location filename="../../settings-widget.cpp" line="66"/>
         <source>Settings</source>
         <translation type="unfinished">配置项</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="72"/>
+        <location filename="../../settings-widget.cpp" line="72"/>
         <source>Index State</source>
         <translation type="unfinished">索引状态</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="75"/>
-        <location filename="../../src/settings-widget.cpp" line="77"/>
+        <location filename="../../settings-widget.cpp" line="75"/>
+        <location filename="../../settings-widget.cpp" line="77"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="84"/>
+        <location filename="../../settings-widget.cpp" line="84"/>
         <source>File Index Settings</source>
         <translation type="unfinished">文件索引设置</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="87"/>
+        <location filename="../../settings-widget.cpp" line="87"/>
         <source>Following folders will not be searched. You can set it by adding and removing folders.</source>
         <translation type="unfinished">搜索将不再查看以下文件夹。通过增加和删除文件夹可进行文件索引设置。</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="96"/>
+        <location filename="../../settings-widget.cpp" line="96"/>
         <source>Add ignored folders</source>
         <translation type="unfinished">添加禁止索引文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="117"/>
+        <location filename="../../settings-widget.cpp" line="117"/>
         <source>Search Engine Settings</source>
         <translation type="unfinished">搜索引擎设置</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="120"/>
+        <location filename="../../settings-widget.cpp" line="120"/>
         <source>Please select search engine you preferred.</source>
         <translation type="unfinished">设置互联网搜索引擎</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="133"/>
+        <location filename="../../settings-widget.cpp" line="133"/>
         <source>baidu</source>
         <translation type="unfinished">百度</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="135"/>
+        <location filename="../../settings-widget.cpp" line="135"/>
         <source>sougou</source>
         <translation type="unfinished">搜狗</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="137"/>
+        <location filename="../../settings-widget.cpp" line="137"/>
         <source>360</source>
         <translation type="unfinished">360</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="160"/>
+        <location filename="../../settings-widget.cpp" line="160"/>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="164"/>
+        <location filename="../../settings-widget.cpp" line="164"/>
         <source>Confirm</source>
         <translation type="unfinished">确认</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="194"/>
+        <location filename="../../settings-widget.cpp" line="194"/>
         <source>Creating ...</source>
         <translation type="unfinished">正在索引</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="197"/>
+        <location filename="../../settings-widget.cpp" line="197"/>
         <source>Done</source>
         <translation type="unfinished">索引完成</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="205"/>
+        <location filename="../../settings-widget.cpp" line="205"/>
         <source>Index Entry: %1</source>
         <translation type="unfinished">索引项: %1</translation>
     </message>

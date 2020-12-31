@@ -73,6 +73,7 @@ private Q_SLOTS:
     void onBtnConfirmClicked();
     void onBtnCancelClicked();
     void onBtnAddClicked();
+    void onBtnDelClicked(const QString&);
 };
 
 #endif // SETTINGSWIDGET_H
