@@ -23,7 +23,7 @@ Q_SIGNALS:
     void searchFinish();
 public Q_SLOTS:
     bool creatAllIndex(QList<QVector<QString>> *messageList);
-    bool creatAllIndex(QVector<QString> *messageList);
+    bool creatAllIndex(QList<QString> *messageList);
     bool deleteAllIndex(QStringList *pathlist);
 
 private:
@@ -31,11 +31,12 @@ private:
     //For file name index
     void HandlePathList(QList<QVector<QString>> *messageList);
     //For file content index
-    void HandlePathList(QVector<QString> *messageList);
+    void HandlePathList(QList<QString> *messageList);
     static Document GenerateDocument(const QVector<QString> &list);
     static Document GenerateContentDocument(const QString &list);
     //add one data in database
     void insertIntoDatabase(Document doc);
+    void insertIntoContentDatabase(Document doc);
     ~IndexGenerator();
 
     QMap<QString,QStringList> *m_index_map;

@@ -31,6 +31,7 @@
 //#include "inotify-manager.h"
 #include "libsearch.h"
 
+
 void centerToScreen(QWidget* widget) {
     if (!widget)
       return;
@@ -55,6 +56,22 @@ int main(int argc, char *argv[])
 //    qDebug() << t1;
 //    qDebug() << t2;
     /*-------------InotyifyRefact Test End-----------------*/
+
+    /*-------------InotyifyRefact Test Start---------------*/
+//    QTime t1 = QTime::currentTime();
+//    FileTypeFilter* ftf = new FileTypeFilter("/home");
+//    ftf->Test();
+//    QTime t2 = QTime::currentTime();
+//    delete ftf;
+//    ftf = nullptr;
+//    qDebug() << t1;
+//    qDebug() << t2;
+    /*-------------InotyifyRefact Test End-----------------*/
+
+    /*-------------文本搜索 Test start-----------------*/
+//    FileSearcher *search = new FileSearcher();
+//    search->onKeywordSearchContent("麒麟");
+    /*-------------文本搜索 Test End-----------------*/
 
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
 

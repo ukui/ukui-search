@@ -7,4 +7,17 @@
 #include "settingsearch/setting-match.h"
 #include "index/inotify.h"
 #include "file-utils.h"
+
+#include "index/filetypefilter.h"
+
+class  LIBSEARCH_EXPORT GlobalSearch
+{
+public:
+
+    static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);
+
+private:
+    GlobalSearch();
+};
+
 #endif // LIBSEARCH_H

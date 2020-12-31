@@ -1,4 +1,4 @@
-QT += core gui concurrent xml
+QT += core concurrent xml
 
 VERSION = 0.0.1
 
@@ -24,14 +24,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(index/index.pri)
 include(appsearch/appsearch.pri)
-include(settingsearch/settingsearch.pri)
+include(settingsearch/settingsearch.pri))
 
+LIBS += -L../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lgsettings-qt -lquazip5
 
 SOURCES += \
     file-utils.cpp \
     globalsettings.cpp \
-    gobject-template.cpp
+    gobject-template.cpp \
+    libsearch.cpp
 
 HEADERS += \
     file-utils.h \
@@ -41,7 +43,7 @@ HEADERS += \
     libsearch.h
 
 RESOURCES += \
-    resource1.qrc
+    resource1.qrc \
 
 
 
@@ -51,9 +53,7 @@ unix {
 }
 !isEmpty(target.path): INSTALLS += target
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../libchinese-segmentation/release/ -lchinese-segmentation
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../libchinese-segmentation/debug/ -lchinese-segmentation
-else:unix: LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
+
 
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation

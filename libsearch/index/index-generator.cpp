@@ -2,9 +2,11 @@
 #include <QStandardPaths>
 #include <QFileInfo>
 #include <QDebug>
+#include "chinese-segmentation.h"
 #include "file-utils.h"
 #include "index-generator.h"
 #include "chinesecharacterstopinyin.h"
+
 #include <QtConcurrent>
 #include <QFuture>
 
@@ -28,6 +30,7 @@ bool IndexGenerator::setIndexdataPath()
     return true;
 }
 
+//文件名索引
 bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
 {
     HandlePathList(messageList);
@@ -62,10 +65,32 @@ bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
 
     return true;
 }
-
-bool IndexGenerator::creatAllIndex(QVector<QString> *messageList)
+//文件内容索引
+bool IndexGenerator::creatAllIndex(QList<QString> *messageList)
 {
     HandlePathList(messageList);
+    try
+    {
+        int count =0;
+        for(int i = 0;i < m_doc_list_content->size(); i++)
+        {
+            insertIntoContentDatabase(m_doc_list_content->at(i));
+
+            if(++count == 9999)
+            {
+                count = 0;
+                m_database_content->commit();
+            }
+        }
+        m_database_content->commit();
+    }
+    catch(const Xapian::Error &e)
+    {
+        qDebug()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
+        return false;
+    }
+    m_doc_list_content->clear();
+    Q_EMIT this->transactionFinished();
     return true;
 
 }
@@ -97,6 +122,14 @@ void IndexGenerator::insertIntoDatabase(Document doc)
     return;
 }
 
+void IndexGenerator::insertIntoContentDatabase(Document doc)
+{
+    Xapian::docid innerId= m_database_content->replace_document(doc.getUniqueTerm(),doc.getXapianDocument());
+//    qDebug()<<"replace doc docid="<<static_cast<int>(innerId);
+//    qDebug()<< "--index finish--";
+    return;
+}
+
 void IndexGenerator::HandlePathList(QList<QVector<QString>> *messageList)
 {
     qDebug()<<"Begin HandlePathList!";
@@ -114,7 +147,7 @@ void IndexGenerator::HandlePathList(QList<QVector<QString>> *messageList)
     return;
 }
 
-void IndexGenerator::HandlePathList(QVector<QString> *messageList)
+void IndexGenerator::HandlePathList(QList<QString> *messageList)
 {
     qDebug()<<"Begin HandlePathList for content index!";
     qDebug()<<messageList->size();
@@ -148,10 +181,10 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
 
     //多音字版
     //现加入首字母
-    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
-    for (QString& i : pinyin_text_list){
-        i.replace("", " ");
-    }
+//    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
+//    for (QString& i : pinyin_text_list){
+//        i.replace("", " ");
+//    }
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
 //    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
@@ -169,10 +202,9 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     doc.setUniqueTerm(uniqueterm);
     doc.addValue(list.at(2));
     if(list.at(2) == QString("1"))
-        qDebug()<<"value!!!"<<list.at(2);
     QStringList temp;
     temp.append(index_text);
-    temp.append(pinyin_text_list);
+//    temp.append(pinyin_text_list);
     doc.setIndexText(temp);
 //    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
 //    doc.setIndexText(QStringList()<<index_text);
@@ -182,15 +214,19 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
 
 Document IndexGenerator::GenerateContentDocument(const QString &path)
 {
-    //构造文本索引的document
-    FileReader::getTextContent(path);
+//    构造文本索引的document
+    QString *content = FileReader::getTextContent(path);
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(path));
+    QVector<SKeyWord> term = ChineseSegmentation::callSegement(content);
     Document doc;
     doc.setData(path);
     doc.setUniqueTerm(uniqueterm);
+    for(int i = 0;i<term.size();++i)
+    {
+        doc.addterm(term.at(i).word,static_cast<int>(term.at(i).weight));
+
+    }
     return doc;
-
-
 }
 
 bool IndexGenerator::isIndexdataExist()
