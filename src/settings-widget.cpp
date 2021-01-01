@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QDebug>
-#include "floder-list-item.h"
+#include "folder-list-item.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
@@ -178,11 +178,28 @@ void SettingsWidget::initUi() {
  */
 void SettingsWidget::setupBlackList(const QStringList& list) {
     Q_FOREACH(QString path, list) {
-        FloderListItem * item = new FloderListItem(m_dirListWidget, path);
+        FolderListItem * item = new FolderListItem(m_dirListWidget, path);
         m_dirListLyt->addWidget(item);
         item->setMaximumWidth(470);
+        //测试用，实际调用中应等待后端完成操作后删除该控件
+        connect(item, SIGNAL(onDelBtnClicked(const QString&)), this, SLOT(onBtnDelClicked(const QString&)));
     }
     m_dirListLyt->addStretch();
+}
+
+/**
+ * @brief SettingsWidget::onBtnDelClicked 删除黑名单中的目录
+ * @param path 文件夹路径
+ */
+void SettingsWidget::onBtnDelClicked(const QString& path) {
+    qDebug()<<path;
+    Q_FOREACH (FolderListItem * item, m_dirListWidget->findChildren<FolderListItem*>()) {
+        if (item->getPath() == path) {
+            item->deleteLater();
+            item = NULL;
+            return;
+        }
+    }
 }
 
 /**

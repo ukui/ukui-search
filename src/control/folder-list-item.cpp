@@ -1,22 +1,22 @@
-#include "floder-list-item.h"
+#include "folder-list-item.h"
 #include <QIcon>
 #include <QEvent>
 
-FloderListItem::FloderListItem(QWidget *parent, const QString &path) : QWidget(parent)
+FolderListItem::FolderListItem(QWidget *parent, const QString &path) : QWidget(parent)
 {
     m_path = path;
     initUi();
 }
 
-FloderListItem::~FloderListItem()
+FolderListItem::~FolderListItem()
 {
 
 }
 
 /**
- * @brief FloderListItem::initUi 构建ui
+ * @brief FolderListItem::initUi 构建ui
  */
-void FloderListItem::initUi() {
+void FolderListItem::initUi() {
     m_layout = new QVBoxLayout(this);
     m_layout->setSpacing(0);
     m_layout->setContentsMargins(0,0,0,0);
@@ -33,7 +33,7 @@ void FloderListItem::initUi() {
     m_delLabel = new QLabel(m_widget);
     m_iconLabel->setPixmap(QIcon::fromTheme("inode-directory").pixmap(QSize(16, 16)));
     m_pathLabel->setText(m_path);
-    m_delLabel->setText(tr("Delete the floder out of blacklist"));
+    m_delLabel->setText(tr("Delete the folder out of blacklist"));
     m_pathLabel->setStyleSheet("QLabel{color: palette(text); background: transparent;}");
     m_delLabel->setStyleSheet("QLabel{color: #3790FA; background: transparent;}");
     m_delLabel->setCursor(QCursor(Qt::PointingHandCursor));
@@ -46,20 +46,28 @@ void FloderListItem::initUi() {
 }
 
 /**
- * @brief FloderListItem::enterEvent 鼠标移入事件
+ * @brief FolderListItem::getPath 获取当前文件夹路径
+ * @return
+ */
+QString FolderListItem::getPath() {
+    return m_path;
+}
+
+/**
+ * @brief FolderListItem::enterEvent 鼠标移入事件
  * @param event
  */
-void FloderListItem::enterEvent(QEvent *event){
+void FolderListItem::enterEvent(QEvent *event){
     m_delLabel->show();
     m_widget->setStyleSheet("QWidget#mWidget{background: rgba(0,0,0,0.1);}");
     QWidget::enterEvent(event);
 }
 
 /**
- * @brief FloderListItem::leaveEvent 鼠标移出事件
+ * @brief FolderListItem::leaveEvent 鼠标移出事件
  * @param event
  */
-void FloderListItem::leaveEvent(QEvent *event){
+void FolderListItem::leaveEvent(QEvent *event){
     m_delLabel->hide();
     m_widget->setStyleSheet("QWidget#mWidget{background: transparent;}");
     QWidget::leaveEvent(event);
@@ -67,15 +75,16 @@ void FloderListItem::leaveEvent(QEvent *event){
 
 
 /**
- * @brief FloderListItem::eventFilter 处理删除按钮点击事件
+ * @brief FolderListItem::eventFilter 处理删除按钮点击事件
  * @param watched
  * @param event
  * @return
  */
-bool FloderListItem::eventFilter(QObject *watched, QEvent *event){
+bool FolderListItem::eventFilter(QObject *watched, QEvent *event){
     if (watched == m_delLabel) {
         if (event->type() == QEvent::MouseButtonPress) {
 //            qDebug()<<"pressed!";
+            Q_EMIT this->onDelBtnClicked(m_path);
         }
     }
     return QObject::eventFilter(watched, event);
