@@ -27,8 +27,8 @@ public:
 
     //parse text,docx.....
     static QString getMimetype(QString &path, bool getsuffix = false);
-    static QString * getDocxTextContent(QString &path);
-    static QString * getTxtContent(QString &path);
+    static QString *getDocxTextContent(QString &path);
+    static QString *getTxtContent(QString &path);
 
 private:
     FileUtils();

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMimeDatabase>
 #include <QMimeType>
-#include <QVector>
+#include <QList>
 #include "traverse_bfs.h"
 
 class FileTypeFilter : public QObject, public Traverse_BFS
@@ -14,18 +14,18 @@ public:
     explicit FileTypeFilter(const QString&);
     ~FileTypeFilter();
     virtual void DoSomething(const QFileInfo&) final;
-    QVector<QString>* getTargetFileAbsolutePath();
-
+    QList<QString>* getTargetFileAbsolutePath();
+    void Test();
 Q_SIGNALS:
 private:
-    const QVector<QString> targetFileTypeVec ={ QString(".doc"),
-                                                QString(".docx"),
-                                                QString(".ppt"),
+    const QVector<QString> targetFileTypeVec ={ /*QString(".doc"),*/
+                                                QString(".docx")/*,*/
+                                                /*QString(".ppt"),
                                                 QString(".pptx"),
                                                 QString(".xls"),
                                                 QString(".xlsx"),
-                                                QString(".txt")};
-    QVector<QString>* result;
+                                                QString(".txt")*/};
+    QList<QString>* result;
 
 };
 

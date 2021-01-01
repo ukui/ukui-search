@@ -73,6 +73,43 @@ void FileSearcher::onKeywordSearch(QString keyword, int begin, int num)
 
 }
 
+void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
+{
+    QStringList searchResult;
+    try
+    {
+        qDebug()<<"--content search start--";
+
+        Xapian::Database db(CONTENT_INDEX_PATH);
+        Xapian::Enquire enquire(db);
+        Xapian::QueryParser qp;
+        qp.set_default_op(Xapian::Query::OP_PHRASE);
+        qp.set_database(db);
+
+        //Creat a query
+        Xapian::Query queryPhrase = qp.parse_query(keyword.toStdString(),Xapian::QueryParser::FLAG_PHRASE);
+
+        qDebug()<<QString::fromStdString(queryPhrase.get_description());
+
+        enquire.set_query(queryPhrase);
+        //dir result
+        Xapian::MSet result = enquire.get_mset(begin, begin+num);
+        qDebug()<< "find results count=" <<static_cast<int>(result.get_matches_estimated());
+        searchResult = getResult(result);
+
+        qDebug()<< "--content search finish--";
+    }
+    catch(const Xapian::Error &e)
+    {
+        qDebug() <<QString::fromStdString(e.get_description());
+        qDebug()<< "--content search finish--";
+        return;
+    }
+    Q_EMIT this->contentResult(searchResult);
+    qDebug()<<searchResult;
+    return;
+}
+
 QStringList FileSearcher::getResult(Xapian::MSet &result)
 {
     //QStringList *pathTobeDelete = new QStringList;
@@ -84,7 +121,6 @@ QStringList FileSearcher::getResult(Xapian::MSet &result)
     for (auto it = result.begin(); it != result.end(); ++it)
     {
         Xapian::Document doc = it.get_document();
-        qDebug()<<"value!!!!"<<QString::fromStdString(doc.get_value(1));
         std::string data = doc.get_data();
         Xapian::weight docScoreWeight = it.get_weight();
         Xapian::percent docScorePercent = it.get_percent();
