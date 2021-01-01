@@ -10,7 +10,7 @@ QString *FileReader::getTextContent(QString path)
 {
     //获取所有文件内容
     //先分类
-    QString type =FileUtils::getMimetype(path);
+    QString type =FileUtils::getMimetype(path,true);
     if(type == "application/zip")
         return FileUtils::getDocxTextContent(path);
     else if(type == "text/plain")

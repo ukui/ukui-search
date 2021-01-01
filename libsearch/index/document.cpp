@@ -23,11 +23,11 @@ void Document::setData(QString data)
     m_document->set_data(data.toStdString());
 }
 
-void Document::addterm(QString term)
+void Document::addterm(std::string term, int weight)
 {
-    if(term.isEmpty())
+    if(term == "")
         return;
-    m_document->add_term(term.toStdString());
+    m_document->add_term(term,weight);
 }
 
 void Document::addValue(QString value)

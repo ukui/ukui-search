@@ -1,5 +1,10 @@
 #include "libsearch.h"
 
-Libsearch::Libsearch()
+GlobalSearch::GlobalSearch()
 {
+}
+
+QStringList GlobalSearch::fileSearch(QString keyword, int begin, int num)
+{
+
 }

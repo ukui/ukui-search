@@ -11,7 +11,7 @@ public:
     Document();
     ~Document();
     void setData(QString data);
-    void addterm(QString term);
+    void addterm(std::string term,int weight =1);
     void addValue(QString value);
     void setUniqueTerm(QString term);
     std::string getUniqueTerm();

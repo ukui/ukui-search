@@ -398,11 +398,11 @@ QString *FileUtils::getDocxTextContent(QString &path)
     QFileInfo info = QFileInfo(path);
     if(!info.exists()||info.isDir())
         return nullptr;
-    QuaZip file("path");
-    if(file.open(QuaZip::mdUnzip))
+    QuaZip file(path);
+    if(!file.open(QuaZip::mdUnzip))
         return nullptr;
 
-    if(file.setCurrentFile("word/document.xml",QuaZip::csSensitive))
+    if(!file.setCurrentFile("word/document.xml",QuaZip::csSensitive))
         return nullptr;
     QuaZipFile fileR(&file);
 
@@ -424,7 +424,6 @@ QString *FileUtils::getDocxTextContent(QString &path)
         }
         first = first.nextSiblingElement();
     }
-    qDebug()<<"size!!!"<<allText->size();
     return allText;
 }
 

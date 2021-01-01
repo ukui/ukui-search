@@ -1,5 +1,6 @@
 QT -= gui
 
+#VERSION = 0.0.1
 TARGET =  chinese-segmentation
 TEMPLATE = lib
 DEFINES += LIBCHINESESEGMENTATION_LIBRARY
@@ -16,7 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-#include(jieba/jieba.pri)
+include(cppjieba/cppjieba.pri)
 
 SOURCES += \
     chinese-segmentation.cpp \
@@ -24,6 +25,13 @@ SOURCES += \
 HEADERS += \
     chinese-segmentation.h \
     libchinese-segmentation_global.h
+
+dict_files.path = /usr/share/ukui-search/res/dict/
+dict_files.files = $$PWD/dict/*.utf8\
+dict_files.files += $$PWD/dict/pos_dict/*.utf8\
+
+INSTALLS += \
+    dict_files \
 
 # Default rules for deployment.
 unix {
@@ -33,3 +41,16 @@ unix {
 
 #DISTFILES += \
 #    jiaba/jieba.pri
+
+DISTFILES += \
+    dict/README.md \
+    dict/hmm_model.utf8 \
+    dict/idf.utf8 \
+    dict/jieba.dict.utf8 \
+    dict/pos_dict/char_state_tab.utf8 \
+    dict/pos_dict/prob_emit.utf8 \
+    dict/pos_dict/prob_start.utf8 \
+    dict/pos_dict/prob_trans.utf8 \
+    dict/stop_words.utf8 \
+    dict/user.dict.utf8
+
