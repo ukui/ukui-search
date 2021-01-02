@@ -5,6 +5,7 @@
 #include <xapian.h>
 #include <QStandardPaths>
 #include <QVector>
+#include <QMap>
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/content_index_data").toStdString()
 
@@ -20,10 +21,11 @@ public Q_SLOTS:
     void onKeywordSearchContent(QString keyword, int begin = 0, int num = 20);
 
 Q_SIGNALS:
-    void result(QVector<QStringList> resultV);
-    void contentResult(QStringList resultL);
+    void result(QVector<QStringList> resultP);
+    void contentResult(QMap<QString,QStringList> resultC);
 private:
     QStringList getResult(Xapian::MSet &result);
+    QMap<QString,QStringList> getContentResult(Xapian::MSet &result,QString &keyWord);
 };
 
 #endif // FILESEARCHER_H

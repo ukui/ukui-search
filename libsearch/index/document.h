@@ -4,6 +4,7 @@
 #include <xapian.h>
 #include <QString>
 #include <QStringList>
+#include <QVector>
 
 class Document
 {
@@ -11,7 +12,7 @@ public:
     Document();
     ~Document();
     void setData(QString data);
-    void addterm(std::string term,int weight =1);
+    void addterm(std::string term, QVector<size_t> offset, int weight =1);
     void addValue(QString value);
     void setUniqueTerm(QString term);
     std::string getUniqueTerm();

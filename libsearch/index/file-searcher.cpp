@@ -75,7 +75,7 @@ void FileSearcher::onKeywordSearch(QString keyword, int begin, int num)
 
 void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
 {
-    QStringList searchResult;
+    QMap<QString,QStringList> searchResult = QMap<QString,QStringList>();
     try
     {
         qDebug()<<"--content search start--";
@@ -83,11 +83,11 @@ void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
         Xapian::Database db(CONTENT_INDEX_PATH);
         Xapian::Enquire enquire(db);
         Xapian::QueryParser qp;
-        qp.set_default_op(Xapian::Query::OP_PHRASE);
+//        qp.set_default_op(Xapian::Query::OP_PHRASE);
         qp.set_database(db);
 
         //Creat a query
-        Xapian::Query queryPhrase = qp.parse_query(keyword.toStdString(),Xapian::QueryParser::FLAG_PHRASE);
+        Xapian::Query queryPhrase = qp.parse_query(keyword.toStdString());
 
         qDebug()<<QString::fromStdString(queryPhrase.get_description());
 
@@ -95,7 +95,7 @@ void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
         //dir result
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
         qDebug()<< "find results count=" <<static_cast<int>(result.get_matches_estimated());
-        searchResult = getResult(result);
+        searchResult = getContentResult(result,keyword);
 
         qDebug()<< "--content search finish--";
     }
@@ -118,6 +118,7 @@ QStringList FileSearcher::getResult(Xapian::MSet &result)
     QStringList searchResult = QStringList();
     if(result.size() == 0)
         return searchResult;
+
     for (auto it = result.begin(); it != result.end(); ++it)
     {
         Xapian::Document doc = it.get_document();
@@ -135,8 +136,51 @@ QStringList FileSearcher::getResult(Xapian::MSet &result)
         {
             searchResult.append(QString::fromStdString(data));
         }
-
         qDebug()<< "doc="<< QString::fromStdString(data) << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
+    }
+    //        if(!pathTobeDelete->isEmpty())
+    //            deleteAllIndex(pathTobeDelete)
+    return searchResult;
+}
+
+QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, QString &keyWord)
+{
+    //QStringList *pathTobeDelete = new QStringList;
+    //Delete those path doc which is not already exist.
+
+    int size = keyWord.size();
+    QMap<QString,QStringList> searchResult;
+    if(result.size() == 0)
+        return searchResult;
+
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+        Xapian::Document doc = it.get_document();
+        std::string data = doc.get_data();
+        double docScoreWeight = it.get_weight();
+        Xapian::percent docScorePercent = it.get_percent();
+        QString path = QString::fromStdString(doc.get_value(1));
+        QFileInfo *info = new QFileInfo(path);
+
+        if(!info->exists())
+        {
+            //                pathTobeDelete->append(QString::fromStdString(data));
+            qDebug()<<path<<"is not exist!!";
+            continue;
+        }
+        // Construct snippets containing keyword.
+        QStringList snippets;
+        auto term = doc.termlist_begin();
+        term.skip_to(keyWord.toStdString());
+        for(auto pos = term.positionlist_begin();pos != term.positionlist_end();++pos)
+        {
+            QByteArray snippetByte = QByteArray::fromStdString(data);
+            QString snippet = "..."+QString(snippetByte.left(*pos)).right(size +5) + QString(snippetByte.mid(*pos,-1)).left(size+5) + "...";
+//            qDebug()<<snippet;
+            snippets.append(snippet);
+        }
+        searchResult.insert(path,snippets);
+        qDebug()<< "path="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)

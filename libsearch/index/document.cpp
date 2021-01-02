@@ -23,11 +23,14 @@ void Document::setData(QString data)
     m_document->set_data(data.toStdString());
 }
 
-void Document::addterm(std::string term, int weight)
+void Document::addterm(std::string term,QVector<size_t> offset, int weight)
 {
-    if(term == "")
+    if(term == ""||term.length() > 240)
         return;
-    m_document->add_term(term,weight);
+    for(size_t i : offset)
+    {
+        m_document->add_posting(term,i,weight);
+    }
 }
 
 void Document::addValue(QString value)
