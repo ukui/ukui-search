@@ -25,7 +25,7 @@ Q_SIGNALS:
     void contentResult(QMap<QString,QStringList> resultC);
 private:
     QStringList getResult(Xapian::MSet &result);
-    QMap<QString,QStringList> getContentResult(Xapian::MSet &result,QString &keyWord);
+    QMap<QString,QStringList> getContentResult(Xapian::MSet &result,std::string &keyWord);
 };
 
 #endif // FILESEARCHER_H

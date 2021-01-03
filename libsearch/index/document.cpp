@@ -25,8 +25,11 @@ void Document::setData(QString data)
 
 void Document::addterm(std::string term,QVector<size_t> offset, int weight)
 {
-    if(term == ""||term.length() > 240)
+    if(term == "")
         return;
+    if(term.length() > 240)
+        term = QString::fromStdString(term).left(30).toStdString();
+
     for(size_t i : offset)
     {
         m_document->add_posting(term,i,weight);

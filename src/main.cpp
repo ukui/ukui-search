@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
     /*-------------InotyifyRefact Test End-----------------*/
 
     /*-------------文本搜索 Test start-----------------*/
-    FileSearcher *search = new FileSearcher();
-    search->onKeywordSearchContent("测试");
+//    FileSearcher *search = new FileSearcher();
+//    search->onKeywordSearchContent("重要器官移植⑤白血病");
     /*-------------文本搜索 Test End-----------------*/
 
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
