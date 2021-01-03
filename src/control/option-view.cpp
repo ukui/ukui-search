@@ -45,6 +45,7 @@ void OptionView::initComponent(const int& type) {
             setupAppOptions();
             break;
         }
+        case SearchListView::ResType::Content:
         case SearchListView::ResType::File : {
             setupFileOptions();
             break;

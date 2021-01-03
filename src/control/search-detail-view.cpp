@@ -48,6 +48,14 @@ void SearchDetailView::clearLayout() {
 }
 
 /**
+ * @brief SearchDetailView::setContent 设置文本区域内容（仅内容搜索）
+ * @param text
+ */
+void SearchDetailView::setContent(const QString& text) {
+    m_contentText = text;
+}
+
+/**
  * @brief SearchDetailView::setupWidget 构建右侧搜索结果详情区域
  * @param type 搜索类型
  * @param path 结果路径
@@ -84,10 +92,17 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_layout->addWidget(hLine);
 
     //文件和文件夹有一个额外的详情区域
-    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File) {
+    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content) {
         QFrame * detailFrame = new QFrame(this);
         QVBoxLayout * detailLyt = new QVBoxLayout(detailFrame);
         detailLyt->setContentsMargins(0,0,0,0);
+        if (type == SearchListView::ResType::Content) {
+            QLabel * contentLabel = new QLabel(detailFrame);
+            contentLabel->setWordWrap(true);
+            contentLabel->setContentsMargins(9, 0, 9, 0);
+            contentLabel->setText(m_contentText);
+            detailLyt->addWidget(contentLabel);
+        }
         QFrame * pathFrame = new QFrame(detailFrame);
         QFrame * timeFrame = new QFrame(detailFrame);
         QHBoxLayout * pathLyt = new QHBoxLayout(pathFrame);
@@ -139,6 +154,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             typeLabel->setText(tr("Application"));
             break;
         }
+        case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir :
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
@@ -204,6 +220,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             return true;
             break;
         }
+        case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir:
         case SearchListView::ResType::File: {
             QProcess * process = new QProcess;

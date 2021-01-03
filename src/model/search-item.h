@@ -21,6 +21,7 @@ public:
         Settings,
         Files,
         Dirs,
+        Contents,
         Best
     };
 
