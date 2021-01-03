@@ -30,6 +30,7 @@
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
 #include "libsearch.h"
+#include "globalsettings.h"
 
 
 void centerToScreen(QWidget* widget) {
@@ -71,7 +72,13 @@ int main(int argc, char *argv[])
     /*-------------文本搜索 Test start-----------------*/
 //    FileSearcher *search = new FileSearcher();
 //    search->onKeywordSearchContent("重要器官移植⑤白血病");
+//    search->onKeywordSearchContent("g,e,x");
     /*-------------文本搜索 Test End-----------------*/
+
+    /*-------------GlobalSettings Test start-----------------*/
+    GlobalSettings::getInstance();
+
+    /*-------------GlobalSettings Test End-----------------*/
 
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
 

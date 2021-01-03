@@ -187,6 +187,7 @@ QString FileUtils::getMimetype(QString &path, bool getsuffix)
         return type.preferredSuffix();
 }
 
+//aborted
 QString FileUtils::find(const QString &hanzi)
 {
 //        static QMap<QString, QStringList> map = loadHanziTable("://index/pinyinWithoutTone.txt");
@@ -375,6 +376,82 @@ void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultL
     return;
 }
 
+//BFS+Stack+超过3个多音字只建一个索引，比较折中的方案
+void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& resultList){
+    QString tempHanzi, resultAllPinYin, resultFirst;
+    QQueue<QString> tempQueue;
+    QQueue<QString> tempQueueFirst;
+    tempHanzi = hanzi;
+    int tempQueueSize = 0;
+    int multiToneWordNum = 0;
+    for (auto i : hanzi){
+        if (FileUtils::map_chinese2pinyin.contains(i)){
+            if (FileUtils::map_chinese2pinyin[i].size() > 1){
+                ++multiToneWordNum;
+            }
+        }
+    }
+    if (multiToneWordNum > 3){
+        QString oneResult, oneResultFirst;
+        for (auto i : hanzi){
+            if (FileUtils::map_chinese2pinyin.contains(i)){
+                oneResult += FileUtils::map_chinese2pinyin[i].first();
+                oneResultFirst += FileUtils::map_chinese2pinyin[i].first().at(0);
+            }
+            else{
+                oneResult += i;
+                oneResultFirst += i;
+            }
+        }
+        resultList.append(oneResult);
+        resultList.append(oneResultFirst);
+        return;
+    }
+
+    if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
+        for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+            tempQueue.enqueue(i);
+            tempQueueFirst.enqueue(i.at(0));
+        }
+    }
+    else{
+        tempQueue.enqueue(tempHanzi.at(0));
+        tempQueueFirst.enqueue(tempHanzi.at(0));
+    }
+    tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
+    while (tempHanzi.size() != 0) {
+        tempQueueSize = tempQueue.size();
+        if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
+            for (int j = 0; j < tempQueueSize; ++j){
+                for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+                    tempQueue.enqueue(tempQueue.head() + i);
+                    tempQueueFirst.enqueue(tempQueueFirst.head() + i.at(0));
+                }
+                tempQueue.dequeue();
+                tempQueueFirst.dequeue();
+            }
+        }
+        else{
+            for (int j = 0; j < tempQueueSize; ++j){
+                tempQueue.enqueue(tempQueue.head() + tempHanzi.at(0));
+                tempQueueFirst.enqueue(tempQueueFirst.head() + tempHanzi.at(0));
+                tempQueue.dequeue();
+                tempQueueFirst.dequeue();
+            }
+        }
+        tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
+    }
+    while(!tempQueue.empty()){
+        resultList.append(tempQueue.dequeue());
+        resultList.append(tempQueueFirst.dequeue());
+    }
+//    delete tempQueue;
+//    delete tempQueueFirst;
+//    tempQueue = nullptr;
+//    tempQueueFirst = nullptr;
+    return;
+}
+
 QStringList FileUtils::findMultiToneWords(const QString& hanzi)
 {
 //    QStringList* output = new QStringList();
@@ -383,7 +460,7 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
     QStringList stringList = hanzi.split("");
 
 //    stitchMultiToneWordsDFS(hanzi, tempAllPinYin, tempFirst, output);
-    stitchMultiToneWordsBFSHeapLess3(hanzi, output);
+    stitchMultiToneWordsBFSStackLess3(hanzi, output);
 //    qDebug() << output;
     return output;
 }
