@@ -18,13 +18,14 @@ public:
     void Test();
 Q_SIGNALS:
 private:
-    const QVector<QString> targetFileTypeVec ={ /*QString(".doc"),*/
-                                                QString(".docx")/*,*/
-                                                /*QString(".ppt"),
-                                                QString(".pptx"),
-                                                QString(".xls"),
-                                                QString(".xlsx"),
-                                                QString(".txt")*/};
+    const QVector<QString> targetFileTypeVec ={
+//        QString(".doc"),
+        QString(".docx"),
+/*        QString(".ppt"),
+        QString(".pptx"),
+        QString(".xls"),
+        QString(".xlsx"),
+        QString(".txt")*/};
     QList<QString>* result;
 
 };

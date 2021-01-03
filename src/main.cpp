@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
     /*-------------InotyifyRefact Test End-----------------*/
 
     /*-------------文本搜索 Test start-----------------*/
-//    FileSearcher *search = new FileSearcher();
-//    search->onKeywordSearchContent("麒麟");
+    FileSearcher *search = new FileSearcher();
+    search->onKeywordSearchContent("测试");
     /*-------------文本搜索 Test End-----------------*/
 
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");

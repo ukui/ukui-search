@@ -201,7 +201,6 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addValue(list.at(2));
-    if(list.at(2) == QString("1"))
     QStringList temp;
     temp.append(index_text);
 //    temp.append(pinyin_text_list);
@@ -219,11 +218,12 @@ Document IndexGenerator::GenerateContentDocument(const QString &path)
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(path));
     QVector<SKeyWord> term = ChineseSegmentation::callSegement(content);
     Document doc;
-    doc.setData(path);
+    doc.setData(*content);
     doc.setUniqueTerm(uniqueterm);
+    doc.addValue(path);
     for(int i = 0;i<term.size();++i)
     {
-        doc.addterm(term.at(i).word,static_cast<int>(term.at(i).weight));
+        doc.addterm(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
 
     }
     return doc;
@@ -322,6 +322,7 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
         {
             qDebug()<<"--delete start--";
             m_datebase_path->delete_document(uniqueterm);
+            m_database_content->delete_document(uniqueterm);
             qDebug()<<"delete md5"<<QString::fromStdString(uniqueterm);
             m_datebase_path->commit();
             qDebug()<< "--delete finish--";
