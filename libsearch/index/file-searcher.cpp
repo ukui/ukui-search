@@ -1,6 +1,7 @@
 #include "file-searcher.h"
 #include <QFileInfo>
 #include <QDebug>
+#include <chinese-segmentation.h>
 
 FileSearcher::FileSearcher(QObject *parent) : QObject(parent)
 {
@@ -83,19 +84,33 @@ void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
         Xapian::Database db(CONTENT_INDEX_PATH);
         Xapian::Enquire enquire(db);
         Xapian::QueryParser qp;
-//        qp.set_default_op(Xapian::Query::OP_PHRASE);
+        qp.set_default_op(Xapian::Query::OP_AND);
         qp.set_database(db);
 
+        QVector<SKeyWord> sKeyWord = ChineseSegmentation::callSegement(&keyword);
         //Creat a query
-        Xapian::Query queryPhrase = qp.parse_query(keyword.toStdString());
+        std::string words;
+        for(int i=0;i<sKeyWord.size();i++)
+        {
+            words.append(sKeyWord.at(i).word).append(" ");
+        }
+        Xapian::Query query = qp.parse_query(words);
 
-        qDebug()<<QString::fromStdString(queryPhrase.get_description());
+//        std::vector<Xapian::Query> v;
+//        for(int i=0;i<sKeyWord.size();i++)
+//        {
+//            v.push_back(Xapian::Query(sKeyWord.at(i).word));
+//            qDebug()<<QString::fromStdString(sKeyWord.at(i).word);
+//        }
+//        Xapian::Query queryPhrase =Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
+        qDebug()<<QString::fromStdString(query.get_description());
 
-        enquire.set_query(queryPhrase);
+        enquire.set_query(query);
         //dir result
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
         qDebug()<< "find results count=" <<static_cast<int>(result.get_matches_estimated());
-        searchResult = getContentResult(result,keyword);
+
+        searchResult = getContentResult(result,words);
 
         qDebug()<< "--content search finish--";
     }
@@ -106,7 +121,7 @@ void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
         return;
     }
     Q_EMIT this->contentResult(searchResult);
-    qDebug()<<searchResult;
+//    qDebug()<<searchResult;
     return;
 }
 
@@ -143,12 +158,16 @@ QStringList FileSearcher::getResult(Xapian::MSet &result)
     return searchResult;
 }
 
-QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, QString &keyWord)
+QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, std::string &keyWord)
 {
     //QStringList *pathTobeDelete = new QStringList;
     //Delete those path doc which is not already exist.
 
-    int size = keyWord.size();
+    QString wordTobeFound = QString::fromStdString(keyWord).section(" ",0,0);
+    int size = wordTobeFound.size();
+    int totalSize = QString::fromStdString(keyWord).size();
+    if(totalSize < 5)
+        totalSize = 5;
     QMap<QString,QStringList> searchResult;
     if(result.size() == 0)
         return searchResult;
@@ -171,13 +190,15 @@ QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, Q
         // Construct snippets containing keyword.
         QStringList snippets;
         auto term = doc.termlist_begin();
-        term.skip_to(keyWord.toStdString());
-        for(auto pos = term.positionlist_begin();pos != term.positionlist_end();++pos)
+        term.skip_to(wordTobeFound.toStdString());
+        int count =0;
+        for(auto pos = term.positionlist_begin();pos != term.positionlist_end()&&count < 6;++pos)
         {
             QByteArray snippetByte = QByteArray::fromStdString(data);
-            QString snippet = "..."+QString(snippetByte.left(*pos)).right(size +5) + QString(snippetByte.mid(*pos,-1)).left(size+5) + "...";
+            QString snippet = "..."+QString(snippetByte.left(*pos)).right(size +totalSize) + QString(snippetByte.mid(*pos,-1)).left(size+totalSize) + "...";
 //            qDebug()<<snippet;
             snippets.append(snippet);
+            ++count;
         }
         searchResult.insert(path,snippets);
         qDebug()<< "path="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
