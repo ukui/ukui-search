@@ -1,5 +1,7 @@
 #include <QtConcurrent>
-#include "globalsettings.h"
+#include <QApplication>
+#include <QPalette>
+#include "global-settings.h"
 
 static GlobalSettings *global_instance = nullptr;
 
@@ -14,6 +16,21 @@ GlobalSettings *GlobalSettings::getInstance()
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
     m_settings = new QSettings("org.ukui", "ukui-search-blockdirs", this);
+    //the default number of transparency in mainwindow is 0.7
+    //if someone changes the num in mainwindow, here should be modified too
+    m_cache.insert(TRANSPARENCY_KEY, 0.7);
+    if (QGSettings::isSchemaInstalled(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID)) {
+        m_gsettings = new QGSettings(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID, QByteArray(), this);
+        connect(m_gsettings, &QGSettings::changed, this, [=](const QString& key) {
+            if (key == TRANSPARENCY_KEY) {
+                m_cache.remove(TRANSPARENCY_KEY);
+                m_cache.insert(TRANSPARENCY_KEY, m_gsettings->get(TRANSPARENCY_KEY).toDouble());
+                qApp->paletteChanged(qApp->palette());
+            }
+        });
+    }
+    m_cache.remove(TRANSPARENCY_KEY);
+    m_cache.insert(TRANSPARENCY_KEY, m_gsettings->get(TRANSPARENCY_KEY).toDouble());
 }
 
 GlobalSettings::~GlobalSettings()
