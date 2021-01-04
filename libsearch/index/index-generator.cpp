@@ -216,7 +216,7 @@ Document IndexGenerator::GenerateContentDocument(const QString &path)
 //    构造文本索引的document
     QString *content = FileReader::getTextContent(path);
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(path));
-    QVector<SKeyWord> term = ChineseSegmentation::callSegement(content);
+    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content);
     Document doc;
     doc.setData(*content);
     doc.setUniqueTerm(uniqueterm);
