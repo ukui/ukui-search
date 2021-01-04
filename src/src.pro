@@ -1,4 +1,4 @@
-QT       += core gui dbus svg KWindowSystem xml
+QT       += core gui dbus  KWindowSystem xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

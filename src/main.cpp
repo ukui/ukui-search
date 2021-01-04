@@ -30,7 +30,7 @@
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
 #include "libsearch.h"
-#include "globalsettings.h"
+#include "global-settings.h"
 
 
 void centerToScreen(QWidget* widget) {

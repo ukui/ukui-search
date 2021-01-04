@@ -316,6 +316,10 @@ void MainWindow::searchContent(QString searchcontent){
 //使用GSetting获取当前窗口应该使用的透明度
 double MainWindow::getTransparentData()
 {
+    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //if you have questions, please ask iaom or MouseZhangZh
     if (!m_transparency_gsettings) {
         return 0.7;
     }
