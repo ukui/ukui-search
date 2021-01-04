@@ -6,6 +6,7 @@
 #include "file-utils.h"
 #include "index-generator.h"
 #include "chinesecharacterstopinyin.h"
+#include "global-settings.h"
 
 #include <QtConcurrent>
 #include <QFuture>
@@ -57,9 +58,12 @@ bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
     }
     catch(const Xapian::Error &e)
     {
-        qDebug()<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
+        qWarning()<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
+        //need a record
+        GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
         return false;
     }
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
     m_doc_list_path->clear();
     Q_EMIT this->transactionFinished();
 
@@ -86,9 +90,11 @@ bool IndexGenerator::creatAllIndex(QList<QString> *messageList)
     }
     catch(const Xapian::Error &e)
     {
-        qDebug()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
+        qWarning()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
+        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"0");
         return false;
     }
+    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
     m_doc_list_content->clear();
     Q_EMIT this->transactionFinished();
     return true;
@@ -99,10 +105,16 @@ IndexGenerator::IndexGenerator(QObject *parent) : QObject(parent)
 {
     m_datebase_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
+    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
 }
 
 IndexGenerator::~IndexGenerator()
 {
+    if(m_datebase_path)
+        delete m_datebase_path;
+    if(m_database_content)
+        delete m_database_content;
+    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"1");
 }
 
 void IndexGenerator::insertIntoDatabase(Document doc)
@@ -329,7 +341,7 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
         }
         catch(const Xapian::Error &e)
         {
-            qDebug() <<QString::fromStdString(e.get_description());
+            qWarning() <<QString::fromStdString(e.get_description());
             return false;
         }
     }
