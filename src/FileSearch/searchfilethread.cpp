@@ -17,12 +17,39 @@ void SearchFileThread::run(){
     filesearch *Fsearch= new filesearch(m_keyWord);
     recMap=Fsearch->returnResult();
     QMap<QString, QStringList>::const_iterator i;
+    QStringList keylist;
+    QStringList returnlist;
+    QStringList pathlist;
+    QString fullpath;
+    QString name;
+    QString path;
 
     for(i=recMap.constBegin();i!=recMap.constEnd();++i){
-        for(int j=0;j<i.value().size();++j){
-       QString str=i.value().at(j)+"/"+i.key();
-       returnResult.append(str);
+        keylist.append(i.key());
+    }
+    qSort(keylist.begin(),keylist.end(), [](const QString& s1, const QString& s2){
+        return s1.size() < s2.size(); });
+
+    if(keylist.size()>=10)
+    {
+        for(int m=0;m<10;++m){
+            QString str=keylist.at(m);
+            returnlist.append(str);
         }
+    }else{
+        for(int m=0;m<keylist.size();++m){
+            QString str=keylist.at(m);
+            returnlist.append(str);
+        }
+    }
+    for(int m=0;m<returnlist.size();m++){
+        for(int j=0;j<recMap.value(returnlist.at(m)).size();++j){
+            name=returnlist.at(m);
+            pathlist=recMap.value(name);
+            path=pathlist.at(j);
+            fullpath=path+"/"+name;
+        }
+        returnResult.append(fullpath);
     }
     Q_EMIT sendSearchResult(returnResult);
 }
