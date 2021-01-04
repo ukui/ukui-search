@@ -63,6 +63,7 @@ void ConfigFile::writeRecently(QString message){
     m_qSettings->setValue("Recently",recently);
     m_qSettings->endGroup();
 }
+
 QStringList ConfigFile::readRecently(){
     m_qSettings->beginGroup("Recently");
     QStringList recently=m_qSettings->value("Recently").toStringList();

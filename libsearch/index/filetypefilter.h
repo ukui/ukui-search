@@ -16,16 +16,17 @@ public:
     virtual void DoSomething(const QFileInfo&) final;
     QList<QString>* getTargetFileAbsolutePath();
     void Test();
+    void startIndexText();
 Q_SIGNALS:
 private:
     const QVector<QString> targetFileTypeVec ={
 //        QString(".doc"),
-        QString(".docx"),
-/*        QString(".ppt"),
-        QString(".pptx"),
-        QString(".xls"),
-        QString(".xlsx"),
-        QString(".txt")*/};
+//        QString(".docx"),
+//        QString(".ppt"),
+//        QString(".pptx"),
+//        QString(".xls"),
+//        QString(".xlsx"),
+        QString(".txt")};
     QList<QString>* result;
 
 };
