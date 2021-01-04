@@ -151,8 +151,7 @@ void MainWindow::bootOptionsFilter(QString opt)
  */
 bool MainWindow::event ( QEvent * event )
 {
-    qDebug()<<event->type();
-
+//    qDebug()<<event->type();
     switch (event->type()){
     case QEvent::ActivationChange:
         if(QApplication::activeWindow() != this){
