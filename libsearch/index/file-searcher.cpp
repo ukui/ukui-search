@@ -87,7 +87,7 @@ void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
         qp.set_default_op(Xapian::Query::OP_AND);
         qp.set_database(db);
 
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::callSegement(&keyword);
+        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(&keyword);
         //Creat a query
         std::string words;
         for(int i=0;i<sKeyWord.size();i++)

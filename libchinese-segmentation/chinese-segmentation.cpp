@@ -1,11 +1,8 @@
 #include "chinese-segmentation.h"
 #include <QFileInfo>
+static ChineseSegmentation *global_instance = nullptr;
 
 ChineseSegmentation::ChineseSegmentation()
-{
-}
-
-QVector<SKeyWord> ChineseSegmentation::callSegement(QString *str)
 {
     const char * const DICT_PATH = "/usr/share/ukui-search/res/dict/jieba.dict.utf8";
     const char * const  HMM_PATH = "/usr/share/ukui-search/res/dict/hmm_model.utf8";
@@ -13,19 +10,35 @@ QVector<SKeyWord> ChineseSegmentation::callSegement(QString *str)
     const char * const  IDF_PATH = "/usr/share/ukui-search/res/dict/idf.utf8";
     const char * const  STOP_WORD_PATH = "/usr/share/ukui-search/res/dict/stop_words.utf8";
 
-
-    cppjieba::Jieba jieba(DICT_PATH,
+    m_jieba = new cppjieba::Jieba(DICT_PATH,
            HMM_PATH,
            USER_DICT_PATH,
            IDF_PATH,
-           STOP_WORD_PATH);
+                                  STOP_WORD_PATH);
+}
 
+ChineseSegmentation::~ChineseSegmentation()
+{
+    if(m_jieba)
+        delete m_jieba;
+}
+
+ChineseSegmentation *ChineseSegmentation::getInstance()
+{
+    if (!global_instance) {
+        global_instance = new ChineseSegmentation;
+    }
+    return global_instance;
+}
+
+QVector<SKeyWord> ChineseSegmentation::callSegement(QString *str)
+{
     std::string s;
     s=str->toStdString();
 
     const size_t topk = -1;
     std::vector<cppjieba::KeywordExtractor::Word> keywordres;
-    jieba.extractor.Extract(s, keywordres, topk);
+    ChineseSegmentation::m_jieba->extractor.Extract(s, keywordres, topk);
     QVector<SKeyWord> vecNeeds;
     convert(keywordres, vecNeeds);
 

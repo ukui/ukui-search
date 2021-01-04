@@ -20,10 +20,13 @@ struct SKeyWord{
 class CHINESESEGMENTATION_EXPORT ChineseSegmentation
 {
 public:
-    static QVector<SKeyWord> callSegement(QString *str);
-    static void convert(std::vector<cppjieba::KeywordExtractor::Word>& keywordres,QVector<SKeyWord>& kw);
+    static ChineseSegmentation *getInstance();
+    QVector<SKeyWord> callSegement(QString *str);
+    void convert(std::vector<cppjieba::KeywordExtractor::Word>& keywordres,QVector<SKeyWord>& kw);
 private:
-    ChineseSegmentation();
+    cppjieba::Jieba *m_jieba;
+    explicit ChineseSegmentation();
+    ~ChineseSegmentation();
 };
 
 #endif // CHINESESEGMENTATION_H
