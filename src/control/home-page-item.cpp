@@ -31,6 +31,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
                 g_object_unref(desktopAppInfo);
                 break;
             }
+            case SearchListView::ResType::Content:
             case SearchListView::ResType::Dir:
             case SearchListView::ResType::File: {
                 QProcess * process = new QProcess;
@@ -65,6 +66,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
                 m_namelabel->setText(FileUtils::getAppName(path));
                 break;
             }
+            case SearchListView::ResType::Content:
             case SearchListView::ResType::Dir :
             case SearchListView::ResType::File : {
                 icon = FileUtils::getFileIcon(QString("file://%1").arg(path));

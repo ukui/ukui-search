@@ -17,7 +17,8 @@ public:
         App,
         File,
         Setting,
-        Dir
+        Dir,
+        Content
     };
 
     int getCurrentType();

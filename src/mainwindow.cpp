@@ -45,15 +45,15 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-//    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
+    //    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
     /*-------------Inotify Test Start---------------*/
-//    QTime t1 = QTime::currentTime();
-//    InotifyManagerRefact* im = new InotifyManagerRefact("/home");
-//    im->Traverse();
-//    QTime t2 = QTime::currentTime();
-//    qDebug() << t1;
-//    qDebug() << t2;
-//    im->start();
+    //    QTime t1 = QTime::currentTime();
+    //    InotifyManagerRefact* im = new InotifyManagerRefact("/home");
+    //    im->Traverse();
+    //    QTime t2 = QTime::currentTime();
+    //    qDebug() << t1;
+    //    qDebug() << t2;
+    //    im->start();
     /*-------------Inotify Test End-----------------*/
 
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
@@ -161,7 +161,7 @@ void MainWindow::initUi()
         } else {
             m_contentFrame->setCurrentIndex(1);
             QTimer::singleShot(50,this,[=](){
-               searchContent(text);
+                searchContent(text);
             });
         }
     });
@@ -234,8 +234,8 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
  * @param searchcontent
  */
 void MainWindow::searchContent(QString searchcontent){
-//    QVector<int> types;
-//    QVector<QStringList> lists;
+    //    QVector<int> types;
+    //    QVector<QStringList> lists;
     m_lists.clear();
     m_types.clear();
 
@@ -245,19 +245,46 @@ void MainWindow::searchContent(QString searchcontent){
     //测试用数据
     QStringList list;
     list = appMatchor->startMatchApp(searchcontent);
-//    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
-//    QStringList list2;
-//    list2<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
+    //    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
     QStringList list3;
     list3 = settingMatchor->startMatchApp(searchcontent);
-//    list3<<"About/关于/计算机属性"<<"Area/语言和地区/货币单位"<<"Datetime/时间和日期/手动更改时间"<<"Theme/主题/图标主题";
+    //    list3<<"About/关于/计算机属性"<<"Area/语言和地区/货币单位"<<"Datetime/时间和日期/手动更改时间"<<"Theme/主题/图标主题";
     m_types.append(SearchItem::SearchType::Apps);
     m_types.append(SearchItem::SearchType::Settings);
-//    types.append(SearchItem::SearchType::Files);
-
     m_lists.append(list);
     m_lists.append(list3);
-//    lists.append(list2);
+
+    //内容搜索测试用数据,每个文件（路径）对应一段文本内容
+    FileSearcher *search = new FileSearcher();
+
+    connect(search, &FileSearcher::contentResult, this, [ = ](QMap<QString,QStringList> map) {
+        m_types.append(SearchItem::SearchType::Contents);
+        QStringList pathlist, contentList;
+        qDebug() << map;
+        for (auto i : map.keys()){
+            QString temp;
+            pathlist << i;
+            for (auto s : map[i]){
+                temp.append(s);
+            }
+            contentList.append(temp);
+        }
+        m_lists.append(pathlist);
+        m_contentFrame->setContentList(contentList);
+    });
+    QTime t1 = QTime::currentTime();
+
+    search->onKeywordSearchContent(searchcontent);
+    QTime t2 = QTime::currentTime();
+    qDebug() << t1;
+    qDebug() << t2;
+//    m_types.append(SearchItem::SearchType::Contents);
+//    QStringList pathlist;
+//    pathlist<<"/home/zjp/下载/搜索结果.png"<<"/home/zjp/下载/显示不全.mp4"<<"/home/zjp/下载/dmesg.log"<<"/home/zjp/下载/WiFi_AP选择.docx";
+//    m_lists.append(pathlist);
+//    QStringList contentList;
+//    contentList<<"这是搜索结果.png的文件内容"<<"这是显示不全.mp4的文件内容"<<"这是dmesg.log的文件内容"<<"这是WiFi_AP选择.docx的文件内容";
+//    m_contentFrame->setContentList(contentList);
 //    m_contentFrame->refreshSearchList(m_types, m_lists);
 
     //文件搜索
@@ -269,21 +296,21 @@ void MainWindow::searchContent(QString searchcontent){
         QStringList list1 = resultV.at(0);
         QStringList list2 = resultV.at(1);
 
-//        QVector<QStringList> lists;
+        //        QVector<QStringList> lists;
         m_lists.append(list1);
         m_lists.append(list2);
-//        QVector<int> types;
+        //        QVector<int> types;
         m_types.append(SearchItem::SearchType::Dirs);
         m_types.append(SearchItem::SearchType::Files);
         m_contentFrame->refreshSearchList(m_types, m_lists);
     });
     searcher->onKeywordSearch(searchcontent,0,10);
-//    QStringList res = IndexGenerator::IndexSearch(searchcontent);
-//    types.append(SearchItem::SearchType::Files);
-//    lists.append(res);
+    //    QStringList res = IndexGenerator::IndexSearch(searchcontent);
+    //    types.append(SearchItem::SearchType::Files);
+    //    lists.append(res);
 
     //将搜索结果加入列表
-//    m_contentFrame->refreshSearchList(types, lists);
+    //    m_contentFrame->refreshSearchList(types, lists);
 }
 
 //使用GSetting获取当前窗口应该使用的透明度
@@ -319,7 +346,6 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
     xcb_generic_event_t *event = (xcb_generic_event_t*)message;
 
     switch (event->response_type & ~0x80) {
-    qDebug()<<"YYF - event->response_type : "<<event->response_type;//YYF 20200922
     case XCB_FOCUS_OUT:
         this->close();
         break;

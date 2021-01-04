@@ -53,6 +53,9 @@ int SearchListView::getCurrentType() {
     case SearchItem::SearchType::Dirs:
 //        qDebug()<<"qDebug: One row selected, its type is dir.";
         return ResType::Dir;
+    case SearchItem::SearchType::Contents:
+//        qDebug()<<"qDebug: One row selected, its type is content.";
+        return ResType::Content;
     default: //All或者Best的情况，需要自己判断文件类型
         return getResType(m_item->m_pathlist.at(this->currentIndex().row()));
         break;

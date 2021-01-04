@@ -152,12 +152,14 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         m_listLyt->addWidget(titleLabel);
         m_listLyt->addWidget(searchList);
         m_resultList->setFixedHeight(m_resultList->height() + searchList->height() + titleLabel->height());
-
 //        if (i == 0) {
 //            searchList->setCurrentIndex(searchList->model()->index(0,1, QModelIndex()));
 //            m_detailView->setupWidget(searchList->getCurrentType(), lists.at(0).at(0));
 //        }
         connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
+            if(type == SearchListView::ResType::Content && !m_contentList.isEmpty()) {
+                m_detailView->setContent(m_contentList.at(searchList->currentIndex().row()));
+            }
             m_detailView->setupWidget(type, path);
             searchList->is_current_list = true;
             Q_EMIT this->currentItemChanged();
@@ -216,6 +218,8 @@ QString ContentWidget::getTitleName(const int& type) {
             return tr("Files");
         case SearchItem::SearchType::Dirs :
             return tr("Dirs");
+        case SearchItem::SearchType::Contents :
+            return tr("File Contents");
         case SearchItem::SearchType::Best :
             return tr("Best Matches");
         default :
@@ -237,4 +241,14 @@ void ContentWidget::clearSearchList() {
     }
     child = NULL;
     m_resultList->setFixedHeight(0);
+}
+
+
+/**
+ * @brief ContentWidget::setContentList 文本内容搜索结果列表（包含所有文本段）
+ * @param list
+ */
+void ContentWidget::setContentList(const QStringList& list) {
+    m_contentList.clear();
+    m_contentList = list;
 }
