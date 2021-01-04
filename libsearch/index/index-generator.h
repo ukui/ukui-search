@@ -28,6 +28,7 @@ public Q_SLOTS:
 
 private:
     explicit IndexGenerator(QObject *parent = nullptr);
+    ~IndexGenerator();
     //For file name index
     void HandlePathList(QList<QVector<QString>> *messageList);
     //For file content index
@@ -37,7 +38,6 @@ private:
     //add one data in database
     void insertIntoDatabase(Document doc);
     void insertIntoContentDatabase(Document doc);
-    ~IndexGenerator();
 
     QMap<QString,QStringList> *m_index_map;
     QList<Document> *m_doc_list_path;  //for path index

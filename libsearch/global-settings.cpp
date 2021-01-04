@@ -15,7 +15,7 @@ GlobalSettings *GlobalSettings::getInstance()
 
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
-    m_settings = new QSettings("org.ukui", "ukui-search-blockdirs", this);
+    m_settings = new QSettings("org.ukui", "ukui-search", this);
     //the default number of transparency in mainwindow is 0.7
     //if someone changes the num in mainwindow, here should be modified too
     m_cache.insert(TRANSPARENCY_KEY, 0.7);
