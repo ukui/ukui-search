@@ -101,8 +101,6 @@ MainWindow::~MainWindow()
 void MainWindow::initUi()
 {
     this->setFixedSize(Style::minw,Style::minh);
-//    this->setAttribute(Qt::WA_AcceptTouchEvents);
-    this->setWindowFlags(Qt::Popup);
     m_frame=new QFrame;
     m_mainViewWid=new MainViewWidget(this);
 
@@ -154,30 +152,18 @@ void MainWindow::bootOptionsFilter(QString opt)
 bool MainWindow::event ( QEvent * event )
 {
     qDebug()<<event->type();
-    if(event->type()== QEvent::ActivationChange){
+
+    switch (event->type()){
+    case QEvent::ActivationChange:
         if(QApplication::activeWindow() != this){
             qApp->exit(0);
-            return true;
         }
-    }
-    const QByteArray panelmodel_id(MODEL_SETTINGS);
-    if(QGSettings::isSchemaInstalled(panelmodel_id))
-    if(event->type()==QEvent::MouseButtonPress){
-        if(QGSettings::isSchemaInstalled(panelmodel_id))
-        {
-            if(!gsetting->get(MODEL).toBool()){
-                qApp->exit(0);
-                return true;
-            }
-        }
-    }
-    if(event->type()==QEvent::GestureOverride){
-        return false;
-    }
-    if(event->type()==QEvent::MouseButtonRelease){
+        break;
+    case QEvent::MouseButtonRelease:
         qApp->exit(0);
-        return true;
+        break;
     }
+
     return QWidget::event(event);
 }
 

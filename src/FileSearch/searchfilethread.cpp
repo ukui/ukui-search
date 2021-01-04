@@ -30,9 +30,17 @@ void SearchFileThread::run(){
     qSort(keylist.begin(),keylist.end(), [](const QString& s1, const QString& s2){
         return s1.size() < s2.size(); });
 
-    for(int m=0;m<10;m++){
-        QString str=keylist.at(m);
-        returnlist.append(keylist.at(m));
+    if(keylist.size()>=10)
+    {
+        for(int m=0;m<10;++m){
+            QString str=keylist.at(m);
+            returnlist.append(str);
+        }
+    }else{
+        for(int m=0;m<keylist.size();++m){
+            QString str=keylist.at(m);
+            returnlist.append(str);
+        }
     }
     for(int m=0;m<returnlist.size();m++){
         for(int j=0;j<recMap.value(returnlist.at(m)).size();++j){

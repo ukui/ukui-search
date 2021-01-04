@@ -43,7 +43,6 @@ void SearchFileWidget::initFilesearchUI()
     //监听点击事件，打开对应的文件
     connect(fileView,&QTreeView::clicked,this,[=](){
         m_filemodel->run(fileView->currentIndex().row(),fileView->currentIndex().column());
-        qApp->exit(0);
     });
 
     //监听输入框的改变，刷新界面
