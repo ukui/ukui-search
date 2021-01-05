@@ -23,7 +23,7 @@ void UKuiSeachBarWidget::paintEvent(QPaintEvent *e)
 //    p.setBrush(QBrush(QColor(255,255,255)));
     p.setOpacity(1);
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect,12,12);
+    p.drawRoundedRect(rect,30,30);
     QWidget::paintEvent(e);
 }
 
@@ -142,7 +142,7 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     this->setFocusPolicy(Qt::ClickFocus);
     this->installEventFilter(this);
     this->setContextMenuPolicy(Qt::NoContextMenu);
-    this->setFixedSize(678,35);
+    this->setFixedSize(650,35);
     this->setMaxLength(100);
 
     /*添加默认文字和图标*/
