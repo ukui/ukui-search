@@ -44,6 +44,7 @@ void SettingWidget::settingTextRefresh(QString mSearchText)
 
 void SettingWidget::recvSettingSearchResult(int row)
 {
+    this->setFixedHeight(settingHead->height()+(row+1)*40);
     if(row<=0){
         this->setVisible(false);
     } else {
