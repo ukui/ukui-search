@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=com.ukui.search.qt.systemdbus
+Exec=/usr/bin/ukuiSearchSystemDBus
+User=root
