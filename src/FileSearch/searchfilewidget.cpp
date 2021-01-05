@@ -76,7 +76,7 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
 {
     int count=m_filemodel->showResult(arg);
     m_searchFileThread->quit();
-    this->setFixedHeight((count+1)*40);
+    this->setFixedHeight(fileHead->height()+(count+1)*40);
 
 
     fileView->setCurrentIndex(m_filemodel->index(0,0,m_filemodel->index(0,0,m_filemodel->index(0))));
