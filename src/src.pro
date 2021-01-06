@@ -1,4 +1,4 @@
-QT       += core gui dbus svg KWindowSystem xml
+QT       += core gui dbus  KWindowSystem xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,8 +39,8 @@ HEADERS += \
     settings-widget.h
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+
+target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
@@ -52,12 +52,12 @@ TRANSLATIONS += \
     res/translations/bo.ts
 
 qm_files.path = /usr/share/ukui-search/res/translations/
-qm_files.files = res/translations/*.qm\
+qm_files.files = $$OUT_PWD/res/translations/*.qm
 
 INSTALLS += \
     qm_files \
 
-unix:!macx: LIBS += -L$$OUT_PWD/../libsearch -lukui-search -L../libchinese-segmentation/ -lchinese-segmentation
+LIBS += -L$$PWD/../libsearch -lukui-search -L$$PWD/../libchinese-segmentation/ -lchinese-segmentation
 
 INCLUDEPATH += $$PWD/../libsearch
 DEPENDPATH += $$PWD/../libsearch

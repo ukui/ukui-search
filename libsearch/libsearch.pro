@@ -1,14 +1,13 @@
-QT += core concurrent xml
-
+QT += core concurrent xml widgets
 VERSION = 0.0.1
 
 TARGET = ukui-search
 TEMPLATE = lib
 DEFINES += LIBSEARCH_LIBRARY
 
-PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0
-CONFIG += c++11 link_pkgconfig no_keywords
+PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt
 
+CONFIG += c++11 link_pkgconfig no_keywords
 
 
 # The following define makes your compiler emit warnings if you use
@@ -27,17 +26,17 @@ include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
 
 LIBS += -L../libchinese-segmentation/ -lchinese-segmentation
-LIBS += -lxapian -lgsettings-qt -lquazip5
+LIBS += -lxapian -lquazip5
 
 SOURCES += \
     file-utils.cpp \
-    globalsettings.cpp \
+    global-settings.cpp \
     gobject-template.cpp \
     libsearch.cpp
 
 HEADERS += \
     file-utils.h \
-    globalsettings.h \
+    global-settings.h \
     gobject-template.h \
     libsearch_global.h \
     libsearch.h
@@ -49,9 +48,13 @@ RESOURCES += \
 
 # Default rules for deployment.
 unix {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_LIBS]
+    INSTALLS += target
+
+    header.path = /usr/include/ukui-search
+    header.files += libsearch.h
+    INSTALLS += header
 }
-!isEmpty(target.path): INSTALLS += target
 
 
 

@@ -21,7 +21,7 @@ Q_SIGNALS:
 private:
     const QVector<QString> targetFileTypeVec ={
 //        QString(".doc"),
-//        QString(".docx"),
+        QString(".docx"),
 //        QString(".ppt"),
 //        QString(".pptx"),
 //        QString(".xls"),

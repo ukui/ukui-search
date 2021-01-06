@@ -2,7 +2,7 @@
 #define BLOCKDIRS_H
 
 #include <QObject>
-#include "globalsettings.h"
+#include "global-settings.h"
 
 #ifndef MYTYPE
 #define MYTYPE
