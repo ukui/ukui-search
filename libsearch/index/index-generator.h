@@ -14,7 +14,7 @@ class IndexGenerator : public QObject
 {
     Q_OBJECT
 public:
-    static IndexGenerator *getInstance();
+    static IndexGenerator *getInstance(bool rebuild = false);
     bool setIndexdataPath();
     bool isIndexdataExist();
     static QStringList IndexSearch(QString indexText);
@@ -27,7 +27,7 @@ public Q_SLOTS:
     bool deleteAllIndex(QStringList *pathlist);
 
 private:
-    explicit IndexGenerator(QObject *parent = nullptr);
+    explicit IndexGenerator(bool rebuild = false,QObject *parent = nullptr);
     ~IndexGenerator();
     //For file name index
     void HandlePathList(QList<QVector<QString>> *messageList);

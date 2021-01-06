@@ -55,3 +55,10 @@ Depends: ${misc:Depends},
          libukui-search0 (= ${binary:Version}),
          libchinese-segmentation0 (= ${binary:Version})
 Description: Libraries for  ukui-search(development files).
+
+Package: ukui-search-systemdbus
+Architecture: any
+Depends: ${shlibs:Depends}, 
+         ${misc:Depends},
+Description: ukui-search-systemdbus is a systembus interface to modify max_user_watches nums 
+ permanent.

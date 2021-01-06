@@ -18,10 +18,10 @@ using namespace std;
 
 static IndexGenerator *global_instance = nullptr;
 
-IndexGenerator *IndexGenerator::getInstance()
+IndexGenerator *IndexGenerator::getInstance(bool rebuild)
 {
     if (!global_instance) {
-        global_instance = new IndexGenerator;
+        global_instance = new IndexGenerator(rebuild);
     }
     return global_instance;
 }
@@ -58,12 +58,11 @@ bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
     }
     catch(const Xapian::Error &e)
     {
-        qWarning()<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
+        qWarning()<<__FILE__<<__LINE__<<__FUNCTION__<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
         //need a record
-        GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
-        return false;
+        GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
+        Q_ASSERT(false);
     }
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
     m_doc_list_path->clear();
     Q_EMIT this->transactionFinished();
 
@@ -90,22 +89,30 @@ bool IndexGenerator::creatAllIndex(QList<QString> *messageList)
     }
     catch(const Xapian::Error &e)
     {
-        qWarning()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
-        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"0");
-        return false;
+        qWarning()<<__FILE__<<__LINE__<<__FUNCTION__<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
+        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
+        Q_ASSERT(false);
     }
-    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
     m_doc_list_content->clear();
     Q_EMIT this->transactionFinished();
     return true;
 
 }
 
-IndexGenerator::IndexGenerator(QObject *parent) : QObject(parent)
+IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
 {
-    m_datebase_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
-    m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
-    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
+    if(rebuild)
+    {
+        m_datebase_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
+        m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
+    }
+    else
+    {
+        m_datebase_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
+        m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
+    }
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
+    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"0");
 }
 
 IndexGenerator::~IndexGenerator()
@@ -114,7 +121,8 @@ IndexGenerator::~IndexGenerator()
         delete m_datebase_path;
     if(m_database_content)
         delete m_database_content;
-    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"1");
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"2");
+    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"2");
 }
 
 void IndexGenerator::insertIntoDatabase(Document doc)
@@ -341,7 +349,7 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
         }
         catch(const Xapian::Error &e)
         {
-            qWarning() <<QString::fromStdString(e.get_description());
+            qWarning() <<__FILE__<<__LINE__<<__FUNCTION__<<QString::fromStdString(e.get_description());
             return false;
         }
     }
