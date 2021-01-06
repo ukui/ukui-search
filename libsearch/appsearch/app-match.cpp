@@ -208,7 +208,7 @@ void AppMatch::getAppName()
  * desktop路径
  */
 void AppMatch::appNameMatch(QString appname,QString desktoppath){
-    if(appname.contains(m_sourceText)){
+    if(appname.contains(m_sourceText,Qt::CaseInsensitive)){
         m_midResult.append(desktoppath);
         return;
     }
