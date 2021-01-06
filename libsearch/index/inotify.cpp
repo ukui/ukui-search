@@ -1,7 +1,18 @@
 #include "inotify.h"
+#include "ukui-search-qdbus.h"
 
 InotifyManagerRefact::InotifyManagerRefact(const QString& path) : Traverse_BFS(path)
 {
+
+    /*-------------ukuisearchdbus Test start-----------------*/
+    qDebug() << "setInotifyMaxUserWatches start";
+    UkuiSearchQDBus usQDBus;
+    usQDBus.setInotifyMaxUserWatches();
+    qDebug() << "setInotifyMaxUserWatches end";
+
+    /*-------------ukuisearchdbus Test End-----------------*/
+
+
 //    dirPath = new QMap<QString, QStringList>();
     m_fd = inotify_init();
     qDebug() << "m_fd----------->" <<m_fd;

@@ -57,7 +57,7 @@ qm_files.files = $$OUT_PWD/res/translations/*.qm
 INSTALLS += \
     qm_files \
 
-LIBS += -L$$PWD/../libsearch -lukui-search -L$$PWD/../libchinese-segmentation/ -lchinese-segmentation
+LIBS += -L$$OUT_PWD/../libsearch -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation -lukui-search
 
 INCLUDEPATH += $$PWD/../libsearch
 DEPENDPATH += $$PWD/../libsearch
