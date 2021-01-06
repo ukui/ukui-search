@@ -33,6 +33,7 @@
 
 //#include "inotify-manager.h"
 #include "settings-widget.h"
+#include "global-settings.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
@@ -56,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //    im->start();
     /*-------------Inotify Test End-----------------*/
 
-    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
+    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
@@ -134,6 +135,12 @@ void MainWindow::initUi()
         }
         m_settingsWidget = new SettingsWidget();
         m_settingsWidget->show();
+        connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
+            QTimer::singleShot(100, this, [ = ] {
+                this->showNormal();
+                m_settingsWidget->deleteLater();
+            });
+        });
     });
     m_titleLyt->addWidget(m_iconLabel);
     m_titleLyt->addWidget(m_titleLabel);
@@ -302,7 +309,7 @@ void MainWindow::searchContent(QString searchcontent){
         //        QVector<int> types;
         m_types.append(SearchItem::SearchType::Dirs);
         m_types.append(SearchItem::SearchType::Files);
-        m_contentFrame->refreshSearchList(m_types, m_lists);
+        m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
     });
     searcher->onKeywordSearch(searchcontent,0,10);
     //    QStringList res = IndexGenerator::IndexSearch(searchcontent);
@@ -320,6 +327,7 @@ double MainWindow::getTransparentData()
     //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //if you have questions, please ask iaom or MouseZhangZh
+//    return GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble();
     if (!m_transparency_gsettings) {
         return 0.7;
     }

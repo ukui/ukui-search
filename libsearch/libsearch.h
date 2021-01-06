@@ -7,6 +7,7 @@
 #include "settingsearch/setting-match.h"
 #include "index/inotify.h"
 #include "file-utils.h"
+#include "global-settings.h"
 
 #include "index/filetypefilter.h"
 

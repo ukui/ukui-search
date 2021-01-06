@@ -3,17 +3,17 @@
 #include <QPalette>
 #include "global-settings.h"
 
-static GlobalSettings *global_instance = nullptr;
+static GlobalSettingsZjp *global_instance = nullptr;
 
-GlobalSettings *GlobalSettings::getInstance()
+GlobalSettingsZjp *GlobalSettingsZjp::getInstance()
 {
     if (!global_instance) {
-        global_instance = new GlobalSettings;
+        global_instance = new GlobalSettingsZjp;
     }
     return global_instance;
 }
 
-GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
+GlobalSettingsZjp::GlobalSettingsZjp(QObject *parent) : QObject(parent)
 {
     m_settings = new QSettings("org.ukui", "ukui-search", this);
     //the default number of transparency in mainwindow is 0.7
@@ -33,22 +33,22 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     m_cache.insert(TRANSPARENCY_KEY, m_gsettings->get(TRANSPARENCY_KEY).toDouble());
 }
 
-GlobalSettings::~GlobalSettings()
+GlobalSettingsZjp::~GlobalSettingsZjp()
 {
 
 }
 
-const QVariant GlobalSettings::getValue(const QString &key)
+const QVariant GlobalSettingsZjp::getValue(const QString &key)
 {
     return m_cache.value(key);
 }
 
-bool GlobalSettings::isExist(const QString &key)
+bool GlobalSettingsZjp::isExist(const QString &key)
 {
     return !m_cache.value(key).isNull();
 }
 
-void GlobalSettings::reset(const QString &key)
+void GlobalSettingsZjp::reset(const QString &key)
 {
     m_cache.remove(key);
     QtConcurrent::run([=]() {
@@ -61,7 +61,7 @@ void GlobalSettings::reset(const QString &key)
     Q_EMIT this->valueChanged(key);
 }
 
-void GlobalSettings::resetAll()
+void GlobalSettingsZjp::resetAll()
 {
     QStringList tmp = m_cache.keys();
     m_cache.clear();
@@ -77,12 +77,12 @@ void GlobalSettings::resetAll()
     });
 }
 
-QList<QString> GlobalSettings::getBlockDirs()
+QList<QString> GlobalSettingsZjp::getBlockDirs()
 {
     return m_cache.keys();
 }
 
-void GlobalSettings::setValue(const QString &key, const QVariant &value)
+void GlobalSettingsZjp::setValue(const QString &key, const QVariant &value)
 {
     m_cache.insert(key, value);
     QtConcurrent::run([=]() {
@@ -94,7 +94,7 @@ void GlobalSettings::setValue(const QString &key, const QVariant &value)
     });
 }
 
-void GlobalSettings::forceSync(const QString &key)
+void GlobalSettingsZjp::forceSync(const QString &key)
 {
     m_settings->sync();
     if (key.isNull()) {

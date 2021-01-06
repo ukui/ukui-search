@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     /*-------------文本搜索 Test End-----------------*/
 
     /*-------------GlobalSettings Test start-----------------*/
-    GlobalSettings::getInstance();
+//    GlobalSettings::getInstance();
 
     /*-------------GlobalSettings Test End-----------------*/
 

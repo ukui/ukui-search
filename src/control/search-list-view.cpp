@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QFileInfo>
 
-SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent)
+SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type, const QString& keyword) : QTreeView(parent)
 {
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
@@ -19,6 +19,9 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");
+    m_styleDelegate = new HighlightItemDelegate();
+    m_styleDelegate->setSearchKeyword(keyword);
+    this->setItemDelegate(m_styleDelegate);
 
     m_type = type;
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ]() {

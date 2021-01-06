@@ -5,12 +5,13 @@
 #include <QTreeView>
 #include "model/search-item-model.h"
 #include "model/search-item.h"
+#include "highlight-item-delegate.h"
 
 class SearchListView : public QTreeView
 {
     Q_OBJECT
 public:
-    explicit SearchListView(QWidget *, const QStringList&, const int&);
+    explicit SearchListView(QWidget *, const QStringList&, const int&, const QString&);
     ~SearchListView();
 
     enum ResType { //搜索结果可能出现的类型：应用、文件、设置、文件夹
@@ -29,6 +30,8 @@ public:
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;
+
+    HighlightItemDelegate * m_styleDelegate = nullptr;
 
     int m_type;
 
