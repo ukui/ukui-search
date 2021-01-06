@@ -25,7 +25,7 @@ include(index/index.pri)
 include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
 
-LIBS += -L../libchinese-segmentation/ -lchinese-segmentation
+LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5
 
 SOURCES += \

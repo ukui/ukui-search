@@ -32,6 +32,48 @@
 #include "libsearch.h"
 #include "global-settings.h"
 
+void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    QByteArray currentTime = QTime::currentTime().toString().toLocal8Bit();
+
+    bool showDebug = true;
+    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/ukui-search.log";
+    if (!QFile::exists(logFilePath)) {
+        showDebug = false;
+    }
+    FILE *log_file = nullptr;
+
+    if (showDebug) {
+        log_file = fopen(logFilePath.toLocal8Bit().constData(), "a+");
+    }
+
+    const char *file = context.file ? context.file : "";
+    const char *function = context.function ? context.function : "";
+    switch (type) {
+    case QtDebugMsg:
+        if (!log_file) {
+            break;
+        }
+        fprintf(log_file, "Debug: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtInfoMsg:
+        fprintf(log_file? log_file: stdout, "Info: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtWarningMsg:
+        fprintf(log_file? log_file: stderr, "Warning: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtCriticalMsg:
+        fprintf(log_file? log_file: stderr, "Critical: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtFatalMsg:
+        fprintf(log_file? log_file: stderr, "Fatal: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    }
+
+    if (log_file)
+        fclose(log_file);
+}
 
 void centerToScreen(QWidget* widget) {
     if (!widget)
@@ -64,37 +106,28 @@ int main(int argc, char *argv[])
 //    qDebug() << t2;
     /*-------------InotyifyRefact Test End-----------------*/
 
-
     /*-------------content index Test Start---------------*/
-    QTime t3 = QTime::currentTime();
-    FileTypeFilter* ftf = new FileTypeFilter("/home");
-    ftf->Test();
-    QTime t4 = QTime::currentTime();
-    delete ftf;
-    ftf = nullptr;
-    qDebug() << t3;
-    qDebug() << t4;
+//    QTime t3 = QTime::currentTime();
+//    FileTypeFilter* ftf = new FileTypeFilter("/home");
+//    ftf->Test();
+//    QTime t4 = QTime::currentTime();
+//    delete ftf;
+//    ftf = nullptr;
+//    qDebug() << t3;
+//    qDebug() << t4;
     /*-------------content index Test End-----------------*/
-
     /*-------------文本搜索 Test start-----------------*/
 //    FileSearcher *search = new FileSearcher();
 //    search->onKeywordSearchContent("重要器官移植⑤白血病");
 //    search->onKeywordSearchContent("g,e,x");
     /*-------------文本搜索 Test End-----------------*/
 
-    /*-------------GlobalSettings Test start-----------------*/
-//    GlobalSettings::getInstance();
-
-    /*-------------GlobalSettings Test End-----------------*/
-
-    qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
-
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);
-
+    qInstallMessageHandler(messageOutput);
 
     if(app.isRunning())
     {

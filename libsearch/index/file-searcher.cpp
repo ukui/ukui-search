@@ -66,7 +66,7 @@ void FileSearcher::onKeywordSearch(QString keyword, int begin, int num)
     }
     catch(const Xapian::Error &e)
     {
-        qDebug() <<QString::fromStdString(e.get_description());
+        qWarning() <<QString::fromStdString(e.get_description());
         return;
     }
     Q_EMIT this->result(searchResult);
@@ -116,7 +116,7 @@ void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
     }
     catch(const Xapian::Error &e)
     {
-        qDebug() <<QString::fromStdString(e.get_description());
+        qWarning() <<QString::fromStdString(e.get_description());
         qDebug()<< "--content search finish--";
         return;
     }
