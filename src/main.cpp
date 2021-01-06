@@ -47,6 +47,12 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    /*-------------ukuisearchdbus Test start-----------------*/
+//    UkuiSearchQDBus usQDBus;
+//    usQDBus.setInotifyMaxUserWatches();
+
+    /*-------------ukuisearchdbus Test End-----------------*/
+
     //load chinese character and pinyin file to a Map
     FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
     /*-------------InotyifyRefact Test Start---------------*/
@@ -58,16 +64,17 @@ int main(int argc, char *argv[])
 //    qDebug() << t2;
     /*-------------InotyifyRefact Test End-----------------*/
 
-    /*-------------InotyifyRefact Test Start---------------*/
-//    QTime t3 = QTime::currentTime();
-//    FileTypeFilter* ftf = new FileTypeFilter("/home");
-//    ftf->Test();
-//    QTime t4 = QTime::currentTime();
-//    delete ftf;
-//    ftf = nullptr;
-//    qDebug() << t3;
-//    qDebug() << t4;
-    /*-------------InotyifyRefact Test End-----------------*/
+
+    /*-------------content index Test Start---------------*/
+    QTime t3 = QTime::currentTime();
+    FileTypeFilter* ftf = new FileTypeFilter("/home");
+    ftf->Test();
+    QTime t4 = QTime::currentTime();
+    delete ftf;
+    ftf = nullptr;
+    qDebug() << t3;
+    qDebug() << t4;
+    /*-------------content index Test End-----------------*/
 
     /*-------------文本搜索 Test start-----------------*/
 //    FileSearcher *search = new FileSearcher();

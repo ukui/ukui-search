@@ -23,12 +23,10 @@
 #include <QSharedPointer>
 #include <QRegExp>
 #include <stdlib.h>
+#include <QGraphicsView>
 
 SysdbusRegister::SysdbusRegister()
 {
-//    mHibernateFile = "/etc/systemd/sleep.conf";
-//    mHibernateSet = new QSettings(mHibernateFile, QSettings::IniFormat, this);
-//    mHibernateSet->setIniCodec("UTF-8");
 }
 
 SysdbusRegister::~SysdbusRegister()
@@ -39,39 +37,20 @@ void SysdbusRegister::exitService() {
     qApp->exit(0);
 }
 
-//QString SysdbusRegister::GetComputerInfo() {
-//    QByteArray ba;
-//    FILE * fp = NULL;
-//    char cmd[128];
-//    char buf[1024];
-//    sprintf(cmd, "dmidecode -t system");
+/*
+ *
+ *   sprintf(cmd, "echo 9999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches");
+ *   sprintf(cmd, "sysctl -w fs.inotify.max_user_watches=\"9999999\"");
+ *   sprintf(cmd, "echo fs.inotify.max_user_watches=9999999 | sudo tee -a /etc/sysctl.conf");
+*/
 
-//    if ((fp = popen(cmd, "r")) != NULL){
-//        rewind(fp);
-//        while (!feof(fp)) {
-//            fgets(buf, sizeof (buf), fp);
-//            ba.append(buf);
-//        }
-//        pclose(fp);
-//        fp = NULL;
-//    }
-//    return QString(ba);
-//}
-
-QString SysdbusRegister::setInotifyMaxUserWatches5()
+QString SysdbusRegister::setInotifyMaxUserWatchesStep1()
 {
-//    QString cmd;
-////    cmd = QString("echo 9999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches");
-//    cmd = QString("reboot");
-//    QProcess p;
-//    p.start(cmd);
-//    return 123;
     QByteArray ba;
     FILE * fp = NULL;
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "echo 9999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches");
-
     if ((fp = popen(cmd, "r")) != NULL){
         rewind(fp);
         while (!feof(fp)) {
@@ -81,46 +60,58 @@ QString SysdbusRegister::setInotifyMaxUserWatches5()
         pclose(fp);
         fp = NULL;
     }
+    else{
+        return QString("popen open failed");
+    }
     return QString(ba);
 }
 
-////获取免密登录状态
-//QString SysdbusRegister::getNoPwdLoginStatus(){
-//    QByteArray ba;
-//    FILE * fp = NULL;
-//    char cmd[128];
-//    char buf[1024];
-//    sprintf(cmd, "cat /etc/group |grep nopasswdlogin");
-//    if ((fp = popen(cmd, "r")) != NULL){
-//        rewind(fp);
-//        fgets(buf, sizeof (buf), fp);
-//        ba.append(buf);
-//        pclose(fp);
-//        fp = NULL;
-//    }else{
-//        qDebug()<<"popen文件打开失败"<<endl;
-//    }
-//    return QString(ba);
-//}
+QString SysdbusRegister::setInotifyMaxUserWatchesStep2()
+{
+    QByteArray ba;
+    FILE * fp = NULL;
+    char cmd[128];
+    char buf[1024];
+    sprintf(cmd, "sysctl -w fs.inotify.max_user_watches=\"9999999\"");
+    if ((fp = popen(cmd, "r")) != NULL){
+        rewind(fp);
+        while (!feof(fp)) {
+            fgets(buf, sizeof (buf), fp);
+            ba.append(buf);
+        }
+        pclose(fp);
+        fp = NULL;
+    }
+    else{
+        return QString("popen open failed");
+    }
+    return QString(ba);
+}
 
-////设置免密登录状态
-//void SysdbusRegister::setNoPwdLoginStatus() {
+QString SysdbusRegister::setInotifyMaxUserWatchesStep3()
+{
+    QByteArray ba;
+    FILE * fp = NULL;
+    char cmd[128];
+    char buf[1024];
+    sprintf(cmd, "echo fs.inotify.max_user_watches=9999999 | sudo tee -a /etc/sysctl.conf");
+    if ((fp = popen(cmd, "r")) != NULL){
+        rewind(fp);
+        while (!feof(fp)) {
+            fgets(buf, sizeof (buf), fp);
+            ba.append(buf);
+        }
+        pclose(fp);
+        fp = NULL;
+    }
+    else{
+        return QString("popen open failed");
+    }
+    return QString(ba);
+}
 
-////    QString cmd;
-////    if(true == status){
-////         cmd = QString("gpasswd  -a %1 nopasswdlogin").arg(username);
-////    } else{
-////        cmd = QString("gpasswd  -d %1 nopasswdlogin").arg(username);
-////    }
-////    QProcess::execute(cmd);
-//    QString cmd;
-//    cmd = QString("sysctl -w fs.inotify.max_user_watches=\"1\"");
-//    QProcess::execute(cmd);
-//}
+//The following example comes from control center
 
-
-
-//// 设置自动登录状态
 //void SysdbusRegister::setAutoLoginStatus(QString username) {
 //    QString filename = "/etc/lightdm/lightdm.conf";
 //    QSharedPointer<QSettings>  autoSettings = QSharedPointer<QSettings>(new QSettings(filename, QSettings::IniFormat));
@@ -143,19 +134,9 @@ QString SysdbusRegister::setInotifyMaxUserWatches5()
 //    return time;
 //}
 
-//void SysdbusRegister::setSuspendThenHibernate(QString time) {
-//    mHibernateSet->beginGroup("Sleep");
-
-//    mHibernateSet->setValue("HibernateDelaySec", time);
-
-//    mHibernateSet->endGroup();
-//    mHibernateSet->sync();
-//}
-
 //void SysdbusRegister::setPasswdAging(int days, QString username) {
 //    QString cmd;
 
 //    cmd = QString("chage -M %1 %2").arg(days).arg(username);
-////    cmd = QString("reboot");
 //    QProcess::execute(cmd);
 //}
