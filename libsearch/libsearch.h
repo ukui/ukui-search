@@ -10,6 +10,8 @@
 
 #include "index/filetypefilter.h"
 
+#include "index/ukui-search-qdbus.h"
+
 class  LIBSEARCH_EXPORT GlobalSearch
 {
 public:

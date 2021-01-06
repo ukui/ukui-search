@@ -13,7 +13,8 @@ HEADERS += \
     $$PWD/messagelisttemplate.h \
     $$PWD/traverse_bfs.h \
 #    $$PWD/text-content-indexer.h \
-    $$PWD/file-searcher.h
+    $$PWD/file-searcher.h \
+    $$PWD/ukui-search-qdbus.h
 
 SOURCES += \
 #    $$PWD/chinesecharacterstopinyin.cpp \
@@ -29,5 +30,6 @@ SOURCES += \
     $$PWD/test-Inotify-Manager.cpp \
     $$PWD/traverse_bfs.cpp \
 #    $$PWD/text-content-indexer.cpp \
-    $$PWD/file-searcher.cpp
+    $$PWD/file-searcher.cpp \
+    $$PWD/ukui-search-qdbus.cpp
 

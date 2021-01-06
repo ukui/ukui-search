@@ -1,4 +1,4 @@
-QT += core concurrent xml widgets
+QT += core concurrent xml widgets dbus
 VERSION = 0.0.1
 
 TARGET = ukui-search
