@@ -18,11 +18,11 @@
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
 
-class LIBSEARCH_EXPORT GlobalSettingsZjp : public QObject
+class LIBSEARCH_EXPORT GlobalSettings : public QObject
 {
     Q_OBJECT
 public:
-    static GlobalSettingsZjp *getInstance();
+    static GlobalSettings *getInstance();
     const QVariant getValue(const QString&);
     bool isExist(const QString&);
 
@@ -39,8 +39,8 @@ public Q_SLOTS:
     void forceSync(const QString& = nullptr);
 
 private:
-    explicit GlobalSettingsZjp(QObject *parent = nullptr);
-    ~GlobalSettingsZjp();
+    explicit GlobalSettings(QObject *parent = nullptr);
+    ~GlobalSettings();
 
     QSettings* m_settings;
     QGSettings* m_gsettings;

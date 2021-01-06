@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //    im->start();
     /*-------------Inotify Test End-----------------*/
 
-    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
@@ -137,8 +137,10 @@ void MainWindow::initUi()
         m_settingsWidget->show();
         connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
             QTimer::singleShot(100, this, [ = ] {
+                this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
+                this->raise();
                 this->showNormal();
-                m_settingsWidget->deleteLater();
+                this->activateWindow();
             });
         });
     });
