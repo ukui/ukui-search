@@ -48,9 +48,13 @@ RESOURCES += \
 
 # Default rules for deployment.
 unix {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_LIBS]
+    INSTALLS += target
+
+    header.path = /usr/include/ukui-search
+    header.files += libsearch.h
+    INSTALLS += header
 }
-!isEmpty(target.path): INSTALLS += target
 
 
 

@@ -351,7 +351,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
 
     switch (event->response_type & ~0x80) {
     case XCB_FOCUS_OUT:
-        this->close();
+        this->hide();
         break;
     }
 

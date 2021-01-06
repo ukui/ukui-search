@@ -50,23 +50,23 @@ int main(int argc, char *argv[])
     //load chinese character and pinyin file to a Map
     FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
     /*-------------InotyifyRefact Test Start---------------*/
-//    QTime t1 = QTime::currentTime();
-//    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
-//    imr->start();
-//    QTime t2 = QTime::currentTime();
-//    qDebug() << t1;
-//    qDebug() << t2;
+    QTime t1 = QTime::currentTime();
+    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
+    imr->start();
+    QTime t2 = QTime::currentTime();
+    qDebug() << t1;
+    qDebug() << t2;
     /*-------------InotyifyRefact Test End-----------------*/
 
     /*-------------InotyifyRefact Test Start---------------*/
-//    QTime t1 = QTime::currentTime();
-//    FileTypeFilter* ftf = new FileTypeFilter("/home");
-//    ftf->Test();
-//    QTime t2 = QTime::currentTime();
-//    delete ftf;
-//    ftf = nullptr;
-//    qDebug() << t1;
-//    qDebug() << t2;
+    QTime t3 = QTime::currentTime();
+    FileTypeFilter* ftf = new FileTypeFilter("/home");
+    ftf->Test();
+    QTime t4 = QTime::currentTime();
+    delete ftf;
+    ftf = nullptr;
+    qDebug() << t3;
+    qDebug() << t4;
     /*-------------InotyifyRefact Test End-----------------*/
 
     /*-------------文本搜索 Test start-----------------*/
