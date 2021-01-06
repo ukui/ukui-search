@@ -56,13 +56,14 @@ int main(int argc, char *argv[])
     //load chinese character and pinyin file to a Map
     FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
     /*-------------InotyifyRefact Test Start---------------*/
-    QTime t1 = QTime::currentTime();
-    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
-    imr->start();
-    QTime t2 = QTime::currentTime();
-    qDebug() << t1;
-    qDebug() << t2;
+//    QTime t1 = QTime::currentTime();
+//    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
+//    imr->start();
+//    QTime t2 = QTime::currentTime();
+//    qDebug() << t1;
+//    qDebug() << t2;
     /*-------------InotyifyRefact Test End-----------------*/
+
 
     /*-------------content index Test Start---------------*/
     QTime t3 = QTime::currentTime();
@@ -82,7 +83,7 @@ int main(int argc, char *argv[])
     /*-------------文本搜索 Test End-----------------*/
 
     /*-------------GlobalSettings Test start-----------------*/
-    GlobalSettings::getInstance();
+//    GlobalSettings::getInstance();
 
     /*-------------GlobalSettings Test End-----------------*/
 
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QtSingleApplication app("ukui-search", argc, argv);
-    app.setQuitOnLastWindowClosed(true);
+    app.setQuitOnLastWindowClosed(false);
 
 
     if(app.isRunning())

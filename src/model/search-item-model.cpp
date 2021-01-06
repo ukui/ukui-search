@@ -91,6 +91,9 @@ QVariant SearchItemModel::data(const QModelIndex &index, int role) const
                 case Qt::DisplayRole: {
                     return QVariant(m_item->getName(index.row()));
                 }
+//                case Qt::ForegroundRole: {
+//                  return QColor(50, 50, 50);
+//                }
                 default:
                     return QVariant();
             }

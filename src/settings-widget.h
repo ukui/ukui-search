@@ -67,7 +67,9 @@ private:
     QHBoxLayout * m_bottomBtnLyt = nullptr;
     QPushButton * m_cancelBtn = nullptr;
     QPushButton * m_confirmBtn = nullptr;
+
 Q_SIGNALS:
+    void settingWidgetClosed();
 
 private Q_SLOTS:
     void onBtnConfirmClicked();

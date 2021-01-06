@@ -33,6 +33,7 @@
 
 //#include "inotify-manager.h"
 #include "settings-widget.h"
+#include "global-settings.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
@@ -74,6 +75,11 @@ MainWindow::MainWindow(QWidget *parent) :
     if (QGSettings::isSchemaInstalled(id)) {
         m_transparency_gsettings = new QGSettings(id);
     }
+
+    connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette &pal) {
+        this->setPalette(pal);
+        this->update();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -134,6 +140,14 @@ void MainWindow::initUi()
         }
         m_settingsWidget = new SettingsWidget();
         m_settingsWidget->show();
+        connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
+            QTimer::singleShot(100, this, [ = ] {
+                this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
+                this->raise();
+                this->showNormal();
+                this->activateWindow();
+            });
+        });
     });
     m_titleLyt->addWidget(m_iconLabel);
     m_titleLyt->addWidget(m_titleLabel);
@@ -302,7 +316,7 @@ void MainWindow::searchContent(QString searchcontent){
         //        QVector<int> types;
         m_types.append(SearchItem::SearchType::Dirs);
         m_types.append(SearchItem::SearchType::Files);
-        m_contentFrame->refreshSearchList(m_types, m_lists);
+        m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
     });
     searcher->onKeywordSearch(searchcontent,0,10);
     //    QStringList res = IndexGenerator::IndexSearch(searchcontent);
@@ -316,21 +330,18 @@ void MainWindow::searchContent(QString searchcontent){
 //使用GSetting获取当前窗口应该使用的透明度
 double MainWindow::getTransparentData()
 {
-    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //if you have questions, please ask iaom or MouseZhangZh
-    if (!m_transparency_gsettings) {
-        return 0.7;
-    }
+    return GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble();
+//    if (!m_transparency_gsettings) {
+//        return 0.7;
+//    }
 
-    QStringList keys = m_transparency_gsettings->keys();
-    if (keys.contains("transparency")) {
-        double tp = m_transparency_gsettings->get("transparency").toDouble();
-        return tp;
-    } else {
-        return 0.7;
-    }
+//    QStringList keys = m_transparency_gsettings->keys();
+//    if (keys.contains("transparency")) {
+//        double tp = m_transparency_gsettings->get("transparency").toDouble();
+//        return tp;
+//    } else {
+//        return 0.7;
+//    }
 }
 
 /**

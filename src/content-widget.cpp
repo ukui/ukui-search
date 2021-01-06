@@ -131,8 +131,9 @@ int ContentWidget::currentPage() {
  * @brief ContentWidget::refreshSearchList 刷新/构建搜索结果列表
  * @param types 获取到的搜索结果类型，仅针对有搜索结果的类型构建listview
  * @param lists 获取到的搜索结果列表（每个类型对应一个列表）
+ * @param keyword 搜索关键字
  */
-void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<QStringList>& lists) {
+void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<QStringList>& lists, const QString& keyword) {
     if (!m_listLyt->isEmpty()) {
         clearSearchList();
     }
@@ -144,7 +145,7 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         }
         bestList << lists.at(i).at(0);
         isEmpty = false;
-        SearchListView * searchList = new SearchListView(m_resultList, lists.at(i), types.at(i)); //Treeview
+        SearchListView * searchList = new SearchListView(m_resultList, lists.at(i), types.at(i), keyword); //Treeview
         QLabel * titleLabel = new QLabel(m_resultList); //表头
         titleLabel->setContentsMargins(8, 0, 0, 0);
         titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
@@ -158,7 +159,7 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
 //        }
         connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
             if(type == SearchListView::ResType::Content && !m_contentList.isEmpty()) {
-                m_detailView->setContent(m_contentList.at(searchList->currentIndex().row()));
+                m_detailView->setContent(m_contentList.at(searchList->currentIndex().row()), keyword);
             }
             m_detailView->setupWidget(type, path);
             searchList->is_current_list = true;
@@ -178,7 +179,7 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
         m_detailView->clearLayout(); //没有搜到结果，清空详情页
         return;
     }
-    SearchListView * searchList = new SearchListView(m_resultList, bestList, SearchItem::SearchType::Best); //Treeview
+    SearchListView * searchList = new SearchListView(m_resultList, bestList, SearchItem::SearchType::Best, keyword); //Treeview
     QLabel * titleLabel = new QLabel(m_resultList); //表头
     titleLabel->setContentsMargins(8, 0, 0, 0);
     titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");

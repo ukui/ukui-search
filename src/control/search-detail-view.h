@@ -13,16 +13,18 @@ public:
 
     void setupWidget(const int&, const QString&);
     void clearLayout();
-    void setContent(const QString&);
+    void setContent(const QString&, const QString&);
 
 private:
     QVBoxLayout * m_layout = nullptr;
     QString m_contentText;
+    QString m_keyword;
     bool openAction(const int&, const QString&);
     bool addDesktopShortcut(const QString&);
     bool addPanelShortcut(const QString&);
     bool openPathAction(const QString&);
     bool copyPathAction(const QString&);
+    QString getHtmlText(const QString&, const QString&);
 Q_SIGNALS:
 
 private Q_SLOTS:

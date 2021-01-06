@@ -53,6 +53,7 @@ void SettingsWidget::initUi() {
     m_closeBtn->setStyleSheet("QPushButton{background: transparent;}"
                               "QPushButton:hover:!pressed{background: transparent;}");
     connect(m_closeBtn, &QPushButton::clicked, this, [ = ]() {
+        Q_EMIT this->settingWidgetClosed();
         this->close();
     });
     m_titleLyt->addWidget(m_titleIcon);
@@ -233,6 +234,7 @@ void SettingsWidget::onBtnConfirmClicked() {
  * @brief SettingsWidget::onBtnCancelClicked 点击取消按钮的槽函数
  */
 void SettingsWidget::onBtnCancelClicked() {
+    Q_EMIT this->settingWidgetClosed();
     this->close();
 }
 

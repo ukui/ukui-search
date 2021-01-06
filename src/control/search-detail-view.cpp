@@ -49,10 +49,33 @@ void SearchDetailView::clearLayout() {
 
 /**
  * @brief SearchDetailView::setContent 设置文本区域内容（仅内容搜索）
- * @param text
+ * @param text 内容搜索结果组成的文段
+ * @param keyword 搜索关键词
  */
-void SearchDetailView::setContent(const QString& text) {
+void SearchDetailView::setContent(const QString& text, const QString& keyword) {
     m_contentText = text;
+    m_keyword = keyword;
+}
+
+QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {
+    QString htmlString;
+    bool boldOpenned = false;
+    for (int i = 0; i < text.length(); i++) {
+        if ((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
+            if (! boldOpenned) {
+                boldOpenned = true;
+                htmlString.append(QString("<b>"));
+            }
+            htmlString.append(QString(text.at(i)));
+        } else {
+            if (boldOpenned) {
+                boldOpenned = false;
+                htmlString.append(QString("</b>"));
+            }
+            htmlString.append(QString(text.at(i)));
+        }
+    }
+    return htmlString;
 }
 
 /**
@@ -96,11 +119,12 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         QFrame * detailFrame = new QFrame(this);
         QVBoxLayout * detailLyt = new QVBoxLayout(detailFrame);
         detailLyt->setContentsMargins(0,0,0,0);
-        if (type == SearchListView::ResType::Content) {
+        if (type == SearchListView::ResType::Content) { //文件内容区域
             QLabel * contentLabel = new QLabel(detailFrame);
             contentLabel->setWordWrap(true);
             contentLabel->setContentsMargins(9, 0, 9, 0);
-            contentLabel->setText(m_contentText);
+//            contentLabel->setText(m_contentText);
+            contentLabel->setText(QApplication::translate("", getHtmlText(m_contentText, m_keyword).toLocal8Bit(), nullptr));
             detailLyt->addWidget(contentLabel);
         }
         QFrame * pathFrame = new QFrame(detailFrame);

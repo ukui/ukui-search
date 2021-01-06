@@ -17,7 +17,7 @@ public:
 
     void setPage(const int&);
     int currentPage();
-    void refreshSearchList(const QVector<int>&, const QVector<QStringList>&);
+    void refreshSearchList(const QVector<int>&, const QVector<QStringList>&, const QString&);
     void initHomePage(const QVector<QStringList>&);
     void setContentList(const QStringList&);
 private:
