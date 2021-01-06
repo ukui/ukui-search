@@ -75,6 +75,11 @@ MainWindow::MainWindow(QWidget *parent) :
     if (QGSettings::isSchemaInstalled(id)) {
         m_transparency_gsettings = new QGSettings(id);
     }
+
+    connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette &pal) {
+        this->setPalette(pal);
+        this->update();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -325,22 +330,18 @@ void MainWindow::searchContent(QString searchcontent){
 //使用GSetting获取当前窗口应该使用的透明度
 double MainWindow::getTransparentData()
 {
-    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //todo modify here!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //if you have questions, please ask iaom or MouseZhangZh
-//    return GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble();
-    if (!m_transparency_gsettings) {
-        return 0.7;
-    }
+    return GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble();
+//    if (!m_transparency_gsettings) {
+//        return 0.7;
+//    }
 
-    QStringList keys = m_transparency_gsettings->keys();
-    if (keys.contains("transparency")) {
-        double tp = m_transparency_gsettings->get("transparency").toDouble();
-        return tp;
-    } else {
-        return 0.7;
-    }
+//    QStringList keys = m_transparency_gsettings->keys();
+//    if (keys.contains("transparency")) {
+//        double tp = m_transparency_gsettings->get("transparency").toDouble();
+//        return tp;
+//    } else {
+//        return 0.7;
+//    }
 }
 
 /**
