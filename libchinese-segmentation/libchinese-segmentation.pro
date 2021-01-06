@@ -1,6 +1,6 @@
 QT -= gui
 
-#VERSION = 0.0.1
+VERSION = 0.0.1
 TARGET =  chinese-segmentation
 TEMPLATE = lib
 DEFINES += LIBCHINESESEGMENTATION_LIBRARY
