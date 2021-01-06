@@ -83,6 +83,15 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
             painter->restore();
         }
         painter->setOpacity(1);
+        if(option.state & QStyle::State_Selected)
+        {
+            painter->save();
+            painter->setPen(QPen(Qt::NoPen));
+            painter->setBrush(QColor("#2FB3E8"));
+            painter->drawPath(path);
+            painter->restore();
+        }
+        painter->setOpacity(1);
 
         if(module>0)
         {
