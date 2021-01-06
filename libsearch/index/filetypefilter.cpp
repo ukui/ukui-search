@@ -41,3 +41,4 @@ void FileTypeFilter::Test(){
         ig->creatAllIndex(this->result);
 }
 
+
