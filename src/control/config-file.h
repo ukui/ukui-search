@@ -10,25 +10,14 @@ class ConfigFile : public QObject
 {
     Q_OBJECT
 public:
-    explicit ConfigFile(QObject *parent = nullptr);
-    void writeConfig();
-    QMap<QString,QStringList> readConfig();
-
+    static void writeConfig(QString message);
+    static QMap<QString,QStringList> readConfig();
+    static void receiveMessage(QString message);
 private:
-    QSettings *m_qSettings;
-    QString m_message;
-
-private:
-    void writeCommonly(QString message);
-    QStringList readCommonly();
-    void writeRecently(QString message);
-    QStringList readRecently();
-
-
-public Q_SLOTS:
-    void receiveMessage(QString message);
-
-Q_SIGNALS:
+   static void writeCommonly(QString message);
+   static QStringList readCommonly();
+   static void writeRecently(QString message);
+   static QStringList readRecently();
 
 };
 

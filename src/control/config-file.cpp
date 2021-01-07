@@ -1,19 +1,7 @@
 #include "config-file.h"
 
-ConfigFile::ConfigFile(QObject *parent) : QObject(parent)
-{
-    QFile file(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf");
-    if(!file.exists()){
-        file.open( QIODevice::ReadWrite | QIODevice::Text );
-        file.close();
-    }
-    m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
-    receiveMessage("ukui-panel");//测试使用
-    receiveMessage("ukui-panel.desktop");//测试使用
-    readConfig();//页面调用
-}
-
 void ConfigFile::writeCommonly(QString message){
+   QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
     QStringList messagelist=message.split("/");
     QString appname=messagelist.last();
     if(!appname.contains("desktop"))
@@ -29,6 +17,7 @@ void ConfigFile::writeCommonly(QString message){
 }
 
 QStringList ConfigFile::readCommonly(){
+    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
     QStringList returnlist;
     QMap<QString,int> quicklycount;
     m_qSettings->beginGroup("Commonly");
@@ -50,42 +39,57 @@ QStringList ConfigFile::readCommonly(){
     for(int j=0;j<vec.size();j++){
         returnlist.append(vec.at(j).first);
     }
-//    qDebug()<<returnlist;
+    if(m_qSettings)
+        delete m_qSettings;
     return returnlist;
 }
 
 void ConfigFile::writeRecently(QString message){
+    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
+
     m_qSettings->beginGroup("Recently");
     QStringList recently=m_qSettings->value("Recently").toStringList();
     m_qSettings->endGroup();
+    if(recently.contains(message)){
+        recently.removeOne(message);
+    }
     recently.insert(0,message);
     m_qSettings->beginGroup("Recently");
     m_qSettings->setValue("Recently",recently);
     m_qSettings->endGroup();
+    if(m_qSettings)
+        delete m_qSettings;
 }
 
 QStringList ConfigFile::readRecently(){
+    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
+
     m_qSettings->beginGroup("Recently");
     QStringList recently=m_qSettings->value("Recently").toStringList();
     m_qSettings->endGroup();
-//    qDebug()<<recently;
+    if(m_qSettings)
+        delete m_qSettings;
     return recently;
 }
 
-void ConfigFile::writeConfig(){
-    writeCommonly(m_message);
-    writeRecently(m_message);
+void ConfigFile::writeConfig(QString message){
+    writeCommonly(message);
+    writeRecently(message);
 }
 
 QMap<QString,QStringList> ConfigFile::readConfig(){
     QMap<QString,QStringList> returnresult;
     returnresult.insert("Commonly",readCommonly());
     returnresult.insert("Recently",readRecently());
-//    qDebug()<<returnresult;
     return returnresult;
 }
 
 void ConfigFile::receiveMessage(QString message){
-    m_message=message;
-    writeConfig();
+    QFile file(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf");
+    if(!file.exists()){
+        file.open( QIODevice::ReadWrite | QIODevice::Text );
+        file.close();
+    }
+    readConfig();//页面调用
+    writeConfig(message);
 }
