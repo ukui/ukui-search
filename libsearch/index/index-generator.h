@@ -17,6 +17,7 @@ public:
     static IndexGenerator *getInstance(bool rebuild = false);
     bool setIndexdataPath();
     bool isIndexdataExist();
+    //for search test
     static QStringList IndexSearch(QString indexText);
 Q_SIGNALS:
     void transactionFinished();

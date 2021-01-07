@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     // 加载国际化文件
     QTranslator translator;
     try {
-        if (! translator.load("/usr/share/ukui-search/res/translations/" + QLocale::system().name())) throw -1;
+        if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw -1;
         app.installTranslator(&translator);
     } catch (...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
