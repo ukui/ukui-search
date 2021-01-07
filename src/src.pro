@@ -7,7 +7,7 @@ TARGET = ukui-search
 TEMPLATE = app
 
 PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0
-CONFIG += c++11 link_pkgconfig no_keywords
+CONFIG += c++11 link_pkgconfig no_keywords lrelease
 LIBS += -lxapian -lgsettings-qt -lquazip5
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -43,19 +43,22 @@ HEADERS += \
 target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
 
+data.path = /usr/share/applications
+data.files += ../data/ukui-search.desktop
+INSTALLS += data
+
 RESOURCES += \
     resource.qrc
 
 TRANSLATIONS += \
-    res/translations/zh_CN.ts \
-    res/translations/tr.ts \
-    res/translations/bo.ts
+    ../translations/ukui-search/zh_CN.ts \
+    ../translations/ukui-search/tr.ts \
+    ../translations/ukui-search/bo.ts
 
-qm_files.path = /usr/share/ukui-search/res/translations/
-qm_files.files = $$OUT_PWD/res/translations/*.qm
+qm_files.path = /usr/share/ukui-search/translations/
+qm_files.files = $$OUT_PWD/.qm/*.qm
 
-INSTALLS += \
-    qm_files \
+INSTALLS += qm_files
 
 LIBS += -L$$OUT_PWD/../libsearch -lukui-search -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 

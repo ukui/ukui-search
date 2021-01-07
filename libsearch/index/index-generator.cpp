@@ -58,7 +58,7 @@ bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
     }
     catch(const Xapian::Error &e)
     {
-        qWarning()<<__FILE__<<__LINE__<<__FUNCTION__<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
+        qWarning()<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
         //need a record
         GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
         Q_ASSERT(false);
@@ -89,7 +89,7 @@ bool IndexGenerator::creatAllIndex(QList<QString> *messageList)
     }
     catch(const Xapian::Error &e)
     {
-        qWarning()<<__FILE__<<__LINE__<<__FUNCTION__<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
+        qWarning()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
         GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
         Q_ASSERT(false);
     }
@@ -193,18 +193,17 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     QString sourcePath = list.at(1);   
     index_text = index_text.replace(".","").replace(""," ");
     index_text = index_text.simplified();
-    //这个应该是写错了
-//    QString pinyin_text = FileUtils::find(index_text.replace(".", "")).replace("", " ");
 
     //不带多音字版
 //    QString pinyin_text = FileUtils::find(QString(list.at(0)).replace(".","")).replace("", " ").simplified();
 
     //多音字版
     //现加入首字母
-//    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
-//    for (QString& i : pinyin_text_list){
-//        i.replace("", " ");
-//    }
+    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
+    for (QString& i : pinyin_text_list){
+        i.replace("", " ");
+        i = i.simplified();
+    }
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
 //    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
@@ -223,10 +222,8 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     doc.addValue(list.at(2));
     QStringList temp;
     temp.append(index_text);
-//    temp.append(pinyin_text_list);
+    temp.append(pinyin_text_list);
     doc.setIndexText(temp);
-//    doc.setIndexText(QStringList()<<index_text<<pinyin_text);
-//    doc.setIndexText(QStringList()<<index_text);
     return doc;
 
 }
@@ -349,7 +346,7 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
         }
         catch(const Xapian::Error &e)
         {
-            qWarning() <<__FILE__<<__LINE__<<__FUNCTION__<<QString::fromStdString(e.get_description());
+            qWarning()<<QString::fromStdString(e.get_description());
             return false;
         }
     }
