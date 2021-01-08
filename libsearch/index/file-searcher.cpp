@@ -1,82 +1,103 @@
-#include "file-searcher.h"
 #include <QFileInfo>
 #include <QDebug>
+#include <QtConcurrent>
 #include <chinese-segmentation.h>
+#include "file-searcher.h"
+#include "global-settings.h"
+
 
 FileSearcher::FileSearcher(QObject *parent) : QObject(parent)
 {
-
 }
 
-void FileSearcher::onKeywordSearch(QString keyword, int begin, int num)
+void FileSearcher::onKeywordSearch(QString keyword)
 {
-    QVector<QStringList> searchResult;
+    //file
+    QtConcurrent::run([=](){
+        int begin = 0;
+        int num = 20;
+        int resultCount = 0;
+        while(1)
+        {
+            resultCount = keywordSearchfile(keyword,"1",1,begin,num);
+            if(resultCount == 0 || resultCount == -1)
+                break;
+            begin += num;
+        }
+    });
+    Q_EMIT this->resultFile(m_search_result_file);
+    //dir
+    QtConcurrent::run([=](){
+        int begin = 0;
+        int num = 20;
+        int resultCount = 0;
+        while(1)
+        {
+            resultCount = keywordSearchfile(keyword,"0",1,begin,num);
+            if(resultCount == 0 || resultCount == -1)
+                break;
+            begin += num;
+        }
+    });
+    Q_EMIT this->resultDir(m_search_result_dir);
+    //content
+    QtConcurrent::run([=](){
+        int begin = 0;
+        int num = 10;
+        int resultCount = 0;
+        while(1)
+        {
+            keywordSearchContent(keyword,begin,num);
+            if(resultCount == 0 || resultCount == -1)
+                break;
+            begin += num;
+        }
+    });
+    Q_EMIT this->resultContent(m_search_result_content);
+}
+
+int FileSearcher::keywordSearchfile(QString keyword, QString value, unsigned slot, int begin, int num)
+{
     try
     {
         qDebug()<<"--search start--";
-
         Xapian::Database db(INDEX_PATH);
+        Xapian::Query query = creatQueryForFileSearch(keyword,db);
         Xapian::Enquire enquire(db);
-        Xapian::QueryParser qp;
-        qp.set_default_op(Xapian::Query::OP_PHRASE);
-        qp.set_database(db);
-        auto userInput = keyword;
 
-        std::string queryStr = keyword.replace(""," ").toStdString();
-//        std::string s =db.get_spelling_suggestion(queryStr,10);
-//        qDebug()<<"spelling_suggestion!"<<QString::fromStdString(s);
-
-        qDebug()<<"queryStr!"<<QString::fromStdString(queryStr);
-        //Creat a query
-        Xapian::Query queryPhrase = qp.parse_query(queryStr,Xapian::QueryParser::FLAG_PHRASE);
-        std::vector<Xapian::Query> v;
-        for(int i=0;i<userInput.size();i++)
+        Xapian::Query queryFile;
+        if(!value.isEmpty())
         {
-            v.push_back(Xapian::Query(QString(userInput.at(i)).toStdString()));
-            qDebug()<<userInput.at(i);
-            qDebug()<<QString::fromStdString(Xapian::Query(QString(userInput.at(i)).toStdString()).get_description());
+            std::string slotValue = value.toStdString();
+            Xapian::Query queryValue = Xapian::Query(Xapian::Query::OP_VALUE_RANGE,slot,slotValue,slotValue);
+            queryFile = Xapian::Query(Xapian::Query::OP_AND,query,queryValue);
         }
-        Xapian::Query queryNear =Xapian::Query(Xapian::Query::OP_NEAR, v.begin(), v.end());
-        Xapian::Query query = Xapian::Query(Xapian::Query::OP_AND,queryNear,queryPhrase);
+        else
+        {
+            queryFile = query;
+        }
 
-        //1- dir 2-file
-        unsigned slot = 1;
-        std::string value = "1";
-        Xapian::Query queryValue1 = Xapian::Query(Xapian::Query::OP_VALUE_GE,slot,value);
-        value = "0";
-        Xapian::Query queryValue0 = Xapian::Query(Xapian::Query::OP_VALUE_LE,1,value);
-        Xapian::Query queryDir = Xapian::Query(Xapian::Query::OP_AND,query,queryValue1);
-        Xapian::Query queryFile = Xapian::Query(Xapian::Query::OP_AND,query,queryValue0);
-
-        qDebug()<<QString::fromStdString(query.get_description());
-
-        enquire.set_query(queryDir);
-        //dir result
-        Xapian::MSet result = enquire.get_mset(begin, begin+num);
-        qDebug()<< "find dir results count=" <<static_cast<int>(result.get_matches_estimated());
-        searchResult.append(getResult(result));
+        qDebug()<<QString::fromStdString(queryFile.get_description());
 
         enquire.set_query(queryFile);
-        //file result
-        result = enquire.get_mset(begin, begin+num);
-        qDebug()<< "find file results count=" <<static_cast<int>(result.get_matches_estimated());
-        searchResult.append(getResult(result));
+        Xapian::MSet result = enquire.get_mset(begin, begin+num);
+        int resultCount =  static_cast<int>(result.get_matches_estimated());
+        qDebug()<< "find results count=" <<resultCount;
+        getResult(result,value);
 
         qDebug()<< "--search finish--";
+        return resultCount;
     }
     catch(const Xapian::Error &e)
     {
         qWarning() <<QString::fromStdString(e.get_description());
-        return;
+        qDebug()<< "--search finish--";
+        return -1;
     }
-    Q_EMIT this->result(searchResult);
-    return;
-
 }
 
-void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
+int FileSearcher::keywordSearchContent(QString keyword, int begin, int num)
 {
-    QMap<QString,QStringList> searchResult = QMap<QString,QStringList>();
     try
     {
         qDebug()<<"--content search start--";
@@ -108,24 +129,52 @@ void FileSearcher::onKeywordSearchContent(QString keyword, int begin, int num)
         enquire.set_query(query);
         //dir result
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
-        qDebug()<< "find results count=" <<static_cast<int>(result.get_matches_estimated());
+        int resultCount = static_cast<int>(result.get_matches_estimated());
+        qDebug()<< "find results count=" <<resultCount;
 
-        searchResult = getContentResult(result,words);
+        getContentResult(result,words);
 
         qDebug()<< "--content search finish--";
+        return resultCount;
     }
     catch(const Xapian::Error &e)
     {
         qWarning() <<QString::fromStdString(e.get_description());
         qDebug()<< "--content search finish--";
-        return;
+        return -1;
     }
-    Q_EMIT this->contentResult(searchResult);
-//    qDebug()<<searchResult;
-    return;
+}
+Xapian::Query FileSearcher::creatQueryForFileSearch(QString keyword, Xapian::Database &db)
+{
+    Xapian::QueryParser qp;
+    qp.set_default_op(Xapian::Query::OP_PHRASE);
+    qp.set_database(db);
+    auto userInput = keyword;
+
+    std::string queryStr = keyword.replace(""," ").toStdString();
+//        std::string s =db.get_spelling_suggestion(queryStr,10);
+//        qDebug()<<"spelling_suggestion!"<<QString::fromStdString(s);
+
+    qDebug()<<"queryStr!"<<QString::fromStdString(queryStr);
+    //Creat a query
+    Xapian::Query queryPhrase = qp.parse_query(queryStr,Xapian::QueryParser::FLAG_PHRASE);
+    std::vector<Xapian::Query> v;
+    for(int i=0;i<userInput.size();i++)
+    {
+        v.push_back(Xapian::Query(QString(userInput.at(i)).toStdString()));
+        qDebug()<<QString::fromStdString(Xapian::Query(QString(userInput.at(i)).toStdString()).get_description());
+    }
+    Xapian::Query queryNear =Xapian::Query(Xapian::Query::OP_NEAR, v.begin(), v.end());
+
+    return Xapian::Query(Xapian::Query::OP_AND,queryNear,queryPhrase);
 }
 
-QStringList FileSearcher::getResult(Xapian::MSet &result)
+Xapian::Query FileSearcher::creatQueryForContentSearch(QString keyword, Xapian::Database &db)
+{
+
+}
+
+QStringList FileSearcher::getResult(Xapian::MSet &result, QString value)
 {
     //QStringList *pathTobeDelete = new QStringList;
     //Delete those path doc which is not already exist.
@@ -140,18 +189,34 @@ QStringList FileSearcher::getResult(Xapian::MSet &result)
         std::string data = doc.get_data();
         Xapian::weight docScoreWeight = it.get_weight();
         Xapian::percent docScorePercent = it.get_percent();
-        QFileInfo *info = new QFileInfo(QString::fromStdString(data));
+        QString path = QString::fromStdString(data);
+
+        if(isBlocked(path))
+            continue;
+
+        QFileInfo *info = new QFileInfo(path);
 
         if(!info->exists())
         {
 //                pathTobeDelete->append(QString::fromStdString(data));
-            qDebug()<<QString::fromStdString(data)<<"is not exist!!";
+            qDebug()<<path<<"is not exist!!";
         }
         else
         {
-            searchResult.append(QString::fromStdString(data));
+            switch (value.toInt())
+            {
+            case 1:
+                m_search_result_dir->enqueue(path);
+                break;
+            case 0:
+                m_search_result_file->enqueue(path);
+                break;
+            default:
+                break;
+            }
+            searchResult.append(path);
         }
-        qDebug()<< "doc="<< QString::fromStdString(data) << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
+        qDebug()<< "doc="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
@@ -179,6 +244,10 @@ QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, s
         double docScoreWeight = it.get_weight();
         Xapian::percent docScorePercent = it.get_percent();
         QString path = QString::fromStdString(doc.get_value(1));
+
+        if(isBlocked(path))
+            continue;
+
         QFileInfo *info = new QFileInfo(path);
 
         if(!info->exists())
@@ -200,10 +269,23 @@ QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, s
             snippets.append(snippet);
             ++count;
         }
+        m_search_result_content->enqueue(qMakePair(path,snippets));
         searchResult.insert(path,snippets);
         qDebug()<< "path="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
     return searchResult;
+}
+
+bool FileSearcher::isBlocked(QString &path)
+{
+    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
+    for(QString i :blockList)
+    {
+        if(path.startsWith(i))
+            return true;
+    }
+    return false;
+
 }

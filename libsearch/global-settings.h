@@ -34,7 +34,15 @@ public Q_SLOTS:
     void setValue(const QString&, const QVariant&);
     void reset(const QString&);
     void resetAll();
-    QList<QString> getBlockDirs();
+    /**
+     * @brief setBlockDirs
+     * set path for blacklist,return true if success,otherwise return false.
+     * @param path path to be blocked
+     * @param returnMessage this message will be set when return false.
+     * @return
+     */
+    bool setBlockDirs(const QString& path, QString &returnMessage);
+    QStringList getBlockDirs();
 
     void forceSync(const QString& = nullptr);
 
@@ -44,6 +52,7 @@ private:
 
     QSettings* m_settings;
     QGSettings* m_gsettings;
+    QSettings *m_block_dirs_settings;
     QMap<QString, QVariant> m_cache;
 
     QMutex m_mutex;

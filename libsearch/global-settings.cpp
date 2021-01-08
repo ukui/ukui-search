@@ -16,6 +16,7 @@ GlobalSettings *GlobalSettings::getInstance()
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
     m_settings = new QSettings("org.ukui", "ukui-search", this);
+    m_block_dirs_settings = new QSettings("org.ukui","ukui-search-block-dirs",this);
     //the default number of transparency in mainwindow is 0.7
     //if someone changes the num in mainwindow, here should be modified too
     m_cache.insert(TRANSPARENCY_KEY, 0.7);
@@ -77,9 +78,27 @@ void GlobalSettings::resetAll()
     });
 }
 
-QList<QString> GlobalSettings::getBlockDirs()
+bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage)
 {
-    return m_cache.keys();
+    QStringList blockDirs = m_block_dirs_settings->allKeys();
+    for(QString i:blockDirs)
+    {
+        if(path.startsWith(i))
+        {
+            returnMessage = QString(tr("Parent folder has been blocked!"));
+            return false;
+        }
+
+        if(i.startsWith(path))
+            m_block_dirs_settings->remove(i);
+    }
+    m_block_dirs_settings->setValue(path,"0");
+    return true;
+}
+
+QStringList GlobalSettings::getBlockDirs()
+{
+    return m_block_dirs_settings->allKeys();
 }
 
 void GlobalSettings::setValue(const QString &key, const QVariant &value)
