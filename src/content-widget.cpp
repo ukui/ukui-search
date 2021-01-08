@@ -253,7 +253,7 @@ QString ContentWidget::getTitleName(const int& type) {
 }
 
 /**
- * @brief ContentWidget::clearLayout 清空搜索结果列表
+ * @brief ContentWidget::clearLayout 清空某个布局
  * @param layout 需要清空的布局
  */
 void ContentWidget::clearLayout(QLayout * layout) {

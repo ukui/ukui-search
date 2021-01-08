@@ -209,7 +209,9 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
 void SearchDetailView::execActions(const int& type, const int& option, const QString& path) {
     switch (option) {
         case OptionView::Options::Open: {
-            openAction(type, path);
+            if (openAction(type, path)) {
+                writeConfigFile(path);
+            }
             break;
         }
         case OptionView::Options::Shortcut: {
@@ -243,7 +245,6 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
             g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
             g_object_unref(desktopAppInfo);
-            writeConfigFile(path);
             return true;
             break;
         }
@@ -255,7 +256,6 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
                 process->deleteLater();
             });
-            writeConfigFile(path);
             return true;
             break;
         }
@@ -266,11 +266,11 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
                 process->deleteLater();
             });
-            writeConfigFile(path);
             return true;
             break;
         }
         default:
+            return false;
             break;
     }
 }
