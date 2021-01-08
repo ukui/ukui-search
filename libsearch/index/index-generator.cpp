@@ -79,7 +79,7 @@ bool IndexGenerator::creatAllIndex(QList<QString> *messageList)
         {
             insertIntoContentDatabase(m_doc_list_content->at(i));
 
-            if(++count == 9999)
+            if(++count == 1000)
             {
                 count = 0;
                 m_database_content->commit();

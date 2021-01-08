@@ -255,25 +255,25 @@ void MainWindow::searchContent(QString searchcontent){
 
     //内容搜索测试用数据,每个文件（路径）对应一段文本内容
     FileSearcher *search = new FileSearcher();
-
-    connect(search, &FileSearcher::contentResult, this, [ = ](QMap<QString,QStringList> map) {
-        m_types.append(SearchItem::SearchType::Contents);
-        QStringList pathlist, contentList;
-        qDebug() << map;
-        for (auto i : map.keys()){
-            QString temp;
-            pathlist << i;
-            for (auto s : map[i]){
-                temp.append(s);
-            }
-            contentList.append(temp);
-        }
-        m_lists.append(pathlist);
-        m_contentFrame->setContentList(contentList);
-    });
+//iaom--------this part shall be rewrite
+//    connect(search, &FileSearcher::contentResult, this, [ = ](QMap<QString,QStringList> map) {
+//        m_types.append(SearchItem::SearchType::Contents);
+//        QStringList pathlist, contentList;
+//        qDebug() << map;
+//        for (auto i : map.keys()){
+//            QString temp;
+//            pathlist << i;
+//            for (auto s : map[i]){
+//                temp.append(s);
+//            }
+//            contentList.append(temp);
+//        }
+//        m_lists.append(pathlist);
+//        m_contentFrame->setContentList(contentList);
+//    });
     QTime t1 = QTime::currentTime();
 
-    search->onKeywordSearchContent(searchcontent);
+//    search->onKeywordSearch(searchcontent);
     QTime t2 = QTime::currentTime();
     qDebug() << t1;
     qDebug() << t2;
@@ -289,21 +289,21 @@ void MainWindow::searchContent(QString searchcontent){
     //文件搜索
 
     FileSearcher *searcher = new FileSearcher();
+//iaom--------this part shall be rewrite
+//    connect(searcher,&FileSearcher::result,[=](QVector<QStringList> resultV){
 
-    connect(searcher,&FileSearcher::result,[=](QVector<QStringList> resultV){
+//        QStringList list1 = resultV.at(0);
+//        QStringList list2 = resultV.at(1);
 
-        QStringList list1 = resultV.at(0);
-        QStringList list2 = resultV.at(1);
-
-        //        QVector<QStringList> lists;
-        m_lists.append(list1);
-        m_lists.append(list2);
-        //        QVector<int> types;
-        m_types.append(SearchItem::SearchType::Dirs);
-        m_types.append(SearchItem::SearchType::Files);
-        m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
-    });
-    searcher->onKeywordSearch(searchcontent,0,10);
+//        //        QVector<QStringList> lists;
+//        m_lists.append(list1);
+//        m_lists.append(list2);
+//        //        QVector<int> types;
+//        m_types.append(SearchItem::SearchType::Dirs);
+//        m_types.append(SearchItem::SearchType::Files);
+//        m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
+//    });
+//    searcher->onKeywordSearch(searchcontent,0,10);
     //    QStringList res = IndexGenerator::IndexSearch(searchcontent);
     //    types.append(SearchItem::SearchType::Files);
     //    lists.append(res);
