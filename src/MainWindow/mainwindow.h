@@ -35,6 +35,7 @@
 #include <QPropertyAnimation>
 #include <QFileInfo>
 #include <QPixmap>
+#include <QKeyEvent>
 #include "src/Style/style.h"
 #include "src/MainWindow/mainviewwidget.h"
 #include "src/Interface/ukuicontrolstyle.h"
@@ -77,6 +78,7 @@ protected:
      * @brief Handle events clicking on the outside of the window
      */
     bool event(QEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 public Q_SLOTS:
     /**

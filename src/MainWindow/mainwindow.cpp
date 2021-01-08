@@ -166,6 +166,12 @@ bool MainWindow::event ( QEvent * event )
     return QWidget::event(event);
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event){
+    if(event->key()==Qt::Key_Escape){
+        qApp->exit(0);
+    }
+}
+
 /**
  * @brief loadMainWindow 加载主界面的函数
  * 不删除的原因是在单例和main函数里面需要用
