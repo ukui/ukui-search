@@ -46,10 +46,16 @@ void SearchFileThread::run(){
         for(int j=0;j<recMap.value(returnlist.at(m)).size();++j){
             name=returnlist.at(m);
             pathlist=recMap.value(name);
-            path=pathlist.at(j);
-            fullpath=path+"/"+name;
+            for(int t=0;t<pathlist.size();t++)
+            {
+                path=pathlist.at(t);
+                fullpath=path+"/"+name;
+                if(returnResult.contains(fullpath))
+                    continue;
+                returnResult.append(fullpath);
+            }
         }
-        returnResult.append(fullpath);
+
     }
     Q_EMIT sendSearchResult(returnResult);
 }

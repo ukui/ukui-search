@@ -29,8 +29,6 @@ fileview::fileview()
             styleChange();
         }
     });
-
-
     this->setHeaderHidden(true);
 }
 

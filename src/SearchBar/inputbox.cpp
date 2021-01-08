@@ -136,9 +136,6 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
             styleChange();
         }
     });
-
-
-
     this->setFocusPolicy(Qt::ClickFocus);
     this->installEventFilter(this);
     this->setContextMenuPolicy(Qt::NoContextMenu);
