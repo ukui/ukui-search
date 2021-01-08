@@ -12,6 +12,9 @@ FileSearcher::FileSearcher(QObject *parent) : QObject(parent)
 
 void FileSearcher::onKeywordSearch(QString keyword)
 {
+    m_search_result_file = new QQueue<QString>;
+    m_search_result_dir = new QQueue<QString>;
+    m_search_result_content = new QQueue<QPair<QString,QStringList>>;
     //file
     QtConcurrent::run([=](){
         int begin = 0;

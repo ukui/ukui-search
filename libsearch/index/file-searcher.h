@@ -43,9 +43,9 @@ private:
     QMap<QString,QStringList> getContentResult(Xapian::MSet &result,std::string &keyWord);
 
     bool isBlocked(QString &path);
-    QQueue<QString> *m_search_result_file;
-    QQueue<QString> *m_search_result_dir;
-    QQueue<QPair<QString,QStringList>> *m_search_result_content;
+    QQueue<QString> *m_search_result_file = nullptr;
+    QQueue<QString> *m_search_result_dir = nullptr;
+    QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
 
 };
 

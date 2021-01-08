@@ -79,6 +79,7 @@ private:
 
     QVector<int> m_types;
     QVector<QStringList> m_lists;
+    QStringList m_dirList;
 protected:
     void paintEvent(QPaintEvent *);
     void initUi();
