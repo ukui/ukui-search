@@ -18,10 +18,11 @@ public:
     void setPage(const int&);
     int currentPage();
     void refreshSearchList(const QVector<int>&, const QVector<QStringList>&, const QString&);
-    void initHomePage(const QVector<QStringList>&);
+    void initHomePage();
     void setContentList(const QStringList&);
 private:
     void initUI();
+    void clearHomepage();
     QStringList m_contentList;
     QWidget * m_homePage = nullptr;
     QVBoxLayout * m_homePageLyt = nullptr;
@@ -44,7 +45,7 @@ Q_SIGNALS:
     void currentItemChanged();
 
 private Q_SLOTS:
-    void clearSearchList();
+    void clearLayout(QLayout *);
 };
 
 #endif // CONTENTWIDGET_H

@@ -1,19 +1,22 @@
 #include "config-file.h"
 
-void ConfigFile::writeCommonly(QString message){
-   QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
+bool ConfigFile::writeCommonly(QString message){
+    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
     QStringList messagelist=message.split("/");
     QString appname=messagelist.last();
     if(!appname.contains("desktop"))
-        return;
+        return false;
     m_qSettings->beginGroup("Commonly");
     QStringList quickly=m_qSettings->allKeys();
-    if(quickly.contains(message)){
+    if(quickly.contains(message.mid(1, message.length()-1))){
         m_qSettings->setValue(message,m_qSettings->value(message).toInt()+1);
     }else{
         m_qSettings->setValue(message,1);
     }
     m_qSettings->endGroup();
+    if(m_qSettings)
+        delete m_qSettings;
+    return true;
 }
 
 QStringList ConfigFile::readCommonly(){
@@ -28,7 +31,6 @@ QStringList ConfigFile::readCommonly(){
     m_qSettings->endGroup();
     QMap<QString, int>::iterator iter =quicklycount.begin();
     QVector<QPair<QString, int>> vec;
-    QString iconamePah;
     while(iter !=quicklycount.end()) {
         vec.push_back(qMakePair(iter.key(), iter.value()));
         iter++;
@@ -37,14 +39,14 @@ QStringList ConfigFile::readCommonly(){
         return (l.second > r.second);
     });
     for(int j=0;j<vec.size();j++){
-        returnlist.append(vec.at(j).first);
+        returnlist.append("/" + vec.at(j).first);
     }
     if(m_qSettings)
         delete m_qSettings;
-    return returnlist;
+    return returnlist.mid(0, 4);
 }
 
-void ConfigFile::writeRecently(QString message){
+bool ConfigFile::writeRecently(QString message){
     QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
 
     m_qSettings->beginGroup("Recently");
@@ -54,11 +56,18 @@ void ConfigFile::writeRecently(QString message){
         recently.removeOne(message);
     }
     recently.insert(0,message);
+
     m_qSettings->beginGroup("Recently");
-    m_qSettings->setValue("Recently",recently);
+    qWarning()<<m_qSettings->value("Recently").toStringList().length();
+    if (m_qSettings->value("Recently").toStringList().length() >= 20) {
+        m_qSettings->setValue("Recently",QStringList(recently.mid(0, 20)));
+    } else {
+        m_qSettings->setValue("Recently",recently);
+    }
     m_qSettings->endGroup();
     if(m_qSettings)
         delete m_qSettings;
+    return true;
 }
 
 QStringList ConfigFile::readRecently(){
@@ -69,12 +78,13 @@ QStringList ConfigFile::readRecently(){
     m_qSettings->endGroup();
     if(m_qSettings)
         delete m_qSettings;
-    return recently;
+    return recently.mid(0, 4);
 }
 
-void ConfigFile::writeConfig(QString message){
-    writeCommonly(message);
-    writeRecently(message);
+bool ConfigFile::writeConfig(QString message){
+    bool isWriteCommonlyDone = writeCommonly(message);
+    bool isWriteRecentlyDone = writeRecently(message);
+    return (isWriteCommonlyDone || isWriteRecentlyDone);
 }
 
 QMap<QString,QStringList> ConfigFile::readConfig(){

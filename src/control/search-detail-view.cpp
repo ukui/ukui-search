@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QDateTime>
+#include "config-file.h"
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
 {
@@ -75,6 +76,7 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
             htmlString.append(QString(text.at(i)));
         }
     }
+    htmlString.replace("\n", "<br />");//替换换行符
     return htmlString;
 }
 
@@ -241,6 +243,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
             g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
             g_object_unref(desktopAppInfo);
+            writeConfigFile(path);
             return true;
             break;
         }
@@ -252,6 +255,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
                 process->deleteLater();
             });
+            writeConfigFile(path);
             return true;
             break;
         }
@@ -262,11 +266,23 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
                 process->deleteLater();
             });
+            writeConfigFile(path);
             return true;
             break;
         }
         default:
             break;
+    }
+}
+
+/**
+ * @brief SearchDetailView::writeConfigFile 将打开过的文件或应用或配置项记录下来并发出刷新Homepage的请求
+ * @param path 待写入的文件路径
+ * @return
+ */
+bool SearchDetailView::writeConfigFile(const QString& path) {
+    if (ConfigFile::writeConfig(path)) {
+        Q_EMIT this->configFileChanged();
     }
 }
 

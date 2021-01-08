@@ -25,8 +25,10 @@ private:
     bool openPathAction(const QString&);
     bool copyPathAction(const QString&);
     QString getHtmlText(const QString&, const QString&);
-Q_SIGNALS:
+    bool writeConfigFile(const QString&);
 
+Q_SIGNALS:
+    void configFileChanged();
 private Q_SLOTS:
     void execActions(const int&, const int&, const QString&);
 };

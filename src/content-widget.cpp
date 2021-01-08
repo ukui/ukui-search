@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QTimer>
+#include "config-file.h"
 
 ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
 {
@@ -56,6 +57,10 @@ void ContentWidget::initUI() {
     m_resultListArea->setWidget(m_resultList);
     m_resultListArea->setWidgetResizable(true);
     m_detailView = new SearchDetailView(m_resultDetailArea);
+    connect(m_detailView, &SearchDetailView::configFileChanged, this, [ = ]() {
+        clearLayout(m_homePageLyt);
+        initHomePage();
+    });
     m_resultDetailArea->setWidget(m_detailView);
     m_resultDetailArea->setWidgetResizable(true);
     m_resultListArea->setStyleSheet("QScrollArea{background:transparent;}");
@@ -70,13 +75,29 @@ void ContentWidget::initUI() {
  * @brief ContentWidget::initHomePage 向homepage填充内容
  * @param lists 三个列表：常用，最近，快捷
  */
-void ContentWidget::initHomePage(const QVector<QStringList>& lists) {
+void ContentWidget::initHomePage() {
+    QVector<QStringList> lists;
+    QMap<QString, QStringList> map = ConfigFile::readConfig();
+    QStringList commonlyList;
+    commonlyList = map.value("Commonly");
+    QStringList recentlyList;
+    recentlyList = map.value("Recently");
+    QStringList quicklyList;
+    quicklyList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Theme/主题/更改壁纸";
+    lists.append(commonlyList);
+    lists.append(recentlyList);
+    lists.append(quicklyList);
+
     for (int i = 0; i < lists.count(); i++) {
+        if (lists.at(i).isEmpty())
+            continue;
         QWidget * listWidget = new QWidget(m_homePage);
         QVBoxLayout * itemWidgetLyt = new QVBoxLayout(listWidget);
         QLabel * titleLabel = new QLabel(listWidget);
         QWidget * itemWidget = new QWidget(listWidget);
         if (i == 1) {
+            if (lists.at(i).length() <= 2) itemWidget->setFixedHeight(48);
+            else itemWidget->setFixedHeight(112);
             titleLabel->setText(tr("Recently Opened"));
             QGridLayout * layout = new QGridLayout(itemWidget);
             layout->setSpacing(8);
@@ -87,6 +108,7 @@ void ContentWidget::initHomePage(const QVector<QStringList>& lists) {
                 layout->addWidget(item, j / 2, j % 2);
             }
         } else {
+            itemWidget->setFixedHeight(136);
             QHBoxLayout * layout = new QHBoxLayout(itemWidget);
             layout->setSpacing(8);
             layout->setContentsMargins(0, 0, 0, 0);
@@ -95,12 +117,12 @@ void ContentWidget::initHomePage(const QVector<QStringList>& lists) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, path);
                 layout->addWidget(item);
             }
-            if (i) {
-                titleLabel->setText(tr("Open Quickly"));
+            for (int j = 0; j < 4 - lists.at(i).length(); j++) {
                 QWidget * emptyItem = new QWidget(itemWidget);
-                emptyItem->setFixedSize(136, 136); //占位用widget,若后续快捷打开有扩展项，可删除此widget
+                emptyItem->setFixedSize(136, 136); //占位用widget,少于4项会补全后方占位
                 layout->addWidget(emptyItem);
             }
+            if (i) titleLabel->setText(tr("Open Quickly"));
             else titleLabel->setText(tr("Commonly Used"));
         }
         itemWidgetLyt->setSpacing(6);
@@ -109,13 +131,14 @@ void ContentWidget::initHomePage(const QVector<QStringList>& lists) {
         itemWidgetLyt->addWidget(itemWidget);
         m_homePageLyt->addWidget(listWidget);
     }
+    m_homePageLyt->addStretch();
 }
 
 /**
  * @brief setPageType 预留的接口，为指定类别搜索调整界面内容
  * @param type
  */
-void ContentWidget::setPage(const int& type){
+void ContentWidget::setPage(const int& type) {
     m_currentType = type;
 }
 
@@ -135,7 +158,8 @@ int ContentWidget::currentPage() {
  */
 void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<QStringList>& lists, const QString& keyword) {
     if (!m_listLyt->isEmpty()) {
-        clearSearchList();
+        clearLayout(m_listLyt);
+        m_resultList->setFixedHeight(0);
     }
     bool isEmpty = true;
     QStringList bestList;
@@ -229,11 +253,13 @@ QString ContentWidget::getTitleName(const int& type) {
 }
 
 /**
- * @brief ContentWidget::clearSearchList 清空搜索结果列表
+ * @brief ContentWidget::clearLayout 清空搜索结果列表
+ * @param layout 需要清空的布局
  */
-void ContentWidget::clearSearchList() {
+void ContentWidget::clearLayout(QLayout * layout) {
+    if (! layout) return;
     QLayoutItem * child;
-    while ((child = m_listLyt->takeAt(0)) != 0) {
+    while ((child = layout->takeAt(0)) != 0) {
         if(child->widget())
         {
             child->widget()->setParent(NULL); //防止删除后窗口看上去没有消失
@@ -241,7 +267,6 @@ void ContentWidget::clearSearchList() {
         delete child;
     }
     child = NULL;
-    m_resultList->setFixedHeight(0);
 }
 
 
