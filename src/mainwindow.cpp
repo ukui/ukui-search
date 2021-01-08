@@ -181,22 +181,7 @@ void MainWindow::initUi()
     });
 
     //初始化homepage
-    QVector<QStringList> lists;
-
-    //测试用数据
-    QStringList list;
-    list<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ukui-clock.desktop"<<"/usr/share/applications/wps-office-pdf.desktop";
-    QStringList list2;
-    list2<<QString("%1/下载").arg(QDir::homePath())<<"/home/zjp/ukui/NM/v10/kylin-nm/README.md"<<"Theme/主题/更改壁纸"<<"/home/zjp/下载/WiFi_AP选择.docx";
-    QStringList list3;
-    list3<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Theme/主题/更改壁纸";
-
-    lists.append(list);
-    lists.append(list2);
-    lists.append(list3);
-
-    //将搜索结果加入列表
-    m_contentFrame->initHomePage(lists);
+    m_contentFrame->initHomePage();
 }
 
 /**

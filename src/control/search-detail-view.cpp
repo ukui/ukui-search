@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QDateTime>
+#include "config-file.h"
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
 {
@@ -75,6 +76,7 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
             htmlString.append(QString(text.at(i)));
         }
     }
+    htmlString.replace("\n", "<br />");//替换换行符
     return htmlString;
 }
 
@@ -207,7 +209,9 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
 void SearchDetailView::execActions(const int& type, const int& option, const QString& path) {
     switch (option) {
         case OptionView::Options::Open: {
-            openAction(type, path);
+            if (openAction(type, path)) {
+                writeConfigFile(path);
+            }
             break;
         }
         case OptionView::Options::Shortcut: {
@@ -266,7 +270,19 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             break;
         }
         default:
+            return false;
             break;
+    }
+}
+
+/**
+ * @brief SearchDetailView::writeConfigFile 将打开过的文件或应用或配置项记录下来并发出刷新Homepage的请求
+ * @param path 待写入的文件路径
+ * @return
+ */
+bool SearchDetailView::writeConfigFile(const QString& path) {
+    if (ConfigFile::writeConfig(path)) {
+        Q_EMIT this->configFileChanged();
     }
 }
 

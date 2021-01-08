@@ -10,13 +10,13 @@ class ConfigFile : public QObject
 {
     Q_OBJECT
 public:
-    static void writeConfig(QString message);
+    static bool writeConfig(QString message);
     static QMap<QString,QStringList> readConfig();
     static void receiveMessage(QString message);
 private:
-   static void writeCommonly(QString message);
+   static bool writeCommonly(QString message);
    static QStringList readCommonly();
-   static void writeRecently(QString message);
+   static bool writeRecently(QString message);
    static QStringList readRecently();
 
 };
