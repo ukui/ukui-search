@@ -117,6 +117,7 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
 
 IndexGenerator::~IndexGenerator()
 {
+    qDebug() << "~IndexGenerator";
     if(m_datebase_path)
         delete m_datebase_path;
     if(m_database_content)

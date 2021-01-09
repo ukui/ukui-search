@@ -3,7 +3,7 @@
 
 #include <xapian.h>
 #include <QObject>
-
+//#include <QtConcurrent/QtConcurrent>
 #include <QStringList>
 #include <QMap>
 #include <QCryptographicHash>
