@@ -1,3 +1,4 @@
+//aborted --MouseZhangZh
 #ifndef MESSAGELISTMANAGER_H
 #define MESSAGELISTMANAGER_H
 
@@ -22,7 +23,7 @@ private:
 
     size_t length = 80000;
     IndexGenerator* ig;
-    QThread* indexGeneratorThread;
+//    QThread* indexGeneratorThread;
 
 Q_SIGNALS:
     bool Send(QStringList*);

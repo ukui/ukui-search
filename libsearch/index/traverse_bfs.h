@@ -9,11 +9,14 @@
 class Traverse_BFS
 {
 public:
-    explicit Traverse_BFS(const QString&);
     void Traverse();
     virtual void DoSomething(const QFileInfo&) = 0;
     void setPath(const QString&);
+protected:
+    explicit Traverse_BFS(const QString&);
 private:
+    Traverse_BFS(const Traverse_BFS&) = delete;
+    void operator=(const Traverse_BFS&) = delete;
     QString path = "/home";
 };
 

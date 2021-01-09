@@ -2,6 +2,7 @@
 
 Traverse_BFS::Traverse_BFS(const QString& path)
 {
+    Q_ASSERT('/' == path.at(0));
     this->path = path;
 }
 

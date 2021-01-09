@@ -19,12 +19,12 @@ MessageListManager::MessageListManager(){
 
 MessageListManager::~MessageListManager(){
     delete this->messageList;
-    delete this->indexGeneratorThread;
+//    delete this->indexGeneratorThread;
     //delete this->ig;
 
     this->messageList = nullptr;
     this->ig = nullptr;
-    this->indexGeneratorThread = nullptr;
+//    this->indexGeneratorThread = nullptr;
 }
 
 void MessageListManager::AddMessage(const QVector<QString>& pathVec){

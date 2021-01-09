@@ -31,10 +31,10 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid)
 {
     auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
     auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
-                              G_FILE_ATTRIBUTE_STANDARD_ICON,
-                              G_FILE_QUERY_INFO_NONE,
-                              nullptr,
-                              nullptr));
+                                                G_FILE_ATTRIBUTE_STANDARD_ICON,
+                                                G_FILE_QUERY_INFO_NONE,
+                                                nullptr,
+                                                nullptr));
     if (!G_IS_FILE_INFO (info.get()->get()))
         return QIcon::fromTheme("unknown");
     GIcon *g_icon = g_file_info_get_icon (info.get()->get());
@@ -190,8 +190,8 @@ QString FileUtils::getMimetype(QString &path, bool getsuffix)
 //aborted
 QString FileUtils::find(const QString &hanzi)
 {
-//        static QMap<QString, QStringList> map = loadHanziTable("://index/pinyinWithoutTone.txt");
-//        static QMap<QString, QStringList> map;
+    //        static QMap<QString, QStringList> map = loadHanziTable("://index/pinyinWithoutTone.txt");
+    //        static QMap<QString, QStringList> map;
     QString output;
     QStringList stringList = hanzi.split("");
 
@@ -445,23 +445,23 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
         resultList.append(tempQueue.dequeue());
         resultList.append(tempQueueFirst.dequeue());
     }
-//    delete tempQueue;
-//    delete tempQueueFirst;
-//    tempQueue = nullptr;
-//    tempQueueFirst = nullptr;
+    //    delete tempQueue;
+    //    delete tempQueueFirst;
+    //    tempQueue = nullptr;
+    //    tempQueueFirst = nullptr;
     return;
 }
 
 QStringList FileUtils::findMultiToneWords(const QString& hanzi)
 {
-//    QStringList* output = new QStringList();
+    //    QStringList* output = new QStringList();
     QStringList output;
     QString tempAllPinYin, tempFirst;
     QStringList stringList = hanzi.split("");
 
-//    stitchMultiToneWordsDFS(hanzi, tempAllPinYin, tempFirst, output);
+    //    stitchMultiToneWordsDFS(hanzi, tempAllPinYin, tempFirst, output);
     stitchMultiToneWordsBFSStackLess3(hanzi, output);
-//    qDebug() << output;
+    //    qDebug() << output;
     return output;
 }
 

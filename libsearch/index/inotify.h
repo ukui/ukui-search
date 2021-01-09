@@ -1,3 +1,4 @@
+//aborted --MouseZhangZh
 #ifndef INOTIFY_H
 #define INOTIFY_H
 

@@ -8,6 +8,7 @@
 #include "index/inotify.h"
 #include "file-utils.h"
 #include "global-settings.h"
+#include "index/first-index.h"
 
 #include "index/filetypefilter.h"
 

@@ -38,7 +38,8 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
     QByteArray currentTime = QTime::currentTime().toString().toLocal8Bit();
 
     bool showDebug = true;
-    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/ukui-search.log";
+//    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/ukui-search.log";
+    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search.log";
     if (!QFile::exists(logFilePath)) {
         showDebug = false;
     }
@@ -89,6 +90,12 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+
+    qInstallMessageHandler(messageOutput);
+
+    qDebug() << "main start";
+    FirstIndex* fi = new FirstIndex("/home");
+    fi->start();
     /*-------------ukuisearchdbus Test start-----------------*/
 //    UkuiSearchQDBus usQDBus;
 //    usQDBus.setInotifyMaxUserWatches();
@@ -127,7 +134,8 @@ int main(int argc, char *argv[])
 
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);
-    qInstallMessageHandler(messageOutput);
+
+    qDebug() << "main start x2";
 
     if(app.isRunning())
     {
