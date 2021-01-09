@@ -83,16 +83,17 @@ bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage)
     QStringList blockDirs = m_block_dirs_settings->allKeys();
     for(QString i:blockDirs)
     {
-        if(path.startsWith(i))
+//        qWarning()<<i;
+        if(path.right(path.length()-1).startsWith(i))
         {
             returnMessage = QString(tr("Parent folder has been blocked!"));
             return false;
         }
 
-        if(i.startsWith(path))
+        if(i.startsWith(path.right(path.length()-1)))
             m_block_dirs_settings->remove(i);
     }
-    m_block_dirs_settings->setValue(path,"0");
+    m_block_dirs_settings->setValue(path.right(path.length()-1),"0");
     return true;
 }
 

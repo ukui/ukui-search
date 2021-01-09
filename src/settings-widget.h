@@ -23,8 +23,9 @@ public:
 
 private:
     void initUi();
-    void setupBlackList(const QStringList&);
-    void paintEvent(QPaintEvent *event);
+    void setupBlackList(const QStringList &);
+    void clearLayout(QLayout *);
+    void paintEvent(QPaintEvent *);
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
     QFrame * m_titleFrame = nullptr;

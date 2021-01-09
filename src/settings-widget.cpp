@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QDebug>
 #include "folder-list-item.h"
+#include "global-settings.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
@@ -12,12 +13,7 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     initUi();
-    QStringList list;
-    list<<"/usr/share/applications"<<"/usr/share/icons"<<
-          "/usr/libs"<<"/home/zjp/UKUI/SEARCH"<<
-          "/home/zjp/UKUI/UKCC"<<"/home/zjp/UKUI/SD/intel/ukui-settings-daemon"<<
-          "/home/zjp/下载"<<"/home/zjp/code";
-    setupBlackList(list);
+    setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
 }
 
 SettingsWidget::~SettingsWidget()
@@ -178,6 +174,7 @@ void SettingsWidget::initUi() {
  * @param list 文件夹路径列表
  */
 void SettingsWidget::setupBlackList(const QStringList& list) {
+    clearLayout(m_dirListLyt);
     Q_FOREACH(QString path, list) {
         FolderListItem * item = new FolderListItem(m_dirListWidget, path);
         m_dirListLyt->addWidget(item);
@@ -186,6 +183,23 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
         connect(item, SIGNAL(onDelBtnClicked(const QString&)), this, SLOT(onBtnDelClicked(const QString&)));
     }
     m_dirListLyt->addStretch();
+}
+
+/**
+ * @brief SettingsWidget::clearLayout 清空某个布局
+ * @param layout 需要清空的布局
+ */
+void SettingsWidget::clearLayout(QLayout * layout) {
+    if (! layout) return;
+    QLayoutItem * child;
+    while ((child = layout->takeAt(0)) != 0) {
+        if(child->widget())
+        {
+            child->widget()->setParent(NULL);
+        }
+        delete child;
+    }
+    child = NULL;
 }
 
 /**
@@ -251,9 +265,17 @@ void SettingsWidget::onBtnAddClicked() {
         fileDialog->deleteLater();
         return;
     }
-    QString selectedDir;
+    QString selectedDir = 0;
+    QString returnMessage = 0;
     selectedDir = fileDialog->selectedFiles().first();
-    qDebug()<<selectedDir;
+    qDebug()<<"Selected a folder in onBtnAddClicked(): "<<selectedDir<<". ->settings-widget.cpp #238";
+    if (GlobalSettings::getInstance()->setBlockDirs(selectedDir, returnMessage)) {
+        setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
+        qDebug()<<"Add block dir in onBtnAddClicked() successed. ->settings-widget.cpp #238";
+    } else {
+        qWarning()<<returnMessage;
+        qDebug()<<"Add block dir in onBtnAddClicked() failed. Message: "<<returnMessage<<" ->settings-widget.cpp #238";
+    }
 }
 
 /**
