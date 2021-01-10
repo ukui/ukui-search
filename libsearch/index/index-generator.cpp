@@ -5,7 +5,6 @@
 #include "chinese-segmentation.h"
 #include "file-utils.h"
 #include "index-generator.h"
-#include "chinesecharacterstopinyin.h"
 #include "global-settings.h"
 
 #include <QtConcurrent>
