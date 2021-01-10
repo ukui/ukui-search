@@ -80,22 +80,28 @@ void GlobalSettings::resetAll()
     });
 }
 
-bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage)
+bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage, bool remove)
 {
+    //why QSetting's key can't start with "/"??
+    QString pathKey = path.right(path.length()-1);
+    if(remove)
+    {
+        m_block_dirs_settings->remove(pathKey);
+        return true;
+    }
     QStringList blockDirs = m_block_dirs_settings->allKeys();
     for(QString i:blockDirs)
     {
-//        qWarning()<<i;
-        if(path.right(path.length()-1).startsWith(i))
+        if(pathKey.startsWith(i))
         {
             returnMessage = QString(tr("Parent folder has been blocked!"));
             return false;
         }
 
-        if(i.startsWith(path.right(path.length()-1)))
+        if(i.startsWith(pathKey))
             m_block_dirs_settings->remove(i);
     }
-    m_block_dirs_settings->setValue(path.right(path.length()-1),"0");
+    m_block_dirs_settings->setValue(pathKey,"0");
     return true;
 }
 
