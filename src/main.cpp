@@ -94,8 +94,10 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(messageOutput);
 
     qDebug() << "main start";
-    FirstIndex* fi = new FirstIndex("/home");
-    fi->start();
+    FirstIndex fi("/home");
+    fi.start();
+    InotifyIndex ii("/home");
+    ii.start();
     /*-------------ukuisearchdbus Test start-----------------*/
 //    UkuiSearchQDBus usQDBus;
 //    usQDBus.setInotifyMaxUserWatches();

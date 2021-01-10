@@ -14,8 +14,14 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
     if (indexDataBaseStatus == "" || contentIndexDataBaseStatus == ""){
         this->bool_dataBaseExist = false;
     }
+    else{
+        this->bool_dataBaseExist = true;
+    }
     if (indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2"){
         this->bool_dataBaseStatusOK = false;
+    }
+    else{
+        this->bool_dataBaseStatusOK = true;
     }
 
     this->q_index = new QQueue<QVector<QString>>();
@@ -26,10 +32,13 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
 
 FirstIndex::~FirstIndex()
 {
+    qDebug() << "~FirstIndex";
     delete this->q_index;
     this->q_index = nullptr;
-    this->q_content_index = nullptr;
     delete this->q_content_index;
+    this->q_content_index = nullptr;
+    delete this->p_indexGenerator;
+    this->p_indexGenerator;
 //    delete this->mlm;
 //    this->mlm = nullptr;
 }
@@ -95,6 +104,10 @@ void FirstIndex::run(){
     mutex2.unlock();
     mutex3.unlock();
     qDebug() << "first index end;";
+    //don't use it now!!!!
+    //MouseZhangZh
+//    this->~FirstIndex();
+//    qDebug() << "~FirstIndex end;";
     this->quit();
 //    this->wait();
 }

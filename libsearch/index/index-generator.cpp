@@ -123,6 +123,7 @@ IndexGenerator::~IndexGenerator()
     if(m_database_content)
         delete m_database_content;
     GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"2");
+    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"2");
     GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"2");
 }
 

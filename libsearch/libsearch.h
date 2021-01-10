@@ -13,6 +13,7 @@
 #include "index/filetypefilter.h"
 
 #include "index/ukui-search-qdbus.h"
+#include "index/inotify-index.h"
 
 class  LIBSEARCH_EXPORT GlobalSearch
 {

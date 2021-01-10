@@ -33,7 +33,7 @@ InotifyManagerRefact::InotifyManagerRefact(const QString& path) : Traverse_BFS(p
     num2string.insert(IN_UNMOUNT, "IN_UNMOUNT");
     num2string.insert(IN_Q_OVERFLOW, "IN_Q_OVERFLOW");
     num2string.insert(IN_IGNORED, "IN_IGNORED");
-    this->mlm = new MessageListManager();
+//    this->mlm = new MessageListManager();
 
     this->AddWatch("/home");
     this->Traverse();
@@ -44,14 +44,14 @@ InotifyManagerRefact::InotifyManagerRefact(const QString& path) : Traverse_BFS(p
 }
 
 InotifyManagerRefact::~InotifyManagerRefact(){
-    delete this->mlm;
-    this->mlm = nullptr;
+//    delete this->mlm;
+//    this->mlm = nullptr;
 //    delete dirPath;
 //    dirPath = nullptr;
 }
 
 void InotifyManagerRefact::DoSomething(const QFileInfo& fileInfo){
-    this->mlm->AddMessage(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir()?"1":"0"));
+//    this->mlm->AddMessage(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir()?"1":"0"));
 //    if(QString(bool((fileInfo.isDir()))) == QString("1"))
 //        qDebug()<<"bool((fileInfo.isDir())"<<QString(fileInfo.isDir());
 //    this->mlm->AddMessage(QVector<QString>() << "PLog" << "/home/zpf/baidunetdisk/PLog" << "1");
@@ -65,7 +65,7 @@ void InotifyManagerRefact::DoSomething(const QFileInfo& fileInfo){
 
 void InotifyManagerRefact::SendRestMessage()
 {
-    this->mlm->SendMessage();
+//    this->mlm->SendMessage();
 }
 
 bool InotifyManagerRefact::AddWatch(const QString &path){
@@ -73,6 +73,7 @@ bool InotifyManagerRefact::AddWatch(const QString &path){
 //    qDebug() << "m_fd: " <<m_fd;
     //int ret = inotify_add_watch(m_fd, path.toStdString().c_str(), IN_ALL_EVENTS);
     int ret = inotify_add_watch(m_fd, path.toStdString().c_str(), (IN_MOVED_FROM | IN_MOVED_TO | IN_CREATE | IN_DELETE));
+    Q_ASSERT(ret == 0);
     if (ret == -1) {
         qDebug() << "AddWatch error:" << path;
         return false;
@@ -155,8 +156,8 @@ void InotifyManagerRefact::run(){
 //                    else {
 
                         //IndexGenerator::getInstance()->creatAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
-                        this->mlm->AddMessage(QVector<QString>() << event->name << (currentPath[event->wd] + '/' + event->name) << QString(bool((event->mask & IN_ISDIR))));
-                        this->mlm->SendMessage();
+//                        this->mlm->AddMessage(QVector<QString>() << event->name << (currentPath[event->wd] + '/' + event->name) << QString(bool((event->mask & IN_ISDIR))));
+//                        this->mlm->SendMessage();
 //                    }
                 }
                 else if((event->mask & IN_DELETE) | (event->mask & IN_MOVED_FROM)){

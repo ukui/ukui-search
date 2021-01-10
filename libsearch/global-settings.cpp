@@ -104,15 +104,18 @@ QStringList GlobalSettings::getBlockDirs()
     return m_block_dirs_settings->allKeys();
 }
 
+//here should be override
+//MouseZhangZh
 void GlobalSettings::setValue(const QString &key, const QVariant &value)
 {
     m_cache.insert(key, value);
     QtConcurrent::run([=]() {
-        if (m_mutex.tryLock(1000)) {
+//        if (m_mutex.tryLock(1000)) {
+        m_mutex.lock();
             m_settings->setValue(key, value);
             m_settings->sync();
             m_mutex.unlock();
-        }
+//        }
     });
 }
 
