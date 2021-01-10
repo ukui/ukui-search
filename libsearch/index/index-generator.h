@@ -15,6 +15,7 @@ class IndexGenerator : public QObject
     Q_OBJECT
 public:
     static IndexGenerator *getInstance(bool rebuild = false);
+    ~IndexGenerator();
     bool setIndexdataPath();
     bool isIndexdataExist();
     //for search test
@@ -29,7 +30,6 @@ public Q_SLOTS:
 
 private:
     explicit IndexGenerator(bool rebuild = false,QObject *parent = nullptr);
-    ~IndexGenerator();
     //For file name index
     void HandlePathList(QList<QVector<QString>> *messageList);
     //For file content index

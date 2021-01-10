@@ -9,6 +9,7 @@ HEADERS += \
     $$PWD/first-index.h \
     $$PWD/index-generator.h \
 #    $$PWD/inotify-manager.h \
+    $$PWD/inotify-index.h \
     $$PWD/inotify.h \
     $$PWD/messagelist-manager.h \
     $$PWD/traverse_bfs.h \
@@ -25,6 +26,7 @@ SOURCES += \
     $$PWD/first-index.cpp \
     $$PWD/index-generator.cpp \
 #    $$PWD/inotify-manager.cpp \
+    $$PWD/inotify-index.cpp \
     $$PWD/inotify.cpp \
     $$PWD/messagelist-manager.cpp \
     $$PWD/test-Inotify-Manager.cpp \

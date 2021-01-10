@@ -29,7 +29,7 @@ private:
     int m_fd;
     QMap<int, QString> currentPath;
     QMap<int, QString> num2string;
-    MessageListManager* mlm;
+//    MessageListManager* mlm;
 
     QMap<QString, QStringList>* dirPath;
 };
