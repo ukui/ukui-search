@@ -92,12 +92,30 @@ int main(int argc, char *argv[])
 {
 
     qInstallMessageHandler(messageOutput);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    qDebug() << "main start";
-    FirstIndex fi("/home");
-    fi.start();
-    InotifyIndex ii("/home");
-    ii.start();
+    QtSingleApplication app("ukui-search", argc, argv);
+    app.setQuitOnLastWindowClosed(false);
+
+    if(app.isRunning())
+    {
+        app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
+        qDebug() << QObject::tr("ukui-search is already running!");
+        return EXIT_SUCCESS;
+    }/*else {
+        QCommandLineParser parser;
+        QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
+        QCommandLineOption showsearch({"s", "show"}, QObject::tr("show search widget"));
+        parser.addOptions({debugOption, showsearch});
+        parser.process(app);
+    }*/
+
+//    qDebug() << "main start";
+//    FirstIndex fi("/home");
+//    fi.start();
+//    InotifyIndex ii("/home");
+//    ii.start();
     /*-------------ukuisearchdbus Test start-----------------*/
 //    UkuiSearchQDBus usQDBus;
 //    usQDBus.setInotifyMaxUserWatches();
@@ -131,27 +149,6 @@ int main(int argc, char *argv[])
 //    search->onKeywordSearchContent("g,e,x");
     /*-------------文本搜索 Test End-----------------*/
 
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-
-    QtSingleApplication app("ukui-search", argc, argv);
-    app.setQuitOnLastWindowClosed(false);
-
-    qDebug() << "main start x2";
-
-    if(app.isRunning())
-    {
-        app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
-        qDebug() << QObject::tr("ukui-search is already running!");
-        return EXIT_SUCCESS;
-    }/*else {
-        QCommandLineParser parser;
-        QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
-        QCommandLineOption showsearch({"s", "show"}, QObject::tr("show search widget"));
-        parser.addOptions({debugOption, showsearch});
-        parser.process(app);
-    }*/
-
     // 加载国际化文件
     QTranslator translator;
     try {
@@ -164,15 +161,15 @@ int main(int argc, char *argv[])
     MainWindow *w = new MainWindow;
     QStringList arguments = QCoreApplication::arguments();
     centerToScreen(w);
-    w->show();
-    w->raise();
-    w->activateWindow();
-//    w->loadMainWindow();
+
     app.setActivationWindow(w);
 //    if(arguments.size()>1)
 //    w->searchContent(arguments.at(1));
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
 
+//    qDebug() << "main start";
+//    FirstIndex* fi = new FirstIndex("/home");
+//    fi->start();
 
     return app.exec();
 }

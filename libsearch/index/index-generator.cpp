@@ -17,9 +17,11 @@ using namespace std;
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/content_index_data").toStdString()
 
 static IndexGenerator *global_instance = nullptr;
+QMutex  IndexGenerator::m_mutex;
 
 IndexGenerator *IndexGenerator::getInstance(bool rebuild)
 {
+    QMutexLocker locker(&m_mutex);
     if (!global_instance) {
         global_instance = new IndexGenerator(rebuild);
     }
@@ -32,7 +34,7 @@ bool IndexGenerator::setIndexdataPath()
 }
 
 //文件名索引
-bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
+bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 {
     HandlePathList(messageList);
     try
@@ -69,7 +71,7 @@ bool IndexGenerator::creatAllIndex(QList<QVector<QString> > *messageList)
     return true;
 }
 //文件内容索引
-bool IndexGenerator::creatAllIndex(QList<QString> *messageList)
+bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 {
     HandlePathList(messageList);
     try
@@ -152,7 +154,7 @@ void IndexGenerator::insertIntoContentDatabase(Document doc)
     return;
 }
 
-void IndexGenerator::HandlePathList(QList<QVector<QString>> *messageList)
+void IndexGenerator::HandlePathList(QQueue<QVector<QString>> *messageList)
 {
     qDebug()<<"Begin HandlePathList!";
     qDebug()<<messageList->size();
@@ -169,7 +171,7 @@ void IndexGenerator::HandlePathList(QList<QVector<QString>> *messageList)
     return;
 }
 
-void IndexGenerator::HandlePathList(QList<QString> *messageList)
+void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
 {
     qDebug()<<"Begin HandlePathList for content index!";
     qDebug()<<messageList->size();

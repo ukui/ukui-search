@@ -1,65 +1,97 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QtConcurrent>
+#include <QThread>
 #include <chinese-segmentation.h>
 #include "file-searcher.h"
 #include "global-settings.h"
 
-
+size_t FileSearcher::uniqueSymbol1 = 0;
+size_t FileSearcher::uniqueSymbol2 = 0;
+size_t FileSearcher::uniqueSymbol3 = 0;
+QMutex  FileSearcher::m_mutex1;
+QMutex  FileSearcher::m_mutex2;
+QMutex  FileSearcher::m_mutex3;
 FileSearcher::FileSearcher(QObject *parent) : QObject(parent)
 {
 }
 
-void FileSearcher::onKeywordSearch(QString keyword)
+FileSearcher::~FileSearcher()
 {
-    m_search_result_file = new QQueue<QString>;
-    m_search_result_dir = new QQueue<QString>;
-    m_search_result_content = new QQueue<QPair<QString,QStringList>>;
-    //file
-    QtConcurrent::run([=](){
-        int begin = 0;
-        int num = 20;
-        int resultCount = 0;
-        while(1)
-        {
-            resultCount = keywordSearchfile(keyword,"1",1,begin,num);
-            if(resultCount == 0 || resultCount == -1)
-                break;
-            begin += num;
-        }
-    });
-    Q_EMIT this->resultFile(m_search_result_file);
-    //dir
-    QtConcurrent::run([=](){
-        int begin = 0;
-        int num = 20;
-        int resultCount = 0;
-        while(1)
-        {
-            resultCount = keywordSearchfile(keyword,"0",1,begin,num);
-            if(resultCount == 0 || resultCount == -1)
-                break;
-            begin += num;
-        }
-    });
-    Q_EMIT this->resultDir(m_search_result_dir);
-    //content
-    QtConcurrent::run([=](){
-        int begin = 0;
-        int num = 10;
-        int resultCount = 0;
-        while(1)
-        {
-            keywordSearchContent(keyword,begin,num);
-            if(resultCount == 0 || resultCount == -1)
-                break;
-            begin += num;
-        }
-    });
-    Q_EMIT this->resultContent(m_search_result_content);
 }
 
-int FileSearcher::keywordSearchfile(QString keyword, QString value, unsigned slot, int begin, int num)
+void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent)
+{
+    m_search_result_file = searchResultFile;
+    m_search_result_dir = searchResultDir;
+    m_search_result_content = searchResultContent;
+
+    m_mutex1.lock();
+    ++uniqueSymbol1;
+    m_mutex1.unlock();
+    m_mutex2.lock();
+    ++uniqueSymbol2;
+    m_mutex2.unlock();
+    m_mutex3.lock();
+    ++uniqueSymbol3;
+    m_mutex3.unlock();
+    //file
+    QtConcurrent::run([&, uniqueSymbol1](){
+        if(!m_search_result_file->isEmpty())
+            m_search_result_file->clear();
+        int begin = 0;
+        int num = 5;
+        int resultCount = 0;
+        int total = 0;
+        while(total<20)
+        {
+            resultCount = keywordSearchfile(uniqueSymbol1,keyword,"0",1,begin,num);
+            if(resultCount == 0 || resultCount == -1)
+                break;
+            total += resultCount;
+            begin += num;
+        }
+    });
+//    Q_EMIT this->resultFile(m_search_result_file);
+    //dir
+    QtConcurrent::run([&, uniqueSymbol2](){
+        if(!m_search_result_dir->isEmpty())
+            m_search_result_dir->clear();
+        int begin = 0;
+        int num = 5;
+        int resultCount = 0;
+        int total = 0;
+        while(total<20)
+        {
+            resultCount = keywordSearchfile(uniqueSymbol2,keyword,"1",1,begin,num);
+            if(resultCount == 0 || resultCount == -1)
+                break;
+            total += resultCount;
+            begin += num;
+        }
+    });
+//    Q_EMIT this->resultDir(m_search_result_dir);
+    //content
+    QtConcurrent::run([&, uniqueSymbol3](){
+        if(!m_search_result_content->isEmpty())
+            m_search_result_content->clear();
+        int begin = 0;
+        int num = 5;
+        int resultCount = 0;
+        int total = 0;
+        while(total<20)
+        {
+            keywordSearchContent(uniqueSymbol3,keyword,begin,num);
+            if(resultCount == 0 || resultCount == -1)
+                break;
+            total += resultCount;
+            begin += num;
+        }
+    });
+//    Q_EMIT this->resultContent(m_search_result_content);
+}
+
+int FileSearcher::keywordSearchfile(size_t uniqueSymbol, QString keyword, QString value, unsigned slot, int begin, int num)
 {
     try
     {
@@ -86,7 +118,7 @@ int FileSearcher::keywordSearchfile(QString keyword, QString value, unsigned slo
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
         int resultCount =  static_cast<int>(result.get_matches_estimated());
         qDebug()<< "find results count=" <<resultCount;
-        getResult(result,value);
+        getResult(uniqueSymbol, result, value);
 
         qDebug()<< "--search finish--";
         return resultCount;
@@ -99,7 +131,7 @@ int FileSearcher::keywordSearchfile(QString keyword, QString value, unsigned slo
     }
 }
 
-int FileSearcher::keywordSearchContent(QString keyword, int begin, int num)
+int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int begin, int num)
 {
     try
     {
@@ -135,7 +167,7 @@ int FileSearcher::keywordSearchContent(QString keyword, int begin, int num)
         int resultCount = static_cast<int>(result.get_matches_estimated());
         qDebug()<< "find results count=" <<resultCount;
 
-        getContentResult(result,words);
+        getContentResult(uniqueSymbol, result, words);
 
         qDebug()<< "--content search finish--";
         return resultCount;
@@ -177,7 +209,7 @@ Xapian::Query FileSearcher::creatQueryForContentSearch(QString keyword, Xapian::
 
 }
 
-QStringList FileSearcher::getResult(Xapian::MSet &result, QString value)
+QStringList FileSearcher::getResult(size_t uniqueSymbol, Xapian::MSet &result, QString value)
 {
     //QStringList *pathTobeDelete = new QStringList;
     //Delete those path doc which is not already exist.
@@ -197,9 +229,9 @@ QStringList FileSearcher::getResult(Xapian::MSet &result, QString value)
         if(isBlocked(path))
             continue;
 
-        QFileInfo *info = new QFileInfo(path);
+        QFileInfo info(path);
 
-        if(!info->exists())
+        if(!info.exists())
         {
 //                pathTobeDelete->append(QString::fromStdString(data));
             qDebug()<<path<<"is not exist!!";
@@ -209,10 +241,31 @@ QStringList FileSearcher::getResult(Xapian::MSet &result, QString value)
             switch (value.toInt())
             {
             case 1:
-                m_search_result_dir->enqueue(path);
+                m_mutex1.lock();
+                if(uniqueSymbol == FileSearcher::uniqueSymbol1)
+                {
+                    m_search_result_dir->enqueue(path);
+                    m_mutex1.unlock();
+                }
+                else
+                {
+                    m_mutex1.unlock();
+                    exit(0);
+                }
+
                 break;
             case 0:
-                m_search_result_file->enqueue(path);
+                m_mutex2.lock();
+                if(uniqueSymbol == FileSearcher::uniqueSymbol2)
+                {
+                    m_search_result_file->enqueue(path);
+                    m_mutex2.unlock();
+                }
+                else
+                {
+                    m_mutex2.unlock();
+                    exit(0);
+                }
                 break;
             default:
                 break;
@@ -226,7 +279,7 @@ QStringList FileSearcher::getResult(Xapian::MSet &result, QString value)
     return searchResult;
 }
 
-QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, std::string &keyWord)
+QMap<QString,QStringList> FileSearcher::getContentResult(size_t uniqueSymbol, Xapian::MSet &result, std::string &keyWord)
 {
     //QStringList *pathTobeDelete = new QStringList;
     //Delete those path doc which is not already exist.
@@ -251,9 +304,9 @@ QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, s
         if(isBlocked(path))
             continue;
 
-        QFileInfo *info = new QFileInfo(path);
+        QFileInfo info(path);
 
-        if(!info->exists())
+        if(!info.exists())
         {
             //                pathTobeDelete->append(QString::fromStdString(data));
             qDebug()<<path<<"is not exist!!";
@@ -272,7 +325,17 @@ QMap<QString,QStringList> FileSearcher::getContentResult(Xapian::MSet &result, s
             snippets.append(snippet);
             ++count;
         }
-        m_search_result_content->enqueue(qMakePair(path,snippets));
+        m_mutex3.lock();
+        if(uniqueSymbol == FileSearcher::uniqueSymbol3)
+        {
+            m_search_result_content->enqueue(qMakePair(path,snippets));
+            m_mutex3.unlock();
+        }
+        else
+        {
+            m_mutex3.unlock();
+            exit(0);
+        }
         searchResult.insert(path,snippets);
         qDebug()<< "path="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
     }
