@@ -7,6 +7,8 @@
 #include <QStringList>
 #include <QMap>
 #include <QCryptographicHash>
+#include <QMutex>
+#include <QQueue>
 #include "document.h"
 #include "file-reader.h"
 
@@ -24,16 +26,17 @@ Q_SIGNALS:
     void transactionFinished();
     void searchFinish();
 public Q_SLOTS:
-    bool creatAllIndex(QList<QVector<QString>> *messageList);
-    bool creatAllIndex(QList<QString> *messageList);
+    bool creatAllIndex(QQueue<QVector<QString>> *messageList);
+    bool creatAllIndex(QQueue<QString> *messageList);
     bool deleteAllIndex(QStringList *pathlist);
 
 private:
     explicit IndexGenerator(bool rebuild = false,QObject *parent = nullptr);
+    static QMutex m_mutex;
     //For file name index
-    void HandlePathList(QList<QVector<QString>> *messageList);
+    void HandlePathList(QQueue<QVector<QString> > *messageList);
     //For file content index
-    void HandlePathList(QList<QString> *messageList);
+    void HandlePathList(QQueue<QString> *messageList);
     static Document GenerateDocument(const QVector<QString> &list);
     static Document GenerateContentDocument(const QString &list);
     //add one data in database

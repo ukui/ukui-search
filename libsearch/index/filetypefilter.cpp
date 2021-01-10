@@ -38,7 +38,7 @@ void FileTypeFilter::Test(){
 //    this->result = new QList<QString>();
 //    this->result->append(QString("/home/zpf/桌面/DOCX 文档(1).docx"));
 
-        ig->creatAllIndex(this->result);
+//        ig->creatAllIndex(this->result);
 }
 
 

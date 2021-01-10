@@ -194,6 +194,8 @@ void MainWindow::bootOptionsFilter(QString opt)
     if (opt == "-s" || opt == "-show") {
         clearSearchResult();
         this->show();
+        this->raise();
+        this->activateWindow();
     }
 }
 
@@ -251,7 +253,17 @@ void MainWindow::searchContent(QString searchcontent){
     //文件、文件夹、内容搜索
     FileSearcher *search = new FileSearcher();
     connect(search, &FileSearcher::resultDir, this, [ = ](QQueue<QString> * dirQueue) {
-        qWarning()<<"dirFile---";
+        qWarning()<<"resultDir---";
+        QString firstDir;
+        while(1)
+        {
+            if(!dirQueue->isEmpty()){
+                firstDir = dirQueue->at(0);
+                qWarning()<<"firstDir"<<firstDir;
+                break;
+            }
+        }
+
     });
     connect(search, &FileSearcher::resultFile, this, [ = ](QQueue<QString> * fileQueue) {
         qWarning()<<"resultFile---";

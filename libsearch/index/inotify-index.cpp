@@ -80,8 +80,8 @@ void InotifyIndex::run(){
 
     ssize_t numRead;
 
-    QList<QVector<QString>>* indexList = new QList<QVector<QString>>();
-    QList<QString>* contentIndexList = new QList<QString>();
+    QQueue<QVector<QString>>* indexQueue = new QQueue<QVector<QString>>();
+    QQueue<QString>* contentIndexQueue = new QQueue<QString>();
 
     for (;;) { /* Read events forever */
         numRead = read(m_fd, buf, BUF_LEN);
@@ -110,14 +110,14 @@ void InotifyIndex::run(){
 
                     /*--------------------------------*/
 //                    IndexGenerator::getInstance()->creatAllIndex(QQueue<QVector<QString>>(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0")));
-                    indexList->append(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
-                    IndexGenerator::getInstance()->creatAllIndex(indexList);
-                    indexList->clear();
+                    indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
+                    IndexGenerator::getInstance()->creatAllIndex(indexQueue);
+                    indexQueue->clear();
                     for (auto i : this->targetFileTypeVec){
                         if (QString(currentPath[event->wd] + '/' + event->name).endsWith(i)){
-                            contentIndexList->append(QString(currentPath[event->wd] + '/' + event->name));
-                            IndexGenerator::getInstance()->creatAllIndex(contentIndexList);
-                            contentIndexList->clear();
+                            contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name));
+                            IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue);
+                            contentIndexQueue->clear();
                         }
                     }
                     /*--------------------------------*/
@@ -134,8 +134,8 @@ void InotifyIndex::run(){
         }
     }
 
-    delete indexList;
-    indexList = nullptr;
-    delete contentIndexList;
-    contentIndexList = nullptr;
+    delete indexQueue;
+    indexQueue = nullptr;
+    delete contentIndexQueue;
+    contentIndexQueue = nullptr;
 }

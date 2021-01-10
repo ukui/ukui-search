@@ -39,9 +39,10 @@ public Q_SLOTS:
      * set path for blacklist,return true if success,otherwise return false.
      * @param path path to be blocked
      * @param returnMessage this message will be set when return false.
+     * @param true to remove blocking,false to set blocking,default set false.
      * @return
      */
-    bool setBlockDirs(const QString& path, QString &returnMessage);
+    bool setBlockDirs(const QString& path, QString &returnMessage,bool remove = false);
     QStringList getBlockDirs();
 
     void forceSync(const QString& = nullptr);
