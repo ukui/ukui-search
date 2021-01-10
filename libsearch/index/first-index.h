@@ -7,7 +7,6 @@
 #include "traverse_bfs.h"
 #include "global-settings.h"
 #include "index-generator.h"
-#include "messagelist-manager.h"
 
 class FirstIndex : public QThread, public Traverse_BFS
 {
