@@ -3,10 +3,12 @@
 
 #include <QThread>
 #include <QtConcurrent/QtConcurrent>
+#include <signal.h>
 //#include <QtConcurrent>
 #include "traverse_bfs.h"
 #include "global-settings.h"
 #include "index-generator.h"
+#include "inotify-index.h"
 
 class FirstIndex : public QThread, public Traverse_BFS
 {
@@ -21,7 +23,7 @@ private:
     void operator=(const FirstIndex&) = delete;
     bool bool_dataBaseStatusOK = false;
     bool bool_dataBaseExist = false;
-    IndexGenerator* p_indexGenerator;
+    IndexGenerator* p_indexGenerator = nullptr;
 
     //here should be refact
 //    MessageListManager* mlm;

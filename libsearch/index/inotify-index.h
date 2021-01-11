@@ -9,11 +9,18 @@
 #include "ukui-search-qdbus.h"
 
 #define BUF_LEN 1024
-
+class InotifyIndex;
+static InotifyIndex* global_instance_of_index = nullptr;
 class InotifyIndex : public QThread, public Traverse_BFS
 {
     Q_OBJECT
 public:
+    static InotifyIndex* getInstance(const QString& path){
+        if (!global_instance_of_index) {
+            global_instance_of_index = new InotifyIndex(path);
+        }
+        return global_instance_of_index;
+    }
     InotifyIndex(const QString&);
     ~InotifyIndex();
 

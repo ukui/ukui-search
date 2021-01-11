@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 {
 
     qInstallMessageHandler(messageOutput);
+
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
@@ -111,11 +112,7 @@ int main(int argc, char *argv[])
         parser.process(app);
     }*/
 
-//    qDebug() << "main start";
-//    FirstIndex fi("/home");
-//    fi.start();
-//    InotifyIndex ii("/home");
-//    ii.start();
+
     /*-------------ukuisearchdbus Test start-----------------*/
 //    UkuiSearchQDBus usQDBus;
 //    usQDBus.setInotifyMaxUserWatches();
@@ -170,6 +167,12 @@ int main(int argc, char *argv[])
 //    qDebug() << "main start";
 //    FirstIndex* fi = new FirstIndex("/home");
 //    fi->start();
+    qDebug() << "main start";
+    FirstIndex fi("/home");
+    fi.start();
+    InotifyIndex* ii = InotifyIndex::getInstance("/home");
+//    InotifyIndex ii("/home");
+    ii->start();
 
     return app.exec();
 }
