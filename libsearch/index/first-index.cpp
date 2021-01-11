@@ -2,6 +2,25 @@
 #include "first-index.h"
 #include <QDebug>
 
+
+void handler(int){
+    qDebug() << "Recieved SIGTERM!";
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"2");
+    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"2");
+    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"2");
+
+
+    qDebug() << "indexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
+    qDebug() << "contentIndexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
+
+//    InotifyIndex::getInstance("/home")->~InotifyIndex();
+    qDebug() << "~IndexGenerator() end!" << endl;
+
+    //wait linux kill this thread forcedly
+//    while (true);
+}
+
+
 FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
 {
     QString indexDataBaseStatus =  GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
@@ -37,8 +56,8 @@ FirstIndex::~FirstIndex()
     this->q_index = nullptr;
     delete this->q_content_index;
     this->q_content_index = nullptr;
-    delete this->p_indexGenerator;
-    this->p_indexGenerator;
+//    delete this->p_indexGenerator;
+//    this->p_indexGenerator;
 //    delete this->mlm;
 //    this->mlm = nullptr;
 }
@@ -56,7 +75,12 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo){
 void FirstIndex::run(){
     if (this->bool_dataBaseExist){
         if (this->bool_dataBaseStatusOK){
-            this->quit();
+
+            //why???????????????????????????????????????????????????????????????
+            //why not quit?
+//            this->quit();
+            exit(0);
+//            return;
 //            this->wait();
         }
         else{
@@ -107,7 +131,14 @@ void FirstIndex::run(){
     //don't use it now!!!!
     //MouseZhangZh
 //    this->~FirstIndex();
-//    qDebug() << "~FirstIndex end;";
+    qDebug() << "~FirstIndex end;";
+
+
+
+    qDebug() << "sigset start!";
+    sigset( SIGTERM, handler);
+    qDebug() << "sigset end!";
+
     this->quit();
 //    this->wait();
 }

@@ -10,6 +10,9 @@ InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
     qDebug() << "setInotifyMaxUserWatches end";
 
     /*-------------ukuisearchdbus Test End-----------------*/
+
+
+
     m_fd = inotify_init();
     qDebug() << "m_fd----------->" <<m_fd;
 
@@ -19,7 +22,7 @@ InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
 
 InotifyIndex::~InotifyIndex()
 {
-
+    IndexGenerator::getInstance()->~IndexGenerator();
 }
 
 void InotifyIndex::DoSomething(const QFileInfo& fileInfo){
@@ -72,6 +75,11 @@ bool InotifyIndex::RemoveWatch(const QString &path){
     return true;
 }
 
+/*
+ * Symbolic Link!!!!!!!!!!!!!!!!!!
+ * Sysmbolic link to database dir will make a Infinite loop !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * MouseZhangZh
+*/
 
 void InotifyIndex::run(){
 
@@ -110,6 +118,7 @@ void InotifyIndex::run(){
 
                     /*--------------------------------*/
 //                    IndexGenerator::getInstance()->creatAllIndex(QQueue<QVector<QString>>(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0")));
+                    qDebug() << QString(currentPath[event->wd] + '/' + event->name);
                     indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
                     IndexGenerator::getInstance()->creatAllIndex(indexQueue);
                     indexQueue->clear();

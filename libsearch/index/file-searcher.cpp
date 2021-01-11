@@ -22,10 +22,6 @@ FileSearcher::~FileSearcher()
 
 void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent)
 {
-    m_search_result_file = searchResultFile;
-    m_search_result_dir = searchResultDir;
-    m_search_result_content = searchResultContent;
-
     m_mutex1.lock();
     ++uniqueSymbol1;
     m_mutex1.unlock();
@@ -35,6 +31,11 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
     m_mutex3.lock();
     ++uniqueSymbol3;
     m_mutex3.unlock();
+
+    m_search_result_file = searchResultFile;
+    m_search_result_dir = searchResultDir;
+    m_search_result_content = searchResultContent;
+
     //file
     QtConcurrent::run([&, uniqueSymbol1, keyword](){
         if(!m_search_result_file->isEmpty())

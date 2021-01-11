@@ -32,6 +32,8 @@
 
 //#include "inotify-manager.h"
 #include "settings-widget.h"
+
+
 #include "global-settings.h"
 #include "search-result.h"
 
@@ -266,7 +268,7 @@ void MainWindow::searchContent(QString searchcontent){
     m_lists.append(appList);
     m_lists.append(settingList);
     m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
-
+  
     //文件、文件夹、内容搜索
     this->m_searcher->onKeywordSearch(searchcontent, m_search_result_file, m_search_result_dir, m_search_result_content);
 }
