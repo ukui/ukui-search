@@ -156,8 +156,6 @@ void settingModel::matching(){
         }
     }
 
-
-
     for(i=pinyin_searchlist.constBegin();i!=pinyin_searchlist.constEnd();++i){
         regmatch=*i;
         settingkey=i.key();
@@ -180,7 +178,10 @@ void settingModel::matching(){
         }
     }
 
-    Q_EMIT requestUpdateSignal(commandresult.count());
+    returnresult=returnresult.mid(0,3);
+    iconresult=iconresult.mid(0,3);
+
+    Q_EMIT requestUpdateSignal(returnresult.count());
     matchesChanged();
 }
 
@@ -210,6 +211,5 @@ void settingModel::matchesChanged()
         endResetModel();
     }
     lockresult=returnresult;
-
 }
 
