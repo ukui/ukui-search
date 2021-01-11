@@ -65,12 +65,12 @@ private:
     QString bgPath;
     QString bgOption;
     QPixmap pixmap1;
-    QPixmap *pixmap=nullptr;
+    QPixmap pixmap;
     bool m_winFlag = false;
 
 protected:
     void initUi();
-    QPixmap * blurPixmap(QPixmap *pixmap);
+    QPixmap blurPixmap(QPixmap pixmap);
     void paintEvent(QPaintEvent *event);
     void backgroundPic();
     void ways();
