@@ -48,8 +48,8 @@ private:
     Xapian::Query creatQueryForFileSearch(QString keyword, Xapian::Database &db);
     Xapian::Query creatQueryForContentSearch(QString keyword, Xapian::Database &db);
 
-    QStringList getResult(size_t uniqueSymbol, Xapian::MSet &result, QString value);
-    QMap<QString,QStringList> getContentResult(size_t uniqueSymbol, Xapian::MSet &result,std::string &keyWord);
+    int getResult(size_t uniqueSymbol, Xapian::MSet &result, QString value);
+    int getContentResult(size_t uniqueSymbol, Xapian::MSet &result,std::string &keyWord);
 
     bool isBlocked(QString &path);
 

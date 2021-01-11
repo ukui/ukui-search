@@ -120,7 +120,10 @@ int FileSearcher::keywordSearchfile(size_t uniqueSymbol, QString keyword, QStrin
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
         int resultCount =  static_cast<int>(result.get_matches_estimated());
         qDebug()<< "find results count=" <<resultCount;
-        getResult(uniqueSymbol, result, value);
+        if(result.size() == 0)
+            return 0;
+        if(getResult(uniqueSymbol, result, value) == -1)
+            return -1;
 
         qDebug()<< "--search finish--";
         return resultCount;
@@ -167,9 +170,12 @@ int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int
         //dir result
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
         int resultCount = static_cast<int>(result.get_matches_estimated());
+        if(result.size() == 0)
+            return 0;
         qDebug()<< "find results count=" <<resultCount;
 
-        getContentResult(uniqueSymbol, result, words);
+        if(getContentResult(uniqueSymbol, result, words) == -1)
+            return -1;
 
         qDebug()<< "--content search finish--";
         return resultCount;
@@ -211,14 +217,12 @@ Xapian::Query FileSearcher::creatQueryForContentSearch(QString keyword, Xapian::
 
 }
 
-QStringList FileSearcher::getResult(size_t uniqueSymbol, Xapian::MSet &result, QString value)
+int FileSearcher::getResult(size_t uniqueSymbol, Xapian::MSet &result, QString value)
 {
     //QStringList *pathTobeDelete = new QStringList;
     //Delete those path doc which is not already exist.
 
-    QStringList searchResult = QStringList();
-    if(result.size() == 0)
-        return searchResult;
+//    QStringList searchResult = QStringList();
 
     for (auto it = result.begin(); it != result.end(); ++it)
     {
@@ -252,7 +256,7 @@ QStringList FileSearcher::getResult(size_t uniqueSymbol, Xapian::MSet &result, Q
                 else
                 {
                     m_mutex1.unlock();
-                    exit(0);
+                    return -1;
                 }
 
                 break;
@@ -266,22 +270,22 @@ QStringList FileSearcher::getResult(size_t uniqueSymbol, Xapian::MSet &result, Q
                 else
                 {
                     m_mutex2.unlock();
-                    exit(0);
+                    return -1;
                 }
                 break;
             default:
                 break;
             }
-            searchResult.append(path);
+//            searchResult.append(path);
         }
         qDebug()<< "doc="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
-    return searchResult;
+    return 0;
 }
 
-QMap<QString,QStringList> FileSearcher::getContentResult(size_t uniqueSymbol, Xapian::MSet &result, std::string &keyWord)
+int FileSearcher::getContentResult(size_t uniqueSymbol, Xapian::MSet &result, std::string &keyWord)
 {
     //QStringList *pathTobeDelete = new QStringList;
     //Delete those path doc which is not already exist.
@@ -291,9 +295,7 @@ QMap<QString,QStringList> FileSearcher::getContentResult(size_t uniqueSymbol, Xa
     int totalSize = QString::fromStdString(keyWord).size();
     if(totalSize < 5)
         totalSize = 5;
-    QMap<QString,QStringList> searchResult;
-    if(result.size() == 0)
-        return searchResult;
+//    QMap<QString,QStringList> searchResult;
 
     for (auto it = result.begin(); it != result.end(); ++it)
     {
@@ -337,17 +339,14 @@ QMap<QString,QStringList> FileSearcher::getContentResult(size_t uniqueSymbol, Xa
         else
         {
             m_mutex3.unlock();
-            break;
-//            exit(0);
+            return -1;
         }
-
-        qDebug() << "after";
-        searchResult.insert(path,snippets);
+//        searchResult.insert(path,snippets);
         qDebug()<< "path="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
-    return searchResult;
+    return 0;
 }
 
 bool FileSearcher::isBlocked(QString &path)
