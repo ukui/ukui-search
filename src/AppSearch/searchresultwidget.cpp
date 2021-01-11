@@ -25,6 +25,7 @@ SearchResultWidget::SearchResultWidget(QWidget *parent) :
     QWidget(parent)
 {
     initUi();
+    installEventFilter(this);
 }
 
 SearchResultWidget::~SearchResultWidget()
@@ -129,5 +130,14 @@ void SearchResultWidget::paintEvent(QPaintEvent *e)
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(rect,12,12);
     QWidget::paintEvent(e);
+}
+
+bool SearchResultWidget::eventFilter(QObject *watched, QEvent *event){
+    if(watched==this){
+        if(event->type()==QEvent::MouseButtonRelease){
+            return true;
+        }
+    }
+    return false;
 }
 

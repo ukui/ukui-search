@@ -6,6 +6,7 @@
 SearchFileWidget::SearchFileWidget()
 {
     initFilesearchUI();
+    installEventFilter(this);
 
 }
 
@@ -100,3 +101,13 @@ void SearchFileWidget::paintEvent(QPaintEvent *e)
     p.drawRoundedRect(rect,12,12);
     QWidget::paintEvent(e);
 }
+
+bool SearchFileWidget::eventFilter(QObject *watched, QEvent *event){
+    if(watched==this){
+        if(event->type()==QEvent::MouseButtonRelease){
+            return true;
+        }
+    }
+    return false;
+}
+

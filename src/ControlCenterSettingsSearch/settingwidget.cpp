@@ -3,7 +3,7 @@
 SettingWidget::SettingWidget()
 {
     initSettingsearchUI();
-
+    installEventFilter(this);
 }
 
 void SettingWidget::initSettingsearchUI()
@@ -64,4 +64,13 @@ void SettingWidget::paintEvent(QPaintEvent *e)
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(rect,12,12);
     QWidget::paintEvent(e);
+}
+
+bool SettingWidget::eventFilter(QObject *watched, QEvent *event){
+    if(watched==this){
+        if(event->type()==QEvent::MouseButtonRelease){
+            return true;
+        }
+    }
+    return false;
 }
