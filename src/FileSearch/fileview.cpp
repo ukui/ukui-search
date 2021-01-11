@@ -11,6 +11,7 @@
 
 fileview::fileview()
 {
+    this->setFrameShape(QFrame::NoFrame);
 
     const QByteArray style_id(ORG_UKUI_STYLE);
 
@@ -50,20 +51,19 @@ void fileview::styleChange()
     if(stylelist.contains(style_settings->get(STYLE_NAME).toString())){
         //黑色主题下需要进行的处理
         setStyleSheet(
-                    "font: bold; "
-                    "font-size:20px; "
-                    "color: rgb(255, 255, 255); "
-                    "background-color: green; "
-                    "background:transparent"
+                    "QTreeView{font: bold;"
+                    "font-size:20px;color: rgb(255, 255, 255);"
+                    "background-color: black;"
+                    "background:transparent}"
                     );
     }else{
         //白色主题下需要进行的处理
         setStyleSheet(
-                    "font: bold; "
-                    "font-size:20px; "
-                    "color: rgb(0, 0, 0); "
-                    "background-color: green; "
-                    "background:transparent"
+                    "QTreeView{font: bold;"
+                    "font-size:20px;color: rgb(0, 0, 0);"
+                    "background-color: white;"
+                    "background:transparent}"
+//                  "QTreeView::item:hover{background-color:}"
                     );
     }
 }
