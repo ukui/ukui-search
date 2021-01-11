@@ -65,7 +65,7 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
 
 //    connect(m_queryLineEdit, SIGNAL(textChanged(QString)), SIGNAL(textChanged(QString)));
     m_timer = new QTimer;
-    QObject::connect(m_timer, &QTimer::timeout, this, [ = ](){
+    connect(m_timer, &QTimer::timeout, this, [ = ](){
         m_timer->stop();
         Q_EMIT this->textChanged(m_queryLineEdit->text());
     });
@@ -76,8 +76,8 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
         } else {
             if (text == "") {
                 m_isEmpty = true;
-                Q_EMIT this->textChanged(m_queryLineEdit->text());
                 m_timer->stop();
+                Q_EMIT this->textChanged(m_queryLineEdit->text());
                 return;
             }
             m_timer->stop();

@@ -182,7 +182,7 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
 //            m_detailView->setupWidget(searchList->getCurrentType(), lists.at(0).at(0));
 //        }
         connect(searchList, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
-            if(type == SearchListView::ResType::Content && !m_contentList.isEmpty()) {
+            if(type == SearchItem::SearchType::Contents && !m_contentList.isEmpty()) {
                 m_detailView->setContent(m_contentList.at(searchList->currentIndex().row()), keyword);
             }
             m_detailView->setupWidget(type, path);
@@ -198,7 +198,6 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
             }
         });
     }
-
     if (isEmpty) {
         m_detailView->clearLayout(); //没有搜到结果，清空详情页
         return;
@@ -226,6 +225,142 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
             searchList->blockSignals(false);
         }
     });
+}
+
+/**
+ * @brief ContentWidget::appendSearchItem 向列表添加一项搜索结果
+ * @param type 类型
+ * @param path 路径
+ * @param contents 文件内容
+ */
+void ContentWidget::appendSearchItem(const int& type, const QString& path, const QString& keyword, QStringList contents) {
+    switch (type) {
+        case SearchItem::SearchType::Files: {
+            if (!m_fileListView) {
+                m_fileListView = new SearchListView(m_resultList, QStringList(), type, keyword);
+                QLabel * titleLabel = new QLabel(m_resultList); //表头
+                titleLabel->setContentsMargins(8, 0, 0, 0);
+                titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+                titleLabel->setText(getTitleName(type));
+                m_listLyt->addWidget(titleLabel);
+                m_listLyt->addWidget(m_fileListView);
+                connect(m_fileListView, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
+                    m_detailView->setupWidget(type, path);
+                    m_fileListView->is_current_list = true;
+                    Q_EMIT this->currentItemChanged();
+                    m_fileListView->is_current_list = false;
+                });
+                connect(this, &ContentWidget::currentItemChanged, m_fileListView, [ = ]() {
+                    if (! m_fileListView->is_current_list) {
+                        m_fileListView->blockSignals(true);
+                        m_fileListView->clearSelection();
+                        m_fileListView->blockSignals(false);
+                    }
+                });
+                m_resultList->setFixedHeight(m_resultList->height() + m_fileListView->height() + titleLabel->height());
+            }
+            if (m_fileListView->isHidden) {
+                m_fileListView->isHidden = false;
+                QLabel * titleLabel = new QLabel(m_resultList); //表头
+                titleLabel->setContentsMargins(8, 0, 0, 0);
+                titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+                titleLabel->setText(getTitleName(type));
+                m_listLyt->addWidget(titleLabel);
+                m_listLyt->addWidget(m_fileListView);
+                m_resultList->setFixedHeight(m_resultList->height() + m_fileListView->height() + titleLabel->height());
+            }
+            m_fileListView->appendItem(path);
+            m_resultList->setFixedHeight(m_resultList->height() + m_fileListView->rowheight);
+            return;
+            break;
+        }
+        case SearchItem::SearchType::Dirs: {
+            if (!m_dirListView) {
+                m_dirListView = new SearchListView(m_resultList, QStringList(), type, keyword);
+                QLabel * titleLabel = new QLabel(m_resultList); //表头
+                titleLabel->setContentsMargins(8, 0, 0, 0);
+                titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+                titleLabel->setText(getTitleName(type));
+                m_listLyt->addWidget(titleLabel);
+                m_listLyt->addWidget(m_dirListView);
+                connect(m_dirListView, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
+                    m_detailView->setupWidget(type, path);
+                    m_dirListView->is_current_list = true;
+                    Q_EMIT this->currentItemChanged();
+                    m_dirListView->is_current_list = false;
+                });
+                connect(this, &ContentWidget::currentItemChanged, m_dirListView, [ = ]() {
+                    if (! m_dirListView->is_current_list) {
+                        m_dirListView->blockSignals(true);
+                        m_dirListView->clearSelection();
+                        m_dirListView->blockSignals(false);
+                    }
+                });
+                m_resultList->setFixedHeight(m_resultList->height() + m_dirListView->height() + titleLabel->height());
+            }
+            if (m_dirListView->isHidden) {
+                m_dirListView->isHidden = false;
+                QLabel * titleLabel = new QLabel(m_resultList); //表头
+                titleLabel->setContentsMargins(8, 0, 0, 0);
+                titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+                titleLabel->setText(getTitleName(type));
+                m_listLyt->addWidget(titleLabel);
+                m_listLyt->addWidget(m_dirListView);
+                m_resultList->setFixedHeight(m_resultList->height() + m_dirListView->height() + titleLabel->height());
+            }
+            m_dirListView->appendItem(path);
+            m_resultList->setFixedHeight(m_resultList->height() + m_dirListView->rowheight);
+            return;
+            break;
+        }
+        case SearchItem::SearchType::Contents: {
+            if (!m_contentListView) {
+                m_contentListView = new SearchListView(m_resultList, QStringList(), type, keyword);
+                QLabel * titleLabel = new QLabel(m_resultList); //表头
+                titleLabel->setContentsMargins(8, 0, 0, 0);
+                titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+                titleLabel->setText(getTitleName(type));
+                m_listLyt->addWidget(titleLabel);
+                m_listLyt->addWidget(m_contentListView);
+                connect(m_contentListView, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
+                    m_detailView->setContent(m_contentList.at(m_contentListView->currentIndex().row()), keyword);
+                    m_detailView->setupWidget(type, path);
+                    m_contentListView->is_current_list = true;
+                    Q_EMIT this->currentItemChanged();
+                    m_contentListView->is_current_list = false;
+                });
+                connect(this, &ContentWidget::currentItemChanged, m_contentListView, [ = ]() {
+                    if (! m_contentListView->is_current_list) {
+                        m_contentListView->blockSignals(true);
+                        m_contentListView->clearSelection();
+                        m_contentListView->blockSignals(false);
+                    }
+                });
+                m_resultList->setFixedHeight(m_resultList->height() + m_contentListView->height() + titleLabel->height());
+            }
+            if (m_contentListView->isHidden) {
+                m_contentListView->isHidden = false;
+                QLabel * titleLabel = new QLabel(m_resultList); //表头
+                titleLabel->setContentsMargins(8, 0, 0, 0);
+                titleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+                titleLabel->setText(getTitleName(type));
+                m_listLyt->addWidget(titleLabel);
+                m_listLyt->addWidget(m_contentListView);
+                m_resultList->setFixedHeight(m_resultList->height() + m_contentListView->height() + titleLabel->height());
+            }
+            m_contentListView->appendItem(path);
+            m_resultList->setFixedHeight(m_resultList->height() + m_contentListView->rowheight);
+            QString temp;
+            for (auto s : contents){
+                temp.append(s);
+            }
+            m_contentList.append(temp);
+            return;
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 /**
@@ -257,6 +392,16 @@ QString ContentWidget::getTitleName(const int& type) {
  * @param layout 需要清空的布局
  */
 void ContentWidget::clearLayout(QLayout * layout) {
+    if (m_fileListView) {
+        m_fileListView->clear();
+    }
+    if (m_dirListView) {
+        m_dirListView->clear();
+    }
+    if (m_contentListView) {
+        m_contentListView->clear();
+    }
+    m_contentList.clear();
     if (! layout) return;
     QLayoutItem * child;
     while ((child = layout->takeAt(0)) != 0) {

@@ -28,12 +28,12 @@
 #include <QStyleOption>
 #include <KWindowEffects>
 #include <QPixmap>
-#include "libsearch.h"
 #include "kwindowsystem.h"
 
 //#include "inotify-manager.h"
 #include "settings-widget.h"
 #include "global-settings.h"
+#include "search-result.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
@@ -46,6 +46,8 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+
+    m_searcher = new FileSearcher();
     //    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
     /*-------------Inotify Test Start---------------*/
     //    QTime t1 = QTime::currentTime();
@@ -79,6 +81,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette &pal) {
         this->setPalette(pal);
         this->update();
+    });
+
+    m_search_result_file = new QQueue<QString>;
+    m_search_result_dir = new QQueue<QString>;
+    m_search_result_content = new QQueue<QPair<QString,QStringList>>;
+    m_search_result_thread = new SearchResult(this);
+//    m_search_result_thread->start();
+    connect(m_search_result_thread, &SearchResult::searchResultFile, this, [ = ](QString path) {
+        m_contentFrame->appendSearchItem(SearchItem::SearchType::Files, path, m_keyword);
+    });
+    connect(m_search_result_thread, &SearchResult::searchResultDir, this, [ = ](QString path) {
+        m_contentFrame->appendSearchItem(SearchItem::SearchType::Dirs, path, m_keyword);
+    });
+    connect(m_search_result_thread, &SearchResult::searchResultContent, this, [ = ](QPair<QString, QStringList> pair) {
+        m_contentFrame->appendSearchItem(SearchItem::SearchType::Contents, pair.first, m_keyword, pair.second);
     });
 }
 
@@ -174,9 +191,9 @@ void MainWindow::initUi()
             m_contentFrame->setCurrentIndex(0);
         } else {
             m_contentFrame->setCurrentIndex(1);
-            QTimer::singleShot(50,this,[=](){
+//            QTimer::singleShot(50,this,[=](){
                 searchContent(text);
-            });
+//            });
         }
     });
 
@@ -190,13 +207,11 @@ void MainWindow::initUi()
  */
 void MainWindow::bootOptionsFilter(QString opt)
 {
-
-    if (opt == "-s" || opt == "-show") {
-        clearSearchResult();
-        this->show();
-        this->raise();
-        this->activateWindow();
-    }
+    clearSearchResult();
+    this->show();
+    this->raise();
+    this->activateWindow();
+    m_search_result_thread->start();
 }
 
 /**
@@ -235,83 +250,25 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
  * @param searchcontent
  */
 void MainWindow::searchContent(QString searchcontent){
+    m_keyword = searchcontent;
     m_lists.clear();
     m_types.clear();
 
     AppMatch * appMatchor = new AppMatch(this);
     SettingsMatch * settingMatchor = new SettingsMatch(this);
     //应用与设置搜索
-    QStringList list;
-    list = appMatchor->startMatchApp(searchcontent);
-    QStringList list3;
-    list3 = settingMatchor->startMatchApp(searchcontent);
+    QStringList appList;
+    appList = appMatchor->startMatchApp(searchcontent);
+    QStringList settingList;
+    settingList = settingMatchor->startMatchApp(searchcontent);
     m_types.append(SearchItem::SearchType::Apps);
     m_types.append(SearchItem::SearchType::Settings);
-    m_lists.append(list);
-    m_lists.append(list3);
-
-    //文件、文件夹、内容搜索
-    FileSearcher *search = new FileSearcher();
-    connect(search, &FileSearcher::resultDir, this, [ = ](QQueue<QString> * dirQueue) {
-        qWarning()<<"resultDir---";
-        QString firstDir;
-        while(1)
-        {
-            if(!dirQueue->isEmpty()){
-                firstDir = dirQueue->at(0);
-                qWarning()<<"firstDir"<<firstDir;
-                break;
-            }
-        }
-
-    });
-    connect(search, &FileSearcher::resultFile, this, [ = ](QQueue<QString> * fileQueue) {
-        qWarning()<<"resultFile---";
-    });
-    connect(search, &FileSearcher::resultContent, this, [ = ](QQueue<QPair<QString,QStringList>> * contentQueue) {
-        qWarning()<<"resultContent---";
-    });
-    search->onKeywordSearch(searchcontent);
-    //将搜索结果加入列表
+    m_lists.append(appList);
+    m_lists.append(settingList);
     m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
 
-//iaom--------this part shall be rewrite
-//    connect(search, &FileSearcher::contentResult, this, [ = ](QMap<QString,QStringList> map) {
-//        m_types.append(SearchItem::SearchType::Contents);
-//        QStringList pathlist, contentList;
-//        qDebug() << map;
-//        for (auto i : map.keys()){
-//            QString temp;
-//            pathlist << i;
-//            for (auto s : map[i]){
-//                temp.append(s);
-//            }
-//            contentList.append(temp);
-//        }
-//        m_lists.append(pathlist);
-//        m_contentFrame->setContentList(contentList);
-//    });
-
-//    search->onKeywordSearch(searchcontent);
-
-//iaom--------this part shall be rewrite
-//    connect(searcher,&FileSearcher::result,[=](QVector<QStringList> resultV){
-
-//        QStringList list1 = resultV.at(0);
-//        QStringList list2 = resultV.at(1);
-
-//        //        QVector<QStringList> lists;
-//        m_lists.append(list1);
-//        m_lists.append(list2);
-//        //        QVector<int> types;
-//        m_types.append(SearchItem::SearchType::Dirs);
-//        m_types.append(SearchItem::SearchType::Files);
-//        m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
-//    });
-//    searcher->onKeywordSearch(searchcontent,0,10);
-    //    QStringList res = IndexGenerator::IndexSearch(searchcontent);
-    //    types.append(SearchItem::SearchType::Files);
-    //    lists.append(res);
+    //文件、文件夹、内容搜索
+    this->m_searcher->onKeywordSearch(searchcontent, m_search_result_file, m_search_result_dir, m_search_result_content);
 }
 
 //使用GSetting获取当前窗口应该使用的透明度
@@ -339,6 +296,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
     switch (event->response_type & ~0x80) {
     case XCB_FOCUS_OUT:
         this->hide();
+        m_search_result_thread->quit();
         break;
     }
 

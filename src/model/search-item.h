@@ -26,6 +26,10 @@ public:
     };
 
     void setSearchList(const int&, const QStringList&);
+    void appendItem(QString);
+    void removeItem(QString);
+    int getCurrentSize();
+    void clear();
 
 private:
 //    SearchItem * m_parent = nullptr;

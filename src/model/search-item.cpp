@@ -82,3 +82,26 @@ void SearchItem::setSearchList(const int& type, const QStringList& searchResult)
     m_searchtype = type;
     m_pathlist = searchResult;
 }
+
+/**
+ * @brief SearchItem::appendItem
+ */
+void SearchItem::appendItem(QString path) {
+    m_pathlist.append(path);
+}
+
+/**
+ * @brief SearchItem::removeItem
+ */
+void SearchItem::removeItem(QString path) {
+    m_pathlist.removeOne(path);
+}
+
+int SearchItem::getCurrentSize() {
+    return m_pathlist.length();
+}
+
+void SearchItem::clear()
+{
+    m_pathlist.clear();
+}
