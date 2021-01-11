@@ -271,7 +271,7 @@ void MainWindow::searchContent(QString searchcontent){
     connect(search, &FileSearcher::resultContent, this, [ = ](QQueue<QPair<QString,QStringList>> * contentQueue) {
         qWarning()<<"resultContent---";
     });
-    search->onKeywordSearch(searchcontent);
+//    search->onKeywordSearch(searchcontent);
     //将搜索结果加入列表
     m_contentFrame->refreshSearchList(m_types, m_lists, searchcontent);
 

@@ -3,14 +3,14 @@
 #include <QPalette>
 #include "global-settings.h"
 
-static GlobalSettings *global_instance = nullptr;
+static GlobalSettings *global_instance_of_global_settings = nullptr;
 
 GlobalSettings *GlobalSettings::getInstance()
 {
-    if (!global_instance) {
-        global_instance = new GlobalSettings;
+    if (!global_instance_of_global_settings) {
+        global_instance_of_global_settings = new GlobalSettings;
     }
-    return global_instance;
+    return global_instance_of_global_settings;
 }
 
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)

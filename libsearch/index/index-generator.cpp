@@ -24,6 +24,8 @@ IndexGenerator *IndexGenerator::getInstance(bool rebuild)
     if (!global_instance) {
         global_instance = new IndexGenerator(rebuild);
     }
+    qDebug() << "global_instance" << global_instance;
+    qDebug() << "QThread::currentThreadId()" << QThread::currentThreadId();
     return global_instance;
 }
 
@@ -126,6 +128,9 @@ IndexGenerator::~IndexGenerator()
     GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"2");
     GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"2");
     GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"2");
+
+    qDebug() << "QThread::currentThreadId()" << QThread::currentThreadId();
+    qDebug() << "~IndexGenerator 22222222222222222222";
 }
 
 void IndexGenerator::insertIntoDatabase(Document doc)
