@@ -120,6 +120,7 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
 
 IndexGenerator::~IndexGenerator()
 {
+    QMutexLocker locker(&m_mutex);
     qDebug() << "~IndexGenerator";
     if(m_datebase_path)
         delete m_datebase_path;
