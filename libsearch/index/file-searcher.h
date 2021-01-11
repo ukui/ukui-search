@@ -20,6 +20,13 @@ public:
     explicit FileSearcher(QObject *parent = nullptr);
     ~FileSearcher();
 
+    static size_t uniqueSymbol1;
+    static size_t uniqueSymbol2;
+    static size_t uniqueSymbol3;
+    static QMutex m_mutex1;
+    static QMutex m_mutex2;
+    static QMutex m_mutex3;
+
 public Q_SLOTS:
     void onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent);
 
@@ -50,12 +57,6 @@ private:
     QQueue<QString> *m_search_result_dir = nullptr;
     QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
     bool m_searching = false;
-    static size_t uniqueSymbol1;
-    static size_t uniqueSymbol2;
-    static size_t uniqueSymbol3;
-    static QMutex m_mutex1;
-    static QMutex m_mutex2;
-    static QMutex m_mutex3;
 };
 
 #endif // FILESEARCHER_H

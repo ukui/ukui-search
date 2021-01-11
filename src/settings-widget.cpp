@@ -207,13 +207,20 @@ void SettingsWidget::clearLayout(QLayout * layout) {
  * @param path 文件夹路径
  */
 void SettingsWidget::onBtnDelClicked(const QString& path) {
-    qDebug()<<path;
-    Q_FOREACH (FolderListItem * item, m_dirListWidget->findChildren<FolderListItem*>()) {
-        if (item->getPath() == path) {
-            item->deleteLater();
-            item = NULL;
-            return;
+    QString returnMessage;
+    if (GlobalSettings::getInstance()->setBlockDirs(path, returnMessage, true)) {
+        qDebug()<<"Remove block dir in onBtnDelClicked() successed.";
+        Q_FOREACH (FolderListItem * item, m_dirListWidget->findChildren<FolderListItem*>()) {
+            if (item->getPath() == path) {
+                item->deleteLater();
+                item = NULL;
+                return;
+            }
         }
+
+    } else {
+        qWarning()<<returnMessage;
+        qDebug()<<"Remove block dir in onBtnAddClicked() failed. Message: "<<returnMessage;
     }
 }
 

@@ -26,7 +26,12 @@ public:
     static int getResType(const QString&);
 
     bool is_current_list = false;
+    int rowheight = 0;
 
+    void appendItem(QString);
+    void removeItem(QString);
+    void clear();
+    bool isHidden = false;
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;

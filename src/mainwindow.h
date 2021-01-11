@@ -41,9 +41,12 @@
 #include "input-box.h"
 #include "index/index-generator.h"
 #include "settings-widget.h"
+#include "libsearch.h"
 
+class SearchResult;
 class MainWindow : public QMainWindow
 {
+    friend class SearchResult;
     Q_OBJECT
 
 public:
@@ -80,6 +83,15 @@ private:
     QVector<int> m_types;
     QVector<QStringList> m_lists;
     QStringList m_dirList;
+
+    QQueue<QString> *m_search_result_file = nullptr;
+    QQueue<QString> *m_search_result_dir = nullptr;
+    QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
+    SearchResult * m_search_result_thread = nullptr;
+    QString m_keyword = 0;
+
+    FileSearcher* m_searcher = nullptr;
+
 protected:
     void paintEvent(QPaintEvent *);
     void initUi();

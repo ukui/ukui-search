@@ -14,8 +14,8 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setHeaderHidden(true);
     this->setColumnWidth(0, 20);
     this->setColumnWidth(1, 80);
-    int rowHeight = this->rowHeight(this->model()->index(0,1, QModelIndex())) + 1;
-    this->setFixedHeight(list.count() * rowHeight + 2);
+    rowheight = this->rowHeight(this->model()->index(0,1, QModelIndex())) + 1;
+    this->setFixedHeight(list.count() * rowheight + 2);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");
@@ -39,6 +39,29 @@ SearchListView::~SearchListView()
         delete m_item;
         m_item = NULL;
     }
+}
+
+/**
+ * @brief SearchListView::appendItem
+ */
+void SearchListView::appendItem(QString path) {
+    m_model->appendItem(path);
+    rowheight = this->rowHeight(this->model()->index(0,1, QModelIndex())) + 1;
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 3);
+}
+
+/**
+ * @brief SearchListView::removeItem
+ */
+void SearchListView::removeItem(QString path) {
+    m_model->removeItem(path);
+}
+
+void SearchListView::clear()
+{
+    m_model->clear();
+    this->setFixedHeight(0);
+    this->isHidden = true;
 }
 
 //获取当前选项所属搜索类型

@@ -37,7 +37,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
     m_search_result_content = searchResultContent;
 
     //file
-    QtConcurrent::run([&, uniqueSymbol1](){
+    QtConcurrent::run([&, uniqueSymbol1, keyword](){
         if(!m_search_result_file->isEmpty())
             m_search_result_file->clear();
         int begin = 0;
@@ -55,7 +55,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
     });
 //    Q_EMIT this->resultFile(m_search_result_file);
     //dir
-    QtConcurrent::run([&, uniqueSymbol2](){
+    QtConcurrent::run([&, uniqueSymbol2, keyword](){
         if(!m_search_result_dir->isEmpty())
             m_search_result_dir->clear();
         int begin = 0;
@@ -73,13 +73,14 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
     });
 //    Q_EMIT this->resultDir(m_search_result_dir);
     //content
-    QtConcurrent::run([&, uniqueSymbol3](){
+    QtConcurrent::run([&, uniqueSymbol3, keyword](){
         if(!m_search_result_content->isEmpty())
             m_search_result_content->clear();
         int begin = 0;
         int num = 5;
         int resultCount = 0;
         int total = 0;
+
         while(total<20)
         {
             keywordSearchContent(uniqueSymbol3,keyword,begin,num);
@@ -329,14 +330,18 @@ QMap<QString,QStringList> FileSearcher::getContentResult(size_t uniqueSymbol, Xa
         m_mutex3.lock();
         if(uniqueSymbol == FileSearcher::uniqueSymbol3)
         {
+
             m_search_result_content->enqueue(qMakePair(path,snippets));
             m_mutex3.unlock();
         }
         else
         {
             m_mutex3.unlock();
-            exit(0);
+            break;
+//            exit(0);
         }
+
+        qDebug() << "after";
         searchResult.insert(path,snippets);
         qDebug()<< "path="<< path << ",weight=" <<docScoreWeight << ",percent=" << docScorePercent;
     }

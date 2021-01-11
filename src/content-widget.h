@@ -18,6 +18,7 @@ public:
     void setPage(const int&);
     int currentPage();
     void refreshSearchList(const QVector<int>&, const QVector<QStringList>&, const QString&);
+    void appendSearchItem(const int& type, const QString& path, const QString& keyword, QStringList contents = QStringList());
     void initHomePage();
     void setContentList(const QStringList&);
 private:
@@ -36,6 +37,9 @@ private:
     QVBoxLayout * m_detailLyt = nullptr;
 
     SearchDetailView * m_detailView = nullptr;
+    SearchListView * m_fileListView = nullptr;
+    SearchListView * m_dirListView = nullptr;
+    SearchListView * m_contentListView = nullptr;
 
     int m_currentType = 0;
 

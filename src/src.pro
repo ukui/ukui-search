@@ -29,6 +29,7 @@ SOURCES += \
     input-box.cpp \
     main.cpp \
     mainwindow.cpp \
+    search-result.cpp \
     settings-widget.cpp \
 
 
@@ -36,6 +37,7 @@ HEADERS += \
     content-widget.h \
     input-box.h \
     mainwindow.h \
+    search-result.h \
     settings-widget.h
 
 # Default rules for deployment.

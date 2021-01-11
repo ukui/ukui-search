@@ -103,10 +103,37 @@ QVariant SearchItemModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+bool SearchItemModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    this->beginInsertRows(parent, row, count);
+    this->endInsertRows();
+    return true;
+}
+
 /**
  * @brief SearchItemModel::setItem 传入存储数据的item
  * @param item
  */
 void SearchItemModel::setItem(SearchItem * item) {
     m_item = item;
+}
+
+/**
+ * @brief SearchItemModel::appendItem
+ */
+void SearchItemModel::appendItem(QString path) {
+    m_item->appendItem(path);
+    this->insertRow(rowCount(QModelIndex()) - 1);
+}
+
+/**
+ * @brief SearchItemModel::removeItem
+ */
+void SearchItemModel::removeItem(QString path) {
+    m_item->removeItem(path);
+}
+
+void SearchItemModel::clear()
+{
+    m_item->clear();
 }
