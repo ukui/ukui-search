@@ -150,7 +150,9 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     editLabel=new QLabel("全局搜索");
     QHBoxLayout *editLayout=new QHBoxLayout(this);
     editLayout->addWidget(editLabel,0,Qt::AlignHCenter);
-
+    connect(searchAction,&QAction::triggered,this,[=](){
+        editLabel->hide();
+    });
 
 
     /*发送输入框文字改变的dbus*/
