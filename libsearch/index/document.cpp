@@ -45,7 +45,7 @@ void Document::setUniqueTerm(QString term)
 {
     if(term.isEmpty())
         return;
-//    m_document->add_term(term.toStdString());
+    m_document->add_term(term.toStdString());
 
     m_unique_term = new QString(term);
 }
