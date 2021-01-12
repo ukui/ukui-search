@@ -24,6 +24,7 @@ public:
 private:
     void initUI();
     void clearHomepage();
+    QString m_keyword;
     QStringList m_contentList;
     QWidget * m_homePage = nullptr;
     QVBoxLayout * m_homePageLyt = nullptr;

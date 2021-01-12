@@ -111,6 +111,10 @@ void UkuiSearchBarHLayout::clearText() {
     m_queryLineEdit->setText("");
 }
 
+QString UkuiSearchBarHLayout::text() {
+    return m_queryLineEdit->text();
+}
+
 /**
  * @brief UKuiSearchLineEdit  全局搜索的输入框
  */

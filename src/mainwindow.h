@@ -88,7 +88,6 @@ private:
     QQueue<QString> *m_search_result_dir = nullptr;
     QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
     SearchResult * m_search_result_thread = nullptr;
-    QString m_keyword = 0;
 
     FileSearcher* m_searcher = nullptr;
 
