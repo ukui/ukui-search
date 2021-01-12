@@ -17,6 +17,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
     m_settings = new QSettings("org.ukui", "ukui-search", this);
     m_block_dirs_settings = new QSettings("org.ukui","ukui-search-block-dirs",this);
+    m_block_dirs_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
     this->forceSync();
     //the default number of transparency in mainwindow is 0.7
     //if someone changes the num in mainwindow, here should be modified too
@@ -82,13 +83,15 @@ void GlobalSettings::resetAll()
 
 bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage, bool remove)
 {
-    //why QSetting's key can't start with "/"??
-    QString pathKey = path.right(path.length()-1);
     if(remove)
     {
-        m_block_dirs_settings->remove(pathKey);
+        m_block_dirs_settings->remove(path);
         return true;
     }
+
+    //why QSetting's key can't start with "/"??
+    QString pathKey = path.right(path.length()-1);
+
     QStringList blockDirs = m_block_dirs_settings->allKeys();
     for(QString i:blockDirs)
     {

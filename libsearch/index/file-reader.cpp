@@ -6,15 +6,15 @@ FileReader::FileReader(QObject *parent) : QObject(parent)
 
 }
 
-QString *FileReader::getTextContent(QString path)
+void FileReader::getTextContent(QString path, QString &textContent)
 {
     //获取所有文件内容
     //先分类
     QString type =FileUtils::getMimetype(path,true);
     if(type == "application/zip")
-        return FileUtils::getDocxTextContent(path);
+         FileUtils::getDocxTextContent(path,textContent);
     else if(type == "text/plain")
-        return FileUtils::getTxtContent(path);
+         FileUtils::getTxtContent(path,textContent);
 
-    return new QString();
+    return;
 }

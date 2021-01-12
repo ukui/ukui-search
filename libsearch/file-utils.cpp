@@ -472,22 +472,21 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
  * @param path: abs path
  * @return docx to QString
  */
-QString *FileUtils::getDocxTextContent(QString &path)
+void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
 {
     QFileInfo info = QFileInfo(path);
     if(!info.exists()||info.isDir())
-        return nullptr;
+        return;
     QuaZip file(path);
     if(!file.open(QuaZip::mdUnzip))
-        return nullptr;
+        return;
 
     if(!file.setCurrentFile("word/document.xml",QuaZip::csSensitive))
-        return nullptr;
+        return;
     QuaZipFile fileR(&file);
 
     fileR.open(QIODevice::ReadOnly);        //读取方式打开
 
-    QString *allText = new QString();
     QDomDocument doc;
     doc.setContent(fileR.readAll());
     QDomElement first = doc.firstChildElement("w:document");
@@ -498,19 +497,19 @@ QString *FileUtils::getDocxTextContent(QString &path)
         while(!wr.isNull())
         {
             QDomElement wt = wr.firstChildElement("w:t");
-            allText->append(wt.text());
+            textcontent.append(wt.text().replace("\n",""));
             wr = wr.nextSiblingElement();
         }
         first = first.nextSiblingElement();
     }
-    return allText;
+    return;
 }
 
-QString *FileUtils::getTxtContent(QString &path)
+void FileUtils::getTxtContent(QString &path, QString &textcontent)
 {
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
-        return nullptr;
-    QString *allText = new QString(file.readAll());
-    return allText;
+        return;
+    textcontent =  QString(file.readAll()).replace("\n","");
+    return;
 }
