@@ -234,6 +234,7 @@ void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<Q
  * @param contents 文件内容
  */
 void ContentWidget::appendSearchItem(const int& type, const QString& path, const QString& keyword, QStringList contents) {
+    m_keyword = keyword;
     switch (type) {
         case SearchItem::SearchType::Files: {
             if (!m_fileListView) {
@@ -269,6 +270,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, const
                 m_listLyt->addWidget(m_fileListView);
                 m_resultList->setFixedHeight(m_resultList->height() + m_fileListView->height() + titleLabel->height());
             }
+            m_fileListView->setKeyword(keyword);
             m_fileListView->appendItem(path);
             m_resultList->setFixedHeight(m_resultList->height() + m_fileListView->rowheight);
             return;
@@ -308,6 +310,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, const
                 m_listLyt->addWidget(m_dirListView);
                 m_resultList->setFixedHeight(m_resultList->height() + m_dirListView->height() + titleLabel->height());
             }
+            m_dirListView->setKeyword(keyword);
             m_dirListView->appendItem(path);
             m_resultList->setFixedHeight(m_resultList->height() + m_dirListView->rowheight);
             return;
@@ -323,7 +326,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, const
                 m_listLyt->addWidget(titleLabel);
                 m_listLyt->addWidget(m_contentListView);
                 connect(m_contentListView, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
-                    m_detailView->setContent(m_contentList.at(m_contentListView->currentIndex().row()), keyword);
+                    m_detailView->setContent(m_contentList.at(m_contentListView->currentIndex().row()), m_keyword);
                     m_detailView->setupWidget(type, path);
                     m_contentListView->is_current_list = true;
                     Q_EMIT this->currentItemChanged();
@@ -348,6 +351,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, const
                 m_listLyt->addWidget(m_contentListView);
                 m_resultList->setFixedHeight(m_resultList->height() + m_contentListView->height() + titleLabel->height());
             }
+            m_contentListView->setKeyword(keyword);
             m_contentListView->appendItem(path);
             m_resultList->setFixedHeight(m_resultList->height() + m_contentListView->rowheight);
             QString temp;

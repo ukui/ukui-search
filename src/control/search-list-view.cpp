@@ -20,7 +20,8 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");
     m_styleDelegate = new HighlightItemDelegate();
-    m_styleDelegate->setSearchKeyword(keyword);
+//    m_styleDelegate->setSearchKeyword(keyword);
+    setKeyword(keyword);
     this->setItemDelegate(m_styleDelegate);
 
     m_type = type;
@@ -62,6 +63,15 @@ void SearchListView::clear()
     m_model->clear();
     this->setFixedHeight(0);
     this->isHidden = true;
+}
+
+/**
+ * @brief SearchListView::setKeyword 设置关键词
+ * @param keyword 关键词
+ */
+void SearchListView::setKeyword(QString keyword)
+{
+    m_styleDelegate->setSearchKeyword(keyword);
 }
 
 //获取当前选项所属搜索类型

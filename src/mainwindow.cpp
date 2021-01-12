@@ -91,13 +91,13 @@ MainWindow::MainWindow(QWidget *parent) :
     m_search_result_thread = new SearchResult(this);
 //    m_search_result_thread->start();
     connect(m_search_result_thread, &SearchResult::searchResultFile, this, [ = ](QString path) {
-        m_contentFrame->appendSearchItem(SearchItem::SearchType::Files, path, m_keyword);
+        m_contentFrame->appendSearchItem(SearchItem::SearchType::Files, path, m_searchLayout->text());
     });
     connect(m_search_result_thread, &SearchResult::searchResultDir, this, [ = ](QString path) {
-        m_contentFrame->appendSearchItem(SearchItem::SearchType::Dirs, path, m_keyword);
+        m_contentFrame->appendSearchItem(SearchItem::SearchType::Dirs, path, m_searchLayout->text());
     });
     connect(m_search_result_thread, &SearchResult::searchResultContent, this, [ = ](QPair<QString, QStringList> pair) {
-        m_contentFrame->appendSearchItem(SearchItem::SearchType::Contents, pair.first, m_keyword, pair.second);
+        m_contentFrame->appendSearchItem(SearchItem::SearchType::Contents, pair.first, m_searchLayout->text(), pair.second);
     });
 }
 
@@ -161,6 +161,8 @@ void MainWindow::initUi()
         m_settingsWidget->show();
         connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
             QTimer::singleShot(100, this, [ = ] {
+                clearSearchResult();
+                m_search_result_thread->start();
                 this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
                 this->raise();
                 this->showNormal();
@@ -252,7 +254,6 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
  * @param searchcontent
  */
 void MainWindow::searchContent(QString searchcontent){
-    m_keyword = searchcontent;
     m_lists.clear();
     m_types.clear();
 

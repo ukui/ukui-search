@@ -248,7 +248,8 @@ void SettingsWidget::setIndexNum(int num) {
  * @brief SettingsWidget::onBtnConfirmClicked 点击确认按钮的槽函数
  */
 void SettingsWidget::onBtnConfirmClicked() {
-
+    Q_EMIT this->settingWidgetClosed();
+    this->close();
 }
 
 /**

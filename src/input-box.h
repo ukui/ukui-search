@@ -35,6 +35,7 @@ public:
     ~UkuiSearchBarHLayout();
     void searchContent(QString searchcontent);
     void clearText();
+    QString text();
 private:
     void initUI();
     bool m_isEmpty = true;

@@ -31,6 +31,7 @@ public:
     void appendItem(QString);
     void removeItem(QString);
     void clear();
+    void setKeyword(QString);
     bool isHidden = false;
 private:
     SearchItemModel * m_model = nullptr;
