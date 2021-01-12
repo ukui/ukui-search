@@ -44,6 +44,13 @@ HEADERS += \
 RESOURCES += \
     resource1.qrc \
 
+TRANSLATIONS += \
+    ../translations/libsearch/libukui-search_zh_CN.ts
+
+qm_files.path = /usr/share/ukui-search/translations/libsearch/
+qm_files.files = $$OUT_PWD/.qm/*.qm
+
+INSTALLS += qm_files
 
 
 # Default rules for deployment.
