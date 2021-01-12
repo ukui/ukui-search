@@ -354,7 +354,7 @@ bool FileSearcher::isBlocked(QString &path)
     QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
     for(QString i :blockList)
     {
-        if(path.startsWith(i))
+        if(path.startsWith(i.prepend("/")))
             return true;
     }
     return false;

@@ -8,7 +8,7 @@ class FileReader : public QObject
     Q_OBJECT
 public:
     explicit FileReader(QObject *parent = nullptr);
-    static QString* getTextContent(QString path);
+    static void getTextContent(QString path, QString &textContent);
 
 };
 

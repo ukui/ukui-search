@@ -131,7 +131,7 @@ IndexGenerator::~IndexGenerator()
     GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"2");
 
     qDebug() << "QThread::currentThreadId()" << QThread::currentThreadId();
-    qDebug() << "~IndexGenerator 22222222222222222222";
+    qDebug() << "~IndexGenerator end";
 }
 
 void IndexGenerator::insertIntoDatabase(Document doc)
@@ -240,11 +240,12 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
 Document IndexGenerator::GenerateContentDocument(const QString &path)
 {
 //    构造文本索引的document
-    QString *content = FileReader::getTextContent(path);
+    QString content;
+    FileReader::getTextContent(path,content);
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(path));
-    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content);
+    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(&content);
     Document doc;
-    doc.setData(*content);
+    doc.setData(content);
     doc.setUniqueTerm(uniqueterm);
     doc.addValue(path);
     for(int i = 0;i<term.size();++i)
@@ -349,6 +350,7 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
             qDebug()<<"--delete start--";
             m_datebase_path->delete_document(uniqueterm);
             m_database_content->delete_document(uniqueterm);
+            qDebug()<<"delete path"<<doc;
             qDebug()<<"delete md5"<<QString::fromStdString(uniqueterm);
             m_datebase_path->commit();
             qDebug()<< "--delete finish--";
