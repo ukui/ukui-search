@@ -162,7 +162,7 @@ void MainWindow::initUi()
         connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
             QTimer::singleShot(100, this, [ = ] {
                 clearSearchResult();
-                m_search_result_thread->start();
+//                m_search_result_thread->start();
                 this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
                 this->raise();
                 this->showNormal();
@@ -192,10 +192,17 @@ void MainWindow::initUi()
             &MainWindow::primaryScreenChangedSlot);
     connect(m_searchLayout, &UkuiSearchBarHLayout::textChanged, this, [ = ](QString text) {
         if (text == "") {
+            if (m_search_result_thread->isInterruptionRequested()) {
+                m_search_result_thread->requestInterruption();
+                m_search_result_thread->quit();
+            }
             m_contentFrame->setCurrentIndex(0);
         } else {
             m_contentFrame->setCurrentIndex(1);
 //            QTimer::singleShot(50,this,[=](){
+                if (! m_search_result_thread->isInterruptionRequested()) {
+                    m_search_result_thread->start();
+                }
                 searchContent(text);
 //            });
         }
@@ -215,7 +222,7 @@ void MainWindow::bootOptionsFilter(QString opt)
     this->show();
     this->raise();
     this->activateWindow();
-    m_search_result_thread->start();
+//    m_search_result_thread->start();
 }
 
 /**
@@ -299,6 +306,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
     switch (event->response_type & ~0x80) {
     case XCB_FOCUS_OUT:
         this->hide();
+        m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
         break;
     }
