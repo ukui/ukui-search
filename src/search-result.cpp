@@ -22,9 +22,9 @@ SearchResult::~SearchResult()
 void SearchResult::run()
 {
     QTimer * m_timer = new QTimer;
+    m_timer->setInterval(3000);
     int emptyLists = 0;
     while(!isInterruptionRequested()) {
-        qWarning()<<"--------------------";
         emptyLists = 0;
         m_mainwindow->m_searcher->m_mutex1.lock();
         if (!m_mainwindow->m_search_result_file->isEmpty()) {
@@ -44,7 +44,7 @@ void SearchResult::run()
         }
         m_mainwindow->m_searcher->m_mutex3.lock();
         if (!m_mainwindow->m_search_result_content->isEmpty())
-            qDebug() << m_mainwindow->m_search_result_content->head();
+//            qDebug() << m_mainwindow->m_search_result_content->head();
         if (!m_mainwindow->m_search_result_content->isEmpty()) {
             Q_EMIT this->searchResultContent(m_mainwindow->m_search_result_content->dequeue());
             m_mainwindow->m_searcher->m_mutex3.unlock();

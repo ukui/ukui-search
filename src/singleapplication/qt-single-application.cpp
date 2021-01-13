@@ -327,23 +327,24 @@ QWidget* QtSingleApplication::activationWindow() const
 */
 void QtSingleApplication::activateWindow()
 {
-    if (actWin) {
-        if(this->applicationState() & Qt::ApplicationInactive)
-        {
-            MainWindow* w=qobject_cast<MainWindow*>(actWin);
-//            w->loadMainWindow();
-            w->clearSearchResult();
-            actWin->setWindowState(actWin->windowState() & ~Qt::WindowMinimized);
-            actWin->raise();
-            actWin->showNormal();
-            actWin->activateWindow();
-        }
-        else {
-            actWin->setWindowState(actWin->windowState() & Qt::WindowMinimized);
-            actWin->hide();
-        }
+    //单例置顶策略，由于bootOptionsFilter in mainwindow自带置顶策略，故注掉此处
+//    if (actWin) {
+//        if(this->applicationState() & Qt::ApplicationInactive)
+//        {
+//            MainWindow* w=qobject_cast<MainWindow*>(actWin);
+////            w->loadMainWindow();
+//            w->clearSearchResult();
+//            actWin->setWindowState(actWin->windowState() & ~Qt::WindowMinimized);
+//            actWin->raise();
+//            actWin->showNormal();
+//            actWin->activateWindow();
+//        }
+//        else {
+//            actWin->setWindowState(actWin->windowState() & Qt::WindowMinimized);
+//            actWin->hide();
+//        }
 
-    }
+//    }
 }
 
 
