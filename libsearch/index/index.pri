@@ -2,7 +2,6 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/document.h \
-    $$PWD/filetypefilter.h \
     $$PWD/file-reader.h \
     $$PWD/first-index.h \
     $$PWD/index-generator.h \
@@ -13,7 +12,6 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/document.cpp \
-    $$PWD/filetypefilter.cpp \
     $$PWD/file-reader.cpp \
     $$PWD/first-index.cpp \
     $$PWD/index-generator.cpp \

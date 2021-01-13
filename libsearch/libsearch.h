@@ -9,8 +9,6 @@
 #include "global-settings.h"
 #include "index/first-index.h"
 
-#include "index/filetypefilter.h"
-
 #include "index/ukui-search-qdbus.h"
 #include "index/inotify-index.h"
 
