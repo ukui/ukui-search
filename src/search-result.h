@@ -2,6 +2,7 @@
 #define SEARCHRESULT_H
 #include <QThread>
 #include <QWaitCondition>
+#include <QTimer>
 #include "mainwindow.h"
 
 class SearchResult : public QThread
@@ -15,6 +16,7 @@ protected:
 
 private:
     MainWindow * m_mainwindow = nullptr;
+//    QTimer * m_timer = nullptr;
 
 Q_SIGNALS:
     void searchResultFile(const QString&);
