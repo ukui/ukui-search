@@ -105,6 +105,7 @@ void FirstIndex::run(){
         sem.acquire(1);
         mutex1.unlock();
         this->Traverse();
+        FileUtils::_max_index_count = this->q_index->length();
         sem.release(5);
     });
     QtConcurrent::run([&](){

@@ -9,6 +9,7 @@
 #include "global-settings.h"
 #include "index-generator.h"
 #include "inotify-index.h"
+#include "file-utils.h"
 
 class FirstIndex : public QThread, public Traverse_BFS
 {
