@@ -12,7 +12,8 @@ public:
     Document();
     ~Document();
     void setData(QString data);
-    void addterm(std::string term, QVector<size_t> offset, int weight =1);
+    void addPosting(std::string term, QVector<size_t> offset, int weight =1);
+    void addTerm(QString term);
     void addValue(QString value);
     void setUniqueTerm(QString term);
     std::string getUniqueTerm();
