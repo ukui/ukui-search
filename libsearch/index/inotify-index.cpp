@@ -112,13 +112,13 @@ void InotifyIndex::run(){
         if (numRead == -1) {
             qDebug() << "read";
         }
-        qDebug() << "Read " << numRead << " bytes from inotify fd";
+//        qDebug() << "Read " << numRead << " bytes from inotify fd";
 
         /* Process all of the events in buffer returned by read() */
 
         for (p = buf; p < buf + numRead;) {
             struct inotify_event * event = reinterpret_cast<inotify_event *>(p);
-            qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
+//            qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
             if(event->name[0] != '.'){
                 qDebug() << QString(currentPath[event->wd] + '/' + event->name);
 

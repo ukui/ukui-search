@@ -1,2 +1,3 @@
 usr/bin/ukui-search
-/usr/share/ukui-search/translations/*.qm
+etc/xdg/autostart/*.desktop
+usr/share/ukui-search/translations/*.qm

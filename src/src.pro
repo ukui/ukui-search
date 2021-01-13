@@ -45,7 +45,8 @@ HEADERS += \
 target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
 
-data.path = /usr/share/applications
+#data.path = /usr/share/applications
+data.path = /etc/xdg/autostart
 data.files += ../data/ukui-search.desktop
 INSTALLS += data
 
