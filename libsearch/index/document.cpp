@@ -23,7 +23,7 @@ void Document::setData(QString data)
     m_document->set_data(data.toStdString());
 }
 
-void Document::addterm(std::string term,QVector<size_t> offset, int weight)
+void Document::addPosting(std::string term,QVector<size_t> offset, int weight)
 {
     if(term == "")
         return;
@@ -34,6 +34,13 @@ void Document::addterm(std::string term,QVector<size_t> offset, int weight)
     {
         m_document->add_posting(term,i,weight);
     }
+}
+
+void Document::addTerm(QString term)
+{
+    if(term.isEmpty())
+        return;
+    m_document->add_term(term.toStdString());
 }
 
 void Document::addValue(QString value)
@@ -49,7 +56,6 @@ void Document::setUniqueTerm(QString term)
 
     m_unique_term = new QString(term);
 }
-
 std::string Document::getUniqueTerm()
 {
 //    qDebug()<<"m_unique_term!"<<*m_unique_term;

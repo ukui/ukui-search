@@ -216,6 +216,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     }
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
+    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep)));
 //    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
 /*--------------------------------------------------------------------*/
     //QByteArray 和  QString 之间会进行隐式转换，造成字符串被截断等意想不到的后果！！！！！！！ zpf
@@ -229,6 +230,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     Document doc;
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
+    doc.addTerm(upTerm);
     doc.addValue(list.at(2));
     QStringList temp;
     temp.append(index_text);
@@ -244,14 +246,17 @@ Document IndexGenerator::GenerateContentDocument(const QString &path)
     QString content;
     FileReader::getTextContent(path,content);
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(path));
+    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(path.section("/",0,-2,QString::SectionIncludeLeadingSep)));
+
     QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(&content);
     Document doc;
     doc.setData(content);
     doc.setUniqueTerm(uniqueterm);
+    doc.addTerm(upTerm);
     doc.addValue(path);
     for(int i = 0;i<term.size();++i)
     {
-        doc.addterm(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
+        doc.addPosting(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
 
     }
     return doc;
