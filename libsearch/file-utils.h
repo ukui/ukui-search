@@ -6,6 +6,9 @@
 #include <QIcon>
 #include <QMap>
 #include "libsearch_global.h"
+#define INITIAL_STATE 0
+#define CREATING_INDEX 1
+#define FINISH_CREATING_INDEX 2
 
 class  LIBSEARCH_EXPORT FileUtils
 {
@@ -31,6 +34,7 @@ public:
     static void getTxtContent(QString &path, QString &textcontent);
     static size_t _max_index_count;
     static size_t _current_index_count;
+    static unsigned short _index_status;
 
 private:
     FileUtils();
