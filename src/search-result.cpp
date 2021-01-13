@@ -43,7 +43,7 @@ void SearchResult::run()
             m_mainwindow->m_searcher->m_mutex2.unlock();
         }
         m_mainwindow->m_searcher->m_mutex3.lock();
-        if (!m_mainwindow->m_search_result_content->isEmpty())
+//        if (!m_mainwindow->m_search_result_content->isEmpty())
 //            qDebug() << m_mainwindow->m_search_result_content->head();
         if (!m_mainwindow->m_search_result_content->isEmpty()) {
             Q_EMIT this->searchResultContent(m_mainwindow->m_search_result_content->dequeue());
