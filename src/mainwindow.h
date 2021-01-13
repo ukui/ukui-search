@@ -37,6 +37,7 @@
 #include <QFrame>
 #include <QPushButton>
 #include <QGSettings/QGSettings>
+#include <QSystemTrayIcon>
 #include "content-widget.h"
 #include "input-box.h"
 #include "index/index-generator.h"
@@ -90,6 +91,7 @@ private:
     SearchResult * m_search_result_thread = nullptr;
 
     FileSearcher* m_searcher = nullptr;
+    QSystemTrayIcon *m_sys_tray_icon;
 
 protected:
     void paintEvent(QPaintEvent *);

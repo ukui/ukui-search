@@ -75,6 +75,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //文件内容索引
 bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 {
+    FileUtils::_index_status = CREATING_INDEX;
     HandlePathList(messageList);
     try
     {
@@ -99,6 +100,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
     }
     m_doc_list_content->clear();
     Q_EMIT this->transactionFinished();
+    FileUtils::_index_status = FINISH_CREATING_INDEX;
     return true;
 
 }
@@ -359,7 +361,9 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
             qDebug()<<"delete path"<<doc;
             qDebug()<<"delete md5"<<QString::fromStdString(uniqueterm);
             m_datebase_path->commit();
-            FileUtils::_current_index_count -= 1;
+
+            FileUtils::_current_index_count = m_datebase_path->get_doccount();
+
             qDebug()<< "--delete finish--";
         }
         catch(const Xapian::Error &e)

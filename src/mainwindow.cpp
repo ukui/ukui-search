@@ -99,6 +99,20 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_search_result_thread, &SearchResult::searchResultContent, this, [ = ](QPair<QString, QStringList> pair) {
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Contents, pair.first, m_searchLayout->text(), pair.second);
     });
+
+    m_sys_tray_icon = new QSystemTrayIcon(this);
+    m_sys_tray_icon->setIcon(QIcon::fromTheme("system-search-symbolic"));
+    m_sys_tray_icon->setToolTip(tr("Global Search"));
+    m_sys_tray_icon->show();
+    connect(m_sys_tray_icon,&QSystemTrayIcon::activated,this,[=](QSystemTrayIcon::ActivationReason reason){
+        if(reason == QSystemTrayIcon::Trigger)
+        {
+            clearSearchResult();
+            this->show();
+            this->raise();
+            this->activateWindow();
+        }
+    });
 }
 
 MainWindow::~MainWindow()
