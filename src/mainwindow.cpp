@@ -218,11 +218,13 @@ void MainWindow::initUi()
  */
 void MainWindow::bootOptionsFilter(QString opt)
 {
-    clearSearchResult();
-    this->show();
-    this->raise();
-    this->activateWindow();
-//    m_search_result_thread->start();
+    if (opt == "-s" || opt == "--show") {
+        clearSearchResult();
+        this->show();
+        this->raise();
+        this->activateWindow();
+//        m_search_result_thread->start();
+    }
 }
 
 /**
