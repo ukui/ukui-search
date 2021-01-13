@@ -23,7 +23,7 @@ void UKuiSeachBarWidget::paintEvent(QPaintEvent *e)
 //    p.setBrush(QBrush(QColor(255,255,255)));
     p.setOpacity(1);
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect,12,12);
+    p.drawRoundedRect(rect,30,30);
     QWidget::paintEvent(e);
 }
 
@@ -136,13 +136,10 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
             styleChange();
         }
     });
-
-
-
     this->setFocusPolicy(Qt::ClickFocus);
     this->installEventFilter(this);
     this->setContextMenuPolicy(Qt::NoContextMenu);
-    this->setFixedSize(678,35);
+    this->setFixedSize(650,35);
     this->setMaxLength(100);
 
     /*添加默认文字和图标*/
@@ -150,10 +147,12 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     searchAction->setIcon(QIcon(":/data/img/mainviewwidget/edit-find-symbolic.svg"));
     this->addAction(searchAction,QLineEdit::LeadingPosition);
 
-    editLabel=new QLabel("全局搜素");
+    editLabel=new QLabel("全局搜索");
     QHBoxLayout *editLayout=new QHBoxLayout(this);
     editLayout->addWidget(editLabel,0,Qt::AlignHCenter);
-
+    connect(searchAction,&QAction::triggered,this,[=](){
+        editLabel->hide();
+    });
 
 
     /*发送输入框文字改变的dbus*/

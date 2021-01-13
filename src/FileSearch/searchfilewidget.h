@@ -25,7 +25,7 @@ public:
 private:
      void initFilesearchUI();
      void paintEvent(QPaintEvent *e);
-
+     bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
      void fileTextRefresh(QString);

@@ -53,6 +53,7 @@ private:
     QVector<QStringList> m_data;
     SearchAppThread *m_searchAppThread=nullptr;
     void paintEvent(QPaintEvent *e);
+    bool eventFilter(QObject *watched, QEvent *event);
 
     QVBoxLayout *m_listLayout;
     QLabel * applabel;

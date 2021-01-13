@@ -124,12 +124,12 @@ void MainWindow::ways()
         bgOption = "stretched";
     if (bgOption== "centered"||bgOption=="scaled"||bgOption=="wallpaper") //居中
     {
-        pixmap->load(bgPath);
+        pixmap=QPixmap(bgPath);
     }
     else
     {
         pixmap1=pixmap1.scaled(this->size());
-        pixmap=&pixmap1;
+        pixmap=pixmap1;
     }
     pixmap=blurPixmap(pixmap);
 }
@@ -164,6 +164,12 @@ bool MainWindow::event ( QEvent * event )
     }
 
     return QWidget::event(event);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event){
+    if(event->key()==Qt::Key_Escape){
+        qApp->exit(0);
+    }
 }
 
 /**
@@ -201,10 +207,10 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 
 }
 
-QPixmap * MainWindow::blurPixmap(QPixmap *pixmap)
+QPixmap  MainWindow::blurPixmap(QPixmap pixmap)
 {
-    QPainter painter(pixmap);
-    QImage srcImg=pixmap->toImage();
+    QPainter painter(&pixmap);
+    QImage srcImg=pixmap.toImage();
     qt_blurImage(&painter,srcImg,150,false,false);//top 27000
     painter.end();
     return pixmap;
@@ -223,13 +229,13 @@ void MainWindow::backgroundPic()//const QString &bgPath,QRect rect
         bgOption = "stretched";
     if (bgOption== "centered") //居中
     {
-        painter.drawPixmap(this->width()/2-pixmap->width()/2,
-                           this->height()/2-pixmap->height()/2,
-                           *pixmap);
+        painter.drawPixmap(this->width()/2-pixmap.width()/2,
+                           this->height()/2-pixmap.height()/2,
+                           pixmap);
     }
     else if (bgOption=="stretched"||bgOption=="scaled") //拉伸
     {
-        painter.drawPixmap(this->rect(),*pixmap);
+        painter.drawPixmap(this->rect(),pixmap);
     }
     else if (bgOption=="wallpaper") //平铺
     {
@@ -240,19 +246,19 @@ void MainWindow::backgroundPic()//const QString &bgPath,QRect rect
             drawedWidth=0;
             while(1)
             {
-                painter.drawPixmap(drawedWidth,drawedHeight,*pixmap);
-                drawedWidth += pixmap->width();
+                painter.drawPixmap(drawedWidth,drawedHeight,pixmap);
+                drawedWidth += pixmap.width();
                 if(drawedWidth>=this->width())
                     break;
             }
-            drawedHeight += pixmap->height();
+            drawedHeight += pixmap.height();
             if(drawedHeight >= this->height())
                 break;
         }
     }
     else
     {
-        painter.drawPixmap(this->rect(),*pixmap);
+        painter.drawPixmap(this->rect(),pixmap);
     }
 }
 

@@ -24,6 +24,7 @@ public:
 private:
      void initSettingsearchUI();
      void paintEvent(QPaintEvent *e);
+     bool eventFilter(QObject *watched, QEvent *event);
 
 private Q_SLOTS:
      void settingTextRefresh(QString);

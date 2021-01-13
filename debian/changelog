@@ -1,3 +1,13 @@
+ukui-search (3.0.0-2+0105) v101; urgency=medium
+
+  * fix:结果显示不全
+  * fix:系统设置框空白区域过大
+  * fix:编辑栏圆角
+  * fix:软键盘无法使用 
+  * fix:文件结果排序
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Tue, 05 Jan 2021 15:43:41 -0800
+
 ukui-search (3.0.0-1+1223) v101; urgency=medium
 
   * fix:背景跟随设计稿

@@ -6,6 +6,7 @@
 SearchFileWidget::SearchFileWidget()
 {
     initFilesearchUI();
+    installEventFilter(this);
 
 }
 
@@ -76,7 +77,7 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
 {
     int count=m_filemodel->showResult(arg);
     m_searchFileThread->quit();
-    this->setFixedHeight((count+1)*40);
+    this->setFixedHeight(fileHead->height()+(count+1)*40);
 
 
     fileView->setCurrentIndex(m_filemodel->index(0,0,m_filemodel->index(0,0,m_filemodel->index(0))));
@@ -100,3 +101,13 @@ void SearchFileWidget::paintEvent(QPaintEvent *e)
     p.drawRoundedRect(rect,12,12);
     QWidget::paintEvent(e);
 }
+
+bool SearchFileWidget::eventFilter(QObject *watched, QEvent *event){
+    if(watched==this){
+        if(event->type()==QEvent::MouseButtonRelease){
+            return true;
+        }
+    }
+    return false;
+}
+

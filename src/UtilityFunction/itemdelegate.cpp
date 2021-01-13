@@ -37,6 +37,7 @@ ItemDelegate::~ItemDelegate()
 
 void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    QStyle *style = option.widget? option.widget->style() : QApplication::style();
     if(index.isValid())
     {
         QStyleOptionViewItem viewOption(option);//用来在视图中画一个item
@@ -81,6 +82,11 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
             painter->setBrush(color);
             painter->drawPath(path);
             painter->restore();
+        }
+        painter->setOpacity(1);
+        if(option.state & QStyle::State_Selected)
+        {
+            style->drawControl(QStyle::CE_ItemViewItem, &option, painter);
         }
         painter->setOpacity(1);
 

@@ -35,6 +35,7 @@
 #include <QPropertyAnimation>
 #include <QFileInfo>
 #include <QPixmap>
+#include <QKeyEvent>
 #include "src/Style/style.h"
 #include "src/MainWindow/mainviewwidget.h"
 #include "src/Interface/ukuicontrolstyle.h"
@@ -64,12 +65,12 @@ private:
     QString bgPath;
     QString bgOption;
     QPixmap pixmap1;
-    QPixmap *pixmap=nullptr;
+    QPixmap pixmap;
     bool m_winFlag = false;
 
 protected:
     void initUi();
-    QPixmap * blurPixmap(QPixmap *pixmap);
+    QPixmap blurPixmap(QPixmap pixmap);
     void paintEvent(QPaintEvent *event);
     void backgroundPic();
     void ways();
@@ -77,6 +78,7 @@ protected:
      * @brief Handle events clicking on the outside of the window
      */
     bool event(QEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 public Q_SLOTS:
     /**
