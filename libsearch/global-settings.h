@@ -17,6 +17,7 @@
 #define INDEX_DATABASE_STATE "index_database_state"
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
+#define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
 
 class LIBSEARCH_EXPORT GlobalSettings : public QObject
 {

@@ -7,6 +7,7 @@
 #include "index-generator.h"
 #include "traverse_bfs.h"
 #include "ukui-search-qdbus.h"
+#include "global-settings.h"
 
 #define BUF_LEN 1024
 class InotifyIndex;

@@ -5,9 +5,10 @@
 
 void handler(int){
     qDebug() << "Recieved SIGTERM!";
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"2");
-    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"2");
-    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT,"2");
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
+    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
+    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
+    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
 
 
     qDebug() << "indexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
@@ -25,9 +26,11 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
 {
     QString indexDataBaseStatus =  GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
     QString contentIndexDataBaseStatus = GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
+    QString inotifyIndexStatus = GlobalSettings::getInstance()->getValue(INOTIFY_NORMAL_EXIT).toString();
 
     qDebug() << "indexDataBaseStatus: " << indexDataBaseStatus;
     qDebug() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
+    qDebug() << "inotifyIndexStatus: " << inotifyIndexStatus;
 
 
     if (indexDataBaseStatus == "" || contentIndexDataBaseStatus == ""){
@@ -36,7 +39,7 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
     else{
         this->bool_dataBaseExist = true;
     }
-    if (indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2"){
+    if (indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2"){
         this->bool_dataBaseStatusOK = false;
     }
     else{
@@ -79,8 +82,8 @@ void FirstIndex::run(){
             //why???????????????????????????????????????????????????????????????
             //why not quit?
 //            this->quit();
+//            exit(0);
             return;
-//            return;
 //            this->wait();
         }
         else{
