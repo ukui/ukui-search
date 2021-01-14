@@ -26,7 +26,7 @@ include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
-LIBS += -lxapian -lquazip5
+LIBS += -lxapian -lquazip5 -luchardet
 
 SOURCES += \
     file-utils.cpp \

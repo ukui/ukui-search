@@ -10,6 +10,7 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QQueue>
+#include "uchardet/uchardet.h"
 size_t FileUtils::_max_index_count = 0;
 size_t FileUtils::_current_index_count = 0;
 unsigned short FileUtils::_index_status = INITIAL_STATE;
@@ -512,6 +513,22 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
-    textcontent =  QString(file.readAll()).replace("\n","");
+
+    QByteArray encodedString = file.readAll();
+
+    uchardet_t chardet = uchardet_new();
+    if(uchardet_handle_data(chardet,encodedString.constData(),encodedString.size()) !=0)
+        qWarning()<<"Txt file encoding format detect fail!"<<path;
+
+    uchardet_data_end(chardet);
+    const char *codec = uchardet_get_charset(chardet);
+
+    if(QTextCodec::codecForName(codec) == 0)
+        qWarning()<<"Unsupported Text encoding format"<<path;
+
+    QTextStream stream(encodedString,QIODevice::ReadOnly);
+    stream.setCodec(codec);
+
+    textcontent = stream.readAll().replace("\n","");
     return;
 }
