@@ -45,10 +45,11 @@ HEADERS += \
 target.path = /usr/bin
 !isEmpty(target.path): INSTALLS += target
 
-#data.path = /usr/share/applications
+data-menu.path = /usr/share/applications
+data-menu.files += ../data/ukui-search-menu.desktop
 data.path = /etc/xdg/autostart
 data.files += ../data/ukui-search.desktop
-INSTALLS += data
+INSTALLS += data data-menu
 
 RESOURCES += \
     resource.qrc
@@ -69,6 +70,7 @@ INCLUDEPATH += $$PWD/../libsearch
 DEPENDPATH += $$PWD/../libsearch
 
 DISTFILES += \
+    ../data/ukui-search-menu.desktop \
     translations/bo.ts \
     translations/es.qm \
     translations/zh_CN.qm
