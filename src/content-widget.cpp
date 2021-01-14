@@ -158,6 +158,15 @@ int ContentWidget::currentPage() {
  */
 void ContentWidget::refreshSearchList(const QVector<int>& types, const QVector<QStringList>& lists, const QString& keyword) {
     if (!m_listLyt->isEmpty()) {
+        if (m_fileListView) {
+            m_fileListView->clear();
+        }
+        if (m_dirListView) {
+            m_dirListView->clear();
+        }
+        if (m_contentListView) {
+            m_contentListView->clear();
+        }
         clearLayout(m_listLyt);
         m_resultList->setFixedHeight(0);
     }
@@ -396,15 +405,6 @@ QString ContentWidget::getTitleName(const int& type) {
  * @param layout 需要清空的布局
  */
 void ContentWidget::clearLayout(QLayout * layout) {
-    if (m_fileListView) {
-        m_fileListView->clear();
-    }
-    if (m_dirListView) {
-        m_dirListView->clear();
-    }
-    if (m_contentListView) {
-        m_contentListView->clear();
-    }
     m_contentList.clear();
     if (! layout) return;
     QLayoutItem * child;

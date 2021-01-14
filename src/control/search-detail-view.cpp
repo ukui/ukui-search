@@ -251,21 +251,15 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
         case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir:
         case SearchListView::ResType::File: {
-            QProcess * process = new QProcess;
-            process->start(QString("xdg-open %1").arg(path));
-            connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
-                process->deleteLater();
-            });
+            QProcess process;
+            process.start(QString("xdg-open %1").arg(path));
             return true;
             break;
         }
         case SearchListView::ResType::Setting: {
             //打开控制面板对应页面
-            QProcess * process = new QProcess;
-            process->start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
-            connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
-                process->deleteLater();
-            });
+            QProcess process;
+            process.start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
             return true;
             break;
         }
@@ -283,7 +277,9 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
 bool SearchDetailView::writeConfigFile(const QString& path) {
     if (ConfigFile::writeConfig(path)) {
         Q_EMIT this->configFileChanged();
+        return true;
     }
+    return false;
 }
 
 /**
@@ -299,11 +295,8 @@ bool SearchDetailView::addDesktopShortcut(const QString& path) {
     bool ret = file.copy(QString(dirpath+"/"+desktopfn));
     if(ret)
     {
-        QProcess * process = new QProcess;
-        process->start(QString("chmod a+x %1").arg(newName));
-        connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
-            process->deleteLater();
-        });
+        QProcess process;
+        process.start(QString("chmod a+x %1").arg(newName));
         return true;
     }
     return false;
@@ -328,6 +321,7 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
         qDebug()<<"qDebug: Add shortcut to panel successed!";
         return true;
     }
+    return false;
 }
 
 /**
@@ -335,11 +329,8 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
  * @return
  */
 bool SearchDetailView::openPathAction(const QString& path) {
-    QProcess * process = new QProcess;
-    process->start(QString("xdg-open %1").arg(path.left(path.lastIndexOf("/"))));
-    connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
-        process->deleteLater();
-    });
+    QProcess process;
+    process.start(QString("xdg-open %1").arg(path.left(path.lastIndexOf("/"))));
     return true;
 }
 
@@ -350,4 +341,5 @@ bool SearchDetailView::openPathAction(const QString& path) {
 bool SearchDetailView::copyPathAction(const QString& path) {
     QClipboard * clipboard = QApplication::clipboard();   //获取系统剪贴板指针
     clipboard->setText(path);
+    return true;
 }
