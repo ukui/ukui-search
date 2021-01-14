@@ -22,6 +22,7 @@ SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
     m_layout->setContentsMargins(16, 60, 16, 24);
     this->setObjectName("detailView");
     this->setStyleSheet("QWidget#detailView{background:transparent;}");
+    this->setFixedWidth(360);
 }
 
 SearchDetailView::~SearchDetailView()
@@ -136,8 +137,8 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         QLabel * pathLabel_1 = new QLabel(pathFrame);
         QLabel * pathLabel_2 = new QLabel(pathFrame);
         pathLabel_1->setText(tr("Path"));
+        pathLabel_2->setFixedWidth(240);
         pathLabel_2->setText(path);
-        pathLabel_2->setMaximumWidth(500);
         pathLabel_2->setWordWrap(true);
         pathLyt->addWidget(pathLabel_1);
         pathLyt->addStretch();
@@ -176,7 +177,9 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         case SearchListView::ResType::App : {
             QIcon icon = FileUtils::getAppIcon(path);
             iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            nameLabel->setText(FileUtils::getAppName(path));
+            QFontMetrics fontMetrics = nameLabel->fontMetrics();
+            QString name = fontMetrics.elidedText(FileUtils::getAppName(path), Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
+            nameLabel->setText(name);
             typeLabel->setText(tr("Application"));
             break;
         }
@@ -185,7 +188,9 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
             iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            nameLabel->setText(FileUtils::getFileName(path));
+            QFontMetrics fontMetrics = nameLabel->fontMetrics();
+            QString name = fontMetrics.elidedText(FileUtils::getFileName(path), Qt::ElideRight, 215);
+            nameLabel->setText(name);
             typeLabel->setText(tr("Document"));
             break;
         }

@@ -10,6 +10,7 @@
 #include <QButtonGroup>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QTimer>
 
 class SettingsWidget : public QWidget
 {
@@ -20,11 +21,13 @@ public:
 
     void setIndexState(bool);
     void setIndexNum(int);
+    void showWidget();
 
 private:
     void initUi();
     void setupBlackList(const QStringList &);
     void clearLayout(QLayout *);
+    void refreshIndexState();
     void paintEvent(QPaintEvent *);
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
@@ -68,6 +71,8 @@ private:
     QHBoxLayout * m_bottomBtnLyt = nullptr;
     QPushButton * m_cancelBtn = nullptr;
     QPushButton * m_confirmBtn = nullptr;
+
+    QTimer * m_timer;
 
 Q_SIGNALS:
     void settingWidgetClosed();
