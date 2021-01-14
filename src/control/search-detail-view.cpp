@@ -65,13 +65,13 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
         if ((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
             if (! boldOpenned) {
                 boldOpenned = true;
-                htmlString.append(QString("<b>"));
+                htmlString.append(QString("<b><font size=\"4\">"));
             }
             htmlString.append(QString(text.at(i)));
         } else {
             if (boldOpenned) {
                 boldOpenned = false;
-                htmlString.append(QString("</b>"));
+                htmlString.append(QString("</font></b>"));
             }
             htmlString.append(QString(text.at(i)));
         }
