@@ -1,3 +1,16 @@
+ukui-search (0.0.1+0114) v101; urgency=medium
+
+  * Bugs fixed.
+
+ -- zhangpengfei <zhangpengfei@zhangpengfei>  Thu, 14 Jan 2021 20:47:42 +0800
+
+ukui-search (0.0.1+0113) v101; urgency=medium
+
+  * Bugs fixed.
+  * Functions perfected.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 13 Jan 2021 18:55:43 +0800
+
 ukui-search (0.0.1+0104) v101; urgency=medium
 
   * Initial release.
