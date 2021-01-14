@@ -34,20 +34,14 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
             case SearchListView::ResType::Content:
             case SearchListView::ResType::Dir:
             case SearchListView::ResType::File: {
-                QProcess * process = new QProcess;
-                process->start(QString("xdg-open %1").arg(path));
-                connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
-                    process->deleteLater();
-                });
+                QProcess process;
+                process.start(QString("xdg-open %1").arg(path));
                 break;
             }
             case SearchListView::ResType::Setting: {
                 //打开控制面板对应页面
-                QProcess * process = new QProcess;
-                process->start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
-                connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
-                    process->deleteLater();
-                });
+                QProcess process;
+                process.start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
                 break;
             }
             default:

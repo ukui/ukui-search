@@ -206,7 +206,7 @@ void MainWindow::initUi()
             &MainWindow::primaryScreenChangedSlot);
     connect(m_searchLayout, &UkuiSearchBarHLayout::textChanged, this, [ = ](QString text) {
         if (text == "") {
-            if (m_search_result_thread->isInterruptionRequested()) {
+            if (m_search_result_thread->isRunning()) {
                 m_search_result_thread->requestInterruption();
                 m_search_result_thread->quit();
             }
@@ -214,7 +214,7 @@ void MainWindow::initUi()
         } else {
             m_contentFrame->setCurrentIndex(1);
 //            QTimer::singleShot(50,this,[=](){
-                if (! m_search_result_thread->isInterruptionRequested()) {
+                if (! m_search_result_thread->isRunning()) {
                     m_search_result_thread->start();
                 }
                 searchContent(text);

@@ -58,7 +58,6 @@ bool ConfigFile::writeRecently(QString message){
     recently.insert(0,message);
 
     m_qSettings->beginGroup("Recently");
-    qWarning()<<m_qSettings->value("Recently").toStringList().length();
     if (m_qSettings->value("Recently").toStringList().length() >= 20) {
         m_qSettings->setValue("Recently",QStringList(recently.mid(0, 20)));
     } else {
