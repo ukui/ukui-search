@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "folder-list-item.h"
 #include "global-settings.h"
+#include "file-utils.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
@@ -13,12 +14,12 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     initUi();
+    refreshIndexState();
     setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
 }
 
 SettingsWidget::~SettingsWidget()
 {
-
 }
 
 /**
@@ -50,6 +51,7 @@ void SettingsWidget::initUi() {
                               "QPushButton:hover:!pressed{background: transparent;}");
     connect(m_closeBtn, &QPushButton::clicked, this, [ = ]() {
         Q_EMIT this->settingWidgetClosed();
+        m_timer->stop();
         this->close();
     });
     m_titleLyt->addWidget(m_titleIcon);
@@ -203,6 +205,21 @@ void SettingsWidget::clearLayout(QLayout * layout) {
 }
 
 /**
+ * @brief SettingsWidget::refreshIndexState 定时刷新索引项
+ */
+void SettingsWidget::refreshIndexState()
+{
+    m_indexStateLabel->setText(QString::number(FileUtils::_index_status));
+    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileUtils::_current_index_count)).arg(QString::number(FileUtils::_max_index_count)));
+    m_timer = new QTimer;
+    connect(m_timer, &QTimer::timeout, this, [ = ]() {
+        m_indexStateLabel->setText(QString::number(FileUtils::_index_status));
+        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileUtils::_current_index_count)).arg(QString::number(FileUtils::_max_index_count)));
+    });
+    m_timer->start(0.5 * 1000);
+}
+
+/**
  * @brief SettingsWidget::onBtnDelClicked 删除黑名单中的目录
  * @param path 文件夹路径
  */
@@ -245,10 +262,25 @@ void SettingsWidget::setIndexNum(int num) {
 }
 
 /**
+ * @brief SettingsWidget::showWidget 显示此窗口
+ */
+void SettingsWidget::showWidget()
+{
+    Qt::WindowFlags flags = this->windowFlags();
+    flags |= Qt::WindowStaysOnTopHint;
+    this->setWindowFlags(flags);
+    flags &= ~Qt::WindowStaysOnTopHint;
+    this->setWindowFlags(flags);
+    m_timer->start();
+    this->show();
+}
+
+/**
  * @brief SettingsWidget::onBtnConfirmClicked 点击确认按钮的槽函数
  */
 void SettingsWidget::onBtnConfirmClicked() {
     Q_EMIT this->settingWidgetClosed();
+    m_timer->stop();
     this->close();
 }
 
@@ -257,6 +289,7 @@ void SettingsWidget::onBtnConfirmClicked() {
  */
 void SettingsWidget::onBtnCancelClicked() {
     Q_EMIT this->settingWidgetClosed();
+    m_timer->stop();
     this->close();
 }
 

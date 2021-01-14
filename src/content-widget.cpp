@@ -364,8 +364,11 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, const
             m_contentListView->appendItem(path);
             m_resultList->setFixedHeight(m_resultList->height() + m_contentListView->rowheight);
             QString temp;
-            for (auto s : contents){
-                temp.append(s);
+            for (int i = 0; i < contents.length(); i ++) {
+                temp.append(contents.at(i));
+                if (i != contents.length() - 1) {
+                    temp.append("\n");
+                }
             }
             m_contentList.append(temp);
             return;

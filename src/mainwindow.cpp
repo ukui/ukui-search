@@ -163,12 +163,7 @@ void MainWindow::initUi()
                              "QPushButton:hover:!pressed{background: transparent;}");
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
         if (m_settingsWidget) { //当此窗口已存在时，仅需置顶
-            Qt::WindowFlags flags = m_settingsWidget->windowFlags();
-            flags |= Qt::WindowStaysOnTopHint;
-            m_settingsWidget->setWindowFlags(flags);
-            flags &= ~Qt::WindowStaysOnTopHint;
-            m_settingsWidget->setWindowFlags(flags);
-            m_settingsWidget->show();
+            m_settingsWidget->showWidget();
             return;
         }
         m_settingsWidget = new SettingsWidget();

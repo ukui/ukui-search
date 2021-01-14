@@ -111,11 +111,12 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
     if (file.exists()) {
         return QIcon(path);
     } else {
-        if (is_white) {
-            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg("About"));
-        } else {
-            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1.svg").arg("About"));
-        }
+        return QIcon::fromTheme("ukui-control-center"); //无插件图标时，返回控制面板应用图标
+//        if (is_white) {
+//            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg("About"));
+//        } else {
+//            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1.svg").arg("About"));
+//        }
     }
 }
 
