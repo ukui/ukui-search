@@ -9,9 +9,6 @@
 filemodel::filemodel():
     fileutils(new FileUtils)
 {
-
-    header<<tr("文档")<<tr("")<<tr("");
-
 }
 
 /**

@@ -147,7 +147,7 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     searchAction->setIcon(QIcon(":/data/img/mainviewwidget/edit-find-symbolic.svg"));
     this->addAction(searchAction,QLineEdit::LeadingPosition);
 
-    editLabel=new QLabel("全局搜索");
+    editLabel=new QLabel(tr("Search"));
     QHBoxLayout *editLayout=new QHBoxLayout(this);
     editLayout->addWidget(editLabel,0,Qt::AlignHCenter);
     connect(searchAction,&QAction::triggered,this,[=](){

@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     }
 
     QTranslator translator;
-    if (translator.load(QLocale(), "ukui-menu", "_", QM_FILES_INSTALL_PATH))
+    if (translator.load(QLocale(), "ukui-search", "_", QM_FILES_INSTALL_PATH))
         app.installTranslator(&translator);
     else
         qDebug() << "Load translations file" << QLocale() << "failed!";

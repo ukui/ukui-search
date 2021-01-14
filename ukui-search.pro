@@ -15,10 +15,10 @@ TEMPLATE = app
 
 target.path = /usr/bin
 
-#TRANSLATIONS+=\
-#    translations/ukui-menu_bo.ts \
-#    translations/ukui-menu_zh_CN.ts \
-#    translations/ukui-menu_tr.ts
+TRANSLATIONS+=\
+#    translations/ukui-search_bo.ts \
+    translations/ukui-search_zh_CN.ts \
+    translations/ukui-search_tr.ts
 
 #QM_FILES_INSTALL_PATH = /usr/share/ukui-menu/translations/
 
