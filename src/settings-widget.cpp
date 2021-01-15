@@ -7,6 +7,7 @@
 #include "folder-list-item.h"
 #include "global-settings.h"
 #include "file-utils.h"
+#include "index/file-searcher.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
@@ -181,7 +182,6 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
         FolderListItem * item = new FolderListItem(m_dirListWidget, path);
         m_dirListLyt->addWidget(item);
         item->setMaximumWidth(470);
-        //测试用，实际调用中应等待后端完成操作后删除该控件
         connect(item, SIGNAL(onDelBtnClicked(const QString&)), this, SLOT(onBtnDelClicked(const QString&)));
     }
     m_dirListLyt->addStretch();
@@ -209,12 +209,20 @@ void SettingsWidget::clearLayout(QLayout * layout) {
  */
 void SettingsWidget::refreshIndexState()
 {
-    m_indexStateLabel->setText(QString::number(FileUtils::_index_status));
-    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileUtils::_current_index_count)).arg(QString::number(FileUtils::_max_index_count)));
+    if (FileUtils::_index_status == CREATING_INDEX) {
+        this->setIndexState(true);
+    } else {
+        this->setIndexState(false);
+    }
+    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileSearcher::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
-        m_indexStateLabel->setText(QString::number(FileUtils::_index_status));
-        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileUtils::_current_index_count)).arg(QString::number(FileUtils::_max_index_count)));
+        if (FileUtils::_index_status == CREATING_INDEX) {
+            this->setIndexState(true);
+        } else {
+            this->setIndexState(false);
+        }
+        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileSearcher::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     });
     m_timer->start(0.5 * 1000);
 }
