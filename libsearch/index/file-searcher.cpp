@@ -20,6 +20,12 @@ FileSearcher::~FileSearcher()
 {
 }
 
+int FileSearcher::getCurrentIndexCount()
+{
+    Xapian::Database db(INDEX_PATH);
+    return db.get_doccount();
+}
+
 void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent)
 {
     m_mutex1.lock();
