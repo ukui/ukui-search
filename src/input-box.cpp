@@ -80,8 +80,9 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
                 Q_EMIT this->textChanged(m_queryLineEdit->text());
                 return;
             }
+//            Q_EMIT this->textChanged(m_queryLineEdit->text());
             m_timer->stop();
-            m_timer->start(0.2 * 1000);
+            m_timer->start(0.1 * 1000);
         }
     });
 }

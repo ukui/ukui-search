@@ -11,14 +11,15 @@ class SearchListView : public QTreeView
 {
     Q_OBJECT
 public:
-    explicit SearchListView(QWidget *, const QStringList&, const int&, const QString&);
+    explicit SearchListView(QWidget *, const QStringList&, const int&);
     ~SearchListView();
 
     enum ResType { //搜索结果可能出现的类型：应用、文件、设置、文件夹
+        Best,
         App,
-        File,
         Setting,
         Dir,
+        File,
         Content
     };
 
@@ -29,9 +30,11 @@ public:
     int rowheight = 0;
 
     void appendItem(QString);
+    void appendList(QStringList);
     void removeItem(QString);
     void clear();
     void setKeyword(QString);
+    int getType();
     bool isHidden = false;
 private:
     SearchItemModel * m_model = nullptr;

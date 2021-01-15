@@ -12,8 +12,9 @@ class OptionView : public QWidget
 {
     Q_OBJECT
 public:
-    explicit OptionView(QWidget *, const int&);
+    explicit OptionView(QWidget *);
     ~OptionView();
+    void setupOptions(const int&);
 
     enum Options {
         Open,
@@ -27,15 +28,18 @@ protected:
     bool eventFilter(QObject *, QEvent *);
 
 private:
-    void initComponent(const int&);
+    void initUI();
     void setupAppOptions();
     void setupFileOptions();
     void setupDirOptions();
     void setupSettingOptions();
     void setupOptionLabel(const int&);
+    void hideOptions();
 
     int m_type;
 
+    QFrame * m_optionFrame = nullptr;
+    QVBoxLayout * m_optionLyt = nullptr;
     QVBoxLayout * m_mainLyt = nullptr;
     QLabel * m_openLabel = nullptr;
     QLabel * m_shortcutLabel = nullptr;

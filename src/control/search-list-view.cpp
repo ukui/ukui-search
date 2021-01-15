@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QFileInfo>
 
-SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type, const QString& keyword) : QTreeView(parent)
+SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent)
 {
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
@@ -14,14 +14,13 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setHeaderHidden(true);
     this->setColumnWidth(0, 20);
     this->setColumnWidth(1, 80);
-    rowheight = this->rowHeight(this->model()->index(0,1, QModelIndex())) + 1;
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
     this->setFixedHeight(list.count() * rowheight + 2);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");
     m_styleDelegate = new HighlightItemDelegate();
 //    m_styleDelegate->setSearchKeyword(keyword);
-    setKeyword(keyword);
     this->setItemDelegate(m_styleDelegate);
 
     m_type = type;
@@ -43,11 +42,21 @@ SearchListView::~SearchListView()
 }
 
 /**
- * @brief SearchListView::appendItem
+ * @brief SearchListView::appendItem 单个添加
  */
 void SearchListView::appendItem(QString path) {
     m_model->appendItem(path);
-    rowheight = this->rowHeight(this->model()->index(0,1, QModelIndex())) + 1;
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 3);
+}
+
+/**
+ * @brief SearchListView::appendList 添加整个列表
+ */
+void SearchListView::appendList(QStringList list)
+{
+    m_model->appendList(list);
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 3);
 }
 
@@ -60,6 +69,9 @@ void SearchListView::removeItem(QString path) {
 
 void SearchListView::clear()
 {
+    this->blockSignals(true);
+    this->clearSelection();
+    this->blockSignals(false);
     m_model->clear();
     this->setFixedHeight(0);
     this->isHidden = true;
@@ -72,6 +84,15 @@ void SearchListView::clear()
 void SearchListView::setKeyword(QString keyword)
 {
     m_styleDelegate->setSearchKeyword(keyword);
+}
+
+/**
+ * @brief SearchListView::getType 获取此列表类型
+ * @return
+ */
+int SearchListView::getType()
+{
+    return m_type;
 }
 
 //获取当前选项所属搜索类型

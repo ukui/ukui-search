@@ -2,13 +2,13 @@
 #include <QDebug>
 #include <QEvent>
 
-OptionView::OptionView(QWidget *parent, const int& type) : QWidget(parent)
+OptionView::OptionView(QWidget *parent) : QWidget(parent)
 {
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
     m_mainLyt->setContentsMargins(0,8,0,0);
     m_mainLyt->setSpacing(8);
-    initComponent(type);
+    initUI();
 }
 
 OptionView::~OptionView()
@@ -39,7 +39,8 @@ OptionView::~OptionView()
  * @brief OptionView::initComponent 构建可用选项表
  * @param type 详情页类型
  */
-void OptionView::initComponent(const int& type) {
+void OptionView::setupOptions(const int& type) {
+    this->hideOptions();
     switch (type) {
         case SearchListView::ResType::App : {
             setupAppOptions();
@@ -63,66 +64,92 @@ void OptionView::initComponent(const int& type) {
     }
 }
 
+
+void OptionView::initUI()
+{
+    m_optionFrame = new QFrame(this);
+    m_optionLyt = new QVBoxLayout(m_optionFrame);
+    m_optionLyt->setContentsMargins(8, 0, 0, 0);
+
+    m_openLabel = new QLabel(m_optionFrame);
+    m_openLabel->setText(tr("Open")); //打开
+    m_openLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
+    m_openLabel->setCursor(QCursor(Qt::PointingHandCursor));
+    m_openLabel->installEventFilter(this);
+    m_optionLyt->addWidget(m_openLabel);
+
+    m_shortcutLabel = new QLabel(m_optionFrame);
+    m_shortcutLabel->setText(tr("Add Shortcut to Desktop")); //添加到桌面快捷方式
+    m_shortcutLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
+    m_shortcutLabel->setCursor(QCursor(Qt::PointingHandCursor));
+    m_shortcutLabel->installEventFilter(this);
+    m_optionLyt->addWidget(m_shortcutLabel);
+
+    m_panelLabel = new QLabel(m_optionFrame);
+    m_panelLabel->setText(tr("Add Shortcut to Panel")); //添加到任务栏快捷方式
+    m_panelLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
+    m_panelLabel->setCursor(QCursor(Qt::PointingHandCursor));
+    m_panelLabel->installEventFilter(this);
+    m_optionLyt->addWidget(m_panelLabel);
+
+    m_openPathLabel = new QLabel(m_optionFrame);
+    m_openPathLabel->setText(tr("Open path")); //打开所在路径
+    m_openPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
+    m_openPathLabel->setCursor(QCursor(Qt::PointingHandCursor));
+    m_openPathLabel->installEventFilter(this);
+    m_optionLyt->addWidget(m_openPathLabel);
+
+    m_copyPathLabel = new QLabel(m_optionFrame);
+    m_copyPathLabel->setText(tr("Copy path")); //复制所在路径
+    m_copyPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
+    m_copyPathLabel->setCursor(QCursor(Qt::PointingHandCursor));
+    m_copyPathLabel->installEventFilter(this);
+    m_optionLyt->addWidget(m_copyPathLabel);
+
+    m_optionLyt->addStretch();
+    m_optionFrame->setLayout(m_optionLyt);
+    m_mainLyt->addWidget(m_optionFrame);
+    this->hideOptions();
+}
+
 /**
  * @brief setupOptionLabel 创建每一个单独的选项
  * @param opt 选项类型
  */
 void OptionView::setupOptionLabel(const int& opt) {
-    QFrame * optionFrame = new QFrame(this);
-    QHBoxLayout * optionLyt = new QHBoxLayout(optionFrame);
-    optionLyt->setContentsMargins(8, 0, 0, 0);
     switch (opt) {
         case Options::Open: {
-            m_openLabel = new QLabel(optionFrame);
-            m_openLabel->setText(tr("Open")); //打开
-            m_openLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
-            m_openLabel->setCursor(QCursor(Qt::PointingHandCursor));
-            m_openLabel->installEventFilter(this);
-            optionLyt->addWidget(m_openLabel);
+            m_openLabel->show();
             break;
         }
         case Options::Shortcut: {
-            m_shortcutLabel = new QLabel(optionFrame);
-            m_shortcutLabel->setText(tr("Add Shortcut to Desktop")); //添加到桌面快捷方式
-            m_shortcutLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
-            m_shortcutLabel->setCursor(QCursor(Qt::PointingHandCursor));
-            m_shortcutLabel->installEventFilter(this);
-            optionLyt->addWidget(m_shortcutLabel);
+            m_shortcutLabel->show();
             break;
         }
         case Options::Panel: {
-            m_panelLabel = new QLabel(optionFrame);
-            m_panelLabel->setText(tr("Add Shortcut to Panel")); //添加到任务栏快捷方式
-            m_panelLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
-            m_panelLabel->setCursor(QCursor(Qt::PointingHandCursor));
-            m_panelLabel->installEventFilter(this);
-            optionLyt->addWidget(m_panelLabel);
+            m_panelLabel->show();
             break;
         }
         case Options::OpenPath: {
-            m_openPathLabel = new QLabel(optionFrame);
-            m_openPathLabel->setText(tr("Open path")); //打开所在路径
-            m_openPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
-            m_openPathLabel->setCursor(QCursor(Qt::PointingHandCursor));
-            m_openPathLabel->installEventFilter(this);
-            optionLyt->addWidget(m_openPathLabel);
+            m_openPathLabel->show();
             break;
         }
         case Options::CopyPath: {
-            m_copyPathLabel = new QLabel(optionFrame);
-            m_copyPathLabel->setText(tr("Copy path")); //复制所在路径
-            m_copyPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3D6BE5}");
-            m_copyPathLabel->setCursor(QCursor(Qt::PointingHandCursor));
-            m_copyPathLabel->installEventFilter(this);
-            optionLyt->addWidget(m_copyPathLabel);
+            m_copyPathLabel->show();
             break;
         }
         default:
             break;
     }
-    optionLyt->addStretch();
-    optionFrame->setLayout(optionLyt);
-    m_mainLyt->addWidget(optionFrame);
+}
+
+void OptionView::hideOptions()
+{
+    m_openLabel->hide();
+    m_shortcutLabel->hide();
+    m_panelLabel->hide();
+    m_openPathLabel->hide();
+    m_copyPathLabel->hide();
 }
 
 /**
@@ -167,19 +194,19 @@ void OptionView::setupSettingOptions() {
  */
 bool OptionView::eventFilter(QObject *watched, QEvent *event){
     if (m_openLabel && watched == m_openLabel && event->type() == QEvent::MouseButtonPress){
-        Q_EMIT onOptionClicked(Options::Open);
+        Q_EMIT this->onOptionClicked(Options::Open);
         return true;
     } else if (m_shortcutLabel && watched == m_shortcutLabel && event->type() == QEvent::MouseButtonPress) {
-        Q_EMIT onOptionClicked(Options::Shortcut);
+        Q_EMIT this->onOptionClicked(Options::Shortcut);
         return true;
     } else if (m_panelLabel && watched == m_panelLabel && event->type() == QEvent::MouseButtonPress) {
-        Q_EMIT onOptionClicked(Options::Panel);
+        Q_EMIT this->onOptionClicked(Options::Panel);
         return true;
     } else if (m_openPathLabel && watched == m_openPathLabel && event->type() == QEvent::MouseButtonPress) {
-        Q_EMIT onOptionClicked(Options::OpenPath);
+        Q_EMIT this->onOptionClicked(Options::OpenPath);
         return true;
     } else if (m_copyPathLabel && watched == m_copyPathLabel && event->type() == QEvent::MouseButtonPress) {
-        Q_EMIT onOptionClicked(Options::CopyPath);
+        Q_EMIT this->onOptionClicked(Options::CopyPath);
         return true;
     }
     return QObject::eventFilter(watched, event);

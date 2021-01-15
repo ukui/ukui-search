@@ -16,17 +16,15 @@ public:
     ~SearchItem();
 
     enum SearchType {
-        All,
+        Best,
         Apps,
         Settings,
-        Files,
         Dirs,
-        Contents,
-        Best
+        Files,
+        Contents
     };
 
     void setSearchList(const int&, const QStringList&);
-    void appendItem(QString);
     void removeItem(QString);
     int getCurrentSize();
     void clear();

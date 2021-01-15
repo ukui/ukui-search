@@ -81,8 +81,7 @@ private:
     QGSettings * m_transparency_gsettings = nullptr;
     double getTransparentData();
 
-    QVector<int> m_types;
-    QVector<QStringList> m_lists;
+    QVector<QStringList> m_app_setting_lists;
     QStringList m_dirList;
 
     QQueue<QString> *m_search_result_file = nullptr;

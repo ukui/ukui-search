@@ -5,6 +5,7 @@
 #include <QStackedWidget>
 #include <QScrollArea>
 #include <QGridLayout>
+#include <QMutex>
 #include "control/search-detail-view.h"
 #include "home-page-item.h"
 
@@ -17,13 +18,18 @@ public:
 
     void setPage(const int&);
     int currentPage();
-    void refreshSearchList(const QVector<int>&, const QVector<QStringList>&, const QString&);
-    void appendSearchItem(const int& type, const QString& path, const QString& keyword, QStringList contents = QStringList());
+    void refreshSearchList(const QVector<QStringList>&);
+    void appendSearchItem(const int& type, const QString& path, QStringList contents = QStringList());
     void initHomePage();
     void setContentList(const QStringList&);
+    void setKeyword(QString);
 private:
     void initUI();
+    void initListView();
+    void hideListView();
+    void setupConnect(SearchListView *);
     void clearHomepage();
+    void resetListHeight();
     QString m_keyword;
     QStringList m_contentList;
     QWidget * m_homePage = nullptr;
@@ -41,10 +47,20 @@ private:
     SearchListView * m_fileListView = nullptr;
     SearchListView * m_dirListView = nullptr;
     SearchListView * m_contentListView = nullptr;
+    SearchListView * m_settingListView = nullptr;
+    SearchListView * m_appListView = nullptr;
+    SearchListView * m_bestListView = nullptr;
+    QLabel * m_fileTitleLabel = nullptr;
+    QLabel * m_dirTitleLabel = nullptr;
+    QLabel * m_contentTitleLabel = nullptr;
+    QLabel * m_appTitleLabel = nullptr;
+    QLabel * m_settingTitleLabel = nullptr;
+    QLabel * m_bestTitleLabel = nullptr;
 
     int m_currentType = 0;
 
     QString getTitleName(const int&);
+    QMutex m_mutex;
 
 Q_SIGNALS:
     void currentItemChanged();

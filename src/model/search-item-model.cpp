@@ -18,7 +18,7 @@ SearchItemModel::~SearchItemModel(){
  */
 QModelIndex SearchItemModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (row < 0 || row > m_item->m_pathlist.count()-1)
+    if (row < 0 || row > m_item->m_pathlist.count() - 1)
         return QModelIndex();
     return createIndex(row, column, m_item);
 }
@@ -122,8 +122,21 @@ void SearchItemModel::setItem(SearchItem * item) {
  * @brief SearchItemModel::appendItem
  */
 void SearchItemModel::appendItem(QString path) {
-    m_item->appendItem(path);
-    this->insertRow(rowCount(QModelIndex()) - 1);
+    this->beginResetModel();
+    m_item->m_pathlist << path;
+    this->endResetModel();
+//    this->insertRow(rowCount(QModelIndex()) - 1);
+}
+
+/**
+ * @brief SearchItemModel::appendList 直接以列表形式添加搜索结果
+ * @param list
+ */
+void SearchItemModel::appendList(QStringList list)
+{
+    this->beginResetModel();
+    m_item->m_pathlist = list;
+    this->endResetModel();
 }
 
 /**
@@ -135,5 +148,7 @@ void SearchItemModel::removeItem(QString path) {
 
 void SearchItemModel::clear()
 {
+    this->beginResetModel();
     m_item->clear();
+    this->endResetModel();
 }
