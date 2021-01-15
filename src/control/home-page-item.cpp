@@ -36,12 +36,18 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
             case SearchListView::ResType::File: {
                 QProcess process;
                 process.start(QString("xdg-open %1").arg(path));
+                process.waitForFinished();
                 break;
             }
             case SearchListView::ResType::Setting: {
                 //打开控制面板对应页面
-                QProcess process;
-                process.start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
+                QProcess  * process = new QProcess;
+                connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
+                    if (process) {
+                        delete process;
+                    }
+                });
+                process->start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
                 break;
             }
             default:
@@ -58,18 +64,30 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
             case SearchListView::ResType::App : {
                 icon = FileUtils::getAppIcon(path);
                 m_namelabel->setText(FileUtils::getAppName(path));
+                QFontMetrics fontMetrics = m_namelabel->fontMetrics();
+                QString name = FileUtils::getAppName(path);
+                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 220));
+                this->setToolTip(name);
                 break;
             }
             case SearchListView::ResType::Content:
             case SearchListView::ResType::Dir :
             case SearchListView::ResType::File : {
                 icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
-                m_namelabel->setText(FileUtils::getFileName(path));
+//                m_namelabel->setText(FileUtils::getFileName(path));
+                QFontMetrics fontMetrics = m_namelabel->fontMetrics();
+                QString name = FileUtils::getFileName(path);
+                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 220));
+                this->setToolTip(name);
                 break;
             }
             case SearchListView::ResType::Setting : {
                 icon = FileUtils::getSettingIcon(path, true);
-                m_namelabel->setText(FileUtils::getSettingName(path));
+//                m_namelabel->setText(FileUtils::getSettingName(path));
+                QFontMetrics fontMetrics = m_namelabel->fontMetrics();
+                QString name = FileUtils::getSettingName(path);
+                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 220));
+                this->setToolTip(name);
                 break;
             }
             default :
@@ -88,17 +106,23 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
             QIcon icon = FileUtils::getSettingIcon(path, true);
             m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
             m_namelabel->setText(FileUtils::getSettingName(path));
+            this->setToolTip(FileUtils::getSettingName(path));
         } else {
             QIcon icon = FileUtils::getAppIcon(path);
             m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
             m_namelabel->setText(FileUtils::getAppName(path));
+            this->setToolTip(FileUtils::getAppName(path));
         }
     } else {
         QIcon icon = FileUtils::getAppIcon(path);
         m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
-        m_namelabel->setText(FileUtils::getAppName(path));
+//        m_namelabel->setText(FileUtils::getAppName(path));
+        QFontMetrics fontMetrics = m_namelabel->fontMetrics();
+        QString name = FileUtils::getAppName(path);
+        m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 96));
+        this->setToolTip(name);
     }
-    m_widget->setFixedSize(120, 120);
+    m_widget->setFixedSize(100, 100);
     m_vlayout = new QVBoxLayout(m_widget);
     m_vlayout->setContentsMargins(0,16,0,12);
     m_iconlabel->setAlignment(Qt::AlignCenter);

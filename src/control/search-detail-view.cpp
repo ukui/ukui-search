@@ -241,9 +241,13 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
         }
         case SearchListView::ResType::Setting: {
             //打开控制面板对应页面
-            QProcess process;
-            process.start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
-            process.waitForFinished();
+            QProcess  * process = new QProcess;
+            connect(process, static_cast<void(QProcess::*)(int,QProcess::ExitStatus)>(&QProcess::finished), this, [ = ]() {
+                if (process) {
+                    delete process;
+                }
+            });
+            process->start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
             return true;
             break;
         }

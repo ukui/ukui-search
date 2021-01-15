@@ -43,7 +43,7 @@ QStringList ConfigFile::readCommonly(){
     }
     if(m_qSettings)
         delete m_qSettings;
-    return returnlist.mid(0, 4);
+    return returnlist.mid(0, 5);
 }
 
 bool ConfigFile::writeRecently(QString message){
