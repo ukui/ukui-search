@@ -33,7 +33,7 @@ public:
     static void getDocxTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
     static size_t _max_index_count;
-    static size_t _current_index_count;
+    static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;
 
 private:

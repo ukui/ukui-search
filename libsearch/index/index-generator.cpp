@@ -56,7 +56,6 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
                 count = 0;
                 m_datebase_path->commit();
             }
-            FileUtils::_current_index_count += 1;
         }
         m_datebase_path->commit();
     }
@@ -65,7 +64,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
         qWarning()<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
         //need a record
         GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
-        Q_ASSERT(false);
+        assert(false);
     }
     m_doc_list_path->clear();
     Q_EMIT this->transactionFinished();
@@ -96,7 +95,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
     {
         qWarning()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
         GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
-        Q_ASSERT(false);
+        assert(false);
     }
     m_doc_list_content->clear();
     Q_EMIT this->transactionFinished();
@@ -361,9 +360,6 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
             qDebug()<<"delete path"<<doc;
             qDebug()<<"delete md5"<<QString::fromStdString(uniqueterm);
             m_datebase_path->commit();
-
-            FileUtils::_current_index_count = m_datebase_path->get_doccount();
-
             qDebug()<< "--delete finish--";
         }
         catch(const Xapian::Error &e)

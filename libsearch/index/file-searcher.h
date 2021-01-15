@@ -20,6 +20,8 @@ public:
     explicit FileSearcher(QObject *parent = nullptr);
     ~FileSearcher();
 
+    int getCurrentIndexCount();
+
     static size_t uniqueSymbol1;
     static size_t uniqueSymbol2;
     static size_t uniqueSymbol3;
