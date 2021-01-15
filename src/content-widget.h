@@ -5,7 +5,6 @@
 #include <QStackedWidget>
 #include <QScrollArea>
 #include <QGridLayout>
-#include <QMutex>
 #include "control/search-detail-view.h"
 #include "home-page-item.h"
 
@@ -60,7 +59,6 @@ private:
     int m_currentType = 0;
 
     QString getTitleName(const int&);
-    QMutex m_mutex;
 
 Q_SIGNALS:
     void currentItemChanged();
