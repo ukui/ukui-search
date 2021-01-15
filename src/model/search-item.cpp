@@ -84,13 +84,6 @@ void SearchItem::setSearchList(const int& type, const QStringList& searchResult)
 }
 
 /**
- * @brief SearchItem::appendItem
- */
-void SearchItem::appendItem(QString path) {
-    m_pathlist.append(path);
-}
-
-/**
  * @brief SearchItem::removeItem
  */
 void SearchItem::removeItem(QString path) {

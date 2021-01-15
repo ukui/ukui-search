@@ -17,12 +17,7 @@
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
 {
-    m_layout = new QVBoxLayout(this);
-    this->setLayout(m_layout);
-    m_layout->setContentsMargins(16, 60, 16, 24);
-    this->setObjectName("detailView");
-    this->setStyleSheet("QWidget#detailView{background:transparent;}");
-    this->setFixedWidth(360);
+    initUI();
 }
 
 SearchDetailView::~SearchDetailView()
@@ -38,15 +33,31 @@ SearchDetailView::~SearchDetailView()
  * @brief SearchDetailView::clearLayout 清空布局
  */
 void SearchDetailView::clearLayout() {
-    QLayoutItem * child;
-    while ((child = m_layout->takeAt(0)) != 0) {
-        if(child->widget())
-        {
-            child->widget()->setParent(NULL); //防止删除后窗口看上去没有消失
-        }
-        delete child;
-    }
-    child = NULL;
+//    QLayoutItem * child;
+//    while ((child = m_layout->takeAt(0)) != 0) {
+//        if(child->widget())
+//        {
+//            child->widget()->setParent(NULL); //防止删除后窗口看上去没有消失
+//        }
+//        delete child;
+//    }
+//    child = NULL;
+    m_iconLabel->hide();
+    m_nameFrame->hide();
+    m_nameLabel->hide();
+    m_typeLabel->hide();
+    m_hLine->hide();
+    m_detailFrame->hide();
+    m_contentLabel->hide();
+    m_pathFrame->hide();
+    m_timeFrame->hide();
+    m_pathLabel_1->hide();
+    m_pathLabel_2->hide();
+    m_timeLabel_1->hide();
+    m_timeLabel_2->hide();
+    m_hLine_2->hide();
+    m_optionView->hide();
+    m_isEmpty = true;
 }
 
 /**
@@ -57,6 +68,24 @@ void SearchDetailView::clearLayout() {
 void SearchDetailView::setContent(const QString& text, const QString& keyword) {
     m_contentText = text;
     m_keyword = keyword;
+}
+
+/**
+ * @brief SearchDetailView::isEmpty 返回当前详情页是否为空
+ * @return
+ */
+bool SearchDetailView::isEmpty()
+{
+    return m_isEmpty;
+}
+
+/**
+ * @brief SearchDetailView::getType 返回当前详情页显示的类型
+ * @return
+ */
+int SearchDetailView::getType()
+{
+    return m_type;
 }
 
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {
@@ -87,119 +116,67 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
  * @param path 结果路径
  */
 void SearchDetailView::setupWidget(const int& type, const QString& path) {
+    m_type = type;
+    m_path = path;
+    m_isEmpty = false;
     clearLayout();
 
-    //图标和名称、分割线区域
-    QLabel * iconLabel = new QLabel(this);
-    iconLabel->setAlignment(Qt::AlignCenter);
-    iconLabel->setFixedHeight(120);
-
-    QFrame * nameFrame = new QFrame(this);
-    QHBoxLayout * nameLayout = new QHBoxLayout(nameFrame);
-    QLabel * nameLabel = new QLabel(nameFrame);
-    QLabel * typeLabel = new QLabel(nameFrame);
-    nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
-//    typeLabel->setStyleSheet("QLabel{font-size: 14px; color: rgba(0, 0, 0, 0.43);}");
-    typeLabel->setStyleSheet("QLabel{font-size: 14px; color: palette(mid);}");
-    nameFrame->setFixedHeight(48);
-    nameLabel->setMaximumWidth(240);
-    nameLayout->addWidget(nameLabel);
-    nameLayout->addStretch();
-    nameLayout->addWidget(typeLabel);
-    nameFrame->setLayout(nameLayout);
-
-    QFrame * hLine = new QFrame(this);
-    hLine->setLineWidth(0);
-    hLine->setFixedHeight(1);
-    hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
-
-    m_layout->addWidget(iconLabel);
-    m_layout->addWidget(nameFrame);
-    m_layout->addWidget(hLine);
+    m_iconLabel->show();
+    m_nameFrame->show();
+    m_nameLabel->show();
+    m_typeLabel->show();
+    m_hLine->show();
 
     //文件和文件夹有一个额外的详情区域
     if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content) {
-        QFrame * detailFrame = new QFrame(this);
-        QVBoxLayout * detailLyt = new QVBoxLayout(detailFrame);
-        detailLyt->setContentsMargins(0,0,0,0);
+        m_detailFrame->show();
         if (type == SearchListView::ResType::Content) { //文件内容区域
-            QLabel * contentLabel = new QLabel(detailFrame);
-            contentLabel->setWordWrap(true);
-            contentLabel->setContentsMargins(9, 0, 9, 0);
-//            contentLabel->setText(m_contentText);
-            contentLabel->setText(QApplication::translate("", getHtmlText(m_contentText, m_keyword).toLocal8Bit(), nullptr));
-            detailLyt->addWidget(contentLabel);
+            m_contentLabel->show();
+            m_contentLabel->setText(QApplication::translate("", getHtmlText(m_contentText, m_keyword).toLocal8Bit(), nullptr));
         }
-        QFrame * pathFrame = new QFrame(detailFrame);
-        QFrame * timeFrame = new QFrame(detailFrame);
-        QHBoxLayout * pathLyt = new QHBoxLayout(pathFrame);
-        QHBoxLayout * timeLyt = new QHBoxLayout(timeFrame);
-        QLabel * pathLabel_1 = new QLabel(pathFrame);
-        QLabel * pathLabel_2 = new QLabel(pathFrame);
-        pathLabel_1->setText(tr("Path"));
-        pathLabel_2->setFixedWidth(240);
-        pathLabel_2->setText(path);
-        pathLabel_2->setWordWrap(true);
-        pathLyt->addWidget(pathLabel_1);
-        pathLyt->addStretch();
-        pathLyt->addWidget(pathLabel_2);
-        QLabel * timeLabel_1 = new QLabel(timeFrame);
-        QLabel * timeLabel_2 = new QLabel(timeFrame);
-        timeLabel_1->setText(tr("Last time modified"));
+        m_pathFrame->show();
+        m_timeFrame->show();
+        m_pathLabel_1->show();
+        m_pathLabel_2->show();
+        m_pathLabel_2->setText(path);
+        m_timeLabel_1->show();
+        m_timeLabel_2->show();
         QFileInfo fileInfo(path);
-        timeLabel_2->setText(fileInfo.lastModified().toString("yyyy-MM-dd hh:mm:ss"));
-        timeLyt->addWidget(timeLabel_1);
-        timeLyt->addStretch();
-        timeLyt->addWidget(timeLabel_2);
-        detailLyt->addWidget(pathFrame);
-        detailLyt->addWidget(timeFrame);
-
-        QFrame * hLine_2 = new QFrame(this);
-        hLine_2->setLineWidth(0);
-        hLine_2->setFixedHeight(1);
-        hLine_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
-
-        m_layout->addWidget(detailFrame);
-        m_layout->addWidget(hLine_2);
+        m_timeLabel_2->setText(fileInfo.lastModified().toString("yyyy-MM-dd hh:mm:ss"));
+        m_hLine_2->show();
     }
 
-    //可执行操作区域
-    OptionView * optionView = new OptionView(this, type);
-    connect(optionView, &OptionView::onOptionClicked, this, [ = ](const int& option) {
-        execActions(type, option, path);
-    });
-
-    m_layout->addWidget(optionView);
-    m_layout->addStretch();
+    m_optionView->setupOptions(m_type);
+    m_optionView->show();
 
     //根据不同类型的搜索结果切换加载图片和名称的方式
     switch (type) {
         case SearchListView::ResType::App : {
             QIcon icon = FileUtils::getAppIcon(path);
-            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            QFontMetrics fontMetrics = nameLabel->fontMetrics();
+            m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+            QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
             QString name = fontMetrics.elidedText(FileUtils::getAppName(path), Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-            nameLabel->setText(name);
-            typeLabel->setText(tr("Application"));
+            m_nameLabel->setText(name);
+            m_typeLabel->setText(tr("Application"));
             break;
         }
         case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir :
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
-            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            QFontMetrics fontMetrics = nameLabel->fontMetrics();
+            m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+            QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
             QString name = fontMetrics.elidedText(FileUtils::getFileName(path), Qt::ElideRight, 215);
-            nameLabel->setText(name);
-            typeLabel->setText(tr("Document"));
+            m_nameLabel->setText(name);
+            m_typeLabel->setText(tr("Document"));
             break;
         }
         case SearchListView::ResType::Setting : {
             QIcon icon = FileUtils::getSettingIcon(path, true);
-            iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+            m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
             QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
-            nameLabel->setText(settingType);
-            typeLabel->setText(FileUtils::getSettingName(path));
+            m_nameLabel->setText(settingType);
+            m_typeLabel->setText(FileUtils::getSettingName(path));
             break;
         }
         default:
@@ -258,6 +235,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
         case SearchListView::ResType::File: {
             QProcess process;
             process.start(QString("xdg-open %1").arg(path));
+            process.waitForFinished();
             return true;
             break;
         }
@@ -265,6 +243,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             //打开控制面板对应页面
             QProcess process;
             process.start(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
+            process.waitForFinished();
             return true;
             break;
         }
@@ -288,6 +267,94 @@ bool SearchDetailView::writeConfigFile(const QString& path) {
 }
 
 /**
+ * @brief SearchDetailView::initUI 初始化ui
+ */
+void SearchDetailView::initUI()
+{
+    m_layout = new QVBoxLayout(this);
+    this->setLayout(m_layout);
+    m_layout->setContentsMargins(16, 60, 16, 24);
+    this->setObjectName("detailView");
+    this->setStyleSheet("QWidget#detailView{background:transparent;}");
+    this->setFixedWidth(360);
+
+    //图标和名称、分割线区域
+    m_iconLabel = new QLabel(this);
+    m_iconLabel->setAlignment(Qt::AlignCenter);
+    m_iconLabel->setFixedHeight(120);
+    m_nameFrame = new QFrame(this);
+    m_nameLayout = new QHBoxLayout(m_nameFrame);
+    m_nameLabel = new QLabel(m_nameFrame);
+    m_typeLabel = new QLabel(m_nameFrame);
+    m_nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
+    m_typeLabel->setStyleSheet("QLabel{font-size: 14px; color: palette(mid);}");
+    m_nameFrame->setFixedHeight(48);
+    m_nameLabel->setMaximumWidth(240);
+    m_nameLayout->addWidget(m_nameLabel);
+    m_nameLayout->addStretch();
+    m_nameLayout->addWidget(m_typeLabel);
+    m_nameFrame->setLayout(m_nameLayout);
+    m_hLine = new QFrame(this);
+    m_hLine->setLineWidth(0);
+    m_hLine->setFixedHeight(1);
+    m_hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_layout->addWidget(m_iconLabel);
+    m_layout->addWidget(m_nameFrame);
+    m_layout->addWidget(m_hLine);
+
+    //文件和文件夹有一个额外的详情区域
+    m_detailFrame = new QFrame(this);
+    m_detailLyt = new QVBoxLayout(m_detailFrame);
+    m_detailLyt->setContentsMargins(0,0,0,0);
+
+    //文件内容区域
+    m_contentLabel = new QLabel(m_detailFrame);
+    m_contentLabel->setWordWrap(true);
+    m_contentLabel->setContentsMargins(9, 0, 9, 0);
+    m_detailLyt->addWidget(m_contentLabel);
+
+    //路径与修改时间区域
+    m_pathFrame = new QFrame(m_detailFrame);
+    m_timeFrame = new QFrame(m_detailFrame);
+    m_pathLyt = new QHBoxLayout(m_pathFrame);
+    m_timeLyt = new QHBoxLayout(m_timeFrame);
+    m_pathLabel_1 = new QLabel(m_pathFrame);
+    m_pathLabel_2 = new QLabel(m_pathFrame);
+    m_pathLabel_1->setText(tr("Path"));
+    m_pathLabel_2->setFixedWidth(240);
+    m_pathLabel_2->setWordWrap(true);
+    m_pathLyt->addWidget(m_pathLabel_1);
+    m_pathLyt->addStretch();
+    m_pathLyt->addWidget(m_pathLabel_2);
+    m_timeLabel_1 = new QLabel(m_timeFrame);
+    m_timeLabel_2 = new QLabel(m_timeFrame);
+    m_timeLabel_1->setText(tr("Last time modified"));
+    m_timeLyt->addWidget(m_timeLabel_1);
+    m_timeLyt->addStretch();
+    m_timeLyt->addWidget(m_timeLabel_2);
+    m_detailLyt->addWidget(m_pathFrame);
+    m_detailLyt->addWidget(m_timeFrame);
+
+    m_hLine_2 = new QFrame(this);
+    m_hLine_2->setLineWidth(0);
+    m_hLine_2->setFixedHeight(1);
+    m_hLine_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_layout->addWidget(m_detailFrame);
+    m_layout->addWidget(m_hLine_2);
+
+    //可执行操作区域
+    m_optionView = new OptionView(this);
+    connect(m_optionView, &OptionView::onOptionClicked, this, [ = ](const int& option) {
+        execActions(m_type, option, m_path);
+    });
+    m_layout->addWidget(m_optionView);
+
+    m_layout->addStretch();
+
+    this->clearLayout(); //初始化时隐藏所有控件
+}
+
+/**
  * @brief SearchDetailView::addDesktopShortcut 添加到桌面快捷方式
  * @return
  */
@@ -302,6 +369,7 @@ bool SearchDetailView::addDesktopShortcut(const QString& path) {
     {
         QProcess process;
         process.start(QString("chmod a+x %1").arg(newName));
+        process.waitForFinished();
         return true;
     }
     return false;
@@ -336,6 +404,7 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
 bool SearchDetailView::openPathAction(const QString& path) {
     QProcess process;
     process.start(QString("xdg-open %1").arg(path.left(path.lastIndexOf("/"))));
+    process.waitForFinished();
     return true;
 }
 
