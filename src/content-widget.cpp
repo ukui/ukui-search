@@ -92,26 +92,32 @@ void ContentWidget::initListView()
 
     m_fileTitleLabel = new QLabel(m_resultList);
     m_fileTitleLabel->setContentsMargins(8, 0, 0, 0);
+    m_fileTitleLabel->setFixedHeight(24);
     m_fileTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
     m_fileTitleLabel->setText(getTitleName(SearchItem::SearchType::Files));
     m_dirTitleLabel = new QLabel(m_resultList);
     m_dirTitleLabel->setContentsMargins(8, 0, 0, 0);
+    m_dirTitleLabel->setFixedHeight(24);
     m_dirTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
     m_dirTitleLabel->setText(getTitleName(SearchItem::SearchType::Dirs));
     m_contentTitleLabel = new QLabel(m_resultList);
     m_contentTitleLabel->setContentsMargins(8, 0, 0, 0);
+    m_contentTitleLabel->setFixedHeight(24);
     m_contentTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
     m_contentTitleLabel->setText(getTitleName(SearchItem::SearchType::Contents));
     m_appTitleLabel = new QLabel(m_resultList);
     m_appTitleLabel->setContentsMargins(8, 0, 0, 0);
+    m_appTitleLabel->setFixedHeight(24);
     m_appTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
     m_appTitleLabel->setText(getTitleName(SearchItem::SearchType::Apps));
     m_settingTitleLabel = new QLabel(m_resultList);
     m_settingTitleLabel->setContentsMargins(8, 0, 0, 0);
+    m_settingTitleLabel->setFixedHeight(24);
     m_settingTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
     m_settingTitleLabel->setText(getTitleName(SearchItem::SearchType::Settings));
     m_bestTitleLabel = new QLabel(m_resultList);
     m_bestTitleLabel->setContentsMargins(8, 0, 0, 0);
+    m_bestTitleLabel->setFixedHeight(24);
     m_bestTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
     m_bestTitleLabel->setText(getTitleName(SearchItem::SearchType::Best));
 
