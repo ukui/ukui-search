@@ -11,6 +11,7 @@
 #include <QQueue>
 #include "document.h"
 #include "file-reader.h"
+//#include "chinese-segmentation.h"
 
 class IndexGenerator : public QObject
 {
@@ -47,7 +48,7 @@ private:
     QList<Document> *m_doc_list_path;  //for path index
     QList<Document> *m_doc_list_content;  // for text content index
     QString *m_index_data_path;
-    Xapian::WritableDatabase *m_datebase_path;
+    Xapian::WritableDatabase *m_database_path;
     Xapian::WritableDatabase *m_database_content;
     std::string m_docstr;
     std::string m_index_text_str;
