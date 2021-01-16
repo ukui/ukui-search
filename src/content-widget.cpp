@@ -253,9 +253,9 @@ void ContentWidget::initHomePage() {
                 HomePageItem * item = new HomePageItem(itemWidget, i, path);
                 layout->addWidget(item);
             }
-            for (int j = 0; j < 4 - lists.at(i).length(); j++) {
+            for (int j = 0; j < 5 - lists.at(i).length(); j++) {
                 QWidget * emptyItem = new QWidget(itemWidget);
-                emptyItem->setFixedSize(136, 136); //占位用widget,少于4项会补全后方占位
+                emptyItem->setFixedSize(108, 108); //占位用widget,少于4项会补全后方占位
                 layout->addWidget(emptyItem);
             }
             if (i) titleLabel->setText(tr("Open Quickly"));
