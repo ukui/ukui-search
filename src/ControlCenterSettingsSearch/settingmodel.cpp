@@ -30,15 +30,6 @@ int settingModel::rowCount(const QModelIndex& index) const
     return index.isValid() ? 0 : returnresult.count();
 }
 
-//重写设置搜索的model标头
-QVariant settingModel::headerData(int section,Qt::Orientation orientation ,int role) const {
-    if(role == 0){
-        return tr("系统设置");
-    }
-
-    return QAbstractItemModel::headerData(section,orientation,role);
-}
-
 QVariant settingModel::data(const QModelIndex &index, int role) const
 {
     QPixmap map(QString::fromLocal8Bit("/home/li/ukui/ukui-search1/ukui-search/data/img/mainviewwidget/search.png"));

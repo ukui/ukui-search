@@ -17,7 +17,7 @@ void SearchFileWidget::initFilesearchUI()
 
     //添加表头
     fileHead = new QLabel(this);
-    fileHead->setText("文档");
+    fileHead->setText(tr("File"));
 
     fileHead->setAttribute(Qt::WA_TranslucentBackground);//"透明背景"
 

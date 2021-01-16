@@ -27,7 +27,6 @@ public:
     settingModel();
     int rowCount(const QModelIndex&) const override;
     QVariant data(const QModelIndex&, int) const override;
-    QVariant headerData(int section,Qt::Orientation orientation ,int role)const override;
     void run(int index);
     void matchstart(const QString &source);
 
