@@ -121,21 +121,83 @@ void ContentWidget::initListView()
     m_bestTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
     m_bestTitleLabel->setText(getTitleName(SearchItem::SearchType::Best));
 
+    m_appShowMoreLabel = new ShowMoreLabel(m_resultList);
+    m_settingShowMoreLabel = new ShowMoreLabel(m_resultList);
+    m_dirShowMoreLabel = new ShowMoreLabel(m_resultList);
+    m_fileShowMoreLabel = new ShowMoreLabel(m_resultList);
+    m_contentShowMoreLabel = new ShowMoreLabel(m_resultList);
+
     m_listLyt->addWidget(m_bestTitleLabel);
     m_listLyt->addWidget(m_bestListView);
     m_listLyt->addWidget(m_appTitleLabel);
     m_listLyt->addWidget(m_appListView);
+    m_listLyt->addWidget(m_appShowMoreLabel);
     m_listLyt->addWidget(m_settingTitleLabel);
     m_listLyt->addWidget(m_settingListView);
+    m_listLyt->addWidget(m_settingShowMoreLabel);
     m_listLyt->addWidget(m_dirTitleLabel);
     m_listLyt->addWidget(m_dirListView);
+    m_listLyt->addWidget(m_dirShowMoreLabel);
     m_listLyt->addWidget(m_fileTitleLabel);
     m_listLyt->addWidget(m_fileListView);
+    m_listLyt->addWidget(m_fileShowMoreLabel);
     m_listLyt->addWidget(m_contentTitleLabel);
     m_listLyt->addWidget(m_contentListView);
+    m_listLyt->addWidget(m_contentShowMoreLabel);
 
     this->hideListView();
     m_resultList->setFixedHeight(0);
+
+    connect(m_appShowMoreLabel, &ShowMoreLabel::showMoreClicked, this, [ = ]() {
+        m_appListView->setList(m_appList);
+        m_appShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_appShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
+        m_appListView->setList(m_appList.mid(0, 5));
+        m_appShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_settingShowMoreLabel, &ShowMoreLabel::showMoreClicked, this, [ = ]() {
+        m_settingListView->setList(m_settingList);
+        m_settingShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_settingShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
+        m_settingListView->setList(m_settingList.mid(0, 5));
+        m_settingShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_dirShowMoreLabel, &ShowMoreLabel::showMoreClicked, this, [ = ]() {
+        m_dirListView->setList(m_dirList);
+        m_dirShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_dirShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
+        m_dirListView->setList(m_dirList.mid(0, 5));
+        m_dirShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_fileShowMoreLabel, &ShowMoreLabel::showMoreClicked, this, [ = ]() {
+        m_fileListView->setList(m_fileList);
+        m_fileShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_fileShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
+        m_fileListView->setList(m_fileList.mid(0, 5));
+        m_fileShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_contentShowMoreLabel, &ShowMoreLabel::showMoreClicked, this, [ = ]() {
+        m_contentListView->setList(m_contentList);
+        m_contentShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+    connect(m_contentShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
+        m_contentListView->setList(m_contentList.mid(0, 5));
+        m_contentShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
 }
 
 /**
@@ -147,14 +209,19 @@ void ContentWidget::hideListView()
     m_bestListView->hide();
     m_appTitleLabel->hide();
     m_appListView->hide();
+    m_appShowMoreLabel->hide();
     m_settingTitleLabel->hide();
     m_settingListView->hide();
+    m_settingShowMoreLabel->hide();
     m_dirTitleLabel->hide();
     m_dirListView->hide();
+    m_dirShowMoreLabel->hide();
     m_fileTitleLabel->hide();
     m_fileListView->hide();
+    m_fileShowMoreLabel->hide();
     m_contentTitleLabel->hide();
     m_contentListView->hide();
+    m_contentShowMoreLabel->hide();
 }
 
 /**
@@ -163,8 +230,8 @@ void ContentWidget::hideListView()
  */
 void ContentWidget::setupConnect(SearchListView * listview) {
     connect(listview, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
-        if(type == SearchItem::SearchType::Contents && !m_contentList.isEmpty()) {
-            m_detailView->setContent(m_contentList.at(listview->currentIndex().row()), m_keyword);
+        if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
+            m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
         }
         m_detailView->setupWidget(type, path);
         listview->is_current_list = true;
@@ -193,22 +260,37 @@ void ContentWidget::resetListHeight()
     if (! m_appListView->isHidden) {
         height += m_appTitleLabel->height();
         height += m_appListView->height();
+        if (m_appShowMoreLabel->isVisible()) {
+            height += m_appShowMoreLabel->height();
+        }
     }
     if (! m_settingListView->isHidden) {
         height += m_settingTitleLabel->height();
         height += m_settingListView->height();
+        if (m_settingShowMoreLabel->isVisible()) {
+            height += m_settingShowMoreLabel->height();
+        }
     }
     if (! m_fileListView->isHidden) {
         height += m_fileTitleLabel->height();
         height += m_fileListView->height();
+        if (m_fileShowMoreLabel->isVisible()) {
+            height += m_fileShowMoreLabel->height();
+        }
     }
     if (! m_dirListView->isHidden) {
         height += m_dirTitleLabel->height();
         height += m_dirListView->height();
+        if (m_dirShowMoreLabel->isVisible()) {
+            height += m_dirShowMoreLabel->height();
+        }
     }
     if (! m_contentListView->isHidden) {
         height += m_contentTitleLabel->height();
         height += m_contentListView->height();
+        if (m_contentShowMoreLabel->isVisible()) {
+            height += m_contentShowMoreLabel->height();
+        }
     }
     m_resultList->setFixedHeight(height);
 }
@@ -301,30 +383,35 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
     if (m_fileListView) {
         m_fileListView->hide();
         m_fileTitleLabel->hide();
+        m_fileShowMoreLabel->hide();
         m_fileListView->isHidden = true;
         m_fileListView->clear();
     }
     if (m_dirListView) {
         m_dirListView->hide();
         m_dirTitleLabel->hide();
+        m_dirShowMoreLabel->hide();
         m_dirListView->isHidden = true;
         m_dirListView->clear();
     }
     if (m_contentListView) {
         m_contentListView->hide();
         m_contentTitleLabel->hide();
+        m_contentShowMoreLabel->hide();
         m_contentListView->isHidden = true;
         m_contentListView->clear();
     }
     if (m_appListView) {
         m_appListView->hide();
         m_appTitleLabel->hide();
+        m_appShowMoreLabel->hide();
         m_appListView->isHidden = true;
         m_appListView->clear();
     }
     if (m_settingListView) {
         m_settingListView->hide();
         m_settingTitleLabel->hide();
+        m_settingShowMoreLabel->hide();
         m_settingListView->isHidden = true;
         m_settingListView->clear();
     }
@@ -337,25 +424,44 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
     m_resultList->setFixedHeight(0);
     m_detailView->clearLayout();
 
+    if (! m_appList.isEmpty())
+        m_appList.clear();
+    if (! m_settingList.isEmpty())
+        m_settingList.clear();
+    if (! m_dirList.isEmpty())
+        m_dirList.clear();
+    if (! m_fileList.isEmpty())
+        m_fileList.clear();
+    if (! m_contentList.isEmpty())
+        m_contentList.clear();
+
     if (!lists.at(0).isEmpty()) {
+        m_appList = lists.at(0);
         qDebug()<<"Append a best item into list: "<<lists.at(0).at(0);
         appendSearchItem(SearchItem::SearchType::Best, lists.at(0).at(0));
-    }
-    if (!lists.at(1).isEmpty()) {
-        qDebug()<<"Append a best item into list: "<<lists.at(1).at(0);
-        appendSearchItem(SearchItem::SearchType::Best, lists.at(1).at(0));
-    }
-    if (!lists.at(0).isEmpty()) {
         m_appListView->show();
         m_appTitleLabel->show();
         m_appListView->isHidden = false;
-        m_appListView->appendList(lists.at(0));
+        if (m_appList.length() <= 5) {
+            m_appListView->setList(m_appList);
+        } else {
+            m_appShowMoreLabel->show();
+            m_appListView->setList(m_appList.mid(0, 5));
+        }
     }
     if (!lists.at(1).isEmpty()) {
+        m_settingList = lists.at(1);
+        qDebug()<<"Append a best item into list: "<<lists.at(1).at(0);
+        appendSearchItem(SearchItem::SearchType::Best, lists.at(1).at(0));
         m_settingListView->show();
         m_settingTitleLabel->show();
         m_settingListView->isHidden = false;
-        m_settingListView->appendList(lists.at(1));
+        if (m_settingList.length() <= 5) {
+            m_settingListView->setList(m_settingList);
+        } else {
+            m_settingShowMoreLabel->show();
+            m_settingListView->setList(m_settingList.mid(0, 5));
+        }
     }
     this->resetListHeight();
 }
@@ -415,7 +521,12 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_fileListView->isHidden = false;
                 appendSearchItem(SearchItem::SearchType::Best, path);
             }
-            m_fileListView->appendItem(path);
+            if (m_fileListView->getLength() < 5) {
+                m_fileListView->appendItem(path);
+            } else if (m_fileListView->getLength() == 5) {
+                m_fileShowMoreLabel->show();
+            }
+            m_fileList.append(path);
             break;;
         }
         case SearchItem::SearchType::Dirs: {
@@ -425,7 +536,12 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_dirListView->isHidden = false;
                 appendSearchItem(SearchItem::SearchType::Best, path);
             }
-            m_dirListView->appendItem(path);
+            if (m_dirListView->getLength() < 5) {
+                m_dirListView->appendItem(path);
+            } else if (m_dirListView->getLength() == 5) {
+                m_dirShowMoreLabel->show();
+            }
+            m_dirList.append(path);
             break;
         }
         case SearchItem::SearchType::Contents: {
@@ -435,7 +551,12 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_contentListView->isHidden = false;
                 appendSearchItem(SearchItem::SearchType::Best, path);
             }
-            m_contentListView->appendItem(path);
+            if (m_contentListView->getLength() < 5) {
+                m_contentListView->appendItem(path);
+            } else if (m_contentListView->getLength() == 5) {
+                m_contentShowMoreLabel->show();
+            }
+            m_contentList.append(path);
             QString temp;
             for (int i = 0; i < contents.length(); i ++) {
                 temp.append(contents.at(i));
@@ -443,7 +564,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                     temp.append("\n");
                 }
             }
-            m_contentList.append(temp);
+            m_contentDetailList.append(temp);
             break;
         }
         default:
@@ -482,7 +603,6 @@ QString ContentWidget::getTitleName(const int& type) {
  * @param layout 需要清空的布局
  */
 void ContentWidget::clearLayout(QLayout * layout) {
-    m_contentList.clear();
     if (! layout) return;
     QLayoutItem * child;
     while ((child = layout->takeAt(0)) != 0) {
@@ -501,8 +621,8 @@ void ContentWidget::clearLayout(QLayout * layout) {
  * @param list
  */
 void ContentWidget::setContentList(const QStringList& list) {
-    m_contentList.clear();
-    m_contentList = list;
+    m_contentDetailList.clear();
+    m_contentDetailList = list;
 }
 
 /**

@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include "control/search-detail-view.h"
 #include "home-page-item.h"
+#include "show-more-label.h"
 
 class ContentWidget : public QStackedWidget
 {
@@ -30,7 +31,7 @@ private:
     void clearHomepage();
     void resetListHeight();
     QString m_keyword;
-    QStringList m_contentList;
+    QStringList m_contentDetailList;
     QWidget * m_homePage = nullptr;
     QVBoxLayout * m_homePageLyt = nullptr;
     QWidget * m_resultPage = nullptr;
@@ -55,6 +56,17 @@ private:
     QLabel * m_appTitleLabel = nullptr;
     QLabel * m_settingTitleLabel = nullptr;
     QLabel * m_bestTitleLabel = nullptr;
+    ShowMoreLabel * m_appShowMoreLabel = nullptr;
+    ShowMoreLabel * m_settingShowMoreLabel = nullptr;
+    ShowMoreLabel * m_dirShowMoreLabel = nullptr;
+    ShowMoreLabel * m_fileShowMoreLabel = nullptr;
+    ShowMoreLabel * m_contentShowMoreLabel = nullptr;
+
+    QStringList m_appList;
+    QStringList m_settingList;
+    QStringList m_dirList;
+    QStringList m_fileList;
+    QStringList m_contentList;
 
     int m_currentType = 0;
 

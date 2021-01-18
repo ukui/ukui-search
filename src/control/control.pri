@@ -8,6 +8,7 @@ HEADERS += \
     $$PWD/search-detail-view.h \
     $$PWD/option-view.h \
     $$PWD/home-page-item.h \
+    $$PWD/show-more-label.h
 
 SOURCES += \
     $$PWD/config-file.cpp \
@@ -17,3 +18,4 @@ SOURCES += \
     $$PWD/search-detail-view.cpp \
     $$PWD/option-view.cpp \
     $$PWD/home-page-item.cpp \
+    $$PWD/show-more-label.cpp
