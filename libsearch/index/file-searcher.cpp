@@ -50,7 +50,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
         int num = 5;
         int resultCount = 0;
         int total = 0;
-        while(total<40)
+        while(total<20)
         {
             resultCount = keywordSearchfile(uniqueSymbol1,keyword,"0",1,begin,num);
             if(resultCount == 0 || resultCount == -1)
@@ -68,7 +68,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
         int num = 5;
         int resultCount = 0;
         int total = 0;
-        while(total<40)
+        while(total<20)
         {
             resultCount = keywordSearchfile(uniqueSymbol2,keyword,"1",1,begin,num);
             if(resultCount == 0 || resultCount == -1)
@@ -87,7 +87,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
         int resultCount = 0;
         int total = 0;
 
-        while(total<40)
+        while(total<20)
         {
             keywordSearchContent(uniqueSymbol3,keyword,begin,num);
             if(resultCount == 0 || resultCount == -1)

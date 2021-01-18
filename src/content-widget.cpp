@@ -423,6 +423,7 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
     }
     m_resultList->setFixedHeight(0);
     m_detailView->clearLayout();
+    m_contentDetailList.clear();
 
     if (! m_appList.isEmpty())
         m_appList.clear();
