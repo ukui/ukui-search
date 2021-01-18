@@ -79,7 +79,7 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
     m_searchFileThread->quit();
     this->setFixedHeight(fileHead->height()+(count+1)*40);
 
-
+    qDebug()<<"file list size :"<<arg.count();
     fileView->setCurrentIndex(m_filemodel->index(0,0,m_filemodel->index(0,0,m_filemodel->index(0))));
     //根据数据的大小隐藏或显示
     if(arg.count()>0) {

@@ -57,6 +57,7 @@ void SearchFileThread::run(){
         }
 
     }
+    qDebug()<<"returnResult :"<<returnResult;
     Q_EMIT sendSearchResult(returnResult);
 }
 
