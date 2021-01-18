@@ -5,26 +5,10 @@
  */
 UKuiSeachBarWidget::UKuiSeachBarWidget()
 {
-//    this->setFixedSize(Style::defaultMainViewWidWidth,Style::defaultTopWidHeight);
-
 }
 
 UKuiSeachBarWidget::~UKuiSeachBarWidget()
 {
-
-}
-
-void UKuiSeachBarWidget::paintEvent(QPaintEvent *e)
-{
-    QPainter p(this);
-    QRect rect = this->rect();
-    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    p.setBrush(this->palette().color(QPalette::Base));
-//    p.setBrush(QBrush(QColor(255,255,255)));
-    p.setOpacity(1);
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect,12,12);
-    QWidget::paintEvent(e);
 }
 
 /**
@@ -41,12 +25,10 @@ UkuiSearchBarWidgetLayout::UkuiSearchBarWidgetLayout()
 
 UkuiSearchBarWidgetLayout::~UkuiSearchBarWidgetLayout()
 {
-
 }
 
 UKuiSeachBar::~UKuiSeachBar()
 {
-
 }
 
 /**
@@ -55,15 +37,7 @@ UKuiSeachBar::~UKuiSeachBar()
 UkuiSearchBarHLayout::UkuiSearchBarHLayout()
 {
     initUI();
-//    retouchLineEdit();
 
-    m_queryLineEdit=new UKuiSearchLineEdit;
-
-    this->setContentsMargins(0,0,0,0);
-    this->setAlignment(m_queryLineEdit,Qt::AlignCenter);
-    this->addWidget(m_queryLineEdit);
-
-//    connect(m_queryLineEdit, SIGNAL(textChanged(QString)), SIGNAL(textChanged(QString)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ](){
         m_timer->stop();
@@ -80,7 +54,6 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
                 Q_EMIT this->textChanged(m_queryLineEdit->text());
                 return;
             }
-//            Q_EMIT this->textChanged(m_queryLineEdit->text());
             m_timer->stop();
             m_timer->start(0.1 * 1000);
         }
@@ -100,12 +73,50 @@ UkuiSearchBarHLayout::~UkuiSearchBarHLayout()
  */
 void UkuiSearchBarHLayout::initUI()
 {
-    setContentsMargins(5,3,0,2);
-    setSpacing(5);
-}
+    m_queryLineEdit = new UKuiSearchLineEdit;
+    m_queryLineEdit->installEventFilter(this);
+    m_queryLineEdit->setTextMargins(30,1,0,1);
+    this->setContentsMargins(0,0,0,0);
+    this->setAlignment(m_queryLineEdit,Qt::AlignCenter);
+    this->addWidget(m_queryLineEdit);
+    m_queryWidget = new QWidget(m_queryLineEdit);
+    m_queryWidget->setFocusPolicy(Qt::NoFocus);
+    m_queryWidget->setStyleSheet("border:0px;background:transparent");
 
-void UkuiSearchBarHLayout::searchContent(QString searchcontent){
-    m_queryLineEdit->setText(searchcontent);
+    QHBoxLayout* queryWidLayout= new QHBoxLayout;
+    queryWidLayout->setContentsMargins(4,0,0,0);
+    queryWidLayout->setAlignment(Qt::AlignJustify);
+    queryWidLayout->setSpacing(5);
+    m_queryWidget->setLayout(queryWidLayout);
+
+
+    QPixmap pixmap(QString(":/res/icons/edit-find-symbolic.svg"));
+    m_queryIcon = new QLabel;
+    m_queryIcon->setStyleSheet("background:transparent");
+    m_queryIcon->setFixedSize(pixmap.size());
+    m_queryIcon->setPixmap(pixmap);
+
+    m_queryText = new QLabel;
+    m_queryText->setText(tr("Search"));
+    m_queryText->setStyleSheet("background:transparent;color:#626c6e;");
+    m_queryText->setContentsMargins(0,0,0,4);
+    m_queryText->adjustSize();
+
+    queryWidLayout->addWidget(m_queryIcon);
+    queryWidLayout->addWidget(m_queryText);
+    m_queryWidget->setGeometry(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 15)) / 2 - 10, 0,
+                                     m_queryIcon->width() + m_queryText->width() + 10, 35)); //设置图标初始位置
+
+    m_animation= new QPropertyAnimation(m_queryWidget,"geometry");
+    m_animation->setDuration(100); //动画时长
+    connect(m_animation,&QPropertyAnimation::finished,this, [ = ]() {
+        if (m_isSearching) {
+            m_queryWidget->layout()->removeWidget(m_queryText);
+            m_queryText->setParent(nullptr);
+        } else {
+            m_queryWidget->layout()->addWidget(m_queryText);
+        }
+    });
 }
 
 void UkuiSearchBarHLayout::clearText() {
@@ -114,6 +125,37 @@ void UkuiSearchBarHLayout::clearText() {
 
 QString UkuiSearchBarHLayout::text() {
     return m_queryLineEdit->text();
+}
+
+bool UkuiSearchBarHLayout::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_queryLineEdit) {
+        if (event->type()==QEvent::FocusIn) {
+             if (m_queryLineEdit->text().isEmpty()) {
+                 m_animation->stop();
+                 m_animation->setStartValue(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 10)) / 2, 0,
+                                                m_queryIcon->width() + m_queryText->width() + 10, 35));
+                 m_animation->setEndValue(QRect(0, 0, m_queryIcon->width() + 5, 35));
+                 m_animation->setEasingCurve(QEasingCurve::OutQuad);
+                 m_animation->start();
+             }
+             m_isSearching=true;
+        } else if (event->type()==QEvent::FocusOut) {
+            if (m_queryLineEdit->text().isEmpty()) {
+                if (m_isSearching) {
+                    m_animation->stop();
+                    m_queryText->adjustSize();
+                    m_animation->setStartValue(QRect(0, 0, m_queryIcon->width() + 5, 35));
+                    m_animation->setEndValue(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 10)) / 2, 0,
+                                                 m_queryIcon->width() + m_queryText->width() + 10, 35));
+                    m_animation->setEasingCurve(QEasingCurve::InQuad);
+                    m_animation->start();
+                }
+            }
+            m_isSearching=false;
+        }
+    }
+    return QObject::eventFilter(watched, event);
 }
 
 /**
@@ -127,11 +169,10 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     this->setMaxLength(100);
 
 
-    QAction *searchAction = new QAction(this);
-    searchAction->setIcon(QIcon(":/res/icons/edit-find-symbolic.svg"));
-    this->addAction(searchAction,QLineEdit::LeadingPosition);
-
-
+    //这是搜索框图标，要改
+//    QAction *searchAction = new QAction(this);
+//    searchAction->setIcon(QIcon(":/res/icons/edit-find-symbolic.svg"));
+//    this->addAction(searchAction,QLineEdit::LeadingPosition);
 
     /*发送输入框文字改变的dbus*/
     QDBusConnection::sessionBus().unregisterService("org.ukui.search.service");
@@ -156,7 +197,7 @@ UKuiSearchLineEdit::~UKuiSearchLineEdit()
  */
 void UKuiSearchLineEdit::lineEditTextChanged(QString arg)
 {
-    QDBusMessage message =QDBusMessage::createSignal("/lineEdit/textChanged", "org.ukui.search.inputbox", "InputBoxTextChanged");
+    QDBusMessage message = QDBusMessage::createSignal("/lineEdit/textChanged", "org.ukui.search.inputbox", "InputBoxTextChanged");
     message<<arg;
     QDBusConnection::sessionBus().send(message);
 }

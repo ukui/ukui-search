@@ -14,7 +14,6 @@ class UKuiSeachBarWidget:public QWidget
 public:
   UKuiSeachBarWidget();
   ~UKuiSeachBarWidget();
-  void paintEvent(QPaintEvent *e);
 };
 
 class UKuiSeachBar:public QWidget
@@ -33,15 +32,23 @@ class UkuiSearchBarHLayout : public QHBoxLayout
 public:
     UkuiSearchBarHLayout();
     ~UkuiSearchBarHLayout();
-    void searchContent(QString searchcontent);
     void clearText();
     QString text();
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 private:
     void initUI();
     bool m_isEmpty = true;
     QTimer * m_timer = nullptr;
 
-    UKuiSearchLineEdit *m_queryLineEdit=nullptr;
+    UKuiSearchLineEdit * m_queryLineEdit = nullptr;
+    QPropertyAnimation * m_animation = nullptr;
+    QWidget * m_queryWidget = nullptr;
+    QLabel * m_queryIcon = nullptr;
+    QLabel * m_queryText = nullptr;
+    bool m_isSearching = false;
 
 Q_SIGNALS:
     void textChanged(QString text);
