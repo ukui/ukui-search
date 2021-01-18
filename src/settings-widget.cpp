@@ -308,8 +308,15 @@ void SettingsWidget::onBtnAddClicked() {
     QFileDialog * fileDialog = new QFileDialog(this);
 //    fileDialog->setFileMode(QFileDialog::Directory); //允许查看文件和文件夹，但只允许选择文件夹
     fileDialog->setFileMode(QFileDialog::DirectoryOnly); //只允许查看文件夹
-    fileDialog->setViewMode(QFileDialog::Detail);
+//    fileDialog->setViewMode(QFileDialog::Detail);
     fileDialog->setDirectory(QDir::homePath());
+    fileDialog->setNameFilter(tr("Directories"));
+    fileDialog->setWindowTitle(tr("select blocked folder"));
+    fileDialog->setLabelText(QFileDialog::Accept, tr("Select"));
+    fileDialog->setLabelText(QFileDialog::LookIn, tr("Position: "));
+    fileDialog->setLabelText(QFileDialog::FileName, tr("FileName: "));
+    fileDialog->setLabelText(QFileDialog::FileType, tr("FileType: "));
+    fileDialog->setLabelText(QFileDialog::Reject, tr("Cancel"));
     if (fileDialog->exec() != QDialog::Accepted) {
         fileDialog->deleteLater();
         return;

@@ -1,3 +1,19 @@
+ukui-search (0.0.1+0118) v101; urgency=medium
+
+  * Feature: Add animation into inputbox.
+  * Feature: Set fixed height for titlelabel.
+  * Feature: Add function of querying current index count.
+  * Feature: Add more text file encoding formats are supported.
+  * Feature: Add ukui-search icon in start menu.
+  * Fix: Break line by adding '\n' into path string.(33378)
+  * Fix: There is not enough items in homepage.(33320)
+  * Fix: Index is empty.(33094)
+  * Fix: Translation is incompleted.(33047)
+  * Fix: Widget crashed when searching & open file/filepath failed.
+
+ -- zhangjiaping <zhangjiaping@zhangpengfei>  Mon, 18 Jan 2021 14:3
+6:12 +0800
+
 ukui-search (0.0.1+0115) v101; urgency=medium
 
   * Bugs fixed.

@@ -51,12 +51,12 @@ void SearchListView::appendItem(QString path) {
 }
 
 /**
- * @brief SearchListView::appendList 添加整个列表
+ * @brief SearchListView::setList 设置整个列表
  */
-void SearchListView::appendList(QStringList list)
+void SearchListView::setList(QStringList list)
 {
     m_model->appendList(list);
-    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 3);
 }
 
@@ -93,6 +93,15 @@ void SearchListView::setKeyword(QString keyword)
 int SearchListView::getType()
 {
     return m_type;
+}
+
+/**
+ * @brief SearchListView::getLength 获取当前显示的列表项数量
+ * @return
+ */
+int SearchListView::getLength()
+{
+    return m_item->getCurrentSize();
 }
 
 //获取当前选项所属搜索类型

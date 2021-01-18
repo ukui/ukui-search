@@ -30,11 +30,12 @@ public:
     int rowheight = 0;
 
     void appendItem(QString);
-    void appendList(QStringList);
+    void setList(QStringList);
     void removeItem(QString);
     void clear();
     void setKeyword(QString);
     int getType();
+    int getLength();
     bool isHidden = false;
 private:
     SearchItemModel * m_model = nullptr;

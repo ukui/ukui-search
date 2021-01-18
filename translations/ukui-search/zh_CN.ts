@@ -4,52 +4,52 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../../src/content-widget.cpp" line="237"/>
+        <location filename="../../src/content-widget.cpp" line="325"/>
         <source>Recently Opened</source>
         <translation>最近</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="261"/>
+        <location filename="../../src/content-widget.cpp" line="349"/>
         <source>Open Quickly</source>
         <translation>快速</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="262"/>
+        <location filename="../../src/content-widget.cpp" line="350"/>
         <source>Commonly Used</source>
         <translation>常用</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="458"/>
+        <location filename="../../src/content-widget.cpp" line="585"/>
         <source>Apps</source>
         <translation>应用</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="460"/>
+        <location filename="../../src/content-widget.cpp" line="587"/>
         <source>Settings</source>
         <translation>配置项</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="462"/>
+        <location filename="../../src/content-widget.cpp" line="589"/>
         <source>Files</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="464"/>
+        <location filename="../../src/content-widget.cpp" line="591"/>
         <source>Dirs</source>
         <translation>文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="466"/>
+        <location filename="../../src/content-widget.cpp" line="593"/>
         <source>File Contents</source>
         <translation>文件内容</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="468"/>
+        <location filename="../../src/content-widget.cpp" line="595"/>
         <source>Best Matches</source>
         <translation>最佳匹配</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="470"/>
+        <location filename="../../src/content-widget.cpp" line="597"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -112,24 +112,32 @@
     </message>
 </context>
 <context>
+    <name>SearchBarHLayout</name>
+    <message>
+        <location filename="../../src/input-box.cpp" line="100"/>
+        <source>Search</source>
+        <translation>搜索</translation>
+    </message>
+</context>
+<context>
     <name>SearchDetailView</name>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="323"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="346"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="331"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="354"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="160"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="179"/>
         <source>Application</source>
         <translation>应用</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="171"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="190"/>
         <source>Document</source>
         <translation>文件</translation>
     </message>
@@ -137,90 +145,155 @@
 <context>
     <name>SettingsWidget</name>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="46"/>
+        <location filename="../../src/settings-widget.cpp" line="47"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="65"/>
+        <location filename="../../src/settings-widget.cpp" line="66"/>
         <source>Settings</source>
         <translation>配置项</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="71"/>
+        <location filename="../../src/settings-widget.cpp" line="72"/>
         <source>Index State</source>
         <translation>索引状态</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="74"/>
-        <location filename="../../src/settings-widget.cpp" line="76"/>
+        <location filename="../../src/settings-widget.cpp" line="75"/>
+        <location filename="../../src/settings-widget.cpp" line="77"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="83"/>
+        <location filename="../../src/settings-widget.cpp" line="84"/>
         <source>File Index Settings</source>
         <translation>文件索引设置</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="86"/>
+        <location filename="../../src/settings-widget.cpp" line="87"/>
         <source>Following folders will not be searched. You can set it by adding and removing folders.</source>
         <translation>搜索将不再查看以下文件夹。通过增加和删除文件夹可进行文件索引设置。</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="95"/>
+        <location filename="../../src/settings-widget.cpp" line="96"/>
         <source>Add ignored folders</source>
         <translation>添加禁止索引文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="116"/>
+        <location filename="../../src/settings-widget.cpp" line="117"/>
         <source>Search Engine Settings</source>
         <translation>搜索引擎设置</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="119"/>
+        <location filename="../../src/settings-widget.cpp" line="120"/>
         <source>Please select search engine you preferred.</source>
         <translation>设置互联网搜索引擎</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="132"/>
+        <location filename="../../src/settings-widget.cpp" line="133"/>
         <source>baidu</source>
         <translation>百度</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="134"/>
+        <location filename="../../src/settings-widget.cpp" line="135"/>
         <source>sougou</source>
         <translation>搜狗</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="136"/>
+        <location filename="../../src/settings-widget.cpp" line="137"/>
         <source>360</source>
         <translation>360</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="159"/>
+        <location filename="../../src/settings-widget.cpp" line="160"/>
+        <location filename="../../src/settings-widget.cpp" line="319"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="163"/>
+        <location filename="../../src/settings-widget.cpp" line="164"/>
         <source>Confirm</source>
         <translation>确认</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="250"/>
+        <location filename="../../src/settings-widget.cpp" line="258"/>
         <source>Creating ...</source>
         <translation>正在索引</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="253"/>
+        <location filename="../../src/settings-widget.cpp" line="261"/>
         <source>Done</source>
         <translation>索引完成</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="261"/>
+        <location filename="../../src/settings-widget.cpp" line="269"/>
         <source>Index Entry: %1</source>
         <translation>索引项: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="313"/>
+        <source>Directories</source>
+        <translation>文件夹</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="314"/>
+        <source>select blocked folder</source>
+        <translation>选择屏蔽文件夹</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="315"/>
+        <source>Select</source>
+        <translation>选择</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="316"/>
+        <source>Position: </source>
+        <translation>位置：</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="317"/>
+        <source>FileName: </source>
+        <translation>名称：</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="318"/>
+        <source>FileType: </source>
+        <translation>类型：</translation>
+    </message>
+</context>
+<context>
+    <name>ShowMoreLabel</name>
+    <message>
+        <location filename="../../src/control/show-more-label.cpp" line="22"/>
+        <location filename="../../src/control/show-more-label.cpp" line="51"/>
+        <source>&lt;u&gt;Show More...&lt;/u&gt;</source>
+        <translation>&lt;u&gt;显示更多...&lt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/show-more-label.cpp" line="49"/>
+        <source>&lt;u&gt;Retract&lt;/u&gt;</source>
+        <translation>&lt;u&gt;收起&lt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/show-more-label.cpp" line="60"/>
+        <source>Loading</source>
+        <translation>加载中</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/show-more-label.cpp" line="65"/>
+        <source>Loading.</source>
+        <translation>加载中.</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/show-more-label.cpp" line="70"/>
+        <source>Loading..</source>
+        <translation>加载中..</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/show-more-label.cpp" line="75"/>
+        <source>Loading...</source>
+        <translation>加载中...</translation>
     </message>
 </context>
 </TS>

@@ -189,8 +189,8 @@ void MainWindow::initUi()
 
     m_contentFrame = new ContentWidget(m_frame);//内容栏
 
-    m_searchWidget = new UKuiSeachBarWidget;
-    m_searchLayout = new UkuiSearchBarHLayout;
+    m_searchWidget = new SeachBarWidget;
+    m_searchLayout = new SearchBarHLayout;
     m_searchWidget->setLayout(m_searchLayout);
     m_searchWidget->setFixedHeight(44);
 
@@ -202,7 +202,7 @@ void MainWindow::initUi()
             this, &MainWindow::monitorResolutionChange);
     connect(qApp, &QApplication::primaryScreenChanged, this,
             &MainWindow::primaryScreenChangedSlot);
-    connect(m_searchLayout, &UkuiSearchBarHLayout::textChanged, this, [ = ](QString text) {
+    connect(m_searchLayout, &SearchBarHLayout::textChanged, this, [ = ](QString text) {
         if (text == "") {
             if (m_search_result_thread->isRunning()) {
                 m_search_result_thread->requestInterruption();
@@ -244,6 +244,7 @@ void MainWindow::bootOptionsFilter(QString opt)
  */
 void MainWindow::clearSearchResult() {
     m_searchLayout->clearText();
+    m_searchLayout->focusOut();
 }
 
 /**
