@@ -13,7 +13,6 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QDateTime>
-#include <QTextBrowser>
 #include "config-file.h"
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)

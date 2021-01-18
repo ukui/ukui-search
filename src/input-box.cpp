@@ -3,38 +3,38 @@
 /**
  * @brief ukui-search顶部搜索界面
  */
-UKuiSeachBarWidget::UKuiSeachBarWidget()
+SeachBarWidget::SeachBarWidget()
 {
 }
 
-UKuiSeachBarWidget::~UKuiSeachBarWidget()
+SeachBarWidget::~SeachBarWidget()
 {
 }
 
 /**
  * @brief ukui-search 顶部搜索框的ui，包含设置按钮
  */
-UKuiSeachBar::UKuiSeachBar()
+SeachBar::SeachBar()
 {
     setFocusPolicy(Qt::NoFocus);
 }
 
-UkuiSearchBarWidgetLayout::UkuiSearchBarWidgetLayout()
+SearchBarWidgetLayout::SearchBarWidgetLayout()
 {
 }
 
-UkuiSearchBarWidgetLayout::~UkuiSearchBarWidgetLayout()
+SearchBarWidgetLayout::~SearchBarWidgetLayout()
 {
 }
 
-UKuiSeachBar::~UKuiSeachBar()
+SeachBar::~SeachBar()
 {
 }
 
 /**
  * @brief 顶部搜索框所在界面的布局
  */
-UkuiSearchBarHLayout::UkuiSearchBarHLayout()
+SearchBarHLayout::SearchBarHLayout()
 {
     initUI();
 
@@ -43,7 +43,7 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
         m_timer->stop();
         Q_EMIT this->textChanged(m_queryLineEdit->text());
     });
-    connect(m_queryLineEdit, &UKuiSearchLineEdit::textChanged, this, [ = ](QString text) {
+    connect(m_queryLineEdit, &SearchLineEdit::textChanged, this, [ = ](QString text) {
         if (m_isEmpty) {
             m_isEmpty = false;
             Q_EMIT this->textChanged(text);
@@ -60,7 +60,7 @@ UkuiSearchBarHLayout::UkuiSearchBarHLayout()
     });
 }
 
-UkuiSearchBarHLayout::~UkuiSearchBarHLayout()
+SearchBarHLayout::~SearchBarHLayout()
 {
     if (m_timer) {
         delete m_timer;
@@ -71,9 +71,9 @@ UkuiSearchBarHLayout::~UkuiSearchBarHLayout()
 /**
  * @brief 初始化ui
  */
-void UkuiSearchBarHLayout::initUI()
+void SearchBarHLayout::initUI()
 {
-    m_queryLineEdit = new UKuiSearchLineEdit;
+    m_queryLineEdit = new SearchLineEdit;
     m_queryLineEdit->installEventFilter(this);
     m_queryLineEdit->setTextMargins(30,1,0,1);
     this->setContentsMargins(0,0,0,0);
@@ -119,15 +119,15 @@ void UkuiSearchBarHLayout::initUI()
     });
 }
 
-void UkuiSearchBarHLayout::clearText() {
+void SearchBarHLayout::clearText() {
     m_queryLineEdit->setText("");
 }
 
-QString UkuiSearchBarHLayout::text() {
+QString SearchBarHLayout::text() {
     return m_queryLineEdit->text();
 }
 
-bool UkuiSearchBarHLayout::eventFilter(QObject *watched, QEvent *event)
+bool SearchBarHLayout::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == m_queryLineEdit) {
         if (event->type()==QEvent::FocusIn) {
@@ -161,7 +161,7 @@ bool UkuiSearchBarHLayout::eventFilter(QObject *watched, QEvent *event)
 /**
  * @brief UKuiSearchLineEdit  全局搜索的输入框
  */
-UKuiSearchLineEdit::UKuiSearchLineEdit()
+SearchLineEdit::SearchLineEdit()
 {
     this->setFocusPolicy(Qt::ClickFocus);
     this->installEventFilter(this);
@@ -179,10 +179,10 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     QDBusConnection::sessionBus().registerService("org.ukui.search.service");
     QDBusConnection::sessionBus().registerObject("/lineEdit/textChanged", this,QDBusConnection :: ExportAllSlots | QDBusConnection :: ExportAllSignals);
 
-    connect(this, &QLineEdit::textChanged, this, &UKuiSearchLineEdit::lineEditTextChanged);
+    connect(this, &QLineEdit::textChanged, this, &SearchLineEdit::lineEditTextChanged);
 }
 
-UKuiSearchLineEdit::~UKuiSearchLineEdit()
+SearchLineEdit::~SearchLineEdit()
 {
 
 }
@@ -195,7 +195,7 @@ UKuiSearchLineEdit::~UKuiSearchLineEdit()
  * QDBusConnection::sessionBus().connect(QString(), QString("/lineEdit/textChanged"), "org.ukui.search.inputbox", "InputBoxTextChanged", this, SLOT(client_get(QString)));
  * 在槽函数client_get(void)　中处理接受到的点击信号
  */
-void UKuiSearchLineEdit::lineEditTextChanged(QString arg)
+void SearchLineEdit::lineEditTextChanged(QString arg)
 {
     QDBusMessage message = QDBusMessage::createSignal("/lineEdit/textChanged", "org.ukui.search.inputbox", "InputBoxTextChanged");
     message<<arg;

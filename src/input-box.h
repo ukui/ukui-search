@@ -7,31 +7,31 @@
 #include <QAction>
 #include <QTimer>
 
-class UKuiSearchLineEdit;
+class SearchLineEdit;
 
-class UKuiSeachBarWidget:public QWidget
+class SeachBarWidget:public QWidget
 {
 public:
-  UKuiSeachBarWidget();
-  ~UKuiSeachBarWidget();
+  SeachBarWidget();
+  ~SeachBarWidget();
 };
 
-class UKuiSeachBar:public QWidget
+class SeachBar:public QWidget
 {
   public:
-    UKuiSeachBar();
-    ~UKuiSeachBar();
+    SeachBar();
+    ~SeachBar();
 
 private:
 //    QLineEdit *m_queryLineEdit=nullptr;
 };
 
-class UkuiSearchBarHLayout : public QHBoxLayout
+class SearchBarHLayout : public QHBoxLayout
 {
     Q_OBJECT
 public:
-    UkuiSearchBarHLayout();
-    ~UkuiSearchBarHLayout();
+    SearchBarHLayout();
+    ~SearchBarHLayout();
     void clearText();
     QString text();
 
@@ -43,7 +43,7 @@ private:
     bool m_isEmpty = true;
     QTimer * m_timer = nullptr;
 
-    UKuiSearchLineEdit * m_queryLineEdit = nullptr;
+    SearchLineEdit * m_queryLineEdit = nullptr;
     QPropertyAnimation * m_animation = nullptr;
     QWidget * m_queryWidget = nullptr;
     QLabel * m_queryIcon = nullptr;
@@ -54,17 +54,17 @@ Q_SIGNALS:
     void textChanged(QString text);
 
 };
-class UkuiSearchBarWidgetLayout : public QHBoxLayout
+class SearchBarWidgetLayout : public QHBoxLayout
 {
 public:
-    UkuiSearchBarWidgetLayout();
-    ~UkuiSearchBarWidgetLayout();
+    SearchBarWidgetLayout();
+    ~SearchBarWidgetLayout();
 private:
     void initUI();
 
 };
 
-class UKuiSearchLineEdit:public QLineEdit
+class SearchLineEdit : public QLineEdit
 {
     Q_OBJECT
 
@@ -74,8 +74,8 @@ class UKuiSearchLineEdit:public QLineEdit
 　　　*/
     Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
 public:
-    UKuiSearchLineEdit();
-    ~UKuiSearchLineEdit();
+    SearchLineEdit();
+    ~SearchLineEdit();
 
 private Q_SLOTS:
     void  lineEditTextChanged(QString arg);

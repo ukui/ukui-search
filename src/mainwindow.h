@@ -73,8 +73,8 @@ private:
 
     ContentWidget * m_contentFrame = nullptr;//内容栏
 
-    UKuiSeachBarWidget * m_searchWidget = nullptr;//搜索栏
-    UkuiSearchBarHLayout * m_searchLayout = nullptr;
+    SeachBarWidget * m_searchWidget = nullptr;//搜索栏
+    SearchBarHLayout * m_searchLayout = nullptr;
 
     bool m_winFlag = false;
 
