@@ -119,6 +119,20 @@ void SearchBarHLayout::initUI()
     });
 }
 
+void SearchBarHLayout::focusIn() {
+    m_queryLineEdit->setFocus();
+}
+
+void SearchBarHLayout::focusOut() {
+    m_queryLineEdit->clearFocus();
+    if (! m_queryText->parent()) {
+        m_queryWidget->layout()->addWidget(m_queryText);
+        m_queryText->adjustSize();
+    }
+    m_queryWidget->setGeometry(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 15)) / 2 - 10, 0,
+                                     m_queryIcon->width() + m_queryText->width() + 10, 35)); //使图标回到初始位置
+}
+
 void SearchBarHLayout::clearText() {
     m_queryLineEdit->setText("");
 }
@@ -133,8 +147,7 @@ bool SearchBarHLayout::eventFilter(QObject *watched, QEvent *event)
         if (event->type()==QEvent::FocusIn) {
              if (m_queryLineEdit->text().isEmpty()) {
                  m_animation->stop();
-                 m_animation->setStartValue(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 10)) / 2, 0,
-                                                m_queryIcon->width() + m_queryText->width() + 10, 35));
+                 m_animation->setStartValue(m_queryWidget->geometry());
                  m_animation->setEndValue(QRect(0, 0, m_queryIcon->width() + 5, 35));
                  m_animation->setEasingCurve(QEasingCurve::OutQuad);
                  m_animation->start();

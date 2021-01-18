@@ -34,6 +34,8 @@ public:
     ~SearchBarHLayout();
     void clearText();
     QString text();
+    void focusIn();
+    void focusOut();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event);

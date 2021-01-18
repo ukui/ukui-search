@@ -244,6 +244,7 @@ void MainWindow::bootOptionsFilter(QString opt)
  */
 void MainWindow::clearSearchResult() {
     m_searchLayout->clearText();
+    m_searchLayout->focusOut();
 }
 
 /**
