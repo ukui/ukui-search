@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QTextBrowser>
 #include "config-file.h"
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
@@ -138,7 +139,26 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         m_timeFrame->show();
         m_pathLabel_1->show();
         m_pathLabel_2->show();
-        m_pathLabel_2->setText(path);
+//        m_pathLabel_2->setText(path);
+        QString showPath = path;
+        QFontMetrics fontMetrics = m_pathLabel_2->fontMetrics();
+        if (fontMetrics.width(path) > m_pathLabel_2->width()) {
+            //路径长度超过240,手动添加换行符以实现折叠
+            int lastIndex = 0;
+            for (int i = lastIndex; i < path.length(); i++) {
+                if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) == m_pathLabel_2->width()) {
+                    lastIndex = i;
+                    showPath.insert(i, '\n');
+                } else if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) > m_pathLabel_2->width()) {
+                    lastIndex = i;
+                    showPath.insert(i - 1, '\n');
+                } else {
+                    continue;
+                }
+            }
+        }
+        m_pathLabel_2->setText(showPath);
+
         m_timeLabel_1->show();
         m_timeLabel_2->show();
         QFileInfo fileInfo(path);
@@ -326,7 +346,7 @@ void SearchDetailView::initUI()
     m_pathLabel_2 = new QLabel(m_pathFrame);
     m_pathLabel_1->setText(tr("Path"));
     m_pathLabel_2->setFixedWidth(240);
-    m_pathLabel_2->setWordWrap(true);
+//    m_pathLabel_2->setWordWrap(true);
     m_pathLyt->addWidget(m_pathLabel_1);
     m_pathLyt->addStretch();
     m_pathLyt->addWidget(m_pathLabel_2);
