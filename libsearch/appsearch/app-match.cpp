@@ -16,6 +16,7 @@ QStringList AppMatch::startMatchApp(QString input){
     this->getAppName();
     m_returnResult=m_midResult;
     m_midResult.clear();
+//    qWarning()<<"m_returnResult  :"<<m_returnResult;
     return m_returnResult;
 }
 
@@ -192,6 +193,7 @@ void AppMatch::getAppName()
         g_key_file_load_from_file(keyfile,filepath,flags,nullptr);
         name=g_key_file_get_locale_string(keyfile,"Desktop Entry","Name", nullptr, nullptr);
         namestr=QString::fromLocal8Bit(name);
+//        qWarning()<<"namestr :"<<namestr;
         appNameMatch(namestr,str);
     }
 
@@ -212,13 +214,15 @@ void AppMatch::appNameMatch(QString appname,QString desktoppath){
         m_midResult.append(desktoppath);
         return;
     }
-    QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
-    if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
+    QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
+    if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
         m_midResult.append(desktoppath);
         return;
     }
-    QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
-    if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
+    if(m_sourceText.size()<2)
+        return;
+    QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
+    if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
         m_midResult.append(desktoppath);
     }
 }
