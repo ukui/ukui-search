@@ -9,7 +9,7 @@
 class Document
 {
 public:
-    Document();
+    Document() = default;
     ~Document(){}
     Document(const Document& other){
         m_document = other.m_document;

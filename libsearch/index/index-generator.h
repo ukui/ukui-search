@@ -12,7 +12,6 @@
 //#include <QMetaObject>
 #include "document.h"
 #include "file-reader.h"
-//#include "chinese-segmentation.h"
 
 extern QList<Document> *_doc_list_path;
 extern QMutex  _mutex_doc_list_path;
@@ -48,18 +47,18 @@ private:
     static Document GenerateDocument(const QVector<QString> &list);
     static Document GenerateContentDocument(const QString &list);
     //add one data in database
-    void insertIntoDatabase(Document doc);
-    void insertIntoContentDatabase(Document doc);
+    void insertIntoDatabase(Document& doc);
+    void insertIntoContentDatabase(Document& doc);
 
-    QMap<QString,QStringList> *m_index_map;
 //    QList<Document> *m_doc_list_path;  //for path index
 //    QList<Document> *m_doc_list_content;  // for text content index
-    QString *m_index_data_path;
-    Xapian::WritableDatabase *m_database_path;
-    Xapian::WritableDatabase *m_database_content;
+    QMap<QString,QStringList> m_index_map;
+    QString m_index_data_path;
+    Xapian::WritableDatabase* m_database_path;
+    Xapian::WritableDatabase* m_database_content;
     std::string m_docstr;
     std::string m_index_text_str;
-    Xapian::TermGenerator *m_indexer;
+    Xapian::TermGenerator m_indexer;
 };
 
 #endif // INDEXGENERATOR_H

@@ -168,11 +168,23 @@ int main(int argc, char *argv[])
 //    FirstIndex* fi = new FirstIndex("/home");
 //    fi->start();
     qDebug() << "main start";
+
+    QThreadPool::globalInstance()->setExpiryTimeout(5);
+//    QThreadPool::globalInstance()->clear();
+//    setAutoDelete(true);
+
+//    FirstIndex fi("/home/zhangzihao/Desktop/qwerty");
+//    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
     FirstIndex fi("/home");
     fi.start();
+//    fi->wait();
+//    fi->exit();
+//    delete fi;
+//    assert(false);
     InotifyIndex* ii = InotifyIndex::getInstance("/home");
 //    InotifyIndex ii("/home");
     ii->start();
+
 
     return app.exec();
 }

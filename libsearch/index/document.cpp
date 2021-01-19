@@ -1,10 +1,6 @@
 #include "document.h"
 #include <QDebug>
 
-Document::Document()
-{
-}
-
 void Document::setData(QString data)
 {
     if(data.isEmpty())
@@ -42,15 +38,21 @@ void Document::setUniqueTerm(QString term)
     if(term.isEmpty())
         return;
     m_document.add_term(term.toStdString());
+
+//    m_unique_term = new QString(term);
     m_unique_term = std::move(term);
 }
 std::string Document::getUniqueTerm()
 {
+//    qDebug()<<"m_unique_term!"<<*m_unique_term;
+//    qDebug() << QString::fromStdString(m_unique_term.toStdString());
     return m_unique_term.toStdString();
 }
 
 void Document::setIndexText(QStringList indexText)
 {
+//    QStringList indexTextList = indexText;
+//    m_index_text = new QStringList(indexText);
     m_index_text = std::move(indexText);
 }
 
