@@ -89,6 +89,8 @@ QStringList SettingsMatch::matching(){
 //        qDebug()<<key;
         for(int t=0; t<regmatch.size();t++)
         {
+            if(m_sourceText=="/")
+                continue;
             QString str =regmatch.at(t);
             if(str.contains(m_sourceText))
             {
@@ -96,14 +98,14 @@ QStringList SettingsMatch::matching(){
                 returnresult.append(str);//中文名
                 continue;
             }
-             QString pinyin=FileUtils::findMultiToneWords(str).at(0);// 中文转拼音
-             if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
+             QString shouzimu=FileUtils::findMultiToneWords(str).at(1);// 中文转首字母
+             if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
                  str=key+"/"+str;
                  returnresult.append(str);
                  continue;
              }
-             QString shouzimu=FileUtils::findMultiToneWords(str).at(1);// 中文转首字母
-             if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
+             QString pinyin=FileUtils::findMultiToneWords(str).at(0);// 中文转拼音
+             if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
                  str=key+"/"+str;
                  returnresult.append(str);
              }
