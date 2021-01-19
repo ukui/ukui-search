@@ -72,7 +72,7 @@ ConstructDocumentForContent::~ConstructDocumentForContent()
 
 void ConstructDocumentForContent::run()
 {
-    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
+//    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
     //      构造文本索引的document
     if (!_doc_list_content)
         _doc_list_content = new QList<Document>;

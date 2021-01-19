@@ -493,18 +493,24 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
     QDomDocument doc;
     doc.setContent(fileR.readAll());
     QDomElement first = doc.firstChildElement("w:document");
-    first = first.firstChildElement().firstChildElement();
-    while(!first.isNull())
+    QDomElement body = first.firstChildElement("w:body");
+    while(!body.isNull())
     {
-        QDomElement wr= first.firstChildElement("w:r");
-        while(!wr.isNull())
+        QDomElement wp= body.firstChildElement("w:p");
+        while(!wp.isNull())
         {
-            QDomElement wt = wr.firstChildElement("w:t");
-            textcontent.append(wt.text().replace("\n",""));
-            wr = wr.nextSiblingElement();
+            QDomElement wr= wp.firstChildElement("w:r");
+            while(!wr.isNull())
+            {
+                QDomElement wt = wr.firstChildElement("w:t");
+                textcontent.append(wt.text().replace("\n",""));
+                wr = wr.nextSiblingElement();
+            }
+            wp = wp.nextSiblingElement();
         }
-        first = first.nextSiblingElement();
+        body = body.nextSiblingElement();
     }
+    file.close();
     return;
 }
 
