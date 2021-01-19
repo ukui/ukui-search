@@ -55,9 +55,11 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
 FirstIndex::~FirstIndex()
 {
     qDebug() << "~FirstIndex";
-    delete this->q_index;
+    if(this->q_index)
+        delete this->q_index;
     this->q_index = nullptr;
-    delete this->q_content_index;
+    if(this->q_content_index)
+        delete this->q_content_index;
     this->q_content_index = nullptr;
 //    delete this->p_indexGenerator;
 //    this->p_indexGenerator;
@@ -66,7 +68,7 @@ FirstIndex::~FirstIndex()
 }
 
 void FirstIndex::DoSomething(const QFileInfo& fileInfo){
-//    qDebug() << "there are some shit here";
+//    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0"));
     for (auto i : this->targetFileTypeVec){
         if (fileInfo.fileName().endsWith(i)){
@@ -89,11 +91,11 @@ void FirstIndex::run(){
         else{
             //if the parameter is false, index won't be rebuild
             //if it is true, index will be rebuild
-            this->p_indexGenerator = IndexGenerator::getInstance(true);
+            this->p_indexGenerator = IndexGenerator::getInstance(true,this);
         }
     }
     else{
-        this->p_indexGenerator = IndexGenerator::getInstance(false);
+        this->p_indexGenerator = IndexGenerator::getInstance(false,this);
     }
     QSemaphore sem(5);
     QMutex mutex1, mutex2, mutex3;

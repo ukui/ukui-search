@@ -2,27 +2,32 @@
 #include <QStandardPaths>
 #include <QFileInfo>
 #include <QDebug>
-#include "chinese-segmentation.h"
+#include <QtConcurrent>
+#include <QFuture>
+#include <QThreadPool>
 #include "file-utils.h"
 #include "index-generator.h"
 #include "global-settings.h"
+#include "chinese-segmentation.h"
+#include "construct-document.h"
 
-#include <QtConcurrent>
-#include <QFuture>
 
 using namespace std;
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/content_index_data").toStdString()
-
 static IndexGenerator *global_instance = nullptr;
 QMutex  IndexGenerator::m_mutex;
-
-IndexGenerator *IndexGenerator::getInstance(bool rebuild)
+QList<Document> *_doc_list_path;
+QMutex  _mutex_doc_list_path;
+QList<Document> *_doc_list_content;
+QMutex  _mutex_doc_list_content;
+IndexGenerator *IndexGenerator::getInstance(bool rebuild, QObject *parent)
 {
     QMutexLocker locker(&m_mutex);
     if (!global_instance) {
-        global_instance = new IndexGenerator(rebuild);
+        qDebug()<<"IndexGenerator=================";
+        global_instance = new IndexGenerator(rebuild,parent);
     }
     qDebug() << "global_instance" << global_instance;
     qDebug() << "QThread::currentThreadId()" << QThread::currentThreadId();
@@ -41,23 +46,25 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
     try
     {
         m_indexer = new Xapian::TermGenerator();
-        m_indexer->set_database(*m_datebase_path);
+        m_indexer->set_database(*m_database_path);
         //可以实现拼写纠正
 //        m_indexer->set_flags(Xapian::TermGenerator::FLAG_SPELLING);
         m_indexer->set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
 
         int count =0;
-        for(int i = 0;i < m_doc_list_path->size(); i++)
+        for(int i = 0;i < _doc_list_path->size(); i++)
         {
-            insertIntoDatabase(m_doc_list_path->at(i));
+            insertIntoDatabase(_doc_list_path->at(i));
 
-            if(++count == 9999)
+            if(++count == 9000)
             {
                 count = 0;
-                m_datebase_path->commit();
+                m_database_path->commit();
             }
         }
-        m_datebase_path->commit();
+        m_database_path->commit();
+        if(m_indexer)
+            delete m_indexer;
     }
     catch(const Xapian::Error &e)
     {
@@ -66,8 +73,10 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
         GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
         assert(false);
     }
-    m_doc_list_path->clear();
-    Q_EMIT this->transactionFinished();
+    _doc_list_path->clear();
+    delete _doc_list_path;
+    _doc_list_path = nullptr;
+//    Q_EMIT this->transactionFinished();
 
     return true;
 }
@@ -76,29 +85,35 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 {
     FileUtils::_index_status = CREATING_INDEX;
     HandlePathList(messageList);
-    try
+    int size = _doc_list_content->size();
+    if(!size == 0)
     {
-        int count =0;
-        for(int i = 0;i < m_doc_list_content->size(); i++)
+        try
         {
-            insertIntoContentDatabase(m_doc_list_content->at(i));
-
-            if(++count == 1000)
+            int count =0;
+            for(int i = 0;i < size; i++)
             {
-                count = 0;
-                m_database_content->commit();
+                insertIntoContentDatabase(_doc_list_content->at(0));
+                _doc_list_content->removeFirst();
+
+                if(++count == 1000)
+                {
+                    count = 0;
+                    m_database_content->commit();
+                }
             }
+            m_database_content->commit();
         }
-        m_database_content->commit();
+        catch(const Xapian::Error &e)
+        {
+            qWarning()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
+            GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
+            assert(false);
+        }
+        delete _doc_list_content;
+        _doc_list_content = nullptr;
     }
-    catch(const Xapian::Error &e)
-    {
-        qWarning()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
-        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
-        assert(false);
-    }
-    m_doc_list_content->clear();
-    Q_EMIT this->transactionFinished();
+//    Q_EMIT this->transactionFinished();
     FileUtils::_index_status = FINISH_CREATING_INDEX;
     return true;
 
@@ -108,12 +123,12 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
 {
     if(rebuild)
     {
-        m_datebase_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
+        m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
         m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
     }
     else
     {
-        m_datebase_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
+        m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
         m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     }
     GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
@@ -124,10 +139,29 @@ IndexGenerator::~IndexGenerator()
 {
     QMutexLocker locker(&m_mutex);
     qDebug() << "~IndexGenerator";
-    if(m_datebase_path)
-        delete m_datebase_path;
+    m_database_path->close();
+    m_database_content->close();
+    if(m_database_path)
+        delete m_database_path;
+    m_database_path = nullptr;
     if(m_database_content)
         delete m_database_content;
+    m_database_content = nullptr;
+    if(m_index_map)
+        delete m_index_map;
+    m_index_map = nullptr;
+//    if(m_doc_list_path)
+//        delete m_doc_list_path;
+//    m_doc_list_path = nullptr;
+//    if(_doc_list_content)
+//        delete m_doc_list_content;
+//    m_doc_list_content = nullptr;
+    if(m_index_data_path)
+        delete m_index_data_path;
+    m_index_data_path = nullptr;
+    if(m_indexer)
+        delete m_indexer;
+    m_indexer = nullptr;
     GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
     GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
     GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
@@ -147,7 +181,7 @@ void IndexGenerator::insertIntoDatabase(Document doc)
         m_indexer->index_text(i.toStdString());
     }
 
-    Xapian::docid innerId= m_datebase_path->replace_document(doc.getUniqueTerm(),document);
+    Xapian::docid innerId= m_database_path->replace_document(doc.getUniqueTerm(),document);
 //    qDebug()<<"replace doc docid="<<static_cast<int>(innerId);
 //    qDebug()<< "--index finish--";
     return;
@@ -166,13 +200,30 @@ void IndexGenerator::HandlePathList(QQueue<QVector<QString>> *messageList)
     qDebug()<<"Begin HandlePathList!";
     qDebug()<<messageList->size();
 //    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
-    QFuture<Document> future = QtConcurrent::mapped(*messageList,&IndexGenerator::GenerateDocument);
+//    QFuture<Document> future = QtConcurrent::mapped(*messageList,&IndexGenerator::GenerateDocument);
 
-    future.waitForFinished();
+//    future.waitForFinished();
 
-    QList<Document> docList = future.results();
-    m_doc_list_path = new QList<Document>(docList);
-    qDebug()<<m_doc_list_path->size();
+//    QList<Document> docList = future.results();
+//    future.cancel();
+//    m_doc_list_path = new QList<Document>(docList);
+    QThreadPool pool;
+//    pool.setMaxThreadCount(1);
+    ConstructDocumentForPath *constructer;
+    while(!messageList->isEmpty())
+    {
+       constructer = new ConstructDocumentForPath(messageList->dequeue());
+       pool.start(constructer);
+    }
+//    while(!pool.waitForDone(1))
+//        qDebug()<<"fuck"<<pool.waitForDone(1);
+    qDebug()<<"pool finish"<<pool.waitForDone(-1);
+//    if(constructer)
+//        delete constructer;
+//    constructer = nullptr;
+
+
+    qDebug()<<_doc_list_path->size();
 
     qDebug()<<"Finish HandlePathList!";
     return;
@@ -183,13 +234,31 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
     qDebug()<<"Begin HandlePathList for content index!";
     qDebug()<<messageList->size();
 //    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
-    QFuture<Document> future = QtConcurrent::mapped(*messageList,&IndexGenerator::GenerateContentDocument);
+    ChineseSegmentation::getInstance();
+    ConstructDocumentForContent *constructer;
+    QThreadPool pool;
+//    pool.setMaxThreadCount(2);
+    pool.setExpiryTimeout(1000);
+    while(!messageList->isEmpty())
+    {
+       constructer = new ConstructDocumentForContent(messageList->dequeue());
+       pool.start(constructer);
+    }
+//    while(!pool.waitForDone(1))
+//        qDebug()<<"fuck"<<pool.waitForDone(1);
+    qDebug()<<"pool finish"<<pool.waitForDone(-1);
+//    if(constructer)
+//        delete constructer;
+//    constructer = nullptr;
 
-    future.waitForFinished();
+//    QFuture<Document> future = QtConcurrent::mapped(*messageList,&IndexGenerator::GenerateContentDocument);
 
-    QList<Document> docList = future.results();
-    m_doc_list_content = new QList<Document>(docList);
-    qDebug()<<m_doc_list_content->size();
+//    future.waitForFinished();
+//    ChineseSegmentation::getInstance()->~ChineseSegmentation();
+
+//    QList<Document> docList = future.results();
+//    m_doc_list_content = new QList<Document>(docList);
+    qDebug()<<_doc_list_content->size();
 
     qDebug()<<"Finish HandlePathList for content index!";
     return;
@@ -202,7 +271,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
     //0-filename 1-filepathname 2-file or dir
     QString index_text = list.at(0);
     QString sourcePath = list.at(1);   
-    index_text = index_text.replace(".","").replace(""," ");
+    index_text = index_text.replace(""," ");
     index_text = index_text.simplified();
 
     //不带多音字版
@@ -249,7 +318,9 @@ Document IndexGenerator::GenerateContentDocument(const QString &path)
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(path));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(path.section("/",0,-2,QString::SectionIncludeLeadingSep)));
 
-    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(&content);
+    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content);
+//    QStringList  term = content.split("");
+
     Document doc;
     doc.setData(content);
     doc.setUniqueTerm(uniqueterm);
@@ -260,6 +331,20 @@ Document IndexGenerator::GenerateContentDocument(const QString &path)
         doc.addPosting(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
 
     }
+
+//    Document doc;
+//        doc.setData(content);
+//        doc.setUniqueTerm(uniqueterm);
+//        doc.addTerm(upTerm);
+//        doc.addValue(path);
+//        int pos = 0;
+//        for(QString i : term)
+//        {
+//            doc.addPosting(i.toStdString(),QVector<size_t>() << ++pos,1);
+//        }
+
+    content.clear();
+    term.clear();
     return doc;
 }
 
@@ -267,6 +352,7 @@ bool IndexGenerator::isIndexdataExist()
 {
 
 //    Xapian::Database db(m_index_data_path->toStdString());
+    return true;
 
 
 }
@@ -355,11 +441,11 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
         try
         {
             qDebug()<<"--delete start--";
-            m_datebase_path->delete_document(uniqueterm);
+            m_database_path->delete_document(uniqueterm);
             m_database_content->delete_document(uniqueterm);
             qDebug()<<"delete path"<<doc;
             qDebug()<<"delete md5"<<QString::fromStdString(uniqueterm);
-            m_datebase_path->commit();
+            m_database_path->commit();
             qDebug()<< "--delete finish--";
         }
         catch(const Xapian::Error &e)

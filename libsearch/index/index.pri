@@ -1,6 +1,7 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
+    $$PWD/construct-document.h \
     $$PWD/document.h \
     $$PWD/file-reader.h \
     $$PWD/first-index.h \
@@ -11,6 +12,7 @@ HEADERS += \
     $$PWD/ukui-search-qdbus.h
 
 SOURCES += \
+    $$PWD/construct-document.cpp \
     $$PWD/document.cpp \
     $$PWD/file-reader.cpp \
     $$PWD/first-index.cpp \

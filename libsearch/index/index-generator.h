@@ -9,17 +9,25 @@
 #include <QCryptographicHash>
 #include <QMutex>
 #include <QQueue>
+//#include <QMetaObject>
 #include "document.h"
 #include "file-reader.h"
+//#include "chinese-segmentation.h"
+
+extern QList<Document> *_doc_list_path;
+extern QMutex  _mutex_doc_list_path;
+extern QList<Document> *_doc_list_content;
+extern QMutex  _mutex_doc_list_content;
 
 class IndexGenerator : public QObject
 {
     Q_OBJECT
 public:
-    static IndexGenerator *getInstance(bool rebuild = false);
+    static IndexGenerator *getInstance(bool rebuild = false,QObject *parent = nullptr);
     ~IndexGenerator();
     bool setIndexdataPath();
     bool isIndexdataExist();
+//    Q_INVOKABLE void appendDocListPath(Document doc);
     //for search test
     static QStringList IndexSearch(QString indexText);
 Q_SIGNALS:
@@ -44,10 +52,10 @@ private:
     void insertIntoContentDatabase(Document doc);
 
     QMap<QString,QStringList> *m_index_map;
-    QList<Document> *m_doc_list_path;  //for path index
-    QList<Document> *m_doc_list_content;  // for text content index
+//    QList<Document> *m_doc_list_path;  //for path index
+//    QList<Document> *m_doc_list_content;  // for text content index
     QString *m_index_data_path;
-    Xapian::WritableDatabase *m_datebase_path;
+    Xapian::WritableDatabase *m_database_path;
     Xapian::WritableDatabase *m_database_content;
     std::string m_docstr;
     std::string m_index_text_str;

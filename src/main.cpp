@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 {
     qInstallMessageHandler(messageOutput);
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
+    qRegisterMetaType<Document>("Document");
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
