@@ -22,8 +22,16 @@ FileSearcher::~FileSearcher()
 
 int FileSearcher::getCurrentIndexCount()
 {
-    Xapian::Database db(INDEX_PATH);
-    return db.get_doccount();
+    try
+    {
+        Xapian::Database db(INDEX_PATH);
+        return db.get_doccount();
+    }
+    catch(const Xapian::Error &e)
+    {
+        qWarning() <<QString::fromStdString(e.get_description());
+        return 0;
+    }
 }
 
 void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent)
@@ -154,7 +162,7 @@ int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int
         qp.set_default_op(Xapian::Query::OP_AND);
         qp.set_database(db);
 
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(&keyword);
+        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(keyword);
         //Creat a query
         std::string words;
         for(int i=0;i<sKeyWord.size();i++)
@@ -199,8 +207,9 @@ Xapian::Query FileSearcher::creatQueryForFileSearch(QString keyword, Xapian::Dat
     qp.set_default_op(Xapian::Query::OP_PHRASE);
     qp.set_database(db);
     auto userInput = keyword;
+    userInput = userInput.replace(".","").simplified();
 
-    std::string queryStr = keyword.replace(""," ").toStdString();
+    std::string queryStr = keyword.replace(".","").replace(" ","").replace(""," ").simplified().toStdString();
 //        std::string s =db.get_spelling_suggestion(queryStr,10);
 //        qDebug()<<"spelling_suggestion!"<<QString::fromStdString(s);
 

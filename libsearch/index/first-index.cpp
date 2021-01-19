@@ -21,6 +21,8 @@ void handler(int){
 //    while (true);
 }
 
+#define NEW_QUEUE(a)    a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
+//#define DELETE_QUEUE(a )
 
 FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
 {
@@ -47,26 +49,30 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
     }
 
     this->q_index = new QQueue<QVector<QString>>();
-    this->q_content_index = new QQueue<QString>();
-
+    //this->q_content_index = new QQueue<QString>();
+    NEW_QUEUE(this->q_content_index);
 //    this->mlm = new MessageListManager();
 }
 
 FirstIndex::~FirstIndex()
 {
     qDebug() << "~FirstIndex";
-    delete this->q_index;
+    if(this->q_index)
+        delete this->q_index;
     this->q_index = nullptr;
-    delete this->q_content_index;
+    if(this->q_content_index)
+        delete this->q_content_index;
     this->q_content_index = nullptr;
-//    delete this->p_indexGenerator;
-//    this->p_indexGenerator;
+    if (this->p_indexGenerator)
+        delete this->p_indexGenerator;
+    this->p_indexGenerator = nullptr;
+    qDebug() << "~FirstIndex end";
 //    delete this->mlm;
 //    this->mlm = nullptr;
 }
 
 void FirstIndex::DoSomething(const QFileInfo& fileInfo){
-//    qDebug() << "there are some shit here";
+//    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0"));
     for (auto i : this->targetFileTypeVec){
         if (fileInfo.fileName().endsWith(i)){
@@ -89,12 +95,18 @@ void FirstIndex::run(){
         else{
             //if the parameter is false, index won't be rebuild
             //if it is true, index will be rebuild
-            this->p_indexGenerator = IndexGenerator::getInstance(true);
+            this->p_indexGenerator = IndexGenerator::getInstance(true,this);
         }
     }
     else{
-        this->p_indexGenerator = IndexGenerator::getInstance(false);
+        this->p_indexGenerator = IndexGenerator::getInstance(false,this);
     }
+
+//    this->q_content_index->enqueue(QString("/home/zhangzihao/Desktop/qwerty/四库全书.txt"));
+
+//    this->p_indexGenerator->creatAllIndex(this->q_content_index);
+
+
     QSemaphore sem(5);
     QMutex mutex1, mutex2, mutex3;
     mutex1.lock();
@@ -131,11 +143,28 @@ void FirstIndex::run(){
     mutex1.unlock();
     mutex2.unlock();
     mutex3.unlock();
-    qDebug() << "first index end;";
+
+
+
+//    qDebug() << "first index end;";
     //don't use it now!!!!
     //MouseZhangZh
 //    this->~FirstIndex();
-    qDebug() << "~FirstIndex end;";
+//    qDebug() << "~FirstIndex end;";
+
+
+    if (this->q_index)
+        delete this->q_index;
+    this->q_index = nullptr;
+    if (this->q_content_index)
+        delete this->q_content_index;
+    this->q_content_index = nullptr;
+    if (this->p_indexGenerator)
+        delete this->p_indexGenerator;
+    this->p_indexGenerator = nullptr;
+
+    QThreadPool::globalInstance()->releaseThread();
+    QThreadPool::globalInstance()->waitForDone();
 
 
 
@@ -143,6 +172,9 @@ void FirstIndex::run(){
     sigset( SIGTERM, handler);
     qDebug() << "sigset end!";
 
+    //quit() is shit!!!
+//    return;
+//    exit(0);
     this->quit();
 //    this->wait();
 }

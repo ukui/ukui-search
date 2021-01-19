@@ -530,5 +530,11 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
     stream.setCodec(codec);
 
     textcontent = stream.readAll().replace("\n","");
+
+    file.close();
+    encodedString.clear();
+    chardet = NULL;
+    stream.flush();
+
     return;
 }
