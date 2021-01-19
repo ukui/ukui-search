@@ -4,6 +4,7 @@
 #include <QtConcurrent>
 #include <QFuture>
 #include <QThreadPool>
+#include <QFile>
 #include "file-utils.h"
 #include "index-generator.h"
 #include "global-settings.h"
@@ -113,6 +114,13 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
 {
     if(rebuild)
     {
+        QDir database(QString::fromStdString(INDEX_PATH));
+        if(database.exists())
+            database.removeRecursively();
+        database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
+        if(database.exists())
+            database.removeRecursively();
+
         m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
         m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
     }
@@ -198,14 +206,13 @@ void IndexGenerator::HandlePathList(QQueue<QVector<QString>> *messageList)
 //    m_doc_list_path = new QList<Document>(docList);
     QThreadPool pool;
 //    pool.setMaxThreadCount(1);
+    pool.setExpiryTimeout(100);
     ConstructDocumentForPath *constructer;
     while(!messageList->isEmpty())
     {
        constructer = new ConstructDocumentForPath(messageList->dequeue());
        pool.start(constructer);
     }
-//    while(!pool.waitForDone(1))
-//        qDebug()<<"fuck"<<pool.waitForDone(1);
     qDebug()<<"pool finish"<<pool.waitForDone(-1);
 //    if(constructer)
 //        delete constructer;
@@ -231,14 +238,12 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
     ConstructDocumentForContent *constructer;
     QThreadPool pool;
 //    pool.setMaxThreadCount(2);
-    pool.setExpiryTimeout(1000);
+    pool.setExpiryTimeout(100);
     while(!messageList->isEmpty())
     {
        constructer = new ConstructDocumentForContent(messageList->dequeue());
        pool.start(constructer);
     }
-//    while(!pool.waitForDone(1))
-//        qDebug()<<"fuck"<<pool.waitForDone(1);
     qDebug()<<"pool finish"<<pool.waitForDone(-1);
 //    if(constructer)
 //        delete constructer;

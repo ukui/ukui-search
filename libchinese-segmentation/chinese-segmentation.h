@@ -16,6 +16,11 @@ struct SKeyWord{
     std::string word;
     QVector<size_t> offsets;
     double weight;
+    ~SKeyWord(){
+        word = std::move("");
+        offsets.clear();
+        offsets.shrink_to_fit();
+    }
 };
 
 class CHINESESEGMENTATION_EXPORT ChineseSegmentation

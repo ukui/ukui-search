@@ -97,7 +97,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
 
         while(total<20)
         {
-            keywordSearchContent(uniqueSymbol3,keyword,begin,num);
+            resultCount = keywordSearchContent(uniqueSymbol3,keyword,begin,num);
             if(resultCount == 0 || resultCount == -1)
                 break;
             total += resultCount;
