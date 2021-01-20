@@ -61,7 +61,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //    im->start();
     /*-------------Inotify Test End-----------------*/
 
-    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
+//    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
+//    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
@@ -161,7 +163,8 @@ void MainWindow::initUi()
     m_titleLabel->setText(tr("Search"));
     m_menuBtn = new QPushButton(m_titleFrame);
     m_menuBtn->setFixedSize(24, 24);
-    m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
+//    m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
+    m_menuBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
     m_menuBtn->setStyleSheet("QPushButton{background: transparent;}"
                              "QPushButton:hover:!pressed{background: transparent;}");
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {

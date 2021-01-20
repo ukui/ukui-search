@@ -4,6 +4,7 @@
 
 SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent)
 {
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
     m_model = new SearchItemModel;
@@ -15,7 +16,7 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setColumnWidth(0, 20);
     this->setColumnWidth(1, 80);
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
-    this->setFixedHeight(list.count() * rowheight + 2);
+    this->setFixedHeight(list.count() * rowheight + 4);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");
@@ -47,7 +48,7 @@ SearchListView::~SearchListView()
 void SearchListView::appendItem(QString path) {
     m_model->appendItem(path);
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
-    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 3);
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
 
 /**
@@ -57,7 +58,7 @@ void SearchListView::setList(QStringList list)
 {
     m_model->appendList(list);
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
-    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 3);
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
 
 /**

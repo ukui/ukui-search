@@ -31,6 +31,7 @@
 //#include "inotify-manager.h"
 #include "libsearch.h"
 #include "global-settings.h"
+#include "xatom-helper.h"
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -158,6 +159,13 @@ int main(int argc, char *argv[])
     MainWindow *w = new MainWindow;
     QStringList arguments = QCoreApplication::arguments();
     centerToScreen(w);
+
+    //使用窗管的无边框策略
+    MotifWmHints hints;
+    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+    hints.functions = MWM_FUNC_ALL;
+    hints.decorations = MWM_DECOR_BORDER;
+    XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), hints);
 
     app.setActivationWindow(w);
 //    if(arguments.size()>1)

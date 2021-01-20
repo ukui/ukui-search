@@ -123,15 +123,21 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
 
 /**
  * @brief FileUtils::getFileName 获取文件名
- * @param uri 文件的url，格式为"file:///home/xxx/xxx/xxxx.txt"
+ * @param uri 格式为"file:///home/xxx/xxx/xxxx.txt"
  * @return
  */
 QString FileUtils::getFileName(const QString& uri) {
-    QUrl url = uri;
-    if (url.fileName().isEmpty()) {
+    QFileInfo info(uri);
+    if (info.exists()) {
+        return info.fileName();
+    } else {
         return "Unknown File";
     }
-    return url.fileName();
+//    QUrl url = uri;
+//    if (url.fileName().isEmpty()) {
+//        return "Unknown File";
+//    }
+//    return url.fileName();
 }
 
 /**
