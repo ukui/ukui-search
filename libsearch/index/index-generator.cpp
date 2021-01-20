@@ -77,7 +77,6 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //文件内容索引
 bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 {
-    FileUtils::_index_status = CREATING_INDEX;
     HandlePathList(messageList);
     int size = _doc_list_content->size();
     if(!size == 0)
@@ -105,7 +104,6 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
         _doc_list_content = nullptr;
     }
     Q_EMIT this->transactionFinished();
-    FileUtils::_index_status = FINISH_CREATING_INDEX;
     return true;
 
 }
