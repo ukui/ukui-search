@@ -180,10 +180,10 @@ QStringList UkuiMenuInterface::getDesktopFilePath()
     filePathList.removeAll("/usr/share/applications/system-config-printer.desktop");
     filePathList.removeAll("/usr/share/applications/org.gnome.DejaDup.desktop");
     filePathList.removeAll("/usr/share/applications/yelp.desktop");
-    filePathList.removeAll("/usr/share/applications/peony-computer.desktop");
-    filePathList.removeAll("/usr/share/applications/peony-home.desktop");
-    filePathList.removeAll("/usr/share/applications/peony-trash.desktop");
-    filePathList.removeAll("/usr/share/applications/peony.desktop");
+//    filePathList.removeAll("/usr/share/applications/peony-computer.desktop");
+//    filePathList.removeAll("/usr/share/applications/peony-home.desktop");
+//    filePathList.removeAll("/usr/share/applications/peony-trash.desktop");
+//    filePathList.removeAll("/usr/share/applications/peony.desktop");
 
     //v10
     filePathList.removeAll("/usr/share/applications/mate-about.desktop");

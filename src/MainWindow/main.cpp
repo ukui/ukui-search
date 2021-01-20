@@ -42,6 +42,35 @@ void centerToScreen(QWidget* widget) {
     widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 }
 
+void outputMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+
+    QString txt;
+          switch (type) {
+          //调试信息提示
+          case QtDebugMsg:
+                  txt = QString("Debug: %1").arg(msg);
+                  break;
+
+          //一般的warning提示
+          case QtWarningMsg:
+                  txt = QString("Warning: %1").arg(msg);
+          break;
+          //严重错误提示
+          case QtCriticalMsg:
+                  txt = QString("Critical: %1").arg(msg);
+          break;
+          //致命错误提示
+          case QtFatalMsg:
+                  txt = QString("Fatal: %1").arg(msg);
+                  abort();
+          }
+    QFile outFile(qgetenv("HOME") +"/.config/ukui/ukui-search.log");
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);  //
+    ts << txt << endl;
+}
+
 int main(int argc, char *argv[])
 {
     qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
@@ -88,6 +117,11 @@ int main(int argc, char *argv[])
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
 
     KWindowEffects::enableBlurBehind(w->winId(),true);
+
+    //注册MessageHandler
+    QFile outFile(qgetenv("HOME") +"/.config/ukui/ukui-search.log");
+    outFile.remove();
+    qInstallMessageHandler(outputMessage);
 
     return app.exec();
 }

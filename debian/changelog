@@ -1,4 +1,17 @@
-ukui-search (3.0.0-2+0105) v101; urgency=medium
+ukui-search (3.0.1-1+0113) v101; urgency=medium
+
+  * fix:更换壁纸排列方式段错误
+  * fix:点击标签退出页面
+  * fix:点击搜索图标预设文字不消失
+  * fix:系统设置模块下的条目个数太多
+  * fix:浅色模式下，当透明度为最低时，鼠标悬浮在文件模块下的任意条目，显示的路径纯黑色一片
+  * fix:改变选中颜色应用
+  * fix:esc键出现异常
+  * fix: 搜索不同目录下的相同名称的文件，只能显示某一个目录下的文件
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Wed, 13 Jan 2021 09:35:15 +0800
+
+ukui-search (3.0.1-1+0105) v101; urgency=medium
 
   * fix:结果显示不全
   * fix:系统设置框空白区域过大
