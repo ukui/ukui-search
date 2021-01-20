@@ -8,6 +8,7 @@
 #include "traverse_bfs.h"
 #include "ukui-search-qdbus.h"
 #include "global-settings.h"
+#include "file-utils.h"
 
 #define BUF_LEN 1024
 class InotifyIndex;

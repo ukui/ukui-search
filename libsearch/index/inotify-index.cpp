@@ -121,6 +121,7 @@ void InotifyIndex::run(){
 //            qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
             if(event->name[0] != '.'){
                 qDebug() << QString(currentPath[event->wd] + '/' + event->name);
+                FileUtils::_index_status = CREATING_INDEX;
 
 //                switch (event->mask) {
                 if (event->mask & IN_CREATE){
@@ -266,6 +267,7 @@ void InotifyIndex::run(){
 //                    }
 //                }
                 /*--------------------------------*/
+                FileUtils::_index_status = FINISH_CREATING_INDEX;
             }
 next:
             p += sizeof(struct inotify_event) + event->len;

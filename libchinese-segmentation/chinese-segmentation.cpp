@@ -46,6 +46,10 @@ QVector<SKeyWord> ChineseSegmentation::callSegement(QString& str)
     QVector<SKeyWord> vecNeeds;
     convert(keywordres, vecNeeds);
 
+    keywordres.clear();
+    keywordres.shrink_to_fit();
+
+
     return vecNeeds;
 
 }

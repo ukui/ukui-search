@@ -107,6 +107,7 @@ void FirstIndex::run(){
 //    this->p_indexGenerator->creatAllIndex(this->q_content_index);
 
 
+    FileUtils::_index_status = CREATING_INDEX;
     QSemaphore sem(5);
     QMutex mutex1, mutex2, mutex3;
     mutex1.lock();
@@ -168,6 +169,7 @@ void FirstIndex::run(){
 
 
 
+    FileUtils::_index_status = FINISH_CREATING_INDEX;
     qDebug() << "sigset start!";
     sigset( SIGTERM, handler);
     qDebug() << "sigset end!";
