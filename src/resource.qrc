@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/icons/commonuse.svg</file>
         <file>res/icons/edit-find-symbolic.svg</file>
         <file>res/icons/desktop.png</file>
         <file>res/icons/close.svg</file>

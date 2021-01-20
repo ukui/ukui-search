@@ -31,10 +31,9 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
                 qApp->paletteChanged(qApp->palette());
             }
         });
+        m_cache.remove(TRANSPARENCY_KEY);
+        m_cache.insert(TRANSPARENCY_KEY, m_gsettings->get(TRANSPARENCY_KEY).toDouble());
     }
-    m_cache.remove(TRANSPARENCY_KEY);
-    m_cache.insert(TRANSPARENCY_KEY, m_gsettings->get(TRANSPARENCY_KEY).toDouble());
-
 }
 
 GlobalSettings::~GlobalSettings()

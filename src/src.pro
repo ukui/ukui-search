@@ -1,4 +1,4 @@
-QT       += core gui dbus  KWindowSystem xml
+QT       += core gui dbus  KWindowSystem xml x11extras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -8,7 +8,7 @@ TEMPLATE = app
 
 PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
-LIBS += -lxapian -lgsettings-qt -lquazip5
+LIBS += -lxapian -lgsettings-qt -lquazip5 -lX11
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -31,6 +31,7 @@ SOURCES += \
     mainwindow.cpp \
     search-result.cpp \
     settings-widget.cpp \
+    xatom-helper.cpp
 
 
 HEADERS += \
@@ -38,7 +39,8 @@ HEADERS += \
     input-box.h \
     mainwindow.h \
     search-result.h \
-    settings-widget.h
+    settings-widget.h \
+    xatom-helper.h
 
 # Default rules for deployment.
 
