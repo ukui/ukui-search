@@ -330,6 +330,16 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
     return false;
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        this->hide();
+        m_search_result_thread->requestInterruption();
+        m_search_result_thread->quit();
+    }
+    return QWidget::keyPressEvent(event);
+}
+
 void MainWindow::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
 
@@ -345,6 +355,6 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     p.setOpacity(trans);
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(rect, 6, 6);
-    QWidget::paintEvent(event);
+    return QWidget::paintEvent(event);
 
 }
