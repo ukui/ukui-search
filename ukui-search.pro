@@ -20,7 +20,7 @@ TRANSLATIONS+=\
     translations/ukui-search_zh_CN.ts \
     translations/ukui-search_tr.ts
 
-#QM_FILES_INSTALL_PATH = /usr/share/ukui-menu/translations/
+QM_FILES_INSTALL_PATH = /usr/share/ukui-search/translations/*.qm
 
 # CONFIG += lrelase not work for qt5.6, add those from lrelease.prf for compatibility
 qtPrepareTool(QMAKE_LRELEASE, lrelease)
