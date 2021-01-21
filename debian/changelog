@@ -1,3 +1,11 @@
+ukui-search (3.0.1-1+0120) v101; urgency=medium
+
+  * fix:增加翻译文件
+  * fix:加入日志打印
+  * fix:全局搜索搜不到“文件管理器
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Wed, 20 Jan 2021 10:35:55 +0800
+
 ukui-search (3.0.1-1+0113) v101; urgency=medium
 
   * fix:更换壁纸排列方式段错误

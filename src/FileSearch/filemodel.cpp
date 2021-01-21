@@ -156,7 +156,7 @@ int filemodel::showResult(QStringList result){
          for(int j=1;j<str1.count()-1;j++){
              str2 +=QString::fromLocal8Bit("/")+str1.at(j);
          }
-         if(str1.at(str1.count()-1).size()<40){
+         if(str1.at(str1.count()-1).size()<100){
              returnresult.append(str1.at(str1.count()-1));
              runresult.append(pathresult.at(i));
              openPathresult.append(str2);
