@@ -10,6 +10,7 @@ class Traverse_BFS
 {
 public:
     void Traverse();
+    virtual ~Traverse_BFS() = default;
     virtual void DoSomething(const QFileInfo&) = 0;
     void setPath(const QString&);
 protected:

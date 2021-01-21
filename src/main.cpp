@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 //    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
     FirstIndex fi("/home");
     fi.start();
-    fi.wait();
+//    fi.wait();
 //    fi->wait();
 //    fi->exit();
 //    delete fi;

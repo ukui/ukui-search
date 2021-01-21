@@ -12,7 +12,7 @@
 #include "file-utils.h"
 #include "first-index.h"
 
-#define BUF_LEN 1024
+#define BUF_LEN 1024000
 class InotifyIndex;
 static InotifyIndex* global_instance_of_index = nullptr;
 class InotifyIndex : public QThread, public Traverse_BFS

@@ -1,5 +1,23 @@
 #include "inotify-index.h"
 
+void handler(int){
+    qDebug() << "Recieved SIGTERM!";
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
+    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
+    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
+    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
+
+
+    qDebug() << "indexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
+    qDebug() << "contentIndexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
+    _exit(0);
+
+//    InotifyIndex::getInstance("/home")->~InotifyIndex();
+
+    //wait linux kill this thread forcedly
+//    while (true);
+}
+
 InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
 {
     /*-------------ukuisearchdbus Test start-----------------*/
@@ -111,7 +129,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
             if (event->mask & IN_CREATE){
                 if (event->mask & IN_ISDIR){
                     AddWatch(currentPath[event->wd] + '/' + event->name);
-                    this->setPath(currentPath[event->wd] + '/' + event->name);
+                    setPath(currentPath[event->wd] + '/' + event->name);
                     Traverse();
                 }
 
@@ -166,7 +184,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
                     RemoveWatch(currentPath[event->wd] + '/' + event->name);
                     IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
                     AddWatch(currentPath[event->wd] + '/' + event->name);
-                    this->setPath(currentPath[event->wd] + '/' + event->name);
+                    setPath(currentPath[event->wd] + '/' + event->name);
                     Traverse();
 
                     indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
@@ -266,6 +284,10 @@ next:
 */
 
 void InotifyIndex::run(){
+    qDebug() << "sigset start!";
+    sigset( SIGTERM, handler);
+    qDebug() << "sigset end!";
+
     char buf[BUF_LEN] __attribute__((aligned(8)));
 
     ssize_t numRead;
@@ -278,6 +300,7 @@ void InotifyIndex::run(){
         pid = fork();
         if(pid  == 0)
         {
+            prctl(PR_SET_PDEATHSIG, SIGKILL);
             prctl(PR_SET_NAME,"inotify-index");
             if (numRead == 0) {
                 qDebug() << "read() from inotify fd returned 0!";
@@ -286,19 +309,20 @@ void InotifyIndex::run(){
                 qDebug() << "read";
             }
             eventProcess(buf, numRead);
-            QTimer* liveTime = new QTimer(this);
-            bool b_timeout = false;
-            liveTime->setInterval(30000);
-            connect(liveTime, &QTimer::timeout, this, [&](){
-//                _exit(0);
-                b_timeout = true;
-            });
+            QTimer* liveTime = new QTimer();
+            //restart inotify-index proccess per minute
+            liveTime->setInterval(60000);
             liveTime->start();
+
+//            connect(liveTime, &QTimer::timeout, [ = ](){
+////                _exit(0);
+//                *b_timeout = 1;
+//            });
             for (;;){
                 numRead = read(m_fd, buf, BUF_LEN);
                 liveTime->stop();
                 this->eventProcess(buf, numRead);
-                if (b_timeout){
+                if (liveTime->remainingTime() < 1){
                     _exit(0);
                 }
                 liveTime->start();
