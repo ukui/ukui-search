@@ -19,37 +19,37 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="585"/>
+        <location filename="../../src/content-widget.cpp" line="586"/>
         <source>Apps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="587"/>
+        <location filename="../../src/content-widget.cpp" line="588"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="589"/>
+        <location filename="../../src/content-widget.cpp" line="590"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="591"/>
+        <location filename="../../src/content-widget.cpp" line="592"/>
         <source>Dirs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="593"/>
+        <location filename="../../src/content-widget.cpp" line="594"/>
         <source>File Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="595"/>
+        <location filename="../../src/content-widget.cpp" line="596"/>
         <source>Best Matches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="597"/>
+        <location filename="../../src/content-widget.cpp" line="598"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -65,12 +65,12 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="108"/>
+        <location filename="../../src/mainwindow.cpp" line="110"/>
         <source>Global Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="161"/>
+        <location filename="../../src/mainwindow.cpp" line="163"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -106,7 +106,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/main.cpp" line="104"/>
+        <location filename="../../src/main.cpp" line="106"/>
         <source>ukui-search is already running!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -122,12 +122,12 @@
 <context>
     <name>SearchDetailView</name>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="346"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="340"/>
         <source>Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="354"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="348"/>
         <source>Last time modified</source>
         <translation type="unfinished"></translation>
     </message>

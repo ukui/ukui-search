@@ -36,6 +36,7 @@
 #include <QLabel>
 #include <QFrame>
 #include <QPushButton>
+#include <QKeyEvent>
 #include <QGSettings/QGSettings>
 #include <QSystemTrayIcon>
 #include "content-widget.h"
@@ -94,6 +95,7 @@ private:
 
 protected:
     void paintEvent(QPaintEvent *);
+    void keyPressEvent(QKeyEvent *event);
     void initUi();
 
 public Q_SLOTS:
