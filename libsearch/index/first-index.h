@@ -4,6 +4,11 @@
 #include <QThread>
 #include <QtConcurrent/QtConcurrent>
 #include <signal.h>
+#include <QSemaphore>
+#include<sys/types.h>
+#include<unistd.h>
+#include <sys/wait.h>
+#include <sys/prctl.h>
 //#include <QtConcurrent>
 #include "traverse_bfs.h"
 #include "global-settings.h"

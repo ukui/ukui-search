@@ -2,7 +2,6 @@
 #include "first-index.h"
 #include <QDebug>
 
-
 void handler(int){
     qDebug() << "Recieved SIGTERM!";
     GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
@@ -107,67 +106,81 @@ void FirstIndex::run(){
 //    this->p_indexGenerator->creatAllIndex(this->q_content_index);
 
 
-    FileUtils::_index_status = CREATING_INDEX;
-    QSemaphore sem(5);
-    QMutex mutex1, mutex2, mutex3;
-    mutex1.lock();
-    mutex2.lock();
-    mutex3.lock();
-    sem.acquire(4);
-    QtConcurrent::run([&](){
-        sem.acquire(1);
+    pid_t pid;
+    pid = fork();
+    if(pid  == 0)
+    {
+        prctl(PR_SET_NAME,"first-index");
+        FileUtils::_index_status = CREATING_INDEX;
+        QSemaphore sem(5);
+        QMutex mutex1, mutex2, mutex3;
+        mutex1.lock();
+        mutex2.lock();
+        mutex3.lock();
+        sem.acquire(4);
+        QtConcurrent::run([&](){
+            sem.acquire(1);
+            mutex1.unlock();
+            this->Traverse();
+            FileUtils::_max_index_count = this->q_index->length();
+            sem.release(5);
+        });
+        QtConcurrent::run([&](){
+            sem.acquire(2);
+            mutex2.unlock();
+            qDebug() << "index start;";
+            this->p_indexGenerator->creatAllIndex(this->q_index);
+            qDebug() << "index end;";
+            sem.release(2);
+        });
+        QtConcurrent::run([&](){
+            sem.acquire(2);
+            mutex3.unlock();
+            qDebug() << "content index start;";
+            this->p_indexGenerator->creatAllIndex(this->q_content_index);
+            qDebug() << "content index end;";
+            sem.release(2);
+        });
+        mutex1.lock();
+        mutex2.lock();
+        mutex3.lock();
+        sem.acquire(5);
         mutex1.unlock();
-        this->Traverse();
-        FileUtils::_max_index_count = this->q_index->length();
-        sem.release(5);
-    });
-    QtConcurrent::run([&](){
-        sem.acquire(2);
         mutex2.unlock();
-        qDebug() << "index start;";
-        this->p_indexGenerator->creatAllIndex(this->q_index);
-        qDebug() << "index end;";
-        sem.release(2);
-    });
-    QtConcurrent::run([&](){
-        sem.acquire(2);
         mutex3.unlock();
-        qDebug() << "content index start;";
-        this->p_indexGenerator->creatAllIndex(this->q_content_index);
-        qDebug() << "content index end;";
-        sem.release(2);
-    });
-    mutex1.lock();
-    mutex2.lock();
-    mutex3.lock();
-    sem.acquire(5);
-    mutex1.unlock();
-    mutex2.unlock();
-    mutex3.unlock();
+        _exit(0);
 
 
 
-//    qDebug() << "first index end;";
-    //don't use it now!!!!
-    //MouseZhangZh
-//    this->~FirstIndex();
-//    qDebug() << "~FirstIndex end;";
+
+        //    qDebug() << "first index end;";
+        //don't use it now!!!!
+        //MouseZhangZh
+        //    this->~FirstIndex();
+        //    qDebug() << "~FirstIndex end;"
 
 
-    if (this->q_index)
-        delete this->q_index;
-    this->q_index = nullptr;
-    if (this->q_content_index)
-        delete this->q_content_index;
-    this->q_content_index = nullptr;
-    if (this->p_indexGenerator)
-        delete this->p_indexGenerator;
-    this->p_indexGenerator = nullptr;
+        if (this->q_index)
+            delete this->q_index;
+        this->q_index = nullptr;
+        if (this->q_content_index)
+            delete this->q_content_index;
+        this->q_content_index = nullptr;
+        if (this->p_indexGenerator)
+            delete this->p_indexGenerator;
+        this->p_indexGenerator = nullptr;
 
-    QThreadPool::globalInstance()->releaseThread();
-    QThreadPool::globalInstance()->waitForDone();
-
-
+        QThreadPool::globalInstance()->releaseThread();
+        QThreadPool::globalInstance()->waitForDone();
+    }
+    else if(pid < 0)
+    {
+        qWarning()<<"First Index fork error!!";
+    }
+    else
+    {
+        waitpid(pid,NULL,0);
+    }
 
     FileUtils::_index_status = FINISH_CREATING_INDEX;
     qDebug() << "sigset start!";

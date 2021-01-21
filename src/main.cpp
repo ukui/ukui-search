@@ -26,6 +26,7 @@
 #include <X11/Xlib.h>
 #include <syslog.h>
 #include <QObject>
+#include <QSemaphore>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
@@ -185,6 +186,7 @@ int main(int argc, char *argv[])
 //    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
     FirstIndex fi("/home");
     fi.start();
+    fi.wait();
 //    fi->wait();
 //    fi->exit();
 //    delete fi;

@@ -66,6 +66,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
             total += resultCount;
             begin += num;
         }
+        return;
     });
 //    Q_EMIT this->resultFile(m_search_result_file);
     //dir
@@ -84,6 +85,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
             total += resultCount;
             begin += num;
         }
+        return;
     });
 //    Q_EMIT this->resultDir(m_search_result_dir);
     //content
@@ -103,6 +105,7 @@ void FileSearcher::onKeywordSearch(QString keyword,QQueue<QString> *searchResult
             total += resultCount;
             begin += num;
         }
+        return;
     });
 //    Q_EMIT this->resultContent(m_search_result_content);
 }

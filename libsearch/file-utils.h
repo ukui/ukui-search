@@ -10,6 +10,7 @@
 #define CREATING_INDEX 1
 #define FINISH_CREATING_INDEX 2
 
+
 class  LIBSEARCH_EXPORT FileUtils
 {
 public:

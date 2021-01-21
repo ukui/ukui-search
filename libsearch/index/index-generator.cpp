@@ -450,7 +450,11 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
             qDebug()<<"delete path"<<doc;
             qDebug()<<"delete md5"<<QString::fromStdString(uniqueterm);
             m_database_path->commit();
+            m_database_content->commit();
             qDebug()<< "--delete finish--";
+//            qDebug()<<"m_database_path->get_lastdocid()!!!"<<m_database_path->get_lastdocid();
+
+//            qDebug()<<"m_database_path->get_doccount()!!!"<<m_database_path->get_doccount();
         }
         catch(const Xapian::Error &e)
         {
