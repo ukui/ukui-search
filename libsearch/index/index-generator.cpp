@@ -42,6 +42,7 @@ bool IndexGenerator::setIndexdataPath()
 //文件名索引
 bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 {
+//    FileUtils::_index_status |= 0x1;
     HandlePathList(messageList);
     try
     {
@@ -67,8 +68,10 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
         qWarning()<<"creatAllIndex fail!"<<QString::fromStdString(e.get_description());
         //need a record
         GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
+//        FileUtils::_index_status &= ~0x1;
         assert(false);
     }
+//    FileUtils::_index_status &= ~0x1;
     _doc_list_path->clear();
     delete _doc_list_path;
     _doc_list_path = nullptr;
@@ -77,6 +80,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //文件内容索引
 bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 {
+//    FileUtils::_index_status |= 0x2;
     HandlePathList(messageList);
     int size = _doc_list_content->size();
     if(!size == 0)
@@ -97,8 +101,10 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
         {
             qWarning()<<"creat content Index fail!"<<QString::fromStdString(e.get_description());
             GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"1");
+//            FileUtils::_index_status &= ~0x2;
             assert(false);
         }
+//        FileUtils::_index_status &= ~0x2;
         _doc_list_content->clear();
         delete _doc_list_content;
         _doc_list_content = nullptr;

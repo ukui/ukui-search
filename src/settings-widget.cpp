@@ -209,7 +209,8 @@ void SettingsWidget::clearLayout(QLayout * layout) {
  */
 void SettingsWidget::refreshIndexState()
 {
-    if (FileUtils::_index_status == CREATING_INDEX) {
+//    qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
+    if (FileUtils::_index_status != 0) {
         this->setIndexState(true);
     } else {
         this->setIndexState(false);
@@ -217,7 +218,8 @@ void SettingsWidget::refreshIndexState()
     m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileSearcher::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
-        if (FileUtils::_index_status == CREATING_INDEX) {
+        qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
+        if (FileUtils::_index_status != 0) {
             this->setIndexState(true);
         } else {
             this->setIndexState(false);

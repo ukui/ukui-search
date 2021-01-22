@@ -106,13 +106,14 @@ void FirstIndex::run(){
 //    this->p_indexGenerator->creatAllIndex(this->q_content_index);
 
 
+    ++FileUtils::_index_status;
+
     pid_t pid;
     pid = fork();
     if(pid  == 0)
     {
         prctl(PR_SET_PDEATHSIG, SIGKILL);
         prctl(PR_SET_NAME,"first-index");
-        FileUtils::_index_status = CREATING_INDEX;
         QSemaphore sem(5);
         QMutex mutex1, mutex2, mutex3;
         mutex1.lock();
@@ -122,6 +123,7 @@ void FirstIndex::run(){
         QtConcurrent::run([&](){
             sem.acquire(1);
             mutex1.unlock();
+            this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
             this->Traverse();
             FileUtils::_max_index_count = this->q_index->length();
             sem.release(5);
@@ -181,6 +183,7 @@ void FirstIndex::run(){
     else
     {
         waitpid(pid,NULL,0);
+        --FileUtils::_index_status;
     }
 
     int retval = write(fifo_fd, buffer, strlen(buffer));
@@ -190,7 +193,6 @@ void FirstIndex::run(){
     }
     printf("write data ok!\n");
 
-    FileUtils::_index_status = FINISH_CREATING_INDEX;
 
     //quit() is shit!!!
 //    return;
