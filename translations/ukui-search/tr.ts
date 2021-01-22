@@ -106,7 +106,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/main.cpp" line="106"/>
+        <location filename="../../src/main.cpp" line="118"/>
         <source>ukui-search is already running!</source>
         <translation type="unfinished"></translation>
     </message>

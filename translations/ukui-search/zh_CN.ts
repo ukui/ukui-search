@@ -67,7 +67,7 @@
     <message>
         <location filename="../../src/mainwindow.cpp" line="110"/>
         <source>Global Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../src/mainwindow.cpp" line="163"/>
@@ -106,7 +106,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/main.cpp" line="106"/>
+        <location filename="../../src/main.cpp" line="118"/>
         <source>ukui-search is already running!</source>
         <translation></translation>
     </message>
