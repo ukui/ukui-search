@@ -284,6 +284,30 @@ next:
 */
 
 void InotifyIndex::run(){
+    int fifo_fd;
+    char buffer[2];
+    memset(buffer, 0, sizeof(buffer));
+    fifo_fd = open(UKUI_SEARCH_PIPE_PATH, O_RDWR);
+    if(fifo_fd == -1)
+    {
+        perror("open fifo error\n");
+        assert(false);
+    }
+    int retval = read(fifo_fd, buffer, sizeof(buffer));
+    if(retval == -1)
+    {
+        perror("read error\n");
+        assert(false);
+    }
+    printf("read fifo=[%s]\n", buffer);
+
+    printf("read data ok\n");
+    close(fifo_fd);
+    if (buffer[0] & 0x1){
+        printf("data confirmed\n");
+    }
+    unlink(UKUI_SEARCH_PIPE_PATH);
+
     qDebug() << "sigset start!";
     sigset( SIGTERM, handler);
     qDebug() << "sigset end!";

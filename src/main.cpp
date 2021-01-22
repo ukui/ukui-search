@@ -26,13 +26,13 @@
 #include <X11/Xlib.h>
 #include <syslog.h>
 #include <QObject>
-#include <QSemaphore>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
 #include "libsearch.h"
 #include "global-settings.h"
 #include "xatom-helper.h"
+
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -92,6 +92,17 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    unlink(UKUI_SEARCH_PIPE_PATH);
+    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
+    if(retval == -1)
+    {
+        perror("creat fifo error\n");
+        assert(false);
+        return -1;
+    }
+    printf("create fifo success\n");
+
+
     qInstallMessageHandler(messageOutput);
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");

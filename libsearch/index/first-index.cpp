@@ -2,7 +2,7 @@
 #include "first-index.h"
 #include <QDebug>
 
-#define NEW_QUEUE(a)    a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
+#define NEW_QUEUE(a) a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
 //#define DELETE_QUEUE(a )
 
 FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
@@ -63,6 +63,18 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo){
 }
 
 void FirstIndex::run(){
+    int fifo_fd;
+    char buffer[2];
+    memset(buffer, 0, sizeof(buffer));
+    buffer[0] = 0x1;
+    buffer[1] = '\0';
+    fifo_fd = open(UKUI_SEARCH_PIPE_PATH, O_RDWR);
+    if(fifo_fd == -1)
+    {
+        perror("open fifo error\n");
+        assert(false);
+    }
+
     if (this->bool_dataBaseExist){
         if (this->bool_dataBaseStatusOK){
 
@@ -164,6 +176,14 @@ void FirstIndex::run(){
     {
         waitpid(pid,NULL,0);
     }
+
+    int retval = write(fifo_fd, buffer, strlen(buffer));
+    if(retval == -1)
+    {
+        perror("write error\n");
+    }
+    printf("write data ok!\n");
+    close(fifo_fd);
 
     FileUtils::_index_status = FINISH_CREATING_INDEX;
 
