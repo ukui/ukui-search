@@ -1,3 +1,9 @@
+ukui-search (0.0.1+0120) v101; urgency=medium
+
+  * Bugs Fixed.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 20 Jan 2021 15:55:57 +0800
+
 ukui-search (0.0.1+0118) v101; urgency=medium
 
   * Feature: Add animation into inputbox.
@@ -11,8 +17,7 @@ ukui-search (0.0.1+0118) v101; urgency=medium
   * Fix: Translation is incompleted.(33047)
   * Fix: Widget crashed when searching & open file/filepath failed.
 
- -- zhangjiaping <zhangjiaping@zhangpengfei>  Mon, 18 Jan 2021 14:3
-6:12 +0800
+ -- zhangjiaping <zhangjiaping@kylinos.cn>  Mon, 18 Jan 2021 14:31:24 +0800
 
 ukui-search (0.0.1+0115) v101; urgency=medium
 
@@ -24,7 +29,7 @@ ukui-search (0.0.1+0114) v101; urgency=medium
 
   * Bugs fixed.
 
- -- zhangpengfei <zhangpengfei@zhangpengfei>  Thu, 14 Jan 2021 20:47:42 +0800
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 14 Jan 2021 20:47:42 +0800
 
 ukui-search (0.0.1+0113) v101; urgency=medium
 

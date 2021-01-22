@@ -1,6 +1,12 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 #include "gobject-template.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <QString>
 #include <QCryptographicHash>
 #include <QIcon>
@@ -9,6 +15,9 @@
 #define INITIAL_STATE 0
 #define CREATING_INDEX 1
 #define FINISH_CREATING_INDEX 2
+
+#define UKUI_SEARCH_PIPE_PATH "/tmp/ukuisearch"
+
 
 class  LIBSEARCH_EXPORT FileUtils
 {

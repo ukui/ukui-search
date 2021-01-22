@@ -2,6 +2,7 @@
 #define INOTIFYINDEX_H
 
 #include <QThread>
+#include <QTimer>
 #include <unistd.h>
 #include <sys/inotify.h>
 #include "index-generator.h"
@@ -9,8 +10,9 @@
 #include "ukui-search-qdbus.h"
 #include "global-settings.h"
 #include "file-utils.h"
+#include "first-index.h"
 
-#define BUF_LEN 1024
+#define BUF_LEN 1024000
 class InotifyIndex;
 static InotifyIndex* global_instance_of_index = nullptr;
 class InotifyIndex : public QThread, public Traverse_BFS
@@ -29,6 +31,8 @@ public:
     bool AddWatch(const QString&);
     bool RemoveWatch(const QString&);
     virtual void DoSomething(const QFileInfo &) final;
+
+    void eventProcess(const char*, ssize_t);
 protected:
     void run() override;
 private:

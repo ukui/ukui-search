@@ -6,7 +6,6 @@ QMutex  ChineseSegmentation::m_mutex;
 
 ChineseSegmentation::ChineseSegmentation()
 {
-    QMutexLocker locker(&m_mutex);
     const char * const DICT_PATH = "/usr/share/ukui-search/res/dict/jieba.dict.utf8";
     const char * const  HMM_PATH = "/usr/share/ukui-search/res/dict/hmm_model.utf8";
     const char * const USER_DICT_PATH ="/usr/share/ukui-search/res/dict/user.dict.utf8";
@@ -29,6 +28,7 @@ ChineseSegmentation::~ChineseSegmentation()
 
 ChineseSegmentation *ChineseSegmentation::getInstance()
 {
+    QMutexLocker locker(&m_mutex);
     if (!global_instance_chinese_segmentation) {
         global_instance_chinese_segmentation = new ChineseSegmentation;
     }

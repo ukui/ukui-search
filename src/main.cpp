@@ -33,6 +33,7 @@
 #include "global-settings.h"
 #include "xatom-helper.h"
 
+
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();
@@ -91,6 +92,17 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    unlink(UKUI_SEARCH_PIPE_PATH);
+    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
+    if(retval == -1)
+    {
+        perror("creat fifo error\n");
+        assert(false);
+        return -1;
+    }
+    printf("create fifo success\n");
+
+
     qInstallMessageHandler(messageOutput);
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
@@ -185,6 +197,7 @@ int main(int argc, char *argv[])
 //    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
     FirstIndex fi("/home");
     fi.start();
+//    fi.wait();
 //    fi->wait();
 //    fi->exit();
 //    delete fi;
