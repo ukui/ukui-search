@@ -77,6 +77,12 @@ void FirstIndex::run(){
 
     if (this->bool_dataBaseExist){
         if (this->bool_dataBaseStatusOK){
+            int retval = write(fifo_fd, buffer, strlen(buffer));
+            if(retval == -1)
+            {
+                perror("write error\n");
+            }
+            printf("write data ok!\n");
 
             //why???????????????????????????????????????????????????????????????
             //why not quit?
@@ -183,7 +189,6 @@ void FirstIndex::run(){
         perror("write error\n");
     }
     printf("write data ok!\n");
-    close(fifo_fd);
 
     FileUtils::_index_status = FINISH_CREATING_INDEX;
 
