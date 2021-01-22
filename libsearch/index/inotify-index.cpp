@@ -1,23 +1,5 @@
 #include "inotify-index.h"
 
-void handler(int){
-    qDebug() << "Recieved SIGTERM!";
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
-    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
-    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
-    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
-
-
-    qDebug() << "indexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
-    qDebug() << "contentIndexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
-    _exit(0);
-
-//    InotifyIndex::getInstance("/home")->~InotifyIndex();
-
-    //wait linux kill this thread forcedly
-//    while (true);
-}
-
 InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
 {
     /*-------------ukuisearchdbus Test start-----------------*/
@@ -33,7 +15,8 @@ InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
     m_fd = inotify_init();
     qDebug() << "m_fd----------->" <<m_fd;
 
-    this->AddWatch("/home");
+    this->AddWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     this->Traverse();
 
 
@@ -123,8 +106,6 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
 //        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
         if(event->name[0] != '.'){
             qDebug() << QString(currentPath[event->wd] + '/' + event->name);
-            FileUtils::_index_status = CREATING_INDEX;
-
             //                switch (event->mask) {
             if (event->mask & IN_CREATE){
                 if (event->mask & IN_ISDIR){
@@ -265,7 +246,6 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
             //                    }
             //                }
             /*--------------------------------*/
-            FileUtils::_index_status = FINISH_CREATING_INDEX;
         }
 next:
         p += sizeof(struct inotify_event) + event->len;
@@ -308,17 +288,30 @@ void InotifyIndex::run(){
     }
     unlink(UKUI_SEARCH_PIPE_PATH);
 
-    qDebug() << "sigset start!";
-    sigset( SIGTERM, handler);
-    qDebug() << "sigset end!";
-
     char buf[BUF_LEN] __attribute__((aligned(8)));
 
     ssize_t numRead;
 
     for (;;) { /* Read events forever */
+read:
         numRead = read(m_fd, buf, BUF_LEN);
 
+
+        char * tmp = const_cast<char*>(buf);
+
+        for (; tmp < buf + numRead;) {
+            struct inotify_event * event = reinterpret_cast<inotify_event *>(tmp);
+    //        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
+            if(event->name[0] != '.'){
+                goto fork;
+            }
+            tmp += sizeof(struct inotify_event) + event->len;
+
+        }
+        goto read;
+
+fork:
+        ++FileUtils::_index_status;
 
         pid_t pid;
         pid = fork();
@@ -338,23 +331,28 @@ void InotifyIndex::run(){
             liveTime->setInterval(60000);
             liveTime->start();
 
+            //I don't know how to use QTimer, wish someone can fix it!
+            //MouseZhangZh
+
 //            connect(liveTime, &QTimer::timeout, [ = ](){
 ////                _exit(0);
 //                *b_timeout = 1;
 //            });
             for (;;){
+//                qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
                 numRead = read(m_fd, buf, BUF_LEN);
-                liveTime->stop();
                 this->eventProcess(buf, numRead);
                 if (liveTime->remainingTime() < 1){
+                    qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
                     _exit(0);
                 }
-                liveTime->start();
             }
         }
         else if (pid > 0){
             memset(buf, 0x00, BUF_LEN);
             waitpid(pid, NULL, 0);
+
+            --FileUtils::_index_status;
         }
         else{
             assert(false);

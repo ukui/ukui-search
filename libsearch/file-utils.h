@@ -12,9 +12,9 @@
 #include <QIcon>
 #include <QMap>
 #include "libsearch_global.h"
-#define INITIAL_STATE 0
-#define CREATING_INDEX 1
-#define FINISH_CREATING_INDEX 2
+//#define INITIAL_STATE 0
+//#define CREATING_INDEX 1
+//#define FINISH_CREATING_INDEX 2
 
 #define UKUI_SEARCH_PIPE_PATH "/tmp/ukuisearch"
 

@@ -15,7 +15,7 @@
 
 size_t FileUtils::_max_index_count = 0;
 size_t FileUtils::_current_index_count = 0;
-unsigned short FileUtils::_index_status = INITIAL_STATE;
+unsigned short FileUtils::_index_status = 0;
 QMap<QString, QStringList> FileUtils::map_chinese2pinyin = QMap<QString, QStringList>();
 
 FileUtils::FileUtils()
