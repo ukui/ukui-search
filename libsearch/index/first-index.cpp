@@ -112,7 +112,7 @@ void FirstIndex::run(){
     pid = fork();
     if(pid  == 0)
     {
-        prctl(PR_SET_PDEATHSIG, SIGKILL);
+        prctl(PR_SET_PDEATHSIG, SIGTERM);
         prctl(PR_SET_NAME,"first-index");
         QSemaphore sem(5);
         QMutex mutex1, mutex2, mutex3;
