@@ -353,7 +353,7 @@ fork:
                 }
                 else if ( rc == 0 ) {
                     qDebug() << "select timeout!";
-                    _exit(0);
+                   ::exit(0);
                 }else{
                     numRead = read(m_fd, buf, BUF_LEN);
                     if (numRead == -1){
@@ -375,7 +375,7 @@ fork:
             //MouseZhangZh
 
 //            connect(liveTime, &QTimer::timeout, [ = ](){
-////                _exit(0);
+////                ::exit(0);
 //                *b_timeout = 1;
 //            });
 //            for (;;){
@@ -384,7 +384,7 @@ fork:
 //                this->eventProcess(buf, numRead);
 //                if (liveTime->remainingTime() < 1){
 //                    qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
-//                    _exit(0);
+//                    ::exit(0);
 //                }
 //            }
         }
