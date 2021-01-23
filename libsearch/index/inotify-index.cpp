@@ -296,6 +296,12 @@ void InotifyIndex::run(){
 read:
         numRead = read(m_fd, buf, BUF_LEN);
 
+        if (numRead == -1){
+            printf("\033[1;31;40mread event error\033[0m\n");
+            fflush(stdout);
+            assert(false);
+        }
+
 
         char * tmp = const_cast<char*>(buf);
 
@@ -317,7 +323,7 @@ fork:
         pid = fork();
         if(pid  == 0)
         {
-            prctl(PR_SET_PDEATHSIG, SIGKILL);
+            prctl(PR_SET_PDEATHSIG, SIGTERM);
             prctl(PR_SET_NAME,"inotify-index");
             if (numRead == 0) {
                 qDebug() << "read() from inotify fd returned 0!";
@@ -326,10 +332,44 @@ fork:
                 qDebug() << "read";
             }
             eventProcess(buf, numRead);
-            QTimer* liveTime = new QTimer();
-            //restart inotify-index proccess per minute
-            liveTime->setInterval(60000);
-            liveTime->start();
+
+
+            fd_set read_fds;
+            int rc;
+            timeval* read_timeout = (timeval*)malloc(sizeof(timeval));
+
+            for(;;)
+            {
+                FD_ZERO(&read_fds);
+                FD_SET(m_fd, &read_fds);
+                read_timeout->tv_sec = 30;
+                read_timeout->tv_usec = 0;
+                rc = select(m_fd + 1, &read_fds, NULL, NULL, read_timeout);
+
+                if ( rc < 0 ) {
+                    // error
+                    qDebug() << "rc < 0";
+                    assert(false);
+                }
+                else if ( rc == 0 ) {
+                    qDebug() << "timeout";
+                    _exit(0);
+                }else{
+                    numRead = read(m_fd, buf, BUF_LEN);
+                    if (numRead == -1){
+                        printf("\033[1;31;40mread event error\033[0m\n");
+                        fflush(stdout);
+                        assert(false);
+                    }
+                    this->eventProcess(buf, numRead);
+                }
+            }
+
+
+//            QTimer* liveTime = new QTimer();
+//            //restart inotify-index proccess per minute
+//            liveTime->setInterval(60000);
+//            liveTime->start();
 
             //I don't know how to use QTimer, wish someone can fix it!
             //MouseZhangZh
@@ -338,15 +378,15 @@ fork:
 ////                _exit(0);
 //                *b_timeout = 1;
 //            });
-            for (;;){
+//            for (;;){
 //                qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
-                numRead = read(m_fd, buf, BUF_LEN);
-                this->eventProcess(buf, numRead);
-                if (liveTime->remainingTime() < 1){
-                    qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
-                    _exit(0);
-                }
-            }
+//                numRead = read(m_fd, buf, BUF_LEN);
+//                this->eventProcess(buf, numRead);
+//                if (liveTime->remainingTime() < 1){
+//                    qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
+//                    _exit(0);
+//                }
+//            }
         }
         else if (pid > 0){
             memset(buf, 0x00, BUF_LEN);
