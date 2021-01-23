@@ -338,21 +338,21 @@ fork:
             int rc;
             timeval* read_timeout = (timeval*)malloc(sizeof(timeval));
 
+            read_timeout->tv_sec = 60;
+            read_timeout->tv_usec = 0;
             for(;;)
             {
                 FD_ZERO(&read_fds);
                 FD_SET(m_fd, &read_fds);
-                read_timeout->tv_sec = 30;
-                read_timeout->tv_usec = 0;
+                qDebug() << read_timeout->tv_sec;
                 rc = select(m_fd + 1, &read_fds, NULL, NULL, read_timeout);
-
                 if ( rc < 0 ) {
                     // error
-                    qDebug() << "rc < 0";
+                    qWarning() << "select result < 0, error!";
                     assert(false);
                 }
                 else if ( rc == 0 ) {
-                    qDebug() << "timeout";
+                    qDebug() << "select timeout!";
                     _exit(0);
                 }else{
                     numRead = read(m_fd, buf, BUF_LEN);
