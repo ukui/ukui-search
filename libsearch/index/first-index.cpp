@@ -151,7 +151,7 @@ void FirstIndex::run(){
         mutex1.unlock();
         mutex2.unlock();
         mutex3.unlock();
-        _exit(0);
+        ::exit(0);
 
 
 
