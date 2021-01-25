@@ -71,8 +71,8 @@ LIBS += -L$$OUT_PWD/../libsearch -lukui-search -L$$OUT_PWD/../libchinese-segment
 INCLUDEPATH += $$PWD/../libsearch
 DEPENDPATH += $$PWD/../libsearch
 
-DISTFILES += \
-    ../data/ukui-search-menu.desktop \
-    translations/bo.ts \
-    translations/es.qm \
-    translations/zh_CN.qm
+#DISTFILES += \
+#    ../data/ukui-search-menu.desktop \
+#    $$OUT_PWD/.qm/bo.qm \
+#    $$OUT_PWD/.qm/tr.qm \
+#    $$OUT_PWD/.qm/zh_CN.qm

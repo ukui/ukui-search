@@ -7,7 +7,7 @@ DEFINES += LIBSEARCH_LIBRARY
 
 PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt
 
-CONFIG += c++11 link_pkgconfig no_keywords
+CONFIG += c++11 link_pkgconfig no_keywords lrelease
 
 
 # The following define makes your compiler emit warnings if you use
@@ -67,3 +67,6 @@ unix {
 
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
+
+#DISTFILES += \
+#    ../translations/libsearch/libukui-search_zh_CN.ts

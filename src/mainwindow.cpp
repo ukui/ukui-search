@@ -93,15 +93,15 @@ MainWindow::MainWindow(QWidget *parent) :
     m_search_result_thread = new SearchResult(this);
 //    m_search_result_thread->start();
     connect(m_search_result_thread, &SearchResult::searchResultFile, this, [ = ](QString path) {
-        qDebug()<<"Append a file into list: "<<path;
+//        qDebug()<<"Append a file into list: "<<path;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Files, path);
     });
     connect(m_search_result_thread, &SearchResult::searchResultDir, this, [ = ](QString path) {
-        qDebug()<<"Append a dir into list: "<<path;
+//        qDebug()<<"Append a dir into list: "<<path;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Dirs, path);
     });
     connect(m_search_result_thread, &SearchResult::searchResultContent, this, [ = ](QPair<QString, QStringList> pair) {
-        qDebug()<<"Append a file content into list: "<<pair.first;
+//        qDebug()<<"Append a file content into list: "<<pair.first;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Contents, pair.first, pair.second);
     });
 
