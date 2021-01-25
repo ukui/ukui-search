@@ -3,10 +3,12 @@
 #include <QProcess>
 #include <QDebug>
 #include <gio/gdesktopappinfo.h>
+#include <QPainter>
 
 HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path) : QWidget(parent)
 {
     setupUi(type, path);
+    m_transparency = 0.06;
 }
 
 HomePageItem::~HomePageItem()
@@ -21,7 +23,7 @@ HomePageItem::~HomePageItem()
 void HomePageItem::setupUi(const int& type, const QString& path) {
     m_widget = new QWidget(this);
     m_widget->setObjectName("MainWidget");
-    m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.05); border-radius: 4px;}");
+//    m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.05); border-radius: 4px;}");
     m_widget->installEventFilter(this);
     connect(this, &HomePageItem::onItemClicked, this, [ = ]() {
         switch (SearchListView::getResType(path)) {
@@ -129,14 +131,41 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
 bool HomePageItem::eventFilter(QObject *watched, QEvent *event){
     if (watched == m_widget){
         if (event->type() == QEvent::MouseButtonPress) {
-            Q_EMIT this->onItemClicked();
-            m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.1); border-radius: 4px;}");
+            m_transparency = 0.06;
+            this->repaint();
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
-            m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.05); border-radius: 4px;}");
+            Q_EMIT this->onItemClicked();
+            m_transparency = 0.06;
+            this->repaint();
+            return true;
+        } else if (event->type() == QEvent::Enter) {
+            m_transparency = 0.15;
+            this->repaint();
+            return true;
+        } else if (event->type() == QEvent::Leave) {
+            m_transparency = 0.06;
+            this->repaint();
             return true;
         }
     }
 
     return QObject::eventFilter(watched, event);
+}
+
+void HomePageItem::paintEvent(QPaintEvent *event) {
+    Q_UNUSED(event)
+
+    QStyleOption opt;
+    opt.init(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+
+    QRect rect = this->rect();
+    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+    p.setBrush(opt.palette.color(QPalette::Text));
+    p.setOpacity(m_transparency);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(rect, 4, 4);
+    return QWidget::paintEvent(event);
 }

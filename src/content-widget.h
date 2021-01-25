@@ -8,6 +8,7 @@
 #include "control/search-detail-view.h"
 #include "home-page-item.h"
 #include "show-more-label.h"
+#include "title-label.h"
 
 class ContentWidget : public QStackedWidget
 {
@@ -50,12 +51,12 @@ private:
     SearchListView * m_settingListView = nullptr;
     SearchListView * m_appListView = nullptr;
     SearchListView * m_bestListView = nullptr;
-    QLabel * m_fileTitleLabel = nullptr;
-    QLabel * m_dirTitleLabel = nullptr;
-    QLabel * m_contentTitleLabel = nullptr;
-    QLabel * m_appTitleLabel = nullptr;
-    QLabel * m_settingTitleLabel = nullptr;
-    QLabel * m_bestTitleLabel = nullptr;
+    TitleLabel * m_fileTitleLabel = nullptr;
+    TitleLabel * m_dirTitleLabel = nullptr;
+    TitleLabel * m_contentTitleLabel = nullptr;
+    TitleLabel * m_appTitleLabel = nullptr;
+    TitleLabel * m_settingTitleLabel = nullptr;
+    TitleLabel * m_bestTitleLabel = nullptr;
     ShowMoreLabel * m_appShowMoreLabel = nullptr;
     ShowMoreLabel * m_settingShowMoreLabel = nullptr;
     ShowMoreLabel * m_dirShowMoreLabel = nullptr;

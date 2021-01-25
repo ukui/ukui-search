@@ -78,8 +78,8 @@ Q_SIGNALS:
     void settingWidgetClosed();
 
 private Q_SLOTS:
-    void onBtnConfirmClicked();
-    void onBtnCancelClicked();
+//    void onBtnConfirmClicked();
+//    void onBtnCancelClicked();
     void onBtnAddClicked();
     void onBtnDelClicked(const QString&);
 };

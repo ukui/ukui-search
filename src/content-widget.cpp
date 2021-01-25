@@ -64,8 +64,8 @@ void ContentWidget::initUI() {
     });
     m_resultDetailArea->setWidget(m_detailView);
     m_resultDetailArea->setWidgetResizable(true);
-    m_resultListArea->setStyleSheet("QScrollArea{background:transparent;}");
-    m_resultDetailArea->setStyleSheet("QScrollArea{background: rgba(0,0,0,0.05); border-radius: 4px;}");
+    m_resultListArea->setStyleSheet("QScrollArea{background: transparent;}");
+    m_resultDetailArea->setStyleSheet("QScrollArea{background: transparent; border-radius: 4px;}");
     this->addWidget(m_homePage);
     this->addWidget(m_resultPage);
 
@@ -90,35 +90,17 @@ void ContentWidget::initListView()
     setupConnect(m_appListView);
     setupConnect(m_bestListView);
 
-    m_fileTitleLabel = new QLabel(m_resultList);
-    m_fileTitleLabel->setContentsMargins(8, 0, 0, 0);
-    m_fileTitleLabel->setFixedHeight(24);
-    m_fileTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+    m_fileTitleLabel = new TitleLabel(m_resultList);
     m_fileTitleLabel->setText(getTitleName(SearchItem::SearchType::Files));
-    m_dirTitleLabel = new QLabel(m_resultList);
-    m_dirTitleLabel->setContentsMargins(8, 0, 0, 0);
-    m_dirTitleLabel->setFixedHeight(24);
-    m_dirTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+    m_dirTitleLabel = new TitleLabel(m_resultList);
     m_dirTitleLabel->setText(getTitleName(SearchItem::SearchType::Dirs));
-    m_contentTitleLabel = new QLabel(m_resultList);
-    m_contentTitleLabel->setContentsMargins(8, 0, 0, 0);
-    m_contentTitleLabel->setFixedHeight(24);
-    m_contentTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+    m_contentTitleLabel = new TitleLabel(m_resultList);
     m_contentTitleLabel->setText(getTitleName(SearchItem::SearchType::Contents));
-    m_appTitleLabel = new QLabel(m_resultList);
-    m_appTitleLabel->setContentsMargins(8, 0, 0, 0);
-    m_appTitleLabel->setFixedHeight(24);
-    m_appTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+    m_appTitleLabel = new TitleLabel(m_resultList);
     m_appTitleLabel->setText(getTitleName(SearchItem::SearchType::Apps));
-    m_settingTitleLabel = new QLabel(m_resultList);
-    m_settingTitleLabel->setContentsMargins(8, 0, 0, 0);
-    m_settingTitleLabel->setFixedHeight(24);
-    m_settingTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+    m_settingTitleLabel = new TitleLabel(m_resultList);
     m_settingTitleLabel->setText(getTitleName(SearchItem::SearchType::Settings));
-    m_bestTitleLabel = new QLabel(m_resultList);
-    m_bestTitleLabel->setContentsMargins(8, 0, 0, 0);
-    m_bestTitleLabel->setFixedHeight(24);
-    m_bestTitleLabel->setStyleSheet("QLabel{background: rgba(0,0,0,0.1);}");
+    m_bestTitleLabel = new TitleLabel(m_resultList);
     m_bestTitleLabel->setText(getTitleName(SearchItem::SearchType::Best));
 
     m_appShowMoreLabel = new ShowMoreLabel(m_resultList);
@@ -329,6 +311,7 @@ void ContentWidget::initHomePage() {
             itemWidget->setLayout(layout);
             for (int j = 0; j < lists.at(i).count(); j++) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, lists.at(i).at(j));
+                item->setFixedSize(265, 48);
                 layout->addWidget(item, j / 2, j % 2);
             }
         } else {
@@ -339,6 +322,7 @@ void ContentWidget::initHomePage() {
             itemWidget->setLayout(layout);
             Q_FOREACH(QString path, lists.at(i)){
                 HomePageItem * item = new HomePageItem(itemWidget, i, path);
+                item->setFixedSize(100, 100);
                 layout->addWidget(item);
             }
             for (int j = 0; j < 5 - lists.at(i).length(); j++) {
@@ -424,6 +408,12 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
     m_resultList->setFixedHeight(0);
     m_detailView->clearLayout();
     m_contentDetailList.clear();
+
+    m_appShowMoreLabel->resetLabel();
+    m_settingShowMoreLabel->resetLabel();
+    m_dirShowMoreLabel->resetLabel();
+    m_fileShowMoreLabel->resetLabel();
+    m_contentShowMoreLabel->resetLabel();
 
     if (! m_appList.isEmpty())
         m_appList.clear();

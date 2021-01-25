@@ -31,7 +31,7 @@ void SettingsWidget::initUi() {
     this->setMinimumHeight(460);
     this->setMaximumHeight(680);
     m_mainLyt = new QVBoxLayout(this);
-    m_mainLyt->setContentsMargins(24, 9, 24, 24);
+    m_mainLyt->setContentsMargins(24, 9, 16, 24);
     this->setLayout(m_mainLyt);
     this->setStyleSheet("QLabel{color: palette(text);}");
 
@@ -42,14 +42,18 @@ void SettingsWidget::initUi() {
     m_titleLyt->setContentsMargins(0, 0, 0, 0);
     m_titleFrame->setLayout(m_titleLyt);
     m_titleIcon = new QLabel(m_titleFrame);
-    m_titleIcon->setPixmap(QPixmap(":/res/icons/edit-find-symbolic.svg"));
+    m_titleIcon->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_closeBtn = new QPushButton(m_titleFrame);
     m_closeBtn->setFixedSize(24, 24);
     m_closeBtn->setIcon(QIcon(":/res/icons/close.svg"));
-    m_closeBtn->setStyleSheet("QPushButton{background: transparent;}"
-                              "QPushButton:hover:!pressed{background: transparent;}");
+//    m_closeBtn->setStyleSheet("QPushButton{background: transparent;}"
+//                              "QPushButton:hover:!pressed{background: transparent;}");
+    m_closeBtn->setIcon(QIcon::fromTheme("window-close-symbolic"));
+    m_closeBtn->setProperty("isWindowButton", 0x02);
+    m_closeBtn->setProperty("useIconHighlightEffect", 0x08);
+    m_closeBtn->setFlat(true);
     connect(m_closeBtn, &QPushButton::clicked, this, [ = ]() {
         Q_EMIT this->settingWidgetClosed();
         m_timer->stop();
@@ -77,7 +81,8 @@ void SettingsWidget::initUi() {
     m_indexNumLabel->setText(tr("..."));
     m_mainLyt->addWidget(m_indexTitleLabel);
     m_mainLyt->addWidget(m_indexStateLabel);
-    m_mainLyt->addWidget(m_indexNumLabel);
+//    m_mainLyt->addWidget(m_indexNumLabel);
+    m_indexNumLabel->hide();
 
     //文件索引设置（黑名单）
     m_indexSettingLabel = new QLabel(this);
@@ -151,23 +156,23 @@ void SettingsWidget::initUi() {
     m_mainLyt->addWidget(m_engineDescLabel);
     m_mainLyt->addWidget(m_radioBtnFrame);
 
-    //取消与确认按钮
-    m_bottomBtnFrame = new QFrame(this);
-    m_bottomBtnLyt = new QHBoxLayout(m_bottomBtnFrame);
-    m_bottomBtnFrame->setLayout(m_bottomBtnLyt);
-    m_bottomBtnLyt->setSpacing(20);
-    m_cancelBtn = new QPushButton(m_bottomBtnFrame);
-    m_cancelBtn->setText(tr("Cancel"));
-    m_cancelBtn->setFixedSize(80, 32);
-    connect(m_cancelBtn, &QPushButton::clicked, this, &SettingsWidget::onBtnCancelClicked);
-    m_confirmBtn = new QPushButton(m_bottomBtnFrame);
-    m_confirmBtn->setText(tr("Confirm"));
-    m_confirmBtn->setFixedSize(80, 32);
-    connect(m_confirmBtn, &QPushButton::clicked, this, &SettingsWidget::onBtnConfirmClicked);
-    m_bottomBtnLyt->addStretch();
-    m_bottomBtnLyt->addWidget(m_cancelBtn);
-    m_bottomBtnLyt->addWidget(m_confirmBtn);
-    m_mainLyt->addWidget(m_bottomBtnFrame);
+    //取消与确认按钮 （隐藏）
+//    m_bottomBtnFrame = new QFrame(this);
+//    m_bottomBtnLyt = new QHBoxLayout(m_bottomBtnFrame);
+//    m_bottomBtnFrame->setLayout(m_bottomBtnLyt);
+//    m_bottomBtnLyt->setSpacing(20);
+//    m_cancelBtn = new QPushButton(m_bottomBtnFrame);
+//    m_cancelBtn->setText(tr("Cancel"));
+//    m_cancelBtn->setFixedSize(80, 32);
+//    connect(m_cancelBtn, &QPushButton::clicked, this, &SettingsWidget::onBtnCancelClicked);
+//    m_confirmBtn = new QPushButton(m_bottomBtnFrame);
+//    m_confirmBtn->setText(tr("Confirm"));
+//    m_confirmBtn->setFixedSize(80, 32);
+//    connect(m_confirmBtn, &QPushButton::clicked, this, &SettingsWidget::onBtnConfirmClicked);
+//    m_bottomBtnLyt->addStretch();
+//    m_bottomBtnLyt->addWidget(m_cancelBtn);
+//    m_bottomBtnLyt->addWidget(m_confirmBtn);
+//    m_mainLyt->addWidget(m_bottomBtnFrame);
 
     m_mainLyt->addStretch();
 }
@@ -285,23 +290,23 @@ void SettingsWidget::showWidget()
     this->show();
 }
 
-/**
- * @brief SettingsWidget::onBtnConfirmClicked 点击确认按钮的槽函数
- */
-void SettingsWidget::onBtnConfirmClicked() {
-    Q_EMIT this->settingWidgetClosed();
-    m_timer->stop();
-    this->close();
-}
+///**
+// * @brief SettingsWidget::onBtnConfirmClicked 点击确认按钮的槽函数
+// */
+//void SettingsWidget::onBtnConfirmClicked() {
+//    Q_EMIT this->settingWidgetClosed();
+//    m_timer->stop();
+//    this->close();
+//}
 
-/**
- * @brief SettingsWidget::onBtnCancelClicked 点击取消按钮的槽函数
- */
-void SettingsWidget::onBtnCancelClicked() {
-    Q_EMIT this->settingWidgetClosed();
-    m_timer->stop();
-    this->close();
-}
+///**
+// * @brief SettingsWidget::onBtnCancelClicked 点击取消按钮的槽函数
+// */
+//void SettingsWidget::onBtnCancelClicked() {
+//    Q_EMIT this->settingWidgetClosed();
+//    m_timer->stop();
+//    this->close();
+//}
 
 /**
  * @brief SettingsWidget::onBtnAddClicked 点击添加黑名单按钮的槽函数

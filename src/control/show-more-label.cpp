@@ -14,19 +14,25 @@ ShowMoreLabel::~ShowMoreLabel()
 {
 }
 
+void ShowMoreLabel::resetLabel()
+{
+    m_textLabel->setText(tr("Show More..."));
+}
+
 void ShowMoreLabel::initUi()
 {
     m_layout = new QHBoxLayout(this);
     m_layout->setContentsMargins(0,0,0,6);
     m_textLabel = new QLabel(this);
-    m_textLabel->setText(tr("<u>Show More...</u>"));
+    m_textLabel->setText(tr("Show More..."));
     m_textLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_textLabel->installEventFilter(this);
 //    m_loadingIconLabel = new QLabel(this); //使用图片显示加载状态时，取消此label的注释
 //    m_loadingIconLabel->setFixedSize(18, 18);
 //    m_loadingIconLabel->hide();
-    m_layout->setAlignment(Qt::AlignCenter);
+    m_layout->setAlignment(Qt::AlignRight);
     m_layout->addWidget(m_textLabel);
+    m_textLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
 //    m_layout->addWidget(m_loadingIconLabel);
 }
 
@@ -46,9 +52,9 @@ void ShowMoreLabel::stopLoading()
         m_timer->stop();
     }
     if (m_isOpen) {
-        m_textLabel->setText(tr("<u>Retract</u>"));
+        m_textLabel->setText(tr("Retract"));
     } else {
-        m_textLabel->setText(tr("<u>Show More...</u>"));
+        m_textLabel->setText(tr("Show More..."));
     }
     m_textLabel->setCursor(QCursor(Qt::PointingHandCursor));
 }

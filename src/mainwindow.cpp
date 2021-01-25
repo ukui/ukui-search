@@ -157,16 +157,16 @@ void MainWindow::initUi()
     m_titleLyt = new QHBoxLayout(m_titleFrame);
     m_titleLyt->setContentsMargins(0, 0, 0, 0);
     m_iconLabel = new QLabel(m_titleFrame);
-    m_iconLabel->setFixedSize(20, 20);
-    m_iconLabel->setPixmap(QPixmap(":/res/icons/edit-find-symbolic.svg"));
+    m_iconLabel->setFixedSize(24, 24);
+    m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_menuBtn = new QPushButton(m_titleFrame);
     m_menuBtn->setFixedSize(24, 24);
 //    m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
     m_menuBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
-    m_menuBtn->setStyleSheet("QPushButton{background: transparent;}"
-                             "QPushButton:hover:!pressed{background: transparent;}");
+    m_menuBtn->setProperty("useIconHighlightEffect", 0x08);
+    m_menuBtn->setFlat(true);
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
         if (m_settingsWidget) { //当此窗口已存在时，仅需置顶
             m_settingsWidget->showWidget();
@@ -281,6 +281,10 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
 void MainWindow::searchContent(QString searchcontent){
     m_app_setting_lists.clear();
     m_contentFrame->setKeyword(searchcontent);
+
+    m_search_result_file->clear();
+    m_search_result_dir->clear();
+    m_search_result_content->clear();
 
     AppMatch * appMatchor = new AppMatch(this);
     SettingsMatch * settingMatchor = new SettingsMatch(this);

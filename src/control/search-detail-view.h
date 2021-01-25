@@ -17,6 +17,9 @@ public:
     bool isEmpty();
     int getType();
 
+protected:
+    void paintEvent(QPaintEvent *);
+
 private:
     QVBoxLayout * m_layout = nullptr;
     QString m_contentText;
