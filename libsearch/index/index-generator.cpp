@@ -273,6 +273,7 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
 
 Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
 {
+    Document doc;
 //    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
     //0-filename 1-filepathname 2-file or dir
     QString index_text = list.at(0);
@@ -303,7 +304,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
 //        qDebug()<<"------------------------------------------finish";
 //    }
 /*--------------------------------------------------------------------*/
-    Document doc;
+
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);

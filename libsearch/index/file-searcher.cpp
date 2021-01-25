@@ -114,7 +114,7 @@ int FileSearcher::keywordSearchfile(size_t uniqueSymbol, QString keyword, QStrin
 {
     try
     {
-        qDebug()<<"--search start--";
+        qDebug()<<"--keywordSearchfile start--";
         Xapian::Database db(INDEX_PATH);
         Xapian::Query query = creatQueryForFileSearch(keyword,db);
         Xapian::Enquire enquire(db);
@@ -131,24 +131,24 @@ int FileSearcher::keywordSearchfile(size_t uniqueSymbol, QString keyword, QStrin
             queryFile = query;
         }
 
-        qDebug()<<QString::fromStdString(queryFile.get_description());
+        qDebug()<<"keywordSearchfile:"<<QString::fromStdString(queryFile.get_description());
 
         enquire.set_query(queryFile);
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
         int resultCount =  static_cast<int>(result.get_matches_estimated());
-        qDebug()<< "find results count=" <<resultCount;
+        qDebug()<< "keywordSearchfile results count=" <<resultCount;
         if(result.size() == 0)
             return 0;
         if(getResult(uniqueSymbol, result, value) == -1)
             return -1;
 
-        qDebug()<< "--search finish--";
+        qDebug()<< "--keywordSearchfile finish--";
         return resultCount;
     }
     catch(const Xapian::Error &e)
     {
         qWarning() <<QString::fromStdString(e.get_description());
-        qDebug()<< "--search finish--";
+        qDebug()<< "--keywordSearchfile finish--";
         return -1;
     }
 }
@@ -157,7 +157,7 @@ int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int
 {
     try
     {
-        qDebug()<<"--content search start--";
+        qDebug()<<"--keywordSearchContent search start--";
 
         Xapian::Database db(CONTENT_INDEX_PATH);
         Xapian::Enquire enquire(db);
@@ -181,53 +181,56 @@ int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int
 //            qDebug()<<QString::fromStdString(sKeyWord.at(i).word);
 //        }
 //        Xapian::Query queryPhrase =Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
-        qDebug()<<QString::fromStdString(query.get_description());
+        qDebug()<<"keywordSearchContent:"<<QString::fromStdString(query.get_description());
 
         enquire.set_query(query);
-        //dir result
+
         Xapian::MSet result = enquire.get_mset(begin, begin+num);
         int resultCount = static_cast<int>(result.get_matches_estimated());
         if(result.size() == 0)
             return 0;
-        qDebug()<< "find results count=" <<resultCount;
+        qDebug()<< "keywordSearchContent results count=" <<resultCount;
 
         if(getContentResult(uniqueSymbol, result, words) == -1)
             return -1;
 
-        qDebug()<< "--content search finish--";
+        qDebug()<< "--keywordSearchContent search finish--";
         return resultCount;
     }
     catch(const Xapian::Error &e)
     {
         qWarning() <<QString::fromStdString(e.get_description());
-        qDebug()<< "--content search finish--";
+        qDebug()<< "--keywordSearchContent search finish--";
         return -1;
     }
 }
 Xapian::Query FileSearcher::creatQueryForFileSearch(QString keyword, Xapian::Database &db)
 {
-    Xapian::QueryParser qp;
-    qp.set_default_op(Xapian::Query::OP_PHRASE);
-    qp.set_database(db);
+//    Xapian::QueryParser qp;
+//    qp.set_default_op(Xapian::Query::OP_PHRASE);
+//    qp.set_database(db);
     auto userInput = keyword;
-    userInput = userInput.replace(".","").simplified();
+//    userInput = userInput.replace(".","").simplified();
 
-    std::string queryStr = keyword.replace(".","").replace(" ","").replace(""," ").simplified().toStdString();
+//    std::string queryStr = keyword.replace(".","").replace(" ","").replace(""," ").simplified().toStdString();
 //        std::string s =db.get_spelling_suggestion(queryStr,10);
 //        qDebug()<<"spelling_suggestion!"<<QString::fromStdString(s);
 
-    qDebug()<<"queryStr!"<<QString::fromStdString(queryStr);
+//    qDebug()<<"queryStr!"<<QString::fromStdString(queryStr);
     //Creat a query
-    Xapian::Query queryPhrase = qp.parse_query(queryStr,Xapian::QueryParser::FLAG_PHRASE);
+//    Xapian::Query queryPhrase = qp.parse_query(queryStr,Xapian::QueryParser::FLAG_PHRASE);
     std::vector<Xapian::Query> v;
     for(int i=0;i<userInput.size();i++)
     {
         v.push_back(Xapian::Query(QString(userInput.at(i)).toStdString()));
-        qDebug()<<QString::fromStdString(Xapian::Query(QString(userInput.at(i)).toStdString()).get_description());
+//        qDebug()<<QString::fromStdString(Xapian::Query(QString(userInput.at(i)).toStdString()).get_description());
     }
+    Xapian::Query queryPhrase =Xapian::Query(Xapian::Query::OP_PHRASE, v.begin(), v.end());
     Xapian::Query queryNear =Xapian::Query(Xapian::Query::OP_NEAR, v.begin(), v.end());
 
-    return Xapian::Query(Xapian::Query::OP_AND,queryNear,queryPhrase);
+    Xapian::Query query = Xapian::Query(Xapian::Query::OP_AND,queryNear,queryPhrase);
+//    qDebug()<<QString::fromStdString(query.get_description());
+    return query;
 }
 
 Xapian::Query FileSearcher::creatQueryForContentSearch(QString keyword, Xapian::Database &db)
