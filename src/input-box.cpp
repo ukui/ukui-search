@@ -90,7 +90,7 @@ void SearchBarHLayout::initUI()
     m_queryWidget->setLayout(queryWidLayout);
 
 
-    QPixmap pixmap(QString(":/res/icons/edit-find-symbolic.svg"));
+    QPixmap pixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(20, 20)));
     m_queryIcon = new QLabel;
     m_queryIcon->setStyleSheet("background:transparent");
     m_queryIcon->setFixedSize(pixmap.size());
@@ -99,7 +99,7 @@ void SearchBarHLayout::initUI()
     m_queryText = new QLabel;
     m_queryText->setText(tr("Search"));
     m_queryText->setStyleSheet("background:transparent;color:#626c6e;");
-    m_queryText->setContentsMargins(0,0,0,4);
+//    m_queryText->setContentsMargins(0,0,0,4);
     m_queryText->adjustSize();
 
     queryWidLayout->addWidget(m_queryIcon);

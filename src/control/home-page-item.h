@@ -23,6 +23,7 @@ public:
 
 protected:
     bool eventFilter(QObject *, QEvent *);
+    void paintEvent(QPaintEvent *);
 
 private:
     void setupUi(const int&, const QString&);
@@ -32,6 +33,7 @@ private:
     QVBoxLayout * m_vlayout = nullptr;
     QLabel * m_iconlabel = nullptr;
     QLabel * m_namelabel = nullptr;
+    double m_transparency = 0;
 
 Q_SIGNALS:
     void onItemClicked();

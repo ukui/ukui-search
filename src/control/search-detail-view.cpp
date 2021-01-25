@@ -432,3 +432,20 @@ bool SearchDetailView::copyPathAction(const QString& path) {
     clipboard->setText(path);
     return true;
 }
+
+void SearchDetailView::paintEvent(QPaintEvent *event) {
+    Q_UNUSED(event)
+
+    QStyleOption opt;
+    opt.init(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+
+    QRect rect = this->rect();
+    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+    p.setBrush(opt.palette.color(QPalette::Text));
+    p.setOpacity(0.06);
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(rect, 4, 4);
+    return QWidget::paintEvent(event);
+}

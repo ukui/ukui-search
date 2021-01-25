@@ -12,6 +12,7 @@ class ShowMoreLabel : public QWidget
 public:
     explicit ShowMoreLabel(QWidget *parent = nullptr);
     ~ShowMoreLabel();
+    void resetLabel();
 
 protected:
     bool eventFilter(QObject *, QEvent *);
