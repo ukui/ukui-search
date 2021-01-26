@@ -126,15 +126,9 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
         database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
         if(database.exists())
             database.removeRecursively();
-
-        m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
-        m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OVERWRITE);
     }
-    else
-    {
-        m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
-        m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
-    }
+    m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
+    m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
     GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"0");
 }
