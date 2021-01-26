@@ -353,6 +353,8 @@ fork:
                 }
                 else if ( rc == 0 ) {
                     qDebug() << "select timeout!";
+                    ::free(read_timeout);
+                    IndexGenerator::getInstance()->~IndexGenerator();
                    ::exit(0);
                 }else{
                     numRead = read(m_fd, buf, BUF_LEN);
@@ -387,6 +389,7 @@ fork:
 //                    ::exit(0);
 //                }
 //            }
+
         }
         else if (pid > 0){
             memset(buf, 0x00, BUF_LEN);

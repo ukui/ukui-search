@@ -82,6 +82,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 {
 //    FileUtils::_index_status |= 0x2;
     HandlePathList(messageList);
+    qDebug()<<"begin creatAllIndex";
     int size = _doc_list_content->size();
     if(!size == 0)
     {
@@ -105,6 +106,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
             assert(false);
         }
 //        FileUtils::_index_status &= ~0x2;
+        qDebug()<<"finish creatAllIndex";
         _doc_list_content->clear();
         delete _doc_list_content;
         _doc_list_content = nullptr;
@@ -142,10 +144,13 @@ IndexGenerator::~IndexGenerator()
     QMutexLocker locker(&m_mutex);
     qDebug() << "~IndexGenerator";
     if(m_database_path)
-        delete m_database_path;
+        m_database_path->~WritableDatabase();
+//        delete m_database_path;
     m_database_path = nullptr;
     if(m_database_content)
-        delete m_database_content;
+        m_database_content->~WritableDatabase();
+//        delete m_database_content;
+    m_database_path = nullptr;
     m_database_content = nullptr;
     global_instance = nullptr;
 //    if(m_index_map)
