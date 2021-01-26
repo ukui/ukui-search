@@ -289,7 +289,7 @@ void ContentWidget::initHomePage() {
     QStringList recentlyList;
     recentlyList = map.value("Recently");
     QStringList quicklyList;
-    quicklyList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Theme/主题/更改壁纸";
+    quicklyList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Background/背景/更改壁纸";
     lists.append(commonlyList);
     lists.append(recentlyList);
     lists.append(quicklyList);
