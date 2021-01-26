@@ -93,15 +93,15 @@ MainWindow::MainWindow(QWidget *parent) :
     m_search_result_thread = new SearchResult(this);
 //    m_search_result_thread->start();
     connect(m_search_result_thread, &SearchResult::searchResultFile, this, [ = ](QString path) {
-//        qDebug()<<"Append a file into list: "<<path;
+        qDebug()<<"Append a file into list: "<<path;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Files, path);
     });
     connect(m_search_result_thread, &SearchResult::searchResultDir, this, [ = ](QString path) {
-//        qDebug()<<"Append a dir into list: "<<path;
+        qDebug()<<"Append a dir into list: "<<path;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Dirs, path);
     });
     connect(m_search_result_thread, &SearchResult::searchResultContent, this, [ = ](QPair<QString, QStringList> pair) {
-//        qDebug()<<"Append a file content into list: "<<pair.first;
+        qDebug()<<"Append a file content into list: "<<pair.first;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Contents, pair.first, pair.second);
     });
 
@@ -215,6 +215,9 @@ void MainWindow::initUi()
         } else {
             m_contentFrame->setCurrentIndex(1);
             QTimer::singleShot(10,this,[=](){
+                m_search_result_file->clear();
+                m_search_result_dir->clear();
+                m_search_result_content->clear();
                 if (! m_search_result_thread->isRunning()) {
                     m_search_result_thread->start();
                 }
@@ -282,9 +285,9 @@ void MainWindow::searchContent(QString searchcontent){
     m_app_setting_lists.clear();
     m_contentFrame->setKeyword(searchcontent);
 
-    m_search_result_file->clear();
-    m_search_result_dir->clear();
-    m_search_result_content->clear();
+//    m_search_result_file->clear();
+//    m_search_result_dir->clear();
+//    m_search_result_content->clear();
 
     AppMatch * appMatchor = new AppMatch(this);
     SettingsMatch * settingMatchor = new SettingsMatch(this);
@@ -296,7 +299,7 @@ void MainWindow::searchContent(QString searchcontent){
     m_app_setting_lists.append(appList);
     m_app_setting_lists.append(settingList);
     m_contentFrame->refreshSearchList(m_app_setting_lists);
-  
+
     //文件、文件夹、内容搜索
     this->m_searcher->onKeywordSearch(searchcontent, m_search_result_file, m_search_result_dir, m_search_result_content);
 }

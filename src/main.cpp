@@ -208,6 +208,10 @@ int main(int argc, char *argv[])
     XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), hints);
 
     app.setActivationWindow(w);
+
+    if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
+        w->show();
+    }
 //    if(arguments.size()>1)
 //    w->searchContent(arguments.at(1));
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));

@@ -16,6 +16,7 @@ ShowMoreLabel::~ShowMoreLabel()
 
 void ShowMoreLabel::resetLabel()
 {
+    m_isOpen = false;
     m_textLabel->setText(tr("Show More..."));
 }
 
