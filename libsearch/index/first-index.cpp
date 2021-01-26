@@ -63,6 +63,7 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo){
 }
 
 void FirstIndex::run(){
+
     int fifo_fd;
     char buffer[2];
     memset(buffer, 0, sizeof(buffer));
@@ -73,32 +74,6 @@ void FirstIndex::run(){
     {
         perror("open fifo error\n");
         assert(false);
-    }
-
-    if (this->bool_dataBaseExist){
-        if (this->bool_dataBaseStatusOK){
-            int retval = write(fifo_fd, buffer, strlen(buffer));
-            if(retval == -1)
-            {
-                perror("write error\n");
-            }
-            printf("write data ok!\n");
-
-            //why???????????????????????????????????????????????????????????????
-            //why not quit?
-//            this->quit();
-//            exit(0);
-            return;
-//            this->wait();
-        }
-        else{
-            //if the parameter is false, index won't be rebuild
-            //if it is true, index will be rebuild
-            p_indexGenerator = IndexGenerator::getInstance(true,this);
-        }
-    }
-    else{
-        p_indexGenerator = IndexGenerator::getInstance(false,this);
     }
 
 //    this->q_content_index->enqueue(QString("/home/zhangzihao/Desktop/qwerty/四库全书.txt"));
@@ -114,6 +89,19 @@ void FirstIndex::run(){
     {
         prctl(PR_SET_PDEATHSIG, SIGTERM);
         prctl(PR_SET_NAME,"first-index");
+        if (this->bool_dataBaseExist){
+            if (this->bool_dataBaseStatusOK){
+                ::exit(0);
+            }
+            else{
+                //if the parameter is false, index won't be rebuild
+                //if it is true, index will be rebuild
+                p_indexGenerator = IndexGenerator::getInstance(true,this);
+            }
+        }
+        else{
+            p_indexGenerator = IndexGenerator::getInstance(false,this);
+        }
         QSemaphore sem(5);
         QMutex mutex1, mutex2, mutex3;
         mutex1.lock();
@@ -151,17 +139,6 @@ void FirstIndex::run(){
         mutex1.unlock();
         mutex2.unlock();
         mutex3.unlock();
-        ::exit(0);
-
-
-
-
-        //    qDebug() << "first index end;";
-        //don't use it now!!!!
-        //MouseZhangZh
-        //    this->~FirstIndex();
-        //    qDebug() << "~FirstIndex end;"
-
 
         if (this->q_index)
             delete this->q_index;
@@ -172,9 +149,7 @@ void FirstIndex::run(){
         if (p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
-
-        QThreadPool::globalInstance()->releaseThread();
-        QThreadPool::globalInstance()->waitForDone();
+        ::exit(0);
     }
     else if(pid < 0)
     {
@@ -186,17 +161,13 @@ void FirstIndex::run(){
         --FileUtils::_index_status;
     }
 
+
     int retval = write(fifo_fd, buffer, strlen(buffer));
     if(retval == -1)
     {
-        perror("write error\n");
+        qWarning("write error\n");
     }
-    printf("write data ok!\n");
+    qDebug("write data ok!\n");
+    return;
 
-
-    //quit() is shit!!!
-//    return;
-//    exit(0);
-    this->quit();
-//    this->wait();
 }
