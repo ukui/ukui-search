@@ -113,6 +113,7 @@ MainWindow::MainWindow(QWidget *parent) :
         if(reason == QSystemTrayIcon::Trigger)
         {
             clearSearchResult();
+            this->moveToPanel();
             this->show();
             this->raise();
             this->activateWindow();
@@ -165,7 +166,8 @@ void MainWindow::initUi()
     m_menuBtn->setFixedSize(24, 24);
 //    m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
     m_menuBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
-    m_menuBtn->setProperty("useIconHighlightEffect", 0x08);
+    m_menuBtn->setProperty("useIconHighlightEffect", 0x2);
+    m_menuBtn->setProperty("isWindowButton", 0x01);
     m_menuBtn->setFlat(true);
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
         if (m_settingsWidget) { //当此窗口已存在时，仅需置顶
@@ -238,6 +240,7 @@ void MainWindow::bootOptionsFilter(QString opt)
 {
     if (opt == "-s" || opt == "--show") {
         clearSearchResult();
+        this->moveToPanel();
         this->show();
         this->raise();
         this->activateWindow();
@@ -302,6 +305,67 @@ void MainWindow::searchContent(QString searchcontent){
 
     //文件、文件夹、内容搜索
     this->m_searcher->onKeywordSearch(searchcontent, m_search_result_file, m_search_result_dir, m_search_result_content);
+}
+
+/**
+ * @brief MainWindow::moveToPanel 将主界面移动到任务栏旁边（跟随任务栏位置）
+ */
+void MainWindow::moveToPanel()
+{
+    QRect availableGeometry = qApp->primaryScreen()->availableGeometry();
+    QRect screenGeometry = qApp->primaryScreen()->geometry();
+
+    QDesktopWidget * desktopWidget = QApplication::desktop();
+    QRect screenMainRect = desktopWidget->screenGeometry(0);//获取设备屏幕大小
+
+    QDBusInterface interface( "com.ukui.panel.desktop",
+                              "/",
+                              "com.ukui.panel.desktop",
+                              QDBusConnection::sessionBus() );
+
+    int position = QDBusReply<int>(interface.call("GetPanelPosition", "position"));
+    int height = QDBusReply<int>(interface.call("GetPanelPosition", "height"));
+    int d = 2; //窗口边沿到任务栏距离
+
+    if (screenGeometry.width() == availableGeometry.width() && screenGeometry.height() == availableGeometry.height()) {
+        if (position == 0) {
+            //任务栏在下侧
+            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
+        } else if(position == 1) {
+            //任务栏在上侧
+            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
+        } else if (position == 2) {
+            //任务栏在左侧
+            if (screenGeometry.x() == 0) {//主屏在左侧
+                this->move(height + d, screenMainRect.y() + screenMainRect.height() - this->height());
+            } else {//主屏在右侧
+                this->move(screenMainRect.x() + height + d, screenMainRect.y() + screenMainRect.height() - this->height());
+            }
+        } else if (position == 3) {
+            //任务栏在右侧
+            if (screenGeometry.x() == 0) {//主屏在左侧
+                this->move(screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
+            } else {//主屏在右侧
+                this->move(screenMainRect.x() + screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
+            }
+        }
+    } else if(screenGeometry.width() == availableGeometry.width() ) {
+        if (m_sys_tray_icon->geometry().y() > availableGeometry.height()/2) {
+            //任务栏在下侧
+            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - d);
+        } else {
+            //任务栏在上侧
+            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + d);
+        }
+    } else if (screenGeometry.height() == availableGeometry.height()) {
+        if (m_sys_tray_icon->geometry().x() > availableGeometry.width()/2) {
+            //任务栏在右侧
+            this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenMainRect.y() + screenGeometry.height() - this->height());
+        } else {
+            //任务栏在左侧
+            this->move(screenGeometry.width() - availableGeometry.width() + d, screenMainRect.y() + screenGeometry.height() - this->height());
+        }
+    }
 }
 
 //使用GSetting获取当前窗口应该使用的透明度

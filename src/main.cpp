@@ -198,9 +198,11 @@ int main(int argc, char *argv[])
 
     MainWindow *w = new MainWindow;
     QStringList arguments = QCoreApplication::arguments();
-    centerToScreen(w);
+//    centerToScreen(w);
+    w->moveToPanel();
 
     //使用窗管的无边框策略
+    w->setProperty("useStyleWindowManager", false); //禁用拖动
     MotifWmHints hints;
     hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
     hints.functions = MWM_FUNC_ALL;

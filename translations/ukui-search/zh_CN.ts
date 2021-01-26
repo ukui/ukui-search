@@ -178,7 +178,7 @@
     <message>
         <location filename="../../src/settings-widget.cpp" line="101"/>
         <source>Add ignored folders</source>
-        <translation>添加禁止索引文件夹</translation>
+        <translation>添加文件夹至黑名单</translation>
     </message>
     <message>
         <location filename="../../src/settings-widget.cpp" line="122"/>

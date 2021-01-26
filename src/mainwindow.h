@@ -58,6 +58,7 @@ public:
      * @brief Load the main window
      */
     void searchContent(QString searchcontent);
+    void moveToPanel();
 
 private:
     bool nativeEvent(const QByteArray&, void *, long *);
