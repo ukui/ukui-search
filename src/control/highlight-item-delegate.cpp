@@ -35,7 +35,7 @@ void HighlightItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem
         ctx.palette.setColor(QPalette::Text, optionV4.palette.color(QPalette::Active, QPalette::HighlightedText));
 
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &optionV4);
-    textRect.adjust(0, -3, 0, 0);
+    textRect.adjust(-20, -5, 0, 0);
     painter->save();
     painter->translate(textRect.topLeft());
     painter->setClipRect(textRect.translated(-textRect.topLeft()));
@@ -64,7 +64,7 @@ QString HighlightItemDelegate::getHtmlText(QPainter *painter, const QStyleOption
     int indexFindLeft = 0;
     QString indexString = index.model()->data(index,Qt::DisplayRole).toString();
     QFontMetrics m_QFontMetrics = painter->fontMetrics();
-    QString indexColString = m_QFontMetrics.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 2); //当字体超过Item的长度时显示为省略号
+    QString indexColString = m_QFontMetrics.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() + 10); //当字体超过Item的长度时显示为省略号
     QString htmlString;
     if ((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
         indexFindLeft = indexColString.toUpper().indexOf(m_regFindKeyWords.toUpper()); //得到查找字体在当前整个Item字体中的位置

@@ -84,7 +84,7 @@ void SearchBarHLayout::initUI()
     m_queryWidget->setStyleSheet("border:0px;background:transparent");
 
     QHBoxLayout* queryWidLayout= new QHBoxLayout;
-    queryWidLayout->setContentsMargins(4,0,0,0);
+    queryWidLayout->setContentsMargins(8,4,0,0);
     queryWidLayout->setAlignment(Qt::AlignJustify);
     queryWidLayout->setSpacing(5);
     m_queryWidget->setLayout(queryWidLayout);
@@ -99,13 +99,13 @@ void SearchBarHLayout::initUI()
     m_queryText = new QLabel;
     m_queryText->setText(tr("Search"));
     m_queryText->setStyleSheet("background:transparent;color:#626c6e;");
-//    m_queryText->setContentsMargins(0,0,0,4);
+    m_queryText->setContentsMargins(0,0,0,4);
     m_queryText->adjustSize();
 
     queryWidLayout->addWidget(m_queryIcon);
     queryWidLayout->addWidget(m_queryText);
     m_queryWidget->setGeometry(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 15)) / 2 - 10, 0,
-                                     m_queryIcon->width() + m_queryText->width() + 10, 35)); //设置图标初始位置
+                                     m_queryIcon->width() + m_queryText->width() + 20, 35)); //设置图标初始位置
 
     m_animation= new QPropertyAnimation(m_queryWidget,"geometry");
     m_animation->setDuration(100); //动画时长
@@ -130,7 +130,7 @@ void SearchBarHLayout::focusOut() {
         m_queryText->adjustSize();
     }
     m_queryWidget->setGeometry(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 15)) / 2 - 10, 0,
-                                     m_queryIcon->width() + m_queryText->width() + 10, 35)); //使图标回到初始位置
+                                     m_queryIcon->width() + m_queryText->width() + 20, 35)); //使图标回到初始位置
 }
 
 void SearchBarHLayout::clearText() {
@@ -148,7 +148,7 @@ bool SearchBarHLayout::eventFilter(QObject *watched, QEvent *event)
              if (m_queryLineEdit->text().isEmpty()) {
                  m_animation->stop();
                  m_animation->setStartValue(m_queryWidget->geometry());
-                 m_animation->setEndValue(QRect(0, 0, m_queryIcon->width() + 5, 35));
+                 m_animation->setEndValue(QRect(0, 0, m_queryIcon->width() + 10, 35));
                  m_animation->setEasingCurve(QEasingCurve::OutQuad);
                  m_animation->start();
              }
@@ -160,7 +160,7 @@ bool SearchBarHLayout::eventFilter(QObject *watched, QEvent *event)
                     m_queryText->adjustSize();
                     m_animation->setStartValue(QRect(0, 0, m_queryIcon->width() + 5, 35));
                     m_animation->setEndValue(QRect((m_queryLineEdit->width() - (m_queryIcon->width() + m_queryText->width() + 10)) / 2, 0,
-                                                 m_queryIcon->width() + m_queryText->width() + 10, 35));
+                                                 m_queryIcon->width() + m_queryText->width() + 20, 35));
                     m_animation->setEasingCurve(QEasingCurve::InQuad);
                     m_animation->start();
                 }

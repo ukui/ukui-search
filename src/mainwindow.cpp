@@ -202,6 +202,7 @@ void MainWindow::initUi()
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
     mainlayout->addWidget(m_searchWidget);
+    mainlayout->setContentsMargins(16, 0, 16, 10);
 
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged,
             this, &MainWindow::monitorResolutionChange);

@@ -4,14 +4,16 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QDebug>
+#include <QMessageBox>
 #include "folder-list-item.h"
 #include "global-settings.h"
 #include "file-utils.h"
 #include "index/file-searcher.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
-SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
+SettingsWidget::SettingsWidget(QWidget *parent) : QDialog(parent)
 {
+    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     initUi();
@@ -27,13 +29,12 @@ SettingsWidget::~SettingsWidget()
  * @brief SettingsWidget::initUi 初始化界面UI
  */
 void SettingsWidget::initUi() {
-    this->setFixedWidth(528);
-    this->setMinimumHeight(460);
-    this->setMaximumHeight(680);
+//    this->setFixedWidth(528);
+//    this->setMinimumHeight(460);
+//    this->setMaximumHeight(680);
     m_mainLyt = new QVBoxLayout(this);
-    m_mainLyt->setContentsMargins(24, 9, 16, 24);
+    m_mainLyt->setContentsMargins(24, 9, 24, 24);
     this->setLayout(m_mainLyt);
-    this->setStyleSheet("QLabel{color: palette(text);}");
 
     //标题栏
     m_titleFrame = new QFrame(this);
@@ -47,7 +48,7 @@ void SettingsWidget::initUi() {
     m_titleLabel->setText(tr("Search"));
     m_closeBtn = new QPushButton(m_titleFrame);
     m_closeBtn->setFixedSize(24, 24);
-    m_closeBtn->setIcon(QIcon(":/res/icons/close.svg"));
+//    m_closeBtn->setIcon(QIcon(":/res/icons/close.svg"));
 //    m_closeBtn->setStyleSheet("QPushButton{background: transparent;}"
 //                              "QPushButton:hover:!pressed{background: transparent;}");
     m_closeBtn->setIcon(QIcon::fromTheme("window-close-symbolic"));
@@ -67,14 +68,12 @@ void SettingsWidget::initUi() {
 
     //设置
     m_settingLabel = new QLabel(this);
-    m_settingLabel->setText(tr("Settings"));
-    m_settingLabel->setStyleSheet("QLabel{font-size: 24px; color: palette(text);}");
+    m_settingLabel->setText(tr("<h2>Settings</h2>"));
     m_mainLyt->addWidget(m_settingLabel);
 
     //文件索引
     m_indexTitleLabel = new QLabel(this);
-    m_indexTitleLabel->setText(tr("Index State"));
-    m_indexTitleLabel->setStyleSheet("QLabel{font-size: 16px; font-weight:bold; color: palette(text);}");
+    m_indexTitleLabel->setText(tr("<h3>Index State</h3>"));
     m_indexStateLabel = new QLabel(this);
     m_indexStateLabel->setText(tr("..."));
     m_indexNumLabel = new QLabel(this);
@@ -86,8 +85,7 @@ void SettingsWidget::initUi() {
 
     //文件索引设置（黑名单）
     m_indexSettingLabel = new QLabel(this);
-    m_indexSettingLabel->setText(tr("File Index Settings"));
-    m_indexSettingLabel->setStyleSheet("QLabel{font-size: 16px; font-weight:bold; color: palette(text);}");
+    m_indexSettingLabel->setText(tr("<h3>File Index Settings</h3>"));
     m_indexDescLabel = new QLabel(this);
     m_indexDescLabel->setText(tr("Following folders will not be searched. You can set it by adding and removing folders."));
     m_indexDescLabel->setWordWrap(true);
@@ -119,8 +117,7 @@ void SettingsWidget::initUi() {
 
     //搜索引擎设置
     m_searchEngineLabel = new QLabel(this);
-    m_searchEngineLabel->setText(tr("Search Engine Settings"));
-    m_searchEngineLabel->setStyleSheet("QLabel{font-size: 16px; font-weight:bold; color: palette(text);}");
+    m_searchEngineLabel->setText(tr("<h3>Search Engine Settings</h3>"));
     m_engineDescLabel = new QLabel(this);
     m_engineDescLabel->setText(tr("Please select search engine you preferred."));
     m_engineDescLabel->setWordWrap(true);
@@ -183,13 +180,17 @@ void SettingsWidget::initUi() {
  */
 void SettingsWidget::setupBlackList(const QStringList& list) {
     clearLayout(m_dirListLyt);
+    m_blockdirs = 0;
     Q_FOREACH(QString path, list) {
         FolderListItem * item = new FolderListItem(m_dirListWidget, path);
         m_dirListLyt->addWidget(item);
-        item->setMaximumWidth(470);
+        item->setMaximumWidth(this->width() - 52);
         connect(item, SIGNAL(onDelBtnClicked(const QString&)), this, SLOT(onBtnDelClicked(const QString&)));
+        m_blockdirs ++;
     }
-    m_dirListLyt->addStretch();
+    this->resize();
+    m_dirListWidget->setFixedWidth(this->width() - 52);
+//    m_dirListLyt->addStretch();
 }
 
 /**
@@ -239,6 +240,12 @@ void SettingsWidget::refreshIndexState()
  * @param path 文件夹路径
  */
 void SettingsWidget::onBtnDelClicked(const QString& path) {
+    QMessageBox message(QMessageBox::Question, tr("Search"), tr("Whether to delete this directory?"), QMessageBox::No | QMessageBox::Yes, this);
+    message.exec();
+    if (message.clickedButton() != message.button(QMessageBox::Yes)) {
+        return;
+    }
+
     QString returnMessage;
     if (GlobalSettings::getInstance()->setBlockDirs(path, returnMessage, true)) {
         qDebug()<<"Remove block dir in onBtnDelClicked() successed.";
@@ -246,13 +253,17 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
             if (item->getPath() == path) {
                 item->deleteLater();
                 item = NULL;
+                m_blockdirs --;
+                this->resize();
                 return;
             }
         }
-
     } else {
         qWarning()<<returnMessage;
         qDebug()<<"Remove block dir in onBtnAddClicked() failed. Message: "<<returnMessage;
+
+        QMessageBox message(QMessageBox::Warning, tr("Search"), returnMessage, QMessageBox::Ok, this);
+        message.exec();
     }
 }
 
@@ -338,6 +349,10 @@ void SettingsWidget::onBtnAddClicked() {
     } else {
         qWarning()<<returnMessage;
         qDebug()<<"Add block dir in onBtnAddClicked() failed. Message: "<<returnMessage<<" ->settings-widget.cpp #238";
+//        QMessageBox::warning(this, tr("Search"), returnMessage);
+
+        QMessageBox message(QMessageBox::Warning, tr("Search"), returnMessage, QMessageBox::Ok, this);
+        message.exec();
     }
 }
 
@@ -385,4 +400,16 @@ void SettingsWidget::paintEvent(QPaintEvent *event) {
     p.fillPath(rectPath,palette().color(QPalette::Base));
     p.restore();
 
+}
+
+/**
+ * @brief SettingsWidget::resize 重新计算窗口应有大小
+ */
+void SettingsWidget::resize()
+{
+    if (m_blockdirs <= 1) {
+        this->setFixedSize(528, 455);
+    } else {
+        this->setFixedSize(528, 425 + 30 * m_blockdirs);
+    }
 }
