@@ -3,6 +3,7 @@
 #include "chinese-segmentation.h"
 #include <QDebug>
 #include <QThread>
+#include <QUrl>
 
 //extern QList<Document> *_doc_list_path;
 //extern QMutex  _mutex_doc_list_path;
@@ -25,11 +26,6 @@ void ConstructDocumentForPath::run()
 //    qDebug()<<_doc_list_path->size();
     QString index_text = m_list.at(0);
     QString sourcePath = m_list.at(1);
-    index_text = index_text.replace(""," ");
-    index_text = index_text.simplified();
-
-    //不带多音字版
-//    QString pinyin_text = FileUtils::find(QString(list.at(0)).replace(".","")).replace("", " ").simplified();
 
     //多音字版
     //现加入首字母
@@ -47,10 +43,19 @@ void ConstructDocumentForPath::run()
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
     doc.addValue(m_list.at(2));
-    QStringList temp;
-    temp.append(index_text);
-    temp.append(pinyin_text_list);
-    doc.setIndexText(temp);
+/*    QStringList temp;
+//    temp.append(index_text);
+    temp.append(pinyin_text_list)*/;
+    doc.setIndexText(pinyin_text_list);
+    int postingCount = 0;
+    while(postingCount < index_text.size())
+    {
+        QVector<size_t> p;
+        p.append(postingCount);
+        doc.addPosting(QUrl::toPercentEncoding(index_text.at(postingCount)).toStdString(),p);
+        ++postingCount;
+    }
+
 //    QMetaObject::invokeMethod(m_indexGenerator,"appendDocListPath",Q_ARG(Document,doc));
     _mutex_doc_list_path.lock();
     _doc_list_path->append(doc);

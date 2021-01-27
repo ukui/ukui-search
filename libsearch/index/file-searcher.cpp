@@ -3,6 +3,7 @@
 #include <QtConcurrent>
 #include <QThread>
 #include <chinese-segmentation.h>
+#include <QUrl>
 #include "file-searcher.h"
 #include "global-settings.h"
 
@@ -222,7 +223,7 @@ Xapian::Query FileSearcher::creatQueryForFileSearch(QString keyword, Xapian::Dat
     std::vector<Xapian::Query> v;
     for(int i=0;i<userInput.size();i++)
     {
-        v.push_back(Xapian::Query(QString(userInput.at(i)).toStdString()));
+        v.push_back(Xapian::Query(QUrl::toPercentEncoding(userInput.at(i)).toStdString()));
         //        qDebug()<<QString::fromStdString(Xapian::Query(QString(userInput.at(i)).toStdString()).get_description());
     }
     Xapian::Query queryPhrase =Xapian::Query(Xapian::Query::OP_PHRASE, v.begin(), v.end());
