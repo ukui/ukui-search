@@ -4,52 +4,52 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../../src/content-widget.cpp" line="325"/>
+        <location filename="../../src/content-widget.cpp" line="307"/>
         <source>Recently Opened</source>
         <translation>最近</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="351"/>
+        <location filename="../../src/content-widget.cpp" line="333"/>
         <source>Open Quickly</source>
         <translation>快速</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="352"/>
+        <location filename="../../src/content-widget.cpp" line="334"/>
         <source>Commonly Used</source>
         <translation>常用</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="588"/>
+        <location filename="../../src/content-widget.cpp" line="576"/>
         <source>Apps</source>
         <translation>应用</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="590"/>
+        <location filename="../../src/content-widget.cpp" line="578"/>
         <source>Settings</source>
         <translation>配置项</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="592"/>
+        <location filename="../../src/content-widget.cpp" line="580"/>
         <source>Files</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="594"/>
+        <location filename="../../src/content-widget.cpp" line="582"/>
         <source>Dirs</source>
         <translation>文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="596"/>
+        <location filename="../../src/content-widget.cpp" line="584"/>
         <source>File Contents</source>
         <translation>文件内容</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="598"/>
+        <location filename="../../src/content-widget.cpp" line="586"/>
         <source>Best Matches</source>
         <translation>最佳匹配</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="600"/>
+        <location filename="../../src/content-widget.cpp" line="588"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
@@ -70,7 +70,7 @@
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="163"/>
+        <location filename="../../src/mainwindow.cpp" line="164"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -211,9 +211,8 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="340"/>
         <source>Parent folder has been blocked!</source>
-        <translation>12345</translation>
+        <translation type="vanished">12345</translation>
     </message>
     <message>
         <source>Confirm</source>
@@ -268,33 +267,34 @@
 <context>
     <name>ShowMoreLabel</name>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="22"/>
-        <location filename="../../src/control/show-more-label.cpp" line="51"/>
+        <location filename="../../src/control/show-more-label.cpp" line="20"/>
+        <location filename="../../src/control/show-more-label.cpp" line="28"/>
+        <location filename="../../src/control/show-more-label.cpp" line="58"/>
         <source>Show More...</source>
         <translation>显示更多...</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="49"/>
+        <location filename="../../src/control/show-more-label.cpp" line="56"/>
         <source>Retract</source>
         <translation>&lt;u&gt;收起&lt;</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="60"/>
+        <location filename="../../src/control/show-more-label.cpp" line="67"/>
         <source>Loading</source>
         <translation>加载中</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="65"/>
+        <location filename="../../src/control/show-more-label.cpp" line="72"/>
         <source>Loading.</source>
         <translation>加载中.</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="70"/>
+        <location filename="../../src/control/show-more-label.cpp" line="77"/>
         <source>Loading..</source>
         <translation>加载中..</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="75"/>
+        <location filename="../../src/control/show-more-label.cpp" line="82"/>
         <source>Loading...</source>
         <translation>加载中...</translation>
     </message>
