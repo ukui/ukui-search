@@ -2,6 +2,7 @@
 #define SETTINGSWIDGET_H
 
 #include <QWidget>
+#include <QDialog>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -12,7 +13,7 @@
 #include <QScrollArea>
 #include <QTimer>
 
-class SettingsWidget : public QWidget
+class SettingsWidget : public QDialog
 {
     Q_OBJECT
 public:
@@ -29,6 +30,7 @@ private:
     void clearLayout(QLayout *);
     void refreshIndexState();
     void paintEvent(QPaintEvent *);
+    void resize();
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
     QFrame * m_titleFrame = nullptr;
@@ -73,6 +75,8 @@ private:
     QPushButton * m_confirmBtn = nullptr;
 
     QTimer * m_timer;
+
+    int m_blockdirs = 0; //黑名单文件夹数量
 
 Q_SIGNALS:
     void settingWidgetClosed();
