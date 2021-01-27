@@ -11,6 +11,7 @@
 #include "fileview.h"
 #include "filemodel.h"
 #include "searchfilethread.h"
+#include "../Interface/morebutton.h"
 
 class SearchFileWidget : public QWidget
 {
@@ -26,6 +27,9 @@ private:
      void initFilesearchUI();
      void paintEvent(QPaintEvent *e);
      bool eventFilter(QObject *watched, QEvent *event);
+
+private:
+     MoreButton *m_Morebutton;
 
 private Q_SLOTS:
      void fileTextRefresh(QString);

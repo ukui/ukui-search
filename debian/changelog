@@ -1,3 +1,10 @@
+ukui-search (3.0.1-1+0123) v101; urgency=medium
+
+  * fix:安装翻译文件进系统
+  * fix:fix:文件名字大于40不显示
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Sat, 23 Jan 2021 09:21:14 +0800
+
 ukui-search (3.0.1-1+0120) v101; urgency=medium
 
   * fix:增加翻译文件

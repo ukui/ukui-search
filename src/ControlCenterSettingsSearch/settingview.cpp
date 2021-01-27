@@ -32,7 +32,7 @@ settingview::settingview()
         }
     });
 
-    this->setHeaderHidden(true);
+//    this->setHeaderHidden(true);
 
 }
 

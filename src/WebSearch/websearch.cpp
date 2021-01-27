@@ -6,7 +6,10 @@ websearch::websearch()
 {
     this->setStyleSheet("QPushButton{text-align: left;}");
     this->setFixedHeight(40);
-    this->setAttribute(Qt::WA_TranslucentBackground);//"透明背景"
+    QColor color1 = palette().color(QPalette::Base);
+    QPalette pal(this->palette());
+    pal.setColor(QPalette::Button, QColor(color1));
+    this->setPalette(pal);
     this->setVisible(false);
     searchString = "请使用百度搜索：";
     search = "";
@@ -48,14 +51,12 @@ void websearch::webSearchTextRefresh(QString mSearchText)
 
 //void websearch::paintEvent(QPaintEvent *e)
 //{
-////    QPainter p(this);
-////    QRect rect = this->rect();
-////    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-////    p.setBrush(qApp->palette().color(QPalette::Base));
-//////    p.setBrush(QBrush(QColor(255,255,255)));
-////    p.setOpacity(1);
-////    p.setPen(Qt::NoPen);
-////    p.drawRoundedRect(rect,12,12);
+//    QPainter p(this);
+//    QRect rect = this->rect();
+//    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+//    p.setOpacity(1);
+//    p.setPen(Qt::NoPen);
+//    p.drawRoundedRect(rect,12,12);
 //    QWidget::paintEvent(e);
 //}
 

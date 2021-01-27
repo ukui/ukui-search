@@ -37,13 +37,14 @@ void SearchResultWidget::initUi()
 {
     m_listLayout = new QVBoxLayout;
     applabel = new QLabel;
+    m_Button = new MoreButton(this);
+    m_Button->setText("在应用商店中搜索更多");
     applabel->setText(tr("App"));
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     this->setFixedSize(Style::defaultMainViewWidWidth,200);
 //    this->setStyleSheet("background:white;");
-
 
     m_listView=new ListView(this,this->width()-6,this->height()-6,3);
     m_listView->setGeometry(QRect(6,0,this->width()-6,this->height()-6));
@@ -54,7 +55,10 @@ void SearchResultWidget::initUi()
     m_ukuiMenuInterface=new UkuiMenuInterface;
 
     connect(m_listView,&ListView::sendItemClickedSignal,this,&SearchResultWidget::execApplication);
-
+    connect(m_Button,&QPushButton::clicked,this,[=](){
+        QProcess *process =new QProcess(this);
+        process->startDetached("kylin-software-center");
+    });
     //监听输入框的改变，刷新界面
     QDBusConnection::sessionBus().connect(QString(), QString("/lineEdit/textChanged"), "org.ukui.search.inputbox", "InputBoxTextChanged", this, SLOT(appTextRefresh(QString)));
 
@@ -71,6 +75,7 @@ void SearchResultWidget::initUi()
 
     m_listLayout->addWidget(applabel);
     m_listLayout->addWidget(m_listView);
+    m_listLayout->addWidget(m_Button);
     this->setLayout(m_listLayout);
     this->setVisible(false);
 }
@@ -91,7 +96,6 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
     m_data.clear();
     Q_FOREACH(QStringList appinfo,arg)
         m_data.append(QStringList()<<appinfo.at(0)<<"1");
-
     Q_EMIT changeAppNum(m_data.count());
     m_listView->updateData(m_data);
     //根据获取的应用数量，刷新界面高度
@@ -100,9 +104,11 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
     } else if(m_data.size()<=3){
         this->setVisible(true);
         this->setFixedSize(Style::defaultMainViewWidWidth,m_data.size()*46+46);
+        m_Button->hide();
     } else {
         this->setVisible(true);
-        this->setFixedSize(Style::defaultMainViewWidWidth,3*46+46);
+        this->setFixedSize(Style::defaultMainViewWidWidth,3*46+46+m_Button->height());
+        m_Button->show();
     }
 
 }

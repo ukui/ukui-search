@@ -95,17 +95,17 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
         }else{
             break;
         }
-//    case Qt::FontRole:
-//        if(index.column()==0){
-//            return QFont("宋体",12,QFont::Bold);
-//        }else{
-//            return QFont("黑体",8,QFont::Bold);
-//        }
+    case Qt::FontRole:
+        if(index.column()==0){
+            return QFont("宋体",18,QFont::DemiBold);
+        }else{
+            return QFont("宋体",12,QFont::Normal);
+        }
     case Qt::SizeHintRole:
         return QSize(200,40);
     case Qt::TextColorRole:
-        if(index.column()==0){
-//            return QColor(Qt::black);
+        if(!index.column()==0){
+            return QColor(Qt::gray);
         }
     }
 return QVariant();
@@ -183,15 +183,10 @@ int filemodel::showResult(QStringList result){
          }
      }
      Q_EMIT requestUpdateSignal(runresult.count());
-     showresult.clear();
-     if(returnresult.size()<4){
-         showresult=returnresult;
-     }else{
-         for (int h=0;h<3;h++) {
-             showresult.append(returnresult.at(h));
-         }
-         showresult.append(QString::fromLocal8Bit("显示更多"));
-     }
+
+     showresult=returnresult.mid(0,3);
+     runresult=runresult.mid(0,3);
+     m_timeResult=m_timeResult.mid(0,3);
 
      m_showMap.insert(QString::fromLocal8Bit("FileName"),showresult);
      m_showMap.insert(QString::fromLocal8Bit("PathName"),runresult);

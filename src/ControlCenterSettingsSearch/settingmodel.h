@@ -42,7 +42,6 @@ private:
     QTimer *startmatchTimer;
     QTimer *finishtimer;
     QSettings *setting;
-    QString settingkey;
 
     QMap<QString,QStringList> pinyin_searchlist;
     QMap<QString,QStringList> chine_searchlist;
@@ -51,11 +50,9 @@ private:
     QString index1;
     QString index;
     QString index2;
-    QStringList regmatch;
-    QList<QString> returnresult;
     QList<QString> commandresult;
-    QList<QString> lockresult;
-    QList<QPixmap> iconresult;
+    QList<QString> m_Showresult;
+    QList<QPixmap> m_Iconresult;
 
 
 

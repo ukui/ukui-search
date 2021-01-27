@@ -9,6 +9,7 @@
 #include <QString>
 #include "settingmodel.h"
 #include "settingview.h"
+#include "../Interface/morebutton.h"
 #include <QPainter>
 
 class SettingWidget : public QWidget
@@ -25,6 +26,7 @@ private:
      void initSettingsearchUI();
      void paintEvent(QPaintEvent *e);
      bool eventFilter(QObject *watched, QEvent *event);
+     MoreButton *m_Button;
 
 private Q_SLOTS:
      void settingTextRefresh(QString);
