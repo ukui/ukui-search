@@ -1,4 +1,5 @@
 SOURCES += \
+    $$PWD/headlabel.cpp \
     $$PWD/morebutton.cpp \
         $$PWD/ukuichineseletter.cpp \
         $$PWD/ukuimenuinterface.cpp \
@@ -6,6 +7,7 @@ SOURCES += \
         $$PWD/ukuicontrolstyle.cpp \
 
 HEADERS += \
+    $$PWD/headlabel.h \
     $$PWD/morebutton.h \
         $$PWD/ukuichineseletter.h \
         $$PWD/ukuimenuinterface.h \

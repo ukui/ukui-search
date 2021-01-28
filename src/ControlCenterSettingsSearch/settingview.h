@@ -5,7 +5,7 @@
 #include "../Style/style.h"
 #include <QDebug>
 #include <QListView>
-class settingview : public QListView
+class settingview : public QTreeView
 {
 public:
     settingview();

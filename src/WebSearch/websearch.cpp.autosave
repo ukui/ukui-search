@@ -62,13 +62,8 @@ void websearch::paintEvent(QPaintEvent *e)
     QBrush brush =QBrush(color1);
     p.setBrush(brush);
     p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-//    p.setOpacity(1);
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(rect,12,12);
-
-    this->setStyleSheet(
-                "QPushButton:hover{background:rgb(140, 220, 35);}"
-                );
     QWidget::paintEvent(e);
 }
 

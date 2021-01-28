@@ -1,3 +1,12 @@
+ukui-search (3.0.1-1+0127) v101; urgency=medium
+
+  * fix:文件名字大于40不显示
+  * fix:安装翻译文件进系统
+  * fix:全局搜索框的“全局搜索”字样位于搜索框中央而不是左侧
+  * fix:更改ui
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Wed, 27 Jan 2021 11:06:19 +0800
+
 ukui-search (3.0.1-1+0123) v101; urgency=medium
 
   * fix:安装翻译文件进系统

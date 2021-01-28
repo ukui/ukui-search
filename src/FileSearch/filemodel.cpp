@@ -102,7 +102,7 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
             return QFont("宋体",12,QFont::Normal);
         }
     case Qt::SizeHintRole:
-        return QSize(200,40);
+        return QSize(200,46);
     case Qt::TextColorRole:
         if(!index.column()==0){
             return QColor(Qt::gray);

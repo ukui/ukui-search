@@ -30,8 +30,9 @@
 #include "src/Interface/ukuimenuinterface.h"
 #include "itemdelegate.h"
 #include <QGSettings>
+#include <QTreeView>
 
-class ListView : public QListView
+class ListView : public QTreeView
 {
     Q_OBJECT
 public:
