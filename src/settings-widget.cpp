@@ -152,6 +152,9 @@ void SettingsWidget::initUi() {
     m_mainLyt->addWidget(m_searchEngineLabel);
     m_mainLyt->addWidget(m_engineDescLabel);
     m_mainLyt->addWidget(m_radioBtnFrame);
+    m_searchEngineLabel->hide();
+    m_engineDescLabel->hide();
+    m_radioBtnFrame->hide();
 
     //取消与确认按钮 （隐藏）
 //    m_bottomBtnFrame = new QFrame(this);
@@ -407,9 +410,19 @@ void SettingsWidget::paintEvent(QPaintEvent *event) {
  */
 void SettingsWidget::resize()
 {
-    if (m_blockdirs <= 1) {
-        this->setFixedSize(528, 455);
+//    if (m_blockdirs <= 1) {
+//        this->setFixedSize(528, 455);
+//    } else if (m_blockdirs <= 3) {
+//        this->setFixedSize(528, 425 + 30 * m_blockdirs);
+//    } else {
+//        this->setFixedSize(528, 515);
+//    }
+    if (m_blockdirs <= 3) {
+        m_dirListArea->setFixedHeight(32 * m_blockdirs);
+        m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
-        this->setFixedSize(528, 425 + 30 * m_blockdirs);
+        m_dirListWidget->setFixedHeight(32 * m_blockdirs);
+        m_dirListArea->setFixedHeight(32 * 3);
     }
+    this->setFixedSize(528, 455);
 }
