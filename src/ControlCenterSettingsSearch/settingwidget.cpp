@@ -10,8 +10,10 @@ void SettingWidget::initSettingsearchUI()
 {
 
     m_listLayout = new QVBoxLayout(this);
-    settingHead = new QLabel(this);
-    settingHead->setText(tr("Settings"));
+    m_Headlabel = new HeadLabel(this);
+    m_Headlabel->setText(tr("Settings"));
+
+
 
     settingView = new settingview;
     m_settingmodel = new settingModel;
@@ -20,7 +22,7 @@ void SettingWidget::initSettingsearchUI()
     m_Button=new MoreButton(this);
     m_Button->setText("在系统设置中搜索更多内容");
 
-    m_listLayout->addWidget(settingHead);
+    m_listLayout->addWidget(m_Headlabel);
     m_listLayout->addWidget(settingView);
     m_listLayout->addWidget(m_Button);
     this->setLayout(m_listLayout);
@@ -54,10 +56,10 @@ void SettingWidget::settingTextRefresh(QString mSearchText)
 void SettingWidget::recvSettingSearchResult(int row)
 {
     if(row>2){
-        this->setFixedHeight(settingHead->height()+(row+1.5)*40);
+        this->setFixedHeight(m_Headlabel->height()+(row+1.7)*46);
         m_Button->show();
     }else{
-        this->setFixedHeight(settingHead->height()+(row+1)*40);
+        this->setFixedHeight(m_Headlabel->height()+(row+1)*46);
         m_Button->hide();
     }
     if(row<=0){

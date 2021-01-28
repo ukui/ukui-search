@@ -28,7 +28,7 @@
 #define STYLE_NAME_KEY_WHITE       "ukui-white"
 
 ListView::ListView(QWidget *parent, int width, int height, int module):
-    QListView(parent)
+    QTreeView(parent)
 {
     this->w=width;
     this->h=height;
@@ -74,20 +74,21 @@ void ListView::initWidget()
     this->setSelectionMode(QAbstractItemView::SingleSelection);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    this->setResizeMode(QListView::Adjust);
+//    this->setResizeMode(QListView::Adjust);
     this->setTextElideMode(Qt::ElideRight);
-    this->setViewMode(QListView::ListMode);
+//    this->setViewMode(QListView::ListMode);
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     this->setFocusPolicy(Qt::NoFocus);
-    this->setMovement(QListView::Static);
+//    this->setMovement(QListView::Static);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setUpdatesEnabled(true);
-    this->setSpacing(0);
+//    this->setSpacing(0);
     this->setContentsMargins(0, 0, 0, 0);
     this->setMouseTracking(true);
     this->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
     this->setFrameShape(QFrame::NoFrame);
     connect(this,&ListView::clicked,this,&ListView::onClicked);
+    this->setHeaderHidden(true);
 }
 
 void ListView::setsize(int x,int y)
@@ -164,7 +165,7 @@ void ListView::paintEvent(QPaintEvent *e)
     painter.setPen(Qt::NoPen);
     painter.setBrush(this->palette().base());
     painter.fillRect(this->rect(), this->palette().base());
-    QListView::paintEvent(e);
+    QTreeView::paintEvent(e);
 }
 
 

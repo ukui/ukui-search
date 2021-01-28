@@ -32,6 +32,7 @@
 #include "src/UtilityFunction/listview.h"
 #include "src/UtilityFunction/itemdelegate.h"
 #include "../Interface/morebutton.h"
+#include "../Interface/headlabel.h"
 #include <QVBoxLayout>
 #include "searchappthread.h"
 #include <QPainter>
@@ -56,7 +57,7 @@ private:
     bool eventFilter(QObject *watched, QEvent *event);
 
     QVBoxLayout *m_listLayout;
-    QLabel * applabel;
+    HeadLabel *m_headLabel;
     MoreButton *m_Button;
 
 protected:

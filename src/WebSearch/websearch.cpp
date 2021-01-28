@@ -4,15 +4,20 @@
 
 websearch::websearch()
 {
-    this->setStyleSheet("QPushButton{text-align: left;}");
     this->setFixedHeight(40);
-    QColor color1 = palette().color(QPalette::Base);
-    QPalette pal(this->palette());
-    pal.setColor(QPalette::Button, QColor(color1));
-    this->setPalette(pal);
     this->setVisible(false);
     searchString = "请使用百度搜索：";
     search = "";
+
+    m_buttonLayout=new QHBoxLayout(this);
+    m_buttonText=new QLabel(this);
+    m_Iconlabel=new QLabel(this);
+    QPixmap pixmap(":/data/img/sidebarwidget/searching-more.svg");
+    m_Iconlabel->setPixmap(pixmap);
+    m_buttonLayout->addSpacing(16);
+    m_buttonLayout->addWidget(m_buttonText);
+    m_buttonLayout->addWidget(m_Iconlabel,0,Qt::AlignRight);
+    m_buttonLayout->addSpacing(9);
 
 
     //监听输入框的改变，刷新界面
@@ -40,23 +45,25 @@ void websearch::webSearchTextRefresh(QString mSearchText)
     if(mSearchText == ""){
         search=mSearchText;
         this->setVisible(false);
-        this->setText(searchString);
+        m_buttonText->setText(searchString);
     } else {
         search=mSearchText;
         this->setVisible(true);
-        this->setText(searchString);
+        m_buttonText->setText(searchString);
     }
 
 }
 
-//void websearch::paintEvent(QPaintEvent *e)
-//{
-//    QPainter p(this);
-//    QRect rect = this->rect();
-//    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-//    p.setOpacity(1);
-//    p.setPen(Qt::NoPen);
-//    p.drawRoundedRect(rect,12,12);
-//    QWidget::paintEvent(e);
-//}
+void websearch::paintEvent(QPaintEvent *e)
+{
+    QPainter p(this);
+    QRect rect = this->rect();
+    QColor color1 = palette().color(QPalette::Base);
+    QBrush brush =QBrush(color1);
+    p.setBrush(brush);
+    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+    p.setPen(Qt::NoPen);
+    p.drawRoundedRect(rect,12,12);
+    QWidget::paintEvent(e);
+}
 

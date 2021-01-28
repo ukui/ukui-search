@@ -36,10 +36,10 @@ SearchResultWidget::~SearchResultWidget()
 void SearchResultWidget::initUi()
 {
     m_listLayout = new QVBoxLayout;
-    applabel = new QLabel;
+    m_headLabel = new HeadLabel(this);
     m_Button = new MoreButton(this);
     m_Button->setText("在应用商店中搜索更多");
-    applabel->setText(tr("App"));
+    m_headLabel->setText(tr("App"));
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_StyledBackground,true);
     this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -73,7 +73,7 @@ void SearchResultWidget::initUi()
             this,&SearchResultWidget::recvSearchResult);
 
 
-    m_listLayout->addWidget(applabel);
+    m_listLayout->addWidget(m_headLabel);
     m_listLayout->addWidget(m_listView);
     m_listLayout->addWidget(m_Button);
     this->setLayout(m_listLayout);
@@ -101,13 +101,13 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
     //根据获取的应用数量，刷新界面高度
     if(m_data.size()<=0){
         this->setVisible(false);
-    } else if(m_data.size()<=3){
+    } else if(m_data.size()<=2){
         this->setVisible(true);
         this->setFixedSize(Style::defaultMainViewWidWidth,m_data.size()*46+46);
         m_Button->hide();
     } else {
         this->setVisible(true);
-        this->setFixedSize(Style::defaultMainViewWidWidth,3*46+46+m_Button->height());
+        this->setFixedSize(Style::defaultMainViewWidWidth,3.3*46+46+m_Button->height());
         m_Button->show();
     }
 

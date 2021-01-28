@@ -102,6 +102,9 @@ void SearchAppThread::run()
     }
 
     qSort(m_searchResultVector.begin(),m_searchResultVector.end(),UkuiMenuInterface::cmpApp);
+    if(m_searchResultVector.size()>3){
+        m_searchResultVector=m_searchResultVector.mid(0,3);
+    }
     Q_EMIT sendSearchResult(m_searchResultVector);
 }
 

@@ -40,6 +40,8 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
     case Qt::DecorationRole:
         if(index.row()<3)
             return m_Iconresult.at(index.row());
+    case Qt::SizeHintRole:
+        return QSize(200,46);
         }
     return QVariant();
 }

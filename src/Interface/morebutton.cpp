@@ -9,6 +9,7 @@ void MoreButton::InitUi(){
     m_Textlabel=new QLabel;
     m_Iconlabel=new QLabel;
     m_Layout=new QHBoxLayout(this);
+    m_Layout->addSpacing(16);
     m_Layout->addWidget(m_Textlabel);
     QColor color1 = palette().color(QPalette::Base);
     color1.setAlpha(0);

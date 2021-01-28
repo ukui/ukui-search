@@ -5,6 +5,8 @@
 #include <QtDBus/QtDBus>
 #include <QString>
 #include <QPainter>
+#include <QLabel>
+#include <QHBoxLayout>
 
 class websearch : public QPushButton
 {
@@ -13,7 +15,12 @@ public:
      websearch();
      QString searchString;
      QString search;
-//     void paintEvent(QPaintEvent *e);
+     void paintEvent(QPaintEvent *e);
+
+private:
+     QLabel *m_buttonText;
+     QHBoxLayout *m_buttonLayout;
+     QLabel *m_Iconlabel;
 
 private Q_SLOTS:
      void webSearchTextRefresh(QString);
