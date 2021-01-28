@@ -187,6 +187,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
             QString name = fontMetrics.elidedText(FileUtils::getFileName(path), Qt::ElideRight, 215);
             m_nameLabel->setText(name);
+            m_nameLabel->setTextFormat(Qt::PlainText); //显示纯文本
             m_typeLabel->setText(tr("Document"));
             break;
         }
