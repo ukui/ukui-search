@@ -69,7 +69,7 @@ QString HighlightItemDelegate::getHtmlText(QPainter *painter, const QStyleOption
     if ((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
         indexFindLeft = indexColString.toUpper().indexOf(m_regFindKeyWords.toUpper()); //得到查找字体在当前整个Item字体中的位置
 //        paintKeywordHighlight(painter, itemOption, indexColString, indexFindLeft, m_regFindKeyWords.length());
-        htmlString = indexColString.left(indexFindLeft) + "<b>" + indexColString.mid(indexFindLeft, m_regFindKeyWords.length())+ "</b>" + indexColString.right(indexColString.length() - indexFindLeft - m_regFindKeyWords.length());
+        htmlString = escapeHtml(indexColString.left(indexFindLeft)) + "<b>" + escapeHtml(indexColString.mid(indexFindLeft, m_regFindKeyWords.length())) + "</b>" + escapeHtml(indexColString.right(indexColString.length() - indexFindLeft - m_regFindKeyWords.length()));
     } else {
         bool boldOpenned = false;
         for (int i = 0; i < indexColString.length(); i++) {
@@ -79,19 +79,32 @@ QString HighlightItemDelegate::getHtmlText(QPainter *painter, const QStyleOption
                     boldOpenned = true;
                     htmlString.append(QString("<b>"));
                 }
-                htmlString.append(QString(indexColString.at(i)));
+                htmlString.append(escapeHtml(QString(indexColString.at(i))));
             } else {
                 if (boldOpenned) {
                     boldOpenned = false;
                     htmlString.append(QString("</b>"));
                 }
-                htmlString.append(QString(indexColString.at(i)));
+                htmlString.append(escapeHtml(QString(indexColString.at(i))));
 
             }
         }
     }
 //    qDebug()<<indexColString<<"---->"<<htmlString;
     return htmlString;
+}
+
+/**
+ * @brief HighlightItemDelegate::escapeHtml 将文件名原本带的尖括号转义，以防被识别为富文本
+ * @param str
+ * @return
+ */
+QString HighlightItemDelegate::escapeHtml(const QString & str) const
+{
+    QString temp = str;
+    temp.replace("<", "&lt;");
+    temp.replace(">", "&gt;");
+    return temp;
 }
 
 /**

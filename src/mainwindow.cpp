@@ -20,7 +20,6 @@
 #include <QHBoxLayout>
 #include <QDebug>
 #include <QDesktopWidget>
-#include <QtSingleApplication>
 #include <QtX11Extras/QX11Info>
 #include <syslog.h>
 #include <QPalette>
@@ -29,6 +28,7 @@
 #include <KWindowEffects>
 #include <QPixmap>
 #include "kwindowsystem.h"
+#include "qt-single-application.h"
 
 //#include "inotify-manager.h"
 #include "settings-widget.h"
@@ -328,43 +328,25 @@ void MainWindow::moveToPanel()
     int height = QDBusReply<int>(interface.call("GetPanelPosition", "height"));
     int d = 2; //窗口边沿到任务栏距离
 
-    if (screenGeometry.width() == availableGeometry.width() && screenGeometry.height() == availableGeometry.height()) {
-        if (position == 0) {
-            //任务栏在下侧
-            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
-        } else if(position == 1) {
-            //任务栏在上侧
-            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
-        } else if (position == 2) {
-            //任务栏在左侧
-            if (screenGeometry.x() == 0) {//主屏在左侧
-                this->move(height + d, screenMainRect.y() + screenMainRect.height() - this->height());
-            } else {//主屏在右侧
-                this->move(screenMainRect.x() + height + d, screenMainRect.y() + screenMainRect.height() - this->height());
-            }
-        } else if (position == 3) {
-            //任务栏在右侧
-            if (screenGeometry.x() == 0) {//主屏在左侧
-                this->move(screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
-            } else {//主屏在右侧
-                this->move(screenMainRect.x() + screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
-            }
+    if (position == 0) {
+        //任务栏在下侧
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
+    } else if(position == 1) {
+        //任务栏在上侧
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
+    } else if (position == 2) {
+        //任务栏在左侧
+        if (screenGeometry.x() == 0) {//主屏在左侧
+            this->move(height + d, screenMainRect.y() + screenMainRect.height() - this->height());
+        } else {//主屏在右侧
+            this->move(screenMainRect.x() + height + d, screenMainRect.y() + screenMainRect.height() - this->height());
         }
-    } else if(screenGeometry.width() == availableGeometry.width() ) {
-        if (m_sys_tray_icon->geometry().y() > availableGeometry.height()/2) {
-            //任务栏在下侧
-            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - d);
-        } else {
-            //任务栏在上侧
-            this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + d);
-        }
-    } else if (screenGeometry.height() == availableGeometry.height()) {
-        if (m_sys_tray_icon->geometry().x() > availableGeometry.width()/2) {
-            //任务栏在右侧
-            this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenMainRect.y() + screenGeometry.height() - this->height());
-        } else {
-            //任务栏在左侧
-            this->move(screenGeometry.width() - availableGeometry.width() + d, screenMainRect.y() + screenGeometry.height() - this->height());
+    } else if (position == 3) {
+        //任务栏在右侧
+        if (screenGeometry.x() == 0) {//主屏在左侧
+            this->move(screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
+        } else {//主屏在右侧
+            this->move(screenMainRect.x() + screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
         }
     }
 }
