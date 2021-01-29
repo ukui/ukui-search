@@ -44,12 +44,6 @@
 #include <QDataStream>
 #include <QTime>
 
-#if defined(Q_OS_WIN)
-#include <QLibrary>
-#include <qt_windows.h>
-typedef BOOL(WINAPI*PProcessIdToSessionId)(DWORD,DWORD*);
-static PProcessIdToSessionId pProcessIdToSessionId = 0;
-#endif
 #if defined(Q_OS_UNIX)
 #include <sys/types.h>
 #include <time.h>
@@ -57,12 +51,8 @@ static PProcessIdToSessionId pProcessIdToSessionId = 0;
 #endif
 
 namespace QtLP_Private {
-#include "qtlockedfile.cpp"
-#if defined(Q_OS_WIN)
-#include "qtlockedfile_win.cpp"
-#else
-#include "qtlockedfile_unix.cpp"
-#endif
+#include "qt-locked-file.cpp"
+#include "qt-locked-file-unix.cpp"
 }
 
 const char* QtLocalPeer::ack = "ack";

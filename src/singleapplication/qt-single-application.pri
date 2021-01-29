@@ -17,8 +17,11 @@ win32 {
 
 HEADERS += \
     $$PWD/qt-local-peer.h \
+    $$PWD/qt-locked-file.h \
     $$PWD/qt-single-application.h
 
 SOURCES += \
     $$PWD/qt-local-peer.cpp \
-    $$PWD/qt-single-application.cpp
+    $$PWD/qt-locked-file-unix.cpp \
+    $$PWD/qt-single-application.cpp \
+    $$PWD/qt-locked-file.cpp
