@@ -97,17 +97,30 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
                 boldOpenned = true;
                 htmlString.append(QString("<b><font size=\"4\">"));
             }
-            htmlString.append(QString(text.at(i)));
+            htmlString.append(escapeHtml(QString(text.at(i))));
         } else {
             if (boldOpenned) {
                 boldOpenned = false;
                 htmlString.append(QString("</font></b>"));
             }
-            htmlString.append(QString(text.at(i)));
+            htmlString.append(escapeHtml(QString(text.at(i))));
         }
     }
     htmlString.replace("\n", "<br />");//替换换行符
     return htmlString;
+}
+
+/**
+ * @brief SearchDetailView::escapeHtml 将搜索结果内容中的标签括号转义，来防止文件内容中的标记语言被识别为富文本
+ * @param str 需要转义的字段
+ * @return
+ */
+QString SearchDetailView::escapeHtml(const QString & str)
+{
+    QString temp = str;
+    temp.replace("<", "&lt;");
+    temp.replace(">", "&gt;");
+    return temp;
 }
 
 /**

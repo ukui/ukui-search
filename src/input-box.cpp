@@ -178,7 +178,7 @@ SearchLineEdit::SearchLineEdit()
 {
     this->setFocusPolicy(Qt::ClickFocus);
     this->installEventFilter(this);
-    this->setContextMenuPolicy(Qt::NoContextMenu);
+//    this->setContextMenuPolicy(Qt::NoContextMenu);
     this->setMaxLength(100);
 
 

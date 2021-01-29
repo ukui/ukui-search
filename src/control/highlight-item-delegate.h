@@ -13,6 +13,7 @@ private:
     QString m_regFindKeyWords = 0;
     void paint(QPainter *,const QStyleOptionViewItem &, const QModelIndex &) const override;
     QString getHtmlText(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const;
+    QString escapeHtml(const QString&) const;
     void paintKeywordHighlight(QPainter *, const QStyleOptionViewItem &, const QString &, const int &, const int &) const;
 };
 

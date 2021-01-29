@@ -30,6 +30,7 @@ private:
     bool openPathAction(const QString&);
     bool copyPathAction(const QString&);
     QString getHtmlText(const QString&, const QString&);
+    QString escapeHtml(const QString&);
     bool writeConfigFile(const QString&);
     bool m_isEmpty = true;
     int m_type = 0;
