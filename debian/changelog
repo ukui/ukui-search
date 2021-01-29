@@ -1,3 +1,10 @@
+ukui-search (0.0.2+0128) v101; urgency=medium
+
+  * Adds support for special symbols in file index and search.
+  * Bugs Fixed. 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 29 Jan 2021 11:15:29 +0800
+
 ukui-search (0.0.1+0127) v101; urgency=medium
 
   * Bugs Fixed. 

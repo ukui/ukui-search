@@ -1,7 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
+** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies)
+**               2020 KylinSoft Co., Ltd.
 ** Contact: http://www.qt-project.org/legal
+**
 **
 ** This file is part of the Qt Solutions component.
 **
@@ -35,6 +37,7 @@
 ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 **
 ** $QT_END_LICENSE$
+**
 **
 ****************************************************************************/
 
