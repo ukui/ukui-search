@@ -17,7 +17,6 @@
  */
 
 #include "mainwindow.h"
-#include <QtSingleApplication>
 #include <QDesktopWidget>
 #include <QFile>
 #include <QScreen>
@@ -212,6 +211,7 @@ int main(int argc, char *argv[])
     app.setActivationWindow(w);
 
     if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
+        w->moveToPanel();
         w->show();
     }
 //    if(arguments.size()>1)

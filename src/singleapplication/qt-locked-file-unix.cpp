@@ -43,7 +43,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "qtlockedfile.h"
+#include "qt-locked-file.h"
 
 bool QtLockedFile::lock(LockMode mode, bool block)
 {

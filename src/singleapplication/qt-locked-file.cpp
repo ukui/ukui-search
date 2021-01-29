@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include "qtlockedfile.h"
+#include "qt-locked-file.h"
 
 /*!
     \class QtLockedFile

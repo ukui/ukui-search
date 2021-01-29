@@ -45,7 +45,7 @@
 #include <QLocalSocket>
 #include <QDir>
 
-#include "qtlockedfile.h"
+#include "qt-locked-file.h"
 
 class QtLocalPeer : public QObject
 {
