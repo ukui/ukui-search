@@ -34,10 +34,10 @@ public:
     void setPath(const QString&);
 protected:
     explicit Traverse_BFS(const QString&);
+    QString path = "/home";
 private:
     Traverse_BFS(const Traverse_BFS&) = delete;
     void operator=(const Traverse_BFS&) = delete;
-    QString path = "/home";
 };
 
 #endif // TRAVERSE_BFS_H

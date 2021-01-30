@@ -36,7 +36,8 @@ InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
 
     this->AddWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-    this->Traverse();
+//    this->Traverse();
+    this->firstTraverse();
 
 
     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
@@ -48,9 +49,43 @@ InotifyIndex::~InotifyIndex()
     IndexGenerator::getInstance()->~IndexGenerator();
 }
 
+void InotifyIndex::firstTraverse(){
+    QQueue<QString> bfs;
+    bfs.enqueue(this->path);
+    QFileInfoList list;
+    QDir dir;
+    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+    dir.setSorting(QDir::DirsFirst);
+    while (!bfs.empty()) {
+        dir.setPath(bfs.dequeue());
+        list = dir.entryInfoList();
+        for (auto i : list){
+            if (i.isDir()){
+                this->AddWatch(i.absoluteFilePath());
+                bfs.enqueue(i.absoluteFilePath());
+            }
+        }
+    }
+}
+
 void InotifyIndex::DoSomething(const QFileInfo& fileInfo){
+    qDebug() << fileInfo.fileName() << "-------" << fileInfo.absoluteFilePath();
     if(fileInfo.isDir()){
         this->AddWatch(fileInfo.absoluteFilePath());
+    }
+    QQueue<QVector<QString> >* tempFile = new QQueue<QVector<QString> >;
+    tempFile->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0"));
+    IndexGenerator::getInstance()->creatAllIndex(tempFile);
+    if (tempFile)
+        delete tempFile;
+    for (auto i : this->targetFileTypeVec){
+        if (fileInfo.fileName().endsWith(i)){
+            QQueue<QString>* tempContent = new QQueue<QString>;
+            tempContent->enqueue(fileInfo.absoluteFilePath());
+            IndexGenerator::getInstance()->creatAllIndex(tempContent);
+            if (tempContent)
+                delete tempContent;
+        }
     }
 }
 
@@ -77,8 +112,11 @@ bool InotifyIndex::RemoveWatch(const QString &path){
     assert(ret == 0);
 
     for (QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();){
+//        qDebug() << i.value();
         if (i.value().length() > path.length()){
-            if (i.value().mid(0, path.length()) == path){
+//            if (i.value().mid(0, path.length()) == path){
+//            if (path.startsWith(i.value())){
+            if (i.value().startsWith(path)){
                 qDebug() << "remove path: " << i.value();
                 ret = inotify_rm_watch(m_fd, currentPath.key(path));
                 if (ret){
@@ -89,6 +127,7 @@ bool InotifyIndex::RemoveWatch(const QString &path){
 //                assert(ret == 0);
                 /*--------------------------------*/
                 //在此调用删除索引
+                qDebug() << i.value();
                 IndexGenerator::getInstance()->deleteAllIndex(new QStringList(i.value()));
                 /*--------------------------------*/
                 currentPath.erase(i++);
@@ -103,16 +142,11 @@ bool InotifyIndex::RemoveWatch(const QString &path){
     }
 //    qDebug() << path;
     //这个貌似不用删，先mark一下
-    //currentPath.remove(currentPath.key(path));
+    currentPath.remove(currentPath.key(path));
     return true;
 }
 
 void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
-    //        qDebug() << "Read " << numRead << " bytes from inotify fd";
-
-    /* Process all of the events in buffer returned by read() */
-
-
     QQueue<QVector<QString>>* indexQueue = new QQueue<QVector<QString>>();
     QQueue<QString>* contentIndexQueue = new QQueue<QString>();
 
@@ -122,11 +156,12 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
 
     for (; p < buf + numRead;) {
         struct inotify_event * event = reinterpret_cast<inotify_event *>(p);
-//        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
+        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
         if(event->name[0] != '.'){
             qDebug() << QString(currentPath[event->wd] + '/' + event->name);
             //                switch (event->mask) {
             if (event->mask & IN_CREATE){
+                qDebug() << "IN_CREATE";
                 if (event->mask & IN_ISDIR){
                     AddWatch(currentPath[event->wd] + '/' + event->name);
                     setPath(currentPath[event->wd] + '/' + event->name);
@@ -151,6 +186,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
 
 
             if ((event->mask & IN_DELETE) | (event->mask & IN_MOVED_FROM)){
+                qDebug() << "IN_DELETE or IN_MOVED_FROM";
                 if (event->mask & IN_ISDIR){
                     RemoveWatch(currentPath[event->wd] + '/' + event->name);
                 }
@@ -161,8 +197,9 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
 
 
             if (event->mask & IN_MODIFY){
+                qDebug() << "IN_MODIFY";
                 if (!(event->mask & IN_ISDIR)){
-                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
+//                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
                     indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
                     IndexGenerator::getInstance()->creatAllIndex(indexQueue);
                     indexQueue->clear();
@@ -180,9 +217,10 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
 
 
             if (event->mask & IN_MOVED_TO){
+                qDebug() << "IN_MOVED_TO";
                 if (event->mask & IN_ISDIR){
                     RemoveWatch(currentPath[event->wd] + '/' + event->name);
-                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
+//                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
                     AddWatch(currentPath[event->wd] + '/' + event->name);
                     setPath(currentPath[event->wd] + '/' + event->name);
                     Traverse();
@@ -382,6 +420,7 @@ fork:
                         fflush(stdout);
                         assert(false);
                     }
+                    qDebug() << "Read " << numRead << " bytes from inotify fd";
                     this->eventProcess(buf, numRead);
                 }
             }
