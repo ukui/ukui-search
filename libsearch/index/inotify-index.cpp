@@ -76,14 +76,14 @@ void InotifyIndex::DoSomething(const QFileInfo& fileInfo){
     QQueue<QVector<QString> >* tempFile = new QQueue<QVector<QString> >;
     tempFile->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0"));
     IndexGenerator::getInstance()->creatAllIndex(tempFile);
-    if (!tempFile)
+    if (tempFile)
         delete tempFile;
     for (auto i : this->targetFileTypeVec){
         if (fileInfo.fileName().endsWith(i)){
             QQueue<QString>* tempContent = new QQueue<QString>;
             tempContent->enqueue(fileInfo.absoluteFilePath());
             IndexGenerator::getInstance()->creatAllIndex(tempContent);
-            if (!tempContent)
+            if (tempContent)
                 delete tempContent;
         }
     }
