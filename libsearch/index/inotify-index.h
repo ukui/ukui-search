@@ -52,6 +52,7 @@ public:
     virtual void DoSomething(const QFileInfo &) final;
 
     void eventProcess(const char*, ssize_t);
+    void firstTraverse();
 protected:
     void run() override;
 private:
