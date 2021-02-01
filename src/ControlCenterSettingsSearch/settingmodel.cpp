@@ -42,6 +42,9 @@ QVariant settingModel::data(const QModelIndex &index, int role) const
             return m_Iconresult.at(index.row());
     case Qt::SizeHintRole:
         return QSize(200,46);
+    case Qt::FontRole:
+         return QFont("宋体",14,QFont::DemiBold);
+
         }
     return QVariant();
 }

@@ -97,9 +97,9 @@ QVariant filemodel::data(const QModelIndex &index, int role) const
         }
     case Qt::FontRole:
         if(index.column()==0){
-            return QFont("宋体",18,QFont::DemiBold);
+            return QFont("宋体",14,QFont::DemiBold);
         }else{
-            return QFont("宋体",12,QFont::Normal);
+            return QFont("宋体",10,QFont::Normal);
         }
     case Qt::SizeHintRole:
         return QSize(200,46);

@@ -85,7 +85,7 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
     int count=m_filemodel->showResult(arg);
     m_searchFileThread->quit();
     if(count>2){
-        this->setFixedHeight(m_fileHead->height()+(count+1.5)*46);
+        this->setFixedHeight(m_fileHead->height()+(count+1.6)*46);
         m_Morebutton->show();
     }else{
         this->setFixedHeight(m_fileHead->height()+(count+1)*46);

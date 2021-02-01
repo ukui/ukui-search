@@ -126,6 +126,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
                 painter->save();
                 icon.paint(painter,iconRect,Qt::AlignLeft);
                 QString appname=pUkuiMenuInterface->getAppName(strlist.at(0));
+                painter->setFont(QFont("宋体",14,QFont::DemiBold));
                 painter->drawText(QRect(iconRect.right()+15,rect.y(),
                                         rect.width()-62,rect.height()),Qt::AlignVCenter,appname);
                 painter->restore();
