@@ -56,6 +56,11 @@ void ConstructDocumentForPath::run()
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep)));
+//    qDebug()<<"sourcePath"<<sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep);
+//    qDebug() << "sourcePath ---------------------------: " << sourcePath;
+//    qDebug() << "sourcePath.section -------------------: " << sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep);
+//    qDebug() << "ConstructDocumentForPath -- uniqueterm: " << uniqueterm;
+//    qDebug() << "ConstructDocumentForPath -- upTerm:     " << upTerm;
 
     Document doc;
     doc.setData(sourcePath);

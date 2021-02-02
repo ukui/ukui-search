@@ -98,7 +98,7 @@ bool InotifyIndex::AddWatch(const QString &path){
 //    Q_ASSERT(ret != -1);
     assert(ret != -1);
     currentPath[ret] = path;
-    //qDebug() << "Watch:" << path;
+//    qDebug() << "Watch: " << path << "ret: " << ret;
     return true;
 }
 
@@ -131,6 +131,7 @@ bool InotifyIndex::RemoveWatch(const QString &path){
                 IndexGenerator::getInstance()->deleteAllIndex(new QStringList(i.value()));
                 /*--------------------------------*/
                 currentPath.erase(i++);
+//                i++;
             }
             else{
                 i++;
@@ -142,7 +143,7 @@ bool InotifyIndex::RemoveWatch(const QString &path){
     }
 //    qDebug() << path;
     //这个貌似不用删，先mark一下
-    currentPath.remove(currentPath.key(path));
+//    currentPath.remove(currentPath.key(path));
     return true;
 }
 
@@ -156,6 +157,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
 
     for (; p < buf + numRead;) {
         struct inotify_event * event = reinterpret_cast<inotify_event *>(p);
+        qDebug() << "Read Event event->wd: " << event->wd;
         qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
         if(event->name[0] != '.'){
             qDebug() << QString(currentPath[event->wd] + '/' + event->name);
