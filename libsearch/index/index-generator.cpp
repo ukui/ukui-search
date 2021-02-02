@@ -200,9 +200,11 @@ void IndexGenerator::insertIntoDatabase(Document& doc)
     for(auto i : doc.getIndexText()){
         m_indexer.index_text(i.toStdString());
     }
+    qDebug()<<"insert m_database_path:"<<QString::fromStdString(document.get_data());
+    qDebug()<<"document:"<<QString::fromStdString(document.get_description());
 
     Xapian::docid innerId= m_database_path->replace_document(doc.getUniqueTerm(),document);
-//    qDebug()<<"replace doc docid="<<static_cast<int>(innerId);
+    qDebug()<<"replace doc docid="<<static_cast<int>(innerId);
 //    qDebug()<< "--index finish--";
     return;
 }
