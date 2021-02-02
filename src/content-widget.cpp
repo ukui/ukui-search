@@ -28,7 +28,8 @@ ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
 {
     initUI();
     initListView();
-    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Background/背景/更改壁纸";
+//    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Background/背景/更改壁纸";
+    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
 }
 
 ContentWidget::~ContentWidget()
@@ -340,17 +341,22 @@ void ContentWidget::initHomePage() {
             layout->setSpacing(8);
             layout->setContentsMargins(0, 0, 0, 0);
             itemWidget->setLayout(layout);
+            int shownItem = lists.at(i).length();
             Q_FOREACH(QString path, lists.at(i)){
+                if (i && QString::compare(FileUtils::getAppName(path),"Unknown App") == 0) {
+                    shownItem --;
+                    continue;
+                }
                 HomePageItem * item = new HomePageItem(itemWidget, i, path);
                 item->setFixedSize(100, 100);
                 layout->addWidget(item);
             }
-            for (int j = 0; j < 5 - lists.at(i).length(); j++) {
+            for (int j = 0; j < 5 - shownItem; j++) {
                 QWidget * emptyItem = new QWidget(itemWidget);
-                emptyItem->setFixedSize(108, 108); //占位用widget,少于4项会补全后方占位
+                emptyItem->setFixedSize(100, 100); //占位用widget,少于5项会补全后方占位
                 layout->addWidget(emptyItem);
             }
-            if (i) titleLabel->setText(tr("Open Quickly"));
+            if (i && shownItem) titleLabel->setText(tr("Open Quickly"));
             else titleLabel->setText(tr("Commonly Used"));
         }
         itemWidgetLyt->setSpacing(6);
