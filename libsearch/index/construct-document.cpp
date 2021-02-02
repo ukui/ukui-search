@@ -45,13 +45,18 @@ void ConstructDocumentForPath::run()
 //    qDebug()<<_doc_list_path->size();
     QString index_text = m_list.at(0);
     QString sourcePath = m_list.at(1);
+    Document doc;
 
     //多音字版
     //现加入首字母
     QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(m_list.at(0)).replace(".",""));
-    for (QString& i : pinyin_text_list){
-        i.replace("", " ");
-        i = i.simplified();
+    if(!pinyin_text_list.isEmpty())
+    {
+        for (QString& i : pinyin_text_list){
+            i.replace("", " ");
+            i = i.simplified();
+        }
+        doc.setIndexText(pinyin_text_list);
     }
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
@@ -62,7 +67,7 @@ void ConstructDocumentForPath::run()
 //    qDebug() << "ConstructDocumentForPath -- uniqueterm: " << uniqueterm;
 //    qDebug() << "ConstructDocumentForPath -- upTerm:     " << upTerm;
 
-    Document doc;
+
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
@@ -70,7 +75,6 @@ void ConstructDocumentForPath::run()
 /*    QStringList temp;
 //    temp.append(index_text);
     temp.append(pinyin_text_list)*/;
-    doc.setIndexText(pinyin_text_list);
     int postingCount = 0;
     while(postingCount < index_text.size())
     {

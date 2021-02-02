@@ -163,13 +163,9 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
             qDebug() << QString(currentPath[event->wd] + '/' + event->name);
             //                switch (event->mask) {
             if (event->mask & IN_CREATE){
-                qDebug() << "IN_CREATE";
-                if (event->mask & IN_ISDIR){
-                    AddWatch(currentPath[event->wd] + '/' + event->name);
-                    setPath(currentPath[event->wd] + '/' + event->name);
-                    Traverse();
-                }
 
+                //Create top dir first, traverse it last.
+                qDebug() << "IN_CREATE";
                 /*--------------------------------*/
                 //                    IndexGenerator::getInstance()->creatAllIndex(QQueue<QVector<QString>>(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0")));
                 indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
@@ -182,6 +178,12 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
                         contentIndexQueue->clear();
                         break;
                     }
+                }
+
+                if (event->mask & IN_ISDIR){
+                    AddWatch(currentPath[event->wd] + '/' + event->name);
+                    setPath(currentPath[event->wd] + '/' + event->name);
+                    Traverse();
                 }
                 goto next;
             }
@@ -223,9 +225,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
                 if (event->mask & IN_ISDIR){
                     RemoveWatch(currentPath[event->wd] + '/' + event->name);
 //                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
-                    AddWatch(currentPath[event->wd] + '/' + event->name);
-                    setPath(currentPath[event->wd] + '/' + event->name);
-                    Traverse();
+
 
                     indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
                     IndexGenerator::getInstance()->creatAllIndex(indexQueue);
@@ -238,6 +238,11 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
                             break;
                         }
                     }
+
+                    AddWatch(currentPath[event->wd] + '/' + event->name);
+                    setPath(currentPath[event->wd] + '/' + event->name);
+                    Traverse();
+
                 }
                 else {
                     IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
