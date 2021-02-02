@@ -22,6 +22,7 @@
 #define SEARCHDETAILVIEW_H
 
 #include <QWidget>
+#include <QWebEngineView>
 #include "option-view.h"
 
 class SearchDetailView : public QWidget
@@ -36,6 +37,7 @@ public:
     void setContent(const QString&, const QString&);
     bool isEmpty();
     int getType();
+//    void setWebWidget(const QString&);
 
 protected:
     void paintEvent(QPaintEvent *);

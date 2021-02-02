@@ -28,6 +28,7 @@ ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
 {
     initUI();
     initListView();
+    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Background/背景/更改壁纸";
 }
 
 ContentWidget::~ContentWidget()
@@ -236,6 +237,7 @@ void ContentWidget::setupConnect(SearchListView * listview) {
             m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
         }
         m_detailView->setupWidget(type, path);
+//        m_detailView->setWebWidget(this->m_keyword);
         listview->is_current_list = true;
         Q_EMIT this->currentItemChanged();
         listview->is_current_list = false;
@@ -308,11 +310,9 @@ void ContentWidget::initHomePage() {
     commonlyList = map.value("Commonly");
     QStringList recentlyList;
     recentlyList = map.value("Recently");
-    QStringList quicklyList;
-    quicklyList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Background/背景/更改壁纸";
     lists.append(commonlyList);
     lists.append(recentlyList);
-    lists.append(quicklyList);
+    lists.append(m_quicklyOpenList);
 
     for (int i = 0; i < lists.count(); i++) {
         if (lists.at(i).isEmpty())
@@ -649,4 +649,13 @@ void ContentWidget::setKeyword(QString keyword)
     m_settingListView->setKeyword(keyword);
     m_appListView->setKeyword(keyword);
     m_bestListView->setKeyword(keyword);
+}
+
+/**
+ * @brief ContentWidget::setQuicklyOpenList 设置快速打开列表
+ * @param list
+ */
+void ContentWidget::setQuicklyOpenList(const QStringList & list)
+{
+    m_quicklyOpenList = list;
 }

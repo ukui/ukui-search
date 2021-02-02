@@ -34,6 +34,7 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 SettingsWidget::SettingsWidget(QWidget *parent) : QDialog(parent)
 {
     this->setWindowIcon(QIcon::fromTheme("kylin-search"));
+    this->setWindowTitle(tr("ukui-search"));
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     initUi();

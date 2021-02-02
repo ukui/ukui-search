@@ -72,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
     this->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+    this->setWindowTitle(tr("ukui-search"));
     initUi();
 
     QPainterPath path;
@@ -234,6 +235,7 @@ void MainWindow::initUi()
     });
 
     //初始化homepage
+//    m_contentFrame->setQuicklyOpenList(list); //如需自定义快捷打开使用本函数
     m_contentFrame->initHomePage();
 }
 

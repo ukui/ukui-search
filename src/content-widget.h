@@ -44,6 +44,7 @@ public:
     void initHomePage();
     void setContentList(const QStringList&);
     void setKeyword(QString);
+    void setQuicklyOpenList(const QStringList &);
 private:
     void initUI();
     void initListView();
@@ -88,6 +89,7 @@ private:
     QStringList m_dirList;
     QStringList m_fileList;
     QStringList m_contentList;
+    QStringList m_quicklyOpenList;
 
     int m_currentType = 0;
 

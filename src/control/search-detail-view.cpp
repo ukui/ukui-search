@@ -43,7 +43,6 @@ SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
 SearchDetailView::~SearchDetailView()
 {
     if (m_layout) {
-        clearLayout();
         delete m_layout;
         m_layout = NULL;
     }
@@ -107,6 +106,23 @@ int SearchDetailView::getType()
 {
     return m_type;
 }
+
+/**
+ * @brief SearchDetailView::setWebWidget 显示为网页
+ * @param keyword 关键词
+ */
+//void SearchDetailView::setWebWidget(const QString& keyword)
+//{
+//    QWebEngineView * m_webView = new QWebEngineView(this);
+//    m_webView->move(0, 0);
+//    m_webView->setFixedSize(360, 522);
+//    m_isEmpty = false;
+//    clearLayout();
+
+//    QString str = "http://m.baidu.com/s?word=" + keyword;
+//    m_webView->load(str);
+//    m_webView->show();
+//}
 
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {
     QString htmlString;
@@ -403,6 +419,8 @@ void SearchDetailView::initUI()
     m_layout->addWidget(m_optionView);
 
     m_layout->addStretch();
+
+
 
     this->clearLayout(); //初始化时隐藏所有控件
 }
