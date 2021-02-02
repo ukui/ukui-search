@@ -228,7 +228,7 @@ void IndexGenerator::HandlePathList(QQueue<QVector<QString>> *messageList)
 //    future.cancel();
 //    m_doc_list_path = new QList<Document>(docList);
     QThreadPool pool;
-//    pool.setMaxThreadCount(1);
+    pool.setMaxThreadCount(((QThread::idealThreadCount() - 1) / 2) + 1);
     pool.setExpiryTimeout(100);
     ConstructDocumentForPath *constructer;
     while(!messageList->isEmpty())
@@ -260,7 +260,7 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
     ChineseSegmentation::getInstance();
     ConstructDocumentForContent *constructer;
     QThreadPool pool;
-//    pool.setMaxThreadCount(2);
+    pool.setMaxThreadCount(((QThread::idealThreadCount() - 1) / 2) + 1);
     pool.setExpiryTimeout(100);
     while(!messageList->isEmpty())
     {
