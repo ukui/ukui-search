@@ -200,6 +200,15 @@ int main(int argc, char *argv[])
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
+    QTranslator qt_translator;
+    try {
+        if (! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw -1;
+        app.installTranslator(&qt_translator);
+    } catch (...) {
+        qDebug() << "Load translations file" << QLocale() << "failed!";
+    }
+
+
     MainWindow *w = new MainWindow;
     QStringList arguments = QCoreApplication::arguments();
 //    centerToScreen(w);
