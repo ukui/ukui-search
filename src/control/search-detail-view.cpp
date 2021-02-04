@@ -223,8 +223,12 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             QIcon icon = FileUtils::getAppIcon(path);
             m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
             QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-            QString name = fontMetrics.elidedText(FileUtils::getAppName(path), Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
+            QString wholeName = FileUtils::getAppName(path);
+            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
             m_nameLabel->setText(name);
+            if (QString::compare(name, wholeName)) {
+                m_nameLabel->setToolTip(wholeName);
+            }
             m_typeLabel->setText(tr("Application"));
             break;
         }
@@ -234,8 +238,12 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
             m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
             QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-            QString name = fontMetrics.elidedText(FileUtils::getFileName(path), Qt::ElideRight, 215);
+            QString wholeName = FileUtils::getFileName(path);
+            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 215);
             m_nameLabel->setText(name);
+            if (QString::compare(name, wholeName)) {
+                m_nameLabel->setToolTip(wholeName);
+            }
             m_nameLabel->setTextFormat(Qt::PlainText); //显示纯文本
             m_typeLabel->setText(tr("Document"));
             break;
