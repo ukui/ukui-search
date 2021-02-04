@@ -557,6 +557,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
 
     uchardet_data_end(chardet);
     const char *codec = uchardet_get_charset(chardet);
+    uchardet_delete(chardet);
 
     if(QTextCodec::codecForName(codec) == 0)
         qWarning()<<"Unsupported Text encoding format"<<path;
