@@ -38,6 +38,9 @@
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
 #define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
+#define PATH_EMPTY 1;
+#define PATH_NOT_IN_HOME 2;
+#define PATH_PARENT_BLOCKED 3;
 
 class LIBSEARCH_EXPORT GlobalSettings : public QObject
 {
@@ -63,7 +66,7 @@ public Q_SLOTS:
      * @param true to remove blocking,false to set blocking,default set false.
      * @return
      */
-    bool setBlockDirs(const QString& path, QString &returnMessage,bool remove = false);
+    bool setBlockDirs(const QString& path, int &returnCode,bool remove = false);
     QStringList getBlockDirs();
 
     void forceSync(const QString& = nullptr);

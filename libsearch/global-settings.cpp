@@ -100,13 +100,13 @@ void GlobalSettings::resetAll()
     });
 }
 
-bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage, bool remove)
+bool GlobalSettings::setBlockDirs(const QString &path, int &returnCode, bool remove)
 {
     if(remove)
     {
         if(path.isEmpty())
         {
-            returnMessage = QString(tr("I can't remove an empty path string!"));
+            returnCode = PATH_EMPTY;
             return false;
         }
 
@@ -115,7 +115,8 @@ bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage, b
     }
     if(!path.startsWith("/home"))
     {
-        returnMessage = QString(tr("I can only search your user directory, it doesn't make any sense if you block an directory which is not in user directory!"));
+//        returnCode = QString(tr("I can only search your user directory, it doesn't make any sense if you block an directory which is not in user directory!"));
+        returnCode = PATH_NOT_IN_HOME;
         return false;
     }
 
@@ -127,7 +128,8 @@ bool GlobalSettings::setBlockDirs(const QString &path, QString &returnMessage, b
     {
         if(pathKey.startsWith(i))
         {
-            returnMessage = QString(tr("My parent folder has been blocked!"));
+//            returnCode = QString(tr("My parent folder has been blocked!"));
+            returnCode = PATH_PARENT_BLOCKED;
             return false;
         }
 

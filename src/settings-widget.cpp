@@ -270,8 +270,8 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
         return;
     }
 
-    QString returnMessage;
-    if (GlobalSettings::getInstance()->setBlockDirs(path, returnMessage, true)) {
+    int returnCode = 0;
+    if (GlobalSettings::getInstance()->setBlockDirs(path, returnCode, true)) {
         qDebug()<<"Remove block dir in onBtnDelClicked() successed.";
         Q_FOREACH (FolderListItem * item, m_dirListWidget->findChildren<FolderListItem*>()) {
             if (item->getPath() == path) {
@@ -283,10 +283,10 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
             }
         }
     } else {
-        qWarning()<<returnMessage;
-        qDebug()<<"Remove block dir in onBtnAddClicked() failed. Message: "<<returnMessage;
+//        qWarning()<<returnCode;
+        qDebug()<<"Remove block dir in onBtnAddClicked() failed. Code: "<<returnCode;
 
-        QMessageBox message(QMessageBox::Warning, tr("Search"), returnMessage, QMessageBox::Ok, this);
+        QMessageBox message(QMessageBox::Warning, tr("Search"), QString::number(returnCode), QMessageBox::Ok, this);
         message.exec();
     }
 }
@@ -365,17 +365,18 @@ void SettingsWidget::onBtnAddClicked() {
     }
     QString selectedDir = 0;
     QString returnMessage = 0;
+    int returnCode;
     selectedDir = fileDialog->selectedFiles().first();
     qDebug()<<"Selected a folder in onBtnAddClicked(): "<<selectedDir<<". ->settings-widget.cpp #238";
-    if (GlobalSettings::getInstance()->setBlockDirs(selectedDir, returnMessage)) {
+    if (GlobalSettings::getInstance()->setBlockDirs(selectedDir, returnCode)) {
         setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
         qDebug()<<"Add block dir in onBtnAddClicked() successed. ->settings-widget.cpp #238";
     } else {
-        qWarning()<<returnMessage;
-        qDebug()<<"Add block dir in onBtnAddClicked() failed. Message: "<<returnMessage<<" ->settings-widget.cpp #238";
+//        qWarning()<<returnMessage;
+        qDebug()<<"Add block dir in onBtnAddClicked() failed. Code: "<<returnCode<<" ->settings-widget.cpp #238";
 //        QMessageBox::warning(this, tr("Search"), returnMessage);
 
-        QMessageBox message(QMessageBox::Warning, tr("Search"), returnMessage, QMessageBox::Ok, this);
+        QMessageBox message(QMessageBox::Warning, tr("Search"), QString::number(returnCode), QMessageBox::Ok, this);
         message.exec();
     }
 }
