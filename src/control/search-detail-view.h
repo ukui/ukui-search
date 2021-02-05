@@ -37,6 +37,7 @@ public:
     void setContent(const QString&, const QString&);
     bool isEmpty();
     int getType();
+    bool isContent = false;
 //    void setWebWidget(const QString&);
 
 protected:

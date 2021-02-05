@@ -91,6 +91,8 @@ private:
     QStringList m_contentList;
     QStringList m_quicklyOpenList;
 
+    QString m_bestContent; //最佳匹配有文件内容搜索结果的时候，以此变量传递
+
     int m_currentType = 0;
 
     QString getTitleName(const int&);

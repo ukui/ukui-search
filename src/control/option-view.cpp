@@ -67,6 +67,7 @@ void OptionView::setupOptions(const int& type) {
             break;
         }
         case SearchListView::ResType::Content:
+        case SearchListView::ResType::Best:
         case SearchListView::ResType::File : {
             setupFileOptions();
             break;
