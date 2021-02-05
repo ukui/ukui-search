@@ -51,6 +51,7 @@ private:
     void refreshIndexState();
     void paintEvent(QPaintEvent *);
     void resize();
+    void showWarningDialog(const int&);
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
     QFrame * m_titleFrame = nullptr;

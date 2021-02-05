@@ -283,11 +283,7 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
             }
         }
     } else {
-//        qWarning()<<returnCode;
-        qDebug()<<"Remove block dir in onBtnAddClicked() failed. Code: "<<returnCode;
-
-        QMessageBox message(QMessageBox::Warning, tr("Search"), QString::number(returnCode), QMessageBox::Ok, this);
-        message.exec();
+        showWarningDialog(returnCode);
     }
 }
 
@@ -364,7 +360,6 @@ void SettingsWidget::onBtnAddClicked() {
         return;
     }
     QString selectedDir = 0;
-    QString returnMessage = 0;
     int returnCode;
     selectedDir = fileDialog->selectedFiles().first();
     qDebug()<<"Selected a folder in onBtnAddClicked(): "<<selectedDir<<". ->settings-widget.cpp #238";
@@ -372,12 +367,7 @@ void SettingsWidget::onBtnAddClicked() {
         setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
         qDebug()<<"Add block dir in onBtnAddClicked() successed. ->settings-widget.cpp #238";
     } else {
-//        qWarning()<<returnMessage;
-        qDebug()<<"Add block dir in onBtnAddClicked() failed. Code: "<<returnCode<<" ->settings-widget.cpp #238";
-//        QMessageBox::warning(this, tr("Search"), returnMessage);
-
-        QMessageBox message(QMessageBox::Warning, tr("Search"), QString::number(returnCode), QMessageBox::Ok, this);
-        message.exec();
+        showWarningDialog(returnCode);
     }
 }
 
@@ -439,12 +429,42 @@ void SettingsWidget::resize()
 //    } else {
 //        this->setFixedSize(528, 515);
 //    }
-    if (m_blockdirs <= 3) {
-        m_dirListArea->setFixedHeight(32 * m_blockdirs);
+    if (m_blockdirs <= 4) {
+        m_dirListArea->setFixedHeight(32 * m_blockdirs + 5);
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
-        m_dirListWidget->setFixedHeight(32 * m_blockdirs);
-        m_dirListArea->setFixedHeight(32 * 3);
+        m_dirListWidget->setFixedHeight(32 * m_blockdirs + 5);
+        m_dirListArea->setFixedHeight(32 * 4);
     }
     this->setFixedSize(528, 455);
+}
+
+/**
+ * @brief SettingsWidget::showWarningDialog 显示警告弹窗
+ * @param errorCode 错误码
+ */
+void SettingsWidget::showWarningDialog(const int & errorCode)
+{
+    qWarning()<<"Add block dir in onBtnAddClicked() failed. Code: "<<errorCode<<" ->settings-widget.cpp #238";
+    QString errorMessage;
+    switch (errorCode) {
+        case 1: {
+            errorMessage = tr("Choosen path is Empty!");
+            break;
+        }
+        case 2: {
+            errorMessage = tr("Choosen path is not in \"home\"!");
+            break;
+        }
+        case 3: {
+            errorMessage = tr("Its' parent folder has been blocked!");
+            break;
+        }
+        default: {
+            errorMessage = tr("Set blocked folder failed!");
+            break;
+        }
+    }
+    QMessageBox message(QMessageBox::Warning, tr("Search"), errorMessage, QMessageBox::Ok, this);
+    message.exec();
 }
