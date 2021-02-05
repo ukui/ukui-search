@@ -27,7 +27,7 @@ Package: ukui-search
 Architecture: any
 Depends: ${shlibs:Depends}, 
          ${misc:Depends},
-         libukui-search0 (= ${binary:Version})
+         libukui-search0 (= ${binary:Version}),
          ukui-search-systemdbus (= ${binary:Version})
 Description: ukui-search is a user-wide desktop search 
  feature of UKUI desktop environment.
