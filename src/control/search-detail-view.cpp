@@ -307,6 +307,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
             return true;
             break;
         }
+        case SearchListView::ResType::Best:
         case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir:
         case SearchListView::ResType::File: {

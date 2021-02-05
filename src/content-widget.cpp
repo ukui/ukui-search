@@ -335,6 +335,11 @@ void ContentWidget::initHomePage() {
                 item->setFixedSize(265, 48);
                 layout->addWidget(item, j / 2, j % 2);
             }
+            if (lists.at(i).length() == 1) {
+                QWidget * emptyItem = new QWidget(itemWidget);
+                emptyItem->setFixedSize(265, 48); //占位用widget,只有一项时在右方补全
+                layout->addWidget(emptyItem, 1, 2);
+            }
         } else {
             itemWidget->setFixedHeight(136);
             QHBoxLayout * layout = new QHBoxLayout(itemWidget);
