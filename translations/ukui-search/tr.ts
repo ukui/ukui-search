@@ -152,7 +152,7 @@
     <message>
         <location filename="../../src/settings-widget.cpp" line="69"/>
         <location filename="../../src/settings-widget.cpp" line="267"/>
-        <location filename="../../src/settings-widget.cpp" line="468"/>
+        <location filename="../../src/settings-widget.cpp" line="470"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -193,12 +193,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="357"/>
+        <location filename="../../src/settings-widget.cpp" line="359"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="296"/>
+        <location filename="../../src/settings-widget.cpp" line="298"/>
         <source>Creating ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -233,62 +233,72 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="299"/>
+        <location filename="../../src/settings-widget.cpp" line="268"/>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="269"/>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="301"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="307"/>
+        <location filename="../../src/settings-widget.cpp" line="309"/>
         <source>Index Entry: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="351"/>
+        <location filename="../../src/settings-widget.cpp" line="353"/>
         <source>Directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="352"/>
+        <location filename="../../src/settings-widget.cpp" line="354"/>
         <source>select blocked folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="353"/>
+        <location filename="../../src/settings-widget.cpp" line="355"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="354"/>
+        <location filename="../../src/settings-widget.cpp" line="356"/>
         <source>Position: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="355"/>
+        <location filename="../../src/settings-widget.cpp" line="357"/>
         <source>FileName: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="356"/>
+        <location filename="../../src/settings-widget.cpp" line="358"/>
         <source>FileType: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="452"/>
+        <location filename="../../src/settings-widget.cpp" line="454"/>
         <source>Choosen path is Empty!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="456"/>
+        <location filename="../../src/settings-widget.cpp" line="458"/>
         <source>Choosen path is not in &quot;home&quot;!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="460"/>
+        <location filename="../../src/settings-widget.cpp" line="462"/>
         <source>Its&apos; parent folder has been blocked!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="464"/>
+        <location filename="../../src/settings-widget.cpp" line="466"/>
         <source>Set blocked folder failed!</source>
         <translation type="unfinished"></translation>
     </message>

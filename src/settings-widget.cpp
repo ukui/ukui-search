@@ -264,9 +264,11 @@ void SettingsWidget::refreshIndexState()
  * @param path 文件夹路径
  */
 void SettingsWidget::onBtnDelClicked(const QString& path) {
-    QMessageBox message(QMessageBox::Question, tr("Search"), tr("Whether to delete this directory?"), QMessageBox::No | QMessageBox::Yes, this);
+    QMessageBox message(QMessageBox::Question, tr("Search"), tr("Whether to delete this directory?"));
+    QPushButton * buttonYes = message.addButton(tr("Yes"), QMessageBox::YesRole);
+    QPushButton * buttonNo = message.addButton(tr("No"), QMessageBox::NoRole);
     message.exec();
-    if (message.clickedButton() != message.button(QMessageBox::Yes)) {
+    if (message.clickedButton() != buttonYes) {
         return;
     }
 

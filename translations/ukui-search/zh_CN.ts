@@ -152,7 +152,7 @@
     <message>
         <location filename="../../src/settings-widget.cpp" line="69"/>
         <location filename="../../src/settings-widget.cpp" line="267"/>
-        <location filename="../../src/settings-widget.cpp" line="468"/>
+        <location filename="../../src/settings-widget.cpp" line="470"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -218,32 +218,42 @@
         <translation>是否要删除此目录</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="357"/>
+        <location filename="../../src/settings-widget.cpp" line="268"/>
+        <source>Yes</source>
+        <translation>是(Y)</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="269"/>
+        <source>No</source>
+        <translation>否(N)</translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="359"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="452"/>
+        <location filename="../../src/settings-widget.cpp" line="454"/>
         <source>Choosen path is Empty!</source>
         <translation>选择的路径不存在！</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="456"/>
+        <location filename="../../src/settings-widget.cpp" line="458"/>
         <source>Choosen path is not in &quot;home&quot;!</source>
         <translation>请选择家目录下的文件夹！</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="460"/>
+        <location filename="../../src/settings-widget.cpp" line="462"/>
         <source>Its&apos; parent folder has been blocked!</source>
         <translation>父文件夹已被屏蔽！</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="464"/>
+        <location filename="../../src/settings-widget.cpp" line="466"/>
         <source>Set blocked folder failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="296"/>
+        <location filename="../../src/settings-widget.cpp" line="298"/>
         <source>Creating ...</source>
         <translation>正在索引</translation>
     </message>
@@ -253,42 +263,42 @@
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="299"/>
+        <location filename="../../src/settings-widget.cpp" line="301"/>
         <source>Done</source>
         <translation>索引完成</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="307"/>
+        <location filename="../../src/settings-widget.cpp" line="309"/>
         <source>Index Entry: %1</source>
         <translation>索引项: %1</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="351"/>
+        <location filename="../../src/settings-widget.cpp" line="353"/>
         <source>Directories</source>
         <translation>文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="352"/>
+        <location filename="../../src/settings-widget.cpp" line="354"/>
         <source>select blocked folder</source>
         <translation>选择屏蔽文件夹</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="353"/>
+        <location filename="../../src/settings-widget.cpp" line="355"/>
         <source>Select</source>
         <translation>选择</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="354"/>
+        <location filename="../../src/settings-widget.cpp" line="356"/>
         <source>Position: </source>
         <translation>位置：</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="355"/>
+        <location filename="../../src/settings-widget.cpp" line="357"/>
         <source>FileName: </source>
         <translation>名称：</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="356"/>
+        <location filename="../../src/settings-widget.cpp" line="358"/>
         <source>FileType: </source>
         <translation>类型：</translation>
     </message>
