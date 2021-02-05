@@ -160,7 +160,8 @@ int SearchListView::getResType(const QString& path) {
         return SearchListView::ResType::App;
     } else if (QFileInfo(path).isFile()) {
 //        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is file.";
-        return SearchListView::ResType::File;
+//        return SearchListView::ResType::File;
+        return SearchListView::ResType::Best;
     } else if (QFileInfo(path).isDir()) {
 //        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is dir.";
         return SearchListView::ResType::Dir;

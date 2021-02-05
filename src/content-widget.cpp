@@ -235,7 +235,18 @@ void ContentWidget::hideListView()
 void ContentWidget::setupConnect(SearchListView * listview) {
     connect(listview, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
         if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
+            m_detailView->isContent = true;
             m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
+        } else if (type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
+            m_detailView->setContent(m_bestContent, m_keyword);
+            m_detailView->isContent = true;
+            m_detailView->setupWidget(type == SearchItem::SearchType::Contents, path);
+            listview->is_current_list = true;
+            Q_EMIT this->currentItemChanged();
+            listview->is_current_list = false;
+            return;
+        } else {
+            m_detailView->isContent = false;
         }
         m_detailView->setupWidget(type, path);
 //        m_detailView->setWebWidget(this->m_keyword);
@@ -434,6 +445,7 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
     m_resultList->setFixedHeight(0);
     m_detailView->clearLayout();
     m_contentDetailList.clear();
+    m_bestContent.clear();
 
     m_appShowMoreLabel->resetLabel();
     m_settingShowMoreLabel->resetLabel();
@@ -566,6 +578,12 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_contentListView->show();
                 m_contentTitleLabel->show();
                 m_contentListView->isHidden = false;
+                for (int i = 0; i < contents.length(); i ++) {
+                    m_bestContent.append(contents.at(i));
+                    if (i != contents.length() - 1) {
+                        m_bestContent.append("\n");
+                    }
+                }
                 appendSearchItem(SearchItem::SearchType::Best, path);
             }
             if (m_contentListView->getLength() < 5) {

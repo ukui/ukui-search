@@ -177,9 +177,9 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_hLine->show();
 
     //文件和文件夹有一个额外的详情区域
-    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content) {
+    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content || type == SearchListView::ResType::Best) {
         m_detailFrame->show();
-        if (type == SearchListView::ResType::Content) { //文件内容区域
+        if (isContent) { //文件内容区域
             m_contentLabel->show();
             m_contentLabel->setText(QApplication::translate("", getHtmlText(m_contentText, m_keyword).toLocal8Bit(), nullptr));
         }
@@ -190,14 +190,14 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
 //        m_pathLabel_2->setText(path);
         QString showPath = path;
         QFontMetrics fontMetrics = m_pathLabel_2->fontMetrics();
-        if (fontMetrics.width(path) > m_pathLabel_2->width()) {
-            //路径长度超过240,手动添加换行符以实现折叠
+        if (fontMetrics.width(path) > m_pathLabel_2->width() - 10) {
+            //路径长度超过230,手动添加换行符以实现折叠
             int lastIndex = 0;
             for (int i = lastIndex; i < path.length(); i++) {
-                if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) == m_pathLabel_2->width()) {
+                if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) == m_pathLabel_2->width() - 10) {
                     lastIndex = i;
                     showPath.insert(i, '\n');
-                } else if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) > m_pathLabel_2->width()) {
+                } else if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) > m_pathLabel_2->width() - 10) {
                     lastIndex = i;
                     showPath.insert(i - 1, '\n');
                 } else {
@@ -233,6 +233,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             break;
         }
         case SearchListView::ResType::Content:
+        case SearchListView::ResType::Best:
         case SearchListView::ResType::Dir :
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
