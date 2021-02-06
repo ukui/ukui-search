@@ -419,7 +419,7 @@ fork:
                     qDebug() << "select timeout!";
                     ::free(read_timeout);
                     IndexGenerator::getInstance()->~IndexGenerator();
-                   ::exit(0);
+                   ::_exit(0);
                 }else{
                     numRead = read(m_fd, buf, BUF_LEN);
                     if (numRead == -1){
@@ -442,7 +442,7 @@ fork:
             //MouseZhangZh
 
 //            connect(liveTime, &QTimer::timeout, [ = ](){
-////                ::exit(0);
+////                ::_exit(0);
 //                *b_timeout = 1;
 //            });
 //            for (;;){
@@ -451,7 +451,7 @@ fork:
 //                this->eventProcess(buf, numRead);
 //                if (liveTime->remainingTime() < 1){
 //                    qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
-//                    ::exit(0);
+//                    ::_exit(0);
 //                }
 //            }
 

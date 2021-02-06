@@ -111,7 +111,7 @@ void FirstIndex::run(){
         prctl(PR_SET_NAME,"first-index");
         if (this->bool_dataBaseExist){
             if (this->bool_dataBaseStatusOK){
-                ::exit(0);
+                ::_exit(0);
             }
             else{
                 //if the parameter is false, index won't be rebuild
@@ -169,7 +169,7 @@ void FirstIndex::run(){
         if (p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
-        ::exit(0);
+        ::_exit(0);
     }
     else if(pid < 0)
     {
