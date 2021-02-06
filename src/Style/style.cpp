@@ -84,8 +84,8 @@ void Style::initWidStyle()
     else
         len=10;
 
-    minw=QApplication::desktop()->width();//主窗口大小调整点
-    minh=QApplication::desktop()->height();//主窗口大小调整点
+    minw=QApplication::primaryScreen()->size().width();//主窗口大小调整点
+    minh=QApplication::primaryScreen()->size().height();//主窗口大小调整点
     defaultMainViewWidWidth=678;  //MainViewWidWidth窗口大小调整点
     defaultTopWidHeight=54;
     defaultQueryLineEditWidth=288;
