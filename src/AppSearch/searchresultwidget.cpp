@@ -57,7 +57,7 @@ void SearchResultWidget::initUi()
     connect(m_listView,&ListView::sendItemClickedSignal,this,&SearchResultWidget::execApplication);
     connect(m_Button,&QPushButton::clicked,this,[=](){
         QProcess *process =new QProcess(this);
-        process->startDetached("kylin-software-center");
+        process->startDetached("ubuntu-kylin-software-center");
     });
     //监听输入框的改变，刷新界面
     QDBusConnection::sessionBus().connect(QString(), QString("/lineEdit/textChanged"), "org.ukui.search.inputbox", "InputBoxTextChanged", this, SLOT(appTextRefresh(QString)));
