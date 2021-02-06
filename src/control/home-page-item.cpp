@@ -53,6 +53,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
                 g_object_unref(desktopAppInfo);
                 break;
             }
+            case SearchListView::ResType::Best:
             case SearchListView::ResType::Content:
             case SearchListView::ResType::Dir:
             case SearchListView::ResType::File: {
@@ -87,6 +88,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
                 this->setToolTip(name);
                 break;
             }
+            case SearchListView::ResType::Best :
             case SearchListView::ResType::Content:
             case SearchListView::ResType::Dir :
             case SearchListView::ResType::File : {
