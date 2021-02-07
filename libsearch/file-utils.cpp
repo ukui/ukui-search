@@ -557,13 +557,13 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
 
     uchardet_data_end(chardet);
     const char *codec = uchardet_get_charset(chardet);
-    uchardet_delete(chardet);
 
     if(QTextCodec::codecForName(codec) == 0)
-        qWarning()<<"Unsupported Text encoding format"<<path;
+        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec);
 
     QTextStream stream(encodedString,QIODevice::ReadOnly);
     stream.setCodec(codec);
+    uchardet_delete(chardet);
 
     textcontent = stream.readAll().replace("\n","");
 
