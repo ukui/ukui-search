@@ -1,3 +1,31 @@
+ukui-search (0.1.0+0207) v101; urgency=medium
+
+  * Fix: Index error when there are too much files in user directory.
+    - 当用户目录下的文件太多时，新建的文件有可能不会被索引到。
+  * Fix: 38072 browser+S4休眠500次过程中出现提示空间不足。
+  * Fix: Index error when copied a folder which has many children folders.
+    - 当复制一个含有多层子文件夹的文件夹时，文件夹中的文件有可能不会被正确的建立索引。
+  * Fix: Index delete error when files were delete from disk.
+    - 文件删除时，数据库删除操作失败。
+  * Update debian/contorl,add dependence.
+    - 在debian/contorl中增加运行依赖。
+  * Fix: Window title is not translated.
+    - 修复任务栏窗口标题未汉化的Bug(36548)
+  * Fix: Modify applications list opened quickly.
+    - 修改快速打开列表项(35708、35311)
+  * Fix: QFileDialog is incompletely translated.
+    - 修复文件选择弹窗汉化不完整的bug(35800)
+  * Fix: There is no tooltip when filename is too long to display.
+    - 修复文件名过长时，文件详情页文件名悬停不完整显示的问题(37934)
+  * Fix: Translations for warning dialog is incomplete.
+    - 修复警示弹窗翻译为完成的bug(38130)
+  * Fix: Button for question dialog is in English.
+    - 修复删除黑名单询问弹窗按钮未汉化的Bug(38128)
+  * Fix:  Detail widget for best content result is incorrect.
+    - 修复最佳匹配里的文件内容项显示有误的问题(35563、35971)
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sun, 07 Feb 2021 10:28:35 +0800
+
 ukui-search (0.0.2+0128) v101; urgency=medium
 
   * Adds support for special symbols in file index and search.
