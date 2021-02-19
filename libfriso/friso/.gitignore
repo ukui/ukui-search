@@ -1,0 +1,15 @@
+*.o
+*.lo
+*.la
+*.so
+*.out
+src/friso
+src/*-testing
+# lib/ #
+CHANGES.txt
+# vim #
+*.swp
+*.vim
+*.viminfo
+.libs/
+.idea/

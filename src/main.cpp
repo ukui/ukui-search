@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 
 //    FirstIndex fi("/home/zhangzihao/Desktop/qwerty");
 //    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
-    FirstIndex fi("/home");
+    FirstIndex fi("/home/zhangzihao/Desktop");
     fi.start();
 //    fi.wait();
 //    fi->wait();

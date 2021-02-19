@@ -559,7 +559,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
     const char *codec = uchardet_get_charset(chardet);
 
     if(QTextCodec::codecForName(codec) == 0)
-        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec);
+        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec)<<"zpf666";
 
     QTextStream stream(encodedString,QIODevice::ReadOnly);
     stream.setCodec(codec);
