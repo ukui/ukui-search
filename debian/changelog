@@ -1,3 +1,11 @@
+ukui-search (0.1.1+0219-1) v101; urgency=medium
+
+  * Remove QWebEngineView dependence.
+  * Remove friso dependence.
+  * Update debian/control.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 19 Feb 2021 11:37:16 +0800
+
 ukui-search (0.1.0+0207) v101; urgency=medium
 
   * Fix: Index error when there are too much files in user directory.

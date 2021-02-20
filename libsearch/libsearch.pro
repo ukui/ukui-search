@@ -68,8 +68,8 @@ unix {
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
 
-INCLUDEPATH += $$PWD/../libfriso
-DEPENDPATH += $$PWD/../libfriso
+#INCLUDEPATH += $$PWD/../libfriso
+#DEPENDPATH += $$PWD/../libfriso
 
 #DISTFILES += \
 #    ../translations/libsearch/libukui-search_zh_CN.ts

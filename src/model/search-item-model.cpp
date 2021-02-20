@@ -149,10 +149,10 @@ void SearchItemModel::appendItem(QString path) {
 }
 
 /**
- * @brief SearchItemModel::appendList 直接以列表形式添加搜索结果
+ * @brief SearchItemModel::setList 直接以列表形式添加搜索结果
  * @param list
  */
-void SearchItemModel::appendList(QStringList list)
+void SearchItemModel::setList(QStringList list)
 {
     this->beginResetModel();
     m_item->m_pathlist = list;

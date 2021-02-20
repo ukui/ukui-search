@@ -555,10 +555,12 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_fileListView->isHidden = false;
                 appendSearchItem(SearchItem::SearchType::Best, path);
             }
-            if (m_fileListView->getLength() < 5) {
+            if (m_fileListView->getLength() < 5) { //当已搜索结果列表少于5项，直接将搜索结果添加到列表中
                 m_fileListView->appendItem(path);
-            } else if (m_fileListView->getLength() == 5) {
+            } else if (m_fileListView->getLength() == 5) { //当已搜索结果等于5项，新增的被折叠，显示“展开”按钮
                 m_fileShowMoreLabel->show();
+            } else { //当搜索列表显示的大于5项，说明列表被展开，可以继续把新增项添加到列表中
+                m_fileListView->appendItem(path);
             }
             m_fileList.append(path);
             break;;
@@ -574,6 +576,8 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_dirListView->appendItem(path);
             } else if (m_dirListView->getLength() == 5) {
                 m_dirShowMoreLabel->show();
+            } else {
+                m_dirListView->appendItem(path);
             }
             m_dirList.append(path);
             break;
@@ -595,6 +599,8 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_contentListView->appendItem(path);
             } else if (m_contentListView->getLength() == 5) {
                 m_contentShowMoreLabel->show();
+            } else {
+                m_contentListView->appendItem(path);
             }
             m_contentList.append(path);
             QString temp;

@@ -22,7 +22,7 @@
 #define SEARCHDETAILVIEW_H
 
 #include <QWidget>
-#include <QWebEngineView>
+//#include <QWebEngineView>
 #include "option-view.h"
 
 class SearchDetailView : public QWidget
