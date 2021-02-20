@@ -21,13 +21,7 @@
 break;
 
 #define ___ABOUT___                    \
-    println("+---------------------------------------------------------------+");    \
-    println("| Friso - a Chinese word segmentation writen by c.              |");    \
-    println("| bug report email - chenxin619315@gmail.com.                   |");    \
-    println("| or: visit https://github.com/lionsoul2014/friso.              |");    \
-    println("|     java version for https://github.com/lionsoul2014/jcseg    |");    \
-    println("| type 'quit' to exit the program.                              |");    \
-    println("+---------------------------------------------------------------+");
+    println("***飞哥牛逼***");
 
 //read a line from a command line.
 static fstring getLine( FILE *fp, fstring __dst )
@@ -161,3 +155,75 @@ err:
 
     return 0;
 }
+
+void multi_thread_test(){
+    friso_t friso = friso_new();
+    friso_config_t config = friso_new_config();
+    //从指定的 friso.ini 文件中初始化 friso 和 config.
+    friso_init_from_ifile(friso, config, "/usr/share/ukui-search/res/friso.ini");
+
+
+    //2.创建分词任务&&设置分词内容
+    friso_task_t task = friso_new_task();
+    fstring text = "这里是要被分词的字符串";
+    friso_set_text( task, text );
+    //friso_next 获取下一个切分结果
+    //得到的切分结果存放在 task->hits 中.
+    //通过 task->hits->word 的到切分的词条.
+    //通过 task->hits->offset 得到对应词条在原文中的偏移位置.
+//    while ( ( friso_next( friso, config, task ) ) != NULL ) {
+//    //查看 friso_hits_t 可以获取更多信息。
+//    //printf("%s[%d]/ ", task->hits->word, task->hits->offset );
+//    printf("%s/ ", task->hits->word );
+//    }
+    //从 1.6.1 开始，为了方便或者，friso_hits_t 更改为 friso_token_t
+
+    while ( ( config->next_token( friso, config, task ) ) != NULL ) {
+    //查看 friso_token_t 可以获取更多信息。
+    //printf("%s[%d]/ ", task->token->word, task->token->offset );
+    printf("%s/ ", task->token->word );
+    }
+
+    //4. 释放资源...
+    friso_free_task( task );
+
+    friso_free_config(config);
+     friso_free(friso);
+}
+
+//int init(){
+//    friso_t friso = friso_new();
+//    friso_config_t config = friso_new_config();
+//    //从指定的 friso.ini 文件中初始化 friso 和 config.
+//    friso_init_from_ifile(friso, config, "/usr/share/ukui-search/res/friso.ini");
+//}
+
+//int seg(){
+//    //2.创建分词任务&&设置分词内容
+//    friso_task_t task = friso_new_task();
+//    fstring text = "这里是要被分词的字符串";
+//    friso_set_text( task, text );
+//    //friso_next 获取下一个切分结果
+//    //得到的切分结果存放在 task->hits 中.
+//    //通过 task->hits->word 的到切分的词条.
+//    //通过 task->hits->offset 得到对应词条在原文中的偏移位置.
+////    while ( ( friso_next( friso, config, task ) ) != NULL ) {
+////    //查看 friso_hits_t 可以获取更多信息。
+////    //printf("%s[%d]/ ", task->hits->word, task->hits->offset );
+////    printf("%s/ ", task->hits->word );
+////    }
+//    //从 1.6.1 开始，为了方便或者，friso_hits_t 更改为 friso_token_t
+
+//    while ( ( config->next_token( friso, config, task ) ) != NULL ) {
+//    //查看 friso_token_t 可以获取更多信息。
+//    //printf("%s[%d]/ ", task->token->word, task->token->offset );
+//    printf("%s/ ", task->token->word );
+//    }
+//}
+
+//int destroy(){
+//    //4. 释放资源...
+//    friso_free_task( task );
+//    friso_free_config(config);
+//    friso_free(friso);
+//}

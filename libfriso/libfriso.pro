@@ -3,7 +3,7 @@ QT -= gui
 VERSION = 0.0.1
 TARGET =  friso
 TEMPLATE = lib
-DEFINES += LIBFRISO_LIBRARY
+DEFINES += LIBFRISOSEGMENTATION_LIBRARY
 
 CONFIG += c++11
 
@@ -20,10 +20,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(friso/friso.pri)
 
 SOURCES += \
-    friso-interface.c
+    friso-interface.c \
+    friso-segmentation.cpp
 
 HEADERS += \
-    friso-interface.h \
+    friso-interface.h \ \
+    friso-segmentation.h \
+    libfriso-segmentation_global.h
 
 dict_utf_files.path = /usr/share/ukui-search/res/dict/UTF-8/
 dict_utf_files.files = $$PWD/friso/vendors/dict/UTF-8/*

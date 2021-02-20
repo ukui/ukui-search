@@ -1,9 +1,9 @@
 TEMPLATE = subdirs
-SUBDIRS += $$PWD/libchinese-segmentation \
+SUBDIRS += $$PWD/libfriso \
+           $$PWD/libchinese-segmentation \
            $$PWD/libsearch \
            $$PWD/src \
            $$PWD/ukuisearch-systemdbus
-#           $$PWD/libfriso
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the

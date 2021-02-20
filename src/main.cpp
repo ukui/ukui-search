@@ -37,6 +37,10 @@
 #include "global-settings.h"
 #include "xatom-helper.h"
 
+extern "C"{
+#include "friso-interface.h"
+}
+
 
 void handler(int){
     qDebug() << "Recieved SIGTERM!";
@@ -123,6 +127,10 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    multi_thread_test();
+//    friso_test();
+    exit(0);
+
     unlink(UKUI_SEARCH_PIPE_PATH);
     int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
     if(retval == -1)
