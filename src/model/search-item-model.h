@@ -53,7 +53,7 @@ public:
     void setItem(SearchItem *);
 
     void appendItem(QString);
-    void appendList(QStringList);
+    void setList(QStringList);
     void removeItem(QString);
     void clear();
 
