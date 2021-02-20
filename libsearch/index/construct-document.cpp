@@ -50,14 +50,14 @@ void ConstructDocumentForPath::run()
     //多音字版
     //现加入首字母
     QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(m_list.at(0)).replace(".",""));
-    if(!pinyin_text_list.isEmpty())
-    {
-        for (QString& i : pinyin_text_list){
-            i.replace("", " ");
-            i = i.simplified();
-        }
-        doc.setIndexText(pinyin_text_list);
-    }
+//    if(!pinyin_text_list.isEmpty())
+//    {
+//        for (QString& i : pinyin_text_list){
+//            i.replace("", " ");
+//            i = i.simplified();
+//        }
+//        doc.setIndexText(pinyin_text_list);
+//    }
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep)));
@@ -78,10 +78,21 @@ void ConstructDocumentForPath::run()
     int postingCount = 0;
     while(postingCount < index_text.size())
     {
-        QVector<size_t> p;
-        p.append(postingCount);
-        doc.addPosting(QUrl::toPercentEncoding(index_text.at(postingCount)).toStdString(),p);
+//        QVector<size_t> p;
+//        p.append(postingCount);
+        doc.addPosting(QUrl::toPercentEncoding(index_text.at(postingCount)).toStdString(),postingCount);
         ++postingCount;
+    }
+    int i = 0;
+    for (QString& s : pinyin_text_list)
+    {
+        i = 0;
+        while(i < s.size())
+        {
+            doc.addPosting(QUrl::toPercentEncoding(s.at(i)).toStdString(),postingCount);
+            ++postingCount;
+            ++i;
+        }
     }
 
 //    QMetaObject::invokeMethod(m_indexGenerator,"appendDocListPath",Q_ARG(Document,doc));

@@ -246,11 +246,11 @@ Xapian::Query FileSearcher::creatQueryForFileSearch(QString keyword, Xapian::Dat
         //        qDebug()<<QString::fromStdString(Xapian::Query(QString(userInput.at(i)).toStdString()).get_description());
     }
     Xapian::Query queryPhrase =Xapian::Query(Xapian::Query::OP_PHRASE, v.begin(), v.end());
-    Xapian::Query queryNear =Xapian::Query(Xapian::Query::OP_NEAR, v.begin(), v.end());
+//    Xapian::Query queryNear =Xapian::Query(Xapian::Query::OP_NEAR, v.begin(), v.end());
 
-    Xapian::Query query = Xapian::Query(Xapian::Query::OP_AND,queryNear,queryPhrase);
+//    Xapian::Query query = Xapian::Query(Xapian::Query::OP_AND,queryNear,queryPhrase);
     //    qDebug()<<QString::fromStdString(query.get_description());
-    return query;
+    return queryPhrase;
 }
 
 Xapian::Query FileSearcher::creatQueryForContentSearch(QString keyword, Xapian::Database &db)
