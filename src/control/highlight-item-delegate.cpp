@@ -62,7 +62,7 @@ void HighlightItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem
     doc.documentLayout()->draw(painter, ctx); //绘制文本区域内容
     painter->restore();
 
-    //以下为drawitemtext方法绘制文字，印加粗字体与原字体不等宽导致像素不对齐，视觉效果较差，已暂时摒弃
+    //以下为drawitemtext方法绘制文字，因加粗字体与原字体不等宽导致像素不对齐，视觉效果较差，已暂时摒弃
 //    QStyleOptionViewItem itemOption = option;
 //    initStyleOption(&itemOption, index);
 //    if (itemOption.state & QStyle::State_HasFocus) {

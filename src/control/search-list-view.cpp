@@ -76,7 +76,13 @@ void SearchListView::appendItem(QString path) {
  */
 void SearchListView::setList(QStringList list)
 {
-    m_model->appendList(list);
+    QModelIndex index = this->currentIndex();
+    m_model->setList(list);
+    if (index.row() >= 0 && index.row() < list.length()) {
+        this->blockSignals(true);
+        this->setCurrentIndex(index);
+        this->blockSignals(false);
+    }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
