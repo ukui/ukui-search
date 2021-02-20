@@ -1,4 +1,4 @@
-QT       += core gui dbus  KWindowSystem xml x11extras webenginewidgets
+QT       += core gui dbus  KWindowSystem xml x11extras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -67,14 +67,14 @@ qm_files.files = $$OUT_PWD/.qm/*.qm
 INSTALLS += qm_files
 
 LIBS += -L$$OUT_PWD/../libsearch -lukui-search \
-        -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
-        -L$$OUT_PWD/../libfriso -lfriso
+        -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation
+#        -L$$OUT_PWD/../libfriso -lfriso
 
 INCLUDEPATH += $$PWD/../libsearch
 DEPENDPATH += $$PWD/../libsearch
 
-INCLUDEPATH += $$PWD/../libfriso
-DEPENDPATH += $$PWD/../libfriso
+#INCLUDEPATH += $$PWD/../libfriso
+#DEPENDPATH += $$PWD/../libfriso
 
 #DISTFILES += \
 #    ../data/ukui-search-menu.desktop \
