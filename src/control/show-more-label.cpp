@@ -40,6 +40,15 @@ void ShowMoreLabel::resetLabel()
     m_textLabel->setText(tr("Show More..."));
 }
 
+/**
+ * @brief ShowMoreLabel::getExpanded 获取当前是否是展开状态
+ * @return true已展开，false已收起
+ */
+bool ShowMoreLabel::getExpanded()
+{
+    return m_isOpen;
+}
+
 void ShowMoreLabel::initUi()
 {
     m_layout = new QHBoxLayout(this);
