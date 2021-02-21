@@ -38,14 +38,11 @@ InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
     this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 //    this->Traverse();
     this->firstTraverse();
-
-
-    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
 }
 
 InotifyIndex::~InotifyIndex()
 {
-    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
+//    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
     IndexGenerator::getInstance()->~IndexGenerator();
 }
 
@@ -362,6 +359,7 @@ read:
 
         if (numRead == -1){
             printf("\033[1;31;40mread event error\033[0m\n");
+            GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "1");
             fflush(stdout);
             assert(false);
         }
@@ -373,6 +371,7 @@ read:
             struct inotify_event * event = reinterpret_cast<inotify_event *>(tmp);
     //        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
             if(event->name[0] != '.'){
+                GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
                 goto fork;
             }
             tmp += sizeof(struct inotify_event) + event->len;
@@ -396,7 +395,7 @@ fork:
                 qDebug() << "read";
             }
             eventProcess(buf, numRead);
-
+            GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
 
             fd_set read_fds;
             int rc;
@@ -413,6 +412,7 @@ fork:
                 if ( rc < 0 ) {
                     // error
                     qWarning() << "select result < 0, error!";
+                    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "1");
                     assert(false);
                 }
                 else if ( rc == 0 ) {
@@ -421,6 +421,7 @@ fork:
                     IndexGenerator::getInstance()->~IndexGenerator();
                    ::_exit(0);
                 }else{
+                    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
                     numRead = read(m_fd, buf, BUF_LEN);
                     if (numRead == -1){
                         printf("\033[1;31;40mread event error\033[0m\n");
@@ -429,6 +430,7 @@ fork:
                     }
                     qDebug() << "Read " << numRead << " bytes from inotify fd";
                     this->eventProcess(buf, numRead);
+                    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
                 }
             }
 
