@@ -38,31 +38,31 @@
 #include "xatom-helper.h"
 
 
-void handler(int){
-    qDebug() << "Recieved SIGTERM!";
+//void handler(int){
+//    qDebug() << "Recieved SIGTERM!";
 
 
 
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
-    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
-    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
-    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
-    GlobalSettings::getInstance()->forceSync(INDEX_DATABASE_STATE);
-    GlobalSettings::getInstance()->forceSync(CONTENT_INDEX_DATABASE_STATE);
-    GlobalSettings::getInstance()->forceSync(INDEX_GENERATOR_NORMAL_EXIT);
-    GlobalSettings::getInstance()->forceSync(INOTIFY_NORMAL_EXIT);
+//    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
+//    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
+//    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
+//    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
+//    GlobalSettings::getInstance()->forceSync(INDEX_DATABASE_STATE);
+//    GlobalSettings::getInstance()->forceSync(CONTENT_INDEX_DATABASE_STATE);
+//    GlobalSettings::getInstance()->forceSync(INDEX_GENERATOR_NORMAL_EXIT);
+//    GlobalSettings::getInstance()->forceSync(INOTIFY_NORMAL_EXIT);
 
 
-    qDebug() << "indexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
-    qDebug() << "contentIndexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
+//    qDebug() << "indexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
+//    qDebug() << "contentIndexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
 
-    ::exit(0);
+//    ::exit(0);
 
-//    InotifyIndex::getInstance("/home")->~InotifyIndex();
+////    InotifyIndex::getInstance("/home")->~InotifyIndex();
 
-    //wait linux kill this thread forcedly
-//    while (true);
-}
+//    //wait linux kill this thread forcedly
+////    while (true);
+//}
 
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -254,9 +254,9 @@ int main(int argc, char *argv[])
 //    InotifyIndex ii("/home");
     ii->start();
 
-    qDebug() << "sigset start!";
-    sigset( SIGTERM, handler);
-    qDebug() << "sigset end!";
+//    qDebug() << "sigset start!";
+//    sigset( SIGTERM, handler);
+//    qDebug() << "sigset end!";
 
 
     return app.exec();

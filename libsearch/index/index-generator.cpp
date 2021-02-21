@@ -64,13 +64,15 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 {
 //    FileUtils::_index_status |= 0x1;
     HandlePathList(messageList);
+    qDebug()<<"begin creatAllIndex";
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
     try
     {
 //        m_indexer = new Xapian::TermGenerator();
-        m_indexer.set_database(*m_database_path);
+//        m_indexer.set_database(*m_database_path);
         //可以实现拼写纠正
 //        m_indexer->set_flags(Xapian::TermGenerator::FLAG_SPELLING);
-        m_indexer.set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
+//        m_indexer.set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
 
         int count =0;
         for (auto i : *_doc_list_path){
@@ -91,6 +93,8 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //        FileUtils::_index_status &= ~0x1;
         assert(false);
     }
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"2");
+    qDebug()<<"finish creatAllIndex";
 //    FileUtils::_index_status &= ~0x1;
     _doc_list_path->clear();
     delete _doc_list_path;
@@ -102,10 +106,11 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 {
 //    FileUtils::_index_status |= 0x2;
     HandlePathList(messageList);
-    qDebug()<<"begin creatAllIndex";
+    qDebug()<<"begin creatAllIndex for content";
     int size = _doc_list_content->size();
     if(!size == 0)
     {
+        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"0");
         try
         {
             int count =0;
@@ -125,8 +130,9 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 //            FileUtils::_index_status &= ~0x2;
             assert(false);
         }
+        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"2");
 //        FileUtils::_index_status &= ~0x2;
-        qDebug()<<"finish creatAllIndex";
+        qDebug()<<"finish creatAllIndex for content";
         _doc_list_content->clear();
         delete _doc_list_content;
         _doc_list_content = nullptr;
@@ -149,8 +155,6 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
     }
     m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
-    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"0");
 }
 
 IndexGenerator::~IndexGenerator()
@@ -182,9 +186,9 @@ IndexGenerator::~IndexGenerator()
 //    if(m_indexer)
 //        delete m_indexer;
 //    m_indexer = nullptr;
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
-    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
-    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
+//    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
+//    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
+//    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
 
     qDebug() << "QThread::currentThreadId()" << QThread::currentThreadId();
     qDebug() << "~IndexGenerator end";
