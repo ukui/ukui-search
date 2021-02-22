@@ -136,48 +136,6 @@
         <ChinesePlugin>字体</ChinesePlugin>
         <ChineseFunc>字体大小</ChineseFunc>
     </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>qiyonganjianzhongfushezhi</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>启用按键重复设置</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>yanchi</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>延迟</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>sudu</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>速度</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>shuruzifuceshizhongfuxiaoguoï¼</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>输入字符测试重复效果：</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>daxiesuodingtishi</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>大写锁定提示</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>huifumorenbuju</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>恢复默认布局</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>jianpanbuju</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>键盘布局</ChineseFunc>
-    </plugin>
     <plugin name="Mouse">
         <pinyinPlugin>shubiao</pinyinPlugin>
         <pinyinfunc>guanyongshou</pinyinfunc>
