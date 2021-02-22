@@ -22,8 +22,13 @@
 #define SEARCHDETAILVIEW_H
 
 #include <QWidget>
-//#include <QWebEngineView>
+#include <QWebEngineView>
+#include <QWebEngineSettings>
+//#include <QWebEngineProfile>
+//#include <QWebEngineUrlRequestInterceptor>
+#include <QDesktopServices>
 #include "option-view.h"
+#include "global-settings.h"
 
 class SearchDetailView : public QWidget
 {
@@ -38,7 +43,7 @@ public:
     bool isEmpty();
     int getType();
     bool isContent = false;
-//    void setWebWidget(const QString&);
+    void setWebWidget(const QString&);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -80,10 +85,21 @@ private:
     QFrame * m_hLine_2 = nullptr;
     OptionView * m_optionView = nullptr;
 
+    QWebEngineView * m_webView = nullptr;
+    bool m_reload = false;
+
 Q_SIGNALS:
     void configFileChanged();
 private Q_SLOTS:
     void execActions(const int&, const int&, const QString&);
 };
+
+//此类用于url拦截
+//class RequestInterceptor : public QWebEngineUrlRequestInterceptor
+//{
+//public:
+//    explicit RequestInterceptor(QObject * parent = nullptr) : QWebEngineUrlRequestInterceptor(parent) {}
+//    virtual void interceptRequest(QWebEngineUrlRequestInfo & info) Q_DECL_OVERRIDE;
+//};
 
 #endif // SEARCHDETAILVIEW_H

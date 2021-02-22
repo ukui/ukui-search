@@ -41,7 +41,8 @@ public:
         Settings,
         Dirs,
         Files,
-        Contents
+        Contents,
+        Web
     };
 
     void setSearchList(const int&, const QStringList&);

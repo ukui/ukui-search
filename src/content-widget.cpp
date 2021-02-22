@@ -105,12 +105,14 @@ void ContentWidget::initListView()
     m_settingListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Settings);
     m_appListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Apps);
     m_bestListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Best);
+    m_webListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Web);
     setupConnect(m_fileListView);
     setupConnect(m_dirListView);
     setupConnect(m_contentListView);
     setupConnect(m_settingListView);
     setupConnect(m_appListView);
     setupConnect(m_bestListView);
+    setupConnect(m_webListView);
 
     m_fileTitleLabel = new TitleLabel(m_resultList);
     m_fileTitleLabel->setText(getTitleName(SearchItem::SearchType::Files));
@@ -124,6 +126,8 @@ void ContentWidget::initListView()
     m_settingTitleLabel->setText(getTitleName(SearchItem::SearchType::Settings));
     m_bestTitleLabel = new TitleLabel(m_resultList);
     m_bestTitleLabel->setText(getTitleName(SearchItem::SearchType::Best));
+    m_webTitleLabel = new TitleLabel(m_resultList);
+    m_webTitleLabel->setText(getTitleName(SearchItem::SearchType::Web));
 
     m_appShowMoreLabel = new ShowMoreLabel(m_resultList);
     m_settingShowMoreLabel = new ShowMoreLabel(m_resultList);
@@ -148,6 +152,8 @@ void ContentWidget::initListView()
     m_listLyt->addWidget(m_contentTitleLabel);
     m_listLyt->addWidget(m_contentListView);
     m_listLyt->addWidget(m_contentShowMoreLabel);
+    m_listLyt->addWidget(m_webTitleLabel);
+    m_listLyt->addWidget(m_webListView);
 
     this->hideListView();
     m_resultList->setFixedHeight(0);
@@ -226,6 +232,8 @@ void ContentWidget::hideListView()
     m_contentTitleLabel->hide();
     m_contentListView->hide();
     m_contentShowMoreLabel->hide();
+    m_webTitleLabel->hide();
+    m_webListView->hide();
 }
 
 /**
@@ -248,8 +256,11 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         } else {
             m_detailView->isContent = false;
         }
-        m_detailView->setupWidget(type, path);
-//        m_detailView->setWebWidget(this->m_keyword);
+        if (type == SearchItem::SearchType::Web) {
+            m_detailView->setWebWidget(this->m_keyword);
+        } else {
+            m_detailView->setupWidget(type, path);
+        }
         listview->is_current_list = true;
         Q_EMIT this->currentItemChanged();
         listview->is_current_list = false;
@@ -307,6 +318,10 @@ void ContentWidget::resetListHeight()
         if (m_contentShowMoreLabel->isVisible()) {
             height += m_contentShowMoreLabel->height();
         }
+    }
+    if (! m_webListView->isHidden) {
+        height += m_webTitleLabel->height();
+        height += m_webListView->height();
     }
     m_resultList->setFixedHeight(height);
 }
@@ -446,6 +461,13 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
         m_bestTitleLabel->hide();
         m_bestListView->isHidden = true;
         m_bestListView->clear();
+    }
+    if (m_webListView) {
+        m_webListView->clear();
+        m_webListView->appendItem(m_keyword);
+        m_webTitleLabel->show();
+        m_webListView->show();
+        m_webListView->isHidden = false;
     }
     m_resultList->setFixedHeight(0);
     m_detailView->clearLayout();
@@ -639,6 +661,8 @@ QString ContentWidget::getTitleName(const int& type) {
             return tr("File Contents");
         case SearchItem::SearchType::Best :
             return tr("Best Matches");
+        case SearchItem::SearchType::Web :
+            return tr("Web Pages");
         default :
             return tr("Unknown");
     }
@@ -684,6 +708,7 @@ void ContentWidget::setKeyword(QString keyword)
     m_settingListView->setKeyword(keyword);
     m_appListView->setKeyword(keyword);
     m_bestListView->setKeyword(keyword);
+    m_webListView->setKeyword(keyword);
 }
 
 /**

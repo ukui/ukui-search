@@ -38,6 +38,7 @@
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
 #define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
+#define WEB_ENGINE "web_engine"
 #define PATH_EMPTY 1;
 #define PATH_NOT_IN_HOME 2;
 #define PATH_PARENT_BLOCKED 3;

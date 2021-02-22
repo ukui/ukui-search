@@ -40,7 +40,8 @@ public:
         Setting,
         Dir,
         File,
-        Content
+        Content,
+        Web
     };
 
     int getCurrentType();
