@@ -37,6 +37,9 @@ void SearchAppThread::run()
     if(!this->m_keyWord.isEmpty())
     {
         QString str=m_ukuiMenuInterface->getAppNamePinyin(m_keyWord);
+        if(str.isEmpty()){
+            return;
+        }
         int index=0;
         if(str.size()==1)
         {
