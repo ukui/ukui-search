@@ -207,16 +207,16 @@
         <ChineseFunc>设置通知来源</ChineseFunc>
     </plugin>
     <plugin name="Display">
-        <pinyinPlugin>xianshiqi</pinyinPlugin>
-        <pinyinfunc>fenbianlv</pinyinfunc>
-        <ChinesePlugin>显示器</ChinesePlugin>
-        <ChineseFunc>分辨率</ChineseFunc>
+        <pinyinPlugin>pingmu</pinyinPlugin>
+        <pinyinfunc>pingmuxuanzhuan</pinyinfunc>
+        <ChinesePlugin>屏幕</ChinesePlugin>
+        <ChineseFunc>屏幕旋转</ChineseFunc>
     </plugin>
     <plugin name="Display">
-        <pinyinPlugin>xianshiqi</pinyinPlugin>
-        <pinyinfunc>suofangpingmu</pinyinfunc>
-        <ChinesePlugin>显示器</ChinesePlugin>
-        <ChineseFunc>缩放屏幕</ChineseFunc>
+        <pinyinPlugin>pingmu</pinyinPlugin>
+        <pinyinfunc>pingmuliangdu</pinyinfunc>
+        <ChinesePlugin>屏幕</ChinesePlugin>
+        <ChineseFunc>屏幕亮度</ChineseFunc>
     </plugin>
     <plugin name="Power">
         <pinyinPlugin>dianyuan</pinyinPlugin>
@@ -521,5 +521,23 @@
         <pinyinfunc>yejianmoshi</pinyinfunc>
         <ChinesePlugin>显示器</ChinesePlugin>
         <ChineseFunc>夜间模式</ChineseFunc>
+    </plugin>
+    <plugin name="Opmode">
+        <pinyinPlugin>caozuomoshi</pinyinPlugin>
+        <pinyinfunc>moshiqiehuan</pinyinfunc>
+        <ChinesePlugin>操作模式</ChinesePlugin>
+        <ChineseFunc>模式切换</ChineseFunc>
+    </plugin>
+    <plugin name="Opmode">
+        <pinyinPlugin>caozuomoshi</pinyinPlugin>
+        <pinyinfunc>zidongqiehuan</pinyinfunc>
+        <ChinesePlugin>操作模式</ChinesePlugin>
+        <ChineseFunc>自动切换</ChineseFunc>
+    </plugin>
+    <plugin name="backup">
+        <pinyinPlugin>xitonghuanyuan</pinyinPlugin>
+        <pinyinfunc>xitonghuanyuan</pinyinfunc>
+        <ChinesePlugin>系统还原</ChinesePlugin>
+        <ChineseFunc>系统还原</ChineseFunc>
     </plugin>
 </plugins>
