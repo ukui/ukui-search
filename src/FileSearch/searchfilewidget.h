@@ -11,13 +11,14 @@
 #include "fileview.h"
 #include "filemodel.h"
 #include "searchfilethread.h"
+#include "../Interface/morebutton.h"
+#include "../Interface/headlabel.h"
 
 class SearchFileWidget : public QWidget
 {
     Q_OBJECT
 public:
      SearchFileWidget();
-     QLabel *fileHead;
      fileview *fileView;
      filemodel *m_filemodel;//文件model
      QVBoxLayout *m_listLayout;
@@ -26,6 +27,10 @@ private:
      void initFilesearchUI();
      void paintEvent(QPaintEvent *e);
      bool eventFilter(QObject *watched, QEvent *event);
+
+private:
+     MoreButton *m_Morebutton;
+     HeadLabel *m_fileHead;
 
 private Q_SLOTS:
      void fileTextRefresh(QString);

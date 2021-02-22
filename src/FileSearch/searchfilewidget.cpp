@@ -16,11 +16,13 @@ void SearchFileWidget::initFilesearchUI()
     m_listLayout = new QVBoxLayout(this);
 
     //添加表头
-    fileHead = new QLabel(this);
-    fileHead->setText(tr("File"));
+    m_fileHead = new HeadLabel(this);
+    m_fileHead->setText(tr("File"));
+    m_fileHead->setAttribute(Qt::WA_TranslucentBackground);//"透明背景"
 
-    fileHead->setAttribute(Qt::WA_TranslucentBackground);//"透明背景"
 
+    m_Morebutton=new MoreButton(this);
+    m_Morebutton->setText("查看更多");
 
     //创建view与model
     fileView = new fileview;
@@ -30,6 +32,10 @@ void SearchFileWidget::initFilesearchUI()
     fileView->setColumnWidth(0,300);
     fileView->setColumnWidth(1,150);
     fileView->setColumnWidth(2,150);
+
+    connect(m_Morebutton,&MoreButton::clicked,this,[=](){
+        m_filemodel->run(5,5);
+    });
 
     //创建文件搜索线程
     m_searchFileThread=new SearchFileThread;
@@ -50,8 +56,9 @@ void SearchFileWidget::initFilesearchUI()
     QDBusConnection::sessionBus().connect(QString(), QString("/lineEdit/textChanged"), "org.ukui.search.inputbox", "InputBoxTextChanged", this, SLOT(fileTextRefresh(QString)));
 
     //整体布局
-    m_listLayout->addWidget(fileHead);
+    m_listLayout->addWidget(m_fileHead);
     m_listLayout->addWidget(fileView);
+    m_listLayout->addWidget(m_Morebutton);
     this->setLayout(m_listLayout);
     this->setVisible(false);
 
@@ -77,7 +84,13 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
 {
     int count=m_filemodel->showResult(arg);
     m_searchFileThread->quit();
-    this->setFixedHeight(fileHead->height()+(count+1)*40);
+    if(count>2){
+        this->setFixedHeight(m_fileHead->height()+(count+1.6)*46);
+        m_Morebutton->show();
+    }else{
+        this->setFixedHeight(m_fileHead->height()+(count+1)*46);
+        m_Morebutton->hide();
+    }
 
     qDebug()<<"file list size :"<<arg.count();
     fileView->setCurrentIndex(m_filemodel->index(0,0,m_filemodel->index(0,0,m_filemodel->index(0))));

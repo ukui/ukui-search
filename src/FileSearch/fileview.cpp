@@ -31,6 +31,7 @@ fileview::fileview()
         }
     });
     this->setHeaderHidden(true);
+    this->setContentsMargins(0,0,0,0);
 }
 
 

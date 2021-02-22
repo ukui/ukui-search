@@ -148,10 +148,22 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     this->addAction(searchAction,QLineEdit::LeadingPosition);
 
     editLabel=new QLabel(tr("Search"));
+    editLabel->setStyleSheet("background:transparent;color:#626c6e;");
     QHBoxLayout *editLayout=new QHBoxLayout(this);
-    editLayout->addWidget(editLabel,0,Qt::AlignHCenter);
+    editLayout->addSpacing(20);
+    editLayout->addWidget(editLabel,0,Qt::AlignLeft);
     connect(searchAction,&QAction::triggered,this,[=](){
         editLabel->hide();
+    });
+    this->setFocusPolicy(Qt::StrongFocus);
+    this->setFocus();
+
+    connect(this,&UKuiSearchLineEdit::textChanged,this,[=](){
+        if(this->text().isEmpty()){
+            editLabel->show();
+        }else{
+            editLabel->hide();
+        }
     });
 
 

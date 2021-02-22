@@ -37,6 +37,9 @@ void SearchAppThread::run()
     if(!this->m_keyWord.isEmpty())
     {
         QString str=m_ukuiMenuInterface->getAppNamePinyin(m_keyWord);
+        if(str.isEmpty()){
+            return;
+        }
         int index=0;
         if(str.size()==1)
         {
@@ -102,6 +105,9 @@ void SearchAppThread::run()
     }
 
     qSort(m_searchResultVector.begin(),m_searchResultVector.end(),UkuiMenuInterface::cmpApp);
+    if(m_searchResultVector.size()>3){
+        m_searchResultVector=m_searchResultVector.mid(0,3);
+    }
     Q_EMIT sendSearchResult(m_searchResultVector);
 }
 

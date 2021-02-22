@@ -76,7 +76,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
         if(option.state & QStyle::State_MouseOver)
         {
             QColor color = option.palette.text().color();
-            color.setAlphaF(0.15);
+            color.setAlphaF(0.03);
             painter->save();
             painter->setPen(QPen(Qt::NoPen));
             painter->setBrush(color);
@@ -94,7 +94,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
         {
             if(strlist.at(1).toInt()==1)
             {
-                QRect iconRect=QRect(rect.x()+11,rect.y()+(rect.height()-32)/2,32,32);
+                QRect iconRect=QRect(rect.x()+6,rect.y()+(rect.height()-32)/2,32,32);
                 QString iconstr=pUkuiMenuInterface->getAppIcon(strlist.at(0));
                 QIcon icon;
                 QFileInfo iconFileInfo(iconstr);
@@ -126,6 +126,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
                 painter->save();
                 icon.paint(painter,iconRect,Qt::AlignLeft);
                 QString appname=pUkuiMenuInterface->getAppName(strlist.at(0));
+                painter->setFont(QFont("宋体",14,QFont::DemiBold));
                 painter->drawText(QRect(iconRect.right()+15,rect.y(),
                                         rect.width()-62,rect.height()),Qt::AlignVCenter,appname);
                 painter->restore();

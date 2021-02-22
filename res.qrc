@@ -84,5 +84,6 @@
         <file>src/ControlCenterSettingsSearch/assets/search.conf</file>
         <file>src/ControlCenterSettingsSearch/assets/search.xml</file>
         <file>data/img/mainviewwidget/edit-find-symbolic.svg</file>
+        <file>data/img/sidebarwidget/searching-more.svg</file>
     </qresource>
 </RCC>

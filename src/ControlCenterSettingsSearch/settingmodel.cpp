@@ -27,27 +27,25 @@ settingModel::settingModel():
 
 int settingModel::rowCount(const QModelIndex& index) const
 {
-    return index.isValid() ? 0 : returnresult.count();
+    return index.isValid() ? 0 : m_Showresult.count();
 }
 
 QVariant settingModel::data(const QModelIndex &index, int role) const
 {
     QPixmap map(QString::fromLocal8Bit("/home/li/ukui/ukui-search1/ukui-search/data/img/mainviewwidget/search.png"));
 
-    if (role == Qt::DisplayRole) {
-        return returnresult.at(index.row());
-    }else if(role == Qt::DecorationRole){
-        return iconresult.at(index.row());
-    }
+    switch(role){
+    case Qt::DisplayRole:
+           return m_Showresult.at(index.row());
+    case Qt::DecorationRole:
+        if(index.row()<3)
+            return m_Iconresult.at(index.row());
+    case Qt::SizeHintRole:
+        return QSize(200,46);
+    case Qt::FontRole:
+         return QFont("宋体",14,QFont::DemiBold);
 
-//    switch(role){
-//    case Qt::TextColorRole:
-////           return QColor(Qt::black);
-//    case Qt::FontRole:
-//            if(index.column()==0){
-//            return QFont("宋体",11,QFont::Bold);
-//            }
-//        }
+        }
     return QVariant();
 }
 
@@ -60,6 +58,10 @@ void settingModel::run(int index)
     p.startDetached(p.program());
     p.waitForFinished(-1);
     setting->endGroup();
+    if(index==3){
+        QProcess *process =new QProcess(this);
+        process->startDetached("ukui-control-center");
+    }
 }
 
 //按字段解析xml文件，将设置插件的中文提取出来
@@ -113,10 +115,10 @@ void settingModel::XmlElement(){
 void settingModel::matchstart(const QString &source){
 
         sourcetext=source;
-        returnresult.clear();
+        m_Showresult.clear();
+        m_Iconresult.clear();
         commandresult.clear();
         Q_EMIT requestUpdateSignal(commandresult.count());
-        iconresult.clear();
         if(sourcetext.isEmpty())
         {
              matchesChanged();
@@ -127,6 +129,10 @@ void settingModel::matchstart(const QString &source){
 
 //将编辑框的字符串与xml文件解析出的结果正则表达式匹配
 void settingModel::matching(){
+    QList<QString> returnresult;
+    QList<QPixmap> iconresult;
+    QStringList regmatch;
+    QString settingkey;
     sourcetext+=QString::fromLocal8Bit(".*");
     QRegExp rx(sourcetext);
     QMap<QString, QStringList>::const_iterator i;
@@ -169,38 +175,17 @@ void settingModel::matching(){
         }
     }
 
-    returnresult=returnresult.mid(0,3);
-    iconresult=iconresult.mid(0,3);
+    m_Showresult=returnresult.mid(0,3);
+    m_Iconresult=iconresult.mid(0,3);
 
-    Q_EMIT requestUpdateSignal(returnresult.count());
+    Q_EMIT requestUpdateSignal(m_Showresult.count());
     matchesChanged();
 }
 
 //编辑栏内容改变，将model重新刷新
 void settingModel::matchesChanged()
 {
-
-    bool fullReset = false;
-    int newCount = returnresult.count();
-    int oldCount = lockresult.count();
-    if (newCount > oldCount) {
-        for (int row = 0; row < oldCount; ++row) {
-            if (!(returnresult.at(row) == lockresult.at(row))) {
-                fullReset = true;
-                break;
-            }
-        }
-        if (!fullReset) {
-            beginInsertRows(QModelIndex(), oldCount, newCount-1);
-            endInsertRows();
-        }
-    } else {
-        fullReset = true;
-    }
-    if (fullReset) {
         beginResetModel();
         endResetModel();
-    }
-    lockresult=returnresult;
 }
 

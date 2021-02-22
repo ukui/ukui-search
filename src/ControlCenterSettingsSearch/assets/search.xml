@@ -136,48 +136,6 @@
         <ChinesePlugin>字体</ChinesePlugin>
         <ChineseFunc>字体大小</ChineseFunc>
     </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>qiyonganjianzhongfushezhi</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>启用按键重复设置</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>yanchi</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>延迟</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>sudu</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>速度</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>shuruzifuceshizhongfuxiaoguoï¼</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>输入字符测试重复效果：</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>daxiesuodingtishi</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>大写锁定提示</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>huifumorenbuju</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>恢复默认布局</ChineseFunc>
-    </plugin>
-    <plugin name="Keyboard">
-        <pinyinPlugin>jianpan</pinyinPlugin>
-        <pinyinfunc>jianpanbuju</pinyinfunc>
-        <ChinesePlugin>键盘</ChinesePlugin>
-        <ChineseFunc>键盘布局</ChineseFunc>
-    </plugin>
     <plugin name="Mouse">
         <pinyinPlugin>shubiao</pinyinPlugin>
         <pinyinfunc>guanyongshou</pinyinfunc>
@@ -249,16 +207,16 @@
         <ChineseFunc>设置通知来源</ChineseFunc>
     </plugin>
     <plugin name="Display">
-        <pinyinPlugin>xianshiqi</pinyinPlugin>
-        <pinyinfunc>fenbianlv</pinyinfunc>
-        <ChinesePlugin>显示器</ChinesePlugin>
-        <ChineseFunc>分辨率</ChineseFunc>
+        <pinyinPlugin>pingmu</pinyinPlugin>
+        <pinyinfunc>pingmuxuanzhuan</pinyinfunc>
+        <ChinesePlugin>屏幕</ChinesePlugin>
+        <ChineseFunc>屏幕旋转</ChineseFunc>
     </plugin>
     <plugin name="Display">
-        <pinyinPlugin>xianshiqi</pinyinPlugin>
-        <pinyinfunc>suofangpingmu</pinyinfunc>
-        <ChinesePlugin>显示器</ChinesePlugin>
-        <ChineseFunc>缩放屏幕</ChineseFunc>
+        <pinyinPlugin>pingmu</pinyinPlugin>
+        <pinyinfunc>pingmuliangdu</pinyinfunc>
+        <ChinesePlugin>屏幕</ChinesePlugin>
+        <ChineseFunc>屏幕亮度</ChineseFunc>
     </plugin>
     <plugin name="Power">
         <pinyinPlugin>dianyuan</pinyinPlugin>
@@ -563,5 +521,23 @@
         <pinyinfunc>yejianmoshi</pinyinfunc>
         <ChinesePlugin>显示器</ChinesePlugin>
         <ChineseFunc>夜间模式</ChineseFunc>
+    </plugin>
+    <plugin name="Opmode">
+        <pinyinPlugin>caozuomoshi</pinyinPlugin>
+        <pinyinfunc>moshiqiehuan</pinyinfunc>
+        <ChinesePlugin>操作模式</ChinesePlugin>
+        <ChineseFunc>模式切换</ChineseFunc>
+    </plugin>
+    <plugin name="Opmode">
+        <pinyinPlugin>caozuomoshi</pinyinPlugin>
+        <pinyinfunc>zidongqiehuan</pinyinfunc>
+        <ChinesePlugin>操作模式</ChinesePlugin>
+        <ChineseFunc>自动切换</ChineseFunc>
+    </plugin>
+    <plugin name="backup">
+        <pinyinPlugin>xitonghuanyuan</pinyinPlugin>
+        <pinyinfunc>xitonghuanyuan</pinyinfunc>
+        <ChinesePlugin>系统还原</ChinesePlugin>
+        <ChineseFunc>系统还原</ChineseFunc>
     </plugin>
 </plugins>
