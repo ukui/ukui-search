@@ -188,6 +188,7 @@ void FirstIndex::run(){
         qWarning("write error\n");
     }
     qDebug("write data ok!\n");
+    GlobalSettings::getInstance()->reset(INOTIFY_NORMAL_EXIT);
     return;
 
 }
