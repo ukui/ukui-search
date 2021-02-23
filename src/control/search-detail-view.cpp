@@ -77,10 +77,7 @@ void SearchDetailView::clearLayout() {
     m_hLine_2->hide();
     m_optionView->hide();
     m_isEmpty = true;
-    if (m_webView) {
-        m_webView->close();
-        m_webView = NULL;
-    }
+    closeWebWidget();
 //    m_reload = false;
 }
 
@@ -138,8 +135,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     });
     connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
         if (m_reload) {
-            m_webView->close();
-            m_webView = NULL;
+            closeWebWidget();
             QDesktopServices::openUrl(url);
         }
     });
@@ -162,6 +158,14 @@ void SearchDetailView::setWebWidget(const QString& keyword)
 
     m_webView->load(address);
     m_webView->show();
+}
+
+void SearchDetailView::closeWebWidget()
+{
+    if (m_webView) {
+        m_webView->close();
+        m_webView = NULL;
+    }
 }
 
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {

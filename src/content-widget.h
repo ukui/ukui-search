@@ -45,6 +45,7 @@ public:
     void setContentList(const QStringList&);
     void setKeyword(QString);
     void setQuicklyOpenList(const QStringList &);
+    void closeWebView();
 private:
     void initUI();
     void initListView();

@@ -44,6 +44,7 @@ public:
     int getType();
     bool isContent = false;
     void setWebWidget(const QString&);
+    void closeWebWidget();
 
 protected:
     void paintEvent(QPaintEvent *);

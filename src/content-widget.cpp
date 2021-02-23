@@ -719,3 +719,11 @@ void ContentWidget::setQuicklyOpenList(const QStringList & list)
 {
     m_quicklyOpenList = list;
 }
+
+/**
+ * @brief ContentWidget::closeWebView 在主界面失焦消失的时候调用，（若webview未关闭）关闭网页搜索界面
+ */
+void ContentWidget::closeWebView()
+{
+    m_detailView->closeWebWidget();
+}
