@@ -65,7 +65,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //    FileUtils::_index_status |= 0x1;
     HandlePathList(messageList);
     qDebug()<<"begin creatAllIndex";
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"1");
+    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
     try
     {
 //        m_indexer = new Xapian::TermGenerator();
