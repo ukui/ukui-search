@@ -382,6 +382,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
     switch (event->response_type & ~0x80) {
     case XCB_FOCUS_OUT:
         this->hide();
+        m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
         break;
@@ -394,6 +395,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
         this->hide();
+        m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
     }

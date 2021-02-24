@@ -77,6 +77,8 @@ void SearchDetailView::clearLayout() {
     m_hLine_2->hide();
     m_optionView->hide();
     m_isEmpty = true;
+    closeWebWidget();
+//    m_reload = false;
 }
 
 /**
@@ -111,18 +113,60 @@ int SearchDetailView::getType()
  * @brief SearchDetailView::setWebWidget 显示为网页
  * @param keyword 关键词
  */
-//void SearchDetailView::setWebWidget(const QString& keyword)
-//{
-//    QWebEngineView * m_webView = new QWebEngineView(this);
-//    m_webView->move(0, 0);
-//    m_webView->setFixedSize(360, 522);
-//    m_isEmpty = false;
-//    clearLayout();
+void SearchDetailView::setWebWidget(const QString& keyword)
+{
+    clearLayout();
+    m_isEmpty = false;
+    m_reload = false;
+    m_webView = new QWebEngineView(this);
+    //如果使用非手机版百度跳转，请使用RequestInterceptor类
+//    RequestInterceptor * interceptor = new RequestInterceptor(m_webView);
+//    QWebEngineProfile * profile = new QWebEngineProfile(m_webView);
+//    profile->setRequestInterceptor(interceptor);
+//    QWebEnginePage * page = new QWebEnginePage(profile, m_webView);
+//    m_webView->setPage(page);
+    m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+    m_webView->setAttribute(Qt::WA_DeleteOnClose);
+    m_webView->move(0, 0);
+    m_webView->setFixedSize(360, 522);
 
-//    QString str = "http://m.baidu.com/s?word=" + keyword;
-//    m_webView->load(str);
-//    m_webView->show();
-//}
+    connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
+        m_reload = true;
+    });
+    connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
+        if (m_reload) {
+            closeWebWidget();
+            QDesktopServices::openUrl(url);
+        }
+    });
+    QString address;
+    QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
+    if (!engine.isEmpty()) {
+        if (engine == "360") {
+            address = "https://m.so.com/s?q=" + keyword; //360
+        } else if (engine == "sougou") {
+            address = "https://wap.sogou.com/web/searchList.jsp?&keyword=" + keyword; //搜狗
+        } else {
+            address = "http://m.baidu.com/s?word=" + keyword; //百度
+        }
+    } else { //默认值
+        address = "http://m.baidu.com/s?word=" + keyword; //百度
+    }
+//    QString str = "http://m.baidu.com/s?word=" + keyword; //百度
+//    QString str = "https://m.so.com/s?q=" + keyword; //360
+//    QString str = "https://wap.sogou.com/web/searchList.jsp?&keyword=" + keyword; //搜狗
+
+    m_webView->load(address);
+    m_webView->show();
+}
+
+void SearchDetailView::closeWebWidget()
+{
+    if (m_webView) {
+        m_webView->close();
+        m_webView = NULL;
+    }
+}
 
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {
     QString htmlString;
@@ -430,8 +474,6 @@ void SearchDetailView::initUI()
 
     m_layout->addStretch();
 
-
-
     this->clearLayout(); //初始化时隐藏所有控件
 }
 
@@ -513,3 +555,14 @@ void SearchDetailView::paintEvent(QPaintEvent *event) {
     p.drawRoundedRect(rect, 4, 4);
     return QWidget::paintEvent(event);
 }
+
+/**
+ * @brief RequestInterceptor::interceptRequest 拦截qwebengineview的Url请求
+ * @param info
+ */
+//void RequestInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info)
+//{
+//当使用PC版搜索引擎时，可以使用此方法获取用户点击的链接的url
+//     QUrl url = info.requestUrl();
+//     qDebug() <<"Request URL:" <<url;
+//}

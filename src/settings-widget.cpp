@@ -40,6 +40,7 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QDialog(parent)
     initUi();
     refreshIndexState();
     setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
+    resetWebEngine();
 }
 
 SettingsWidget::~SettingsWidget()
@@ -170,12 +171,25 @@ void SettingsWidget::initUi() {
     m_engineBtnGroup->addButton(m_baiduBtn);
     m_engineBtnGroup->addButton(m_sougouBtn);
     m_engineBtnGroup->addButton(m_360Btn);
+//    m_engineBtnGroup->setId(m_baiduBtn, WebEngine::Baidu);
+//    m_engineBtnGroup->setId(m_sougouBtn, WebEngine::Sougou);
+//    m_engineBtnGroup->setId(m_360Btn, WebEngine::_360);
+//    connect(m_engineBtnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), [ = ] (int id) {
+//        setWebEngine(id);
+//    });
+    connect(m_baiduBtn, &QRadioButton::clicked, [ = ] (bool checked) {
+        if (checked) setWebEngine("baidu");
+    });
+    connect(m_sougouBtn, &QRadioButton::clicked, [ = ] (bool checked) {
+        if (checked) setWebEngine("sougou");
+    });
+    connect(m_360Btn, &QRadioButton::clicked, [ = ] (bool checked) {
+        if (checked) setWebEngine("360");
+    });
+
     m_mainLyt->addWidget(m_searchEngineLabel);
     m_mainLyt->addWidget(m_engineDescLabel);
     m_mainLyt->addWidget(m_radioBtnFrame);
-    m_searchEngineLabel->hide();
-    m_engineDescLabel->hide();
-    m_radioBtnFrame->hide();
 
     //取消与确认按钮 （隐藏）
 //    m_bottomBtnFrame = new QFrame(this);
@@ -287,6 +301,36 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
     } else {
         showWarningDialog(returnCode);
     }
+}
+
+/**
+ * @brief SettingsWidget::resetWebEngine 获取当前的搜索引擎并反应在UI控件上
+ */
+void SettingsWidget::resetWebEngine()
+{
+    QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
+    m_engineBtnGroup->blockSignals(true);
+    if (!engine.isEmpty()) {
+        if (engine == "360") {
+            m_360Btn->setChecked(true);
+        } else if (engine == "sougou") {
+            m_sougouBtn->setChecked(true);
+        } else {
+            m_baiduBtn->setChecked(true);
+        }
+    } else {
+        m_baiduBtn->setChecked(true);
+    }
+    m_engineBtnGroup->blockSignals(false);
+}
+
+/**
+ * @brief SettingsWidget::setWebEngine
+ * @param engine 选择的搜索引擎
+ */
+void SettingsWidget::setWebEngine(const QString& engine)
+{
+    GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
 }
 
 /**
@@ -432,13 +476,13 @@ void SettingsWidget::resize()
 //        this->setFixedSize(528, 515);
 //    }
     if (m_blockdirs <= 4) {
-        m_dirListArea->setFixedHeight(32 * m_blockdirs + 5);
+        m_dirListArea->setFixedHeight(32 * m_blockdirs);
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
-        m_dirListWidget->setFixedHeight(32 * m_blockdirs + 5);
+        m_dirListWidget->setFixedHeight(32 * m_blockdirs);
         m_dirListArea->setFixedHeight(32 * 4);
     }
-    this->setFixedSize(528, 455);
+    this->setFixedSize(528, 410 + m_dirListArea->height());
 }
 
 /**

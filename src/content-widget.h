@@ -45,6 +45,7 @@ public:
     void setContentList(const QStringList&);
     void setKeyword(QString);
     void setQuicklyOpenList(const QStringList &);
+    void closeWebView();
 private:
     void initUI();
     void initListView();
@@ -72,12 +73,14 @@ private:
     SearchListView * m_settingListView = nullptr;
     SearchListView * m_appListView = nullptr;
     SearchListView * m_bestListView = nullptr;
+    SearchListView * m_webListView = nullptr;
     TitleLabel * m_fileTitleLabel = nullptr;
     TitleLabel * m_dirTitleLabel = nullptr;
     TitleLabel * m_contentTitleLabel = nullptr;
     TitleLabel * m_appTitleLabel = nullptr;
     TitleLabel * m_settingTitleLabel = nullptr;
     TitleLabel * m_bestTitleLabel = nullptr;
+    TitleLabel * m_webTitleLabel = nullptr;
     ShowMoreLabel * m_appShowMoreLabel = nullptr;
     ShowMoreLabel * m_settingShowMoreLabel = nullptr;
     ShowMoreLabel * m_dirShowMoreLabel = nullptr;
