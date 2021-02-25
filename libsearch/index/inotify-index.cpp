@@ -355,6 +355,7 @@ void InotifyIndex::run(){
 
     for (;;) { /* Read events forever */
 read:
+        memset(buf, 0x00, BUF_LEN);
         numRead = read(m_fd, buf, BUF_LEN);
 
         if (numRead == -1){
@@ -422,6 +423,7 @@ fork:
                    ::_exit(0);
                 }else{
                     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
+                    memset(buf, 0x00, BUF_LEN);
                     numRead = read(m_fd, buf, BUF_LEN);
                     if (numRead == -1){
                         printf("\033[1;31;40mread event error\033[0m\n");
