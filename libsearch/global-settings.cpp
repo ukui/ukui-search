@@ -77,7 +77,7 @@ void GlobalSettings::reset(const QString &key)
     QtConcurrent::run([=]() {
 //        if (m_mutex.tryLock(1000)) {
             m_settings->remove(key);
-//            m_settings->sync();
+            m_settings->sync();
 //            m_mutex.unlock();
 //        }
     });
