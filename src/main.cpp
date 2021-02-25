@@ -72,6 +72,7 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 
     bool showDebug = true;
 //    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/ukui-search.log";
+//    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search/ukui-search.log";
     QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search.log";
     if (!QFile::exists(logFilePath)) {
         showDebug = false;
