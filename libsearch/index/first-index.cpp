@@ -169,6 +169,7 @@ void FirstIndex::run(){
         if (p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
+        GlobalSettings::getInstance()->forceSync();
         ::_exit(0);
     }
     else if(pid < 0)
@@ -182,13 +183,14 @@ void FirstIndex::run(){
     }
 
 
+    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
     int retval = write(fifo_fd, buffer, strlen(buffer));
     if(retval == -1)
     {
         qWarning("write error\n");
     }
     qDebug("write data ok!\n");
-    GlobalSettings::getInstance()->reset(INOTIFY_NORMAL_EXIT);
+
     return;
 
 }

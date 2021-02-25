@@ -35,8 +35,9 @@ GlobalSettings *GlobalSettings::getInstance()
 
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
-    m_settings = new QSettings("org.ukui", "ukui-search", this);
-    m_block_dirs_settings = new QSettings("org.ukui","ukui-search-block-dirs",this);
+    m_settings = new QSettings("org.ukui/ukui-search", "ukui-search", this);
+//    m_settings->setAtomicSyncRequired(false);
+    m_block_dirs_settings = new QSettings("org.ukui/ukui-search","ukui-search-block-dirs",this);
     m_block_dirs_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
     this->forceSync();
     //the default number of transparency in mainwindow is 0.7
@@ -58,7 +59,6 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 
 GlobalSettings::~GlobalSettings()
 {
-
 }
 
 const QVariant GlobalSettings::getValue(const QString &key)
@@ -75,11 +75,11 @@ void GlobalSettings::reset(const QString &key)
 {
     m_cache.remove(key);
     QtConcurrent::run([=]() {
-        if (m_mutex.tryLock(1000)) {
+//        if (m_mutex.tryLock(1000)) {
             m_settings->remove(key);
-            m_settings->sync();
-            m_mutex.unlock();
-        }
+//            m_settings->sync();
+//            m_mutex.unlock();
+//        }
     });
     Q_EMIT this->valueChanged(key);
 }
@@ -149,14 +149,19 @@ QStringList GlobalSettings::getBlockDirs()
 //MouseZhangZh
 void GlobalSettings::setValue(const QString &key, const QVariant &value)
 {
+    //    qDebug()<<"setvalue========"<<key<<":"<<value;
     m_cache.insert(key, value);
+    //     m_settings->sync();
     QtConcurrent::run([=]() {
-//        if (m_mutex.tryLock(1000)) {
-        m_mutex.lock();
-            m_settings->setValue(key, value);
-            m_settings->sync();
-            m_mutex.unlock();
-//        }
+        //        qDebug()<<m_settings->status();
+        //        if (m_mutex.tryLock(1000)) {
+        //        m_mutex.lock();
+        m_settings->setValue(key, value);
+        //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
+        m_settings->sync();
+        //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
+        //            m_mutex.unlock();
+        //        }
     });
 }
 
