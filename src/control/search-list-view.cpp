@@ -47,6 +47,7 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     m_type = type;
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ]() {
         Q_EMIT this->currentRowChanged(getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+        m_isSelected = true;
     });
 }
 
@@ -78,7 +79,7 @@ void SearchListView::setList(QStringList list)
 {
     QModelIndex index = this->currentIndex();
     m_model->setList(list);
-    if (index.row() >= 0 && index.row() < list.length()) {
+    if (index.row() >= 0 && index.row() < list.length() && m_isSelected) {
         this->blockSignals(true);
         this->setCurrentIndex(index);
         this->blockSignals(false);
@@ -184,4 +185,5 @@ int SearchListView::getResType(const QString& path) {
  */
 void SearchListView::clearSelection() {
     this->selectionModel()->clearSelection();
+    m_isSelected = false;
 }

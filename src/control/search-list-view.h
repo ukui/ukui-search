@@ -61,6 +61,7 @@ public:
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;
+    bool m_isSelected = false;
 
     HighlightItemDelegate * m_styleDelegate = nullptr;
 
