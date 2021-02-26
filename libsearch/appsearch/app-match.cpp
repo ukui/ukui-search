@@ -25,6 +25,13 @@ AppMatch::AppMatch(QObject *parent) : QObject(parent)
 {
 
     this->getDesktopFilePath();
+
+    m_watchAppDir=new QFileSystemWatcher(this);
+    m_watchAppDir->addPath("/usr/share/applications/");
+    connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,[this](){
+        this->getDesktopFilePath();
+            });
+
     qDBusRegisterMetaType<QMap<QString,QString>>();
     qDBusRegisterMetaType<QList<QMap<QString,QString>>>();
     m_interFace=new QDBusInterface ("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
@@ -40,6 +47,10 @@ AppMatch::~AppMatch(){
     if(m_interFace){
         delete m_interFace;
         m_interFace=NULL;
+    }
+    if(m_watchAppDir){
+        delete m_watchAppDir;
+        m_watchAppDir=NULL;
     }
 }
 
