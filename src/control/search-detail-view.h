@@ -88,6 +88,7 @@ private:
 
     QWebEngineView * m_webView = nullptr;
     bool m_reload = false;
+    QString m_currentKeyword;
 
 Q_SIGNALS:
     void configFileChanged();

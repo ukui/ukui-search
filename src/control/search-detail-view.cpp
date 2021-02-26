@@ -77,7 +77,10 @@ void SearchDetailView::clearLayout() {
     m_hLine_2->hide();
     m_optionView->hide();
     m_isEmpty = true;
-    closeWebWidget();
+//    closeWebWidget();
+    if (m_webView) {
+        m_webView->hide();
+    }
 //    m_reload = false;
 }
 
@@ -118,27 +121,37 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     clearLayout();
     m_isEmpty = false;
     m_reload = false;
-    m_webView = new QWebEngineView(this);
+    if (m_webView) {
+        if (QString::compare(keyword, m_currentKeyword) == 0) { //关键词没有发生变化，只把原来的网页show出来
+            m_webView->show();
+            return;
+        }
+    } else {
+        m_webView = new QWebEngineView(this);
+        m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+        m_webView->setAttribute(Qt::WA_DeleteOnClose);
+        m_webView->move(0, 0);
+        m_webView->setFixedSize(360, 522);
+
+        connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
+            m_reload = true;
+        });
+        connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
+            if (m_reload) {
+                closeWebWidget();
+                QDesktopServices::openUrl(url);
+            }
+        });
+    }
     //如果使用非手机版百度跳转，请使用RequestInterceptor类
 //    RequestInterceptor * interceptor = new RequestInterceptor(m_webView);
 //    QWebEngineProfile * profile = new QWebEngineProfile(m_webView);
 //    profile->setRequestInterceptor(interceptor);
 //    QWebEnginePage * page = new QWebEnginePage(profile, m_webView);
 //    m_webView->setPage(page);
-    m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-    m_webView->setAttribute(Qt::WA_DeleteOnClose);
-    m_webView->move(0, 0);
-    m_webView->setFixedSize(360, 522);
 
-    connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
-        m_reload = true;
-    });
-    connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
-        if (m_reload) {
-            closeWebWidget();
-            QDesktopServices::openUrl(url);
-        }
-    });
+    //新打开网页搜索或关键词发生变化，重新load
+    m_currentKeyword = keyword;//目前网页搜索的关键词，记录此词来判断网页是否需要刷新
     QString address;
     QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
     if (!engine.isEmpty()) {
