@@ -24,24 +24,47 @@
 #include <QDir>
 #include <QLocale>
 #include <QDebug>
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QtDBus>
+#include <QElapsedTimer>
+
 class AppMatch : public QObject
 {
     Q_OBJECT
 public:
     explicit AppMatch(QObject *parent = nullptr);
+    ~AppMatch();
     QStringList startMatchApp(QString input);
+    QMap<QString,QList<QString>> startMatchApp(QString input,int i);
 
 private:
     void getAllDesktopFilePath(QString path);
     void getDesktopFilePath();
     void getAppName();
-    void appNameMatch(QString appname,QString desktoppath);
+//    void appNameMatch(QString appname,QString desktoppath,QString appicon);
+    void appNameMatch(QString appname);
+    void softWareCenterSearch();
+    void parseSoftWareCenterReturn(QList<QMap<QString,QString>> list);
+    void getInstalledAppsVersion(QString appname);
+    void returnAppMap();
 
 private:
     QString m_sourceText;
     QStringList m_filePathList;
     QStringList m_returnResult;
-    QStringList m_midResult;
+
+    QDBusInterface *m_interFace=nullptr;
+    QMap<QString,QList<QString>> m_softWareCenterMap;
+    QMap<QString,QList<QString>> m_installAppMap;
+    QMap<QString,QList<QString>> m_filterInstallAppMap;
+    QMap<QString,QList<QString>> m_matchInstallAppMap;
+    QMap<QString,QList<QString>> m_returnResult1;
+    QMap<QString,QList<QString>> m_midResult;
+//    QProcess *m_versionCommand;
+
+private Q_SLOTS:
+    void slotDBusCallFinished();
 
 };
 

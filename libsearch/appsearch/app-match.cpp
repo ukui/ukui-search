@@ -21,22 +21,62 @@
 #include <glib.h>
 #include "file-utils.h"
 AppMatch::AppMatch(QObject *parent) : QObject(parent)
+//    m_versionCommand(new QProcess(this))
 {
+
     this->getDesktopFilePath();
+    qDBusRegisterMetaType<QMap<QString,QString>>();
+    qDBusRegisterMetaType<QList<QMap<QString,QString>>>();
+    m_interFace=new QDBusInterface ("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
+                              "com.kylin.getsearchresults",
+                              QDBusConnection::sessionBus());
+     if (!m_interFace->isValid())
+     {
+        qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+     }
+}
+
+AppMatch::~AppMatch(){
+    if(m_interFace){
+        delete m_interFace;
+        m_interFace=NULL;
+    }
 }
 
 QStringList AppMatch::startMatchApp(QString input){
     input.replace(" ","");
     m_sourceText=input;
-    m_returnResult.clear();
+    m_softWareCenterMap.clear();
+    m_matchInstallAppMap.clear();
+    m_returnResult1.clear();
     if(input.isEmpty()){
         return m_returnResult;
     }
-    this->getAppName();
-    m_returnResult=m_midResult;
+    softWareCenterSearch();
+    getAppName();
+    returnAppMap();
+    m_returnResult1=m_midResult;
     m_midResult.clear();
-//    qWarning()<<"m_returnResult  :"<<m_returnResult;
+    qWarning()<<"m_returnResult  :"<<m_returnResult1;
     return m_returnResult;
+}
+
+QMap<QString,QList<QString>> AppMatch::startMatchApp(QString input,int i){
+    input.replace(" ","");
+    m_sourceText=input;
+    m_softWareCenterMap.clear();
+    m_matchInstallAppMap.clear();
+    m_returnResult1.clear();
+    if(input.isEmpty()){
+        return m_returnResult1;
+    }
+    softWareCenterSearch();
+    getAppName();
+    returnAppMap();
+    m_returnResult1=m_midResult;
+    m_midResult.clear();
+    qWarning()<<"m_returnResult  :"<<m_returnResult1;
+    return m_returnResult1;
 }
 
 /**
@@ -44,6 +84,10 @@ QStringList AppMatch::startMatchApp(QString input){
  * @param path 存放desktop文件夹
  */
 void AppMatch::getAllDesktopFilePath(QString path){
+
+    char* name;
+    char* icon;
+    QStringList applist;
 
     GKeyFileFlags flags=G_KEY_FILE_NONE;
     GKeyFile* keyfile=g_key_file_new ();
@@ -60,7 +104,6 @@ void AppMatch::getAllDesktopFilePath(QString path){
         return;
     }
     int i=0;
-
     //递归算法的核心部分
     do{
         QFileInfo fileInfo = list.at(i);
@@ -128,7 +171,10 @@ void AppMatch::getAllDesktopFilePath(QString path){
                     continue;
                 }
             }
-
+            name=g_key_file_get_locale_string(keyfile,"Desktop Entry","Name", nullptr, nullptr);
+            icon=g_key_file_get_locale_string(keyfile,"Desktop Entry","Icon", nullptr, nullptr);
+            m_installAppMap.insert(QString::fromLocal8Bit(name),applist<<filePathStr<<QString::fromLocal8Bit(icon));
+            applist.clear();
             m_filePathList.append(filePathStr);
         }
         i++;
@@ -188,7 +234,15 @@ void AppMatch::getDesktopFilePath()
     m_filePathList.removeAll("/usr/share/applications/openjdk-8-policytool.desktop");
     m_filePathList.removeAll("/usr/share/applications/kylin-io-monitor.desktop");
     m_filePathList.removeAll("/usr/share/applications/wps-office-uninstall.desktop");
-    m_filePathList.removeAll("/usr/share/applications/wps-office-misc.desktop");
+
+    QString desktop;
+    QStringList applist;
+    QMap<QString, QList<QString>>::const_iterator i;
+    for(i=m_installAppMap.constBegin();i!=m_installAppMap.constEnd();++i){
+        applist=i.value();
+        if(m_filePathList.contains(applist.at(0)))
+            m_filterInstallAppMap.insert(i.key(),applist);
+    }
 }
 
 /**
@@ -197,27 +251,10 @@ void AppMatch::getDesktopFilePath()
  */
 void AppMatch::getAppName()
 {
-    GKeyFileFlags flags=G_KEY_FILE_NONE;
-    GKeyFile* keyfile=g_key_file_new ();
-
-    QByteArray fpbyte;
-    QString str;
-    char* filepath;
-    char* name;
-    QString namestr;
-    for(int i=0;i<m_filePathList.size();i++){
-        str=m_filePathList.at(i);
-        fpbyte=str.toLocal8Bit();
-        filepath=fpbyte.data();
-        g_key_file_load_from_file(keyfile,filepath,flags,nullptr);
-        name=g_key_file_get_locale_string(keyfile,"Desktop Entry","Name", nullptr, nullptr);
-        namestr=QString::fromLocal8Bit(name);
-//        qWarning()<<"namestr :"<<namestr;
-        appNameMatch(namestr,str);
-    }
-
-    g_key_file_load_from_file(keyfile,filepath,flags,nullptr);
-    g_key_file_free(keyfile);
+    QMap<QString, QList<QString>>::const_iterator i;
+            for(i=m_filterInstallAppMap.constBegin();i!=m_filterInstallAppMap.constEnd();++i){
+                appNameMatch(i.key());
+            }
 }
 
 /**
@@ -228,20 +265,90 @@ void AppMatch::getAppName()
  * @param desktoppath
  * desktop路径
  */
-void AppMatch::appNameMatch(QString appname,QString desktoppath){
+void AppMatch::appNameMatch(QString appname){
     if(appname.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_midResult.append(desktoppath);
+        m_matchInstallAppMap.insert(appname,m_filterInstallAppMap.value(appname));
         return;
     }
     QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
     if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_midResult.append(desktoppath);
+        m_matchInstallAppMap.insert(appname,m_filterInstallAppMap.value(appname));
         return;
     }
     if(m_sourceText.size()<2)
         return;
     QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
     if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_midResult.append(desktoppath);
+        m_matchInstallAppMap.insert(appname,m_filterInstallAppMap.value(appname));
     }
 }
+
+void AppMatch::softWareCenterSearch(){
+    // 调用D-Bus接口的方法
+//    QDBusPendingCall pcall = m_interFace->asyncCall("get_search_result", m_sourceText);
+    // 设置等待异步消息的信号槽
+//    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(pcall, nullptr);
+//    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &AppMatch::slotDBusCallFinished);
+    slotDBusCallFinished();
+}
+
+void AppMatch::slotDBusCallFinished()
+{
+    QDBusReply<QList<QMap<QString,QString>>> reply = m_interFace->call("get_search_result",m_sourceText); //阻塞，直到远程方法调用完成。
+//    QDBusPendingReply<QList<QMap<QString,QString>>> reply = *call;
+           if (reply.isValid())
+           {
+            parseSoftWareCenterReturn(reply.value());
+           }
+           else
+           {
+               qWarning() << "value method called failed!";
+           }
+//     call->deleteLater();
+}
+
+void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list){
+//    qWarning()<<list;
+    QString appname;
+    QString appicon;
+    QStringList applist;
+    for(int i=0;i<list.size();i++){
+//        qWarning()<<list.at(i).keys();
+        appname=list.at(i).value("appname");
+        appicon=list.at(i).value("icon");
+        m_softWareCenterMap.insert(appname,applist<<""<<appicon);
+        applist.clear();
+    }
+}
+
+void AppMatch::getInstalledAppsVersion(QString appname){
+//    qWarning()<<"apt show "+appname;
+//    m_versionCommand->start("apt show "+appname);
+//    m_versionCommand->startDetached(m_versionCommand->program());
+//    m_versionCommand->waitForFinished();
+//    connect(m_versionCommand,&QProcess::readyReadStandardOutput,this,[=](){
+//        QString result=m_versionCommand->readAllStandardOutput();
+//        if(!result.isEmpty()){
+//            QStringList strlist=result.split("\n");
+//            QString str=strlist.at(1);
+//            if(!str.contains("Version")){
+//               return;
+//            }
+//            qWarning()<<strlist.at(1);
+//            qWarning()<<"-----------------------------------------------";
+//        }
+//    });
+//    m_versionCommand->close();
+}
+
+void AppMatch::returnAppMap(){
+    QMap<QString, QList<QString>>::const_iterator i;
+    for(i=m_matchInstallAppMap.constBegin();i!=m_matchInstallAppMap.constEnd();++i){
+        m_midResult.insert(i.key(),i.value());
+    }
+    QMap<QString, QList<QString>>::const_iterator j;
+    for(j=m_softWareCenterMap.constBegin();j!=m_softWareCenterMap.constEnd();++j){
+        m_midResult.insert(j.key(),j.value());
+    }
+}
+
