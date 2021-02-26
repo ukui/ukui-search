@@ -34,6 +34,7 @@ class AppMatch : public QObject
     Q_OBJECT
 public:
     explicit AppMatch(QObject *parent = nullptr);
+    ~AppMatch();
     QStringList startMatchApp(QString input);
     QMap<QString,QList<QString>> startMatchApp(QString input,int i);
 
@@ -53,7 +54,7 @@ private:
     QStringList m_filePathList;
     QStringList m_returnResult;
 
-    QDBusInterface *m_interFace;
+    QDBusInterface *m_interFace=nullptr;
     QMap<QString,QList<QString>> m_softWareCenterMap;
     QMap<QString,QList<QString>> m_installAppMap;
     QMap<QString,QList<QString>> m_filterInstallAppMap;

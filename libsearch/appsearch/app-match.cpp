@@ -36,6 +36,13 @@ AppMatch::AppMatch(QObject *parent) : QObject(parent)
      }
 }
 
+AppMatch::~AppMatch(){
+    if(m_interFace){
+        delete m_interFace;
+        m_interFace=NULL;
+    }
+}
+
 QStringList AppMatch::startMatchApp(QString input){
     input.replace(" ","");
     m_sourceText=input;
