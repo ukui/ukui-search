@@ -57,10 +57,6 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 }
 
-GlobalSettings::~GlobalSettings()
-{
-}
-
 const QVariant GlobalSettings::getValue(const QString &key)
 {
     return m_cache.value(key);

@@ -70,6 +70,9 @@ private:
 //        QString(".xls"),
 //        QString(".xlsx"),
         QString(".txt")};
+
+    //xapian will auto commit per 10,000 changes, donnot change it!!!
+    const size_t u_send_length = 8192;
 };
 
 #endif // FIRSTINDEX_H
