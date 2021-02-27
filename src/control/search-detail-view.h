@@ -44,6 +44,7 @@ public:
     int getType();
     bool isContent = false;
     void setWebWidget(const QString&);
+    void setAppWidget(const QString &name, const QString &path, const QString &icon);
     void closeWebWidget();
 
 protected:
@@ -58,12 +59,14 @@ private:
     bool addPanelShortcut(const QString&);
     bool openPathAction(const QString&);
     bool copyPathAction(const QString&);
+    bool installAppAction(const QString&);
     QString getHtmlText(const QString&, const QString&);
     QString escapeHtml(const QString&);
     bool writeConfigFile(const QString&);
     bool m_isEmpty = true;
     int m_type = 0;
     QString m_path = 0;
+    QString m_name = 0; //目前只有未安装应用在打开软件商店时需要此参数
 
     void initUI();
     QLabel * m_iconLabel = nullptr;

@@ -52,6 +52,8 @@ public:
 
     void appendItem(QString);
     void setList(QStringList);
+    void setAppList(const QStringList&, const QStringList&);
+    void appendBestItem(const QPair<int, QString>&);
     void removeItem(QString);
     void clear();
     void setKeyword(QString);

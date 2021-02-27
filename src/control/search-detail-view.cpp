@@ -173,6 +173,43 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     m_webView->show();
 }
 
+void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath)
+{
+    m_type = SearchListView::ResType::App;
+    m_path = path;
+    m_name = appname;
+    m_isEmpty = false;
+    clearLayout();
+    m_iconLabel->show();
+    m_nameFrame->show();
+    m_nameLabel->show();
+    m_typeLabel->show();
+    m_hLine->show();
+
+    QIcon icon;
+    if (path.isEmpty() || path == "") {
+        icon = QIcon(iconpath);
+        m_optionView->setupOptions(m_type, false);
+    } else {
+        m_optionView->setupOptions(m_type, true);
+        if (QIcon::fromTheme(iconpath).isNull()) {
+            icon = QIcon(":/res/icons/desktop.png");
+        } else {
+            icon = QIcon::fromTheme(iconpath);
+        }
+    }
+    m_optionView->show();
+
+    m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+    QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
+    QString showname = fontMetrics.elidedText(appname, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
+    m_nameLabel->setText(showname);
+    if (QString::compare(showname, appname)) {
+        m_nameLabel->setToolTip(appname);
+    }
+    m_typeLabel->setText(tr("Application"));
+}
+
 void SearchDetailView::closeWebWidget()
 {
     if (m_webView) {
@@ -234,7 +271,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_hLine->show();
 
     //文件和文件夹有一个额外的详情区域
-    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content || type == SearchListView::ResType::Best) {
+    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content) {
         m_detailFrame->show();
         if (isContent) { //文件内容区域
             m_contentLabel->show();
@@ -276,21 +313,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
 
     //根据不同类型的搜索结果切换加载图片和名称的方式
     switch (type) {
-        case SearchListView::ResType::App : {
-            QIcon icon = FileUtils::getAppIcon(path);
-            m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-            QString wholeName = FileUtils::getAppName(path);
-            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-            m_nameLabel->setText(name);
-            if (QString::compare(name, wholeName)) {
-                m_nameLabel->setToolTip(wholeName);
-            }
-            m_typeLabel->setText(tr("Application"));
-            break;
-        }
         case SearchListView::ResType::Content:
-        case SearchListView::ResType::Best:
         case SearchListView::ResType::Dir :
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
@@ -346,6 +369,9 @@ void SearchDetailView::execActions(const int& type, const int& option, const QSt
         case OptionView::Options::CopyPath: {
             copyPathAction(path);
             break;
+        }
+        case OptionView::Options::Install: {
+            installAppAction(m_name); //未安装应用点击此选项，不使用路径作为参数，而是使用软件名
         }
         default:
             break;
@@ -550,6 +576,18 @@ bool SearchDetailView::copyPathAction(const QString& path) {
     QClipboard * clipboard = QApplication::clipboard();   //获取系统剪贴板指针
     clipboard->setText(path);
     return true;
+}
+
+/**
+ * @brief SearchDetailView::installAppAction 执行打开软件商店操作
+ * @param name
+ * @return
+ */
+bool SearchDetailView::installAppAction(const QString & name)
+{
+    //打开软件商店下载此软件
+    QProcess process;
+    process.startDetached(QString("kylin-software-center -find %1").arg(name));
 }
 
 void SearchDetailView::paintEvent(QPaintEvent *event) {

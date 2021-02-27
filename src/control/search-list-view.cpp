@@ -88,6 +88,16 @@ void SearchListView::setList(QStringList list)
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
 
+void SearchListView::setAppList(const QStringList &pathlist, const QStringList &iconlist)
+{
+    m_model->setAppList(pathlist, iconlist);
+}
+
+void SearchListView::appendBestItem(const QPair<int, QString> &pair)
+{
+    m_model->appendBestItem(pair);
+}
+
 /**
  * @brief SearchListView::removeItem
  */
@@ -153,7 +163,8 @@ int SearchListView::getCurrentType() {
     case SearchItem::SearchType::Web:
         return ResType::Web;
     default: //All或者Best的情况，需要自己判断文件类型
-        return getResType(m_item->m_pathlist.at(this->currentIndex().row()));
+//        return getResType(m_item->m_pathlist.at(this->currentIndex().row()));
+        return ResType::Best;
         break;
     }
 }
@@ -165,17 +176,12 @@ int SearchListView::getCurrentType() {
  */
 int SearchListView::getResType(const QString& path) {
     if (path.endsWith(".desktop")) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is application.";
         return SearchListView::ResType::App;
     } else if (QFileInfo(path).isFile()) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is file.";
-//        return SearchListView::ResType::File;
         return SearchListView::ResType::Best;
     } else if (QFileInfo(path).isDir()) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is dir.";
         return SearchListView::ResType::Dir;
     } else {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is setting.";
         return SearchListView::ResType::Setting;
     }
 }
