@@ -74,14 +74,14 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //        m_indexer->set_flags(Xapian::TermGenerator::FLAG_SPELLING);
 //        m_indexer.set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
 
-        int count =0;
+//        int count =0;
         for (auto i : *_doc_list_path){
 
             insertIntoDatabase(i);
-            if(++count > 8999){
-                count = 0;
-                m_database_path->commit();
-            }
+//            if(++count > 8999){
+//                count = 0;
+//                m_database_path->commit();
+//            }
         }
         m_database_path->commit();
     }
@@ -148,10 +148,10 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
     {
         QDir database(QString::fromStdString(INDEX_PATH));
         if(database.exists())
-            database.removeRecursively();
+            qDebug()<<"remove"<<database.removeRecursively();
         database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
         if(database.exists())
-            database.removeRecursively();
+            qDebug()<<"remove"<<database.removeRecursively();
     }
     m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
@@ -266,7 +266,8 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
     ChineseSegmentation::getInstance();
     ConstructDocumentForContent *constructer;
     QThreadPool pool;
-    pool.setMaxThreadCount(((QThread::idealThreadCount() - 1) / 2) + 1);
+//    pool.setMaxThreadCount(((QThread::idealThreadCount() - 1) / 2) + 1);
+    pool.setMaxThreadCount(1);
     pool.setExpiryTimeout(100);
     while(!messageList->isEmpty())
     {

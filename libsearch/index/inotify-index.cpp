@@ -402,7 +402,7 @@ fork:
             int rc;
             timeval* read_timeout = (timeval*)malloc(sizeof(timeval));
 
-            read_timeout->tv_sec = 60;
+            read_timeout->tv_sec = 40;
             read_timeout->tv_usec = 0;
             for(;;)
             {
