@@ -53,17 +53,22 @@ OptionView::~OptionView()
         delete m_copyPathLabel;
         m_copyPathLabel = NULL;
     }
+    if (m_installLabel) {
+        delete m_installLabel;
+        m_installLabel = NULL;
+    }
 }
 
 /**
  * @brief OptionView::initComponent 构建可用选项表
  * @param type 详情页类型
+ * @param is_appInstalled 如果是应用详情页，应用是否已安装
  */
-void OptionView::setupOptions(const int& type) {
+void OptionView::setupOptions(const int& type, bool is_appInstalled) {
     this->hideOptions();
     switch (type) {
         case SearchListView::ResType::App : {
-            setupAppOptions();
+            setupAppOptions(is_appInstalled);
             break;
         }
         case SearchListView::ResType::Content:
@@ -127,6 +132,13 @@ void OptionView::initUI()
     m_copyPathLabel->installEventFilter(this);
     m_optionLyt->addWidget(m_copyPathLabel);
 
+    m_installLabel = new QLabel(m_optionFrame);
+    m_installLabel->setText(tr("Install")); //复制所在路径
+    m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
+    m_installLabel->setCursor(QCursor(Qt::PointingHandCursor));
+    m_installLabel->installEventFilter(this);
+    m_optionLyt->addWidget(m_installLabel);
+
     m_optionLyt->addStretch();
     m_optionFrame->setLayout(m_optionLyt);
     m_mainLyt->addWidget(m_optionFrame);
@@ -159,6 +171,10 @@ void OptionView::setupOptionLabel(const int& opt) {
             m_copyPathLabel->show();
             break;
         }
+        case Options::Install: {
+            m_installLabel->show();
+            break;
+        }
         default:
             break;
     }
@@ -171,15 +187,21 @@ void OptionView::hideOptions()
     m_panelLabel->hide();
     m_openPathLabel->hide();
     m_copyPathLabel->hide();
+    m_installLabel->hide();
 }
 
 /**
  * @brief OptionView::setupAppOptions 为应用类型的详情页构建选项表
+ * @param is_installed 应用是否已安装
  */
-void OptionView::setupAppOptions() {
-    setupOptionLabel(Options::Open);
-    setupOptionLabel(Options::Shortcut);
-    setupOptionLabel(Options::Panel);
+void OptionView::setupAppOptions(bool is_installed) {
+    if (is_installed) {
+        setupOptionLabel(Options::Open);
+        setupOptionLabel(Options::Shortcut);
+        setupOptionLabel(Options::Panel);
+    } else {
+        setupOptionLabel(Options::Install);
+    }
 }
 
 /**
@@ -287,6 +309,21 @@ bool OptionView::eventFilter(QObject *watched, QEvent *event){
             return true;
         } else if (event->type() == QEvent::Leave) {
             m_copyPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
+            return true;
+        }
+    } else if (m_installLabel && watched == m_installLabel) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #296CD9;}");
+            return true;
+        } else if (event->type() == QEvent::MouseButtonRelease) {
+            m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
+            Q_EMIT this->onOptionClicked(Options::Install);
+            return true;
+        } else if (event->type() == QEvent::Enter) {
+            m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #40A9FB;}");
+            return true;
+        } else if (event->type() == QEvent::Leave) {
+            m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             return true;
         }
     }

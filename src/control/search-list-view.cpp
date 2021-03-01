@@ -47,6 +47,7 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     m_type = type;
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ]() {
         Q_EMIT this->currentRowChanged(getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+        m_isSelected = true;
     });
 }
 
@@ -78,13 +79,23 @@ void SearchListView::setList(QStringList list)
 {
     QModelIndex index = this->currentIndex();
     m_model->setList(list);
-    if (index.row() >= 0 && index.row() < list.length()) {
+    if (index.row() >= 0 && index.row() < list.length() && m_isSelected) {
         this->blockSignals(true);
         this->setCurrentIndex(index);
         this->blockSignals(false);
     }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+}
+
+void SearchListView::setAppList(const QStringList &pathlist, const QStringList &iconlist)
+{
+    m_model->setAppList(pathlist, iconlist);
+}
+
+void SearchListView::appendBestItem(const QPair<int, QString> &pair)
+{
+    m_model->appendBestItem(pair);
 }
 
 /**
@@ -152,7 +163,8 @@ int SearchListView::getCurrentType() {
     case SearchItem::SearchType::Web:
         return ResType::Web;
     default: //All或者Best的情况，需要自己判断文件类型
-        return getResType(m_item->m_pathlist.at(this->currentIndex().row()));
+//        return getResType(m_item->m_pathlist.at(this->currentIndex().row()));
+        return ResType::Best;
         break;
     }
 }
@@ -164,17 +176,12 @@ int SearchListView::getCurrentType() {
  */
 int SearchListView::getResType(const QString& path) {
     if (path.endsWith(".desktop")) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is application.";
         return SearchListView::ResType::App;
     } else if (QFileInfo(path).isFile()) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is file.";
-//        return SearchListView::ResType::File;
         return SearchListView::ResType::Best;
     } else if (QFileInfo(path).isDir()) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is dir.";
         return SearchListView::ResType::Dir;
     } else {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is setting.";
         return SearchListView::ResType::Setting;
     }
 }
@@ -184,4 +191,5 @@ int SearchListView::getResType(const QString& path) {
  */
 void SearchListView::clearSelection() {
     this->selectionModel()->clearSelection();
+    m_isSelected = false;
 }

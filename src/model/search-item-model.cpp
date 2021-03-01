@@ -145,7 +145,7 @@ void SearchItemModel::appendItem(QString path) {
     this->beginResetModel();
     m_item->m_pathlist << path;
     this->endResetModel();
-//    this->insertRow(rowCount(QModelIndex()) - 1);
+    //    this->insertRow(rowCount(QModelIndex()) - 1);
 }
 
 /**
@@ -157,6 +157,23 @@ void SearchItemModel::setList(QStringList list)
     this->beginResetModel();
     m_item->m_pathlist = list;
     this->endResetModel();
+}
+
+void SearchItemModel::setAppList(const QStringList &pathlist, const QStringList &iconlist)
+{
+    this->beginResetModel();
+    m_item->m_app_pathlist = pathlist;
+    m_item->m_app_iconlist = iconlist;
+    this->endResetModel();
+}
+
+/**
+ * @brief SearchItemModel::insertBestItem 向最佳匹配列表添加一项
+ * @param pair <类型，路径或名称>
+ */
+void SearchItemModel::appendBestItem(const QPair<int, QString> & pair)
+{
+        m_item->m_bestList.append(pair);
 }
 
 /**
@@ -171,4 +188,18 @@ void SearchItemModel::clear()
     this->beginResetModel();
     m_item->clear();
     this->endResetModel();
+}
+
+/**
+ * @brief SearchItemModel::setBestAppIcon 设置最佳匹配应用的图标
+ * @param str 图标名称或路径，应用安装时为图标名，未安装时为路径
+ * @param is_installed 应用是否已安装
+ */
+void SearchItemModel::setBestAppIcon(const QString &str, const bool & is_installed)
+{
+    if (is_installed) {
+        m_item->m_bestAppIcon = QIcon::fromTheme(str);
+    } else {
+        m_item->m_bestAppIcon = QIcon(str);
+    }
 }

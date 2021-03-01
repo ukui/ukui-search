@@ -54,8 +54,11 @@ public:
 
     void appendItem(QString);
     void setList(QStringList);
+    void setAppList(const QStringList&, const QStringList&);
+    void appendBestItem(const QPair<int, QString>&);
     void removeItem(QString);
     void clear();
+    void setBestAppIcon(const QString &, const bool &);
 
 private :
     SearchItem * m_item = nullptr;

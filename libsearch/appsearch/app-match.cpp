@@ -54,25 +54,31 @@ AppMatch::~AppMatch(){
     }
 }
 
-QStringList AppMatch::startMatchApp(QString input){
-    input.replace(" ","");
-    m_sourceText=input;
-    m_softWareCenterMap.clear();
-    m_matchInstallAppMap.clear();
-    m_returnResult1.clear();
-    if(input.isEmpty()){
-        return m_returnResult;
-    }
-    softWareCenterSearch();
-    getAppName();
-    returnAppMap();
-    m_returnResult1=m_midResult;
-    m_midResult.clear();
-    qWarning()<<"m_returnResult  :"<<m_returnResult1;
-    return m_returnResult;
-}
+//QStringList AppMatch::startMatchApp(QString input){
+//    input.replace(" ","");
+//    m_sourceText=input;
+//    m_softWareCenterMap.clear();
+//    m_matchInstallAppMap.clear();
+//    m_returnResult1.clear();
+//    if(input.isEmpty()){
+//        return m_returnResult;
+//    }
+//    softWareCenterSearch();
+//    getAppName();
+//    returnAppMap();
+//    m_returnResult1=m_midResult;
+//    m_midResult.clear();
+//    qWarning()<<"m_returnResult  :"<<m_returnResult1;
+//    return m_returnResult;
+//}
 
-QMap<QString,QList<QString>> AppMatch::startMatchApp(QString input,int i){
+/**
+ * @brief AppMatch::startMatchApp 查询应用，含所有已安装与未安装
+ * @param input 关键词
+ * @param i
+ * @return QMap<QString,QList<QString>> QMap<应用名，{.desktop(未安装为空),图标(安装的是名字，未安装是路径)}>
+ */
+QMap<QString,QList<QString>> AppMatch::startMatchApp(QString input){
     input.replace(" ","");
     m_sourceText=input;
     m_softWareCenterMap.clear();

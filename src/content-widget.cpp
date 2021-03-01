@@ -248,7 +248,7 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         } else if (type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
             m_detailView->setContent(m_bestContent, m_keyword);
             m_detailView->isContent = true;
-            m_detailView->setupWidget(type == SearchItem::SearchType::Contents, path);
+            m_detailView->setupWidget(SearchItem::SearchType::Contents, path);
             listview->is_current_list = true;
             Q_EMIT this->currentItemChanged();
             listview->is_current_list = false;
@@ -258,6 +258,15 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         }
         if (type == SearchItem::SearchType::Web) {
             m_detailView->setWebWidget(this->m_keyword);
+        } else if (type == SearchItem::SearchType::Apps) {
+            int index = listview->currentIndex().row();
+            m_detailView->setAppWidget(m_appList.at(index), m_appPathList.at(index), m_appIconList.at(index));
+        } else if (type == SearchItem::SearchType::Best) {
+            if (m_bestList.at(listview->currentIndex().row()).first ==  SearchItem::SearchType::Apps) {
+               m_detailView->setAppWidget(m_appList.at(0), m_appPathList.at(0), m_appIconList.at(0));
+            } else {
+                m_detailView->setupWidget(m_bestList.at(listview->currentIndex().row()).first, m_bestList.at(listview->currentIndex().row()).second);
+            }
         } else {
             m_detailView->setupWidget(type, path);
         }
@@ -324,6 +333,13 @@ void ContentWidget::resetListHeight()
         height += m_webListView->height();
     }
     m_resultList->setFixedHeight(height);
+}
+
+void ContentWidget::appendBestItem(const int &type, const QString &path)
+{
+    m_bestList.append(QPair<int, QString>(type, path));
+    m_bestListView->appendBestItem(QPair<int, QString>(type, path));
+    appendSearchItem(SearchItem::SearchType::Best, path);
 }
 
 /**
@@ -416,10 +432,10 @@ int ContentWidget::currentPage() {
 }
 
 /**
- * @brief ContentWidget::refreshSearchList 刷新/构建搜索结果列表
- * @param lists 获取到的应用与设置结果列表，list.at(0)是应用， list.at(1)是设置
+ * @brief ContentWidget::resetSearchList 在构建新的搜索结果列表前，先重置所有控件
  */
-void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
+void ContentWidget::resetSearchList()
+{
     this->hideListView();
     if (m_fileListView) {
         m_fileListView->hide();
@@ -480,6 +496,7 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
     m_fileShowMoreLabel->resetLabel();
     m_contentShowMoreLabel->resetLabel();
 
+    m_bestList.clear();
     if (! m_appList.isEmpty())
         m_appList.clear();
     if (! m_settingList.isEmpty())
@@ -490,34 +507,62 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
         m_fileList.clear();
     if (! m_contentList.isEmpty())
         m_contentList.clear();
+    if (! m_appPathList.isEmpty())
+        m_appPathList.clear();
+    if (! m_appIconList.isEmpty())
+        m_appIconList.clear();
+}
 
-    if (!lists.at(0).isEmpty()) {
-        m_appList = lists.at(0);
-        qDebug()<<"Append a best item into list: "<<lists.at(0).at(0);
-        appendSearchItem(SearchItem::SearchType::Best, lists.at(0).at(0));
-        m_appListView->show();
-        m_appTitleLabel->show();
-        m_appListView->isHidden = false;
-        if (m_appList.length() <= 5) {
-            m_appListView->setList(m_appList);
-        } else {
-            m_appShowMoreLabel->show();
-            m_appListView->setList(m_appList.mid(0, 5));
-        }
+/**
+ * @brief ContentWidget::setSettingList 插入设置项搜索结果列表
+ * @param settingList
+ */
+void ContentWidget::setSettingList(const QStringList & settingList)
+{
+    if (settingList.isEmpty())
+        return;
+    m_settingList = settingList;
+    qDebug()<<"Append a best item into list: "<<settingList.at(0);
+    this->appendBestItem(SearchItem::SearchType::Settings, settingList.at(0));
+    m_settingListView->show();
+    m_settingTitleLabel->show();
+    m_settingListView->isHidden = false;
+    if (m_settingList.length() <= 5) {
+        m_settingListView->setList(m_settingList);
+    } else {
+        m_settingShowMoreLabel->show();
+        m_settingListView->setList(m_settingList.mid(0, 5));
     }
-    if (!lists.at(1).isEmpty()) {
-        m_settingList = lists.at(1);
-        qDebug()<<"Append a best item into list: "<<lists.at(1).at(0);
-        appendSearchItem(SearchItem::SearchType::Best, lists.at(1).at(0));
-        m_settingListView->show();
-        m_settingTitleLabel->show();
-        m_settingListView->isHidden = false;
-        if (m_settingList.length() <= 5) {
-            m_settingListView->setList(m_settingList);
-        } else {
-            m_settingShowMoreLabel->show();
-            m_settingListView->setList(m_settingList.mid(0, 5));
-        }
+    this->resetListHeight();
+}
+
+/**
+ * @brief ContentWidget::setAppList 插入应用搜索结果
+ * @param appList QVector<namelist,pathlist,iconlist>
+ */
+void ContentWidget::setAppList(const QVector<QStringList>& appList) {
+    if (appList.at(0).isEmpty())
+        return;
+    m_appList = appList.at(0);
+    m_appPathList = appList.at(1);
+    m_appIconList = appList.at(2);
+    m_appListView->setAppList(m_appPathList, m_appIconList);
+    qDebug()<<"Append a best item into list: "<<appList.at(0).at(0);
+    SearchItemModel * model = qobject_cast<SearchItemModel *>(m_bestListView->model());
+    if (appList.at(1).at(0).isEmpty() || appList.at(1).at(0) == "") {
+        model->setBestAppIcon(appList.at(2).at(0), false);
+    } else {
+        model->setBestAppIcon(appList.at(2).at(0), true);
+    }
+    this->appendBestItem(SearchItem::SearchType::Apps, appList.at(0).at(0));
+    m_appListView->show();
+    m_appTitleLabel->show();
+    m_appListView->isHidden = false;
+    if (m_appList.length() <= 5) {
+        m_appListView->setList(m_appList);
+    } else {
+        m_appShowMoreLabel->show();
+        m_appListView->setList(m_appList.mid(0, 5));
     }
     this->resetListHeight();
 }
@@ -542,40 +587,12 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
             }
             break;
         }
-//        case SearchItem::SearchType::Apps: {
-//            if (m_appListView->isHidden) {
-//                m_appListView->show();
-//                m_appTitleLabel->show();
-//                m_appListView->isHidden = false;
-//                if (!m_detailView->isEmpty() && m_detailView->getType() > type) {
-//                    m_appListView->setCurrentIndex(m_appListView->model()->index(0, 0, QModelIndex()));
-//                }
-//            }
-//            m_appListView->appendItem(path);
-//            currentList = m_appListView;
-
-//            this->resetListHeight();
-//            break;
-//        }
-//        case SearchItem::SearchType::Settings: {
-//            if (m_settingListView->isHidden) {
-//                m_settingListView->show();
-//                m_settingTitleLabel->show();
-//                m_settingListView->isHidden = false;
-//                if (!m_detailView->isEmpty() && m_detailView->getType() > type) {
-//                    m_settingListView->setCurrentIndex(m_settingListView->model()->index(0, 0, QModelIndex()));
-//                }
-//            }
-//            m_settingListView->appendItem(path);
-//            currentList = m_settingListView;
-//            break;
-//        }
         case SearchItem::SearchType::Files: {
             if (m_fileListView->isHidden) {
                 m_fileListView->show();
                 m_fileTitleLabel->show();
                 m_fileListView->isHidden = false;
-                appendSearchItem(SearchItem::SearchType::Best, path);
+                this->appendBestItem(SearchItem::SearchType::Files, path);
             }
             if (m_fileListView->getLength() < 5) { //当已搜索结果列表少于5项，直接将搜索结果添加到列表中
                 m_fileListView->appendItem(path);
@@ -592,7 +609,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_dirListView->show();
                 m_dirTitleLabel->show();
                 m_dirListView->isHidden = false;
-                appendSearchItem(SearchItem::SearchType::Best, path);
+                this->appendBestItem(SearchItem::SearchType::Dirs, path);
             }
             if (m_dirListView->getLength() < 5) {
                 m_dirListView->appendItem(path);
@@ -615,7 +632,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                         m_bestContent.append("\n");
                     }
                 }
-                appendSearchItem(SearchItem::SearchType::Best, path);
+                this->appendBestItem(SearchItem::SearchType::Contents, path);
             }
             if (m_contentListView->getLength() < 5) {
                 m_contentListView->appendItem(path);

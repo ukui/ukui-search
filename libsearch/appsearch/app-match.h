@@ -35,8 +35,8 @@ class AppMatch : public QObject
 public:
     explicit AppMatch(QObject *parent = nullptr);
     ~AppMatch();
-    QStringList startMatchApp(QString input);
-    QMap<QString,QList<QString>> startMatchApp(QString input,int i);
+//    QStringList startMatchApp(QString input);
+    QMap<QString,QList<QString>> startMatchApp(QString input);
 
 private:
     void getAllDesktopFilePath(QString path);

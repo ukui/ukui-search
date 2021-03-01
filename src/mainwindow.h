@@ -48,6 +48,7 @@
 #include "index/index-generator.h"
 #include "settings-widget.h"
 #include "libsearch.h"
+#include "search-app-thread.h"
 
 class SearchResult;
 class MainWindow : public QMainWindow
@@ -87,13 +88,13 @@ private:
     QGSettings * m_transparency_gsettings = nullptr;
     double getTransparentData();
 
-    QVector<QStringList> m_app_setting_lists;
     QStringList m_dirList;
 
     QQueue<QString> *m_search_result_file = nullptr;
     QQueue<QString> *m_search_result_dir = nullptr;
     QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
     SearchResult * m_search_result_thread = nullptr;
+    SearchAppThread * m_seach_app_thread = nullptr;
 
     FileSearcher* m_searcher = nullptr;
     QSystemTrayIcon *m_sys_tray_icon;
