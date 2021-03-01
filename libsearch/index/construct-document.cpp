@@ -43,7 +43,7 @@ void ConstructDocumentForPath::run()
     if (!_doc_list_path)
         _doc_list_path = new QList<Document>;
 //    qDebug()<<_doc_list_path->size();
-    QString index_text = m_list.at(0);
+    QString index_text = m_list.at(0).toLower();
     QString sourcePath = m_list.at(1);
     Document doc;
 
