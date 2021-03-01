@@ -152,6 +152,7 @@ void FirstIndex::run(){
                 this->p_indexGenerator->creatAllIndex(tmp);
                 tmp->clear();
             }
+//            this->p_indexGenerator->setSynonym();
             delete tmp;
             qDebug() << "index end;";
             sem.release(2);

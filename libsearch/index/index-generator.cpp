@@ -466,6 +466,71 @@ QStringList IndexGenerator::IndexSearch(QString indexText)
     return searchResult;
 }
 
+//void IndexGenerator::setSynonym()
+//{
+//    try
+//    {
+//        m_database_path->add_synonym("a","A");
+//        m_database_path->add_synonym("b","B");
+//        m_database_path->add_synonym("c","C");
+//        m_database_path->add_synonym("d","D");
+//        m_database_path->add_synonym("e","A");
+//        m_database_path->add_synonym("f","F");
+//        m_database_path->add_synonym("g","G");
+//        m_database_path->add_synonym("h","H");
+//        m_database_path->add_synonym("i","I");
+//        m_database_path->add_synonym("j","J");
+//        m_database_path->add_synonym("k","K");
+//        m_database_path->add_synonym("l","L");
+//        m_database_path->add_synonym("m","M");
+//        m_database_path->add_synonym("n","N");
+//        m_database_path->add_synonym("o","O");
+//        m_database_path->add_synonym("p","P");
+//        m_database_path->add_synonym("q","Q");
+//        m_database_path->add_synonym("r","R");
+//        m_database_path->add_synonym("s","S");
+//        m_database_path->add_synonym("t","T");
+//        m_database_path->add_synonym("u","U");
+//        m_database_path->add_synonym("v","V");
+//        m_database_path->add_synonym("w","W");
+//        m_database_path->add_synonym("x","X");
+//        m_database_path->add_synonym("y","Y");
+//        m_database_path->add_synonym("z","Z");
+
+//        m_database_path->add_synonym("A","a");
+//        m_database_path->add_synonym("B","b");
+//        m_database_path->add_synonym("C","c");
+//        m_database_path->add_synonym("D","d");
+//        m_database_path->add_synonym("E","e");
+//        m_database_path->add_synonym("F","f");
+//        m_database_path->add_synonym("G","g");
+//        m_database_path->add_synonym("H","h");
+//        m_database_path->add_synonym("I","i");
+//        m_database_path->add_synonym("J","j");
+//        m_database_path->add_synonym("K","k");
+//        m_database_path->add_synonym("L","a");
+//        m_database_path->add_synonym("M","m");
+//        m_database_path->add_synonym("N","n");
+//        m_database_path->add_synonym("O","o");
+//        m_database_path->add_synonym("P","p");
+//        m_database_path->add_synonym("Q","q");
+//        m_database_path->add_synonym("R","r");
+//        m_database_path->add_synonym("S","s");
+//        m_database_path->add_synonym("T","t");
+//        m_database_path->add_synonym("U","u");
+//        m_database_path->add_synonym("V","v");
+//        m_database_path->add_synonym("W","w");
+//        m_database_path->add_synonym("X","x");
+//        m_database_path->add_synonym("Y","y");
+//        m_database_path->add_synonym("Z","z");
+//        m_database_path->commit();
+//    }
+//    catch(const Xapian::Error &e)
+//    {
+//        qWarning() <<QString::fromStdString(e.get_description());
+//    }
+//}
+
 bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
 {
     QStringList *list = pathlist;

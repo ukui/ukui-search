@@ -48,6 +48,7 @@ public:
 //    Q_INVOKABLE void appendDocListPath(Document doc);
     //for search test
     static QStringList IndexSearch(QString indexText);
+    void setSynonym();
 Q_SIGNALS:
     void transactionFinished();
     void searchFinish();
