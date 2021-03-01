@@ -74,7 +74,7 @@ public Q_SLOTS:
 
 private:
     explicit GlobalSettings(QObject *parent = nullptr);
-    ~GlobalSettings();
+    ~GlobalSettings() = default;
 
     QSettings* m_settings;
     QGSettings* m_gsettings;

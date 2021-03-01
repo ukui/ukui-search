@@ -54,7 +54,8 @@ private:
     QStringList m_filePathList;
     QStringList m_returnResult;
 
-    QDBusInterface *m_interFace;
+    QDBusInterface *m_interFace=nullptr;
+    QFileSystemWatcher *m_watchAppDir=nullptr;
     QMap<QString,QList<QString>> m_softWareCenterMap;
     QMap<QString,QList<QString>> m_installAppMap;
     QMap<QString,QList<QString>> m_filterInstallAppMap;

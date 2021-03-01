@@ -74,14 +74,14 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //        m_indexer->set_flags(Xapian::TermGenerator::FLAG_SPELLING);
 //        m_indexer.set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
 
-        int count =0;
+//        int count =0;
         for (auto i : *_doc_list_path){
 
             insertIntoDatabase(i);
-            if(++count > 8999){
-                count = 0;
-                m_database_path->commit();
-            }
+//            if(++count > 8999){
+//                count = 0;
+//                m_database_path->commit();
+//            }
         }
         m_database_path->commit();
     }
@@ -148,10 +148,10 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
     {
         QDir database(QString::fromStdString(INDEX_PATH));
         if(database.exists())
-            database.removeRecursively();
+            qDebug()<<"remove"<<database.removeRecursively();
         database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
         if(database.exists())
-            database.removeRecursively();
+            qDebug()<<"remove"<<database.removeRecursively();
     }
     m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
@@ -266,7 +266,8 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
     ChineseSegmentation::getInstance();
     ConstructDocumentForContent *constructer;
     QThreadPool pool;
-    pool.setMaxThreadCount(((QThread::idealThreadCount() - 1) / 2) + 1);
+//    pool.setMaxThreadCount(((QThread::idealThreadCount() - 1) / 2) + 1);
+    pool.setMaxThreadCount(1);
     pool.setExpiryTimeout(100);
     while(!messageList->isEmpty())
     {
@@ -464,6 +465,71 @@ QStringList IndexGenerator::IndexSearch(QString indexText)
     }
     return searchResult;
 }
+
+//void IndexGenerator::setSynonym()
+//{
+//    try
+//    {
+//        m_database_path->add_synonym("a","A");
+//        m_database_path->add_synonym("b","B");
+//        m_database_path->add_synonym("c","C");
+//        m_database_path->add_synonym("d","D");
+//        m_database_path->add_synonym("e","A");
+//        m_database_path->add_synonym("f","F");
+//        m_database_path->add_synonym("g","G");
+//        m_database_path->add_synonym("h","H");
+//        m_database_path->add_synonym("i","I");
+//        m_database_path->add_synonym("j","J");
+//        m_database_path->add_synonym("k","K");
+//        m_database_path->add_synonym("l","L");
+//        m_database_path->add_synonym("m","M");
+//        m_database_path->add_synonym("n","N");
+//        m_database_path->add_synonym("o","O");
+//        m_database_path->add_synonym("p","P");
+//        m_database_path->add_synonym("q","Q");
+//        m_database_path->add_synonym("r","R");
+//        m_database_path->add_synonym("s","S");
+//        m_database_path->add_synonym("t","T");
+//        m_database_path->add_synonym("u","U");
+//        m_database_path->add_synonym("v","V");
+//        m_database_path->add_synonym("w","W");
+//        m_database_path->add_synonym("x","X");
+//        m_database_path->add_synonym("y","Y");
+//        m_database_path->add_synonym("z","Z");
+
+//        m_database_path->add_synonym("A","a");
+//        m_database_path->add_synonym("B","b");
+//        m_database_path->add_synonym("C","c");
+//        m_database_path->add_synonym("D","d");
+//        m_database_path->add_synonym("E","e");
+//        m_database_path->add_synonym("F","f");
+//        m_database_path->add_synonym("G","g");
+//        m_database_path->add_synonym("H","h");
+//        m_database_path->add_synonym("I","i");
+//        m_database_path->add_synonym("J","j");
+//        m_database_path->add_synonym("K","k");
+//        m_database_path->add_synonym("L","a");
+//        m_database_path->add_synonym("M","m");
+//        m_database_path->add_synonym("N","n");
+//        m_database_path->add_synonym("O","o");
+//        m_database_path->add_synonym("P","p");
+//        m_database_path->add_synonym("Q","q");
+//        m_database_path->add_synonym("R","r");
+//        m_database_path->add_synonym("S","s");
+//        m_database_path->add_synonym("T","t");
+//        m_database_path->add_synonym("U","u");
+//        m_database_path->add_synonym("V","v");
+//        m_database_path->add_synonym("W","w");
+//        m_database_path->add_synonym("X","x");
+//        m_database_path->add_synonym("Y","y");
+//        m_database_path->add_synonym("Z","z");
+//        m_database_path->commit();
+//    }
+//    catch(const Xapian::Error &e)
+//    {
+//        qWarning() <<QString::fromStdString(e.get_description());
+//    }
+//}
 
 bool IndexGenerator::deleteAllIndex(QStringList *pathlist)
 {
