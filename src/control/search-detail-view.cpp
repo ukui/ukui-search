@@ -587,7 +587,8 @@ bool SearchDetailView::installAppAction(const QString & name)
 {
     //打开软件商店下载此软件
     QProcess process;
-    process.startDetached(QString("kylin-software-center -find %1").arg(name));
+    bool res = process.startDetached(QString("kylin-software-center -find %1").arg(name));
+    return res;
 }
 
 void SearchDetailView::paintEvent(QPaintEvent *event) {
