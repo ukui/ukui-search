@@ -11,7 +11,7 @@
     <message>
         <location filename="../../src/content-widget.cpp" line="406"/>
         <source>Open Quickly</source>
-        <translation>快速</translation>
+        <translation>快速入口</translation>
     </message>
     <message>
         <location filename="../../src/content-widget.cpp" line="407"/>

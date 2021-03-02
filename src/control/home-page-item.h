@@ -36,9 +36,9 @@ public:
     ~HomePageItem();
 
     enum ItemType { //homepage中item的类型，包括常用应用、最近打开、快捷打开
-        Common,
+        Quick,
         Recent,
-        Quick
+        Common
     };
 
 protected:

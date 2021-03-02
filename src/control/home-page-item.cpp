@@ -123,8 +123,9 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
     } else if (type == ItemType::Quick) {
             QIcon icon = FileUtils::getAppIcon(path);
             m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
-            m_namelabel->setText(FileUtils::getAppName(path));
-            this->setToolTip(FileUtils::getAppName(path));
+            QString name = FileUtils::getAppName(path);
+            m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 96));
+            this->setToolTip(name);
     } else {
         QIcon icon = FileUtils::getAppIcon(path);
         m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
