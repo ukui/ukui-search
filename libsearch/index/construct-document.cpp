@@ -122,6 +122,8 @@ void ConstructDocumentForContent::run()
         _doc_list_content = new QList<Document>;
     QString content;
     FileReader::getTextContent(m_path,content);
+    if(content.isEmpty())
+        return;
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/",0,-2,QString::SectionIncludeLeadingSep)));
 

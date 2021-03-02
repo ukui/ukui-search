@@ -61,7 +61,7 @@ private:
 
     QMap<int, QString> currentPath;
     const QVector<QString> targetFileTypeVec ={
-//        QString(".doc"),
+        QString(".doc"),
         QString(".docx"),
 //        QString(".ppt"),
 //        QString(".pptx"),
