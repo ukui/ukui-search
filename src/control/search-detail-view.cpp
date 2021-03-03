@@ -386,27 +386,26 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
     switch (type) {
         case SearchListView::ResType::App: {
             GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
-            g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
+            bool res = static_cast<bool>(g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr));
             g_object_unref(desktopAppInfo);
-            return true;
+            return res;
             break;
         }
         case SearchListView::ResType::Best:
         case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir:
         case SearchListView::ResType::File: {
-            QProcess process;
-            process.startDetached(QString("xdg-open %1").arg(path));
-            return true;
+//            QProcess process;
+//            process.startDetached(QString("xdg-open %1").arg(path));
+            return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
             break;
         }
         case SearchListView::ResType::Setting: {
             //打开控制面板对应页面
             QProcess  process;
             if (path.left(path.indexOf("/")).toLower() == "wallpaper")
-                process.startDetached(QString("ukui-control-center --background"));
-            else process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
-            return true;
+                return process.startDetached(QString("ukui-control-center --background"));
+            else  return process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
             break;
         }
         default:
