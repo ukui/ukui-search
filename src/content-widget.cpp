@@ -442,7 +442,7 @@ int ContentWidget::currentPage() {
  */
 void ContentWidget::resetSearchList()
 {
-    this->hideListView();
+//    this->hideListView();
     if (m_fileListView) {
         m_fileListView->hide();
         m_fileTitleLabel->hide();
@@ -491,7 +491,8 @@ void ContentWidget::resetSearchList()
         m_webListView->show();
         m_webListView->isHidden = false;
     }
-    m_resultList->setFixedHeight(0);
+
+    resetListHeight();
     m_detailView->clearLayout();
     m_contentDetailList.clear();
     m_bestContent.clear();
