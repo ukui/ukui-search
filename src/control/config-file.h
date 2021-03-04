@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
+#define HOMEPAGE_SETTINGS  QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search-homepage.conf"
 class ConfigFile : public QObject
 {
     Q_OBJECT

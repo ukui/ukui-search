@@ -121,17 +121,11 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
         m_hlayout->addStretch();
         return;
     } else if (type == ItemType::Quick) {
-        if (SearchListView::getResType(path) == SearchListView::ResType::Setting) {
-            QIcon icon = FileUtils::getSettingIcon(path, true);
-            m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
-            m_namelabel->setText(FileUtils::getSettingName(path));
-            this->setToolTip(FileUtils::getSettingName(path));
-        } else {
             QIcon icon = FileUtils::getAppIcon(path);
             m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
-            m_namelabel->setText(FileUtils::getAppName(path));
-            this->setToolTip(FileUtils::getAppName(path));
-        }
+            QString name = FileUtils::getAppName(path);
+            m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 96));
+            this->setToolTip(name);
     } else {
         QIcon icon = FileUtils::getAppIcon(path);
         m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));

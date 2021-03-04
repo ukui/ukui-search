@@ -34,14 +34,15 @@ class OptionView : public QWidget
 public:
     explicit OptionView(QWidget *);
     ~OptionView();
-    void setupOptions(const int&);
+    void setupOptions(const int&, bool is_appInstalled = true);
 
     enum Options {
         Open,
         Shortcut,
         Panel,
         OpenPath,
-        CopyPath
+        CopyPath,
+        Install
     };
 
 protected:
@@ -49,7 +50,7 @@ protected:
 
 private:
     void initUI();
-    void setupAppOptions();
+    void setupAppOptions(bool);
     void setupFileOptions();
     void setupDirOptions();
     void setupSettingOptions();
@@ -66,6 +67,7 @@ private:
     QLabel * m_panelLabel  = nullptr;
     QLabel * m_openPathLabel = nullptr;
     QLabel * m_copyPathLabel = nullptr;
+    QLabel * m_installLabel = nullptr;
 
 Q_SIGNALS:
     void onOptionClicked(const int&);

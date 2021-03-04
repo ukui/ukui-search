@@ -63,13 +63,16 @@ private:
     QQueue<QVector<QString>>* q_index;
     QQueue<QString>* q_content_index;
     const QVector<QString> targetFileTypeVec ={
-//        QString(".doc"),
+        QString(".doc"),
         QString(".docx"),
 //        QString(".ppt"),
 //        QString(".pptx"),
 //        QString(".xls"),
 //        QString(".xlsx"),
         QString(".txt")};
+
+    //xapian will auto commit per 10,000 changes, donnot change it!!!
+    const size_t u_send_length = 8192;
 };
 
 #endif // FIRSTINDEX_H

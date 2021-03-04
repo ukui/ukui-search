@@ -1,3 +1,22 @@
+ukui-search (0.2.0+0301) v101; urgency=medium
+
+  * Fix: New result won't be added to expanded list.
+    - 修复展开列表后新增的搜索结果不会动态添加的bug。
+  * Fix: Selection canceled with 'Show More' button clicked.
+    - 修复点击显示更多按钮时列表选中项被取消的问题。
+  * Feature: Add web searching & web engine settings.
+    - 添加网页搜索功能和引擎设置功能。
+  * Fix: Two list items can be selected simultaneously.
+    - 修复可以同时选中两个列表项的bug(40056)。
+  * Fix: Web view will be refreshed when there is nothing to reload.
+    - 修复当网页未搜索新内容时每次打开会重新加载的问题。
+  * Feature: Connect with the latest API for app search.
+    - 对接应用搜索新接口(可搜索未安装应用)。
+  * Fix: Excessive use of resources。
+    - 优化了资源占用。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 01 Mar 2021 13:55:27 +0800
+
 ukui-search (0.1.1+0219-1) v101; urgency=medium
 
   * Remove QWebEngineView dependence.

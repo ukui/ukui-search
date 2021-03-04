@@ -1,4 +1,4 @@
-QT       += core gui dbus  KWindowSystem xml x11extras
+QT       += core gui dbus  KWindowSystem xml x11extras webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,6 +29,7 @@ SOURCES += \
     input-box.cpp \
     main.cpp \
     mainwindow.cpp \
+    search-app-thread.cpp \
     search-result.cpp \
     settings-widget.cpp \
     xatom-helper.cpp
@@ -38,6 +39,7 @@ HEADERS += \
     content-widget.h \
     input-box.h \
     mainwindow.h \
+    search-app-thread.h \
     search-result.h \
     settings-widget.h \
     xatom-helper.h

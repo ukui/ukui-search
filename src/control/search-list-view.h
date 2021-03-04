@@ -40,7 +40,8 @@ public:
         Setting,
         Dir,
         File,
-        Content
+        Content,
+        Web
     };
 
     int getCurrentType();
@@ -51,6 +52,8 @@ public:
 
     void appendItem(QString);
     void setList(QStringList);
+    void setAppList(const QStringList&, const QStringList&);
+    void appendBestItem(const QPair<int, QString>&);
     void removeItem(QString);
     void clear();
     void setKeyword(QString);
@@ -60,6 +63,7 @@ public:
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;
+    bool m_isSelected = false;
 
     HighlightItemDelegate * m_styleDelegate = nullptr;
 

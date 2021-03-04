@@ -21,6 +21,7 @@
 #define FILEREADER_H
 
 #include <QObject>
+#include <QFileInfo>
 
 class FileReader : public QObject
 {

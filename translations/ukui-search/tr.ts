@@ -4,52 +4,57 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../../src/content-widget.cpp" line="328"/>
+        <location filename="../../src/content-widget.cpp" line="370"/>
         <source>Recently Opened</source>
         <translation>Yeni Açılan</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="359"/>
+        <location filename="../../src/content-widget.cpp" line="406"/>
         <source>Open Quickly</source>
         <translation>Hızlı Aç</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="360"/>
+        <location filename="../../src/content-widget.cpp" line="407"/>
         <source>Commonly Used</source>
         <translation>Genel olarak kullanılan</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="602"/>
+        <location filename="../../src/content-widget.cpp" line="670"/>
         <source>Apps</source>
         <translation>Uygulamalar</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="604"/>
+        <location filename="../../src/content-widget.cpp" line="672"/>
         <source>Settings</source>
         <translation>Ayarlar</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="606"/>
+        <location filename="../../src/content-widget.cpp" line="674"/>
         <source>Files</source>
         <translation>Dosyalar</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="608"/>
+        <location filename="../../src/content-widget.cpp" line="676"/>
         <source>Dirs</source>
         <translation>Dizinler</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="610"/>
+        <location filename="../../src/content-widget.cpp" line="678"/>
         <source>File Contents</source>
         <translation>Dosya İçeriği</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="612"/>
+        <location filename="../../src/content-widget.cpp" line="680"/>
         <source>Best Matches</source>
         <translation>En İyi Eşleşen</translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="614"/>
+        <location filename="../../src/content-widget.cpp" line="682"/>
+        <source>Web Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/content-widget.cpp" line="684"/>
         <source>Unknown</source>
         <translation>Bilinmeyen</translation>
     </message>
@@ -70,12 +75,12 @@
         <translation>ukui-ara</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="115"/>
+        <location filename="../../src/mainwindow.cpp" line="121"/>
         <source>Global Search</source>
         <translation>Genel Arama</translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="169"/>
+        <location filename="../../src/mainwindow.cpp" line="175"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
@@ -83,35 +88,40 @@
 <context>
     <name>OptionView</name>
     <message>
-        <location filename="../../src/control/option-view.cpp" line="95"/>
+        <location filename="../../src/control/option-view.cpp" line="101"/>
         <source>Open</source>
         <translation>Aç</translation>
     </message>
     <message>
-        <location filename="../../src/control/option-view.cpp" line="102"/>
+        <location filename="../../src/control/option-view.cpp" line="108"/>
         <source>Add Shortcut to Desktop</source>
         <translation>Masaüstüne Kısayol Ekle</translation>
     </message>
     <message>
-        <location filename="../../src/control/option-view.cpp" line="109"/>
+        <location filename="../../src/control/option-view.cpp" line="115"/>
         <source>Add Shortcut to Panel</source>
         <translation>Panele Kısayol Ekle</translation>
     </message>
     <message>
-        <location filename="../../src/control/option-view.cpp" line="116"/>
+        <location filename="../../src/control/option-view.cpp" line="122"/>
         <source>Open path</source>
         <translation>Yolu aç</translation>
     </message>
     <message>
-        <location filename="../../src/control/option-view.cpp" line="123"/>
+        <location filename="../../src/control/option-view.cpp" line="129"/>
         <source>Copy path</source>
         <translation>Yolu kopyala</translation>
+    </message>
+    <message>
+        <location filename="../../src/control/option-view.cpp" line="136"/>
+        <source>Install</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/main.cpp" line="149"/>
+        <location filename="../../src/main.cpp" line="150"/>
         <source>ukui-search is already running!</source>
         <translation>ukui-bul zaten çalışıyor!</translation>
     </message>
@@ -127,22 +137,22 @@
 <context>
     <name>SearchDetailView</name>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="400"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="485"/>
         <source>Path</source>
         <translation>Yol</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="408"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="493"/>
         <source>Last time modified</source>
         <translation>Son değiştirilme zamanı</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="232"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="210"/>
         <source>Application</source>
         <translation>Uygulama</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="248"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="329"/>
         <source>Document</source>
         <translation>Belge</translation>
     </message>
@@ -150,55 +160,55 @@
 <context>
     <name>SettingsWidget</name>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="69"/>
-        <location filename="../../src/settings-widget.cpp" line="267"/>
-        <location filename="../../src/settings-widget.cpp" line="470"/>
+        <location filename="../../src/settings-widget.cpp" line="70"/>
+        <location filename="../../src/settings-widget.cpp" line="281"/>
+        <location filename="../../src/settings-widget.cpp" line="514"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="99"/>
-        <location filename="../../src/settings-widget.cpp" line="101"/>
+        <location filename="../../src/settings-widget.cpp" line="100"/>
+        <location filename="../../src/settings-widget.cpp" line="102"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="111"/>
+        <location filename="../../src/settings-widget.cpp" line="112"/>
         <source>Following folders will not be searched. You can set it by adding and removing folders.</source>
         <translation>Aşağıdaki klasörler aranmayacaktır. Klasör ekleyip kaldırarak ayarlayabilirsiniz.</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="120"/>
+        <location filename="../../src/settings-widget.cpp" line="121"/>
         <source>Add ignored folders</source>
         <translation>Göz ardı edilen klasörleri ekleyin</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="143"/>
+        <location filename="../../src/settings-widget.cpp" line="144"/>
         <source>Please select search engine you preferred.</source>
         <translation>Lütfen tercih ettiğiniz arama motorunu seçin.</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="156"/>
+        <location filename="../../src/settings-widget.cpp" line="157"/>
         <source>baidu</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="158"/>
+        <location filename="../../src/settings-widget.cpp" line="159"/>
         <source>sougou</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="160"/>
+        <location filename="../../src/settings-widget.cpp" line="161"/>
         <source>360</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="359"/>
+        <location filename="../../src/settings-widget.cpp" line="403"/>
         <source>Cancel</source>
         <translation>İptal</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="298"/>
+        <location filename="../../src/settings-widget.cpp" line="342"/>
         <source>Creating ...</source>
         <translation>Oluşturuluyor...</translation>
     </message>
@@ -208,97 +218,97 @@
         <translation>ukui-bul</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="92"/>
+        <location filename="../../src/settings-widget.cpp" line="93"/>
         <source>&lt;h2&gt;Settings&lt;/h2&gt;</source>
         <translation>&lt;h2&gt;Ayarlar&lt;/h2&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="97"/>
+        <location filename="../../src/settings-widget.cpp" line="98"/>
         <source>&lt;h3&gt;Index State&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;Dizin Durumu&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="109"/>
+        <location filename="../../src/settings-widget.cpp" line="110"/>
         <source>&lt;h3&gt;File Index Settings&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;Dosya Dizini Ayarları&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="141"/>
+        <location filename="../../src/settings-widget.cpp" line="142"/>
         <source>&lt;h3&gt;Search Engine Settings&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;SArama Motoru Ayarları&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="267"/>
+        <location filename="../../src/settings-widget.cpp" line="281"/>
         <source>Whether to delete this directory?</source>
         <translation>Bu dizini silinsin mi?</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="268"/>
+        <location filename="../../src/settings-widget.cpp" line="282"/>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="269"/>
+        <location filename="../../src/settings-widget.cpp" line="283"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="301"/>
+        <location filename="../../src/settings-widget.cpp" line="345"/>
         <source>Done</source>
         <translation>Tamam</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="309"/>
+        <location filename="../../src/settings-widget.cpp" line="353"/>
         <source>Index Entry: %1</source>
         <translation>Dizin Girişi: %1</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="353"/>
+        <location filename="../../src/settings-widget.cpp" line="397"/>
         <source>Directories</source>
         <translation>Dizinler</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="354"/>
+        <location filename="../../src/settings-widget.cpp" line="398"/>
         <source>select blocked folder</source>
         <translation>engellenen klasörü seç</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="355"/>
+        <location filename="../../src/settings-widget.cpp" line="399"/>
         <source>Select</source>
         <translation>Seç</translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="356"/>
+        <location filename="../../src/settings-widget.cpp" line="400"/>
         <source>Position: </source>
         <translation>Pozisyon: </translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="357"/>
+        <location filename="../../src/settings-widget.cpp" line="401"/>
         <source>FileName: </source>
         <translation>Dosya Adı: </translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="358"/>
+        <location filename="../../src/settings-widget.cpp" line="402"/>
         <source>FileType: </source>
         <translation>Dosya Türü: </translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="454"/>
+        <location filename="../../src/settings-widget.cpp" line="498"/>
         <source>Choosen path is Empty!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="458"/>
+        <location filename="../../src/settings-widget.cpp" line="502"/>
         <source>Choosen path is not in &quot;home&quot;!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="462"/>
+        <location filename="../../src/settings-widget.cpp" line="506"/>
         <source>Its&apos; parent folder has been blocked!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="466"/>
+        <location filename="../../src/settings-widget.cpp" line="510"/>
         <source>Set blocked folder failed!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -307,33 +317,33 @@
     <name>ShowMoreLabel</name>
     <message>
         <location filename="../../src/control/show-more-label.cpp" line="40"/>
-        <location filename="../../src/control/show-more-label.cpp" line="48"/>
-        <location filename="../../src/control/show-more-label.cpp" line="78"/>
+        <location filename="../../src/control/show-more-label.cpp" line="57"/>
+        <location filename="../../src/control/show-more-label.cpp" line="87"/>
         <source>Show More...</source>
         <translation>Daha Fazla Göster...</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="76"/>
+        <location filename="../../src/control/show-more-label.cpp" line="85"/>
         <source>Retract</source>
         <translation>Geri çek</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="87"/>
+        <location filename="../../src/control/show-more-label.cpp" line="96"/>
         <source>Loading</source>
         <translation>Yükleniyor</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="92"/>
+        <location filename="../../src/control/show-more-label.cpp" line="101"/>
         <source>Loading.</source>
         <translation>Yükleniyor.</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="97"/>
+        <location filename="../../src/control/show-more-label.cpp" line="106"/>
         <source>Loading..</source>
         <translation>Yükleniyor..</translation>
     </message>
     <message>
-        <location filename="../../src/control/show-more-label.cpp" line="102"/>
+        <location filename="../../src/control/show-more-label.cpp" line="111"/>
         <source>Loading...</source>
         <translation>Yükleniyor...</translation>
     </message>

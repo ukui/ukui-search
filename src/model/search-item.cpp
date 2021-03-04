@@ -45,17 +45,22 @@ QIcon SearchItem::getIcon(int index) {
         case Dirs :
         case Files : //文件，返回文件图标
             return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
-        case Apps : //应用，返回应用图标
-            return FileUtils::getAppIcon(m_pathlist.at(index));
-        case Best : {//最佳匹配，含全部类型，需要自己判断，返回不同类型的图标
-//            return QIcon(":/res/icons/edit-find-symbolic.svg");
-            if (m_pathlist.at(index).endsWith(".desktop")) {
-                return FileUtils::getAppIcon(m_pathlist.at(index));
-            } else if (QFileInfo(m_pathlist.at(index)).isFile() || QFileInfo(m_pathlist.at(index)).isDir()) {
-                return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
+        case Apps : {//应用，返回应用图标
+//            return FileUtils::getAppIcon(m_pathlist.at(index));
+            if (m_app_pathlist.length() > index && m_app_pathlist.at(index) == "") { //未安装，存储的是图标路径
+                return QIcon(m_app_iconlist.at(index));
+            } else if (m_app_pathlist.length() > index) { //已安装,存储的是图标名
+                if (QIcon::fromTheme(m_app_iconlist.at(index)).isNull()) {
+                    return QIcon(":/res/icons/desktop.png");
+                } else {
+                    return QIcon::fromTheme(m_app_iconlist.at(index));
+                }
             } else {
-                return FileUtils::getSettingIcon(m_pathlist.at(index), false);
+                return QIcon(":/res/icons/desktop.png");
             }
+        }
+        case Best : {//最佳匹配，含全部类型，需要自己判断，返回不同类型的图标
+            return getBestIcon(index);
         }
         default:
             return QIcon(":/res/icons/edit-find-symbolic.svg");
@@ -77,19 +82,63 @@ QString SearchItem::getName(int index) {
         case Dirs :
         case Files : //文件，返回文件名
             return FileUtils::getFileName(m_pathlist.at(index));
-        case Apps : //应用，返回应用名
-            return FileUtils::getAppName(m_pathlist.at(index));
+        case Apps : {//应用，返回应用名
+            return m_pathlist.at(index);
+        }
         case Best : //最佳匹配，含全部类型，需要自己判断，返回不同类型的名称
-//            return m_pathlist.at(index);
-            if (m_pathlist.at(index).endsWith(".desktop")) {
-                return FileUtils::getAppName(m_pathlist.at(index));
-            } else if (QFileInfo(m_pathlist.at(index)).isFile() || QFileInfo(m_pathlist.at(index)).isDir()) {
-                return FileUtils::getFileName(m_pathlist.at(index));
-            } else {
-                return FileUtils::getSettingName(m_pathlist.at(index));
-            }
+            return getBestName(index);
         default:
             return m_pathlist.at(index);
+    }
+}
+
+/**
+ * @brief SearchItem::getBestIcon 获取最佳匹配结果的图标
+ * @param index 索引行
+ * @return
+ */
+QIcon SearchItem::getBestIcon(const int &index)
+{
+//    if (m_pathlist.at(index).endsWith(".desktop")) {
+//        return FileUtils::getAppIcon(m_pathlist.at(index));
+//    } else if (QFileInfo(m_pathlist.at(index)).isFile() || QFileInfo(m_pathlist.at(index)).isDir()) {
+//        return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
+//    } else {
+//        return FileUtils::getSettingIcon(m_pathlist.at(index), false);
+//    }
+    if (m_bestList.isEmpty() || !m_bestList.length() > index) return QIcon::fromTheme("unknown");
+        switch(m_bestList.at(index).first) {
+            case Apps: {
+                return this->m_bestAppIcon;
+//                return FileUtils::getAppIcon(m_pathlist.at(index));
+            }
+            case Settings: {
+                return FileUtils::getSettingIcon(m_pathlist.at(index), false);
+            }
+            default: {
+                return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
+            }
+        }
+}
+
+/**
+ * @brief SearchItem::getBestName 获取最佳匹配结果的名称
+ * @param index 索引行
+ * @return
+ */
+QString SearchItem::getBestName(const int &index)
+{
+    if (m_bestList.isEmpty() || !m_bestList.length() > index) return "";
+    switch(m_bestList.at(index).first) {
+        case Apps: {
+            return m_bestList.at(index).second;
+        }
+        case Settings: {
+            return FileUtils::getSettingName(m_pathlist.at(index));
+        }
+        default: {
+            return FileUtils::getFileName(m_pathlist.at(index));
+        }
     }
 }
 
@@ -117,4 +166,7 @@ int SearchItem::getCurrentSize() {
 void SearchItem::clear()
 {
     m_pathlist.clear();
+    m_app_pathlist.clear();
+    m_app_iconlist.clear();
+    m_bestList.clear();
 }

@@ -83,6 +83,7 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo){
 }
 
 void FirstIndex::run(){
+    QTime t1 = QTime::currentTime();
 
     int fifo_fd;
     char buffer[2];
@@ -120,7 +121,9 @@ void FirstIndex::run(){
             }
         }
         else{
-            p_indexGenerator = IndexGenerator::getInstance(false,this);
+//            p_indexGenerator = IndexGenerator::getInstance(false,this);
+            p_indexGenerator = IndexGenerator::getInstance(true,this);
+
         }
         QSemaphore sem(5);
         QMutex mutex1, mutex2, mutex3;
@@ -134,21 +137,39 @@ void FirstIndex::run(){
             this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
             this->Traverse();
             FileUtils::_max_index_count = this->q_index->length();
+            qDebug()<<"max_index_count:"<<FileUtils::_max_index_count;
             sem.release(5);
         });
         QtConcurrent::run([&](){
             sem.acquire(2);
             mutex2.unlock();
             qDebug() << "index start;";
-            this->p_indexGenerator->creatAllIndex(this->q_index);
+            QQueue<QVector<QString>>* tmp = new QQueue<QVector<QString>>();
+            while (!this->q_index->empty()) {
+                for (size_t i = 0; (i < 8192) && (!this->q_index->empty()); ++i){
+                    tmp->enqueue(this->q_index->dequeue());
+                }
+                this->p_indexGenerator->creatAllIndex(tmp);
+                tmp->clear();
+            }
+//            this->p_indexGenerator->setSynonym();
+            delete tmp;
             qDebug() << "index end;";
             sem.release(2);
         });
         QtConcurrent::run([&](){
             sem.acquire(2);
             mutex3.unlock();
-            qDebug() << "content index start;";
-            this->p_indexGenerator->creatAllIndex(this->q_content_index);
+            QQueue<QString>* tmp = new QQueue<QString>();;
+            while (!this->q_content_index->empty()) {
+//                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
+                for (size_t i = 0; (i < 30) && (!this->q_content_index->empty()); ++i){
+                    tmp->enqueue(this->q_content_index->dequeue());
+                }
+                this->p_indexGenerator->creatAllIndex(tmp);
+                tmp->clear();
+            }
+            delete tmp;
             qDebug() << "content index end;";
             sem.release(2);
         });
@@ -169,6 +190,7 @@ void FirstIndex::run(){
         if (p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
+        GlobalSettings::getInstance()->forceSync();
         ::_exit(0);
     }
     else if(pid < 0)
@@ -182,12 +204,17 @@ void FirstIndex::run(){
     }
 
 
+    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
     int retval = write(fifo_fd, buffer, strlen(buffer));
     if(retval == -1)
     {
         qWarning("write error\n");
     }
     qDebug("write data ok!\n");
+    QTime t2 = QTime::currentTime();
+    qWarning() << t1;
+    qWarning() << t2;
+
     return;
 
 }

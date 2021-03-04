@@ -77,6 +77,11 @@ void SearchDetailView::clearLayout() {
     m_hLine_2->hide();
     m_optionView->hide();
     m_isEmpty = true;
+//    closeWebWidget();
+    if (m_webView) {
+        m_webView->hide();
+    }
+//    m_reload = false;
 }
 
 /**
@@ -111,18 +116,107 @@ int SearchDetailView::getType()
  * @brief SearchDetailView::setWebWidget 显示为网页
  * @param keyword 关键词
  */
-//void SearchDetailView::setWebWidget(const QString& keyword)
-//{
-//    QWebEngineView * m_webView = new QWebEngineView(this);
-//    m_webView->move(0, 0);
-//    m_webView->setFixedSize(360, 522);
-//    m_isEmpty = false;
-//    clearLayout();
+void SearchDetailView::setWebWidget(const QString& keyword)
+{
+    clearLayout();
+    m_isEmpty = false;
+    m_reload = false;
+    if (m_webView) {
+        if (QString::compare(keyword, m_currentKeyword) == 0) { //关键词没有发生变化，只把原来的网页show出来
+            m_webView->show();
+            return;
+        }
+    } else {
+        m_webView = new QWebEngineView(this);
+        m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+        m_webView->setAttribute(Qt::WA_DeleteOnClose);
+        m_webView->move(0, 0);
+        m_webView->setFixedSize(360, 522);
 
-//    QString str = "http://m.baidu.com/s?word=" + keyword;
-//    m_webView->load(str);
-//    m_webView->show();
-//}
+        connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
+            m_reload = true;
+        });
+        connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
+            if (m_reload) {
+                closeWebWidget();
+                QDesktopServices::openUrl(url);
+            }
+        });
+    }
+    //如果使用非手机版百度跳转，请使用RequestInterceptor类
+//    RequestInterceptor * interceptor = new RequestInterceptor(m_webView);
+//    QWebEngineProfile * profile = new QWebEngineProfile(m_webView);
+//    profile->setRequestInterceptor(interceptor);
+//    QWebEnginePage * page = new QWebEnginePage(profile, m_webView);
+//    m_webView->setPage(page);
+
+    //新打开网页搜索或关键词发生变化，重新load
+    m_currentKeyword = keyword;//目前网页搜索的关键词，记录此词来判断网页是否需要刷新
+    QString address;
+    QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
+    if (!engine.isEmpty()) {
+        if (engine == "360") {
+            address = "https://m.so.com/s?q=" + keyword; //360
+        } else if (engine == "sougou") {
+            address = "https://wap.sogou.com/web/searchList.jsp?&keyword=" + keyword; //搜狗
+        } else {
+            address = "http://m.baidu.com/s?word=" + keyword; //百度
+        }
+    } else { //默认值
+        address = "http://m.baidu.com/s?word=" + keyword; //百度
+    }
+//    QString str = "http://m.baidu.com/s?word=" + keyword; //百度
+//    QString str = "https://m.so.com/s?q=" + keyword; //360
+//    QString str = "https://wap.sogou.com/web/searchList.jsp?&keyword=" + keyword; //搜狗
+
+    m_webView->load(address);
+    m_webView->show();
+}
+
+void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath)
+{
+    m_type = SearchListView::ResType::App;
+    m_path = path;
+    m_name = appname;
+    m_isEmpty = false;
+    clearLayout();
+    m_iconLabel->show();
+    m_nameFrame->show();
+    m_nameLabel->show();
+    m_typeLabel->show();
+    m_hLine->show();
+
+    QIcon icon;
+    if (path.isEmpty() || path == "") {
+        icon = QIcon(iconpath);
+        m_optionView->setupOptions(m_type, false);
+    } else {
+        m_optionView->setupOptions(m_type, true);
+        if (QIcon::fromTheme(iconpath).isNull()) {
+            icon = QIcon(":/res/icons/desktop.png");
+        } else {
+            icon = QIcon::fromTheme(iconpath);
+        }
+    }
+    m_optionView->show();
+
+    m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+    QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
+    QString showname = fontMetrics.elidedText(appname, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
+    m_nameLabel->setText(showname);
+    if (QString::compare(showname, appname)) {
+        m_nameLabel->setToolTip(appname);
+    }
+    m_typeLabel->setText(tr("Application"));
+}
+
+void SearchDetailView::closeWebWidget()
+{
+    if (m_webView) {
+        m_webView->close();
+        m_webView = NULL;
+    }
+}
 
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {
     QString htmlString;
@@ -177,7 +271,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_hLine->show();
 
     //文件和文件夹有一个额外的详情区域
-    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content || type == SearchListView::ResType::Best) {
+    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content) {
         m_detailFrame->show();
         if (isContent) { //文件内容区域
             m_contentLabel->show();
@@ -219,21 +313,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
 
     //根据不同类型的搜索结果切换加载图片和名称的方式
     switch (type) {
-        case SearchListView::ResType::App : {
-            QIcon icon = FileUtils::getAppIcon(path);
-            m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-            QString wholeName = FileUtils::getAppName(path);
-            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-            m_nameLabel->setText(name);
-            if (QString::compare(name, wholeName)) {
-                m_nameLabel->setToolTip(wholeName);
-            }
-            m_typeLabel->setText(tr("Application"));
-            break;
-        }
         case SearchListView::ResType::Content:
-        case SearchListView::ResType::Best:
         case SearchListView::ResType::Dir :
         case SearchListView::ResType::File : {
             QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
@@ -290,6 +370,9 @@ void SearchDetailView::execActions(const int& type, const int& option, const QSt
             copyPathAction(path);
             break;
         }
+        case OptionView::Options::Install: {
+            installAppAction(m_name); //未安装应用点击此选项，不使用路径作为参数，而是使用软件名
+        }
         default:
             break;
     }
@@ -303,27 +386,26 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
     switch (type) {
         case SearchListView::ResType::App: {
             GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
-            g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
+            bool res = static_cast<bool>(g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr));
             g_object_unref(desktopAppInfo);
-            return true;
+            return res;
             break;
         }
         case SearchListView::ResType::Best:
         case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir:
         case SearchListView::ResType::File: {
-            QProcess process;
-            process.startDetached(QString("xdg-open %1").arg(path));
-            return true;
+//            QProcess process;
+//            process.startDetached(QString("xdg-open %1").arg(path));
+            return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
             break;
         }
         case SearchListView::ResType::Setting: {
             //打开控制面板对应页面
             QProcess  process;
             if (path.left(path.indexOf("/")).toLower() == "wallpaper")
-                process.startDetached(QString("ukui-control-center --background"));
-            else process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
-            return true;
+                return process.startDetached(QString("ukui-control-center --background"));
+            else  return process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
             break;
         }
         default:
@@ -430,8 +512,6 @@ void SearchDetailView::initUI()
 
     m_layout->addStretch();
 
-
-
     this->clearLayout(); //初始化时隐藏所有控件
 }
 
@@ -497,6 +577,19 @@ bool SearchDetailView::copyPathAction(const QString& path) {
     return true;
 }
 
+/**
+ * @brief SearchDetailView::installAppAction 执行打开软件商店操作
+ * @param name
+ * @return
+ */
+bool SearchDetailView::installAppAction(const QString & name)
+{
+    //打开软件商店下载此软件
+    QProcess process;
+    bool res = process.startDetached(QString("kylin-software-center -find %1").arg(name));
+    return res;
+}
+
 void SearchDetailView::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
 
@@ -513,3 +606,14 @@ void SearchDetailView::paintEvent(QPaintEvent *event) {
     p.drawRoundedRect(rect, 4, 4);
     return QWidget::paintEvent(event);
 }
+
+/**
+ * @brief RequestInterceptor::interceptRequest 拦截qwebengineview的Url请求
+ * @param info
+ */
+//void RequestInterceptor::interceptRequest(QWebEngineUrlRequestInfo &info)
+//{
+//当使用PC版搜索引擎时，可以使用此方法获取用户点击的链接的url
+//     QUrl url = info.requestUrl();
+//     qDebug() <<"Request URL:" <<url;
+//}

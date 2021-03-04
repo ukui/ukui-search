@@ -39,12 +39,15 @@ public:
 
     void setPage(const int&);
     int currentPage();
-    void refreshSearchList(const QVector<QStringList>&);
+    void resetSearchList();
+    void setSettingList(const QStringList&);
+    void setAppList(const QVector<QStringList>&);
     void appendSearchItem(const int& type, const QString& path, QStringList contents = QStringList());
     void initHomePage();
     void setContentList(const QStringList&);
     void setKeyword(QString);
     void setQuicklyOpenList(const QStringList &);
+    void closeWebView();
 private:
     void initUI();
     void initListView();
@@ -52,6 +55,7 @@ private:
     void setupConnect(SearchListView *);
     void clearHomepage();
     void resetListHeight();
+    void appendBestItem(const int&, const QString&);
     QString m_keyword;
     QStringList m_contentDetailList;
     QWidget * m_homePage = nullptr;
@@ -72,12 +76,14 @@ private:
     SearchListView * m_settingListView = nullptr;
     SearchListView * m_appListView = nullptr;
     SearchListView * m_bestListView = nullptr;
+    SearchListView * m_webListView = nullptr;
     TitleLabel * m_fileTitleLabel = nullptr;
     TitleLabel * m_dirTitleLabel = nullptr;
     TitleLabel * m_contentTitleLabel = nullptr;
     TitleLabel * m_appTitleLabel = nullptr;
     TitleLabel * m_settingTitleLabel = nullptr;
     TitleLabel * m_bestTitleLabel = nullptr;
+    TitleLabel * m_webTitleLabel = nullptr;
     ShowMoreLabel * m_appShowMoreLabel = nullptr;
     ShowMoreLabel * m_settingShowMoreLabel = nullptr;
     ShowMoreLabel * m_dirShowMoreLabel = nullptr;
@@ -90,6 +96,9 @@ private:
     QStringList m_fileList;
     QStringList m_contentList;
     QStringList m_quicklyOpenList;
+    QStringList m_appPathList;
+    QStringList m_appIconList;
+    QList<QPair<int, QString>> m_bestList;
 
     QString m_bestContent; //最佳匹配有文件内容搜索结果的时候，以此变量传递
 
