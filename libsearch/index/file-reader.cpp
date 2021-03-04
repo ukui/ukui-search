@@ -19,6 +19,7 @@
  */
 #include "file-reader.h"
 #include "file-utils.h"
+#include "binary-parser.h"
 
 FileReader::FileReader(QObject *parent) : QObject(parent)
 {
@@ -27,13 +28,32 @@ FileReader::FileReader(QObject *parent) : QObject(parent)
 
 void FileReader::getTextContent(QString path, QString &textContent)
 {
-    //获取所有文件内容
-    //先分类
-    QString type =FileUtils::getMimetype(path,true);
-    if(type == "application/zip")
-         FileUtils::getDocxTextContent(path,textContent);
-    else if(type == "text/plain")
-         FileUtils::getTxtContent(path,textContent);
+    QMimeType type = FileUtils::getMimetype(path);
+    QString name = type.name();
+    QFileInfo file(path);
+    QString strsfx =  file.suffix();
+    if(name== "application/zip")
+    {
+        if(strsfx.endsWith( "docx"))
+            FileUtils::getDocxTextContent(path,textContent);
+    }
+    else if(name == "text/plain")
+    {
+        if(strsfx.endsWith( "txt"))
+            FileUtils::getTxtContent(path,textContent);
+    }
+    else if(type.inherits("application/msword"))
+    {
+        if (strsfx.endsWith("doc"))
+        {
+            KBinaryParser searchdata;
+            searchdata.RunParser(path,textContent);
+        }
+    }
+    else
+    {
+        qWarning()<<"Unsupport format:["<<path<<"]["<<type.name()<<"]";
+    }
 
     return;
 }

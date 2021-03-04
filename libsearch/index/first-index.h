@@ -63,7 +63,7 @@ private:
     QQueue<QVector<QString>>* q_index;
     QQueue<QString>* q_content_index;
     const QVector<QString> targetFileTypeVec ={
-//        QString(".doc"),
+        QString(".doc"),
         QString(".docx"),
 //        QString(".ppt"),
 //        QString(".pptx"),
