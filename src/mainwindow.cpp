@@ -126,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
             clearSearchResult();
             this->moveToPanel();
             this->show();
+            this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
             this->raise();
             this->activateWindow();
         }
@@ -256,6 +257,7 @@ void MainWindow::bootOptionsFilter(QString opt)
         clearSearchResult();
         this->moveToPanel();
         this->show();
+        this->m_searchLayout->focusIn();
         this->raise();
         this->activateWindow();
 //        m_search_result_thread->start();

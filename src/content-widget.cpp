@@ -28,8 +28,13 @@ ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
 {
     initUI();
     initListView();
-//    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Background/背景/更改壁纸";
-    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
+    //快速入口应用列表
+//    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
+    m_quicklyOpenList << "/usr/share/applications/ksc-defender.desktop"
+                                        << "/usr/share/applications/ukui-notebook.desktop"
+                                        << "/usr/share/applications/eom.desktop"
+                                        << "/usr/share/applications/pluma.desktop"
+                                        << "/usr/share/applications/claws-mail.desktop" ;
 }
 
 ContentWidget::~ContentWidget()
@@ -353,9 +358,10 @@ void ContentWidget::initHomePage() {
     commonlyList = map.value("Commonly");
     QStringList recentlyList;
     recentlyList = map.value("Recently");
-    lists.append(commonlyList);
-    lists.append(recentlyList);
+
     lists.append(m_quicklyOpenList);
+    lists.append(recentlyList);
+    lists.append(commonlyList);
 
     for (int i = 0; i < lists.count(); i++) {
         if (lists.at(i).isEmpty())
@@ -390,7 +396,7 @@ void ContentWidget::initHomePage() {
             itemWidget->setLayout(layout);
             int shownItem = lists.at(i).length();
             Q_FOREACH(QString path, lists.at(i)){
-                if (i && QString::compare(FileUtils::getAppName(path),"Unknown App") == 0) {
+                if (i == 0 && QString::compare(FileUtils::getAppName(path),"Unknown App") == 0) {
                     shownItem --;
                     continue;
                 }
@@ -403,7 +409,7 @@ void ContentWidget::initHomePage() {
                 emptyItem->setFixedSize(100, 100); //占位用widget,少于5项会补全后方占位
                 layout->addWidget(emptyItem);
             }
-            if (i && shownItem) titleLabel->setText(tr("Open Quickly"));
+            if (i == 0 && shownItem) titleLabel->setText(tr("Open Quickly"));
             else titleLabel->setText(tr("Commonly Used"));
         }
         itemWidgetLyt->setSpacing(6);
@@ -436,7 +442,7 @@ int ContentWidget::currentPage() {
  */
 void ContentWidget::resetSearchList()
 {
-    this->hideListView();
+//    this->hideListView();
     if (m_fileListView) {
         m_fileListView->hide();
         m_fileTitleLabel->hide();
@@ -485,7 +491,8 @@ void ContentWidget::resetSearchList()
         m_webListView->show();
         m_webListView->isHidden = false;
     }
-    m_resultList->setFixedHeight(0);
+
+    resetListHeight();
     m_detailView->clearLayout();
     m_contentDetailList.clear();
     m_bestContent.clear();
