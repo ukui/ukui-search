@@ -5060,11 +5060,13 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 				{
 					ushort* usAucData = (ushort*)ptaucBytes;
                     content.append(QString::fromUtf16(usAucData).replace("\r",""));
+                    usAucData = (ushort*)xfree((void*)usAucData);
 				}
 				else
 				{
                     //need more format document
-                    qWarning()<<"Parser error:";
+                    ptaucBytes = (UCHAR*)xfree((void*)ptaucBytes);
+                    qWarning()<<"Parser error:"<<m_strFileName;
 				}
             }
         }
@@ -5393,6 +5395,10 @@ int KBinaryParser::InitDocOle(FILE* pFile,long lFilesize,QString &content)
 						aulBBD, tBBDLen, aulSBD, tSBDLen,
                         aucHeader,content);
 	}
+    else
+    {
+        qWarning()<<"Unsupport doc type:"<<m_strFileName;
+    }
 //	else if (PPS_info.type == Excel)
 //	{
 //		readParam.ulStBlk = PPS_info.tWorkBook.ulSB;

@@ -28,26 +28,31 @@ FileReader::FileReader(QObject *parent) : QObject(parent)
 
 void FileReader::getTextContent(QString path, QString &textContent)
 {
-    QString type =FileUtils::getMimetype(path,true);
+    QMimeType type = FileUtils::getMimetype(path);
+    QString name = type.name();
     QFileInfo file(path);
     QString strsfx =  file.suffix();
-    if(type == "application/zip")
+    if(name== "application/zip")
     {
         if(strsfx.endsWith( "docx"))
             FileUtils::getDocxTextContent(path,textContent);
     }
-    else if(type == "text/plain")
+    else if(name == "text/plain")
     {
         if(strsfx.endsWith( "txt"))
             FileUtils::getTxtContent(path,textContent);
     }
-    else if(type == "application/x-ole-storage")
+    else if(type.inherits("application/msword"))
     {
         if (strsfx.endsWith("doc"))
         {
             KBinaryParser searchdata;
             searchdata.RunParser(path,textContent);
         }
+    }
+    else
+    {
+        qWarning()<<"Unsupport format:["<<path<<"]["<<type.name()<<"]";
     }
 
     return;

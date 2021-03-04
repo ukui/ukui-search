@@ -28,8 +28,6 @@
 #include "quazip/quazip.h"
 #include <quazip/quazipfile.h>
 #include <QDomDocument>
-#include <QMimeDatabase>
-#include <QMimeType>
 #include <QQueue>
 #include "uchardet/uchardet.h"
 
@@ -211,14 +209,12 @@ void FileUtils::loadHanziTable(const QString &fileName)
     return;
 }
 
-QString FileUtils::getMimetype(QString &path, bool getsuffix)
+QMimeType FileUtils::getMimetype(QString &path)
 {
     QMimeDatabase mdb;
     QMimeType type = mdb.mimeTypeForFile(path,QMimeDatabase::MatchContent);
-    if(getsuffix)
-        return type.name();
-    else
-        return type.preferredSuffix();
+
+    return type;
 }
 
 //aborted
@@ -559,7 +555,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
     const char *codec = uchardet_get_charset(chardet);
 
     if(QTextCodec::codecForName(codec) == 0)
-        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec)<<"zpf666";
+        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec);
 
     QTextStream stream(encodedString,QIODevice::ReadOnly);
     stream.setCodec(codec);

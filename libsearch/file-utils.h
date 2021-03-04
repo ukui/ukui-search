@@ -32,6 +32,8 @@
 #include <QCryptographicHash>
 #include <QIcon>
 #include <QMap>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include "libsearch_global.h"
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
@@ -59,7 +61,7 @@ public:
     static void loadHanziTable(const QString&);
 
     //parse text,docx.....
-    static QString getMimetype(QString &path, bool getsuffix = false);
+    static QMimeType getMimetype(QString &path);
     static void getDocxTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
     static size_t _max_index_count;
