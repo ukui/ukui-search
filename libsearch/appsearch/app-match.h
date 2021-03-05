@@ -28,24 +28,33 @@
 #include <QDBusReply>
 #include <QtDBus>
 #include <QElapsedTimer>
+#include <QThread>
 
-class AppMatch : public QObject
+class AppMatch : public QThread
 {
     Q_OBJECT
 public:
+    static AppMatch *getAppMatch();
     explicit AppMatch(QObject *parent = nullptr);
     ~AppMatch();
-//    QStringList startMatchApp(QString input);
+    void startMatchApp(QString input,QMap<QString,QStringList> &installed,QMap<QString,QStringList> &softwarereturn);
     QMap<QString,QList<QString>> startMatchApp(QString input);
 
 private:
     void getAllDesktopFilePath(QString path);
     void getDesktopFilePath();
     void getAppName();
+    void getAppName(QMap<QString,QStringList> &installed);
 //    void appNameMatch(QString appname,QString desktoppath,QString appicon);
     void appNameMatch(QString appname);
+    void appNameMatch(QString appname,QMap<QString,QStringList> &installed);
+
     void softWareCenterSearch();
+    void softWareCenterSearch(QMap<QString,QStringList> &softwarereturn);
+
     void parseSoftWareCenterReturn(QList<QMap<QString,QString>> list);
+    void parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<QString,QStringList> &softwarereturn);
+
     void getInstalledAppsVersion(QString appname);
     void returnAppMap();
 
@@ -58,7 +67,6 @@ private:
     QFileSystemWatcher *m_watchAppDir=nullptr;
     QMap<QString,QList<QString>> m_softWareCenterMap;
     QMap<QString,QList<QString>> m_installAppMap;
-    QMap<QString,QList<QString>> m_filterInstallAppMap;
     QMap<QString,QList<QString>> m_matchInstallAppMap;
     QMap<QString,QList<QString>> m_returnResult1;
     QMap<QString,QList<QString>> m_midResult;
@@ -66,6 +74,12 @@ private:
 
 private Q_SLOTS:
     void slotDBusCallFinished();
+    void slotDBusCallFinished(QMap<QString,QStringList> &softwarereturn);
+
+//Q_SIGNALS:
+
+protected:
+    void run() override;
 
 };
 
