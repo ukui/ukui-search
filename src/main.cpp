@@ -238,8 +238,9 @@ int main(int argc, char *argv[])
 //    fi->start();
     qDebug() << "main start";
     AppMatch::getAppMatch()->start();
-    AppMatch apm;
-    apm.start();
+    //wtf???
+//     AppMatch apm;
+//     apm.start();
     QThreadPool::globalInstance()->setExpiryTimeout(5);
 //    QThreadPool::globalInstance()->clear();
 //    setAutoDelete(true);
