@@ -237,7 +237,9 @@ int main(int argc, char *argv[])
 //    FirstIndex* fi = new FirstIndex("/home");
 //    fi->start();
     qDebug() << "main start";
-
+    AppMatch::getAppMatch()->start();
+    AppMatch apm;
+    apm.start();
     QThreadPool::globalInstance()->setExpiryTimeout(5);
 //    QThreadPool::globalInstance()->clear();
 //    setAutoDelete(true);
