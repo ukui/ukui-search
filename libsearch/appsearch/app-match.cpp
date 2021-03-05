@@ -35,6 +35,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
 {
     m_watchAppDir=new QFileSystemWatcher(this);
     m_watchAppDir->addPath("/usr/share/applications/");
+    //This part is not right!!!!!!!!!----iaom
     connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,[this](){
         this->getDesktopFilePath();
         this->getAllDesktopFilePath("/usr/share/applications/");
