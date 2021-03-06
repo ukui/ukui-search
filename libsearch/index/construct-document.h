@@ -31,28 +31,23 @@ class IndexGenerator;
 class ConstructDocumentForPath : public QRunnable
 {
 public:
-    explicit ConstructDocumentForPath(QVector<QString> list,IndexGenerator *parent = nullptr);
-    ~ConstructDocumentForPath();
+    explicit ConstructDocumentForPath(QVector<QString> list);
+    ~ConstructDocumentForPath() = default;
 protected:
     void run();
 private:
     QVector<QString> m_list;
-
-
 };
 
-class ConstructDocumentForContent : public QObject, public QRunnable
+class ConstructDocumentForContent : public QRunnable
 {
-    Q_OBJECT
 public:
-    explicit ConstructDocumentForContent(QString path,QObject *parent = nullptr);
-    ~ConstructDocumentForContent();
+    explicit ConstructDocumentForContent(QString path);
+    ~ConstructDocumentForContent() = default;
 protected:
     void run();
 private:
     QString m_path;
-
-
 };
 
 #endif // CONSTRUCTDOCUMENT_H
