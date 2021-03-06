@@ -35,12 +35,6 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
 {
     m_watchAppDir=new QFileSystemWatcher(this);
     m_watchAppDir->addPath("/usr/share/applications/");
-    //This part is not right!!!!!!!!!----iaom
-    connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,[this](){
-        this->getDesktopFilePath();
-        this->getAllDesktopFilePath("/usr/share/applications/");
-            });
-
     qDBusRegisterMetaType<QMap<QString,QString>>();
     qDBusRegisterMetaType<QList<QMap<QString,QString>>>();
     m_interFace=new QDBusInterface ("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
@@ -64,35 +58,12 @@ AppMatch::~AppMatch(){
     m_watchAppDir=NULL;
 }
 
-void AppMatch::startMatchApp(QString input,QMap<QString,QStringList> &installed,QMap<QString,QStringList> &softwarereturn){
+void AppMatch::startMatchApp(QString input,QMap<NameString,QStringList> &installed,QMap<NameString,QStringList> &softwarereturn){
     input.replace(" ","");
     m_sourceText=input;
     getAppName(installed);
     softWareCenterSearch(softwarereturn);
     qDebug()<<"match app is successful!";
-}
-
-/**
- * @brief AppMatch::startMatchApp 查询应用，含所有已安装与未安装
- * @param input 关键词
- * @param i
- * @return QMap<QString,QList<QString>> QMap<应用名，{.desktop(未安装为空),图标(安装的是名字，未安装是路径)}>
- */
-QMap<QString,QList<QString>> AppMatch::startMatchApp(QString input){
-    input.replace(" ","");
-    m_sourceText=input;
-    m_softWareCenterMap.clear();
-    m_matchInstallAppMap.clear();
-    m_returnResult1.clear();
-    if(input.isEmpty()){
-        return m_returnResult1;
-    }
-    softWareCenterSearch();
-    getAppName();
-    returnAppMap();
-    m_returnResult1=m_midResult;
-    m_midResult.clear();
-    return m_returnResult1;
 }
 
 /**
@@ -190,7 +161,9 @@ void AppMatch::getAllDesktopFilePath(QString path){
             name=g_key_file_get_locale_string(keyfile,"Desktop Entry","Name", nullptr, nullptr);
             icon=g_key_file_get_locale_string(keyfile,"Desktop Entry","Icon", nullptr, nullptr);
             if(!m_filePathList.contains(filePathStr)){
-            m_installAppMap.insert(QString::fromLocal8Bit(name),applist<<filePathStr<<QString::fromLocal8Bit(icon)<<"");
+                NameString appname;
+                appname.app_name = QString::fromLocal8Bit(name);
+                m_installAppMap.insert(appname,applist<<filePathStr<<QString::fromLocal8Bit(icon)<<"");
             applist.clear();
             }
 //            m_filePathList.append(filePathStr);
@@ -263,23 +236,11 @@ void AppMatch::getDesktopFilePath()
 //    }
 }
 
-/**
- * @brief AppMatch::getAppName
- * 获取应用名字
- */
-void AppMatch::getAppName()
+void AppMatch::getAppName(QMap<NameString,QStringList> &installed)
 {
-    QMap<QString, QList<QString>>::const_iterator i;
+    QMap<NameString, QStringList>::const_iterator i;
             for(i=m_installAppMap.constBegin();i!=m_installAppMap.constEnd();++i){
-                appNameMatch(i.key());
-            }
-}
-
-void AppMatch::getAppName(QMap<QString,QStringList> &installed)
-{
-    QMap<QString, QList<QString>>::const_iterator i;
-            for(i=m_installAppMap.constBegin();i!=m_installAppMap.constEnd();++i){
-                appNameMatch(i.key(),installed);
+                appNameMatch(i.key().app_name,installed);
             }
     qDebug()<<"installed app match is successful!";
 }
@@ -289,59 +250,40 @@ void AppMatch::getAppName(QMap<QString,QStringList> &installed)
  * 进行匹配
  * @param appname
  * 应用名字
- * @param desktoppath
- * desktop路径
  */
-void AppMatch::appNameMatch(QString appname){
+void AppMatch::appNameMatch(QString appname,QMap<NameString,QStringList> &installed){
+    NameString name{appname};
+    QStringList list;
+    QMapIterator<NameString,QStringList> iter(m_installAppMap);
+    while(iter.hasNext())
+    {
+        iter.next();
+        if (iter.key().app_name == appname) {
+            list = iter.value();
+            break;
+        }
+    }
     if(appname.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_matchInstallAppMap.insert(appname,m_installAppMap.value(appname));
+//        installed.insert(name,m_installAppMap.value(name));
+        installed.insert(name,list);
         return;
     }
     QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
     if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_matchInstallAppMap.insert(appname,m_installAppMap.value(appname));
+//        installed.insert(name,m_installAppMap.value(name));
+        installed.insert(name,list);
         return;
     }
     if(m_sourceText.size()<2)
         return;
     QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
     if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_matchInstallAppMap.insert(appname,m_installAppMap.value(appname));
+//        installed.insert(name,m_installAppMap.value(name));
+        installed.insert(name,list);
     }
 }
 
-void AppMatch::appNameMatch(QString appname,QMap<QString,QStringList> &installed){
-    if(appname.contains(m_sourceText,Qt::CaseInsensitive)){
-        installed.insert(appname,m_installAppMap.value(appname));
-        return;
-    }
-    QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
-    if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
-        installed.insert(appname,m_installAppMap.value(appname));
-        return;
-    }
-    if(m_sourceText.size()<2)
-        return;
-    QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
-    if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
-        installed.insert(appname,m_installAppMap.value(appname));
-    }
-}
-
-
-void AppMatch::softWareCenterSearch(){
-    // 调用D-Bus接口的方法
-//    QDBusPendingCall pcall = m_interFace->asyncCall("get_search_result", m_sourceText);
-    // 设置等待异步消息的信号槽
-//    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(pcall, nullptr);
-//    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &AppMatch::slotDBusCallFinished);
-    if(m_interFace->timeout()!=-1)
-        return;
-//    qWarning()<<"this    :"<<m_interFace->timeout();
-    slotDBusCallFinished();
-}
-
-void AppMatch::softWareCenterSearch(QMap<QString,QStringList> &softwarereturn){
+void AppMatch::softWareCenterSearch(QMap<NameString,QStringList> &softwarereturn){
     if(m_interFace->timeout()!=-1){
         qWarning()<<"softWareCente Dbus is timeout !";
         return;
@@ -350,21 +292,7 @@ void AppMatch::softWareCenterSearch(QMap<QString,QStringList> &softwarereturn){
     qDebug()<<"softWareCenter match app is successful!";
 }
 
-void AppMatch::slotDBusCallFinished()
-{
-    QDBusReply<QList<QMap<QString,QString>>> reply = m_interFace->call("get_search_result",m_sourceText); //阻塞，直到远程方法调用完成。
-//    QDBusPendingReply<QList<QMap<QString,QString>>> reply = *call;
-           if (reply.isValid())
-           {
-            parseSoftWareCenterReturn(reply.value());
-           }
-           else
-           {
-               qWarning() << "value method called failed!";
-           }
-//     call->deleteLater();
-}
-void AppMatch::slotDBusCallFinished(QMap<QString,QStringList> &softwarereturn){
+void AppMatch::slotDBusCallFinished(QMap<NameString,QStringList> &softwarereturn){
     QDBusReply<QList<QMap<QString,QString>>> reply = m_interFace->call("get_search_result",m_sourceText); //阻塞，直到远程方法调用完成。
 //    QDBusPendingReply<QList<QMap<QString,QString>>> reply = *call;
            if (reply.isValid())
@@ -378,47 +306,28 @@ void AppMatch::slotDBusCallFinished(QMap<QString,QStringList> &softwarereturn){
 //     call->deleteLater();
 }
 
-void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<QString,QStringList> &softwarereturn){
+void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<NameString,QStringList> &softwarereturn){
 //    qWarning()<<list;
     QString appname;
+    NameString name;
     QString appicon;
     QString appdiscription;
     QStringList applist;
     QLocale locale;
+    QString pkgname;
     for(int i=0;i<list.size();i++){
 //        qWarning()<<list.at(i).keys();
         if(locale.language()==QLocale::Chinese){
            appname=list.at(i).value("displayname_cn");
+           pkgname = list.at(i).value("appname");
         }
         if(locale.language()==QLocale::English){
             appname=list.at(i).value("appname");
         }
          appdiscription=list.at(i).value("discription");
         appicon=list.at(i).value("icon");
-        softwarereturn.insert(appname,applist<<""<<appicon<<appdiscription);
-        applist.clear();
-    }
-}
-
-void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list){
-//    qWarning()<<list;
-    QString appname;
-    QString appicon;
-    QString appdiscription;
-    QStringList applist;
-    QLocale locale;
-    for(int i=0;i<list.size();i++){
-//        qWarning()<<list.at(i).keys();
-        if(locale.language()==QLocale::Chinese){
-           appname=list.at(i).value("displayname_cn");
-        }
-        if(locale.language()==QLocale::English){
-            appname=list.at(i).value("appname");
-        }
-        appdiscription=list.at(i).value("discription");
-//        qWarning()<<"discription"<<appdiscription;
-        appicon=list.at(i).value("icon");
-        m_softWareCenterMap.insert(appname,applist<<""<<appicon<<appdiscription);
+        name.app_name = appname;
+        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname);
         applist.clear();
     }
 }
@@ -443,19 +352,12 @@ void AppMatch::getInstalledAppsVersion(QString appname){
 //    m_versionCommand->close();
 }
 
-void AppMatch::returnAppMap(){
-    QMap<QString, QList<QString>>::const_iterator i;
-    for(i=m_matchInstallAppMap.constBegin();i!=m_matchInstallAppMap.constEnd();++i){
-        m_midResult.insert(i.key(),i.value());
-    }
-    QMap<QString, QList<QString>>::const_iterator j;
-    for(j=m_softWareCenterMap.constBegin();j!=m_softWareCenterMap.constEnd();++j){
-        m_midResult.insert(j.key(),j.value());
-    }
-}
-
 void AppMatch::run(){
     qDebug()<<"AppMatch is run";
     this->getDesktopFilePath();
     this->getAllDesktopFilePath("/usr/share/applications/");
+    connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,[this](){
+        this->getDesktopFilePath();
+        this->getAllDesktopFilePath("/usr/share/applications/");
+    });
 }

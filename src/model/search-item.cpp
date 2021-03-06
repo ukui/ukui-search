@@ -83,7 +83,9 @@ QString SearchItem::getName(int index) {
         case Files : //文件，返回文件名
             return FileUtils::getFileName(m_pathlist.at(index));
         case Apps : {//应用，返回应用名
-            return m_pathlist.at(index);
+            QString whole_name = m_pathlist.at(index);
+            QString app_name = whole_name.contains("/") ? whole_name.left(whole_name.indexOf("/")) : whole_name;
+            return app_name;
         }
         case Best : //最佳匹配，含全部类型，需要自己判断，返回不同类型的名称
             return getBestName(index);

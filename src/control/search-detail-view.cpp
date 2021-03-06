@@ -177,7 +177,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
 {
     m_type = SearchListView::ResType::App;
     m_path = path;
-    m_name = appname;
+    m_name = appname.contains("/") ? appname.left(appname.indexOf("/")) : appname;
     m_isEmpty = false;
     clearLayout();
     m_iconLabel->show();
@@ -202,10 +202,10 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
 
     m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-    QString showname = fontMetrics.elidedText(appname, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
+    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(showname);
-    if (QString::compare(showname, appname)) {
-        m_nameLabel->setToolTip(appname);
+    if (QString::compare(showname, m_name)) {
+        m_nameLabel->setToolTip(m_name);
     }
     m_typeLabel->setText(tr("Application"));
 }
@@ -586,7 +586,8 @@ bool SearchDetailView::installAppAction(const QString & name)
 {
     //打开软件商店下载此软件
     QProcess process;
-    bool res = process.startDetached(QString("kylin-software-center -find %1").arg(name));
+    QString app_name = name.contains("/") ? name.mid(name.indexOf("/") + 1) : name;
+    bool res = process.startDetached(QString("kylin-software-center -find %1").arg(app_name));
     return res;
 }
 
