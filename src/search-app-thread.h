@@ -15,9 +15,10 @@ public:
 protected:
     void run() override;
 private:
-    AppMatch * m_appMatch = nullptr;
     QString m_keyword;
     bool m_stop = false;
+    QMap<NameString,QStringList> m_installed_apps;
+    QMap<NameString,QStringList> m_uninstalled_apps;
 Q_SIGNALS:
     void searchResultApp(const QVector<QStringList>&);
 };
