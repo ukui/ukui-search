@@ -1,3 +1,12 @@
+ukui-search (3.0.1-1+0224) v101; urgency=medium
+
+  * fix:应用为一条时显示不全 
+  * fix:可以搜到控制面板键盘选项
+  * fix:输入中文标点会出现应用结果
+  * fix:有些设置项搜不到
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Wed, 24 Feb 2021 09:29:50 +0800
+
 ukui-search (3.0.1-1+0127) v101; urgency=medium
 
   * fix:文件名字大于40不显示

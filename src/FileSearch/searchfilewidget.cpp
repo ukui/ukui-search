@@ -99,6 +99,7 @@ void SearchFileWidget::recvFileSearchResult(QStringList arg)
         this->setVisible(true);
     } else {
         this->setVisible(false);
+        Q_EMIT fileWidgetHide();
     }
 }
 

@@ -42,6 +42,7 @@ public:
     void addData(QVector<QStringList> data);
     void updateData(QVector<QStringList> data);
     void setsize(int x,int y);
+    QStandardItemModel* listmodel=nullptr;
 
 protected:
     void initWidget();
@@ -50,7 +51,7 @@ protected:
     void paintEvent(QPaintEvent *e) override;
 
 private:
-    QStandardItemModel* listmodel=nullptr;
+//    QStandardItemModel* listmodel=nullptr;
     int w=0;
     int h=0;
     int module=0;

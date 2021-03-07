@@ -148,3 +148,6 @@ bool SearchResultWidget::eventFilter(QObject *watched, QEvent *event){
     return false;
 }
 
+void SearchResultWidget::fristSelect(){
+    m_listView->setCurrentIndex(m_listView->listmodel->index(0,0));
+}

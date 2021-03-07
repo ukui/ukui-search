@@ -91,3 +91,8 @@ bool SettingWidget::eventFilter(QObject *watched, QEvent *event){
     }
     return false;
 }
+
+void SettingWidget::fristSelect(){
+    QTimer::singleShot(100,[this] {settingView->setCurrentIndex(m_settingmodel->index(0));});
+
+}

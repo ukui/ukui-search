@@ -74,6 +74,10 @@ private Q_SLOTS:
     void execApplication(QStringList arg);
     void appTextRefresh(QString);
     void recvSearchResult(QVector<QStringList> arg);
+
+public Q_SLOTS:
+    void fristSelect();
+
 Q_SIGNALS:
     void changeAppNum(int num);
     void sendSearchKeyword(QString arg);

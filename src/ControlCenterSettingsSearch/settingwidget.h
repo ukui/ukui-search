@@ -13,6 +13,7 @@
 #include "../Interface/headlabel.h"
 #include <QPainter>
 
+
 class SettingWidget : public QWidget
 {
     Q_OBJECT
@@ -34,6 +35,9 @@ private:
 private Q_SLOTS:
      void settingTextRefresh(QString);
      void recvSettingSearchResult(int row);
+
+public Q_SLOTS:
+     void fristSelect();
 
 Q_SIGNALS:
 //     void sendSearchKeyword(QString arg);

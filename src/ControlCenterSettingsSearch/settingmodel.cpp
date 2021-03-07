@@ -95,12 +95,12 @@ void settingModel::XmlElement(){
              }
 
              if(n.nodeName()==QString::fromLocal8Bit("ChinesePlugin")){
-                 index=n.toElement().text();
+                 index0=n.toElement().text();
              }
              if(n.nodeName()==QString::fromLocal8Bit("ChineseFunc")){
-                 index+=QString::fromLocal8Bit(":")+n.toElement().text();
+                 index0+=QString::fromLocal8Bit(":")+n.toElement().text();
 
-             chine_searchresult.append(index);
+             chine_searchresult.append(index0);
              }
          }
         pinyin_searchlist.insert(key,pinyin_searchresult);

@@ -38,6 +38,7 @@ private Q_SLOTS:
 
 Q_SIGNALS:
      void sendSearchKeyword(QString arg);
+     void fileWidgetHide();
 
 
 };
