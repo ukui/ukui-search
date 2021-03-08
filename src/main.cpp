@@ -124,6 +124,27 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    char *p_home = NULL;
+
+    unsigned int i = 0;
+    while(p_home == NULL)
+    {
+        ::sleep(1);
+        ++i;
+        p_home = getenv("HOME");
+        if(i%5==0)
+        {
+            qWarning()<<"I can't find home! I'm done here!!";
+            printf("I can't find home! I'm done here!!");
+        }
+    }
+    p_home = NULL;
+    while(!QDir(QDir::homePath()).exists())
+    {
+        qWarning()<<"Home not exits!!";
+        printf("Home not exits!!");
+        ::sleep(1);
+    }
     unlink(UKUI_SEARCH_PIPE_PATH);
     int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
     if(retval == -1)
@@ -247,6 +268,7 @@ int main(int argc, char *argv[])
 
 //    FirstIndex fi("/home/zhangzihao/Desktop/qwerty");
 //    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
+
     FirstIndex fi("/home/zhangzihao/Desktop");
     fi.start();
 //    fi.wait();

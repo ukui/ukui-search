@@ -160,7 +160,8 @@ void FirstIndex::run(){
         QtConcurrent::run([&](){
             sem.acquire(2);
             mutex3.unlock();
-            QQueue<QString>* tmp = new QQueue<QString>();;
+            QQueue<QString>* tmp = new QQueue<QString>();
+            qDebug()<<"q_content_index:"<<q_content_index->size();
             while (!this->q_content_index->empty()) {
 //                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
                 for (size_t i = 0; (i < 30) && (!this->q_content_index->empty()); ++i){
