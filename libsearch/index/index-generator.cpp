@@ -33,8 +33,8 @@
 #include <QStandardPaths>
 
 
-#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/index_data").toStdString()
-#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/content_index_data").toStdString()
+#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
+#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
 static IndexGenerator *global_instance = nullptr;
 QMutex  IndexGenerator::m_mutex;
@@ -144,15 +144,28 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 
 IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
 {
-    if(rebuild)
+    QDir database(QString::fromStdString(INDEX_PATH));
+
+    if(database.exists())
     {
-        QDir database(QString::fromStdString(INDEX_PATH));
-        if(database.exists())
-            qDebug()<<"remove"<<database.removeRecursively();
-        database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
-        if(database.exists())
+        if(rebuild)
             qDebug()<<"remove"<<database.removeRecursively();
     }
+    else
+    {
+       qDebug()<<"create index path"<<database.mkpath(QString::fromStdString(INDEX_PATH));
+    }
+    database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
+    if(database.exists())
+    {
+        if(rebuild)
+            qDebug()<<"remove"<<database.removeRecursively();
+    }
+    else
+    {
+         qDebug()<<"create content index path"<<database.mkpath(QString::fromStdString(CONTENT_INDEX_PATH));
+    }
+
     m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
 }

@@ -1,3 +1,16 @@
+ukui-search (0.2.0+0306) v101; urgency=medium
+
+  * Feature: Add support for 'doc' file in file content search.
+    - 文本索引增加了对doc格式文件的支持。
+  * Fix: There is no web search result when there is no local result.
+    - 修复没有本地搜索结果时不显示网页搜索列表的问题。
+  * Fix:Files with special charactors can not be opened successfully.
+    - 修复带有特殊字符的文件无法正常打开的问题。
+  * Fix:Occasional crash during the first boot of system.
+    - 修复了在系统首次启动时偶现的崩溃问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 06 Mar 2021 11:03:20 +0800
+
 ukui-search (0.2.0+0301) v101; urgency=medium
 
   * Fix: New result won't be added to expanded list.
