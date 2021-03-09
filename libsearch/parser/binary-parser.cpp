@@ -5067,6 +5067,8 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
                     //need more format document
                     ptaucBytes = (UCHAR*)xfree((void*)ptaucBytes);
                     qWarning()<<"Parser error:"<<m_strFileName;
+//                    content.append(QString::fromStdString((char*)ptaucBytes).replace("\r",""));
+//                    ptaucBytes = (UCHAR*)xfree((void*)ptaucBytes);
 				}
             }
         }
