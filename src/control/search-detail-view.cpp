@@ -131,7 +131,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
         m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
         m_webView->setAttribute(Qt::WA_DeleteOnClose);
         m_webView->move(0, 0);
-        m_webView->setFixedSize(360, 522);
+        m_webView->setFixedSize(378, 522);
 
         connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
             m_reload = true;
@@ -173,7 +173,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     m_webView->show();
 }
 
-void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath)
+void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath, const QString &description)
 {
     m_type = SearchListView::ResType::App;
     m_path = path;
@@ -190,6 +190,12 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     if (path.isEmpty() || path == "") {
         icon = QIcon(iconpath);
         m_optionView->setupOptions(m_type, false);
+        //未安装应用有一个label显示软件描述
+        if (description != "" && !description.isEmpty()) {
+            m_detailFrame->show();
+            m_contentLabel->show();
+            m_contentLabel->setText(QString(tr("Introduction: %1")).arg(description));
+        }
     } else {
         m_optionView->setupOptions(m_type, true);
         if (QIcon::fromTheme(iconpath).isNull()) {
@@ -437,7 +443,7 @@ void SearchDetailView::initUI()
     m_layout->setContentsMargins(16, 60, 16, 24);
     this->setObjectName("detailView");
     this->setStyleSheet("QWidget#detailView{background:transparent;}");
-    this->setFixedWidth(360);
+    this->setFixedWidth(378);
 
     //图标和名称、分割线区域
     m_iconLabel = new QLabel(this);
@@ -562,9 +568,7 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
  * @return
  */
 bool SearchDetailView::openPathAction(const QString& path) {
-    QProcess process;
-    process.startDetached(QString("xdg-open %1").arg(path.left(path.lastIndexOf("/"))));
-    return true;
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
 }
 
 /**
