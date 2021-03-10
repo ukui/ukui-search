@@ -43,6 +43,7 @@ public:
     void setData(QString data);
     void addPosting(std::string term, QVector<size_t> offset, int weight =1);
     void addPosting(std::string term, unsigned int offset, int weight =1);
+    void addPosting(std::string term, const ::std::vector<size_t>& offsets, const int weight =1);
     void addTerm(QString term);
     void addValue(QString value);
     void setUniqueTerm(QString term);

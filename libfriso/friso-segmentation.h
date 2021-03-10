@@ -21,39 +21,54 @@
 #ifndef FRISOSEGMENTATION_H
 #define FRISOSEGMENTATION_H
 
+#ifdef __cplusplus
 extern "C"{
+#endif
+
 #include "friso-interface.h"
+
+#ifdef __cplusplus
 }
+#endif
 
 #include <string>
 #include <vector>
 #include <mutex>
+#include <map>
+#include <list>
 #include "libfriso-segmentation_global.h"
-namespace friso {
-    struct SkeyWord{
-        std::string word;
-        std::vector<size_t> offset;
-        double weight;
-    };
 
-    class LIBFRISOSEGMENTATION_EXPORT FrisoSegmentation
-    {
-    public:
-        static FrisoSegmentation *getInstance();
-        ~FrisoSegmentation();
-        void callSegement(::std::vector<::friso::SkeyWord>&, ::std::string&);
-    private:
-        explicit FrisoSegmentation();
+namespace friso {
+/*
+using SkeyWord = ::std::pair<::std::vector<size_t>, int>;
+using ResultMap = ::std::map<::std::string, ::friso::SkeyWord>;
+
+typedef struct wordInfo{
+    size_t  weight      = 0;        //the times which word appeared, need be modified.
+    size_t  offsets[8]  = { 0 };    //the position which word appears.
+    char    word[64]    = { 0 };    //the length of task->token->word is 64.
+}fgnb;
+*/
+class LIBFRISOSEGMENTATION_EXPORT FrisoSegmentation
+{
+public:
+    static FrisoSegmentation *getInstance();
+    static void deleteInstance();
+//    void callSegement(::friso::ResultMap&, char*);
+//    void setText(char*);
+    static friso_t g_friso;
+    friso_config_t config;
+    friso_task_t task;
+private:
+    explicit FrisoSegmentation();
+    ~FrisoSegmentation();
 //        friso::FrisoSegmentation* m_friso;
-        static std::mutex m_mutex;
-        friso_t friso;
-        friso_config_t config;
-        friso_task_t task;
-        int init();
-        int segment();
-        int destory();
-        char* m_ini_path = "/usr/share/ukui-search/res/friso.ini";
-    };
+    static std::mutex m_mutex;
+    int init();
+//    int segment(::std::vector<::friso::SkeyWord>&, char*);
+    int destory();
+    char* m_ini_path = "/usr/share/ukui-search/res/friso.ini";
+};
 }
 
 

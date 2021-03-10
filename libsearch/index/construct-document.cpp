@@ -19,7 +19,6 @@
  */
 #include "construct-document.h"
 #include "file-utils.h"
-#include "chinese-segmentation.h"
 #include <QDebug>
 #include <QThread>
 #include <QUrl>
@@ -127,23 +126,54 @@ void ConstructDocumentForContent::run()
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/",0,-2,QString::SectionIncludeLeadingSep)));
 
-    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content);
+    qWarning() << m_path;
+//    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content);
+//    QVector<SKeyWord> term;
+//    ::friso::ResultMap term;
+
+//    friso::FrisoSegmentation::getInstance()->callSegement(term, content.toLocal8Bit().data());
+//    ::friso::FrisoSegmentation::getInstance()->setText(content.toLocal8Bit().data());
 
     Document doc;
     doc.setData(content);
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
     doc.addValue(m_path);
-    for(int i = 0;i<term.size();++i)
-    {
-        doc.addPosting(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
 
+    friso_task_t task = friso_new_task();
+
+    //if the text is tooooooo long, it will crashed!!!
+    //need fix!!!
+    //MouseZhangZh
+    friso_set_text( task, content.left(20480).toLocal8Bit().data()); //memory!!!
+
+    while ((FrisoUtils::g_config->next_token(FrisoUtils::g_friso, FrisoUtils::g_config, task)) != NULL){
+//        printf("%s/ ", task->token->word);
+        doc.addPosting(task->token->word, task->token->offset);
     }
+    friso_free_task(task);
+
+//    while (::friso::FrisoSegmentation::getInstance()->config->next_token(::friso::FrisoSegmentation::g_friso, ::friso::FrisoSegmentation::getInstance()->config, ::friso::FrisoSegmentation::getInstance()->task) != NULL) {
+//        doc.addPosting(::friso::FrisoSegmentation::getInstance()->task->token->word, ::friso::FrisoSegmentation::getInstance()->task->token->offset);
+//    }
+//    friso_free_task(::friso::FrisoSegmentation::getInstance()->task);
+//    for (::friso::ResultMap::iterator it_map = term.begin(); it_map != term.end(); ++it_map){
+//        doc.addPosting(it_map->first, it_map->second.first, it_map->second.second);
+//        it_map->second.first.clear();
+//        ::std::vector<size_t>().swap(it_map->second.first);
+//    }
+
+//    for(int i = 0;i<term.size();++i)
+//    {
+//        doc.addPosting(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
+//    }
 
     _mutex_doc_list_content.lock();
     _doc_list_content->append(doc);
     _mutex_doc_list_content.unlock();
     content.clear();
-    term.clear();
+//    term.clear();
+//    term.erase(term.begin(), term.end());
+//    ::friso::ResultMap().swap(term);
     return;
 }

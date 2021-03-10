@@ -50,6 +50,24 @@ void Document::addPosting(std::string term, unsigned int offset, int weight)
     m_document.add_posting(term,offset,weight);
 }
 
+
+//一个词出现一次插一条？？？
+//term值传递，map的key不可以被修改
+void Document::addPosting(::std::string term, const ::std::vector<size_t>& offsets, const int weight)
+{
+    if(term == "")
+        return;
+    if(term.length() > 240){
+        term = term.substr(0, 30);
+    }
+//    if(term.length() > 240)
+//        term = QString::fromStdString(term).left(30).toStdString();
+
+    for (size_t i : offsets){
+        m_document.add_posting(term, i, weight);
+    }
+}
+
 void Document::addTerm(QString term)
 {
     if(term.isEmpty())

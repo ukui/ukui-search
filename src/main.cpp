@@ -37,9 +37,11 @@
 #include "global-settings.h"
 #include "xatom-helper.h"
 
-extern "C"{
-#include "friso-interface.h"
-}
+#include "friso-utils.h"
+
+//extern "C"{
+//#include "friso-interface.h"
+//}
 
 
 //void handler(int){
@@ -128,9 +130,34 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
-    multi_thread_test();
+
+    /*-------------friso_task_t Test start-----------------*/
+    FrisoUtils::init(); //init first!!!
+
+//    while (true) {
+//        friso_task_t task = friso_new_task();
+//        friso_set_text( task, "asdasdasdasdas");
+
+//        while ((FrisoUtils::g_config->next_token(FrisoUtils::g_friso, FrisoUtils::g_config, task)) != NULL){
+//            printf("%s/ ", task->token->word);
+//        }
+//        friso_free_task(task);
+//    }
+    /*-------------friso_task_t Test end-------------------*/
+
+
+//    multi_thread_test();
+
+//    ::friso::ResultMap v;
+
+//    while (true){
+
+//        friso::FrisoSegmentation::getInstance()->callSegement(v, "aaa");
+//        v.clear();
+//    }
+
 //    friso_test();
-    exit(0);
+//    exit(0);
 
     unlink(UKUI_SEARCH_PIPE_PATH);
     int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
@@ -175,6 +202,10 @@ int main(int argc, char *argv[])
 
     //load chinese character and pinyin file to a Map
     FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
+
+    //load friso dicts in hash.
+//    ::friso::FrisoSegmentation::getInstance();
+
     /*-------------InotyifyRefact Test Start---------------*/
 //    QTime t1 = QTime::currentTime();
 //    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
@@ -252,14 +283,14 @@ int main(int argc, char *argv[])
 
 //    FirstIndex fi("/home/zhangzihao/Desktop/qwerty");
 //    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
-    FirstIndex fi("/home/zhangzihao/Desktop");
+    FirstIndex fi("/home/zhangzihao");
     fi.start();
 //    fi.wait();
 //    fi->wait();
 //    fi->exit();
 //    delete fi;
 //    assert(false);
-    InotifyIndex* ii = InotifyIndex::getInstance("/home");
+    InotifyIndex* ii = InotifyIndex::getInstance("/home/zhangzihao");
 //    InotifyIndex ii("/home");
     ii->start();
 
