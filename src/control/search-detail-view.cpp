@@ -208,7 +208,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
 
     m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
+    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(showname);
     if (QString::compare(showname, m_name)) {
         m_nameLabel->setToolTip(m_name);
@@ -326,7 +326,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
             QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
             QString wholeName = FileUtils::getFileName(path);
-            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 215);
+            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
             m_nameLabel->setText(name);
             if (QString::compare(name, wholeName)) {
                 m_nameLabel->setToolTip(wholeName);
@@ -456,7 +456,7 @@ void SearchDetailView::initUI()
     m_nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
     m_typeLabel->setStyleSheet("QLabel{font-size: 14px; color: palette(mid);}");
     m_nameFrame->setFixedHeight(48);
-    m_nameLabel->setMaximumWidth(240);
+    m_nameLabel->setMaximumWidth(280);
     m_nameLayout->addWidget(m_nameLabel);
     m_nameLayout->addStretch();
     m_nameLayout->addWidget(m_typeLabel);

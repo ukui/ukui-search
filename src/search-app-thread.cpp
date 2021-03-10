@@ -31,7 +31,7 @@ void SearchAppThread::stop()
 void SearchAppThread::run()
 {
     //nameList:应用名，pathList:已安装的是.desktop路径，未安装为空，iconList:已安装的是图标名，未安装的是图标路径
-    QStringList nameList, pathList, iconList;
+    QStringList nameList, pathList, iconList, descList;
     QVector<QStringList> appVector;
     AppMatch::getAppMatch()->startMatchApp(m_keyword, m_installed_apps, m_uninstalled_apps);
     QMapIterator<NameString,QStringList> installed_iter(m_installed_apps);
@@ -41,6 +41,7 @@ void SearchAppThread::run()
         nameList << installed_iter.key().app_name;
         pathList << installed_iter.value().at(0);
         iconList << installed_iter.value().at(1);
+        descList << installed_iter.value().at(3);
     }
     QMapIterator<NameString,QStringList> uninstalled_iter(m_uninstalled_apps);
     while(uninstalled_iter.hasNext())
@@ -54,10 +55,12 @@ void SearchAppThread::run()
         nameList << name;
         pathList << uninstalled_iter.value().at(0);
         iconList << uninstalled_iter.value().at(1);
+        descList << uninstalled_iter.value().at(3);
     }
     appVector.append(nameList);
     appVector.append(pathList);
     appVector.append(iconList);
+    appVector.append(descList);
     if (!m_stop)
         Q_EMIT this->searchResultApp(appVector);
 }
