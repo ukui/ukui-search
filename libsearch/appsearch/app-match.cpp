@@ -60,6 +60,8 @@ AppMatch::~AppMatch(){
 
 void AppMatch::startMatchApp(QString input,QMap<NameString,QStringList> &installed,QMap<NameString,QStringList> &softwarereturn){
     input.replace(" ","");
+    if(input.isEmpty())
+        return;
     m_sourceText=input;
     getAppName(installed);
     softWareCenterSearch(softwarereturn);
