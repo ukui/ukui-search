@@ -26,7 +26,6 @@ include(parser/parser.pri))
 include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
 
-LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5 -luchardet
 
 SOURCES += \
@@ -66,11 +65,9 @@ unix {
 
 
 
-INCLUDEPATH += $$PWD/../libchinese-segmentation
-DEPENDPATH += $$PWD/../libchinese-segmentation
 
-#INCLUDEPATH += $$PWD/../libfriso
-#DEPENDPATH += $$PWD/../libfriso
+INCLUDEPATH += $$PWD/../libfriso
+DEPENDPATH += $$PWD/../libfriso
 
 #DISTFILES += \
 #    ../translations/libsearch/libukui-search_zh_CN.ts

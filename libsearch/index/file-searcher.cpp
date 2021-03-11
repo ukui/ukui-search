@@ -21,7 +21,6 @@
 #include <QDebug>
 #include <QtConcurrent>
 #include <QThread>
-#include <chinese-segmentation.h>
 #include <QUrl>
 #include "file-searcher.h"
 #include "global-settings.h"
@@ -185,14 +184,38 @@ int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int
         qp.set_default_op(Xapian::Query::OP_AND);
         qp.set_database(db);
 
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(keyword);
-        //Creat a query
-        std::string words;
-        for(int i=0;i<sKeyWord.size();i++)
-        {
-            words.append(sKeyWord.at(i).word).append(" ");
+
+        ::std::string target_str;
+/*
+        ::friso::ResultMap ret;
+        ::friso::FrisoSegmentation::getInstance()->callSegement(ret, keyword.toLocal8Bit().data());
+        for (::friso::ResultMap::iterator it_map = ret.begin(); it_map != ret.end(); ++it_map){
+            target_str += it_map->first;
+            target_str += " ";
+            it_map->second.first.clear();
+            ::std::vector<size_t>().swap(it_map->second.first);
         }
-        Xapian::Query query = qp.parse_query(words);
+
+        ret.clear();
+        ret.erase(ret.begin(), ret.end());
+        ::friso::ResultMap().swap(ret);
+*/
+        FrisoUtils::segementOnlyInSearch(target_str, keyword.toLocal8Bit().data());
+
+        Xapian::Query query = qp.parse_query(target_str);
+
+
+
+//        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(keyword);
+//        //Creat a query
+//        std::string words;
+//        for(int i=0;i<sKeyWord.size();i++)
+//        {
+//            words.append(sKeyWord.at(i).word).append(" ");
+//        }
+
+
+//        Xapian::Query query = qp.parse_query(words);
 
         //        std::vector<Xapian::Query> v;
         //        for(int i=0;i<sKeyWord.size();i++)
@@ -211,7 +234,7 @@ int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int
             return 0;
         qDebug()<< "keywordSearchContent results count=" <<resultCount;
 
-        if(getContentResult(uniqueSymbol, result, words) == -1)
+        if(getContentResult(uniqueSymbol, result, target_str) == -1)
             return -1;
 
         qDebug()<< "--keywordSearchContent search finish--";

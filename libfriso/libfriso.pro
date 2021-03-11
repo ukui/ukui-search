@@ -21,11 +21,13 @@ include(friso/friso.pri)
 
 SOURCES += \
     friso-interface.c \
-    friso-segmentation.cpp
+    friso-segmentation.cpp \
+    friso-utils.cpp
 
 HEADERS += \
-    friso-interface.h \ \
+    friso-interface.h \
     friso-segmentation.h \
+    friso-utils.h \
     libfriso-segmentation_global.h
 
 dict_utf_files.path = /usr/share/ukui-search/res/dict/UTF-8/

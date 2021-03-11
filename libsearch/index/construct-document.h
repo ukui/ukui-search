@@ -25,6 +25,7 @@
 //#include <QMetaObject>
 #include "document.h"
 #include "index-generator.h"
+#include "friso-utils.h"
 //extern QList<Document> *_doc_list_path;
 //extern QMutex  _mutex_doc_list_path;
 class IndexGenerator;

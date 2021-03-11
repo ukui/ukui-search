@@ -28,7 +28,6 @@
 #include "file-utils.h"
 #include "index-generator.h"
 #include "global-settings.h"
-#include "chinese-segmentation.h"
 #include "construct-document.h"
 #include <QStandardPaths>
 
@@ -263,7 +262,6 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
     qDebug()<<"Begin HandlePathList for content index!";
     qDebug()<<messageList->size();
 //    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
-    ChineseSegmentation::getInstance();
     ConstructDocumentForContent *constructer;
     QThreadPool pool;
 //    pool.setMaxThreadCount(((QThread::idealThreadCount() - 1) / 2) + 1);
@@ -297,92 +295,109 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
 
 }
 
-Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
-{
-    Document doc;
-//    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
-    //0-filename 1-filepathname 2-file or dir
-    QString index_text = list.at(0);
-    QString sourcePath = list.at(1);   
-    index_text = index_text.replace(""," ");
-    index_text = index_text.simplified();
-
-    //不带多音字版
-//    QString pinyin_text = FileUtils::find(QString(list.at(0)).replace(".","")).replace("", " ").simplified();
-
-    //多音字版
-    //现加入首字母
-    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
-    for (QString& i : pinyin_text_list){
-        i.replace("", " ");
-        i = i.simplified();
-    }
-
-    QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
-    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep)));
-//    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
-/*--------------------------------------------------------------------*/
-    //QByteArray 和  QString 之间会进行隐式转换，造成字符串被截断等意想不到的后果！！！！！！！ zpf
-    //    if(uniqueterm1!=uniqueterm){
-//        qDebug()<<"-----------------------------------------start";
-//        qDebug()<<uniqueterm1;
-//        qDebug()<<uniqueterm;
-//        qDebug()<<"------------------------------------------finish";
-//    }
-/*--------------------------------------------------------------------*/
-
-    doc.setData(sourcePath);
-    doc.setUniqueTerm(uniqueterm);
-    doc.addTerm(upTerm);
-    doc.addValue(list.at(2));
-    QStringList temp;
-    temp.append(index_text);
-    temp.append(pinyin_text_list);
-    doc.setIndexText(temp);
-    return doc;
-
-}
-
-Document IndexGenerator::GenerateContentDocument(const QString &path)
-{
-//    构造文本索引的document
-    QString content;
-    QStringList tmp;
-    QVector<SKeyWord> term;
-    SKeyWord skw;
-    Document doc;
-    QString uniqueterm;
-    QString upTerm;
-    FileReader::getTextContent(path,content);
-
-    term = ChineseSegmentation::getInstance()->callSegement(content);
-//    QStringList  term = content.split("");
-
-    doc.setData(content);
-    doc.setUniqueTerm(uniqueterm);
-    doc.addTerm(upTerm);
-    doc.addValue(path);
-    for(int i = 0;i<term.size();++i)
-    {
-        doc.addPosting(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
-
-    }
-
+//Document IndexGenerator::GenerateDocument(const QVector<QString> &list)
+//{
 //    Document doc;
-//        doc.setData(content);
-//        doc.setUniqueTerm(uniqueterm);
-//        doc.addTerm(upTerm);
-//        doc.addValue(path);
-//        int pos = 0;
-//        for(QString i : term)
-//        {
-//            doc.addPosting(i.toStdString(),QVector<size_t>() << ++pos,1);
-//        }
+////    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
+//    //0-filename 1-filepathname 2-file or dir
+//    QString index_text = list.at(0);
+//    QString sourcePath = list.at(1);
+//    index_text = index_text.replace(""," ");
+//    index_text = index_text.simplified();
 
-    content.clear();
-    term.clear();
-    return doc;
-}
+//    //不带多音字版
+////    QString pinyin_text = FileUtils::find(QString(list.at(0)).replace(".","")).replace("", " ").simplified();
+
+//    //多音字版
+//    //现加入首字母
+//    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(list.at(0)).replace(".",""));
+//    for (QString& i : pinyin_text_list){
+//        i.replace("", " ");
+//        i = i.simplified();
+//    }
+
+//    QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
+//    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep)));
+////    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
+///*--------------------------------------------------------------------*/
+//    //QByteArray 和  QString 之间会进行隐式转换，造成字符串被截断等意想不到的后果！！！！！！！ zpf
+//    //    if(uniqueterm1!=uniqueterm){
+////        qDebug()<<"-----------------------------------------start";
+////        qDebug()<<uniqueterm1;
+////        qDebug()<<uniqueterm;
+////        qDebug()<<"------------------------------------------finish";
+////    }
+///*--------------------------------------------------------------------*/
+
+//    doc.setData(sourcePath);
+//    doc.setUniqueTerm(uniqueterm);
+//    doc.addTerm(upTerm);
+//    doc.addValue(list.at(2));
+//    QStringList temp;
+//    temp.append(index_text);
+//    temp.append(pinyin_text_list);
+//    doc.setIndexText(temp);
+//    return doc;
+
+//}
+
+//Document IndexGenerator::GenerateContentDocument(const QString &path)
+//{
+////    构造文本索引的document
+//    QString content;
+////    QStringList tmp;
+////    QVector<SKeyWord> term;
+////    SKeyWord skw;
+//    Document doc;
+//    QString uniqueterm;
+//    QString upTerm;
+//    FileReader::getTextContent(path,content);
+////    ::friso::ResultMap ret;
+
+////    ::friso::FrisoSegmentation::getInstance()->callSegement(ret, content.toLocal8Bit().data());
+//    ::friso::FrisoSegmentation::getInstance()->setText(content.toLocal8Bit().data());
+
+////    term = ChineseSegmentation::getInstance()->callSegement(content);
+////    QStringList  term = content.split("");
+
+//    doc.setData(content);
+//    doc.setUniqueTerm(uniqueterm);
+//    doc.addTerm(upTerm);
+//    doc.addValue(path);
+
+////    for (::friso::ResultMap::iterator it_map = ret.begin(); it_map != ret.end(); ++it_map){
+////        doc.addPosting(it_map->first, it_map->second.first, it_map->second.second);
+////        it_map->second.first.clear();
+////        ::std::vector<size_t>().swap(it_map->second.first);
+////    }
+
+//    while (::friso::FrisoSegmentation::getInstance()->config->next_token(::friso::FrisoSegmentation::getInstance()->friso, ::friso::FrisoSegmentation::getInstance()->config, ::friso::FrisoSegmentation::getInstance()->task) != NULL) {
+//        doc.addPosting(::friso::FrisoSegmentation::getInstance()->task->token->word, ::friso::FrisoSegmentation::getInstance()->task->token->offset);
+//    }
+///*
+//    for(int i = 0;i<term.size();++i)
+//    {
+//        doc.addPosting(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
+
+//    }
+//*/
+////    Document doc;
+////        doc.setData(content);
+////        doc.setUniqueTerm(uniqueterm);
+////        doc.addTerm(upTerm);
+////        doc.addValue(path);
+////        int pos = 0;
+////        for(QString i : term)
+////        {
+////            doc.addPosting(i.toStdString(),QVector<size_t>() << ++pos,1);
+////        }
+
+//    content.clear();
+////    ret.clear();
+////    ret.erase(ret.begin(), ret.end());
+////    ::friso::ResultMap().swap(ret);
+//    return doc;
+//}
 
 bool IndexGenerator::isIndexdataExist()
 {

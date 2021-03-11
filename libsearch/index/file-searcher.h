@@ -28,6 +28,7 @@
 #include <QQueue>
 #include <QPair>
 #include <QMutex>
+#include "friso-utils.h"
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/content_index_data").toStdString()
 
