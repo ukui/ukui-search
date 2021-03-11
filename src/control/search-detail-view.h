@@ -44,7 +44,7 @@ public:
     int getType();
     bool isContent = false;
     void setWebWidget(const QString&);
-    void setAppWidget(const QString &name, const QString &path, const QString &icon);
+    void setAppWidget(const QString &name, const QString &path, const QString &icon, const QString &description);
     void closeWebWidget();
 
 protected:

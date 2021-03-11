@@ -163,7 +163,7 @@ void AppMatch::getAllDesktopFilePath(QString path){
             if(!m_filePathList.contains(filePathStr)){
                 NameString appname;
                 appname.app_name = QString::fromLocal8Bit(name);
-                m_installAppMap.insert(appname,applist<<filePathStr<<QString::fromLocal8Bit(icon)<<"");
+                m_installAppMap.insert(appname,applist<<filePathStr<<QString::fromLocal8Bit(icon)<<""<<"");
             applist.clear();
             }
 //            m_filePathList.append(filePathStr);
@@ -327,7 +327,7 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<
          appdiscription=list.at(i).value("discription");
         appicon=list.at(i).value("icon");
         name.app_name = appname;
-        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname);
+        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname<<appdiscription);
         applist.clear();
     }
 }

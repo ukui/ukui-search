@@ -56,6 +56,7 @@ void ContentWidget::initUI() {
     m_homePage = new QWidget;
     m_homePageLyt = new QVBoxLayout(m_homePage);
     m_homePageLyt->setSpacing(0);
+    m_homePageLyt->setContentsMargins(0,0,0,0);
     m_homePage->setLayout(m_homePageLyt);
 
     m_resultPage = new QWidget;
@@ -80,7 +81,7 @@ void ContentWidget::initUI() {
     m_resultList->setFixedWidth(240);
     m_resultList->setFixedHeight(0);
     m_resultList->setStyleSheet("QWidget{background:transparent;}");
-    m_listLyt->setContentsMargins(0, 0, 15, 0);
+    m_listLyt->setContentsMargins(0, 0, 12, 0);
     m_listLyt->setSpacing(0);
     m_resultListArea->setWidget(m_resultList);
     m_resultListArea->setWidgetResizable(true);
@@ -265,10 +266,10 @@ void ContentWidget::setupConnect(SearchListView * listview) {
             m_detailView->setWebWidget(this->m_keyword);
         } else if (type == SearchItem::SearchType::Apps) {
             int index = listview->currentIndex().row();
-            m_detailView->setAppWidget(m_appList.at(index), m_appPathList.at(index), m_appIconList.at(index));
+            m_detailView->setAppWidget(m_appList.at(index), m_appPathList.at(index), m_appIconList.at(index), m_appDescList.at(index));
         } else if (type == SearchItem::SearchType::Best) {
             if (m_bestList.at(listview->currentIndex().row()).first ==  SearchItem::SearchType::Apps) {
-               m_detailView->setAppWidget(m_appList.at(0), m_appPathList.at(0), m_appIconList.at(0));
+               m_detailView->setAppWidget(m_appList.at(0), m_appPathList.at(0), m_appIconList.at(0), m_appDescList.at(0));
             } else {
                 m_detailView->setupWidget(m_bestList.at(listview->currentIndex().row()).first, m_bestList.at(listview->currentIndex().row()).second);
             }
@@ -372,7 +373,7 @@ void ContentWidget::initHomePage() {
         QWidget * itemWidget = new QWidget(listWidget);
         if (i == 1) {
             if (lists.at(i).length() <= 2) itemWidget->setFixedHeight(48);
-            else itemWidget->setFixedHeight(112);
+            else itemWidget->setFixedHeight(104);
             titleLabel->setText(tr("Recently Opened"));
             QGridLayout * layout = new QGridLayout(itemWidget);
             layout->setSpacing(8);
@@ -380,16 +381,16 @@ void ContentWidget::initHomePage() {
             itemWidget->setLayout(layout);
             for (int j = 0; j < lists.at(i).count(); j++) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, lists.at(i).at(j));
-                item->setFixedSize(265, 48);
+                item->setFixedSize(300, 48);
                 layout->addWidget(item, j / 2, j % 2);
             }
             if (lists.at(i).length() == 1) {
                 QWidget * emptyItem = new QWidget(itemWidget);
-                emptyItem->setFixedSize(265, 48); //占位用widget,只有一项时在右方补全
+                emptyItem->setFixedSize(300, 48); //占位用widget,只有一项时在右方补全
                 layout->addWidget(emptyItem, 1, 2);
             }
         } else {
-            itemWidget->setFixedHeight(136);
+            itemWidget->setFixedHeight(116);
             QHBoxLayout * layout = new QHBoxLayout(itemWidget);
             layout->setSpacing(8);
             layout->setContentsMargins(0, 0, 0, 0);
@@ -401,12 +402,12 @@ void ContentWidget::initHomePage() {
                     continue;
                 }
                 HomePageItem * item = new HomePageItem(itemWidget, i, path);
-                item->setFixedSize(100, 100);
+                item->setFixedSize(116, 116);
                 layout->addWidget(item);
             }
             for (int j = 0; j < 5 - shownItem; j++) {
                 QWidget * emptyItem = new QWidget(itemWidget);
-                emptyItem->setFixedSize(100, 100); //占位用widget,少于5项会补全后方占位
+                emptyItem->setFixedSize(116, 116); //占位用widget,少于5项会补全后方占位
                 layout->addWidget(emptyItem);
             }
             if (i == 0 && shownItem) titleLabel->setText(tr("Open Quickly"));
@@ -518,6 +519,8 @@ void ContentWidget::resetSearchList()
         m_appPathList.clear();
     if (! m_appIconList.isEmpty())
         m_appIconList.clear();
+    if (!m_appDescList.isEmpty())
+        m_appDescList.clear();
 }
 
 /**
@@ -553,6 +556,7 @@ void ContentWidget::setAppList(const QVector<QStringList>& appList) {
     m_appList = appList.at(0);
     m_appPathList = appList.at(1);
     m_appIconList = appList.at(2);
+    m_appDescList = appList.at(3);
     m_appListView->setAppList(m_appPathList, m_appIconList);
     qDebug()<<"Append a best item into list: "<<appList.at(0).at(0);
     SearchItemModel * model = qobject_cast<SearchItemModel *>(m_bestListView->model());

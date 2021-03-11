@@ -24,6 +24,8 @@
 #include <QDebug>
 #include <gio/gdesktopappinfo.h>
 #include <QPainter>
+#include <QDesktopServices>
+#include <QUrl>
 
 HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path) : QWidget(parent)
 {
@@ -57,9 +59,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
             case SearchListView::ResType::Content:
             case SearchListView::ResType::Dir:
             case SearchListView::ResType::File: {
-                QProcess process;
-                process.startDetached(QString("xdg-open %1").arg(path));
-                process.waitForFinished();
+                QDesktopServices::openUrl(QUrl::fromLocalFile(path));
                 break;
             }
             case SearchListView::ResType::Setting: {
@@ -76,7 +76,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
     m_namelabel = new QLabel(m_widget);
     m_namelabel->setStyleSheet("QLabel{color: palette(text);}");
     if (type == ItemType::Recent) {
-        m_widget->setFixedSize(265, 48);
+        m_widget->setFixedSize(300, 48);
         QIcon icon;
         switch (SearchListView::getResType(path)) { //可能出现文件应用等，需要根据路径判断类型
             case SearchListView::ResType::App : {
@@ -84,7 +84,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
                 m_namelabel->setText(FileUtils::getAppName(path));
                 QFontMetrics fontMetrics = m_namelabel->fontMetrics();
                 QString name = FileUtils::getAppName(path);
-                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 220));
+                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 250));
                 this->setToolTip(name);
                 break;
             }
@@ -96,7 +96,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
 //                m_namelabel->setText(FileUtils::getFileName(path));
                 QFontMetrics fontMetrics = m_namelabel->fontMetrics();
                 QString name = FileUtils::getFileName(path);
-                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 220));
+                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 250));
                 this->setToolTip(name);
                 break;
             }
@@ -105,7 +105,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
 //                m_namelabel->setText(FileUtils::getSettingName(path));
                 QFontMetrics fontMetrics = m_namelabel->fontMetrics();
                 QString name = FileUtils::getSettingName(path);
-                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 220));
+                m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 250));
                 this->setToolTip(name);
                 break;
             }
@@ -124,7 +124,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
             QIcon icon = FileUtils::getAppIcon(path);
             m_iconlabel->setPixmap(icon.pixmap(icon.actualSize(QSize(48, 48))));
             QString name = FileUtils::getAppName(path);
-            m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 96));
+            m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 108));
             this->setToolTip(name);
     } else {
         QIcon icon = FileUtils::getAppIcon(path);
@@ -132,10 +132,10 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
 //        m_namelabel->setText(FileUtils::getAppName(path));
         QFontMetrics fontMetrics = m_namelabel->fontMetrics();
         QString name = FileUtils::getAppName(path);
-        m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 96));
+        m_namelabel->setText(fontMetrics.elidedText(name, Qt::ElideRight, 108));
         this->setToolTip(name);
     }
-    m_widget->setFixedSize(100, 100);
+    m_widget->setFixedSize(116, 116);
     m_vlayout = new QVBoxLayout(m_widget);
     m_vlayout->setContentsMargins(0,16,0,12);
     m_iconlabel->setAlignment(Qt::AlignCenter);
