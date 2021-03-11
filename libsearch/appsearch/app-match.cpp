@@ -105,7 +105,7 @@ void AppMatch::getAllDesktopFilePath(QString path){
             //过滤LXQt、KDE
             QString filePathStr=fileInfo.filePath();
             if(filePathStr.contains("KDE",Qt::CaseInsensitive)||
-               filePathStr.contains("mate",Qt::CaseInsensitive)||
+//               filePathStr.contains("mate",Qt::CaseInsensitive)||
                filePathStr.contains("LX",Qt::CaseInsensitive) ){
                 i++;
                 continue;
@@ -214,7 +214,7 @@ void AppMatch::getDesktopFilePath()
     m_filePathList.append("/usr/share/applications/peony-computer.desktop");
     m_filePathList.append("/usr/share/applications/peony-home.desktop");
     m_filePathList.append("/usr/share/applications/peony-trash.desktop");
-    m_filePathList.append("/usr/share/applications/peony.desktop");
+//    m_filePathList.append("/usr/share/applications/peony.desktop");
 
     //v10
     m_filePathList.append("/usr/share/applications/mate-about.desktop");
