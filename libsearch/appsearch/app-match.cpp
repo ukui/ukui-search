@@ -327,7 +327,7 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<
          appdiscription=list.at(i).value("discription");
         appicon=list.at(i).value("icon");
         name.app_name = appname;
-        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname<<appdiscription);
+        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<""<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname<<appdiscription);
         applist.clear();
     }
 }

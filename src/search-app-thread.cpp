@@ -49,7 +49,7 @@ void SearchAppThread::run()
         uninstalled_iter.next();
         QString name;
         //当返回列表的value中含包名时，将名称按“应用名/包名”的格式存储
-        if (uninstalled_iter.value().length() > 2) {
+        if (!uninstalled_iter.value().at(2).isEmpty() && uninstalled_iter.value().at(2) != "") {
             name = uninstalled_iter.key().app_name + "/" + uninstalled_iter.value().at(2);
         } else name = uninstalled_iter.key().app_name;
         nameList << name;
