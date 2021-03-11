@@ -33,6 +33,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QDBusMetaType>
 #include "config-file.h"
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
@@ -178,6 +179,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     m_type = SearchListView::ResType::App;
     m_path = path;
     m_name = appname.contains("/") ? appname.left(appname.indexOf("/")) : appname;
+    m_pkgname = appname.contains("/") ? appname.mid(appname.indexOf("/") + 1) : appname;
     m_isEmpty = false;
     clearLayout();
     m_iconLabel->show();
@@ -377,7 +379,7 @@ void SearchDetailView::execActions(const int& type, const int& option, const QSt
             break;
         }
         case OptionView::Options::Install: {
-            installAppAction(m_name); //未安装应用点击此选项，不使用路径作为参数，而是使用软件名
+            installAppAction(m_pkgname); //未安装应用点击此选项，不使用路径作为参数，而是使用软件名
         }
         default:
             break;
@@ -588,11 +590,22 @@ bool SearchDetailView::copyPathAction(const QString& path) {
  */
 bool SearchDetailView::installAppAction(const QString & name)
 {
-    //打开软件商店下载此软件
-    QProcess process;
-    QString app_name = name.contains("/") ? name.mid(name.indexOf("/") + 1) : name;
-    bool res = process.startDetached(QString("kylin-software-center -find %1").arg(app_name));
-    return res;
+    QDBusInterface * interface = new QDBusInterface( "com.kylin.softwarecenter",
+                              "/com/kylin/softwarecenter",
+                              "com.kylin.utiliface",
+                              QDBusConnection::sessionBus() );
+
+    if (interface->isValid()) {
+        //软件商店已打开，直接跳转
+        interface->call("show_search_result",name);
+        bool reply = QDBusReply<bool>(interface->call(QString("show_search_result"), name));
+        return reply;
+    } else {
+        //软件商店未打开，打开软件商店下载此软件
+        qDebug()<<"软件商店未打开，打开软件商店下载此软件"<<name;
+        QProcess process;
+        return process.startDetached(QString("kylin-software-center -find %1").arg(name));
+    }
 }
 
 void SearchDetailView::paintEvent(QPaintEvent *event) {

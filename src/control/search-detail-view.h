@@ -67,6 +67,7 @@ private:
     int m_type = 0;
     QString m_path = 0;
     QString m_name = 0; //目前只有未安装应用在打开软件商店时需要此参数
+    QString m_pkgname = 0; //目前只有未安装应用在打开软件商店时需要此参数
 
     void initUI();
     QLabel * m_iconLabel = nullptr;
