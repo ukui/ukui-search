@@ -42,7 +42,7 @@ void FileReader::getTextContent(QString path, QString &textContent)
         if(strsfx.endsWith( "txt"))
             FileUtils::getTxtContent(path,textContent);
     }
-    else if(type.inherits("application/msword"))
+    else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage")
     {
         if (strsfx.endsWith("doc"))
         {

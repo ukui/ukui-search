@@ -32,8 +32,8 @@
 #include <QStandardPaths>
 
 
-#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/index_data").toStdString()
-#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/content_index_data").toStdString()
+#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
+#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
 static IndexGenerator *global_instance = nullptr;
 QMutex  IndexGenerator::m_mutex;
@@ -62,7 +62,11 @@ bool IndexGenerator::setIndexdataPath()
 bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 {
 //    FileUtils::_index_status |= 0x1;
+//    qDebug() << messageList->size();
     HandlePathList(messageList);
+    if (_doc_list_path == NULL){
+        return false;
+    }
     qDebug()<<"begin creatAllIndex";
     GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE,"0");
     try
@@ -74,6 +78,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList)
 //        m_indexer.set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
 
 //        int count =0;
+
         for (auto i : *_doc_list_path){
 
             insertIntoDatabase(i);
@@ -106,6 +111,9 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 //    FileUtils::_index_status |= 0x2;
     HandlePathList(messageList);
     qDebug()<<"begin creatAllIndex for content";
+    if (_doc_list_content == NULL){
+        return false;
+    }
     int size = _doc_list_content->size();
     if(!size == 0)
     {
@@ -143,15 +151,28 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
 
 IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent)
 {
-    if(rebuild)
+    QDir database(QString::fromStdString(INDEX_PATH));
+
+    if(database.exists())
     {
-        QDir database(QString::fromStdString(INDEX_PATH));
-        if(database.exists())
-            qDebug()<<"remove"<<database.removeRecursively();
-        database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
-        if(database.exists())
+        if(rebuild)
             qDebug()<<"remove"<<database.removeRecursively();
     }
+    else
+    {
+       qDebug()<<"create index path"<<database.mkpath(QString::fromStdString(INDEX_PATH));
+    }
+    database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
+    if(database.exists())
+    {
+        if(rebuild)
+            qDebug()<<"remove"<<database.removeRecursively();
+    }
+    else
+    {
+         qDebug()<<"create content index path"<<database.mkpath(QString::fromStdString(CONTENT_INDEX_PATH));
+    }
+
     m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
 }
@@ -246,8 +267,8 @@ void IndexGenerator::HandlePathList(QQueue<QVector<QString>> *messageList)
 //        delete constructer;
 //    constructer = nullptr;
 
-
-    qDebug()<<_doc_list_path->size();
+//    qDebug()<<_doc_list_path->size();
+//    qWarning() << _doc_list_path;
 //    QList<Document> docList = future.results();
 //    m_doc_list_path = new QList<Document>(docList);
 //    m_doc_list_path = std::move(future.results());
@@ -284,7 +305,9 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList)
 
 //    QList<Document> docList = future.results();
 //    m_doc_list_content = new QList<Document>(docList);
-    qDebug()<<_doc_list_content->size();
+
+//    qDebug()<<_doc_list_content->size();
+
 //    QList<Document> docList = future.results();
 //    m_doc_list_content = new QList<Document>(docList);
 //    m_doc_list_content = std::move(future.results());

@@ -131,7 +131,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
         m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
         m_webView->setAttribute(Qt::WA_DeleteOnClose);
         m_webView->move(0, 0);
-        m_webView->setFixedSize(360, 522);
+        m_webView->setFixedSize(378, 522);
 
         connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
             m_reload = true;
@@ -173,11 +173,11 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     m_webView->show();
 }
 
-void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath)
+void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath, const QString &description)
 {
     m_type = SearchListView::ResType::App;
     m_path = path;
-    m_name = appname;
+    m_name = appname.contains("/") ? appname.left(appname.indexOf("/")) : appname;
     m_isEmpty = false;
     clearLayout();
     m_iconLabel->show();
@@ -190,6 +190,12 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     if (path.isEmpty() || path == "") {
         icon = QIcon(iconpath);
         m_optionView->setupOptions(m_type, false);
+        //未安装应用有一个label显示软件描述
+        if (description != "" && !description.isEmpty()) {
+            m_detailFrame->show();
+            m_contentLabel->show();
+            m_contentLabel->setText(QString(tr("Introduction: %1")).arg(description));
+        }
     } else {
         m_optionView->setupOptions(m_type, true);
         if (QIcon::fromTheme(iconpath).isNull()) {
@@ -202,10 +208,10 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
 
     m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-    QString showname = fontMetrics.elidedText(appname, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
+    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(showname);
-    if (QString::compare(showname, appname)) {
-        m_nameLabel->setToolTip(appname);
+    if (QString::compare(showname, m_name)) {
+        m_nameLabel->setToolTip(m_name);
     }
     m_typeLabel->setText(tr("Application"));
 }
@@ -320,7 +326,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
             m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
             QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
             QString wholeName = FileUtils::getFileName(path);
-            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 215);
+            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
             m_nameLabel->setText(name);
             if (QString::compare(name, wholeName)) {
                 m_nameLabel->setToolTip(wholeName);
@@ -437,7 +443,7 @@ void SearchDetailView::initUI()
     m_layout->setContentsMargins(16, 60, 16, 24);
     this->setObjectName("detailView");
     this->setStyleSheet("QWidget#detailView{background:transparent;}");
-    this->setFixedWidth(360);
+    this->setFixedWidth(378);
 
     //图标和名称、分割线区域
     m_iconLabel = new QLabel(this);
@@ -450,7 +456,7 @@ void SearchDetailView::initUI()
     m_nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
     m_typeLabel->setStyleSheet("QLabel{font-size: 14px; color: palette(mid);}");
     m_nameFrame->setFixedHeight(48);
-    m_nameLabel->setMaximumWidth(240);
+    m_nameLabel->setMaximumWidth(280);
     m_nameLayout->addWidget(m_nameLabel);
     m_nameLayout->addStretch();
     m_nameLayout->addWidget(m_typeLabel);
@@ -562,9 +568,7 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
  * @return
  */
 bool SearchDetailView::openPathAction(const QString& path) {
-    QProcess process;
-    process.startDetached(QString("xdg-open %1").arg(path.left(path.lastIndexOf("/"))));
-    return true;
+    return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
 }
 
 /**
@@ -586,7 +590,8 @@ bool SearchDetailView::installAppAction(const QString & name)
 {
     //打开软件商店下载此软件
     QProcess process;
-    bool res = process.startDetached(QString("kylin-software-center -find %1").arg(name));
+    QString app_name = name.contains("/") ? name.mid(name.indexOf("/") + 1) : name;
+    bool res = process.startDetached(QString("kylin-software-center -find %1").arg(app_name));
     return res;
 }
 

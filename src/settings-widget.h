@@ -55,6 +55,8 @@ private:
     void resetWebEngine();
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
+    QFrame * m_contentFrame = nullptr;
+    QVBoxLayout * m_contentLyt = nullptr;
     QFrame * m_titleFrame = nullptr;
     QHBoxLayout * m_titleLyt = nullptr;
     QLabel * m_titleIcon = nullptr;

@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
-    m_searcher = new FileSearcher();
+    m_searcher = new SearchManager();
     //    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
     /*-------------Inotify Test Start---------------*/
     //    QTime t1 = QTime::currentTime();
@@ -155,18 +155,18 @@ MainWindow::~MainWindow()
  */
 void MainWindow::initUi()
 {
-    this->setFixedSize(640, 640);
+    this->setFixedSize(640, 590);
 
     m_frame = new QFrame(this);
 
     this->setCentralWidget(m_frame);
     QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
-    mainlayout->setContentsMargins(16, 0, 16, 16);
+    mainlayout->setContentsMargins(8, 0, 8, 6);
     m_frame->setLayout(mainlayout);
     m_frame->setStyleSheet("QLabel{color: palette(text);}");
 
     m_titleFrame = new QFrame(m_frame);//标题栏
-    m_titleFrame->setFixedHeight(48);
+    m_titleFrame->setFixedHeight(40);
     m_titleLyt = new QHBoxLayout(m_titleFrame);
     m_titleLyt->setContentsMargins(0, 0, 0, 0);
     m_iconLabel = new QLabel(m_titleFrame);
@@ -175,7 +175,7 @@ void MainWindow::initUi()
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_menuBtn = new QPushButton(m_titleFrame);
-    m_menuBtn->setFixedSize(24, 24);
+    m_menuBtn->setFixedSize(30, 30);
 //    m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
     m_menuBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
     m_menuBtn->setProperty("useIconHighlightEffect", 0x2);
@@ -214,7 +214,6 @@ void MainWindow::initUi()
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
     mainlayout->addWidget(m_searchWidget);
-    mainlayout->setContentsMargins(16, 0, 16, 10);
 
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged,
             this, &MainWindow::monitorResolutionChange);
@@ -389,6 +388,10 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
         m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
+        m_search_result_thread->wait();
+        m_search_result_file->clear();
+        m_search_result_dir->clear();
+        m_search_result_content->clear();
         m_seach_app_thread->stop();
         break;
     }
@@ -403,6 +406,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
+        m_search_result_thread->wait();
+        m_search_result_file->clear();
+        m_search_result_dir->clear();
+        m_search_result_content->clear();
         m_seach_app_thread->stop();
     }
     return QWidget::keyPressEvent(event);

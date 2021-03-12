@@ -20,18 +20,21 @@
 #include "app-match.h"
 #include <glib.h>
 #include "file-utils.h"
-AppMatch::AppMatch(QObject *parent) : QObject(parent)
+
+static AppMatch *app_match_Class = nullptr;
+
+AppMatch *AppMatch::getAppMatch()
+{
+    if (!app_match_Class) {
+        app_match_Class = new AppMatch;
+    }
+    return app_match_Class;
+}
+AppMatch::AppMatch(QObject *parent) : QThread(parent)
 //    m_versionCommand(new QProcess(this))
 {
-
-    this->getDesktopFilePath();
-
     m_watchAppDir=new QFileSystemWatcher(this);
     m_watchAppDir->addPath("/usr/share/applications/");
-    connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,[this](){
-        this->getDesktopFilePath();
-            });
-
     qDBusRegisterMetaType<QMap<QString,QString>>();
     qDBusRegisterMetaType<QList<QMap<QString,QString>>>();
     m_interFace=new QDBusInterface ("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
@@ -41,59 +44,26 @@ AppMatch::AppMatch(QObject *parent) : QObject(parent)
      {
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
      }
+     qDebug()<<"AppMatch is new";
 }
 
 AppMatch::~AppMatch(){
     if(m_interFace){
         delete m_interFace;
-        m_interFace=NULL;
     }
+    m_interFace=NULL;
     if(m_watchAppDir){
         delete m_watchAppDir;
-        m_watchAppDir=NULL;
     }
+    m_watchAppDir=NULL;
 }
 
-//QStringList AppMatch::startMatchApp(QString input){
-//    input.replace(" ","");
-//    m_sourceText=input;
-//    m_softWareCenterMap.clear();
-//    m_matchInstallAppMap.clear();
-//    m_returnResult1.clear();
-//    if(input.isEmpty()){
-//        return m_returnResult;
-//    }
-//    softWareCenterSearch();
-//    getAppName();
-//    returnAppMap();
-//    m_returnResult1=m_midResult;
-//    m_midResult.clear();
-//    qWarning()<<"m_returnResult  :"<<m_returnResult1;
-//    return m_returnResult;
-//}
-
-/**
- * @brief AppMatch::startMatchApp 查询应用，含所有已安装与未安装
- * @param input 关键词
- * @param i
- * @return QMap<QString,QList<QString>> QMap<应用名，{.desktop(未安装为空),图标(安装的是名字，未安装是路径)}>
- */
-QMap<QString,QList<QString>> AppMatch::startMatchApp(QString input){
+void AppMatch::startMatchApp(QString input,QMap<NameString,QStringList> &installed,QMap<NameString,QStringList> &softwarereturn){
     input.replace(" ","");
     m_sourceText=input;
-    m_softWareCenterMap.clear();
-    m_matchInstallAppMap.clear();
-    m_returnResult1.clear();
-    if(input.isEmpty()){
-        return m_returnResult1;
-    }
-    softWareCenterSearch();
-    getAppName();
-    returnAppMap();
-    m_returnResult1=m_midResult;
-    m_midResult.clear();
-    qWarning()<<"m_returnResult  :"<<m_returnResult1;
-    return m_returnResult1;
+    getAppName(installed);
+    softWareCenterSearch(softwarereturn);
+    qDebug()<<"match app is successful!";
 }
 
 /**
@@ -190,9 +160,13 @@ void AppMatch::getAllDesktopFilePath(QString path){
             }
             name=g_key_file_get_locale_string(keyfile,"Desktop Entry","Name", nullptr, nullptr);
             icon=g_key_file_get_locale_string(keyfile,"Desktop Entry","Icon", nullptr, nullptr);
-            m_installAppMap.insert(QString::fromLocal8Bit(name),applist<<filePathStr<<QString::fromLocal8Bit(icon));
+            if(!m_filePathList.contains(filePathStr)){
+                NameString appname;
+                appname.app_name = QString::fromLocal8Bit(name);
+                m_installAppMap.insert(appname,applist<<filePathStr<<QString::fromLocal8Bit(icon)<<""<<"");
             applist.clear();
-            m_filePathList.append(filePathStr);
+            }
+//            m_filePathList.append(filePathStr);
         }
         i++;
 
@@ -207,71 +181,68 @@ void AppMatch::getAllDesktopFilePath(QString path){
 void AppMatch::getDesktopFilePath()
 {
     m_filePathList.clear();
-    getAllDesktopFilePath("/usr/share/applications/");
-    m_filePathList.removeAll("/usr/share/applications/software-properties-livepatch.desktop");
-    m_filePathList.removeAll("/usr/share/applications/mate-color-select.desktop");
-    m_filePathList.removeAll("/usr/share/applications/blueman-adapters.desktop");
-    m_filePathList.removeAll("/usr/share/applications/blueman-manager.desktop");
-    m_filePathList.removeAll("/usr/share/applications/mate-user-guide.desktop");
-    m_filePathList.removeAll("/usr/share/applications/nm-connection-editor.desktop");
-    m_filePathList.removeAll("/usr/share/applications/debian-uxterm.desktop");
-    m_filePathList.removeAll("/usr/share/applications/debian-xterm.desktop");
-    m_filePathList.removeAll("/usr/share/applications/im-config.desktop");
-    m_filePathList.removeAll("/usr/share/applications/fcitx.desktop");
-    m_filePathList.removeAll("/usr/share/applications/fcitx-configtool.desktop");
-    m_filePathList.removeAll("/usr/share/applications/onboard-settings.desktop");
-    m_filePathList.removeAll("/usr/share/applications/info.desktop");
-    m_filePathList.removeAll("/usr/share/applications/ukui-power-preferences.desktop");
-    m_filePathList.removeAll("/usr/share/applications/ukui-power-statistics.desktop");
-    m_filePathList.removeAll("/usr/share/applications/software-properties-drivers.desktop");
-    m_filePathList.removeAll("/usr/share/applications/software-properties-gtk.desktop");
-    m_filePathList.removeAll("/usr/share/applications/gnome-session-properties.desktop");
-    m_filePathList.removeAll("/usr/share/applications/org.gnome.font-viewer.desktop");
-    m_filePathList.removeAll("/usr/share/applications/xdiagnose.desktop");
-    m_filePathList.removeAll("/usr/share/applications/gnome-language-selector.desktop");
-    m_filePathList.removeAll("/usr/share/applications/mate-notification-properties.desktop");
-    m_filePathList.removeAll("/usr/share/applications/transmission-gtk.desktop");
-    m_filePathList.removeAll("/usr/share/applications/mpv.desktop");
-    m_filePathList.removeAll("/usr/share/applications/system-config-printer.desktop");
-    m_filePathList.removeAll("/usr/share/applications/org.gnome.DejaDup.desktop");
-    m_filePathList.removeAll("/usr/share/applications/yelp.desktop");
-    m_filePathList.removeAll("/usr/share/applications/peony-computer.desktop");
-    m_filePathList.removeAll("/usr/share/applications/peony-home.desktop");
-    m_filePathList.removeAll("/usr/share/applications/peony-trash.desktop");
-    m_filePathList.removeAll("/usr/share/applications/peony.desktop");
+    m_installAppMap.clear();
+    m_filePathList.append("/usr/share/applications/software-properties-livepatch.desktop");
+    m_filePathList.append("/usr/share/applications/mate-color-select.desktop");
+    m_filePathList.append("/usr/share/applications/blueman-adapters.desktop");
+    m_filePathList.append("/usr/share/applications/blueman-manager.desktop");
+    m_filePathList.append("/usr/share/applications/mate-user-guide.desktop");
+    m_filePathList.append("/usr/share/applications/nm-connection-editor.desktop");
+    m_filePathList.append("/usr/share/applications/debian-uxterm.desktop");
+    m_filePathList.append("/usr/share/applications/debian-xterm.desktop");
+    m_filePathList.append("/usr/share/applications/im-config.desktop");
+    m_filePathList.append("/usr/share/applications/fcitx.desktop");
+    m_filePathList.append("/usr/share/applications/fcitx-configtool.desktop");
+    m_filePathList.append("/usr/share/applications/onboard-settings.desktop");
+    m_filePathList.append("/usr/share/applications/info.desktop");
+    m_filePathList.append("/usr/share/applications/ukui-power-preferences.desktop");
+    m_filePathList.append("/usr/share/applications/ukui-power-statistics.desktop");
+    m_filePathList.append("/usr/share/applications/software-properties-drivers.desktop");
+    m_filePathList.append("/usr/share/applications/software-properties-gtk.desktop");
+    m_filePathList.append("/usr/share/applications/gnome-session-properties.desktop");
+    m_filePathList.append("/usr/share/applications/org.gnome.font-viewer.desktop");
+    m_filePathList.append("/usr/share/applications/xdiagnose.desktop");
+    m_filePathList.append("/usr/share/applications/gnome-language-selector.desktop");
+    m_filePathList.append("/usr/share/applications/mate-notification-properties.desktop");
+    m_filePathList.append("/usr/share/applications/transmission-gtk.desktop");
+    m_filePathList.append("/usr/share/applications/mpv.desktop");
+    m_filePathList.append("/usr/share/applications/system-config-printer.desktop");
+    m_filePathList.append("/usr/share/applications/org.gnome.DejaDup.desktop");
+    m_filePathList.append("/usr/share/applications/yelp.desktop");
+    m_filePathList.append("/usr/share/applications/peony-computer.desktop");
+    m_filePathList.append("/usr/share/applications/peony-home.desktop");
+    m_filePathList.append("/usr/share/applications/peony-trash.desktop");
+    m_filePathList.append("/usr/share/applications/peony.desktop");
 
     //v10
-    m_filePathList.removeAll("/usr/share/applications/mate-about.desktop");
-    m_filePathList.removeAll("/usr/share/applications/time.desktop");
-    m_filePathList.removeAll("/usr/share/applications/network.desktop");
-    m_filePathList.removeAll("/usr/share/applications/shares.desktop");
-    m_filePathList.removeAll("/usr/share/applications/mate-power-statistics.desktop");
-    m_filePathList.removeAll("/usr/share/applications/display-im6.desktop");
-    m_filePathList.removeAll("/usr/share/applications/display-im6.q16.desktop");
-    m_filePathList.removeAll("/usr/share/applications/openjdk-8-policytool.desktop");
-    m_filePathList.removeAll("/usr/share/applications/kylin-io-monitor.desktop");
-    m_filePathList.removeAll("/usr/share/applications/wps-office-uninstall.desktop");
+    m_filePathList.append("/usr/share/applications/mate-about.desktop");
+    m_filePathList.append("/usr/share/applications/time.desktop");
+    m_filePathList.append("/usr/share/applications/network.desktop");
+    m_filePathList.append("/usr/share/applications/shares.desktop");
+    m_filePathList.append("/usr/share/applications/mate-power-statistics.desktop");
+    m_filePathList.append("/usr/share/applications/display-im6.desktop");
+    m_filePathList.append("/usr/share/applications/display-im6.q16.desktop");
+    m_filePathList.append("/usr/share/applications/openjdk-8-policytool.desktop");
+    m_filePathList.append("/usr/share/applications/kylin-io-monitor.desktop");
+    m_filePathList.append("/usr/share/applications/wps-office-uninstall.desktop");
 
-    QString desktop;
-    QStringList applist;
-    QMap<QString, QList<QString>>::const_iterator i;
-    for(i=m_installAppMap.constBegin();i!=m_installAppMap.constEnd();++i){
-        applist=i.value();
-        if(m_filePathList.contains(applist.at(0)))
-            m_filterInstallAppMap.insert(i.key(),applist);
-    }
+//    QString desktop;
+//    QStringList applist;
+//    QMap<QString, QList<QString>>::const_iterator i;
+//    for(i=m_installAppMap.constBegin();i!=m_installAppMap.constEnd();++i){
+//        applist=i.value();
+//        if(m_filePathList.contains(applist.at(0)))
+//            m_filterInstallAppMap.insert(i.key(),applist);
+//    }
 }
 
-/**
- * @brief AppMatch::getAppName
- * 获取应用名字
- */
-void AppMatch::getAppName()
+void AppMatch::getAppName(QMap<NameString,QStringList> &installed)
 {
-    QMap<QString, QList<QString>>::const_iterator i;
-            for(i=m_filterInstallAppMap.constBegin();i!=m_filterInstallAppMap.constEnd();++i){
-                appNameMatch(i.key());
+    QMap<NameString, QStringList>::const_iterator i;
+            for(i=m_installAppMap.constBegin();i!=m_installAppMap.constEnd();++i){
+                appNameMatch(i.key().app_name,installed);
             }
+    qDebug()<<"installed app match is successful!";
 }
 
 /**
@@ -279,43 +250,54 @@ void AppMatch::getAppName()
  * 进行匹配
  * @param appname
  * 应用名字
- * @param desktoppath
- * desktop路径
  */
-void AppMatch::appNameMatch(QString appname){
+void AppMatch::appNameMatch(QString appname,QMap<NameString,QStringList> &installed){
+    NameString name{appname};
+    QStringList list;
+    QMapIterator<NameString,QStringList> iter(m_installAppMap);
+    while(iter.hasNext())
+    {
+        iter.next();
+        if (iter.key().app_name == appname) {
+            list = iter.value();
+            break;
+        }
+    }
     if(appname.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_matchInstallAppMap.insert(appname,m_filterInstallAppMap.value(appname));
+//        installed.insert(name,m_installAppMap.value(name));
+        installed.insert(name,list);
         return;
     }
     QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
     if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_matchInstallAppMap.insert(appname,m_filterInstallAppMap.value(appname));
+//        installed.insert(name,m_installAppMap.value(name));
+        installed.insert(name,list);
         return;
     }
     if(m_sourceText.size()<2)
         return;
     QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
     if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
-        m_matchInstallAppMap.insert(appname,m_filterInstallAppMap.value(appname));
+//        installed.insert(name,m_installAppMap.value(name));
+        installed.insert(name,list);
     }
 }
 
-void AppMatch::softWareCenterSearch(){
-    // 调用D-Bus接口的方法
-//    QDBusPendingCall pcall = m_interFace->asyncCall("get_search_result", m_sourceText);
-    // 设置等待异步消息的信号槽
-//    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(pcall, nullptr);
-//    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &AppMatch::slotDBusCallFinished);
-    slotDBusCallFinished();
+void AppMatch::softWareCenterSearch(QMap<NameString,QStringList> &softwarereturn){
+    if(m_interFace->timeout()!=-1){
+        qWarning()<<"softWareCente Dbus is timeout !";
+        return;
+    }
+    slotDBusCallFinished(softwarereturn);
+    qDebug()<<"softWareCenter match app is successful!";
 }
 
-void AppMatch::slotDBusCallFinished()
-{
+void AppMatch::slotDBusCallFinished(QMap<NameString,QStringList> &softwarereturn){
     QDBusReply<QList<QMap<QString,QString>>> reply = m_interFace->call("get_search_result",m_sourceText); //阻塞，直到远程方法调用完成。
 //    QDBusPendingReply<QList<QMap<QString,QString>>> reply = *call;
            if (reply.isValid())
            {
-            parseSoftWareCenterReturn(reply.value());
+            parseSoftWareCenterReturn(reply.value(),softwarereturn);
            }
            else
            {
@@ -324,16 +306,28 @@ void AppMatch::slotDBusCallFinished()
 //     call->deleteLater();
 }
 
-void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list){
+void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<NameString,QStringList> &softwarereturn){
 //    qWarning()<<list;
     QString appname;
+    NameString name;
     QString appicon;
+    QString appdiscription;
     QStringList applist;
+    QLocale locale;
+    QString pkgname;
     for(int i=0;i<list.size();i++){
 //        qWarning()<<list.at(i).keys();
-        appname=list.at(i).value("appname");
+        if(locale.language()==QLocale::Chinese){
+           appname=list.at(i).value("displayname_cn");
+           pkgname = list.at(i).value("appname");
+        }
+        if(locale.language()==QLocale::English){
+            appname=list.at(i).value("appname");
+        }
+         appdiscription=list.at(i).value("discription");
         appicon=list.at(i).value("icon");
-        m_softWareCenterMap.insert(appname,applist<<""<<appicon);
+        name.app_name = appname;
+        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname<<appdiscription);
         applist.clear();
     }
 }
@@ -358,14 +352,12 @@ void AppMatch::getInstalledAppsVersion(QString appname){
 //    m_versionCommand->close();
 }
 
-void AppMatch::returnAppMap(){
-    QMap<QString, QList<QString>>::const_iterator i;
-    for(i=m_matchInstallAppMap.constBegin();i!=m_matchInstallAppMap.constEnd();++i){
-        m_midResult.insert(i.key(),i.value());
-    }
-    QMap<QString, QList<QString>>::const_iterator j;
-    for(j=m_softWareCenterMap.constBegin();j!=m_softWareCenterMap.constEnd();++j){
-        m_midResult.insert(j.key(),j.value());
-    }
+void AppMatch::run(){
+    qDebug()<<"AppMatch is run";
+    this->getDesktopFilePath();
+    this->getAllDesktopFilePath("/usr/share/applications/");
+    connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,[this](){
+        this->getDesktopFilePath();
+        this->getAllDesktopFilePath("/usr/share/applications/");
+    });
 }
-

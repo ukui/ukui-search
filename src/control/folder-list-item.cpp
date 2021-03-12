@@ -45,7 +45,7 @@ void FolderListItem::initUi() {
     this->setFixedHeight(32);
     m_layout->addWidget(m_widget);
     m_widgetlayout = new QHBoxLayout(m_widget);
-    m_widgetlayout->setContentsMargins(4, 4, 4, 4);
+    m_widgetlayout->setContentsMargins(8, 4, 8, 4);
     m_widget->setLayout(m_widgetlayout);
 
     m_iconLabel = new QLabel(m_widget);
