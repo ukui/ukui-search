@@ -129,6 +129,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
         }
     } else {
         m_webView = new QWebEngineView(this);
+        m_engineProfile = m_webView->page()->profile();
         m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
         m_webView->setAttribute(Qt::WA_DeleteOnClose);
         m_webView->move(0, 0);
@@ -136,11 +137,12 @@ void SearchDetailView::setWebWidget(const QString& keyword)
 
         connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
             m_reload = true;
+            if (m_engineProfile) m_engineProfile->clearHttpCache();
         });
         connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
             if (m_reload) {
-                closeWebWidget();
                 QDesktopServices::openUrl(url);
+                closeWebWidget();
             }
         });
     }
