@@ -1,0 +1,4 @@
+usr/lib/*.so.*
+/usr/share/ukui-search/res/dict/UTF-8/*
+/usr/share/ukui-search/res/dict/GBK/*
+/usr/share/ukui-search/res/friso.ini

@@ -329,7 +329,7 @@ void MainWindow::moveToPanel()
                                           "/org/ukui/SettingsDaemon/wayland",
                                           "org.ukui.SettingsDaemon.wayland",
                                           QDBusConnection::sessionBus());
-    if (primaryScreenInterface.isValid()) {
+    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
         QDBusReply<int> x = primaryScreenInterface.call("x");
         QDBusReply<int> width = primaryScreenInterface.call("width");
         QDBusReply<int> height = primaryScreenInterface.call("height");
@@ -358,7 +358,6 @@ void MainWindow::moveToPanel()
         this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
     } else if(position == 1) {
         //任务栏在上侧
-        qDebug()<<"任务栏在上侧";
         this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
     } else if (position == 2) {
         //任务栏在左侧
