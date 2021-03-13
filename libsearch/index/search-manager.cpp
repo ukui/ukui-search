@@ -55,7 +55,8 @@ int SearchManager::getCurrentIndexCount()
     }
 }
 
-void SearchManager::onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent)
+void SearchManager::onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,
+                                    QQueue<QPair<QString,QStringList>> *searchResultContent)
 {
     m_mutex1.lock();
     ++uniqueSymbol1;
@@ -191,7 +192,7 @@ int FileSearch::getResult(Xapian::MSet &result)
         std::string data = doc.get_data();
         Xapian::weight docScoreWeight = it.get_weight();
         Xapian::percent docScorePercent = it.get_percent();
-        QString path = QString::fromStdString(data);\
+        QString path = QString::fromStdString(data);
         std::string().swap(data);
 
         if(SearchManager::isBlocked(path))
