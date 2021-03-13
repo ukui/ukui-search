@@ -325,6 +325,22 @@ void MainWindow::moveToPanel()
     QRect availableGeometry = qApp->primaryScreen()->availableGeometry();
     QRect screenGeometry = qApp->primaryScreen()->geometry();
 
+    QDBusInterface primaryScreenInterface("org.ukui.SettingsDaemon",
+                                          "/org/ukui/SettingsDaemon/wayland",
+                                          "org.ukui.SettingsDaemon.wayland",
+                                          QDBusConnection::sessionBus());
+    if (primaryScreenInterface.isValid()) {
+        QDBusReply<int> x = primaryScreenInterface.call("x");
+        QDBusReply<int> width = primaryScreenInterface.call("width");
+        QDBusReply<int> height = primaryScreenInterface.call("height");
+        screenGeometry.setX(x);
+        screenGeometry.setWidth(width);
+        screenGeometry.setHeight(height);
+        availableGeometry.setX(x);
+        availableGeometry.setWidth(width);
+        availableGeometry.setHeight(height);
+    }
+
     QDesktopWidget * desktopWidget = QApplication::desktop();
     QRect screenMainRect = desktopWidget->screenGeometry(0);//获取设备屏幕大小
 
@@ -342,6 +358,7 @@ void MainWindow::moveToPanel()
         this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
     } else if(position == 1) {
         //任务栏在上侧
+        qDebug()<<"任务栏在上侧";
         this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
     } else if (position == 2) {
         //任务栏在左侧

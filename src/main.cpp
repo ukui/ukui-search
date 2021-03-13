@@ -197,8 +197,14 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
 
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);
