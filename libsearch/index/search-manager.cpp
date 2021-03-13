@@ -154,7 +154,7 @@ int FileSearch::keywordSearchfile()
         Xapian::MSet result = enquire.get_mset(m_begin, m_num);
         int resultCount = result.size();
         qDebug()<< "keywordSearchfile results count=" <<resultCount;
-        if(result.size() == 0)
+        if(resultCount == 0)
             return 0;
         if(getResult(result) == -1)
             return -1;
