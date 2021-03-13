@@ -34,12 +34,13 @@
 #include <QMap>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QDir>
 #include "libsearch_global.h"
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
 //#define FINISH_CREATING_INDEX 2
 
-#define UKUI_SEARCH_PIPE_PATH "/tmp/ukuisearch"
+#define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
 
 
 class  LIBSEARCH_EXPORT FileUtils
