@@ -145,6 +145,11 @@ int main(int argc, char *argv[])
         printf("Home not exits!!");
         ::sleep(1);
     }
+
+    QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
+    if(!fifoDir.exists())
+        qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
+
     unlink(UKUI_SEARCH_PIPE_PATH);
     int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
     if(retval == -1)
