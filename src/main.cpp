@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 {
 
     /*-------------friso_task_t Test start-----------------*/
-    FrisoUtils::init(); //init first!!!
+   // FrisoUtils::init(); //init first!!!
 
 //    while (true) {
 //        friso_task_t task = friso_new_task();
@@ -159,6 +159,27 @@ int main(int argc, char *argv[])
 //    friso_test();
 //    exit(0);
 
+    char *p_home = NULL;
+
+    unsigned int i = 0;
+    while(p_home == NULL)
+    {
+        ::sleep(1);
+        ++i;
+        p_home = getenv("HOME");
+        if(i%5==0)
+        {
+            qWarning()<<"I can't find home! I'm done here!!";
+            printf("I can't find home! I'm done here!!");
+        }
+    }
+    p_home = NULL;
+    while(!QDir(QDir::homePath()).exists())
+    {
+        qWarning()<<"Home not exits!!";
+        printf("Home not exits!!");
+        ::sleep(1);
+    }
     unlink(UKUI_SEARCH_PIPE_PATH);
     int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
     if(retval == -1)
@@ -171,6 +192,9 @@ int main(int argc, char *argv[])
 
 
     qInstallMessageHandler(messageOutput);
+
+    FrisoUtils::init(); //init first!!!
+
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -276,21 +300,25 @@ int main(int argc, char *argv[])
 //    FirstIndex* fi = new FirstIndex("/home");
 //    fi->start();
     qDebug() << "main start";
-
-    QThreadPool::globalInstance()->setExpiryTimeout(5);
+    AppMatch::getAppMatch()->start();
+    //wtf???
+//     AppMatch apm;
+//     apm.start();
+    QThreadPool::globalInstance()->setExpiryTimeout(5000);
 //    QThreadPool::globalInstance()->clear();
 //    setAutoDelete(true);
 
 //    FirstIndex fi("/home/zhangzihao/Desktop/qwerty");
 //    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
-    FirstIndex fi("/home/zhangzihao");
+    FirstIndex fi("/home");
+
     fi.start();
 //    fi.wait();
 //    fi->wait();
 //    fi->exit();
 //    delete fi;
 //    assert(false);
-    InotifyIndex* ii = InotifyIndex::getInstance("/home/zhangzihao");
+    InotifyIndex* ii = InotifyIndex::getInstance("/home");
 //    InotifyIndex ii("/home");
     ii->start();
 

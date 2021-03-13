@@ -98,6 +98,7 @@ private:
     QStringList m_quicklyOpenList;
     QStringList m_appPathList;
     QStringList m_appIconList;
+    QStringList m_appDescList;
     QList<QPair<int, QString>> m_bestList;
 
     QString m_bestContent; //最佳匹配有文件内容搜索结果的时候，以此变量传递
