@@ -1,3 +1,17 @@
+ukui-search (0.2.0+0312) v101; urgency=medium
+
+  * Fix: Index process may crash while system first boot.
+    - 解决了系统首次启动时偶现的崩溃问题。
+  * Fix: File with space in name can not be opened.
+    - 修复文件名带空格时无法从最近打开列表打开的问题 
+  * Feature: Add app description.
+    - 为未安装应用添加应用描述栏.
+  * Adjust spacing of UI controls according to blueprint.
+    - 根据设计稿调整UI控件间距.
+  * Fix: Software center will not refresh which is already opened.
+    - 修复软件商店打开后点击安装不会再跳转的bug.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 12 Mar 2021 08:59:29 +0800
 ukui-search (0.2.0+0306) v101; urgency=medium
 
   * Feature: Add support for 'doc' file in file content search.
