@@ -60,6 +60,8 @@ AppMatch::~AppMatch(){
 
 void AppMatch::startMatchApp(QString input,QMap<NameString,QStringList> &installed,QMap<NameString,QStringList> &softwarereturn){
     input.replace(" ","");
+    if(input.isEmpty())
+        return;
     m_sourceText=input;
     getAppName(installed);
     softWareCenterSearch(softwarereturn);
@@ -103,7 +105,7 @@ void AppMatch::getAllDesktopFilePath(QString path){
             //过滤LXQt、KDE
             QString filePathStr=fileInfo.filePath();
             if(filePathStr.contains("KDE",Qt::CaseInsensitive)||
-               filePathStr.contains("mate",Qt::CaseInsensitive)||
+//               filePathStr.contains("mate",Qt::CaseInsensitive)||
                filePathStr.contains("LX",Qt::CaseInsensitive) ){
                 i++;
                 continue;
@@ -212,7 +214,7 @@ void AppMatch::getDesktopFilePath()
     m_filePathList.append("/usr/share/applications/peony-computer.desktop");
     m_filePathList.append("/usr/share/applications/peony-home.desktop");
     m_filePathList.append("/usr/share/applications/peony-trash.desktop");
-    m_filePathList.append("/usr/share/applications/peony.desktop");
+//    m_filePathList.append("/usr/share/applications/peony.desktop");
 
     //v10
     m_filePathList.append("/usr/share/applications/mate-about.desktop");
@@ -327,7 +329,7 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<
          appdiscription=list.at(i).value("discription");
         appicon=list.at(i).value("icon");
         name.app_name = appname;
-        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname<<appdiscription);
+        pkgname.isEmpty() ? softwarereturn.insert(name,applist<<""<<appicon<<""<<appdiscription) : softwarereturn.insert(name,applist<<""<<appicon<<pkgname<<appdiscription);
         applist.clear();
     }
 }

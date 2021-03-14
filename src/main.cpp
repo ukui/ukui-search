@@ -180,6 +180,10 @@ int main(int argc, char *argv[])
         printf("Home not exits!!");
         ::sleep(1);
     }
+    QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
+    if(!fifoDir.exists())
+        qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
+
     unlink(UKUI_SEARCH_PIPE_PATH);
     int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
     if(retval == -1)
@@ -197,8 +201,14 @@ int main(int argc, char *argv[])
 
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
 
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);

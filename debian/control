@@ -32,12 +32,12 @@ Depends: ${shlibs:Depends},
 Description: ukui-search is a user-wide desktop search 
  feature of UKUI desktop environment.
 
-Package: libchinese-segmentation0
+Package: libfriso0
 Section: libs
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends}
-Provides: libchinese-segmentation,
+Provides: libfriso0,
 Description: Libraries for chinese-segmentation
  .
  This package contains a few runtime libraries needed by 
@@ -48,7 +48,7 @@ Section: libs
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         libchinese-segmentation0 (= ${binary:Version})
+         libfriso0 (= ${binary:Version})
 Provides: libukui-search,
 Description: Libraries for ukui-search. 
 
@@ -58,7 +58,7 @@ Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libukui-search0 (= ${binary:Version}),
-         libchinese-segmentation0 (= ${binary:Version})
+         libfriso0 (= ${binary:Version})
 Description: Libraries for  ukui-search(development files).
 
 Package: ukui-search-systemdbus

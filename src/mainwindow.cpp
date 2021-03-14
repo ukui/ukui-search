@@ -325,6 +325,22 @@ void MainWindow::moveToPanel()
     QRect availableGeometry = qApp->primaryScreen()->availableGeometry();
     QRect screenGeometry = qApp->primaryScreen()->geometry();
 
+    QDBusInterface primaryScreenInterface("org.ukui.SettingsDaemon",
+                                          "/org/ukui/SettingsDaemon/wayland",
+                                          "org.ukui.SettingsDaemon.wayland",
+                                          QDBusConnection::sessionBus());
+    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
+        QDBusReply<int> x = primaryScreenInterface.call("x");
+        QDBusReply<int> width = primaryScreenInterface.call("width");
+        QDBusReply<int> height = primaryScreenInterface.call("height");
+        screenGeometry.setX(x);
+        screenGeometry.setWidth(width);
+        screenGeometry.setHeight(height);
+        availableGeometry.setX(x);
+        availableGeometry.setWidth(width);
+        availableGeometry.setHeight(height);
+    }
+
     QDesktopWidget * desktopWidget = QApplication::desktop();
     QRect screenMainRect = desktopWidget->screenGeometry(0);//获取设备屏幕大小
 
