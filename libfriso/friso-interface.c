@@ -15,7 +15,7 @@
 #include <time.h>
 
 #define __LENGTH__ 15
-#define __INPUT_LENGTH__ 20480
+#define __INPUT_LENGTH__ 2048000
 #define ___EXIT_INFO___                    \
     println("Thanks for trying friso.");        \
 break;

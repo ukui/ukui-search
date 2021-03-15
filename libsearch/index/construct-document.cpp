@@ -136,7 +136,7 @@ void ConstructDocumentForContent::run()
     //if the text is tooooooo long, it will crashed!!!
     //need fix!!!
     //MouseZhangZh
-    friso_set_text( task, content.left(20480).toLocal8Bit().data()); //memory!!!
+    friso_set_text( task, content.left(2048000).toLocal8Bit().data()); //memory!!!
 
     while ((FrisoUtils::g_config->next_token(FrisoUtils::g_friso, FrisoUtils::g_config, task)) != NULL){
 //        printf("%s/ ", task->token->word);
