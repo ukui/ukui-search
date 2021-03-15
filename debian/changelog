@@ -1,3 +1,9 @@
+ukui-search (3.0.1-1+0311) v101; urgency=medium
+
+  * fix:搜索设置项会出现多少问题
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Thu, 11 Mar 2021 10:50:28 +0800
+
 ukui-search (3.0.1-1+0224) v101; urgency=medium
 
   * fix:应用为一条时显示不全 

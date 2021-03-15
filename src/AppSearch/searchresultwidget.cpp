@@ -108,7 +108,7 @@ void SearchResultWidget::updateAppListView(QVector<QStringList> arg)
         m_Button->hide();
     } else {
         this->setVisible(true);
-        this->setFixedSize(Style::defaultMainViewWidWidth,3.3*46+46+m_Button->height());
+        this->setFixedSize(Style::defaultMainViewWidWidth,3.3*54+46+m_Button->height());
         m_Button->show();
     }
 
