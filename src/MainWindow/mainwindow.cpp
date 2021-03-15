@@ -211,7 +211,7 @@ QPixmap  MainWindow::blurPixmap(QPixmap pixmap)
 {
     QPainter painter(&pixmap);
     QImage srcImg=pixmap.toImage();
-    qt_blurImage(&painter,srcImg,150,false,false);//top 27000
+    qt_blurImage(&painter,srcImg,10,false,false);//top 27000
     painter.end();
     return pixmap;
 }
