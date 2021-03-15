@@ -24,7 +24,7 @@
 #include <QWidget>
 #include <QWebEngineView>
 #include <QWebEngineSettings>
-//#include <QWebEngineProfile>
+#include <QWebEngineProfile>
 //#include <QWebEngineUrlRequestInterceptor>
 #include <QDesktopServices>
 #include "option-view.h"
@@ -91,6 +91,7 @@ private:
     OptionView * m_optionView = nullptr;
 
     QWebEngineView * m_webView = nullptr;
+    QWebEngineProfile * m_engineProfile = nullptr;
     bool m_reload = false;
     QString m_currentKeyword;
 
