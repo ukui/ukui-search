@@ -286,7 +286,7 @@ void SettingsWidget::refreshIndexState()
 void SettingsWidget::onBtnDelClicked(const QString& path) {
     QMessageBox message(QMessageBox::Question, tr("Search"), tr("Whether to delete this directory?"));
     QPushButton * buttonYes = message.addButton(tr("Yes"), QMessageBox::YesRole);
-    QPushButton * buttonNo = message.addButton(tr("No"), QMessageBox::NoRole);
+    message.addButton(tr("No"), QMessageBox::NoRole);
     message.exec();
     if (message.clickedButton() != buttonYes) {
         return;
@@ -517,6 +517,7 @@ void SettingsWidget::showWarningDialog(const int & errorCode)
             break;
         }
     }
-    QMessageBox message(QMessageBox::Warning, tr("Search"), errorMessage, QMessageBox::Ok, this);
+    QMessageBox message(QMessageBox::Warning, tr("Search"), errorMessage);
+    message.addButton(tr("OK"), QMessageBox::AcceptRole);
     message.exec();
 }
