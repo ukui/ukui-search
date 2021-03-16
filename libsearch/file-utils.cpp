@@ -529,6 +529,11 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
             {
                 QDomElement wt = wr.firstChildElement("w:t");
                 textcontent.append(wt.text().replace("\n",""));
+                if(textcontent.length() >= 682666) //20480000/3
+                {
+                    file.close();
+                    return;
+                }
                 wr = wr.nextSiblingElement();
             }
             wp = wp.nextSiblingElement();
@@ -545,7 +550,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
 
-    QByteArray encodedString = file.readAll();
+    QByteArray encodedString = file.read(20480000);
 
     uchardet_t chardet = uchardet_new();
     if(uchardet_handle_data(chardet,encodedString.constData(),encodedString.size()) !=0)

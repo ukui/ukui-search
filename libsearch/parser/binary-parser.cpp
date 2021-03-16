@@ -5061,6 +5061,8 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 					ushort* usAucData = (ushort*)ptaucBytes;
                     content.append(QString::fromUtf16(usAucData).replace("\r",""));
                     usAucData = (ushort*)xfree((void*)usAucData);
+                    if(content.length() >= 682666) //20480000/3
+                        break;
 				}
 				else
 				{
