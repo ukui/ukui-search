@@ -384,22 +384,36 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord)
 //        snippets.append(QString::fromStdString( result.snippet(doc.get_data(),400)));
 //        qWarning()<<QString::fromStdString(s);
         auto term = doc.termlist_begin();
-
-        for(QString i : QString::fromStdString(keyWord).split(" ",QString::SkipEmptyParts))
+        std::string wordTobeFound = QString::fromStdString(keyWord).section(" ",0,0).toStdString();
+        int size = wordTobeFound.length();
+        term.skip_to(wordTobeFound);
+        int count =0;
+        for(auto pos = term.positionlist_begin();pos != term.positionlist_end()&&count < 6;++pos)
         {
-            std::string word = i.toStdString();
-            term.skip_to(word);
-            int size = word.size();
-            auto pos = term.positionlist_begin();
             std::string s = data.substr((*pos < 60)? 0: (*pos  - 60) , size + 120);
             QString snippet = QString::fromStdString(s);
             snippet.replace(0,3,"...").replace(snippet.size()-3,3,"...");
             snippets.append(snippet);
-            std::string().swap(word);
-            std::string().swap(s);
             QString().swap(snippet);
+            std::string().swap(s);
+            ++count;
         }
         std::string().swap(data);
+
+//        for(QString i : QString::fromStdString(keyWord).split(" ",QString::SkipEmptyParts))
+//        {
+//            std::string word = i.toStdString();
+//            term.skip_to(word);
+//            int size = word.size();
+//            auto pos = term.positionlist_begin();
+//            std::string s = data.substr((*pos < 60)? 0: (*pos  - 60) , size + 120);
+//            QString snippet = QString::fromStdString(s);
+//            snippet.replace(0,3,"...").replace(snippet.size()-3,3,"...");
+//            snippets.append(snippet);
+//            std::string().swap(word);
+//            std::string().swap(s);
+//            QString().swap(snippet);
+//        }
 
         SearchManager::m_mutex3.lock();
         if(m_uniqueSymbol == SearchManager::uniqueSymbol3)
