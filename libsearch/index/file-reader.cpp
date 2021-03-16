@@ -26,7 +26,7 @@ FileReader::FileReader(QObject *parent) : QObject(parent)
 
 }
 
-void FileReader::getTextContent(QString path, QString &textContent)
+void FileReader::getTextContent(QString path, QByteArray &textContent)
 {
     QMimeType type = FileUtils::getMimetype(path);
     QString name = type.name();

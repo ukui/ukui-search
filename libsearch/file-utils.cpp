@@ -500,7 +500,7 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
  * @param path: abs path
  * @return docx to QString
  */
-void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
+void FileUtils::getDocxTextContent(QString &path,QByteArray &textcontent)
 {
     QFileInfo info = QFileInfo(path);
     if(!info.exists()||info.isDir())
@@ -528,7 +528,12 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
             while(!wr.isNull())
             {
                 QDomElement wt = wr.firstChildElement("w:t");
-                textcontent.append(wt.text().replace("\n",""));
+                textcontent.append(wt.text().replace("\n","").toUtf8());
+                if(textcontent.length() >= 20480000)
+                {
+                    file.close();
+                    return;
+                }
                 wr = wr.nextSiblingElement();
             }
             wp = wp.nextSiblingElement();
@@ -539,13 +544,13 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
     return;
 }
 
-void FileUtils::getTxtContent(QString &path, QString &textcontent)
+void FileUtils::getTxtContent(QString &path, QByteArray &textcontent)
 {
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
 
-    QByteArray encodedString = file.readAll();
+    QByteArray encodedString = file.read(20480000);
 
     uchardet_t chardet = uchardet_new();
     if(uchardet_handle_data(chardet,encodedString.constData(),encodedString.size()) !=0)
@@ -557,16 +562,20 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
     if(QTextCodec::codecForName(codec) == 0)
         qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec);
 
-    QTextStream stream(encodedString,QIODevice::ReadOnly);
-    stream.setCodec(codec);
+    QTextDecoder td(QTextCodec::codecForName(codec));
+        textcontent = td.toUnicode(encodedString).toUtf8();
+
+//    QTextStream stream(encodedString,QIODevice::ReadOnly);
+//    stream.setCodec(codec);
     uchardet_delete(chardet);
 
-    textcontent = stream.readAll().replace("\n","");
+//    textcontent = stream.readAll().replace("\n","");
 
     file.close();
     encodedString.clear();
+    encodedString.shrink_to_fit();
     chardet = NULL;
-    stream.flush();
+//    stream.flush();
 
     return;
 }

@@ -90,7 +90,7 @@ public:
 	~KBinaryParser();
 
 public:
-    bool RunParser(QString strFile,QString &content);
+    bool RunParser(QString strFile,QByteArray &content);
 
 private:
 	bool bGetPPS(FILE *pFile,
@@ -98,11 +98,11 @@ private:
 
 	int readData(rdPara &readParam, uchar *aucBuffer, ulong ulOffset, size_t tToRead);
 
-    int InitDocOle(FILE *pFile,long lFilesize,QString &content);
+    int InitDocOle(FILE *pFile,long lFilesize,QByteArray &content);
     bool read8DocText(FILE *pFile, const ppsInfoType *pPPS,
         const ULONG *aulBBD, size_t tBBDLen,
         const ULONG *aulSBD, size_t tSBDLen,
-        const UCHAR *aucHeader,QString &content);
+        const UCHAR *aucHeader, QByteArray &content);
 
 //	int readSSTRecord(readDataParam &rdParam, ppsInfoType, ulong &ulOff, ushort usPartLen);
 //	int read8BiffRecord(uchar uFlag, ulong ulOff, ulong &ulNext, readDataParam &rdParam, excelRecord &eR);

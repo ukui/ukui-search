@@ -63,8 +63,8 @@ public:
 
     //parse text,docx.....
     static QMimeType getMimetype(QString &path);
-    static void getDocxTextContent(QString &path, QString &textcontent);
-    static void getTxtContent(QString &path, QString &textcontent);
+    static void getDocxTextContent(QString &path, QByteArray &textcontent);
+    static void getTxtContent(QString &path, QByteArray &textcontent);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;

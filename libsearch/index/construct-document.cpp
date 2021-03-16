@@ -110,14 +110,14 @@ void ConstructDocumentForContent::run()
     //      构造文本索引的document
     if (!_doc_list_content)
         _doc_list_content = new QList<Document>;
-    QString content;
+    QByteArray content;
     FileReader::getTextContent(m_path,content);
     if(content.isEmpty())
         return;
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/",0,-2,QString::SectionIncludeLeadingSep)));
 
-//    qWarning() << m_path;
+//    qWarning() << "================================"<<m_path;
 //    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content);
 //    QVector<SKeyWord> term;
 //    ::friso::ResultMap term;
@@ -126,7 +126,7 @@ void ConstructDocumentForContent::run()
 //    ::friso::FrisoSegmentation::getInstance()->setText(content.toLocal8Bit().data());
 
     Document doc;
-    doc.setData(content);
+    doc.setData(QString(content));
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
     doc.addValue(m_path);
@@ -136,7 +136,7 @@ void ConstructDocumentForContent::run()
     //if the text is tooooooo long, it will crashed!!!
     //need fix!!!
     //MouseZhangZh
-    friso_set_text( task, content.left(20480).toLocal8Bit().data()); //memory!!!
+    friso_set_text( task, content.left(30720000).data()); //memory!!!
 
     while ((FrisoUtils::g_config->next_token(FrisoUtils::g_friso, FrisoUtils::g_config, task)) != NULL){
 //        printf("%s/ ", task->token->word);

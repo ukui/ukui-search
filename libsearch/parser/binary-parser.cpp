@@ -4953,7 +4953,7 @@ inline uint _Ucs2ToUcs4( ushort lead, ushort trail)
 bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 	const ULONG *aulBBD, size_t tBBDLen,
 	const ULONG *aulSBD, size_t tSBDLen,
-    const UCHAR *aucHeader,QString &content)
+    const UCHAR *aucHeader,QByteArray &content)
 {
 	const ULONG	*aulBlockDepot;
 	ULONG	ulTextOffset, ulBeginTextInfo;
@@ -5061,6 +5061,8 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 					ushort* usAucData = (ushort*)ptaucBytes;
                     content.append(QString::fromUtf16(usAucData).replace("\r",""));
                     usAucData = (ushort*)xfree((void*)usAucData);
+                    if(content.length() >= 20480000)
+                        break;
 				}
 				else
 				{
@@ -5249,7 +5251,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 //	return ulOff;
 //}
 
-int KBinaryParser::InitDocOle(FILE* pFile,long lFilesize,QString &content)
+int KBinaryParser::InitDocOle(FILE* pFile,long lFilesize,QByteArray &content)
 {
 	ppsInfoType	PPS_info;
 	ULONG	*aulBBD, *aulSBD;
@@ -5462,7 +5464,7 @@ KBinaryParser::KBinaryParser(QObject *parent)
 KBinaryParser::~KBinaryParser()
 {}
 
-bool KBinaryParser::RunParser(QString strFile,QString &content)
+bool KBinaryParser::RunParser(QString strFile, QByteArray &content)
 {
 	FILE* pFile = fopen(strFile.toLocal8Bit().data(), "rb");
 	if (!pFile)
