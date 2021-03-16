@@ -90,6 +90,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette &pal) {
         this->setPalette(pal);
         this->update();
+        Q_FOREACH (QWidget *widget, this->findChildren<QWidget *>()) {
+            if (widget) {
+                widget->update();
+            }
+        }
     });
 
     m_search_result_file = new QQueue<QString>;
@@ -163,7 +168,6 @@ void MainWindow::initUi()
     QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
     mainlayout->setContentsMargins(8, 0, 8, 6);
     m_frame->setLayout(mainlayout);
-    m_frame->setStyleSheet("QLabel{color: palette(text);}");
 
     m_titleFrame = new QFrame(m_frame);//标题栏
     m_titleFrame->setFixedHeight(40);
@@ -190,8 +194,7 @@ void MainWindow::initUi()
         m_settingsWidget->show();
         connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
             QTimer::singleShot(100, this, [ = ] {
-                clearSearchResult();
-//                m_search_result_thread->start();
+//                clearSearchResult(); //现暂定从设置页返回主页面不清空搜索结果
                 this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
                 this->raise();
                 this->showNormal();
@@ -329,7 +332,7 @@ void MainWindow::moveToPanel()
                                           "/org/ukui/SettingsDaemon/wayland",
                                           "org.ukui.SettingsDaemon.wayland",
                                           QDBusConnection::sessionBus());
-    if (primaryScreenInterface.isValid()) {
+    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
         QDBusReply<int> x = primaryScreenInterface.call("x");
         QDBusReply<int> width = primaryScreenInterface.call("width");
         QDBusReply<int> height = primaryScreenInterface.call("height");

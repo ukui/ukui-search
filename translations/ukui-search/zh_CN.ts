@@ -121,7 +121,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/main.cpp" line="171"/>
+        <location filename="../../src/main.cpp" line="182"/>
         <source>ukui-search is already running!</source>
         <translation></translation>
     </message>
@@ -137,27 +137,27 @@
 <context>
     <name>SearchDetailView</name>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="490"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="494"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="498"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="502"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="216"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="220"/>
         <source>Application</source>
         <translation>应用</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="197"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="201"/>
         <source>Introduction: %1</source>
         <translation>软件介绍: %1</translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="335"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="339"/>
         <source>Document</source>
         <translation>文件</translation>
     </message>
@@ -271,6 +271,11 @@
         <location filename="../../src/settings-widget.cpp" line="516"/>
         <source>Set blocked folder failed!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/settings-widget.cpp" line="521"/>
+        <source>OK</source>
+        <translation>好的</translation>
     </message>
     <message>
         <location filename="../../src/settings-widget.cpp" line="348"/>

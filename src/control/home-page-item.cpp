@@ -26,11 +26,18 @@
 #include <QPainter>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QApplication>
 
 HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path) : QWidget(parent)
 {
     setupUi(type, path);
     m_transparency = 0.06;
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+        if (m_namelabel) {
+            QString name = this->toolTip();
+            m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 108));
+        }
+    });
 }
 
 HomePageItem::~HomePageItem()
@@ -74,7 +81,6 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
     });
     m_iconlabel = new QLabel(m_widget);
     m_namelabel = new QLabel(m_widget);
-    m_namelabel->setStyleSheet("QLabel{color: palette(text);}");
     if (type == ItemType::Recent) {
         m_widget->setFixedSize(300, 48);
         QIcon icon;
@@ -148,20 +154,20 @@ bool HomePageItem::eventFilter(QObject *watched, QEvent *event){
     if (watched == m_widget){
         if (event->type() == QEvent::MouseButtonPress) {
             m_transparency = 0.06;
-            this->repaint();
+            this->update();
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
             Q_EMIT this->onItemClicked();
             m_transparency = 0.06;
-            this->repaint();
+            this->update();
             return true;
         } else if (event->type() == QEvent::Enter) {
             m_transparency = 0.15;
-            this->repaint();
+            this->update();
             return true;
         } else if (event->type() == QEvent::Leave) {
             m_transparency = 0.06;
-            this->repaint();
+            this->update();
             return true;
         }
     }
@@ -171,12 +177,10 @@ bool HomePageItem::eventFilter(QObject *watched, QEvent *event){
 
 void HomePageItem::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
-
     QStyleOption opt;
     opt.init(this);
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-
     QRect rect = this->rect();
     p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
     p.setBrush(opt.palette.color(QPalette::Text));
