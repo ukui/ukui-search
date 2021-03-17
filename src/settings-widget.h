@@ -32,6 +32,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QTimer>
+#include <libsearch.h>
 
 class SettingsWidget : public QDialog
 {

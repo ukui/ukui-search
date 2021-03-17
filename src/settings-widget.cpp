@@ -28,7 +28,6 @@
 #include "folder-list-item.h"
 #include "global-settings.h"
 #include "file-utils.h"
-#include "index/file-searcher.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QDialog(parent)
@@ -265,7 +264,7 @@ void SettingsWidget::refreshIndexState()
     } else {
         this->setIndexState(false);
     }
-    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileSearcher::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
+    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
         qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
@@ -274,7 +273,7 @@ void SettingsWidget::refreshIndexState()
         } else {
             this->setIndexState(false);
         }
-        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileSearcher::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
+        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     });
     m_timer->start(0.5 * 1000);
 }
