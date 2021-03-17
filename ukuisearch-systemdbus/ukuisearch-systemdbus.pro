@@ -2,6 +2,7 @@ QT       += core dbus
 QT       -= gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+VERSION = 0.0.1
 TARGET = ukui-search-systemdbus
 TEMPLATE = app
 
