@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
-    m_searcher = new FileSearcher();
+    m_searcher = new SearchManager();
     //    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
     /*-------------Inotify Test Start---------------*/
     //    QTime t1 = QTime::currentTime();
