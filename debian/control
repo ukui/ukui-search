@@ -48,7 +48,8 @@ Section: libs
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         libchinese-segmentation0 (= ${binary:Version})
+         libchinese-segmentation0 (= ${binary:Version}),
+         ukui-search-systemdbus (= ${binary:Version})
 Provides: libukui-search,
 Description: Libraries for ukui-search. 
 
@@ -58,7 +59,8 @@ Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libukui-search0 (= ${binary:Version}),
-         libchinese-segmentation0 (= ${binary:Version})
+         libchinese-segmentation0 (= ${binary:Version}),
+         ukui-search-systemdbus (= ${binary:Version})
 Description: Libraries for  ukui-search(development files).
 
 Package: ukui-search-systemdbus
