@@ -128,12 +128,20 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_sys_tray_icon,&QSystemTrayIcon::activated,this,[=](QSystemTrayIcon::ActivationReason reason){
         if(reason == QSystemTrayIcon::Trigger)
         {
-            clearSearchResult();
-            this->moveToPanel();
-            this->show();
-            this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
-            this->raise();
-            this->activateWindow();
+            if (!this->isVisible()) {
+                clearSearchResult();
+                this->moveToPanel();
+                this->show();
+                this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
+                this->raise();
+                this->activateWindow();
+            } else {
+                this->hide();
+                m_contentFrame->closeWebView();
+                m_search_result_thread->requestInterruption();
+                m_search_result_thread->quit();
+                m_seach_app_thread->stop();
+            }
         }
     });
 }
@@ -334,12 +342,15 @@ void MainWindow::moveToPanel()
                                           QDBusConnection::sessionBus());
     if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
         QDBusReply<int> x = primaryScreenInterface.call("x");
+        QDBusReply<int> y = primaryScreenInterface.call("y");
         QDBusReply<int> width = primaryScreenInterface.call("width");
         QDBusReply<int> height = primaryScreenInterface.call("height");
         screenGeometry.setX(x);
+        screenGeometry.setY(y);
         screenGeometry.setWidth(width);
         screenGeometry.setHeight(height);
         availableGeometry.setX(x);
+        availableGeometry.setY(y);
         availableGeometry.setWidth(width);
         availableGeometry.setHeight(height);
     }
@@ -354,29 +365,20 @@ void MainWindow::moveToPanel()
 
     int position = QDBusReply<int>(interface.call("GetPanelPosition", "position"));
     int height = QDBusReply<int>(interface.call("GetPanelPosition", "height"));
-    int d = 2; //窗口边沿到任务栏距离
+    int d = 8; //窗口边沿到任务栏距离
 
     if (position == 0) {
         //任务栏在下侧
-        this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
     } else if(position == 1) {
         //任务栏在上侧
-        qDebug()<<"任务栏在上侧";
-        this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
     } else if (position == 2) {
         //任务栏在左侧
-        if (screenGeometry.x() == 0) {//主屏在左侧
-            this->move(height + d, screenMainRect.y() + screenMainRect.height() - this->height());
-        } else {//主屏在右侧
-            this->move(screenMainRect.x() + height + d, screenMainRect.y() + screenMainRect.height() - this->height());
-        }
+        this->move(screenGeometry.x() + screenGeometry.width() - availableGeometry.width() + d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     } else if (position == 3) {
         //任务栏在右侧
-        if (screenGeometry.x() == 0) {//主屏在左侧
-            this->move(screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
-        } else {//主屏在右侧
-            this->move(screenMainRect.x() + screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
-        }
+        this->move(screenGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     }
 }
 

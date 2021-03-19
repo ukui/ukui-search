@@ -6009,7 +6009,7 @@ zhong 仲
 pi,bi 仳
 wo 仴
 wu 仵
-mou,jian 件
+jian 件
 jie,jia 价
 fo,yao 仸
 feng 仹
@@ -11099,7 +11099,7 @@ niu,yu,ao 拗
 ju,gou 拘
 zhuo 拙
 pin,fan,pan,fen,bian 拚
-shao,qiao,zhao 招
+zhao 招
 bai 拜
 bai 拝
 di 拞
@@ -12449,7 +12449,7 @@ kuo,tian,gua 栝
 kan 栞
 bing,ben 栟
 ren 栠
-jiao,qiao,xiao 校
+jiao,xiao 校
 bai 栢
 ren 栣
 bing 栤

@@ -6009,7 +6009,7 @@ zhòng 仲
 pǐ,pí,bì 仳
 wò 仴
 wǔ 仵
-jiàn,móu 件
+jiàn 件
 jià,jiè,jie 价
 yǎo,fó 仸
 fēng 仹
@@ -11099,7 +11099,7 @@ tuō,chǐ 拖
 jū,gōu,jǔ,jú 拘
 zhuō 拙
 pàn,biàn,fèn,fān,pīn 拚
-zhāo,qiáo,sháo 招
+zhāo 招
 bài 拜
 bài 拝
 dǐ 拞
@@ -12449,7 +12449,7 @@ guā,tiǎn,kuò 栝
 kān 栞
 bēn,bīng 栟
 rěn 栠
-xiào,jiào,jiǎo,qiāo 校
+xiào,jiào,jiǎo 校
 bǎi 栢
 rěn 栣
 bìng 栤
