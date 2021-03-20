@@ -140,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 m_contentFrame->closeWebView();
                 m_search_result_thread->requestInterruption();
                 m_search_result_thread->quit();
-                m_seach_app_thread->stop();
+//                m_seach_app_thread->stop();
             }
         }
     });
@@ -236,7 +236,7 @@ void MainWindow::initUi()
                 m_search_result_thread->requestInterruption();
                 m_search_result_thread->quit();
             }
-            m_seach_app_thread->stop();
+//            m_seach_app_thread->stop();
             m_contentFrame->setCurrentIndex(0);
         } else {
             m_contentFrame->setCurrentIndex(1);
@@ -321,7 +321,7 @@ void MainWindow::searchContent(QString keyword){
     m_contentFrame->setSettingList(settingList);
 
     //应用搜索
-    m_seach_app_thread->stop();
+//    m_seach_app_thread->stop();
     m_seach_app_thread->startSearch(keyword);
 
     //文件、文件夹、内容搜索
@@ -364,21 +364,21 @@ void MainWindow::moveToPanel()
                               QDBusConnection::sessionBus() );
 
     int position = QDBusReply<int>(interface.call("GetPanelPosition", "position"));
-    int height = QDBusReply<int>(interface.call("GetPanelPosition", "height"));
+    int height = QDBusReply<int>(interface.call("GetPanelSize", "height"));
     int d = 8; //窗口边沿到任务栏距离
 
     if (position == 0) {
         //任务栏在下侧
-        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + screenGeometry.height() - this->height() - height - d);
     } else if(position == 1) {
         //任务栏在上侧
-        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + height + d);
     } else if (position == 2) {
         //任务栏在左侧
-        this->move(screenGeometry.x() + screenGeometry.width() - availableGeometry.width() + d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
+        this->move(screenGeometry.x() + height + d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     } else if (position == 3) {
         //任务栏在右侧
-        this->move(screenGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
+        this->move(screenGeometry.x() + screenGeometry.width() - this->width() - height - d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     }
 }
 
@@ -410,7 +410,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
         m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
-        m_seach_app_thread->stop();
+//        m_seach_app_thread->stop();
         break;
     }
 
@@ -424,7 +424,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
-        m_seach_app_thread->stop();
+//        m_seach_app_thread->stop();
     }
     return QWidget::keyPressEvent(event);
 }
