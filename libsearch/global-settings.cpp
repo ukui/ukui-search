@@ -141,6 +141,85 @@ QStringList GlobalSettings::getBlockDirs()
     return m_block_dirs_settings->allKeys();
 }
 
+void GlobalSettings::appendCloudData(const QString &key, const QString &value)
+{
+    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+    m_qSettings->beginGroup(key);
+    QStringList values = m_qSettings->value(key).toStringList();
+    m_qSettings->endGroup();
+    if (values.contains(value)) {
+        values.removeOne(value);
+    }
+    values.insert(0,value);
+
+    m_qSettings->beginGroup(key);
+    m_qSettings->setValue(key, values);
+    m_qSettings->endGroup();
+    if (m_qSettings) {
+        delete m_qSettings;
+        m_qSettings = NULL;
+    }
+}
+
+void GlobalSettings::setCloudData(const QString &key, const QStringList &values)
+{
+    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+    m_qSettings->beginGroup(key);
+    m_qSettings->setValue(key, values);
+    m_qSettings->endGroup();
+    if (m_qSettings) {
+        delete m_qSettings;
+        m_qSettings = NULL;
+    }
+}
+
+bool GlobalSettings::removeOneCloudData(const QString &key, const QString &value)
+{
+    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
+    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+    m_qSettings->beginGroup(key);
+    QStringList values = m_qSettings->value(key).toStringList();
+    m_qSettings->endGroup();
+    if (values.contains(value)) {
+        values.removeOne(value);
+    } else return false;
+    m_qSettings->beginGroup(key);
+    m_qSettings->setValue(key, values);
+    m_qSettings->endGroup();
+    if (m_qSettings) {
+        delete m_qSettings;
+        m_qSettings = NULL;
+    }
+    return true;
+}
+
+bool GlobalSettings::removeAllCloudData(const QString &key)
+{
+    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
+    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+    m_qSettings->beginGroup(key);
+    m_qSettings->beginGroup(key);
+    m_qSettings->setValue(key, QStringList());
+    m_qSettings->endGroup();
+    if (m_qSettings) {
+        delete m_qSettings;
+        m_qSettings = NULL;
+    }
+    return true;
+}
+
+QStringList GlobalSettings::getCloudData(const QString &key)
+{
+    if (!QFileInfo(CLOUD_FILE).isFile()) return QStringList();
+    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+    m_qSettings->beginGroup(key);
+    QStringList values = m_qSettings->value(key).toStringList();
+    m_qSettings->endGroup();
+    if(m_qSettings)
+        delete m_qSettings;
+    return values;
+}
+
 //here should be override
 //MouseZhangZh
 void GlobalSettings::setValue(const QString &key, const QVariant &value)

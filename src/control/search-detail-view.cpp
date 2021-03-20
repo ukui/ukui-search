@@ -137,7 +137,12 @@ void SearchDetailView::setWebWidget(const QString& keyword)
 
         connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
             m_reload = true;
-            if (m_engineProfile) m_engineProfile->clearHttpCache();
+            if (m_engineProfile){
+                m_engineProfile->clearHttpCache(); // 清理缓存
+                m_engineProfile->clearAllVisitedLinks(); // 清理浏览记录
+                m_engineProfile->cookieStore()->deleteAllCookies(); // 清理cookie
+                m_engineProfile->cookieStore()->deleteSessionCookies(); // 清理会话cookie
+            }
         });
         connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
             if (m_reload) {
