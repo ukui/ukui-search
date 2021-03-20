@@ -18,11 +18,13 @@ void UKuiSeachBarWidget::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
     QRect rect = this->rect();
+    QPen pen;
+    pen.setColor(QColor(38,246,234));
+    pen.setWidth(3);
     p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
     p.setBrush(qApp->palette().color(QPalette::Base));
-//    p.setBrush(QBrush(QColor(255,255,255)));
     p.setOpacity(1);
-    p.setPen(Qt::NoPen);
+    p.setPen(pen);
     p.drawRoundedRect(rect,30,30);
     QWidget::paintEvent(e);
 }
