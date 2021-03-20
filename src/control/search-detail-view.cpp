@@ -34,6 +34,7 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QDBusMetaType>
+#include <QWebEngineCookieStore>
 #include "config-file.h"
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
@@ -62,6 +63,7 @@ void SearchDetailView::clearLayout() {
 //        delete child;
 //    }
 //    child = NULL;
+    m_noNetFrame->hide();
     m_iconLabel->hide();
     m_nameFrame->hide();
     m_nameLabel->hide();
@@ -123,7 +125,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     m_isEmpty = false;
     m_reload = false;
     if (m_webView) {
-        if (QString::compare(keyword, m_currentKeyword) == 0) { //关键词没有发生变化，只把原来的网页show出来
+        if (QString::compare(keyword, m_currentKeyword) == 0 && m_net_enable) { //关键词没有发生变化，只把原来的网页show出来
             m_webView->show();
             return;
         }
@@ -135,13 +137,20 @@ void SearchDetailView::setWebWidget(const QString& keyword)
         m_webView->move(0, 0);
         m_webView->setFixedSize(378, 522);
 
-        connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](){
+        connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](bool is_successful){
             m_reload = true;
             if (m_engineProfile){
                 m_engineProfile->clearHttpCache(); // 清理缓存
                 m_engineProfile->clearAllVisitedLinks(); // 清理浏览记录
                 m_engineProfile->cookieStore()->deleteAllCookies(); // 清理cookie
                 m_engineProfile->cookieStore()->deleteSessionCookies(); // 清理会话cookie
+            }
+            if (is_successful) {
+                m_webView->show();
+                m_net_enable = true;
+            } else {
+                m_noNetFrame->show();
+                m_net_enable = false;
             }
         });
         connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
@@ -178,7 +187,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
 //    QString str = "https://wap.sogou.com/web/searchList.jsp?&keyword=" + keyword; //搜狗
 
     m_webView->load(address);
-    m_webView->show();
+//    m_webView->show();
 }
 
 void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath, const QString &description)
@@ -453,6 +462,23 @@ void SearchDetailView::initUI()
     this->setObjectName("detailView");
     this->setStyleSheet("QWidget#detailView{background:transparent;}");
     this->setFixedWidth(378);
+
+    //没有网络的时候的提示信息
+    m_noNetFrame = new QFrame(this);
+    m_noNetFrame->setFixedSize(378, 140);
+    m_noNetLyt = new QVBoxLayout(m_noNetFrame);
+    m_noNetIconLabel = new QLabel(m_noNetFrame);
+    m_noNetIconLabel->setFixedHeight(98);
+    m_noNetIconLabel->setPixmap(QIcon(":/res/icons/net-disconnected.svg").pixmap(QSize(98, 86)));
+    m_noNetIconLabel->setAlignment(Qt::AlignCenter);
+    m_noNetTipsLabel = new QLabel(m_noNetFrame);
+    m_noNetTipsLabel->setText(tr("Preview is not avaliable"));
+    m_noNetTipsLabel->setAlignment(Qt::AlignCenter);
+    m_noNetFrame->setLayout(m_noNetLyt);
+    m_noNetLyt->addWidget(m_noNetIconLabel);
+    m_noNetLyt->addWidget(m_noNetTipsLabel);
+    m_noNetLyt->setSpacing(12);
+    m_noNetFrame->move((this->width() - m_noNetFrame->width()) / 2, 160);
 
     //图标和名称、分割线区域
     m_iconLabel = new QLabel(this);

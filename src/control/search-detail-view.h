@@ -89,10 +89,15 @@ private:
     QLabel * m_timeLabel_2 = nullptr;
     QFrame * m_hLine_2 = nullptr;
     OptionView * m_optionView = nullptr;
+    QFrame * m_noNetFrame = nullptr;
+    QVBoxLayout * m_noNetLyt = nullptr;
+    QLabel * m_noNetIconLabel = nullptr;
+    QLabel * m_noNetTipsLabel = nullptr;
 
     QWebEngineView * m_webView = nullptr;
     QWebEngineProfile * m_engineProfile = nullptr;
     bool m_reload = false;
+    bool m_net_enable = true;
     QString m_currentKeyword;
 
 Q_SIGNALS:
