@@ -140,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 m_contentFrame->closeWebView();
                 m_search_result_thread->requestInterruption();
                 m_search_result_thread->quit();
-                m_seach_app_thread->stop();
+//                m_seach_app_thread->stop();
             }
         }
     });
@@ -236,7 +236,7 @@ void MainWindow::initUi()
                 m_search_result_thread->requestInterruption();
                 m_search_result_thread->quit();
             }
-            m_seach_app_thread->stop();
+//            m_seach_app_thread->stop();
             m_contentFrame->setCurrentIndex(0);
         } else {
             m_contentFrame->setCurrentIndex(1);
@@ -321,7 +321,7 @@ void MainWindow::searchContent(QString keyword){
     m_contentFrame->setSettingList(settingList);
 
     //应用搜索
-    m_seach_app_thread->stop();
+//    m_seach_app_thread->stop();
     m_seach_app_thread->startSearch(keyword);
 
     //文件、文件夹、内容搜索
@@ -410,7 +410,7 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
         m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
-        m_seach_app_thread->stop();
+//        m_seach_app_thread->stop();
         break;
     }
 
@@ -424,7 +424,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
-        m_seach_app_thread->stop();
+//        m_seach_app_thread->stop();
     }
     return QWidget::keyPressEvent(event);
 }
