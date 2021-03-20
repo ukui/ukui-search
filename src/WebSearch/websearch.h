@@ -8,19 +8,32 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
+class webwidget : public QWidget
+{
+    Q_OBJECT
+public:
+    webwidget();
+protected:
+    void paintEvent(QPaintEvent *e);
+private Q_SLOTS:
+    void webSearchTextRefresh(QString mSearchText);
+
+};
+
 class websearch : public QPushButton
 {
     Q_OBJECT
 public:
-     websearch();
+     websearch(QWidget *parent=nullptr);
      QString searchString;
      QString search;
-     void paintEvent(QPaintEvent *e);
 
 private:
      QLabel *m_buttonText;
      QHBoxLayout *m_buttonLayout;
      QLabel *m_Iconlabel;
+
+protected:
 
 private Q_SLOTS:
      void webSearchTextRefresh(QString);

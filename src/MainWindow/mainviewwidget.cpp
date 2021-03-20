@@ -105,7 +105,7 @@ void MainViewWidget::initSearchWidget()
 {
     m_fileview    = new SearchFileWidget;
     m_settingview = new SettingWidget;
-    search_web_page   = new websearch;
+    search_web_page   = new webwidget;
     m_searchResultWid = new SearchResultWidget;
     connect(m_fileview,&SearchFileWidget::fileWidgetHide,m_searchResultWid,[=](){
         m_searchResultWid->fristSelect();
