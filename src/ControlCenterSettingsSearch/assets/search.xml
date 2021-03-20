@@ -168,9 +168,9 @@
     </plugin>
     <plugin name="Netconnect">
         <pinyinPlugin>wangluo</pinyinPlugin>
-        <pinyinfunc>wangluozhuangtai</pinyinfunc>
+        <pinyinfunc>youxianwangluo</pinyinfunc>
         <ChinesePlugin>网络</ChinesePlugin>
-        <ChineseFunc>网络状态</ChineseFunc>
+        <ChineseFunc>有线网络</ChineseFunc>
     </plugin>
     <plugin name="Netconnect">
         <pinyinPlugin>wangluo</pinyinPlugin>
@@ -513,4 +513,17 @@
         <ChinesePlugin>系统还原</ChinesePlugin>
         <ChineseFunc>系统还原</ChineseFunc>
     </plugin>
+    <plugin name="Bluetooth">
+        <pinyinPlugin>kaiqilanya</pinyinPlugin>
+        <pinyinfunc>lanya</pinyinfunc>
+        <ChinesePlugin>蓝牙</ChinesePlugin>
+        <ChineseFunc>开启蓝牙</ChineseFunc>
+    </plugin>
+    <plugin name="Bluetooth">
+        <pinyinPlugin>tianjialanya</pinyinPlugin>
+        <pinyinfunc>lanya</pinyinfunc>
+        <ChinesePlugin>蓝牙</ChinesePlugin>
+        <ChineseFunc>添加蓝牙</ChineseFunc>
+    </plugin>
+
 </plugins>

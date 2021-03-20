@@ -1,5 +1,5 @@
 #include "settingmodel.h"
-
+#include <src/Interface/ukuichineseletter.h>
 
 #define XML_Source QString::fromLocal8Bit("ChineseFunc")
 #define XML_Title  QString::fromLocal8Bit("ChinesePlugin")
@@ -135,9 +135,9 @@ void settingModel::matching(){
     QStringList regmatch;
     QString settingkey;
     QString str;
-//    sourcetext+=QString::fromLocal8Bit(".*");
-    qDebug()<<sourcetext;
-    QRegExp rx(sourcetext);
+    QString pinyinFrist;
+    QIcon icon;
+    QPixmap pixmap;
     QMap<QString, QStringList>::const_iterator i;
     for(i=chine_searchlist.constBegin();i!=chine_searchlist.constEnd();++i){
         regmatch=*i;
@@ -145,14 +145,23 @@ void settingModel::matching(){
         QList<QString>::Iterator it = regmatch.begin(),itend = regmatch.end();
         int n = 0;
         for (;it != itend; it++,n++){
-//            if(rx.exactMatch(*it)){
             str =regmatch.at(n);
+            pinyinFrist=UkuiChineseLetter::getFirstLettersAll(str.mid(0,4)).toLower();
+            if(pinyinFrist.contains(sourcetext)){
+                returnresult.append(*it);//中文名
+                commandresult.append(settingkey);//命令
+                str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
+                icon = QIcon::fromTheme(str);
+                pixmap = icon.pixmap(QSize(25,25));
+                iconresult.append(pixmap);
+                continue;
+            }
             if(str.contains(sourcetext)){
                 returnresult.append(*it);//中文名
                 commandresult.append(settingkey);//命令
-                QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
-                QIcon icon = QIcon::fromTheme(str);
-                QPixmap pixmap = icon.pixmap(QSize(25,25));
+                str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
+                icon = QIcon::fromTheme(str);
+                pixmap = icon.pixmap(QSize(25,25));
                 iconresult.append(pixmap);
             }
         }
@@ -164,17 +173,14 @@ void settingModel::matching(){
         QList<QString>::Iterator it = regmatch.begin(),itend = regmatch.end();
         int n = 0;
         for (;it != itend; it++,n++){
-//            if(rx.exactMatch(*it)){
             str =regmatch.at(n);
             if(str.contains(sourcetext)){
                 QStringList val=chine_searchlist.value(settingkey);
-
                 returnresult.append(val.at(n));//pinyin
                 commandresult.append(settingkey);//命令
-
-                QString str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
-                QIcon icon = QIcon::fromTheme(str);
-                QPixmap pixmap = icon.pixmap(QSize(25,25));
+                str="/usr/share/ukui-control-center/shell/res/secondaryleftmenu/"+settingkey+".svg";
+                icon = QIcon::fromTheme(str);
+                pixmap = icon.pixmap(QSize(25,25));
                 iconresult.append(pixmap);
 
             }
