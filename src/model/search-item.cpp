@@ -133,7 +133,9 @@ QString SearchItem::getBestName(const int &index)
     if (m_bestList.isEmpty() || !m_bestList.length() > index) return "";
     switch(m_bestList.at(index).first) {
         case Apps: {
-            return m_bestList.at(index).second;
+            QString whole_name = m_bestList.at(index).second;
+            QString app_name = whole_name.contains("/") ? whole_name.left(whole_name.indexOf("/")) : whole_name;
+            return app_name;
         }
         case Settings: {
             return FileUtils::getSettingName(m_pathlist.at(index));
