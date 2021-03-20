@@ -1,3 +1,10 @@
+ukui-search (3.0.1-1+0317) v101; urgency=medium
+
+  * fix:打开全局搜索后，可以从毛玻璃页面较明显地看到桌面图标轮廓
+  * fix:全局搜索应用程序模块右侧有滚动条，与UI不符
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Wed, 17 Mar 2021 15:06:38 +0800
+
 ukui-search (3.0.1-1+0311) v101; urgency=medium
 
   * fix:搜索设置项会出现多少问题
