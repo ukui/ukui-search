@@ -49,6 +49,10 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
         Q_EMIT this->currentRowChanged(getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
         m_isSelected = true;
     });
+
+    connect(this, &SearchListView::doubleClicked, this, [ = ](const QModelIndex& index) {
+
+    });
 }
 
 SearchListView::~SearchListView()

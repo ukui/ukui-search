@@ -6016,7 +6016,7 @@ feng 仹
 cang 仺
 ren,lin 任
 wang 仼
-bin,fen 份
+fen 份
 di 仾
 fang,pang 仿
 zhong 伀
@@ -6221,7 +6221,7 @@ xu,shu 俆
 guang 俇
 ku 俈
 wu 俉
-dun,jun,shun 俊
+jun 俊
 yi 俋
 fu 俌
 liang,lang 俍
@@ -11420,7 +11420,7 @@ zhi 搘
 nuo,nou,nu 搙
 la,xie,xian 搚
 lian,jian 搛
-shao,xiao,sou 搜
+sou 搜
 qiu 搝
 qiao,gao,kao 搞
 xian 搟
