@@ -1,3 +1,24 @@
+ukui-search (0.2.0+0322) v101; urgency=medium
+
+  * Fit muti-screens mode. 
+    - 适配990多屏显示。
+  * Feat:Clear cache after web searching.
+    - 清除网页搜索缓存。
+  * Fix(frontend): Complete translations.
+    - 修复提示框按钮未汉化问题(bug38128)。
+  * Fix(frontend): NameLabel do not update when font-size changed.
+    - 修复字体大小更改时主页标签不刷新的bug(bug42681)。
+  * Feat(frontend): Reset geometry for ukui-search.
+    - 重新计算搜索主界面的显示位置,修复任务栏隐藏时主界面显示位置有误的问题(43730)。
+  * Fix(frontend): Mainwindow is blocked when searching.
+    - 修复搜索时主界面阻塞的问题(43315)。
+  * Fix:mkfifo fail when fifo path is not exits
+    - 修复切换用户后打开搜索失败的问题(42486)。
+  * Feat(frontend): Add tips when there is no network avaliable.
+    - 当无网络可用时添加提示图案。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 22 Mar 2021 10:43:51 +0800
+
 ukui-search (0.2.0+0312) v101; urgency=medium
 
   * Fix: Index process may crash while system first boot.
