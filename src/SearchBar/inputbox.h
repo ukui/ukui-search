@@ -78,12 +78,19 @@ public:
 
     //控制style的gsetting
     QGSettings *style_settings;
+    QGSettings *model_gsettings;
     //用来判断style
     QStringList stylelist;
     void styleChange();
     QLabel *editLabel;
+
+private:
+    bool mModel;
 protected:
         void mousePressEvent(QMouseEvent *event);
+
+private:
+        void sogouInput();
 
 private Q_SLOTS:
     void  lineEditTextChanged(QString arg);

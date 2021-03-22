@@ -68,6 +68,9 @@ private:
     QPixmap pixmap;
     bool m_winFlag = false;
 
+private:
+    void sogouHide();
+
 protected:
     void initUi();
     QPixmap blurPixmap(QPixmap pixmap);
