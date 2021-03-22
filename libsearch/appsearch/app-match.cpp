@@ -256,6 +256,8 @@ void AppMatch::getAppName(QMap<NameString,QStringList> &installed)
 void AppMatch::appNameMatch(QString appname,QMap<NameString,QStringList> &installed){
     NameString name{appname};
     QStringList list;
+    QStringList pinyinlist;
+    pinyinlist=FileUtils::findMultiToneWords(appname);
     QMapIterator<NameString,QStringList> iter(m_installAppMap);
     while(iter.hasNext())
     {
@@ -270,18 +272,21 @@ void AppMatch::appNameMatch(QString appname,QMap<NameString,QStringList> &instal
         installed.insert(name,list);
         return;
     }
-    QString shouzimu=FileUtils::findMultiToneWords(appname).at(1);// 中文转首字母
-    if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
-//        installed.insert(name,m_installAppMap.value(name));
-        installed.insert(name,list);
-        return;
-    }
-    if(m_sourceText.size()<2)
-        return;
-    QString pinyin=FileUtils::findMultiToneWords(appname).at(0);// 中文转拼音
-    if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
-//        installed.insert(name,m_installAppMap.value(name));
-        installed.insert(name,list);
+    for(int i;i<pinyinlist.size()/2;i++){
+        QString shouzimu=pinyinlist.at(2*i+1);// 中文转首字母
+        if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
+            //        installed.insert(name,m_installAppMap.value(name));
+            installed.insert(name,list);
+            return;
+        }
+        if(m_sourceText.size()<2)
+            return;
+        QString pinyin=pinyinlist.at(2*i);// 中文转拼音
+        if(pinyin.contains(m_sourceText,Qt::CaseInsensitive)){
+            //        installed.insert(name,m_installAppMap.value(name));
+            installed.insert(name,list);
+            return;
+        }
     }
 }
 
