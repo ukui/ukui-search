@@ -116,6 +116,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList)
         return false;
     }
     int size = _doc_list_content->size();
+    qDebug()<<"begin creatAllIndex for content"<<size;
     if(!size == 0)
     {
         GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE,"0");
