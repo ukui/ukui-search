@@ -164,10 +164,14 @@ void ContentWidget::initListView()
     this->hideListView();
     m_resultList->setFixedHeight(0);
 
+    m_resultListArea->setFocusProxy(m_bestListView);
+    m_bestListView->setFocus();
     connect(m_appShowMoreLabel, &ShowMoreLabel::showMoreClicked, this, [ = ]() {
         m_appListView->setList(m_appList);
         m_appShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_appListView);
+        m_appListView->setFocus();
     });
     connect(m_appShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_appListView->setList(m_appList.mid(0, 5));
@@ -178,6 +182,8 @@ void ContentWidget::initListView()
         m_settingListView->setList(m_settingList);
         m_settingShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_settingListView);
+        m_settingListView->setFocus();
     });
     connect(m_settingShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_settingListView->setList(m_settingList.mid(0, 5));
@@ -188,6 +194,8 @@ void ContentWidget::initListView()
         m_dirListView->setList(m_dirList);
         m_dirShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_dirListView);
+        m_dirListView->setFocus();
     });
     connect(m_dirShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_dirListView->setList(m_dirList.mid(0, 5));
@@ -198,6 +206,8 @@ void ContentWidget::initListView()
         m_fileListView->setList(m_fileList);
         m_fileShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_fileListView);
+        m_fileListView->setFocus();
     });
     connect(m_fileShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_fileListView->setList(m_fileList.mid(0, 5));
@@ -208,6 +218,8 @@ void ContentWidget::initListView()
         m_contentListView->setList(m_contentList);
         m_contentShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_contentListView);
+        m_contentListView->setFocus();
     });
     connect(m_contentShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_contentListView->setList(m_contentList.mid(0, 5));
@@ -281,6 +293,7 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         listview->is_current_list = false;
     });
     connect(this, &ContentWidget::currentItemChanged, listview, [ = ]() {
+
         if (! listview->is_current_list) {
             listview->blockSignals(true);
             listview->clearSelection();
