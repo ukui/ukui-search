@@ -32,7 +32,7 @@ class SearchItemModel : public QAbstractItemModel
     friend class SearchItem;
     Q_OBJECT
 public:
-    explicit SearchItemModel();
+    explicit SearchItemModel(QObject *parent = nullptr);
     ~SearchItemModel();
 
     enum SearchInfo {

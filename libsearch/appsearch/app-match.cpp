@@ -272,7 +272,7 @@ void AppMatch::appNameMatch(QString appname,QMap<NameString,QStringList> &instal
         installed.insert(name,list);
         return;
     }
-    for(int i;i<pinyinlist.size()/2;i++){
+    for(int i = 0;i<pinyinlist.size()/2;i++){
         QString shouzimu=pinyinlist.at(2*i+1);// 中文转首字母
         if(shouzimu.contains(m_sourceText,Qt::CaseInsensitive)){
             //        installed.insert(name,m_installAppMap.value(name));

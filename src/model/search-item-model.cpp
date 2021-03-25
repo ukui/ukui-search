@@ -21,7 +21,7 @@
 #include "search-item-model.h"
 #include <QDebug>
 
-SearchItemModel::SearchItemModel()
+SearchItemModel::SearchItemModel(QObject *parent) : QAbstractItemModel (parent)
 {
 
 }
