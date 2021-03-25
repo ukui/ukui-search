@@ -27,7 +27,7 @@ class HighlightItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit HighlightItemDelegate();
+    explicit HighlightItemDelegate(QObject *parent = nullptr);
     void setSearchKeyword(const QString &);
 private:
     QString m_regFindKeyWords = 0;

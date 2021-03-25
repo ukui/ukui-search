@@ -53,13 +53,13 @@ ContentWidget::~ContentWidget()
  * @brief initUI 初始化homepage和resultpage
  */
 void ContentWidget::initUI() {
-    m_homePage = new QWidget;
+    m_homePage = new QWidget(this);
     m_homePageLyt = new QVBoxLayout(m_homePage);
     m_homePageLyt->setSpacing(0);
     m_homePageLyt->setContentsMargins(0,0,0,0);
     m_homePage->setLayout(m_homePageLyt);
 
-    m_resultPage = new QWidget;
+    m_resultPage = new QWidget(this);
     m_resultPageLyt = new QHBoxLayout(m_resultPage);
     m_resultPageLyt->setSpacing(0);
     m_resultPageLyt->setContentsMargins(0, 0, 0, 0);
@@ -74,7 +74,7 @@ void ContentWidget::initUI() {
     m_resultPageLyt->addWidget(m_resultDetailArea);
     m_resultPage->setLayout(m_resultPageLyt);
 
-    m_resultList = new QWidget(m_resultDetailArea);
+    m_resultList = new QWidget(m_resultListArea);
     m_resultDetail = new QWidget(m_resultDetailArea);
     m_listLyt = new QVBoxLayout(m_resultList);
     m_detailLyt = new QVBoxLayout(m_resultDetail);

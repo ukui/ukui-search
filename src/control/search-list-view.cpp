@@ -27,7 +27,7 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
-    m_model = new SearchItemModel;
+    m_model = new SearchItemModel(this);
     m_item = new SearchItem;
     m_item->setSearchList(type, list);
     m_model->setItem(m_item);
@@ -40,7 +40,7 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");
-    m_styleDelegate = new HighlightItemDelegate();
+    m_styleDelegate = new HighlightItemDelegate(this);
 //    m_styleDelegate->setSearchKeyword(keyword);
     this->setItemDelegate(m_styleDelegate);
 

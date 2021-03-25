@@ -26,7 +26,7 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 
-HighlightItemDelegate::HighlightItemDelegate()
+HighlightItemDelegate::HighlightItemDelegate(QObject *parent) : QStyledItemDelegate (parent)
 {
 }
 
