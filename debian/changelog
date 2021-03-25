@@ -1,3 +1,10 @@
+ukui-search (0.2.0+0325) v101; urgency=medium
+
+  * Changed name displayed in ukui-menu from 'ukui-search' to 'Search'.
+    - 更改了英文模式下开始菜单中显示的名字。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 25 Mar 2021 11:00:09 +0800
+
 ukui-search (0.2.0+0322) v101; urgency=medium
 
   * Fit muti-screens mode. 

@@ -71,6 +71,7 @@ private:
 
 Q_SIGNALS:
     void currentRowChanged(const int&, const QString&);
+    void currentSelectPos(QPoint pos);
 
 public Q_SLOTS:
     void clearSelection();
