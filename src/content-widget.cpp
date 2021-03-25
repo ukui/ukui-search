@@ -300,6 +300,9 @@ void ContentWidget::setupConnect(SearchListView * listview) {
             listview->blockSignals(false);
         }
     });
+    connect(listview,&SearchListView::currentSelectPos,[=](QPoint pos){
+        m_resultListArea->ensureVisible(pos.x(),pos.y());
+    });
 }
 
 /**
