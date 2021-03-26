@@ -75,6 +75,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(tr("ukui-search"));
     initUi();
 
+    setProperty("useStyleWindowManager", false);
+    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+    m_hints.functions = MWM_FUNC_ALL;
+    m_hints.decorations = MWM_DECOR_BORDER;
+    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+
     QPainterPath path;
     auto rect = this->rect();
     rect.adjust(1, 1, -1, -1);
@@ -131,6 +137,7 @@ MainWindow::MainWindow(QWidget *parent) :
             if (!this->isVisible()) {
                 clearSearchResult();
                 this->moveToPanel();
+                XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
                 this->show();
                 this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
                 this->raise();
@@ -266,6 +273,7 @@ void MainWindow::bootOptionsFilter(QString opt)
     if (opt == "-s" || opt == "--show") {
         clearSearchResult();
         this->moveToPanel();
+        XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
         this->show();
         this->m_searchLayout->focusIn();
         this->raise();
