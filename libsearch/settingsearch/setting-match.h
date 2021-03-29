@@ -42,10 +42,10 @@ private:
     QStringList matching();
 
 private:
-    QMap<QString,QStringList> m_pinyin_searchList;
     QMap<QString,QStringList> m_chine_searchList;
-    QStringList m_pinyin_searchResult;
+    QMap<QString,QStringList> m_English_searchList;
     QStringList m_chine_searchResult;
+    QStringList m_English_searchResult;
     QString m_sourceText;
 
 };
