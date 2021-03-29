@@ -49,6 +49,7 @@
 #include "settings-widget.h"
 #include "libsearch.h"
 #include "search-app-thread.h"
+#include "xatom-helper.h"
 
 class SearchResult;
 class MainWindow : public QMainWindow
@@ -64,6 +65,7 @@ public:
      */
     void searchContent(QString searchcontent);
     void moveToPanel();
+    MotifWmHints m_hints;
 
 private:
     bool nativeEvent(const QByteArray&, void *, long *);

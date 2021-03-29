@@ -35,7 +35,6 @@
 //#include "inotify-manager.h"
 #include "libsearch.h"
 #include "global-settings.h"
-#include "xatom-helper.h"
 
 
 //void handler(int){
@@ -248,17 +247,18 @@ int main(int argc, char *argv[])
     w->moveToPanel();
 
     //使用窗管的无边框策略
-    w->setProperty("useStyleWindowManager", false); //禁用拖动
-    MotifWmHints hints;
-    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
-    hints.functions = MWM_FUNC_ALL;
-    hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), hints);
+//    w->setProperty("useStyleWindowManager", false); //禁用拖动
+//    MotifWmHints hints;
+//    hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+//    hints.functions = MWM_FUNC_ALL;
+//    hints.decorations = MWM_DECOR_BORDER;
+//    XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), hints);
 
     app.setActivationWindow(w);
 
     if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
         w->moveToPanel();
+        XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
         w->show();
     }
 //    if(arguments.size()>1)
