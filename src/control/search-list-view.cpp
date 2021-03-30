@@ -152,6 +152,15 @@ int SearchListView::getLength()
     return m_item->getCurrentSize();
 }
 
+void SearchListView::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        Q_EMIT mousePressed();
+    }
+    QTreeView::mousePressEvent(event);
+}
+
 //获取当前选项所属搜索类型
 int SearchListView::getCurrentType() {
     switch (m_type) {

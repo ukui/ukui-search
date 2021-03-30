@@ -109,6 +109,7 @@ private:
 
 Q_SIGNALS:
     void currentItemChanged();
+    void mousePressed();
 
 private Q_SLOTS:
     void clearLayout(QLayout *);

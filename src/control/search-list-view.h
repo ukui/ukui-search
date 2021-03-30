@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QTreeView>
+#include <QMouseEvent>
 #include "model/search-item-model.h"
 #include "model/search-item.h"
 #include "highlight-item-delegate.h"
@@ -60,6 +61,8 @@ public:
     int getType();
     int getLength();
     bool isHidden = false;
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;
@@ -72,6 +75,7 @@ private:
 Q_SIGNALS:
     void currentRowChanged(const int&, const QString&);
     void currentSelectPos(QPoint pos);
+    void mousePressed();
 
 public Q_SLOTS:
     void clearSelection();
