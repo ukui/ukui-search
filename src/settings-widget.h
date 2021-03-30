@@ -33,8 +33,9 @@
 #include <QScrollArea>
 #include <QTimer>
 #include <libsearch.h>
+#include "xatom-helper.h"
 
-class SettingsWidget : public QDialog
+class SettingsWidget : public QWidget
 {
     Q_OBJECT
 public:
@@ -54,6 +55,9 @@ private:
     void resize();
     void showWarningDialog(const int&);
     void resetWebEngine();
+
+    MotifWmHints m_hints;
+
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
     QFrame * m_contentFrame = nullptr;

@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(tr("ukui-search"));
     initUi();
 
-    setProperty("useStyleWindowManager", false);
+//    setProperty("useStyleWindowManager", false); //禁止拖动
     m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
     m_hints.functions = MWM_FUNC_ALL;
     m_hints.decorations = MWM_DECOR_BORDER;
@@ -136,7 +136,8 @@ MainWindow::MainWindow(QWidget *parent) :
         {
             if (!this->isVisible()) {
                 clearSearchResult();
-                this->moveToPanel();
+//                this->moveToPanel();
+                centerToScreen(this);
                 XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
                 this->show();
                 this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
@@ -202,10 +203,14 @@ void MainWindow::initUi()
     m_menuBtn->setFlat(true);
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
         if (m_settingsWidget) { //当此窗口已存在时，仅需置顶
+            if (!m_settingsWidget->isVisible()) {
+                centerToScreen(m_settingsWidget);
+            }
             m_settingsWidget->showWidget();
             return;
         }
         m_settingsWidget = new SettingsWidget();
+        centerToScreen(m_settingsWidget);
         m_settingsWidget->show();
         connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
             QTimer::singleShot(100, this, [ = ] {
@@ -273,7 +278,8 @@ void MainWindow::bootOptionsFilter(QString opt)
 {
     if (opt == "-s" || opt == "--show") {
         clearSearchResult();
-        this->moveToPanel();
+//        this->moveToPanel();
+        centerToScreen(this);
         XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
         this->show();
         this->m_searchLayout->focusIn();
@@ -389,6 +395,32 @@ void MainWindow::moveToPanel()
         //任务栏在右侧
         this->move(screenGeometry.x() + screenGeometry.width() - this->width() - height - d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     }
+}
+
+/**
+ * @brief MainWindow::centerToScreen 使窗口显示在屏幕中间
+ * @param widget
+ */
+void MainWindow::centerToScreen(QWidget* widget) {
+    if (!widget)
+      return;
+    QDesktopWidget* m = QApplication::desktop();
+    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
+    int desk_x = desk_rect.width();
+    int desk_y = desk_rect.height();
+    int x = widget->width();
+    int y = widget->height();
+    QDBusInterface primaryScreenInterface("org.ukui.SettingsDaemon",
+                                          "/org/ukui/SettingsDaemon/wayland",
+                                          "org.ukui.SettingsDaemon.wayland",
+                                          QDBusConnection::sessionBus());
+    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
+        QDBusReply<int> width = primaryScreenInterface.call("width");
+        QDBusReply<int> height = primaryScreenInterface.call("height");
+        desk_x = width;
+        desk_y = height;
+    }
+    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 }
 
 //使用GSetting获取当前窗口应该使用的透明度
