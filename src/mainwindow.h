@@ -100,6 +100,7 @@ private:
     SearchAppThread * m_seach_app_thread = nullptr;
 
     SearchManager* m_searcher = nullptr;
+    SettingsMatch *m_settingsMatch = nullptr;
     QSystemTrayIcon *m_sys_tray_icon;
 
 protected:

@@ -135,32 +135,21 @@ int main(int argc, char *argv[])
         {
             qWarning()<<"I can't find home! I'm done here!!";
             printf("I can't find home! I'm done here!!");
+            syslog(LOG_ERR,"I can't find home! I'm done here!!\n");
         }
     }
     p_home = NULL;
     while(!QDir(QDir::homePath()).exists())
     {
-        qWarning()<<"Home not exits!!";
-        printf("Home not exits!!");
+        qWarning()<<"Home is not exits!!";
+        printf("Home is not exits!!");
+        syslog(LOG_ERR,"Home is not exits!!\n");
         ::sleep(1);
     }
 
-    QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
-    if(!fifoDir.exists())
-        qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
-
-    unlink(UKUI_SEARCH_PIPE_PATH);
-    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
-    if(retval == -1)
-    {
-        perror("creat fifo error\n");
-        assert(false);
-        return -1;
-    }
-    printf("create fifo success\n");
-
-
     qInstallMessageHandler(messageOutput);
+
+    qDebug() << "ukui-search main start";
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
 
@@ -191,6 +180,21 @@ int main(int argc, char *argv[])
 
     //here need to be modified
     /*-------------ukuisearchdbus Test start-----------------*/
+
+    QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
+    if(!fifoDir.exists())
+        qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
+
+    unlink(UKUI_SEARCH_PIPE_PATH);
+    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
+    if(retval == -1)
+    {
+        qCritical()<<"creat fifo error!!";
+        syslog(LOG_ERR,"creat fifo error!!\n");
+        assert(false);
+        return -1;
+    }
+    qDebug()<<"create fifo success\n";
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
 
@@ -270,7 +274,6 @@ int main(int argc, char *argv[])
 //    qDebug() << "main start";
 //    FirstIndex* fi = new FirstIndex("/home");
 //    fi->start();
-    qDebug() << "main start";
     AppMatch::getAppMatch()->start();
     //wtf???
 //     AppMatch apm;
