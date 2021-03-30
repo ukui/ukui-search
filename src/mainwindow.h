@@ -65,6 +65,7 @@ public:
      */
     void searchContent(QString searchcontent);
     void moveToPanel();
+    void centerToScreen(QWidget* widget);
     MotifWmHints m_hints;
 
 private:

@@ -244,7 +244,8 @@ int main(int argc, char *argv[])
     MainWindow *w = new MainWindow;
     QStringList arguments = QCoreApplication::arguments();
 //    centerToScreen(w);
-    w->moveToPanel();
+//    w->moveToPanel();
+    centerToScreen(w);
 
     //使用窗管的无边框策略
 //    w->setProperty("useStyleWindowManager", false); //禁用拖动
@@ -257,7 +258,8 @@ int main(int argc, char *argv[])
     app.setActivationWindow(w);
 
     if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
-        w->moveToPanel();
+//        w->moveToPanel();
+        centerToScreen(w);
         XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
         w->show();
     }
