@@ -224,14 +224,15 @@ void MainWindow::initUi()
 
     m_contentFrame = new ContentWidget(m_frame);//内容栏
 
-    m_searchWidget = new SeachBarWidget;
-    m_searchLayout = new SearchBarHLayout;
+    m_searchWidget = new SeachBarWidget(this);
+    m_searchLayout = new SearchBarHLayout(this);
     m_searchWidget->setLayout(m_searchLayout);
     m_searchWidget->setFixedHeight(44);
 
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
     mainlayout->addWidget(m_searchWidget);
+    connect(m_contentFrame,&ContentWidget::mousePressed,m_searchLayout,&SearchBarHLayout::effectiveSearchRecord);
 
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged,
             this, &MainWindow::monitorResolutionChange);

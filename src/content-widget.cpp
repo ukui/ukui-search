@@ -303,6 +303,7 @@ void ContentWidget::setupConnect(SearchListView * listview) {
     connect(listview,&SearchListView::currentSelectPos,[=](QPoint pos){
         m_resultListArea->ensureVisible(pos.x(),pos.y());
     });
+    connect(listview,&SearchListView::mousePressed,this,&ContentWidget::mousePressed);
 }
 
 /**

@@ -35,10 +35,25 @@ GlobalSettings *GlobalSettings::getInstance()
 
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
-    m_settings = new QSettings("org.ukui/ukui-search", "ukui-search", this);
+    m_settings = new QSettings(MAIN_SETTINGS, QSettings::IniFormat, this);
 //    m_settings->setAtomicSyncRequired(false);
-    m_block_dirs_settings = new QSettings("org.ukui/ukui-search","ukui-search-block-dirs",this);
+    m_block_dirs_settings = new QSettings(BLOCK_DIRS,QSettings::IniFormat, this);
     m_block_dirs_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+
+    m_search_record_settings = new QSettings(SEARCH_HISTORY, QSettings::IniFormat , this);
+    m_search_record_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+    for(QString i:m_search_record_settings->allKeys())
+    {
+        m_history.append(QUrl::fromPercentEncoding(i.toLocal8Bit()));
+    }
+    if(!QDBusConnection::sessionBus().connect("org.kylinssoclient.dbus",
+                                              "/org/kylinssoclient/path",
+                                              "org.freedesktop.kylinssoclient.interface",
+                                              "keyChanged",
+                                              this, SLOT(updateSearchHistory(QString))))
+
+        qWarning()<<"Kylinssoclient Dbus connect fail!";
+
     this->forceSync();
     //the default number of transparency in mainwindow is 0.7
     //if someone changes the num in mainwindow, here should be modified too
@@ -141,84 +156,88 @@ QStringList GlobalSettings::getBlockDirs()
     return m_block_dirs_settings->allKeys();
 }
 
-void GlobalSettings::appendCloudData(const QString &key, const QString &value)
-{
-    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
-    m_qSettings->beginGroup(key);
-    QStringList values = m_qSettings->value(key).toStringList();
-    m_qSettings->endGroup();
-    if (values.contains(value)) {
-        values.removeOne(value);
-    }
-    values.insert(0,value);
+//void GlobalSettings::appendCloudData(const QString &key, const QString &value)
+//{
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    QStringList values = m_qSettings->value(key).toStringList();
+//    m_qSettings->endGroup();
+//    if (values.contains(value)) {
+//        values.removeOne(value);
+//    }
+//    values.insert(0,value);
 
-    m_qSettings->beginGroup(key);
-    m_qSettings->setValue(key, values);
-    m_qSettings->endGroup();
-    if (m_qSettings) {
-        delete m_qSettings;
-        m_qSettings = NULL;
-    }
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->setValue(key, values);
+//    m_qSettings->endGroup();
+//    if (m_qSettings) {
+//        delete m_qSettings;
+//        m_qSettings = NULL;
+//    }
+//}
+
+void GlobalSettings::setSearchRecord(const QString &word, const QDateTime &time)
+{
+    QStringList keys = m_search_record_settings->allKeys();
+    if(keys.contains(QString(QUrl::toPercentEncoding(word))))
+        m_history.removeOne(word);
+        m_search_record_settings->setValue(QString(QUrl::toPercentEncoding(word)), time.toString("yyyy-MM-dd hh:mm:ss"));
+    if(keys.size() >= 20)
+       m_search_record_settings->remove(QString(QUrl::toPercentEncoding(m_history.takeFirst())));
+    m_history.append(word);
 }
 
-void GlobalSettings::setCloudData(const QString &key, const QStringList &values)
+QStringList GlobalSettings::getSearchRecord()
 {
-    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
-    m_qSettings->beginGroup(key);
-    m_qSettings->setValue(key, values);
-    m_qSettings->endGroup();
-    if (m_qSettings) {
-        delete m_qSettings;
-        m_qSettings = NULL;
-    }
+    return m_history;
 }
 
-bool GlobalSettings::removeOneCloudData(const QString &key, const QString &value)
-{
-    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
-    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
-    m_qSettings->beginGroup(key);
-    QStringList values = m_qSettings->value(key).toStringList();
-    m_qSettings->endGroup();
-    if (values.contains(value)) {
-        values.removeOne(value);
-    } else return false;
-    m_qSettings->beginGroup(key);
-    m_qSettings->setValue(key, values);
-    m_qSettings->endGroup();
-    if (m_qSettings) {
-        delete m_qSettings;
-        m_qSettings = NULL;
-    }
-    return true;
-}
+//bool GlobalSettings::removeOneCloudData(const QString &key, const QString &value)
+//{
+//    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    QStringList values = m_qSettings->value(key).toStringList();
+//    m_qSettings->endGroup();
+//    if (values.contains(value)) {
+//        values.removeOne(value);
+//    } else return false;
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->setValue(key, values);
+//    m_qSettings->endGroup();
+//    if (m_qSettings) {
+//        delete m_qSettings;
+//        m_qSettings = NULL;
+//    }
+//    return true;
+//}
 
-bool GlobalSettings::removeAllCloudData(const QString &key)
-{
-    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
-    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
-    m_qSettings->beginGroup(key);
-    m_qSettings->beginGroup(key);
-    m_qSettings->setValue(key, QStringList());
-    m_qSettings->endGroup();
-    if (m_qSettings) {
-        delete m_qSettings;
-        m_qSettings = NULL;
-    }
-    return true;
-}
+//bool GlobalSettings::removeAllCloudData(const QString &key)
+//{
+//    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->setValue(key, QStringList());
+//    m_qSettings->endGroup();
+//    if (m_qSettings) {
+//        delete m_qSettings;
+//        m_qSettings = NULL;
+//    }
+//    return true;
+//}
 
-QStringList GlobalSettings::getCloudData(const QString &key)
-{
-    if (!QFileInfo(CLOUD_FILE).isFile()) return QStringList();
-    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
-    m_qSettings->beginGroup(key);
-    QStringList values = m_qSettings->value(key).toStringList();
-    m_qSettings->endGroup();
-    if(m_qSettings)
-        delete m_qSettings;
-    return values;
-}
+//QStringList GlobalSettings::getCloudData(const QString &key)
+//{
+//    if (!QFileInfo(CLOUD_FILE).isFile()) return QStringList();
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    QStringList values = m_qSettings->value(key).toStringList();
+//    m_qSettings->endGroup();
+//    if(m_qSettings)
+//        delete m_qSettings;
+//    return values;
+//}
 
 //here should be override
 //MouseZhangZh
@@ -251,5 +270,18 @@ void GlobalSettings::forceSync(const QString &key)
     } else {
         m_cache.remove(key);
         m_cache.insert(key, m_settings->value(key));
+    }
+}
+
+void GlobalSettings::updateSearchHistory(QString key)
+{
+    if(key == "search")
+    {
+        m_search_record_settings->sync();
+        m_history.clear();
+        for(QString i:m_search_record_settings->allKeys())
+        {
+            m_history.append(QUrl::fromPercentEncoding(i.toLocal8Bit()));
+        }
     }
 }

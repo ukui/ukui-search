@@ -31,6 +31,8 @@
 //My demo can build access yet.
 //MouseZhangZh
 #include <QGSettings/QGSettings>
+#include <QDBusConnection>
+#include <QDBusInterface>
 #include "libsearch_global.h"
 
 #define CONTROL_CENTER_PERSONALISE_GSETTINGS_ID "org.ukui.control-center.personalise"
@@ -44,9 +46,11 @@
 #define PATH_NOT_IN_HOME 2;
 #define PATH_PARENT_BLOCKED 3;
 
-#define CLOUD_FILE QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-cloud.conf"
-#define CLOUD_HISTORY "history"
-#define CLOUD_APPLICATIONS "applications"
+#define MAIN_SETTINGS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search.conf"
+#define BLOCK_DIRS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-block-dirs.conf"
+#define SEARCH_HISTORY QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-history.conf"
+//#define CLOUD_HISTORY "history"
+//#define CLOUD_APPLICATIONS "applications"
 
 class LIBSEARCH_EXPORT GlobalSettings : public QObject
 {
@@ -74,13 +78,15 @@ public Q_SLOTS:
      */
     bool setBlockDirs(const QString& path, int &returnCode,bool remove = false);
     QStringList getBlockDirs();
-    void appendCloudData(const QString& key, const QString& value);
-    void setCloudData(const QString& key, const QStringList& values);
-    bool removeOneCloudData(const QString& key, const QString& value);
-    bool removeAllCloudData(const QString& key);
-    QStringList getCloudData(const QString& key);
+//    void appendCloudData(const QString& key, const QString& value);
+    void setSearchRecord(const QString &word, const QDateTime &time);
+    QStringList getSearchRecord();
+//    bool removeOneCloudData(const QString& key, const QString& value);
+//    bool removeAllCloudData(const QString& key);
+//    QStringList getCloudData(const QString& key);
 
     void forceSync(const QString& = nullptr);
+    void updateSearchHistory(QString key);
 
 private:
     explicit GlobalSettings(QObject *parent = nullptr);
@@ -89,7 +95,9 @@ private:
     QSettings* m_settings;
     QGSettings* m_gsettings;
     QSettings *m_block_dirs_settings;
+    QSettings *m_search_record_settings;
     QMap<QString, QVariant> m_cache;
+    QStringList m_history;
 
     QMutex m_mutex;
 

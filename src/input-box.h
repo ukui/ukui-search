@@ -26,13 +26,18 @@
 #include <QPainter>
 #include <QAction>
 #include <QTimer>
+#include <QStringListModel>
+#include <QCompleter>
+#include <QAbstractItemView>
+#include <QVector4D>
+#include "global-settings.h"
 
 class SearchLineEdit;
 
 class SeachBarWidget:public QWidget
 {
 public:
-  SeachBarWidget();
+  SeachBarWidget(QWidget *parent = nullptr);
   ~SeachBarWidget();
 };
 
@@ -50,7 +55,7 @@ class SearchBarHLayout : public QHBoxLayout
 {
     Q_OBJECT
 public:
-    SearchBarHLayout();
+    SearchBarHLayout(QWidget *parent = nullptr);
     ~SearchBarHLayout();
     void clearText();
     QString text();
@@ -74,6 +79,8 @@ private:
 
 Q_SIGNALS:
     void textChanged(QString text);
+public Q_SLOTS:
+    void effectiveSearchRecord();
 
 };
 class SearchBarWidgetLayout : public QHBoxLayout
@@ -97,8 +104,13 @@ class SearchLineEdit : public QLineEdit
     Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
 public:
     SearchLineEdit();
+    void record();
     ~SearchLineEdit();
 
 private Q_SLOTS:
     void  lineEditTextChanged(QString arg);
+private:
+    QStringListModel *m_model = nullptr;
+    QCompleter *m_completer= nullptr;
+    bool m_isRecorded = false;
 };
