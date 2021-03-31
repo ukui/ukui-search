@@ -1,4 +1,4 @@
-QT       += core gui dbus  KWindowSystem xml x11extras webenginewidgets
+QT       += core gui dbus  KWindowSystem xml x11extras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
