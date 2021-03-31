@@ -439,7 +439,8 @@ void SettingsWidget::paintEvent(QPaintEvent *event) {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     QPainterPath rectPath;
-    rectPath.addRoundedRect(this->rect(), 6, 6);
+//    rectPath.addRoundedRect(this->rect(), 6, 6);
+    rectPath.addRect(this->rect());
 
 //    // 画一个黑底
 //    QPixmap pixmap(this->rect().size());

@@ -34,7 +34,7 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QDBusMetaType>
-#include <QWebEngineCookieStore>
+//#include <QWebEngineCookieStore>
 #include "config-file.h"
 
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
@@ -81,9 +81,9 @@ void SearchDetailView::clearLayout() {
     m_optionView->hide();
     m_isEmpty = true;
 //    closeWebWidget();
-    if (m_webView) {
-        m_webView->hide();
-    }
+//    if (m_webView) {
+//        m_webView->hide();
+//    }
 //    m_reload = false;
 }
 
@@ -124,42 +124,42 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     clearLayout();
     m_isEmpty = false;
     m_reload = false;
-    if (m_webView) {
-        if (QString::compare(keyword, m_currentKeyword) == 0 && m_net_enable) { //关键词没有发生变化，只把原来的网页show出来
-            m_webView->show();
-            return;
-        }
-    } else {
-        m_webView = new QWebEngineView(this);
-        m_engineProfile = m_webView->page()->profile();
-        m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-        m_webView->setAttribute(Qt::WA_DeleteOnClose);
-        m_webView->move(0, 0);
-        m_webView->setFixedSize(378, 522);
+//    if (m_webView) {
+//        if (QString::compare(keyword, m_currentKeyword) == 0 && m_net_enable) { //关键词没有发生变化，只把原来的网页show出来
+//            m_webView->show();
+//            return;
+//        }
+//    } else {
+//        m_webView = new QWebEngineView(this);
+//        m_engineProfile = m_webView->page()->profile();
+//        m_webView->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+//        m_webView->setAttribute(Qt::WA_DeleteOnClose);
+//        m_webView->move(0, 0);
+//        m_webView->setFixedSize(378, 522);
 
-        connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](bool is_successful){
-            m_reload = true;
-            if (m_engineProfile){
-                m_engineProfile->clearHttpCache(); // 清理缓存
-                m_engineProfile->clearAllVisitedLinks(); // 清理浏览记录
-                m_engineProfile->cookieStore()->deleteAllCookies(); // 清理cookie
-                m_engineProfile->cookieStore()->deleteSessionCookies(); // 清理会话cookie
-            }
-            if (is_successful) {
-                m_webView->show();
-                m_net_enable = true;
-            } else {
-                m_noNetFrame->show();
-                m_net_enable = false;
-            }
-        });
-        connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
-            if (m_reload) {
-                QDesktopServices::openUrl(url);
-                closeWebWidget();
-            }
-        });
-    }
+//        connect(m_webView,&QWebEngineView::loadFinished, this, [ = ](bool is_successful){
+//            m_reload = true;
+//            if (m_engineProfile){
+//                m_engineProfile->clearHttpCache(); // 清理缓存
+//                m_engineProfile->clearAllVisitedLinks(); // 清理浏览记录
+//                m_engineProfile->cookieStore()->deleteAllCookies(); // 清理cookie
+//                m_engineProfile->cookieStore()->deleteSessionCookies(); // 清理会话cookie
+//            }
+//            if (is_successful) {
+//                m_webView->show();
+//                m_net_enable = true;
+//            } else {
+//                m_noNetFrame->show();
+//                m_net_enable = false;
+//            }
+//        });
+//        connect(m_webView, &QWebEngineView::urlChanged, this, [ = ](const QUrl& url) {
+//            if (m_reload) {
+//                QDesktopServices::openUrl(url);
+//                closeWebWidget();
+//            }
+//        });
+//    }
     //如果使用非手机版百度跳转，请使用RequestInterceptor类
 //    RequestInterceptor * interceptor = new RequestInterceptor(m_webView);
 //    QWebEngineProfile * profile = new QWebEngineProfile(m_webView);
@@ -173,20 +173,21 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
     if (!engine.isEmpty()) {
         if (engine == "360") {
-            address = "https://m.so.com/s?q=" + keyword; //360
+            address = "https://so.com/s?q=" + keyword; //360
         } else if (engine == "sougou") {
-            address = "https://wap.sogou.com/web/searchList.jsp?&keyword=" + keyword; //搜狗
+            address = "https://www.sogou.com/web?query=" + keyword; //搜狗
         } else {
-            address = "http://m.baidu.com/s?word=" + keyword; //百度
+            address = "http://baidu.com/s?word=" + keyword; //百度
         }
     } else { //默认值
-        address = "http://m.baidu.com/s?word=" + keyword; //百度
+        address = "http://baidu.com/s?word=" + keyword; //百度
     }
+    QDesktopServices::openUrl(address);
 //    QString str = "http://m.baidu.com/s?word=" + keyword; //百度
 //    QString str = "https://m.so.com/s?q=" + keyword; //360
 //    QString str = "https://wap.sogou.com/web/searchList.jsp?&keyword=" + keyword; //搜狗
 
-    m_webView->load(address);
+//    m_webView->load(address);
 //    m_webView->show();
 }
 
@@ -236,10 +237,10 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
 
 void SearchDetailView::closeWebWidget()
 {
-    if (m_webView) {
-        m_webView->close();
-        m_webView = NULL;
-    }
+//    if (m_webView) {
+//        m_webView->close();
+//        m_webView = NULL;
+//    }
 }
 
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {

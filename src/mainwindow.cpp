@@ -85,7 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QPainterPath path;
     auto rect = this->rect();
     rect.adjust(1, 1, -1, -1);
-    path.addRoundedRect(rect, 6, 6);
+//    path.addRoundedRect(rect, 0, 0);
+    path.addRect(rect);
     setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
     KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
@@ -484,7 +485,8 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     p.setBrush(opt.palette.color(QPalette::Base));
     p.setOpacity(trans);
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect, 6, 6);
+//    p.drawRoundedRect(rect, 6, 6);
+    p.drawRect(rect);
     return QWidget::paintEvent(event);
 
 }

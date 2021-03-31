@@ -22,9 +22,9 @@
 #define SEARCHDETAILVIEW_H
 
 #include <QWidget>
-#include <QWebEngineView>
-#include <QWebEngineSettings>
-#include <QWebEngineProfile>
+//#include <QWebEngineView>
+//#include <QWebEngineSettings>
+//#include <QWebEngineProfile>
 //#include <QWebEngineUrlRequestInterceptor>
 #include <QDesktopServices>
 #include "option-view.h"
@@ -94,8 +94,8 @@ private:
     QLabel * m_noNetIconLabel = nullptr;
     QLabel * m_noNetTipsLabel = nullptr;
 
-    QWebEngineView * m_webView = nullptr;
-    QWebEngineProfile * m_engineProfile = nullptr;
+//    QWebEngineView * m_webView = nullptr;
+//    QWebEngineProfile * m_engineProfile = nullptr;
     bool m_reload = false;
     bool m_net_enable = true;
     QString m_currentKeyword;
