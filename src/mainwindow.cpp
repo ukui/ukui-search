@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     m_searcher = new SearchManager();
+    m_settingsMatch = new SettingsMatch(this);
     //    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
     /*-------------Inotify Test Start---------------*/
     //    QTime t1 = QTime::currentTime();
@@ -329,9 +330,8 @@ void MainWindow::searchContent(QString keyword){
     m_contentFrame->setKeyword(keyword);
 
     //设置搜索
-    SettingsMatch * settingMatchor = new SettingsMatch(this);
     QStringList settingList;
-    settingList = settingMatchor->startMatchApp(keyword);
+    settingList = m_settingsMatch->startMatchApp(keyword);
     m_contentFrame->resetSearchList();
     m_contentFrame->setSettingList(settingList);
 

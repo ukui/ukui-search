@@ -217,7 +217,7 @@ SearchLineEdit::SearchLineEdit()
     m_model->setStringList(GlobalSettings::getInstance()->getSearchRecord());
     m_completer->setModel(m_model);
     m_completer->setCompletionMode(QCompleter::InlineCompletion);
-    m_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    m_completer->setMaxVisibleItems(14);
 
     setCompleter(m_completer);
 
