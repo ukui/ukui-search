@@ -396,7 +396,10 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord)
         {
             std::string s = data.substr((*pos < 60)? 0: (*pos  - 60) , size + 120);
             QString snippet = QString::fromStdString(s);
-            snippet.replace(0,3,"...").replace(snippet.size()-3,3,"...");
+            if(snippet.size() > 6 + QString::fromStdString(keyWord).size())
+                snippet.replace(0,3,"...").replace(snippet.size()-3,3,"...");
+            else
+                snippet.append("...").prepend("...");
             snippets.append(snippet);
             QString().swap(snippet);
             std::string().swap(s);
