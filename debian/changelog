@@ -1,3 +1,24 @@
+ukui-search (0.3.0+0401) v101; urgency=medium
+
+  * Remove qtwebengineview dependence, remove web page load function.
+    - 移除了网页加载功能，点击网页搜索直接跳转到浏览器。
+  * Use kwin effect for settings widget.
+    - 设置页面使用了窗管特效，避免了失焦变黑的问题(45200)。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 01 Apr 2021 11:38:51 +0800
+
+ukui-search (0.2.0+0330) v101; urgency=medium
+
+  * Fix:Title bar will appear if open mainwindow which closed in panel.
+    - 修复了从任务栏预览窗关闭搜索后再打开搜索会出现两个标题栏的问题。
+  * Add function of historycal record.
+    - 增加搜索历史记录功能。
+  * Fix:Add support for polysyllabic character in app search and settings
+    search.
+    - 在应用搜索和设置搜索中增加对多音字的支持(43441,46289)。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 30 Mar 2021 09:52:15 +0800
+
 ukui-search (0.2.0+0325) v101; urgency=medium
 
   * Changed name displayed in ukui-menu from 'ukui-search' to 'Search'.
