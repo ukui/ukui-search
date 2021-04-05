@@ -65,11 +65,16 @@ private:
     const QVector<QString> targetFileTypeVec ={
         QString(".doc"),
         QString(".docx"),
-//        QString(".ppt"),
-//        QString(".pptx"),
-//        QString(".xls"),
-//        QString(".xlsx"),
-        QString(".txt")};
+        QString(".ppt"),
+        //        QString(".pptx"),
+        QString(".xls"),
+        //        QString(".xlsx"),
+        QString(".txt"),
+        QString(".dot"),
+        QString(".wps"),
+        QString(".pps"),
+        QString(".dps"),
+        QString(".et")};
 
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;

@@ -44,7 +44,8 @@ void FileReader::getTextContent(QString path, QString &textContent)
     }
     else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage")
     {
-        if (strsfx.endsWith("doc"))
+        if (strsfx.endsWith("doc") || strsfx.endsWith("dot") || strsfx.endsWith("wps") || strsfx.endsWith("ppt") ||
+                strsfx.endsWith("pps") ||strsfx.endsWith("dps") || strsfx.endsWith("et") || strsfx.endsWith("xls"))
         {
             KBinaryParser searchdata;
             searchdata.RunParser(path,textContent);

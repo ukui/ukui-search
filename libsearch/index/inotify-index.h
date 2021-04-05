@@ -63,11 +63,16 @@ private:
     const QVector<QString> targetFileTypeVec ={
         QString(".doc"),
         QString(".docx"),
-//        QString(".ppt"),
+        QString(".ppt"),
 //        QString(".pptx"),
-//        QString(".xls"),
+        QString(".xls"),
 //        QString(".xlsx"),
-        QString(".txt")};
+        QString(".txt"),
+        QString(".dot"),
+        QString(".wps"),
+        QString(".pps"),
+        QString(".dps"),
+        QString(".et")};
 };
 
 #endif // INOTIFYINDEX_H
