@@ -57,7 +57,7 @@ void InotifyIndex::firstTraverse(){
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
         for (auto i : list){
-            if (i.isDir()){
+            if (i.isDir() && (!(i.isSymLink()))){
                 this->AddWatch(i.absoluteFilePath());
                 bfs.enqueue(i.absoluteFilePath());
             }
@@ -67,11 +67,11 @@ void InotifyIndex::firstTraverse(){
 
 void InotifyIndex::DoSomething(const QFileInfo& fileInfo){
     qDebug() << fileInfo.fileName() << "-------" << fileInfo.absoluteFilePath();
-    if(fileInfo.isDir()){
+    if(fileInfo.isDir() && (!fileInfo.isSymLink())){
         this->AddWatch(fileInfo.absoluteFilePath());
     }
     QQueue<QVector<QString> >* tempFile = new QQueue<QVector<QString> >;
-    tempFile->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0"));
+    tempFile->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     IndexGenerator::getInstance()->creatAllIndex(tempFile);
     if (tempFile)
         delete tempFile;
@@ -178,9 +178,13 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
                 }
 
                 if (event->mask & IN_ISDIR){
-                    AddWatch(currentPath[event->wd] + '/' + event->name);
-                    setPath(currentPath[event->wd] + '/' + event->name);
-                    Traverse();
+                    QString tmp = currentPath[event->wd] + '/' + event->name;
+                    QFileInfo fi(tmp);
+                    if(!fi.isSymLink()){
+                        AddWatch(tmp);
+                        setPath(tmp);
+                        Traverse();
+                    }
                 }
                 goto next;
             }
@@ -236,10 +240,13 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
                         }
                     }
 
-                    AddWatch(currentPath[event->wd] + '/' + event->name);
-                    setPath(currentPath[event->wd] + '/' + event->name);
-                    Traverse();
-
+                    QString tmp = currentPath[event->wd] + '/' + event->name;
+                    QFileInfo fi(tmp);
+                    if(!fi.isSymLink()){
+                        AddWatch(tmp);
+                        setPath(tmp);
+                        Traverse();
+                    }
                 }
                 else {
                     IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));

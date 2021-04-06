@@ -40,8 +40,6 @@
 //void handler(int){
 //    qDebug() << "Recieved SIGTERM!";
 
-
-
 //    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
 //    GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
 //    GlobalSettings::getInstance()->setValue(INDEX_GENERATOR_NORMAL_EXIT, "2");
@@ -51,16 +49,15 @@
 //    GlobalSettings::getInstance()->forceSync(INDEX_GENERATOR_NORMAL_EXIT);
 //    GlobalSettings::getInstance()->forceSync(INOTIFY_NORMAL_EXIT);
 
-
 //    qDebug() << "indexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
 //    qDebug() << "contentIndexDataBaseStatus: " << GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
 
 //    ::exit(0);
 
-////    InotifyIndex::getInstance("/home")->~InotifyIndex();
+//    InotifyIndex::getInstance("/home")->~InotifyIndex();
 
 //    //wait linux kill this thread forcedly
-////    while (true);
+//    while (true);
 //}
 
 
@@ -123,6 +120,7 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    // Determine whether the home directory has been created, and if not, keep waiting.
     char *p_home = NULL;
 
     unsigned int i = 0;
@@ -147,12 +145,15 @@ int main(int argc, char *argv[])
         ::sleep(1);
     }
 
+    // Output log to file
     qInstallMessageHandler(messageOutput);
 
+    // Register meta type
     qDebug() << "ukui-search main start";
     qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
 
+    // If qt version bigger than 5.12, enable high dpi scaling and use high dpi pixmaps?
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -161,6 +162,7 @@ int main(int argc, char *argv[])
   QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
 
+    // Make sure only one ukui-search is running.
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
@@ -177,10 +179,7 @@ int main(int argc, char *argv[])
         parser.process(app);
     }*/
 
-
-    //here need to be modified
-    /*-------------ukuisearchdbus Test start-----------------*/
-
+    // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
     QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
     if(!fifoDir.exists())
         qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
@@ -195,12 +194,12 @@ int main(int argc, char *argv[])
         return -1;
     }
     qDebug()<<"create fifo success\n";
+
+    // Set max_user_watches to a number which is enough big.
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
 
-    /*-------------ukuisearchdbus Test End-----------------*/
-
-    //load chinese character and pinyin file to a Map
+    // load chinese character and pinyin file to a Map
     FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
     /*-------------InotyifyRefact Test Start---------------*/
 //    QTime t1 = QTime::currentTime();
@@ -227,7 +226,7 @@ int main(int argc, char *argv[])
 //    search->onKeywordSearchContent("g,e,x");
     /*-------------文本搜索 Test End-----------------*/
 
-    // 加载国际化文件
+    // Load translations
     QTranslator translator;
     try {
         if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw -1;
@@ -244,9 +243,8 @@ int main(int argc, char *argv[])
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
-
+    //set main window to the center of screen
     MainWindow *w = new MainWindow;
-    QStringList arguments = QCoreApplication::arguments();
 //    centerToScreen(w);
 //    w->moveToPanel();
     centerToScreen(w);
@@ -259,47 +257,38 @@ int main(int argc, char *argv[])
 //    hints.decorations = MWM_DECOR_BORDER;
 //    XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), hints);
 
+    //TODO
+    //wait Ping jiang before 2021.04.10
     app.setActivationWindow(w);
 
+    // Processing startup parameters
     if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
 //        w->moveToPanel();
         centerToScreen(w);
         XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
         w->show();
     }
-//    if(arguments.size()>1)
-//    w->searchContent(arguments.at(1));
+
+    // TODO
+    // Wait Ping jiang before 2021.04.10
     QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
 
-//    qDebug() << "main start";
-//    FirstIndex* fi = new FirstIndex("/home");
-//    fi->start();
+    // Start app search thread
     AppMatch::getAppMatch()->start();
-    //wtf???
-//     AppMatch apm;
-//     apm.start();
+
+    // TODO
+    // Set threads which in global thread pool expiry time in 5ms, some prolems here
     QThreadPool::globalInstance()->setExpiryTimeout(5);
-//    QThreadPool::globalInstance()->clear();
-//    setAutoDelete(true);
 
-//    FirstIndex fi("/home/zhangzihao/Desktop/qwerty");
-//    FirstIndex* fi = new FirstIndex("/home/zhangzihao/Desktop/qwerty");
-
+    // TODO
+    // First insdex start, the parameter us useless, should remove the parameter
     FirstIndex fi("/home/zhangzihao/Desktop");
     fi.start();
-//    fi.wait();
-//    fi->wait();
-//    fi->exit();
-//    delete fi;
-//    assert(false);
+
+    // TODO
+    // Inotify index start, the parameter us useless, should remove the parameter
     InotifyIndex* ii = InotifyIndex::getInstance("/home");
-//    InotifyIndex ii("/home");
     ii->start();
-
-//    qDebug() << "sigset start!";
-//    sigset( SIGTERM, handler);
-//    qDebug() << "sigset end!";
-
 
     return app.exec();
 }
