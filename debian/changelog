@@ -1,3 +1,15 @@
+ukui-search (0.3.0+0406) v101; urgency=medium
+
+  * Add support for '.xls', '.dot','.wps', '.pps', '.dps', '.et','.ppt'.
+    - 增加了对'.xls', '.dot','.wps', '.pps', '.dps',
+     '.et','.ppt'格式文本内容索引的支持。
+  * Fix: symbolic links may cause main blocked.
+    - 解决了符号链接有可能导致索引卡死的bug。
+  * Fix: Snippet will not be displayed correctly when file content is too short.
+    - 修复了当文件内容太短时，显示详情错误的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 06 Apr 2021 08:40:38 +0800
+
 ukui-search (0.3.0+0401) v101; urgency=medium
 
   * Remove qtwebengineview dependence, remove web page load function.
