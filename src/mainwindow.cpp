@@ -53,18 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
-    m_searcher = new SearchManager();
+    m_searcher = new SearchManager(this);
     m_settingsMatch = new SettingsMatch(this);
-    //    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
-    /*-------------Inotify Test Start---------------*/
-    //    QTime t1 = QTime::currentTime();
-    //    InotifyManagerRefact* im = new InotifyManagerRefact("/home");
-    //    im->Traverse();
-    //    QTime t2 = QTime::currentTime();
-    //    qDebug() << t1;
-    //    qDebug() << t2;
-    //    im->start();
-    /*-------------Inotify Test End-----------------*/
 
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
@@ -453,6 +443,8 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
 //        m_seach_app_thread->stop();
+        break;
+    default:
         break;
     }
 
