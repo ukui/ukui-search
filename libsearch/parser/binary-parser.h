@@ -50,20 +50,20 @@ typedef struct pps_entry_tag
 } ppsEntryType;
 
 /* Excel Record Struct*/
-//typedef struct excelRecord
-//{
-//    excelRecord()
-//    {
-//        usLen = 0;
-//        usRichLen = 0;
-//        ulWLen = 0;
-//        bUni = false;
-//    }
-//    ushort usLen;
-//    ushort usRichLen;
-//    ulong ulWLen;
-//    bool bUni;
-//} excelRecord;
+typedef struct excelRecord
+{
+    excelRecord()
+    {
+        usLen = 0;
+        usRichLen = 0;
+        ulWLen = 0;
+        bUni = false;
+    }
+    ushort usLen;
+    ushort usRichLen;
+    ulong ulWLen;
+    bool bUni;
+} excelRecord;
 
 typedef struct readDataParam
 {
@@ -104,11 +104,11 @@ private:
         const ULONG *aulSBD, size_t tSBDLen,
         const UCHAR *aucHeader,QString &content);
 
-//	int readSSTRecord(readDataParam &rdParam, ppsInfoType, ulong &ulOff, ushort usPartLen);
-//	int read8BiffRecord(uchar uFlag, ulong ulOff, ulong &ulNext, readDataParam &rdParam, excelRecord &eR);
+    int readSSTRecord(readDataParam &rdParam, ppsInfoType, ulong &ulOff, ushort usPartLen,QString &content);
+    int read8BiffRecord(uchar uFlag, ulong ulOff, ulong &ulNext, readDataParam &rdParam, excelRecord &eR);
 
-//	ULONG readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* aulBBD,
-//                        size_t tBBDLen, ULONG ulPos);
+    ULONG readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* aulBBD,
+                        size_t tBBDLen, ULONG ulPos,QString &content);
 
 	QString m_strFileName;
 };

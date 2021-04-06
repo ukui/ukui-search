@@ -5058,9 +5058,10 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 
 				if (bUsesUnicode)
 				{
-					ushort* usAucData = (ushort*)ptaucBytes;
+                    ushort* usAucData = (ushort*)ptaucBytes;
                     content.append(QString::fromUtf16(usAucData).replace("\r",""));
                     usAucData = (ushort*)xfree((void*)usAucData);
+                    ptaucBytes = NULL;
                     if(content.length() >= 682666) //20480000/3
                         break;
 				}
@@ -5080,176 +5081,186 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 	return false;
 }/* end of bGet8DocumentText */
 
-//int KBinaryParser::readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, ulong &ulOff, ushort usPartLen)
-//{
-//	UCHAR chSizeData[8];
-//	if (readData(rdParam, chSizeData, ulOff, 8) != 0)
-//		return -1;
+int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, ulong &ulOff, ushort usPartLen, QString &content)
+{
+    UCHAR chSizeData[8];
+    if (readData(rdParam, chSizeData, ulOff, 8) != 0)
+        return -1;
 
-//	ulOff += 8;
-//	usPartLen -= 8;
-//	ulong ulSize = ulGetLong(0x04, chSizeData) + 1;
-//	ulong ulCount = 1;
-//	ulong ulNextOff = 0;
-//	while ((ulCount < ulSize) && (ulOff < PPS_info.tWorkBook.ulSize))
-//	{
-//		UCHAR chHeader[3];
-//		if (readData(rdParam, chHeader, ulOff + ulNextOff, 3) != 0)
-//			break;
+    ulOff += 8;
+    usPartLen -= 8;
+    ulong ulSize = ulGetLong(0x04, chSizeData) + 1;
+    ulong ulCount = 1;
+    ulong ulNextOff = 0;
+    while ((ulCount < ulSize) && (ulOff < PPS_info.tWorkBook.ulSize))
+    {
+        UCHAR chHeader[3];
+        if (readData(rdParam, chHeader, ulOff + ulNextOff, 3) != 0)
+            break;
 
-//		ushort uscharlen = usGetWord(0x00, chHeader);
-//		ushort usCharByteLen = uscharlen;
-//		UCHAR ucFlag = ucGetByte(0x02, chHeader);
-//		ulNextOff += 3;
-//		excelRecord eRrd;
-//		if (read8BiffRecord(ucFlag, ulOff, ulNextOff, rdParam, eRrd) != 0)
-//			break;
+        ushort uscharlen = usGetWord(0x00, chHeader);
+        ushort usCharByteLen = uscharlen;
+        UCHAR ucFlag = ucGetByte(0x02, chHeader);
+        ulNextOff += 3;
+        excelRecord eRrd;
+        if (read8BiffRecord(ucFlag, ulOff, ulNextOff, rdParam, eRrd) != 0)
+            break;
 
-//		ushort ustotalLen = uscharlen + eRrd.usRichLen * 4 + eRrd.ulWLen;
-//		if (!eRrd.bUni)
-//			ustotalLen += uscharlen;
-//		UCHAR* chData= (UCHAR*)xmalloc(ustotalLen);
-//		if (ulNextOff < usPartLen && (ulNextOff + ustotalLen) >= usPartLen)
-//		{
-//			ushort usIdf = usPartLen - ulNextOff;
-//			uchar chTemp[MAX_BUFF_SIZE];
-//			memset(chTemp, 0 ,MAX_BUFF_SIZE);
-//			if (readData(rdParam, chTemp, ulOff + ulNextOff, usIdf + 5) != 0)
-//				break;
+        ushort ustotalLen = uscharlen + eRrd.usRichLen * 4 + eRrd.ulWLen;
+        if (!eRrd.bUni)
+            ustotalLen += uscharlen;
+        UCHAR* chData= (UCHAR*)xmalloc(ustotalLen);
+        if (ulNextOff < usPartLen && (ulNextOff + ustotalLen) >= usPartLen)
+        {
+            ushort usIdf = usPartLen - ulNextOff;
+            uchar chTemp[MAX_BUFF_SIZE];
+            memset(chTemp, 0 ,MAX_BUFF_SIZE);
+            if (readData(rdParam, chTemp, ulOff + ulNextOff, usIdf + 5) != 0)
+                break;
 
-//			bool bTemp = false;
-//			ulOff += usPartLen;
-//			ulOff += 4;
-//			memcpy(&usPartLen, chTemp + usIdf + 2, 2);
-//			ushort usOthTxtLen = ustotalLen - usIdf;
-//			bool bAnotherCompare = (usOthTxtLen == 0 || (usCharByteLen - usIdf) == 0) || usCharByteLen < usIdf;
-//			ulong ulNoUse = 0;
-//			bool bUniFlg = false;
-//			if (!bAnotherCompare)
-//			{
-//				uchar chFlag;
+            bool bTemp = false;
+            ulOff += usPartLen;
+            ulOff += 4;
+            memcpy(&usPartLen, chTemp + usIdf + 2, 2);
+            ushort usOthTxtLen = ustotalLen - usIdf;
+            bool bAnotherCompare = (usOthTxtLen == 0 || (usCharByteLen - usIdf) == 0) || usCharByteLen < usIdf;
+            ulong ulNoUse = 0;
+            bool bUniFlg = false;
+            if (!bAnotherCompare)
+            {
+                uchar chFlag;
 
-//				memcpy(&chFlag, chTemp + usIdf + 4, 1);
-//				if (chFlag == 0x00 || chFlag == 0x01 || chFlag == 0x05 || chFlag == 0x09 || chFlag == 0x08 || chFlag == 0x04 || chFlag == 0x0c)
-//				{
-//					bTemp = true;
-//					ulOff ++;
+                memcpy(&chFlag, chTemp + usIdf + 4, 1);
+                if (chFlag == 0x00 || chFlag == 0x01 || chFlag == 0x05 || chFlag == 0x09 || chFlag == 0x08 || chFlag == 0x04 || chFlag == 0x0c)
+                {
+                    bTemp = true;
+                    ulOff ++;
 
-//					ulong ulNextTep = 0;
-//					excelRecord eRTmp;
-//					if (read8BiffRecord(chFlag, ulOff, ulNextTep, rdParam, eRTmp) != 0)
-//						break;
-//					ulOff += ulNextTep;
-//					bUniFlg = eRTmp.bUni;
-//					ulNoUse = eRTmp.usRichLen * 4 + eRTmp.ulWLen;
-//				}
-//			}
-//			memcpy(chData, chTemp, usIdf);
-//			ulNextOff = 0;
-//			ustotalLen = usOthTxtLen + ulNoUse;
+                    ulong ulNextTep = 0;
+                    excelRecord eRTmp;
+                    if (read8BiffRecord(chFlag, ulOff, ulNextTep, rdParam, eRTmp) != 0)
+                        break;
+                    ulOff += ulNextTep;
+                    bUniFlg = eRTmp.bUni;
+                    ulNoUse = eRTmp.usRichLen * 4 + eRTmp.ulWLen;
+                }
+            }
+            memcpy(chData, chTemp, usIdf);
+            ulNextOff = 0;
+            ustotalLen = usOthTxtLen + ulNoUse;
 
-//			if (usOthTxtLen > 0)
-//			{
-//				memset(chTemp, 0 ,MAX_BUFF_SIZE);
-//				if (readData(rdParam, chTemp, ulOff, usOthTxtLen) != 0)
-//					return -1;
-//				memcpy(chData + usIdf , chTemp , usOthTxtLen);
-//			}
-//			if (bTemp)
-//				usPartLen --;
-//		}
-//		else
-//		{
-//			if (readData(rdParam, chData, ulOff + ulNextOff, ustotalLen) != 0)
-//				break;
-//		}
+            if (usOthTxtLen > 0)
+            {
+                memset(chTemp, 0 ,MAX_BUFF_SIZE);
+                if (readData(rdParam, chTemp, ulOff, usOthTxtLen) != 0)
+                    return -1;
+                memcpy(chData + usIdf , chTemp , usOthTxtLen);
+            }
+            if (bTemp)
+                usPartLen --;
+        }
+        else
+        {
+            if (readData(rdParam, chData, ulOff + ulNextOff, ustotalLen) != 0)
+                break;
+        }
 
-//		if (eRrd.bUni)
-//		{
-////			QtConcurrent::run(this, &KBinaryParser::compare2Word, (const char*)chData, m_strKey, m_strFileName);
-//		}
-//		else
-//		{
-//            ushort* usData = (ushort*)chData;
-//            qDebug() << QString::fromUtf16(usData);
-////			QtConcurrent::run(this, &KBinaryParser::compare2UsWord, usData, uscharlen, m_strKey, m_strKey.length(), m_strFileName);
-//		}
-//		ulNextOff += ustotalLen;
-//		ulCount += 1;
-//	}
+        if (eRrd.bUni)
+        {
+            qDebug()<<QString((const char*)chData);
+            chData = (UCHAR*)xfree((void*)chData);
+            qWarning()<<"Unsupport excel type:"<<m_strFileName;
+        }
+        else
+        {
+            ushort* usData = (ushort*)chData;
 
-//	if (ulCount >= ulSize)
-//		return -1;
-//}
+            content.append(QString::fromUtf16(usData).replace("\r",""));
+            usData = (ushort*)xfree((void*)usData);
+            chData = NULL;
+            if(content.length() >= 682666) //20480000/3
+                break;
+        }
+        ulNextOff += ustotalLen;
+        ulCount += 1;
+    }
 
-//int KBinaryParser::read8BiffRecord(uchar ucFlag, ulong ulOff, ulong &ulNext, readDataParam &rdParam, excelRecord &eR)
-//{
-//	bool butf8 = true;
-//	if (ucFlag & 0x08)
-//	{
-//		uchar chiRich[2];
-//		if (readData(rdParam, chiRich, ulOff + ulNext, 2) != 0)
-//			return -1;
-//		eR.usRichLen = usGetWord(0x00, chiRich);
-//		ulNext += 2;
-//	}
-//	if(ucFlag & 0x04)
-//	{
-//		uchar chExt[4];
-//		if (readData(rdParam, chExt, ulOff + ulNext, 4) != 0)
-//			return -1;
-//		eR.ulWLen = ulGetLong(0x00, chExt);
-//		ulNext += 4;
-//	}
-//	if ((ucFlag & 0x01))
-//	{
-//		butf8 = false;
-//	}
-//	eR.bUni = butf8;
-//	return 0;
-//}
+    if (ulCount >= ulSize)
+        return -1;
+}
 
-//ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* aulBBD, size_t tBBDLen, ULONG ulPos)
-//{
-//	UCHAR	aucHeader[PPT_RECORD_HEADER];
-//	ULONG	ulOff = ulPos;
-//	/* Read the headerblock */
-//	if (!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
-//			aulBBD, tBBDLen, BIG_BLOCK_SIZE,
-//			aucHeader, ulOff, PPT_RECORD_HEADER))
-//		return -1;
+int KBinaryParser::read8BiffRecord(uchar ucFlag, ulong ulOff, ulong &ulNext, readDataParam &rdParam, excelRecord &eR)
+{
+    bool butf8 = true;
+    if (ucFlag & 0x08)
+    {
+        uchar chiRich[2];
+        if (readData(rdParam, chiRich, ulOff + ulNext, 2) != 0)
+            return -1;
+        eR.usRichLen = usGetWord(0x00, chiRich);
+        ulNext += 2;
+    }
+    if(ucFlag & 0x04)
+    {
+        uchar chExt[4];
+        if (readData(rdParam, chExt, ulOff + ulNext, 4) != 0)
+            return -1;
+        eR.ulWLen = ulGetLong(0x00, chExt);
+        ulNext += 4;
+    }
+    if ((ucFlag & 0x01))
+    {
+        butf8 = false;
+    }
+    eR.bUni = butf8;
+    return 0;
+}
 
-//	ulOff += PPT_RECORD_HEADER;
-//	USHORT usVersion = usGetWord(0x00, aucHeader);
-//	USHORT usType = usGetWord(0x02, aucHeader);
-//	ULONG ulLen = ulGetLong(0x04, aucHeader);
-//	USHORT usVer = usVersion & 0xF;
-//	if (usVer == 0xF)
-//	{
-//		while (ulOff < ulLen)
-//		{
-//            ulOff = readPPtRecord(pFile, PPS_info, aulBBD, tBBDLen, ulOff);
-//		}
-//	}
-//	else
-//	{
-//		if (usType == PPT_TEXTBYTEATOM || usType == PPT_TEXTCHARATOM)
-//		{
-//			long llen = (long)ulLen;
-//			UCHAR* chData = (UCHAR*)xmalloc(llen);
-//			if (!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
-//					aulBBD, tBBDLen, BIG_BLOCK_SIZE,
-//					chData, ulOff, llen))
-//				return -1;
-//			ushort* usData = (ushort*)chData;
-//            qDebug() << QString::fromUtf16(usData);
+ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* aulBBD, size_t tBBDLen, ULONG ulPos,QString &content)
+{
+    UCHAR	aucHeader[PPT_RECORD_HEADER];
+    ULONG	ulOff = ulPos;
+    /* Read the headerblock */
+    if (!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
+            aulBBD, tBBDLen, BIG_BLOCK_SIZE,
+            aucHeader, ulOff, PPT_RECORD_HEADER))
+        return -1;
 
-////			QtConcurrent::run(this, &KBinaryParser::compare2UsWord, usData, llen / 2, strKey, strKey.length(), m_strFileName);
-//		}
-//		ulOff += ulLen;
-//	}
-//	return ulOff;
-//}
+    ulOff += PPT_RECORD_HEADER;
+    USHORT usVersion = usGetWord(0x00, aucHeader);
+    USHORT usType = usGetWord(0x02, aucHeader);
+    ULONG ulLen = ulGetLong(0x04, aucHeader);
+    USHORT usVer = usVersion & 0xF;
+    if (usVer == 0xF)
+    {
+        while (ulOff < ulLen)
+        {
+            ulOff = readPPtRecord(pFile, PPS_info, aulBBD, tBBDLen, ulOff,content);
+        }
+    }
+    else
+    {
+        if (usType == PPT_TEXTBYTEATOM || usType == PPT_TEXTCHARATOM)
+        {
+            long llen = (long)ulLen;
+            UCHAR* chData = (UCHAR*)xmalloc(llen);
+            if (!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
+                    aulBBD, tBBDLen, BIG_BLOCK_SIZE,
+                    chData, ulOff, llen))
+                return -1;
+            ushort* usData = (ushort*)chData;
+
+            content.append(QString::fromUtf16(usData).replace("\r",""));
+
+            usData = (ushort*)xfree((void*)usData);
+            chData = NULL;
+        }
+        ulOff += ulLen;
+        if(content.length() >= 682666) //20480000/3
+            return ulOff;
+    }
+    return ulOff;
+}
 
 int KBinaryParser::InitDocOle(FILE* pFile,long lFilesize,QString &content)
 {
@@ -5399,44 +5410,44 @@ int KBinaryParser::InitDocOle(FILE* pFile,long lFilesize,QString &content)
 						aulBBD, tBBDLen, aulSBD, tSBDLen,
                         aucHeader,content);
 	}
+    else if (PPS_info.type == Excel)
+    {
+        readParam.ulStBlk = PPS_info.tWorkBook.ulSB;
+        UCHAR aucHeader[4];
+        ulong ulOff = 0;
+        if (readData(readParam, aucHeader, 0, 8) != 0)
+            return -1;
+        ulOff += 4;
+        USHORT usType = usGetWord(0x00, aucHeader);
+
+        while (ulOff < PPS_info.tWorkBook.ulSize)
+        {
+            USHORT usLen = usGetWord(0x02, aucHeader);
+            ulOff += usLen;
+            if (readData(readParam, aucHeader, ulOff, 4) != 0)
+                break;
+            ulOff += 4;
+            usType = usGetWord(0x00, aucHeader);
+            ushort usPartLen = usGetWord(0x02, aucHeader);
+            if (usType == 0x00FC)
+            {
+                if (readSSTRecord(readParam, PPS_info, ulOff, usPartLen,content) != 0)
+                    break;
+            }
+        }
+    }
+    else if (PPS_info.type == Ppt)
+    {
+        ULONG ulOff = 0;
+        while (ulOff < PPS_info.tPPTDocument.ulSize)
+        {
+            ulOff = readPPtRecord(pFile, &PPS_info, aulBBD, tBBDLen, ulOff,content);
+        }
+    }
     else
     {
         qWarning()<<"Unsupport doc type:"<<m_strFileName;
     }
-//	else if (PPS_info.type == Excel)
-//	{
-//		readParam.ulStBlk = PPS_info.tWorkBook.ulSB;
-//		UCHAR aucHeader[4];
-//		ulong ulOff = 0;
-//		if (readData(readParam, aucHeader, 0, 8) != 0)
-//			return -1;
-//		ulOff += 4;
-//		USHORT usType = usGetWord(0x00, aucHeader);
-
-//		while (ulOff < PPS_info.tWorkBook.ulSize)
-//		{
-//			USHORT usLen = usGetWord(0x02, aucHeader);
-//			ulOff += usLen;
-//			if (readData(readParam, aucHeader, ulOff, 4) != 0)
-//				break;
-//			ulOff += 4;
-//			usType = usGetWord(0x00, aucHeader);
-//			ushort usPartLen = usGetWord(0x02, aucHeader);
-//			if (usType == 0x00FC)
-//			{
-//				if (readSSTRecord(readParam, PPS_info, ulOff, usPartLen) != 0)
-//					break;
-//			}
-//		}
-//	}
-//	else if (PPS_info.type == Ppt)
-//	{
-//		ULONG ulOff = 0;
-//		while (ulOff < PPS_info.tPPTDocument.ulSize)
-//		{
-//            ulOff = readPPtRecord(pFile, &PPS_info, aulBBD, tBBDLen, ulOff,);
-//		}
-//	}
 	return 0;
 }
 

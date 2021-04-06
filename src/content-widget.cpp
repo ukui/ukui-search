@@ -112,6 +112,7 @@ void ContentWidget::initListView()
     m_appListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Apps);
     m_bestListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Best);
     m_webListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Web);
+
     setupConnect(m_fileListView);
     setupConnect(m_dirListView);
     setupConnect(m_contentListView);
