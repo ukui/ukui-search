@@ -97,27 +97,27 @@ QVariant SearchItemModel::data(const QModelIndex &index, int role) const
     if(!index.isValid())
         return QVariant();
     switch (index.column()) {
-        case Icon: {
-            switch (role) {
-                case Qt::DecorationRole: {
-                    return m_item->getIcon(index.row());
-                }
-                default:
-                    return QVariant();
-            }
+    case Icon: {
+        switch (role) {
+        case Qt::DecorationRole: {
+            return m_item->getIcon(index.row());
         }
-        case Name: {
-            switch (role) {
-                case Qt::DisplayRole: {
-                    return QVariant(m_item->getName(index.row()));
-                }
-//                case Qt::ForegroundRole: {
-//                  return QColor(50, 50, 50);
-//                }
-                default:
-                    return QVariant();
-            }
+        default:
+            return QVariant();
         }
+    }
+    case Name: {
+        switch (role) {
+        case Qt::DisplayRole: {
+            return QVariant(m_item->getName(index.row()));
+        }
+            //                case Qt::ForegroundRole: {
+            //                  return QColor(50, 50, 50);
+            //                }
+        default:
+            return QVariant();
+        }
+    }
     }
 
     return QVariant();
