@@ -62,19 +62,21 @@ private:
     //test
     QQueue<QVector<QString>>* q_index;
     QQueue<QString>* q_content_index;
-    const QVector<QString> targetFileTypeVec ={
-        QString(".doc"),
-        QString(".docx"),
-        QString(".ppt"),
-        //        QString(".pptx"),
-        QString(".xls"),
-        //        QString(".xlsx"),
-        QString(".txt"),
-        QString(".dot"),
-        QString(".wps"),
-        QString(".pps"),
-        QString(".dps"),
-        QString(".et")};
+
+    const QMap<QString, bool> targetFileTypeMap = {
+        std::map<QString, bool>::value_type("doc", true),
+        std::map<QString, bool>::value_type("docx", true),
+        std::map<QString, bool>::value_type("ppt", true),
+//        std::map<QString, bool>::value_type(".pptx", true),
+        std::map<QString, bool>::value_type("xls", true),
+//        std::map<QString, bool>::value_type(".xlsx", true),
+        std::map<QString, bool>::value_type("txt", true),
+        std::map<QString, bool>::value_type("dot", true),
+        std::map<QString, bool>::value_type("wps", true),
+        std::map<QString, bool>::value_type("pps", true),
+        std::map<QString, bool>::value_type("dps", true),
+        std::map<QString, bool>::value_type("et", true)
+    };
 
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;
