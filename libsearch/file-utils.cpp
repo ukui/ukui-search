@@ -502,6 +502,7 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
  */
 void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
 {
+    //fix me :optimized by xpath??
     QFileInfo info = QFileInfo(path);
     if(!info.exists()||info.isDir())
         return;
@@ -517,6 +518,7 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
 
     QDomDocument doc;
     doc.setContent(fileR.readAll());
+    fileR.close();
     QDomElement first = doc.firstChildElement("w:document");
     QDomElement body = first.firstChildElement("w:body");
     while(!body.isNull())
@@ -529,7 +531,7 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
             {
                 QDomElement wt = wr.firstChildElement("w:t");
                 textcontent.append(wt.text().replace("\n",""));
-                if(textcontent.length() >= 682666) //20480000/3
+                if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
                 {
                     file.close();
                     return;
@@ -544,13 +546,86 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
     return;
 }
 
+void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
+{
+    //fix me :optimized by xpath??
+    QFileInfo info = QFileInfo(path);
+    if(!info.exists()||info.isDir())
+        return;
+    QuaZip file(path);
+    if(!file.open(QuaZip::mdUnzip))
+        return;
+    QString prefix("ppt/slides/slide");
+    QStringList fileList;
+    for(QString i : file.getFileNameList())
+    {
+        if(i.startsWith(prefix))
+            fileList<<i;
+    }
+    if(fileList.isEmpty())
+        return;
+    QDomElement sptree;
+    QDomElement sp;
+    QDomElement txbody;
+    QDomElement ap;
+    QDomElement ar;
+    QDomElement at;
+    for(int i =0;i<fileList.size();++i)
+    {
+        QString name = prefix + QString::number(i+1) + ".xml";
+        if(!file.setCurrentFile(name))
+        {
+            continue;
+        }
+        QuaZipFile fileR(&file);
+        fileR.open(QIODevice::ReadOnly);
+        QDomDocument doc;
+        doc.setContent(fileR.readAll());
+        fileR.close();
+        sptree = doc.firstChildElement("p:sld").firstChildElement("p:cSld").firstChildElement("p:spTree");
+        while(!sptree.isNull())
+        {
+            sp= sptree.firstChildElement("p:sp");
+            while(!sp.isNull())
+            {
+                txbody= sp.firstChildElement("p:txBody");
+                while(!txbody.isNull())
+                {
+                    ap = txbody.firstChildElement("a:p");
+                    while(!ap.isNull())
+                    {
+                        ar = ap.firstChildElement("a:r");
+                        while(!ar.isNull())
+                        {
+                            at = ar.firstChildElement("a:t");
+                            textcontent.append(at.text().replace("\r","")).replace("\t"," ");
+                            if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+                            {
+                                file.close();
+                                return;
+                            }
+                            ar = ar.nextSiblingElement();
+                        }
+                        ap = ap.nextSiblingElement();
+                    }
+                    txbody = txbody.nextSiblingElement();
+                }
+                sp = sp.nextSiblingElement();
+            }
+            sptree = sptree.nextSiblingElement();
+        }
+    }
+    file.close();
+    return;
+}
+
 void FileUtils::getTxtContent(QString &path, QString &textcontent)
 {
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
 
-    QByteArray encodedString = file.read(20480000);
+    QByteArray encodedString = file.read(MAX_CONTENT_LENGTH);
 
     uchardet_t chardet = uchardet_new();
     if(uchardet_handle_data(chardet,encodedString.constData(),encodedString.size()) !=0)
