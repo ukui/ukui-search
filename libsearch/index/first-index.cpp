@@ -35,8 +35,8 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
     qDebug() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
     qDebug() << "inotifyIndexStatus: " << inotifyIndexStatus;
 
-
-    if (indexDataBaseStatus == "" || contentIndexDataBaseStatus == ""){
+    /* || contentIndexDataBaseStatus == ""*/
+    if (indexDataBaseStatus == ""){
         this->bool_dataBaseExist = false;
     }
     else{
@@ -75,7 +75,7 @@ FirstIndex::~FirstIndex()
 void FirstIndex::DoSomething(const QFileInfo& fileInfo){
 //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
-    if ((!fileInfo.fileName().split(".").isEmpty()) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])){
+    if ((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])){
         this->q_content_index->enqueue(fileInfo.absoluteFilePath());
     }
 }
