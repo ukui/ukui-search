@@ -227,12 +227,12 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
     Q_FOREACH(QString path, list) {
         FolderListItem * item = new FolderListItem(m_dirListWidget, path);
         m_dirListLyt->addWidget(item);
-        item->setMaximumWidth(this->width() - 52);
+        item->setMaximumWidth(this->width() - 68);
         connect(item, SIGNAL(onDelBtnClicked(const QString&)), this, SLOT(onBtnDelClicked(const QString&)));
         m_blockdirs ++;
     }
     this->resize();
-    m_dirListWidget->setFixedWidth(this->width() - 52);
+    m_dirListWidget->setFixedWidth(this->width() - 68);
 //    m_dirListLyt->addStretch();
 }
 
@@ -481,11 +481,11 @@ void SettingsWidget::resize()
 //        this->setFixedSize(528, 515);
 //    }
     if (m_blockdirs <= 4) {
-        m_dirListArea->setFixedHeight(32 * m_blockdirs);
+        m_dirListArea->setFixedHeight(32 * m_blockdirs + 4);
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
-        m_dirListArea->setFixedHeight(32 * 4);
+        m_dirListArea->setFixedHeight(32 * 4 + 4);
     }
     this->setFixedSize(528, 410 + m_dirListArea->height());
 }
