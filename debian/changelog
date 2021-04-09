@@ -1,3 +1,25 @@
+ukui-search (3.0.1-1+0317) v101; urgency=medium
+
+  * fix:打开全局搜索后，可以从毛玻璃页面较明显地看到桌面图标轮廓
+  * fix:全局搜索应用程序模块右侧有滚动条，与UI不符
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Wed, 17 Mar 2021 15:06:38 +0800
+
+ukui-search (3.0.1-1+0311) v101; urgency=medium
+
+  * fix:搜索设置项会出现多少问题
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Thu, 11 Mar 2021 10:50:28 +0800
+
+ukui-search (3.0.1-1+0224) v101; urgency=medium
+
+  * fix:应用为一条时显示不全 
+  * fix:可以搜到控制面板键盘选项
+  * fix:输入中文标点会出现应用结果
+  * fix:有些设置项搜不到
+
+ -- sunfengsheng <sunfengsheng@kylinos.cn>  Wed, 24 Feb 2021 09:29:50 +0800
+
 ukui-search (3.0.1-1+0127) v101; urgency=medium
 
   * fix:文件名字大于40不显示

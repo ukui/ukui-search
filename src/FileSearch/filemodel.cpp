@@ -209,12 +209,22 @@ void filemodel::run(int row,int column){
             if(file.contains("#")){
                 file.replace("#","%23");
             }
+            if(file.contains(" ")){
+                file.replace(" ","%20");
+            }
             m_szHelpDoc = QString(QString::fromLocal8Bit("file://")) + file;
         }else{
             file=openPathresult.at(row);
+            if(file.contains("#")){
+                file.replace("#","%23");
+            }
+            if(file.contains(" ")){
+                file.replace(" ","%20");
+            }
             m_szHelpDoc = QString(QString::fromLocal8Bit("file://")) + file;
         }
         QString  cmd= QString(QString::fromLocal8Bit("xdg-open "))+ m_szHelpDoc;
+        qDebug()<<"cmd    :"<<cmd;
         QProcess app;
         app.setProgram(cmd);
         app.startDetached(app.program());

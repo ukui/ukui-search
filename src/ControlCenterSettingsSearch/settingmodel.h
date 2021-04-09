@@ -47,8 +47,6 @@ private:
     QMap<QString,QStringList> chine_searchlist;
     QStringList pinyin_searchresult;
     QStringList chine_searchresult;
-    QString index1;
-    QString index;
     QString index2;
     QList<QString> commandresult;
     QList<QString> m_Showresult;

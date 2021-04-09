@@ -1,5 +1,11 @@
 #include "inputbox.h"
 #include "src/Style/style.h"
+#include<sys/types.h>
+#include<unistd.h>
+
+#define PANELMODEL_SETTINGS      "org.ukui.SettingsDaemon.plugins.tablet-mode"
+#define PANEL_MODEL              "tablet-mode"
+
 /**
  * @brief ukui-search顶部搜索界面
  */
@@ -18,11 +24,13 @@ void UKuiSeachBarWidget::paintEvent(QPaintEvent *e)
 {
     QPainter p(this);
     QRect rect = this->rect();
+    QPen pen;
+    pen.setColor(QColor(38,246,234));
+    pen.setWidth(3);
     p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
     p.setBrush(qApp->palette().color(QPalette::Base));
-//    p.setBrush(QBrush(QColor(255,255,255)));
     p.setOpacity(1);
-    p.setPen(Qt::NoPen);
+    p.setPen(pen);
     p.drawRoundedRect(rect,30,30);
     QWidget::paintEvent(e);
 }
@@ -117,8 +125,17 @@ void UkuiSearchBarHLayout::searchContent(QString searchcontent){
 /**
  * @brief UKuiSearchLineEdit  全局搜索的输入框
  */
-UKuiSearchLineEdit::UKuiSearchLineEdit()
+UKuiSearchLineEdit::UKuiSearchLineEdit():
+    mModel(false)
 {
+
+    const QByteArray model_id(PANELMODEL_SETTINGS);
+    //开机第一次检测模式执行对应的任务栏
+    if(QGSettings::isSchemaInstalled(model_id)){
+        model_gsettings = new QGSettings(model_id);
+        mModel=model_gsettings->get(PANEL_MODEL).toBool();
+    }
+
     const QByteArray style_id(ORG_UKUI_STYLE);
 
     /*
@@ -157,7 +174,6 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
     });
     this->setFocusPolicy(Qt::StrongFocus);
     this->setFocus();
-
     connect(this,&UKuiSearchLineEdit::textChanged,this,[=](){
         if(this->text().isEmpty()){
             editLabel->show();
@@ -165,7 +181,10 @@ UKuiSearchLineEdit::UKuiSearchLineEdit()
             editLabel->hide();
         }
     });
-
+    QTimer::singleShot(500,this,[=](){
+        if(mModel)
+        sogouInput();
+    });
 
     /*发送输入框文字改变的dbus*/
     QDBusConnection::sessionBus().unregisterService("org.ukui.search.service");
@@ -210,8 +229,24 @@ void UKuiSearchLineEdit::styleChange()
 }
 
 void UKuiSearchLineEdit::mousePressEvent(QMouseEvent *event){
+    if(mModel)
+    sogouInput();
     if(this->text().isEmpty()){
         editLabel->hide();
     }
+}
+void UKuiSearchLineEdit::sogouInput(){
+    int i=getuid();
+    char* n=getenv("DISPLAY");
+    QString env=QString(n);
+    env.replace(":","");
+    QString service;
+    service="com.basesogouimebs_service.hotel_"+QString::number(i)+"_"+env;
+    QDBusInterface interface(service,
+                             "/",
+                             "com.basesogouimebs_interface_service",
+                             QDBusConnection::sessionBus(),
+                             this);
+    interface.call("SwitchInputToTouchMode");
 }
 

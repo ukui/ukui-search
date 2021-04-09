@@ -85,7 +85,7 @@ private:
 
     filemodel *m_filemodel;       //文件model
 
-    websearch *search_web_page;
+    webwidget *search_web_page;
 
 protected:
     /**

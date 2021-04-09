@@ -6,7 +6,7 @@
     <message>
         <location filename="../src/UtilityFunction/listview.cpp" line="37"/>
         <source>File</source>
-        <translation type="unfinished">文件</translation>
+        <translation type="unfinished">文档</translation>
     </message>
 </context>
 <context>
@@ -32,7 +32,7 @@
     <message>
         <location filename="../src/FileSearch/searchfilewidget.cpp" line="20"/>
         <source>File</source>
-        <translation>文件</translation>
+        <translation type="unfinished">文档</translation>
     </message>
 </context>
 <context>

@@ -155,10 +155,12 @@ bool MainWindow::event ( QEvent * event )
     switch (event->type()){
     case QEvent::ActivationChange:
         if(QApplication::activeWindow() != this){
+            sogouHide();
             qApp->exit(0);
         }
         break;
     case QEvent::MouseButtonRelease:
+        sogouHide();
         qApp->exit(0);
         break;
     }
@@ -168,6 +170,7 @@ bool MainWindow::event ( QEvent * event )
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
     if(event->key()==Qt::Key_Escape){
+        sogouHide();
         qApp->exit(0);
     }
 }
@@ -211,7 +214,7 @@ QPixmap  MainWindow::blurPixmap(QPixmap pixmap)
 {
     QPainter painter(&pixmap);
     QImage srcImg=pixmap.toImage();
-    qt_blurImage(&painter,srcImg,150,false,false);//top 27000
+    qt_blurImage(&painter,srcImg,10,false,false);//top 27000
     painter.end();
     return pixmap;
 }
@@ -264,4 +267,19 @@ void MainWindow::backgroundPic()//const QString &bgPath,QRect rect
 
 void MainWindow::searchContent(QString searchcontent){
     m_mainViewWid->searchContent(searchcontent);
+}
+
+void MainWindow::sogouHide(){
+//    int i=getuid();
+//    char* n=getenv("DISPLAY");
+//    QString env=QString(n);
+//    env.replace(":","");
+//    QString service;
+//    service="com.basesogouimebs_service.hotel_"+QString::number(i)+"_"+env;
+//    QDBusInterface interface(service,
+//                             "/",
+//                             "com.basesogouimebs_interface_service",
+//                             QDBusConnection::sessionBus(),
+//                             this);
+//    interface.call("SwitchInputToPcMode");
 }
