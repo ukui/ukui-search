@@ -305,6 +305,27 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         m_resultListArea->ensureVisible(pos.x(),pos.y());
     });
     connect(listview,&SearchListView::mousePressed,this,&ContentWidget::mousePressed);
+    connect(listview, &SearchListView::onRowDoubleClicked, [ = ](const int& type, const QString& path) {
+        qDebug()<<"A row has been double clicked.Type = "<<type<<"; Name = "<<path;
+        if (type == SearchItem::SearchType::Best && m_bestList.at(listview->currentIndex().row()).first != SearchItem::SearchType::Apps) {
+            m_detailView->doubleClickAction(m_bestList.at(listview->currentIndex().row()).first, path);
+        } else if (type == SearchItem::SearchType::Best && m_bestList.at(listview->currentIndex().row()).first == SearchItem::SearchType::Apps) {
+            if (m_appPathList.at(0) == "" || m_appPathList.at(0).isEmpty()){
+                m_detailView->doubleClickAction(SearchListView::ResType::App, m_appList.at(0));
+            } else {
+                m_detailView->doubleClickAction(SearchListView::ResType::App, m_appPathList.at(0));
+            }
+        } else if (type == SearchItem::SearchType::Apps) {
+            int index = listview->currentIndex().row();
+            if (m_appPathList.at(index) == "" || m_appPathList.at(index).isEmpty()){
+                m_detailView->doubleClickAction(SearchListView::ResType::App, m_appList.at(index));
+            } else {
+                m_detailView->doubleClickAction(SearchListView::ResType::App, m_appPathList.at(index));
+            }
+        } else {
+            m_detailView->doubleClickAction(type, path);
+        }
+    });
 }
 
 /**

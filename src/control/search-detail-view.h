@@ -46,6 +46,7 @@ public:
     void setWebWidget(const QString&);
     void setAppWidget(const QString &name, const QString &path, const QString &icon, const QString &description);
     void closeWebWidget();
+    bool doubleClickAction(const int&, const QString&);
 
 protected:
     void paintEvent(QPaintEvent *);

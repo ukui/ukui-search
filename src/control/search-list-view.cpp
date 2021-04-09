@@ -161,6 +161,12 @@ void SearchListView::mousePressEvent(QMouseEvent *event)
     QTreeView::mousePressEvent(event);
 }
 
+void SearchListView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    Q_EMIT this->onRowDoubleClicked(getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+    QTreeView::mouseDoubleClickEvent(event);
+}
+
 //获取当前选项所属搜索类型
 int SearchListView::getCurrentType() {
     switch (m_type) {
