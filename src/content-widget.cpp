@@ -78,7 +78,7 @@ void ContentWidget::initUI() {
     m_resultDetail = new QWidget(m_resultDetailArea);
     m_listLyt = new QVBoxLayout(m_resultList);
     m_detailLyt = new QVBoxLayout(m_resultDetail);
-    m_resultList->setFixedWidth(240);
+    m_resultList->setFixedWidth(236);
     m_resultList->setFixedHeight(0);
     m_resultList->setStyleSheet("QWidget{background:transparent;}");
     m_listLyt->setContentsMargins(0, 0, 12, 0);
