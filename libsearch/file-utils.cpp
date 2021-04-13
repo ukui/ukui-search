@@ -548,7 +548,6 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
 
 void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
 {
-    //fix me :optimized by xpath??
     QFileInfo info = QFileInfo(path);
     if(!info.exists()||info.isDir())
         return;
@@ -569,7 +568,9 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
     QDomElement txbody;
     QDomElement ap;
     QDomElement ar;
+    QDomDocument doc;
     QDomElement at;
+//    QDomNodeList atList;
     for(int i =0;i<fileList.size();++i)
     {
         QString name = prefix + QString::number(i+1) + ".xml";
@@ -579,9 +580,29 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
         }
         QuaZipFile fileR(&file);
         fileR.open(QIODevice::ReadOnly);
-        QDomDocument doc;
+        doc.clear();
         doc.setContent(fileR.readAll());
         fileR.close();
+
+        //fix me :optimized by xpath??
+        //This method looks better but slower,
+        //If xml file is very large with many useless node,this method will take a lot of time.
+
+//        atList = doc.elementsByTagName("a:t");
+//        for(int i = 0; i<atList.size(); ++i)
+//        {
+//            at = atList.at(i).toElement();
+//            if(!at.isNull())
+//            {
+//                textcontent.append(at.text().replace("\r","")).replace("\t"," ");
+//                if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+//                {
+//                    file.close();
+//                    return;
+//                }
+//            }
+//        }
+        //This is ugly but seems more efficient when handel a large file.
         sptree = doc.firstChildElement("p:sld").firstChildElement("p:cSld").firstChildElement("p:spTree");
         while(!sptree.isNull())
         {
