@@ -63,7 +63,6 @@ public:
     bool isHidden = false;
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;
@@ -74,8 +73,8 @@ private:
     int m_type;
 
 Q_SIGNALS:
-    void currentRowChanged(const int&, const QString&);
-    void onRowDoubleClicked(const int&, const QString&);
+    void currentRowChanged(SearchListView *,const int&, const QString&);
+    void onRowDoubleClicked(SearchListView *, const int&, const QString&);
     void currentSelectPos(QPoint pos);
     void mousePressed();
 

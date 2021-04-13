@@ -251,14 +251,14 @@ void SearchDetailView::closeWebWidget()
  */
 bool SearchDetailView::doubleClickAction(const int &type, const QString &path)
 {
-    if (type == SearchListView::ResType::App) {
-        if (path.contains(".desktop")) {
-            return openAction(type, path);
-        } else {
+    if (type == SearchListView::ResType::App && !path.contains(".desktop")) {
             return installAppAction(path.mid(path.indexOf("/") + 1));
-        }
     } else {
-        return openAction(type, path);
+        if (openAction(type, path)) {
+            writeConfigFile(path);
+            return true;
+        }
+        return false;
     }
 }
 

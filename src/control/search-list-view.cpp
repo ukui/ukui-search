@@ -46,7 +46,7 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
 
     m_type = type;
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ](const QItemSelection &selected, const QItemSelection &deselected) {
-        Q_EMIT this->currentRowChanged(getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+        Q_EMIT this->currentRowChanged(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
         m_isSelected = true;
         if(!selected.isEmpty())
         {
@@ -56,8 +56,8 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
         }
     });
 
-    connect(this, &SearchListView::doubleClicked, this, [ = ](const QModelIndex& index) {
-
+    connect(this, &SearchListView::activated, this, [ = ](const QModelIndex& index) {
+        Q_EMIT this->onRowDoubleClicked(this, getCurrentType(), m_item->m_pathlist.at(index.row()));
     });
 }
 
@@ -159,12 +159,6 @@ void SearchListView::mousePressEvent(QMouseEvent *event)
         Q_EMIT mousePressed();
     }
     QTreeView::mousePressEvent(event);
-}
-
-void SearchListView::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    Q_EMIT this->onRowDoubleClicked(getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
-    QTreeView::mouseDoubleClickEvent(event);
 }
 
 //获取当前选项所属搜索类型
