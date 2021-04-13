@@ -69,7 +69,7 @@ private:
         std::map<QString, bool>::value_type("ppt", true),
         std::map<QString, bool>::value_type("pptx", true),
         std::map<QString, bool>::value_type("xls", true),
-//        std::map<QString, bool>::value_type("xlsx", true),
+        std::map<QString, bool>::value_type("xlsx", true),
         std::map<QString, bool>::value_type("txt", true),
         std::map<QString, bool>::value_type("dot", true),
         std::map<QString, bool>::value_type("wps", true),

@@ -640,6 +640,58 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
     return;
 }
 
+void FileUtils::getXlsxTextContent(QString &path, QString &textcontent)
+{
+    QFileInfo info = QFileInfo(path);
+    if(!info.exists()||info.isDir())
+        return;
+    QuaZip file(path);
+    if(!file.open(QuaZip::mdUnzip))
+        return;
+
+    if(!file.setCurrentFile("xl/sharedStrings.xml",QuaZip::csSensitive))
+        return;
+    QuaZipFile fileR(&file);
+
+    fileR.open(QIODevice::ReadOnly);        //读取方式打开
+
+    QDomDocument doc;
+    doc.setContent(fileR.readAll());
+    fileR.close();
+    QDomElement sst = doc.firstChildElement("sst");
+    QDomElement si;
+    QDomElement r;
+    QDomElement t;
+    while(!sst.isNull())
+    {
+        si= sst.firstChildElement("si");
+        while(!si.isNull())
+        {
+            r= si.firstChildElement("r");
+            if(r.isNull())
+            {
+                t= si.firstChildElement("t");
+            }
+            else
+            {
+                t = r.firstChildElement("t");
+            }
+            if(t.isNull())
+                continue;
+            textcontent.append(t.text().replace("\r","").replace("\n"," "));
+            if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+            {
+                file.close();
+                return;
+            }
+            si = si.nextSiblingElement();
+        }
+        sst = sst.nextSiblingElement();
+    }
+    file.close();
+    return;
+}
+
 void FileUtils::getTxtContent(QString &path, QString &textcontent)
 {
     QFile file(path);

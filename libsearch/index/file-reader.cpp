@@ -38,6 +38,8 @@ void FileReader::getTextContent(QString path, QString &textContent)
             FileUtils::getDocxTextContent(path,textContent);
         if(strsfx.endsWith( "pptx"))
             FileUtils::getPptxTextContent(path,textContent);
+        if(strsfx.endsWith( "xlsx"))
+            FileUtils::getXlsxTextContent(path,textContent);
     }
     else if(name == "text/plain")
     {

@@ -66,6 +66,7 @@ public:
     static QMimeType getMimetype(QString &path);
     static void getDocxTextContent(QString &path, QString &textcontent);
     static void getPptxTextContent(QString &path, QString &textcontent);
+    static void getXlsxTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
