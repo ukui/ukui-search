@@ -243,6 +243,25 @@ void SearchDetailView::closeWebWidget()
 //    }
 }
 
+/**
+ * @brief SearchDetailView::doubleClickAction 处理搜索结果列表选项双击事件
+ * @param type
+ * @param path
+ * @return
+ */
+bool SearchDetailView::doubleClickAction(const int &type, const QString &path)
+{
+    if (type == SearchListView::ResType::App && !path.contains(".desktop")) {
+            return installAppAction(path.mid(path.indexOf("/") + 1));
+    } else {
+        if (openAction(type, path)) {
+            writeConfigFile(path);
+            return true;
+        }
+        return false;
+    }
+}
+
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {
     QString htmlString;
     bool boldOpenned = false;

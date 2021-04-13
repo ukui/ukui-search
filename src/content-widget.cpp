@@ -260,39 +260,6 @@ void ContentWidget::hideListView()
  * @param listview
  */
 void ContentWidget::setupConnect(SearchListView * listview) {
-    connect(listview, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
-        if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
-            m_detailView->isContent = true;
-            m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
-        } else if (type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
-            m_detailView->setContent(m_bestContent, m_keyword);
-            m_detailView->isContent = true;
-            m_detailView->setupWidget(SearchItem::SearchType::Contents, path);
-            listview->is_current_list = true;
-            Q_EMIT this->currentItemChanged();
-            listview->is_current_list = false;
-            return;
-        } else {
-            m_detailView->isContent = false;
-        }
-        if (type == SearchItem::SearchType::Web) {
-            m_detailView->setWebWidget(this->m_keyword);
-        } else if (type == SearchItem::SearchType::Apps) {
-            int index = listview->currentIndex().row();
-            m_detailView->setAppWidget(m_appList.at(index), m_appPathList.at(index), m_appIconList.at(index), m_appDescList.at(index));
-        } else if (type == SearchItem::SearchType::Best) {
-            if (m_bestList.at(listview->currentIndex().row()).first ==  SearchItem::SearchType::Apps) {
-               m_detailView->setAppWidget(m_appList.at(0), m_appPathList.at(0), m_appIconList.at(0), m_appDescList.at(0));
-            } else {
-                m_detailView->setupWidget(m_bestList.at(listview->currentIndex().row()).first, m_bestList.at(listview->currentIndex().row()).second);
-            }
-        } else {
-            m_detailView->setupWidget(type, path);
-        }
-        listview->is_current_list = true;
-        Q_EMIT this->currentItemChanged();
-        listview->is_current_list = false;
-    });
     connect(this, &ContentWidget::currentItemChanged, listview, [ = ]() {
 
         if (! listview->is_current_list) {
@@ -305,6 +272,8 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         m_resultListArea->ensureVisible(pos.x(),pos.y());
     });
     connect(listview,&SearchListView::mousePressed,this,&ContentWidget::mousePressed);
+    connect(listview, SIGNAL(currentRowChanged(SearchListView *,const int&, const QString&)), this, SLOT(onListViewRowChanged(SearchListView *, const int&, const QString&)));
+    connect(listview, SIGNAL(onRowDoubleClicked(SearchListView *,const int&, const QString&)), this, SLOT(onListViewRowDoubleClicked(SearchListView *, const int&, const QString&)));
 }
 
 /**
@@ -729,6 +698,74 @@ void ContentWidget::clearLayout(QLayout * layout) {
         delete child;
     }
     child = NULL;
+}
+
+/**
+ * @brief ContentWidget::onListViewRowChanged 点击某列表某一行的槽函数
+ * @param type
+ * @param path
+ */
+void ContentWidget::onListViewRowChanged(SearchListView * listview, const int &type, const QString &path)
+{
+    if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
+        m_detailView->isContent = true;
+        m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
+    } else if (type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
+        m_detailView->setContent(m_bestContent, m_keyword);
+        m_detailView->isContent = true;
+        m_detailView->setupWidget(SearchItem::SearchType::Contents, path);
+        listview->is_current_list = true;
+        Q_EMIT this->currentItemChanged();
+        listview->is_current_list = false;
+        return;
+    } else {
+        m_detailView->isContent = false;
+    }
+    if (type == SearchItem::SearchType::Web) {
+        m_detailView->setWebWidget(this->m_keyword);
+    } else if (type == SearchItem::SearchType::Apps) {
+        int index = listview->currentIndex().row();
+        m_detailView->setAppWidget(m_appList.at(index), m_appPathList.at(index), m_appIconList.at(index), m_appDescList.at(index));
+    } else if (type == SearchItem::SearchType::Best) {
+        if (m_bestList.at(listview->currentIndex().row()).first ==  SearchItem::SearchType::Apps) {
+           m_detailView->setAppWidget(m_appList.at(0), m_appPathList.at(0), m_appIconList.at(0), m_appDescList.at(0));
+        } else {
+            m_detailView->setupWidget(m_bestList.at(listview->currentIndex().row()).first, m_bestList.at(listview->currentIndex().row()).second);
+        }
+    } else {
+        m_detailView->setupWidget(type, path);
+    }
+    listview->is_current_list = true;
+    Q_EMIT this->currentItemChanged();
+    listview->is_current_list = false;
+}
+
+/**
+ * @brief ContentWidget::onListViewRowDoubleClicked 双击某列表某一行的槽函数
+ * @param type
+ * @param path
+ */
+void ContentWidget::onListViewRowDoubleClicked(SearchListView * listview, const int &type, const QString &path)
+{
+    qDebug()<<"A row has been double clicked.Type = "<<type<<"; Name = "<<path;
+    if (type == SearchItem::SearchType::Best && m_bestList.at(listview->currentIndex().row()).first != SearchItem::SearchType::Apps) {
+        m_detailView->doubleClickAction(m_bestList.at(listview->currentIndex().row()).first, path);
+    } else if (type == SearchItem::SearchType::Best && m_bestList.at(listview->currentIndex().row()).first == SearchItem::SearchType::Apps) {
+        if (m_appPathList.at(0) == "" || m_appPathList.at(0).isEmpty()){
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appList.at(0));
+        } else {
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appPathList.at(0));
+        }
+    } else if (type == SearchItem::SearchType::Apps) {
+        int index = listview->currentIndex().row();
+        if (m_appPathList.at(index) == "" || m_appPathList.at(index).isEmpty()){
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appList.at(index));
+        } else {
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appPathList.at(index));
+        }
+    } else {
+        m_detailView->doubleClickAction(type, path);
+    }
 }
 
 

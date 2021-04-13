@@ -73,7 +73,8 @@ private:
     int m_type;
 
 Q_SIGNALS:
-    void currentRowChanged(const int&, const QString&);
+    void currentRowChanged(SearchListView *,const int&, const QString&);
+    void onRowDoubleClicked(SearchListView *, const int&, const QString&);
     void currentSelectPos(QPoint pos);
     void mousePressed();
 
