@@ -37,6 +37,8 @@
 
 #define CONTROL_CENTER_PERSONALISE_GSETTINGS_ID "org.ukui.control-center.personalise"
 #define TRANSPARENCY_KEY "transparency"
+#define THEME_GSETTINGS_ID "org.ukui.style"
+#define STYLE_NAME_KEY "styleName"
 #define INDEX_DATABASE_STATE "index_database_state"
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
@@ -93,7 +95,8 @@ private:
     ~GlobalSettings() = default;
 
     QSettings* m_settings;
-    QGSettings* m_gsettings;
+    QGSettings* m_trans_gsettings;
+    QGSettings* m_theme_gsettings;
     QSettings *m_block_dirs_settings;
     QSettings *m_search_record_settings;
     QMap<QString, QVariant> m_cache;

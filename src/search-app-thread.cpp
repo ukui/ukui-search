@@ -14,7 +14,7 @@ void SearchAppThread::startSearch(const QString & keyword)
     SearchApp *appsearch;
     appsearch = new SearchApp(keyword);
 //    appsearch->setKeyword(keyword);
-    connect(appsearch, SIGNAL(searchResultApp(const QVector<QStringList>&)), this, SIGNAL(searchResultApp(const QVector<QStringList>&)));
+    connect(appsearch, &SearchApp::searchResultApp, this, &SearchAppThread::searchResultApp);
     m_pool.start(appsearch);
 }
 

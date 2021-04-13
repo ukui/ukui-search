@@ -234,7 +234,7 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
         FolderListItem * item = new FolderListItem(m_dirListWidget, path);
         m_dirListLyt->addWidget(item);
         item->setMaximumWidth(this->width() - 52);
-        connect(item, SIGNAL(onDelBtnClicked(const QString&)), this, SLOT(onBtnDelClicked(const QString&)));
+        connect(item, &FolderListItem::onDelBtnClicked, this, &SettingsWidget::onBtnDelClicked);
         m_blockdirs ++;
     }
     this->resize();

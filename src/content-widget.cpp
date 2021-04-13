@@ -272,8 +272,8 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         m_resultListArea->ensureVisible(pos.x(),pos.y());
     });
     connect(listview,&SearchListView::mousePressed,this,&ContentWidget::mousePressed);
-    connect(listview, SIGNAL(currentRowChanged(SearchListView *,const int&, const QString&)), this, SLOT(onListViewRowChanged(SearchListView *, const int&, const QString&)));
-    connect(listview, SIGNAL(onRowDoubleClicked(SearchListView *,const int&, const QString&)), this, SLOT(onListViewRowDoubleClicked(SearchListView *, const int&, const QString&)));
+    connect(listview, &SearchListView::currentRowChanged, this, &ContentWidget::onListViewRowChanged);
+    connect(listview, &SearchListView::onRowDoubleClicked, this, &ContentWidget::onListViewRowDoubleClicked);
 }
 
 /**

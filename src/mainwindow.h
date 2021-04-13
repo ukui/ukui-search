@@ -74,18 +74,12 @@ public:
     // The position which mainwindow shows in the center of screen where the cursor in.
     void centerToScreen(QWidget* widget);
 
-    // TODO
-    // Wait Ping jiang.
     MotifWmHints m_hints;
 
 private:
 
     // MainWindow quit when focus out.
     bool nativeEvent(const QByteArray&, void*, long*);
-
-    // TODO
-    // Not use?
-    QFrame * m_line = nullptr;                   // Vertical dividing line
 
     QFrame * m_frame = nullptr;                  // Main frame
     QFrame * m_titleFrame = nullptr;             // Title bar frame
@@ -97,10 +91,6 @@ private:
     ContentWidget * m_contentFrame = nullptr;    // Content frame
     SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
     SeachBarWidget * m_searchWidget = nullptr;   // Search bar
-
-    // TODO
-    // Not use?
-    bool m_winFlag = false;
 
     QGSettings * m_transparency_gsettings = nullptr;
     double getTransparentData();
