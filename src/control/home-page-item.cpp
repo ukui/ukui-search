@@ -50,35 +50,11 @@ HomePageItem::~HomePageItem()
  * @param path 路径
  */
 void HomePageItem::setupUi(const int& type, const QString& path) {
+    m_path = path;
     m_widget = new QWidget(this);
     m_widget->setObjectName("MainWidget");
 //    m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.05); border-radius: 4px;}");
     m_widget->installEventFilter(this);
-    connect(this, &HomePageItem::onItemClicked, this, [ = ]() {
-        switch (SearchListView::getResType(path)) {
-            case SearchListView::ResType::App: {
-                GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
-                g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
-                g_object_unref(desktopAppInfo);
-                break;
-            }
-            case SearchListView::ResType::Best:
-            case SearchListView::ResType::Content:
-            case SearchListView::ResType::Dir:
-            case SearchListView::ResType::File: {
-                QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-                break;
-            }
-            case SearchListView::ResType::Setting: {
-                //打开控制面板对应页面
-                QProcess process;
-                process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
-                break;
-            }
-            default:
-                break;
-        }
-    });
     m_iconlabel = new QLabel(m_widget);
     m_namelabel = new QLabel(m_widget);
     if (type == ItemType::Recent) {
@@ -150,6 +126,33 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
     m_vlayout->addWidget(m_namelabel);
 }
 
+void HomePageItem::onItemClicked()
+{
+    switch (SearchListView::getResType(m_path)) {
+        case SearchListView::ResType::App: {
+            GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(m_path.toLocal8Bit().data());
+            g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr);
+            g_object_unref(desktopAppInfo);
+            break;
+        }
+        case SearchListView::ResType::Best:
+        case SearchListView::ResType::Content:
+        case SearchListView::ResType::Dir:
+        case SearchListView::ResType::File: {
+            QDesktopServices::openUrl(QUrl::fromLocalFile(m_path));
+            break;
+        }
+        case SearchListView::ResType::Setting: {
+            //打开控制面板对应页面
+            QProcess process;
+            process.startDetached(QString("ukui-control-center --%1").arg(m_path.left(m_path.indexOf("/")).toLower()));
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 bool HomePageItem::eventFilter(QObject *watched, QEvent *event){
     if (watched == m_widget){
         if (event->type() == QEvent::MouseButtonPress) {
@@ -157,7 +160,7 @@ bool HomePageItem::eventFilter(QObject *watched, QEvent *event){
             this->update();
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
-            Q_EMIT this->onItemClicked();
+            this->onItemClicked();
             m_transparency = 0.06;
             this->update();
             return true;

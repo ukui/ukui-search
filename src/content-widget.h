@@ -113,6 +113,8 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void clearLayout(QLayout *);
+    void onListViewRowChanged(SearchListView * listview, const int& type, const QString& path);
+    void onListViewRowDoubleClicked(SearchListView * listview, const int& type, const QString& path);
 };
 
 #endif // CONTENTWIDGET_H

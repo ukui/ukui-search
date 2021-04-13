@@ -30,6 +30,7 @@ void Traverse_BFS::Traverse(){
     bfs.enqueue(this->path);
     QFileInfoList list;
     QDir dir;
+    // QDir::Hidden
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
     while (!bfs.empty()) {

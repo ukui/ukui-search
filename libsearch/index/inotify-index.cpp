@@ -93,7 +93,7 @@ void InotifyIndex::DoSomething(const QFileInfo& fileInfo){
     QQueue<QVector<QString> > tempFile;
     tempFile.enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     IndexGenerator::getInstance()->creatAllIndex(&tempFile);
-    if ((!fileInfo.fileName().split(".").isEmpty()) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])){
+    if ((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])){
         QQueue<QString> tmp;
         tmp.enqueue(fileInfo.absoluteFilePath());
         IndexGenerator::getInstance()->creatAllIndex(&tmp);

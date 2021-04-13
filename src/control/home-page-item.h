@@ -47,6 +47,7 @@ protected:
 
 private:
     void setupUi(const int&, const QString&);
+    void onItemClicked();
 
     QWidget * m_widget = nullptr;
     QHBoxLayout * m_hlayout = nullptr;
@@ -54,9 +55,7 @@ private:
     QLabel * m_iconlabel = nullptr;
     QLabel * m_namelabel = nullptr;
     double m_transparency = 0;
-
-Q_SIGNALS:
-    void onItemClicked();
+    QString m_path;
 };
 
 #endif // HOMEPAGEITEM_H
