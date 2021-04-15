@@ -56,6 +56,7 @@ private:
     QLabel * m_namelabel = nullptr;
     double m_transparency = 0;
     QString m_path;
+    int m_type = 0;
 };
 
 #endif // HOMEPAGEITEM_H

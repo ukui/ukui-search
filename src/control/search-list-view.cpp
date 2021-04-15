@@ -21,9 +21,13 @@
 #include "search-list-view.h"
 #include <QDebug>
 #include <QFileInfo>
+#include "custom-style.h"
 
 SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent)
 {
+    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
+    this->setStyle(style);
+
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);

@@ -35,7 +35,11 @@ HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path
     connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
         if (m_namelabel) {
             QString name = this->toolTip();
-            m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 108));
+            if (m_type == ItemType::Recent) {
+                m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 250));
+            } else {
+                m_namelabel->setText(m_namelabel->fontMetrics().elidedText(name, Qt::ElideRight, 108));
+            }
         }
     });
 }
@@ -51,6 +55,7 @@ HomePageItem::~HomePageItem()
  */
 void HomePageItem::setupUi(const int& type, const QString& path) {
     m_path = path;
+    m_type = type;
     m_widget = new QWidget(this);
     m_widget->setObjectName("MainWidget");
 //    m_widget->setStyleSheet("QWidget#MainWidget{background: rgba(0, 0, 0, 0.05); border-radius: 4px;}");
