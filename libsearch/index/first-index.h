@@ -75,7 +75,8 @@ private:
         std::map<QString, bool>::value_type("wps", true),
         std::map<QString, bool>::value_type("pps", true),
         std::map<QString, bool>::value_type("dps", true),
-        std::map<QString, bool>::value_type("et", true)
+        std::map<QString, bool>::value_type("et", true),
+        std::map<QString, bool>::value_type("pdf", true)
     };
 
     //xapian will auto commit per 10,000 changes, donnot change it!!!
