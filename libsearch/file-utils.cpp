@@ -30,6 +30,7 @@
 #include <QDomDocument>
 #include <QQueue>
 #include "uchardet/uchardet.h"
+#include "poppler-qt5.h"
 
 
 size_t FileUtils::_max_index_count = 0;
@@ -619,7 +620,7 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
                         while(!ar.isNull())
                         {
                             at = ar.firstChildElement("a:t");
-                            textcontent.append(at.text().replace("\r","")).replace("\t"," ");
+                            textcontent.append(at.text().replace("\r","")).replace("\t","");
                             if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
                             {
                                 file.close();
@@ -678,7 +679,7 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent)
             }
             if(t.isNull())
                 continue;
-            textcontent.append(t.text().replace("\r","").replace("\n"," "));
+            textcontent.append(t.text().replace("\r","").replace("\n",""));
             if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
             {
                 file.close();
@@ -689,6 +690,23 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent)
         sst = sst.nextSiblingElement();
     }
     file.close();
+    return;
+}
+
+void FileUtils::getPdfTextContent(QString &path, QString &textcontent)
+{
+    Poppler::Document *doc = Poppler::Document::load(path);
+    if(doc->isLocked())
+        return;
+    const QRectF qf;
+    int pageNum = doc->numPages();
+    for(int i = 0; i<pageNum; ++i)
+    {
+        textcontent.append(doc->page(i)->text(qf).replace("\n",""));
+        if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+            break;
+    }
+    delete doc;
     return;
 }
 

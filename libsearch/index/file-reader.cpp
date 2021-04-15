@@ -55,6 +55,11 @@ void FileReader::getTextContent(QString path, QString &textContent)
             searchdata.RunParser(path,textContent);
         }
     }
+    else if(name == "application/pdf")
+    {
+        if(strsfx.endsWith( "pdf"))
+            FileUtils::getPdfTextContent(path,textContent);
+    }
     else
     {
         qWarning()<<"Unsupport format:["<<path<<"]["<<type.name()<<"]";

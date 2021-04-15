@@ -35,6 +35,7 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QDir>
+
 #include "libsearch_global.h"
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
@@ -67,6 +68,7 @@ public:
     static void getDocxTextContent(QString &path, QString &textcontent);
     static void getPptxTextContent(QString &path, QString &textcontent);
     static void getXlsxTextContent(QString &path, QString &textcontent);
+    static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
