@@ -39,6 +39,7 @@
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
 //#define FINISH_CREATING_INDEX 2
+#define MAX_CONTENT_LENGTH 20480000
 
 #define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
 
@@ -64,6 +65,8 @@ public:
     //parse text,docx.....
     static QMimeType getMimetype(QString &path);
     static void getDocxTextContent(QString &path, QString &textcontent);
+    static void getPptxTextContent(QString &path, QString &textcontent);
+    static void getXlsxTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.

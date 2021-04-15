@@ -238,7 +238,7 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
         m_blockdirs ++;
     }
     this->resize();
-    m_dirListWidget->setFixedWidth(this->width() - 52);
+    m_dirListWidget->setFixedWidth(this->width() - 68);
 //    m_dirListLyt->addStretch();
 }
 
@@ -488,11 +488,11 @@ void SettingsWidget::resize()
 //        this->setFixedSize(528, 515);
 //    }
     if (m_blockdirs <= 4) {
-        m_dirListArea->setFixedHeight(32 * m_blockdirs);
+        m_dirListArea->setFixedHeight(32 * m_blockdirs + 4);
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
-        m_dirListArea->setFixedHeight(32 * 4);
+        m_dirListArea->setFixedHeight(32 * 4 + 4);
     }
     this->setFixedSize(528, 410 + m_dirListArea->height());
 }
