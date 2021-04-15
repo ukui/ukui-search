@@ -257,8 +257,6 @@ int main(int argc, char *argv[])
 //    hints.decorations = MWM_DECOR_BORDER;
 //    XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), hints);
 
-    //TODO
-    //wait Ping jiang before 2021.04.10
     app.setActivationWindow(w);
 
     // Processing startup parameters
@@ -269,9 +267,7 @@ int main(int argc, char *argv[])
         w->show();
     }
 
-    // TODO
-    // Wait Ping jiang before 2021.04.10
-    QObject::connect(&app, SIGNAL(messageReceived(const QString&)),w, SLOT(bootOptionsFilter(const QString&)));
+    QObject::connect(&app, &QtSingleApplication::messageReceived, w, &MainWindow::bootOptionsFilter);
 
     // Start app search thread
     AppMatch::getAppMatch()->start();

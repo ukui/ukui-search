@@ -69,10 +69,10 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
 #if defined(Q_OS_WIN)
         id = id.toLower();
 #endif
-        prefix = id.section(QLatin1Char('/'), -1);
+        prefix = id.section(QLatin1Char('/'), -1); //完整路径按‘/’分隔后取最后一个字段
     }
-    prefix.remove(QRegExp("[^a-zA-Z]"));
-    prefix.truncate(6);
+    prefix.remove(QRegExp("[^a-zA-Z]")); //去掉名称中的非字母
+    prefix.truncate(6); //取前六位
 
     QByteArray idc = id.toUtf8();
     quint16 idNum = qChecksum(idc.constData(), idc.size());
@@ -96,7 +96,7 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
     server = new QLocalServer(this);
     QString lockName = QDir(QDir::tempPath()).absolutePath()
                        + QLatin1Char('/') + socketName
-                       + QLatin1String("-lockfile");
+                       + QLatin1String("-lockfile"); //tmp目录下的锁文件
     lockFile.setFileName(lockName);
     lockFile.open(QIODevice::ReadWrite);
 }
@@ -111,6 +111,7 @@ bool QtLocalPeer::isClient()
     if (!lockFile.lock(QtLP_Private::QtLockedFile::WriteLock, false))
         return true;
 
+    //由于文件锁的存在，仅当本进程第一次启动时能执行到此并使server进行监听和关联槽函数
     bool res = server->listen(socketName);
 #if defined(Q_OS_UNIX) && (QT_VERSION >= QT_VERSION_CHECK(4,5,0))
     // ### Workaround
@@ -121,7 +122,7 @@ bool QtLocalPeer::isClient()
 #endif
     if (!res)
         qWarning("QtSingleCoreApplication: listen on local socket failed, %s", qPrintable(server->errorString()));
-    QObject::connect(server, SIGNAL(newConnection()), SLOT(receiveConnection()));
+    QObject::connect(server, &QLocalServer::newConnection, this, &QtLocalPeer::receiveConnection);
     return false;
 }
 
@@ -162,10 +163,12 @@ bool QtLocalPeer::sendMessage(const QString &message, int timeout)
     return res;
 }
 
-
+/**
+ * @brief QtLocalPeer::receiveConnection 当新进程启动时，会尝试连接此进程server,server接收到newConnection信号并触发此槽函数
+ */
 void QtLocalPeer::receiveConnection()
 {
-    QLocalSocket* socket = server->nextPendingConnection();
+    QLocalSocket* socket = server->nextPendingConnection(); //获取新进程的socket
     if (!socket)
         return;
 
@@ -202,5 +205,5 @@ void QtLocalPeer::receiveConnection()
     socket->waitForBytesWritten(1000);
     socket->waitForDisconnected(1000); // make sure client reads ack
     delete socket;
-    Q_EMIT messageReceived(message); //### (might take a long time to return)
+    Q_EMIT messageReceived(message); //获取新进程的启动信息并作为信号发送给前端
 }
