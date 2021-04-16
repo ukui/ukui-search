@@ -20,17 +20,6 @@
  *
  */
 #include "file-utils.h"
-#include <QDebug>
-#include <QFile>
-#include <QFileInfo>
-#include <QUrl>
-#include <QMap>
-#include "quazip/quazip.h"
-#include <quazip/quazipfile.h>
-#include <QDomDocument>
-#include <QQueue>
-#include "uchardet/uchardet.h"
-#include "poppler-qt5.h"
 
 
 size_t FileUtils::_max_index_count = 0;

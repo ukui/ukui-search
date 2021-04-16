@@ -31,6 +31,15 @@
 #include <thread>
 #include <QRunnable>
 #include <QThreadPool>
+#include <QFileInfo>
+#include <QDebug>
+#include <QtConcurrent/QtConcurrent>
+#include <QThread>
+#include <QUrl>
+
+#include "file-utils.h"
+#include "global-settings.h"
+#include "chinese-segmentation.h"
 
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()

@@ -17,14 +17,7 @@
  * Authors: zhangpengfei <zhangpengfei@kylinos.cn>
  *
  */
-#include <QFileInfo>
-#include <QDebug>
-#include <QtConcurrent>
-#include <QThread>
-#include <QUrl>
 #include "search-manager.h"
-#include "global-settings.h"
-#include "chinese-segmentation.h"
 
 size_t SearchManager::uniqueSymbol1 = 0;
 size_t SearchManager::uniqueSymbol2 = 0;
@@ -68,6 +61,8 @@ void SearchManager::onKeywordSearch(QString keyword,QQueue<QString> *searchResul
     m_mutex3.lock();
     ++uniqueSymbol3;
     m_mutex3.unlock();
+
+
 
     FileSearch *filesearch;
     filesearch = new FileSearch(searchResultFile,uniqueSymbol1,keyword,"0",1,0,5);
