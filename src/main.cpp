@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
     }
 
     // Output log to file
-    qInstallMessageHandler(messageOutput);
+//    qInstallMessageHandler(messageOutput);
 
     // Register meta type
     qDebug() << "ukui-search main start";
@@ -278,13 +278,13 @@ int main(int argc, char *argv[])
 
     // TODO
     // First insdex start, the parameter us useless, should remove the parameter
-    FirstIndex fi("/home/zhangzihao/Desktop");
-    fi.start();
+//    FirstIndex fi("/home/zhangzihao/Desktop");
+//    fi.start();
 
     // TODO
     // Inotify index start, the parameter us useless, should remove the parameter
-    InotifyIndex* ii = InotifyIndex::getInstance("/home");
-    ii->start();
+//    InotifyIndex* ii = InotifyIndex::getInstance("/home");
+//    ii->start();
 
     return app.exec();
 }
