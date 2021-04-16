@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/prctl.h>
+#include <syslog.h>
 //#include <QtConcurrent>
 #include "traverse_bfs.h"
 #include "global-settings.h"

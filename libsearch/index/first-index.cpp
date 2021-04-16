@@ -27,6 +27,22 @@
 
 FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
 {
+    // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
+    QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
+    if(!fifoDir.exists())
+        qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
+
+    unlink(UKUI_SEARCH_PIPE_PATH);
+    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
+    if(retval == -1)
+    {
+        qCritical()<<"creat fifo error!!";
+        syslog(LOG_ERR,"creat fifo error!!\n");
+        assert(false);
+        return;
+    }
+    qDebug()<<"create fifo success\n";
+
     QString indexDataBaseStatus =  GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
     QString contentIndexDataBaseStatus = GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
     QString inotifyIndexStatus = GlobalSettings::getInstance()->getValue(INOTIFY_NORMAL_EXIT).toString();

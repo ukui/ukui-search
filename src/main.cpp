@@ -118,6 +118,23 @@ void centerToScreen(QWidget* widget) {
     widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 }
 
+void searchMethod(FileUtils::SearchMethod sm){
+    if (FileUtils::SearchMethod::INDEXSEARCH == sm || FileUtils::SearchMethod::DIRECTSEARCH == sm){
+        FileUtils::searchMethod = sm;
+    } else {
+        printf("enum class error!!!\n");
+        qWarning("enum class error!!!\n");
+    }
+    if (FileUtils::SearchMethod::INDEXSEARCH == sm) {
+        FirstIndex fi("/home/zhangzihao/Desktop");
+        fi.start();
+        InotifyIndex* ii = InotifyIndex::getInstance("/home");
+        ii->start();
+    } else if (FileUtils::SearchMethod::DIRECTSEARCH == sm) {
+        InotifyIndex::getInstance("/home")->requestInterruption();
+    }
+}
+
 int main(int argc, char *argv[])
 {
     // Determine whether the home directory has been created, and if not, keep waiting.
@@ -178,7 +195,7 @@ int main(int argc, char *argv[])
         parser.addOptions({debugOption, showsearch});
         parser.process(app);
     }*/
-
+/*
     // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
     QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
     if(!fifoDir.exists())
@@ -194,7 +211,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     qDebug()<<"create fifo success\n";
-
+*/
     // Set max_user_watches to a number which is enough big.
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();

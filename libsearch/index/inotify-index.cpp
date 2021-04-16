@@ -256,8 +256,8 @@ void InotifyIndex::run(){
 
     ssize_t numRead;
 
-    for (;;) { /* Read events forever */
-read:
+    while (!isInterruptionRequested()) {
+//    for (;;) { /* Read events forever */
         memset(buf, 0x00, BUF_LEN);
         numRead = read(m_fd, buf, BUF_LEN);
 
@@ -276,14 +276,14 @@ read:
     //        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
             if(event->name[0] != '.'){
                 GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
-                goto fork;
+                break;
             }
             tmp += sizeof(struct inotify_event) + event->len;
-
         }
-        goto read;
+        if (tmp >= buf + numRead) {
+            continue;
+        }
 
-fork:
         ++FileUtils::_index_status;
 
         pid_t pid;
