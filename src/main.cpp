@@ -130,8 +130,10 @@ void searchMethod(FileUtils::SearchMethod sm){
         fi.start();
         InotifyIndex* ii = InotifyIndex::getInstance("/home");
         ii->start();
+        qDebug()<<"Search method has been set to INDEXSEARCH";
     } else if (FileUtils::SearchMethod::DIRECTSEARCH == sm) {
         InotifyIndex::getInstance("/home")->requestInterruption();
+        qDebug()<<"Search method has been set to DIRECTSEARCH";
     }
 }
 
@@ -163,7 +165,7 @@ int main(int argc, char *argv[])
     }
 
     // Output log to file
-//    qInstallMessageHandler(messageOutput);
+    qInstallMessageHandler(messageOutput);
 
     // Register meta type
     qDebug() << "ukui-search main start";
@@ -265,6 +267,11 @@ int main(int argc, char *argv[])
 //    centerToScreen(w);
 //    w->moveToPanel();
     centerToScreen(w);
+    QObject::connect(w, &MainWindow::searchMethodChanged, w, [ = ](FileUtils::SearchMethod sm) {
+        searchMethod(sm);
+    });
+    //请务必在connect之后初始化mainwindow的Gsettings，为了保证gsettings第一次读取到的配置值能成功应用
+    w->initGsettings();
 
     //使用窗管的无边框策略
 //    w->setProperty("useStyleWindowManager", false); //禁用拖动

@@ -43,6 +43,7 @@
 #include <QKeyEvent>
 #include <QGSettings/QGSettings>
 #include <QSystemTrayIcon>
+#include <QTimer>
 
 #include "content-widget.h"
 #include "input-box.h"
@@ -51,6 +52,10 @@
 #include "libsearch.h"
 #include "search-app-thread.h"
 #include "xatom-helper.h"
+#include "create-index-ask-dialog.h"
+
+#define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
+#define SEARCH_METHOD_KEY "indexSearch"
 
 class SearchResult;
 class MainWindow : public QMainWindow
@@ -73,6 +78,7 @@ public:
 
     // The position which mainwindow shows in the center of screen where the cursor in.
     void centerToScreen(QWidget* widget);
+    void initGsettings();
 
     MotifWmHints m_hints;
 
@@ -92,7 +98,6 @@ private:
     SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
     SeachBarWidget * m_searchWidget = nullptr;   // Search bar
 
-    QGSettings * m_transparency_gsettings = nullptr;
     double getTransparentData();
 
     QStringList m_dirList;
@@ -105,12 +110,24 @@ private:
 
     SearchManager* m_searcher = nullptr;
     SettingsMatch *m_settingsMatch = nullptr;
-    QSystemTrayIcon *m_sys_tray_icon;
+    QSystemTrayIcon *m_sys_tray_icon = nullptr;
+    CreateIndexAskDialog * m_askDialog = nullptr;
+    bool m_isAskDialogVisible = false;
+
+    QTimer * m_askTimer = nullptr; //询问是否创建索引弹窗弹出的计时器
+    QTimer * m_researchTimer = nullptr; //创建索引后重新执行一次搜索的计时器
+    void initTimer();
+    bool m_currentSearchAsked = false; //本次搜索是否已经询问过是否创建索引了
+    QGSettings * m_search_gsettings = nullptr;
+    void setSearchMethod(const bool&);
 
 protected:
     void paintEvent(QPaintEvent *);
     void keyPressEvent(QKeyEvent *event);
     void initUi();
+
+Q_SIGNALS:
+    void searchMethodChanged(FileUtils::SearchMethod);
 
 public Q_SLOTS:
     /**
@@ -126,6 +143,7 @@ public Q_SLOTS:
 
     void bootOptionsFilter(QString opt);                              // 过滤终端命令
     void clearSearchResult(); //清空搜索结果
+    void createIndexSlot();
 };
 
 #endif // MAINWINDOW_H

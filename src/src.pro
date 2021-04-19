@@ -26,6 +26,7 @@ include(singleapplication/qt-single-application.pri)
 
 SOURCES += \
     content-widget.cpp \
+    create-index-ask-dialog.cpp \
     input-box.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
 
 HEADERS += \
     content-widget.h \
+    create-index-ask-dialog.h \
     input-box.h \
     mainwindow.h \
     search-app-thread.h \
@@ -53,7 +55,9 @@ data-menu.path = /usr/share/applications
 data-menu.files += ../data/ukui-search-menu.desktop
 data.path = /etc/xdg/autostart
 data.files += ../data/ukui-search.desktop
-INSTALLS += data data-menu
+schemes.path =  /usr/share/glib-2.0/schemas/
+schemes.files += ../data/org.ukui.search.data.gschema.xml
+INSTALLS += data data-menu schemes
 
 RESOURCES += \
     resource.qrc
@@ -82,3 +86,6 @@ DEPENDPATH += $$PWD/../libsearch
 #    $$OUT_PWD/.qm/bo.qm \
 #    $$OUT_PWD/.qm/tr.qm \
 #    $$OUT_PWD/.qm/zh_CN.qm
+
+DISTFILES += \
+    ../data/org.ukui.search.data.gschema.xml
