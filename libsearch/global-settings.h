@@ -39,6 +39,7 @@
 #define TRANSPARENCY_KEY "transparency"
 #define THEME_GSETTINGS_ID "org.ukui.style"
 #define STYLE_NAME_KEY "styleName"
+#define FONT_SIZE_KEY "systemFontSize"
 #define INDEX_DATABASE_STATE "index_database_state"
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
