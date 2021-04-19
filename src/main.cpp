@@ -29,6 +29,7 @@
 #include <QLocale>
 #include <X11/Xlib.h>
 #include <syslog.h>
+#include <ukui-log4qt.h>
 #include <QObject>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
@@ -120,6 +121,9 @@ void centerToScreen(QWidget* widget) {
 
 int main(int argc, char *argv[])
 {
+    //Init log module
+    initUkuiLog4qt("ukui-search");
+
     // Determine whether the home directory has been created, and if not, keep waiting.
     char *p_home = NULL;
 
@@ -146,7 +150,7 @@ int main(int argc, char *argv[])
     }
 
     // Output log to file
-    qInstallMessageHandler(messageOutput);
+//    qInstallMessageHandler(messageOutput);
 
     // Register meta type
     qDebug() << "ukui-search main start";
