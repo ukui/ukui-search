@@ -22,19 +22,16 @@
 #include <QPainter>
 #include <QStyleOption>
 
-TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent)
-{
+TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
     this->setContentsMargins(8, 0, 0, 0);
     this->setFixedHeight(24);
 }
 
-TitleLabel::~TitleLabel()
-{
+TitleLabel::~TitleLabel() {
 
 }
 
-void TitleLabel::paintEvent(QPaintEvent * event)
-{
+void TitleLabel::paintEvent(QPaintEvent * event) {
     Q_UNUSED(event)
 
     QStyleOption opt;

@@ -32,8 +32,7 @@
 #include "index/inotify-index.h"
 #include "index/search-manager.h"
 
-class  LIBSEARCH_EXPORT GlobalSearch
-{
+class  LIBSEARCH_EXPORT GlobalSearch {
 public:
 
     static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);

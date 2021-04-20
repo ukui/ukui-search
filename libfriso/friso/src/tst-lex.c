@@ -1,6 +1,6 @@
 /*
  * lex functions test program.
- * 
+ *
  * @author  lionsoul<chenxin619315@gmail.com>
  */
 
@@ -16,8 +16,7 @@
     printf("3. other search the words in the dictionary.\n");   \
     printf("4. quit exit the programe.\n");
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     lex_entry_t e;
     int lex = __LEX_CJK_WORDS__;
     char _line[__LENGTH__];
@@ -59,42 +58,42 @@ int main(int argc, char **argv)
     //__CN_DNAME2__
     friso_dic_load(friso, config, __LEX_CN_DNAME2__, "../vendors/dict/UTF-8/lex-dname-2.lex", __LENGTH__);
     //__CN_LNA__
-    friso_dic_load(friso, config, __LEX_CN_LNA__, "../vendors/dict/UTF-8/lex-ln-adorn.lex", __LENGTH__ );
+    friso_dic_load(friso, config, __LEX_CN_LNA__, "../vendors/dict/UTF-8/lex-ln-adorn.lex", __LENGTH__);
 
     e_time = clock();
     printf(
-        "Done, cost: %f sec, size=%d\n", 
-        (double) (e_time - s_time) / CLOCKS_PER_SEC,
+        "Done, cost: %f sec, size=%d\n",
+        (double)(e_time - s_time) / CLOCKS_PER_SEC,
         friso_all_dic_size(friso->dic)
     );
 
-    while (1) {
+    while(1) {
         printf("friso-%d>> ", lex);
-        if (scanf("%s", _line) != 1) {
+        if(scanf("%s", _line) != 1) {
             printf("Invalid input\n");
             continue;
         }
 
-        if (strcmp( _line, "quit" ) == 0) {
+        if(strcmp(_line, "quit") == 0) {
             break;
-        }  else if ( strcmp(_line, "help") == 0 ) {
+        }  else if(strcmp(_line, "help") == 0) {
             ___PRINT_HELP_INFO___
-        } else if ( strcmp( _line, "#set" ) == 0 ) {
+        } else if(strcmp(_line, "#set") == 0) {
             printf("lex_t>> ");
-            if (scanf("%d", &lex) != 1) {
+            if(scanf("%d", &lex) != 1) {
                 printf("Warning: Invalid lex type input\n");
                 continue;
             }
         } else {
             s_time = clock();
-            e = friso_dic_get( friso->dic, lex, _line );
+            e = friso_dic_get(friso->dic, lex, _line);
             e_time = clock();
-            if (e != NULL) {
+            if(e != NULL) {
                 printf(
-                    "word=%s, syn=%s, fre=%d, cost:%fsec\n", 
-                    e->word, e->syn==NULL? "NULL" : (char *)e->syn->items[0], 
-                    e->fre, 
-                    (double) (e_time - s_time) / CLOCKS_PER_SEC
+                    "word=%s, syn=%s, fre=%d, cost:%fsec\n",
+                    e->word, e->syn == NULL ? "NULL" : (char *)e->syn->items[0],
+                    e->fre,
+                    (double)(e_time - s_time) / CLOCKS_PER_SEC
                 );
             } else {
                 printf("%s was not found.\n", _line);

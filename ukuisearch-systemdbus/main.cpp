@@ -25,7 +25,7 @@
 
 #include "sysdbusregister.h"
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 
     QCoreApplication app(argc, argv);
     app.setOrganizationName("Kylin Team");
@@ -33,12 +33,12 @@ int main(int argc, char *argv[]){
 
 
     QDBusConnection systemBus = QDBusConnection::systemBus();
-    if (!systemBus.registerService("com.ukui.search.qt.systemdbus")){
+    if(!systemBus.registerService("com.ukui.search.qt.systemdbus")) {
         qCritical() << "QDbus register service failed reason:" << systemBus.lastError();
         exit(1);
     }
 
-    if (!systemBus.registerObject("/", new SysdbusRegister(), QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals)){
+    if(!systemBus.registerObject("/", new SysdbusRegister(), QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals)) {
         qCritical() << "QDbus register object failed reason:" << systemBus.lastError();
         exit(2);
     }

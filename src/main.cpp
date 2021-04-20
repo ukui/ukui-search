@@ -61,8 +61,7 @@
 //}
 
 
-void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-{
+void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
     QByteArray localMsg = msg.toLocal8Bit();
     QByteArray currentTime = QTime::currentTime().toString().toLocal8Bit();
 
@@ -70,45 +69,45 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 //    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/ukui-search.log";
 //    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search/ukui-search.log";
     QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search.log";
-    if (!QFile::exists(logFilePath)) {
+    if(!QFile::exists(logFilePath)) {
         showDebug = false;
     }
     FILE *log_file = nullptr;
 
-    if (showDebug) {
+    if(showDebug) {
         log_file = fopen(logFilePath.toLocal8Bit().constData(), "a+");
     }
 
     const char *file = context.file ? context.file : "";
     const char *function = context.function ? context.function : "";
-    switch (type) {
+    switch(type) {
     case QtDebugMsg:
-        if (!log_file) {
+        if(!log_file) {
             break;
         }
         fprintf(log_file, "Debug: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
         break;
     case QtInfoMsg:
-        fprintf(log_file? log_file: stdout, "Info: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        fprintf(log_file ? log_file : stdout, "Info: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
         break;
     case QtWarningMsg:
-        fprintf(log_file? log_file: stderr, "Warning: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        fprintf(log_file ? log_file : stderr, "Warning: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
         break;
     case QtCriticalMsg:
-        fprintf(log_file? log_file: stderr, "Critical: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        fprintf(log_file ? log_file : stderr, "Critical: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
         break;
     case QtFatalMsg:
-        fprintf(log_file? log_file: stderr, "Fatal: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        fprintf(log_file ? log_file : stderr, "Fatal: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
         break;
     }
 
-    if (log_file)
+    if(log_file)
         fclose(log_file);
 }
 
 void centerToScreen(QWidget* widget) {
-    if (!widget)
-      return;
+    if(!widget)
+        return;
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
     int desk_x = desk_rect.width();
@@ -142,30 +141,26 @@ void searchMethod(FileUtils::SearchMethod sm){
     qWarning() << "searchMethod end: " << static_cast<int>(FileUtils::searchMethod);
 }
 */
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     // Determine whether the home directory has been created, and if not, keep waiting.
     char *p_home = NULL;
 
     unsigned int i = 0;
-    while(p_home == NULL)
-    {
+    while(p_home == NULL) {
         ::sleep(1);
         ++i;
         p_home = getenv("HOME");
-        if(i%5==0)
-        {
-            qWarning()<<"I can't find home! I'm done here!!";
+        if(i % 5 == 0) {
+            qWarning() << "I can't find home! I'm done here!!";
             printf("I can't find home! I'm done here!!");
-            syslog(LOG_ERR,"I can't find home! I'm done here!!\n");
+            syslog(LOG_ERR, "I can't find home! I'm done here!!\n");
         }
     }
     p_home = NULL;
-    while(!QDir(QDir::homePath()).exists())
-    {
-        qWarning()<<"Home is not exits!!";
+    while(!QDir(QDir::homePath()).exists()) {
+        qWarning() << "Home is not exits!!";
         printf("Home is not exits!!");
-        syslog(LOG_ERR,"Home is not exits!!\n");
+        syslog(LOG_ERR, "Home is not exits!!\n");
         ::sleep(1);
     }
 
@@ -174,24 +169,23 @@ int main(int argc, char *argv[])
 
     // Register meta type
     qDebug() << "ukui-search main start";
-    qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
+    qRegisterMetaType<QPair<QString, QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
 
     // If qt version bigger than 5.12, enable high dpi scaling and use high dpi pixmaps?
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+    QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
 
     // Make sure only one ukui-search is running.
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    if(app.isRunning())
-    {
+    if(app.isRunning()) {
         app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
         qDebug() << QObject::tr("ukui-search is already running!");
         return EXIT_SUCCESS;
@@ -202,23 +196,23 @@ int main(int argc, char *argv[])
         parser.addOptions({debugOption, showsearch});
         parser.process(app);
     }*/
-/*
-    // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
-    QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
-    if(!fifoDir.exists())
-        qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
+    /*
+        // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
+        QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
+        if(!fifoDir.exists())
+            qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
 
-    unlink(UKUI_SEARCH_PIPE_PATH);
-    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
-    if(retval == -1)
-    {
-        qCritical()<<"creat fifo error!!";
-        syslog(LOG_ERR,"creat fifo error!!\n");
-        assert(false);
-        return -1;
-    }
-    qDebug()<<"create fifo success\n";
-*/
+        unlink(UKUI_SEARCH_PIPE_PATH);
+        int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
+        if(retval == -1)
+        {
+            qCritical()<<"creat fifo error!!";
+            syslog(LOG_ERR,"creat fifo error!!\n");
+            assert(false);
+            return -1;
+        }
+        qDebug()<<"create fifo success\n";
+    */
     // Set max_user_watches to a number which is enough big.
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
@@ -253,17 +247,17 @@ int main(int argc, char *argv[])
     // Load translations
     QTranslator translator;
     try {
-        if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw -1;
+        if(! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw - 1;
         app.installTranslator(&translator);
-    } catch (...) {
+    } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
     QTranslator qt_translator;
     try {
-        if (! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw -1;
+        if(! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
         app.installTranslator(&qt_translator);
-    } catch (...) {
+    } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
@@ -287,7 +281,7 @@ int main(int argc, char *argv[])
     app.setActivationWindow(w);
 
     // Processing startup parameters
-    if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
+    if(QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
 //        w->moveToPanel();
         centerToScreen(w);
         XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);

@@ -26,8 +26,7 @@
 #include "search-item-model.h"
 #include "file-utils.h"
 
-class SearchItem : public QObject
-{
+class SearchItem : public QObject {
     friend class SearchItemModel;
     friend class SearchListView;
     Q_OBJECT

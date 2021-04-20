@@ -22,16 +22,14 @@
 #include "create-index-ask-dialog.h"
 #include <QPainter>
 
-CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent)
-{
+CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent) {
     this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search"));
 
     initUi();
 }
 
-void CreateIndexAskDialog::initUi()
-{
+void CreateIndexAskDialog::initUi() {
     this->setFixedSize(380, 202);
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
@@ -116,8 +114,7 @@ void CreateIndexAskDialog::initUi()
 /**
  * @brief CreateIndexAskDialog::paintEvent 绘制窗口背景（默认背景较暗）
  */
-void CreateIndexAskDialog::paintEvent(QPaintEvent *event)
-{
+void CreateIndexAskDialog::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
 
     QPainter p(this);
@@ -125,7 +122,7 @@ void CreateIndexAskDialog::paintEvent(QPaintEvent *event)
     QPainterPath rectPath;
     rectPath.addRect(this->rect());
     p.save();
-    p.fillPath(rectPath,palette().color(QPalette::Base));
+    p.fillPath(rectPath, palette().color(QPalette::Base));
     p.restore();
     return QDialog::paintEvent(event);
 }

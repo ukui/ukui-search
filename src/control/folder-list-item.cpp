@@ -22,14 +22,12 @@
 #include <QIcon>
 #include <QEvent>
 
-FolderListItem::FolderListItem(QWidget *parent, const QString &path) : QWidget(parent)
-{
+FolderListItem::FolderListItem(QWidget *parent, const QString &path) : QWidget(parent) {
     m_path = path;
     initUi();
 }
 
-FolderListItem::~FolderListItem()
-{
+FolderListItem::~FolderListItem() {
 
 }
 
@@ -39,7 +37,7 @@ FolderListItem::~FolderListItem()
 void FolderListItem::initUi() {
     m_layout = new QVBoxLayout(this);
     m_layout->setSpacing(0);
-    m_layout->setContentsMargins(0,0,0,0);
+    m_layout->setContentsMargins(0, 0, 0, 0);
     m_widget = new QWidget(this);
     m_widget->setObjectName("mWidget");
     this->setFixedHeight(32);
@@ -77,7 +75,7 @@ QString FolderListItem::getPath() {
  * @brief FolderListItem::enterEvent 鼠标移入事件
  * @param event
  */
-void FolderListItem::enterEvent(QEvent *event){
+void FolderListItem::enterEvent(QEvent *event) {
     m_delLabel->show();
     m_widget->setStyleSheet("QWidget#mWidget{background: rgba(0,0,0,0.1);}");
     QWidget::enterEvent(event);
@@ -87,7 +85,7 @@ void FolderListItem::enterEvent(QEvent *event){
  * @brief FolderListItem::leaveEvent 鼠标移出事件
  * @param event
  */
-void FolderListItem::leaveEvent(QEvent *event){
+void FolderListItem::leaveEvent(QEvent *event) {
     m_delLabel->hide();
     m_widget->setStyleSheet("QWidget#mWidget{background: transparent;}");
     QWidget::leaveEvent(event);
@@ -100,9 +98,9 @@ void FolderListItem::leaveEvent(QEvent *event){
  * @param event
  * @return
  */
-bool FolderListItem::eventFilter(QObject *watched, QEvent *event){
-    if (watched == m_delLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
+bool FolderListItem::eventFilter(QObject *watched, QEvent *event) {
+    if(watched == m_delLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
 //            qDebug()<<"pressed!";
             Q_EMIT this->onDelBtnClicked(m_path);
         }

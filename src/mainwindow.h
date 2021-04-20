@@ -59,8 +59,7 @@
 #define SEARCH_METHOD_KEY "indexSearch"
 
 class SearchResult;
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     friend class SearchResult;
     Q_OBJECT
 
@@ -105,7 +104,7 @@ private:
 
     QQueue<QString> *m_search_result_file = nullptr;
     QQueue<QString> *m_search_result_dir = nullptr;
-    QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
+    QQueue<QPair<QString, QStringList>> *m_search_result_content = nullptr;
     SearchResult * m_search_result_thread = nullptr;
     SearchAppThread * m_seach_app_thread = nullptr;
 

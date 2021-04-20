@@ -32,8 +32,7 @@
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
 
-class FileSearcher : public QObject
-{
+class FileSearcher : public QObject {
     Q_OBJECT
 public:
     explicit FileSearcher(QObject *parent = nullptr);
@@ -49,14 +48,14 @@ public:
     static QMutex m_mutex3;
 
 public Q_SLOTS:
-    void onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent);
+    void onKeywordSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, QQueue<QPair<QString, QStringList>> *searchResultContent);
 
 Q_SIGNALS:
     void resultFile(QQueue<QString> *);
     void resultDir(QQueue<QString> *);
-    void resultContent(QQueue<QPair<QString,QStringList>> *);
+    void resultContent(QQueue<QPair<QString, QStringList>> *);
 private:
-    int keywordSearchfile(size_t uniqueSymbol, QString keyword, QString value,unsigned slot = 1,int begin = 0, int num = 20);
+    int keywordSearchfile(size_t uniqueSymbol, QString keyword, QString value, unsigned slot = 1, int begin = 0, int num = 20);
     int keywordSearchContent(size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
 
     /**
@@ -70,13 +69,13 @@ private:
     Xapian::Query creatQueryForContentSearch(QString keyword, Xapian::Database &db);
 
     int getResult(size_t uniqueSymbol, Xapian::MSet &result, QString value);
-    int getContentResult(size_t uniqueSymbol, Xapian::MSet &result,std::string &keyWord);
+    int getContentResult(size_t uniqueSymbol, Xapian::MSet &result, std::string &keyWord);
 
     bool isBlocked(QString &path);
 
     QQueue<QString> *m_search_result_file = nullptr;
     QQueue<QString> *m_search_result_dir = nullptr;
-    QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
+    QQueue<QPair<QString, QStringList>> *m_search_result_content = nullptr;
     bool m_searching = false;
 };
 

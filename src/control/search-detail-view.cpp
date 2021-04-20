@@ -37,14 +37,12 @@
 //#include <QWebEngineCookieStore>
 #include "config-file.h"
 
-SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent)
-{
+SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent) {
     initUI();
 }
 
-SearchDetailView::~SearchDetailView()
-{
-    if (m_layout) {
+SearchDetailView::~SearchDetailView() {
+    if(m_layout) {
         delete m_layout;
         m_layout = NULL;
     }
@@ -101,8 +99,7 @@ void SearchDetailView::setContent(const QString& text, const QString& keyword) {
  * @brief SearchDetailView::isEmpty 返回当前详情页是否为空
  * @return
  */
-bool SearchDetailView::isEmpty()
-{
+bool SearchDetailView::isEmpty() {
     return m_isEmpty;
 }
 
@@ -110,8 +107,7 @@ bool SearchDetailView::isEmpty()
  * @brief SearchDetailView::getType 返回当前详情页显示的类型
  * @return
  */
-int SearchDetailView::getType()
-{
+int SearchDetailView::getType() {
     return m_type;
 }
 
@@ -119,8 +115,7 @@ int SearchDetailView::getType()
  * @brief SearchDetailView::setWebWidget 显示为网页
  * @param keyword 关键词
  */
-void SearchDetailView::setWebWidget(const QString& keyword)
-{
+void SearchDetailView::setWebWidget(const QString& keyword) {
     clearLayout();
     m_isEmpty = false;
     m_reload = false;
@@ -171,10 +166,10 @@ void SearchDetailView::setWebWidget(const QString& keyword)
     m_currentKeyword = keyword;//目前网页搜索的关键词，记录此词来判断网页是否需要刷新
     QString address;
     QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
-    if (!engine.isEmpty()) {
-        if (engine == "360") {
+    if(!engine.isEmpty()) {
+        if(engine == "360") {
             address = "https://so.com/s?q=" + keyword; //360
-        } else if (engine == "sougou") {
+        } else if(engine == "sougou") {
             address = "https://www.sogou.com/web?query=" + keyword; //搜狗
         } else {
             address = "http://baidu.com/s?word=" + keyword; //百度
@@ -191,8 +186,7 @@ void SearchDetailView::setWebWidget(const QString& keyword)
 //    m_webView->show();
 }
 
-void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath, const QString &description)
-{
+void SearchDetailView::setAppWidget(const QString &appname, const QString &path, const QString &iconpath, const QString &description) {
     m_type = SearchListView::ResType::App;
     m_path = path;
     m_name = appname.contains("/") ? appname.left(appname.indexOf("/")) : appname;
@@ -206,18 +200,18 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     m_hLine->show();
 
     QIcon icon;
-    if (path.isEmpty() || path == "") {
+    if(path.isEmpty() || path == "") {
         icon = QIcon(iconpath);
         m_optionView->setupOptions(m_type, false);
         //未安装应用有一个label显示软件描述
-        if (description != "" && !description.isEmpty()) {
+        if(description != "" && !description.isEmpty()) {
             m_detailFrame->show();
             m_contentLabel->show();
             m_contentLabel->setText(QString(tr("Introduction: %1")).arg(description));
         }
     } else {
         m_optionView->setupOptions(m_type, true);
-        if (QIcon::fromTheme(iconpath).isNull()) {
+        if(QIcon::fromTheme(iconpath).isNull()) {
             icon = QIcon(":/res/icons/desktop.png");
         } else {
             icon = QIcon::fromTheme(iconpath);
@@ -229,14 +223,13 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(showname);
-    if (QString::compare(showname, m_name)) {
+    if(QString::compare(showname, m_name)) {
         m_nameLabel->setToolTip(m_name);
     }
     m_typeLabel->setText(tr("Application"));
 }
 
-void SearchDetailView::closeWebWidget()
-{
+void SearchDetailView::closeWebWidget() {
 //    if (m_webView) {
 //        m_webView->close();
 //        m_webView = NULL;
@@ -249,12 +242,11 @@ void SearchDetailView::closeWebWidget()
  * @param path
  * @return
  */
-bool SearchDetailView::doubleClickAction(const int &type, const QString &path)
-{
-    if (type == SearchListView::ResType::App && !path.contains(".desktop")) {
-            return installAppAction(path.mid(path.indexOf("/") + 1));
+bool SearchDetailView::doubleClickAction(const int &type, const QString &path) {
+    if(type == SearchListView::ResType::App && !path.contains(".desktop")) {
+        return installAppAction(path.mid(path.indexOf("/") + 1));
     } else {
-        if (openAction(type, path)) {
+        if(openAction(type, path)) {
             writeConfigFile(path);
             return true;
         }
@@ -265,15 +257,15 @@ bool SearchDetailView::doubleClickAction(const int &type, const QString &path)
 QString SearchDetailView::getHtmlText(const QString & text, const QString & keyword) {
     QString htmlString;
     bool boldOpenned = false;
-    for (int i = 0; i < text.length(); i++) {
-        if ((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
-            if (! boldOpenned) {
+    for(int i = 0; i < text.length(); i++) {
+        if((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
+            if(! boldOpenned) {
                 boldOpenned = true;
                 htmlString.append(QString("<b><font size=\"4\">"));
             }
             htmlString.append(escapeHtml(QString(text.at(i))));
         } else {
-            if (boldOpenned) {
+            if(boldOpenned) {
                 boldOpenned = false;
                 htmlString.append(QString("</font></b>"));
             }
@@ -289,8 +281,7 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
  * @param str 需要转义的字段
  * @return
  */
-QString SearchDetailView::escapeHtml(const QString & str)
-{
+QString SearchDetailView::escapeHtml(const QString & str) {
     QString temp = str;
     temp.replace("<", "&lt;");
     temp.replace(">", "&gt;");
@@ -315,9 +306,9 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_hLine->show();
 
     //文件和文件夹有一个额外的详情区域
-    if (type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content) {
+    if(type == SearchListView::ResType::Dir || type == SearchListView::ResType::File || type == SearchListView::ResType::Content) {
         m_detailFrame->show();
-        if (isContent) { //文件内容区域
+        if(isContent) {  //文件内容区域
             m_contentLabel->show();
             m_contentLabel->setText(QApplication::translate("", getHtmlText(m_contentText, m_keyword).toLocal8Bit(), nullptr));
         }
@@ -328,14 +319,14 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
 //        m_pathLabel_2->setText(path);
         QString showPath = path;
         QFontMetrics fontMetrics = m_pathLabel_2->fontMetrics();
-        if (fontMetrics.width(path) > m_pathLabel_2->width() - 10) {
+        if(fontMetrics.width(path) > m_pathLabel_2->width() - 10) {
             //路径长度超过230,手动添加换行符以实现折叠
             int lastIndex = 0;
-            for (int i = lastIndex; i < path.length(); i++) {
-                if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) == m_pathLabel_2->width() - 10) {
+            for(int i = lastIndex; i < path.length(); i++) {
+                if(fontMetrics.width(path.mid(lastIndex, i - lastIndex)) == m_pathLabel_2->width() - 10) {
                     lastIndex = i;
                     showPath.insert(i, '\n');
-                } else if (fontMetrics.width(path.mid(lastIndex, i - lastIndex)) > m_pathLabel_2->width() - 10) {
+                } else if(fontMetrics.width(path.mid(lastIndex, i - lastIndex)) > m_pathLabel_2->width() - 10) {
                     lastIndex = i;
                     showPath.insert(i - 1, '\n');
                 } else {
@@ -356,33 +347,33 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     m_optionView->show();
 
     //根据不同类型的搜索结果切换加载图片和名称的方式
-    switch (type) {
-        case SearchListView::ResType::Content:
-        case SearchListView::ResType::Dir :
-        case SearchListView::ResType::File : {
-            QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
-            m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-            QString wholeName = FileUtils::getFileName(path);
-            QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
-            m_nameLabel->setText(name);
-            if (QString::compare(name, wholeName)) {
-                m_nameLabel->setToolTip(wholeName);
-            }
-            m_nameLabel->setTextFormat(Qt::PlainText); //显示纯文本
-            m_typeLabel->setText(tr("Document"));
-            break;
+    switch(type) {
+    case SearchListView::ResType::Content:
+    case SearchListView::ResType::Dir :
+    case SearchListView::ResType::File : {
+        QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
+        QString wholeName = FileUtils::getFileName(path);
+        QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
+        m_nameLabel->setText(name);
+        if(QString::compare(name, wholeName)) {
+            m_nameLabel->setToolTip(wholeName);
         }
-        case SearchListView::ResType::Setting : {
-            QIcon icon = FileUtils::getSettingIcon(path, true);
-            m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
-            QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
-            m_nameLabel->setText(settingType);
-            m_typeLabel->setText(FileUtils::getSettingName(path));
-            break;
-        }
-        default:
-            break;
+        m_nameLabel->setTextFormat(Qt::PlainText); //显示纯文本
+        m_typeLabel->setText(tr("Document"));
+        break;
+    }
+    case SearchListView::ResType::Setting : {
+        QIcon icon = FileUtils::getSettingIcon(path, true);
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
+        m_nameLabel->setText(settingType);
+        m_typeLabel->setText(FileUtils::getSettingName(path));
+        break;
+    }
+    default:
+        break;
     }
 }
 
@@ -391,34 +382,34 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
  * @param type 选中的类型
  */
 void SearchDetailView::execActions(const int& type, const int& option, const QString& path) {
-    switch (option) {
-        case OptionView::Options::Open: {
-            if (openAction(type, path)) {
-                writeConfigFile(path);
-            }
-            break;
+    switch(option) {
+    case OptionView::Options::Open: {
+        if(openAction(type, path)) {
+            writeConfigFile(path);
         }
-        case OptionView::Options::Shortcut: {
-            addDesktopShortcut(path);
-            break;
-        }
-        case OptionView::Options::Panel: {
-            addPanelShortcut(path);
-            break;
-        }
-        case OptionView::Options::OpenPath: {
-            openPathAction(path);
-            break;
-        }
-        case OptionView::Options::CopyPath: {
-            copyPathAction(path);
-            break;
-        }
-        case OptionView::Options::Install: {
-            installAppAction(m_pkgname); //未安装应用点击此选项，不使用路径作为参数，而是使用软件名
-        }
-        default:
-            break;
+        break;
+    }
+    case OptionView::Options::Shortcut: {
+        addDesktopShortcut(path);
+        break;
+    }
+    case OptionView::Options::Panel: {
+        addPanelShortcut(path);
+        break;
+    }
+    case OptionView::Options::OpenPath: {
+        openPathAction(path);
+        break;
+    }
+    case OptionView::Options::CopyPath: {
+        copyPathAction(path);
+        break;
+    }
+    case OptionView::Options::Install: {
+        installAppAction(m_pkgname); //未安装应用点击此选项，不使用路径作为参数，而是使用软件名
+    }
+    default:
+        break;
     }
 }
 
@@ -427,34 +418,34 @@ void SearchDetailView::execActions(const int& type, const int& option, const QSt
  * @return
  */
 bool SearchDetailView::openAction(const int& type, const QString& path) {
-    switch (type) {
-        case SearchListView::ResType::App: {
-            GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
-            bool res = static_cast<bool>(g_app_info_launch(G_APP_INFO(desktopAppInfo),nullptr, nullptr, nullptr));
-            g_object_unref(desktopAppInfo);
-            return res;
-            break;
-        }
-        case SearchListView::ResType::Best:
-        case SearchListView::ResType::Content:
-        case SearchListView::ResType::Dir:
-        case SearchListView::ResType::File: {
+    switch(type) {
+    case SearchListView::ResType::App: {
+        GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
+        bool res = static_cast<bool>(g_app_info_launch(G_APP_INFO(desktopAppInfo), nullptr, nullptr, nullptr));
+        g_object_unref(desktopAppInfo);
+        return res;
+        break;
+    }
+    case SearchListView::ResType::Best:
+    case SearchListView::ResType::Content:
+    case SearchListView::ResType::Dir:
+    case SearchListView::ResType::File: {
 //            QProcess process;
 //            process.startDetached(QString("xdg-open %1").arg(path));
-            return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-            break;
-        }
-        case SearchListView::ResType::Setting: {
-            //打开控制面板对应页面
-            QProcess  process;
-            if (path.left(path.indexOf("/")).toLower() == "wallpaper")
-                return process.startDetached(QString("ukui-control-center --background"));
-            else  return process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
-            break;
-        }
-        default:
-            return false;
-            break;
+        return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        break;
+    }
+    case SearchListView::ResType::Setting: {
+        //打开控制面板对应页面
+        QProcess  process;
+        if(path.left(path.indexOf("/")).toLower() == "wallpaper")
+            return process.startDetached(QString("ukui-control-center --background"));
+        else  return process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
+        break;
+    }
+    default:
+        return false;
+        break;
     }
 }
 
@@ -464,7 +455,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
  * @return
  */
 bool SearchDetailView::writeConfigFile(const QString& path) {
-    if (ConfigFile::writeConfig(path)) {
+    if(ConfigFile::writeConfig(path)) {
         Q_EMIT this->configFileChanged();
         return true;
     }
@@ -474,8 +465,7 @@ bool SearchDetailView::writeConfigFile(const QString& path) {
 /**
  * @brief SearchDetailView::initUI 初始化ui
  */
-void SearchDetailView::initUI()
-{
+void SearchDetailView::initUI() {
     m_layout = new QVBoxLayout(this);
     this->setLayout(m_layout);
     m_layout->setContentsMargins(16, 60, 16, 24);
@@ -527,7 +517,7 @@ void SearchDetailView::initUI()
     //文件和文件夹有一个额外的详情区域
     m_detailFrame = new QFrame(this);
     m_detailLyt = new QVBoxLayout(m_detailFrame);
-    m_detailLyt->setContentsMargins(0,0,0,0);
+    m_detailLyt->setContentsMargins(0, 0, 0, 0);
 
     //文件内容区域
     m_contentLabel = new QLabel(m_detailFrame);
@@ -585,10 +575,9 @@ bool SearchDetailView::addDesktopShortcut(const QString& path) {
     QFileInfo fileInfo(path);
     QString desktopfn = fileInfo.fileName();
     QFile file(path);
-    QString newName = QString(dirpath+"/"+desktopfn);
-    bool ret = file.copy(QString(dirpath+"/"+desktopfn));
-    if(ret)
-    {
+    QString newName = QString(dirpath + "/" + desktopfn);
+    bool ret = file.copy(QString(dirpath + "/" + desktopfn));
+    if(ret) {
         QProcess process;
         process.startDetached(QString("chmod a+x %1").arg(newName));
         return true;
@@ -605,14 +594,14 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
                          "/",
                          "com.ukui.panel.desktop",
                          QDBusConnection::sessionBus());
-    if (iface.isValid()) {
-        QDBusReply<bool> isExist = iface.call("CheckIfExist",path);
-        if (isExist) {
-            qDebug()<<"qDebug: Add shortcut to panel failed, because it is already existed!";
+    if(iface.isValid()) {
+        QDBusReply<bool> isExist = iface.call("CheckIfExist", path);
+        if(isExist) {
+            qDebug() << "qDebug: Add shortcut to panel failed, because it is already existed!";
             return false;
         }
-        QDBusReply<QVariant> ret = iface.call("AddToTaskbar",path);
-        qDebug()<<"qDebug: Add shortcut to panel successed!";
+        QDBusReply<QVariant> ret = iface.call("AddToTaskbar", path);
+        qDebug() << "qDebug: Add shortcut to panel successed!";
         return true;
     }
     return false;
@@ -641,21 +630,20 @@ bool SearchDetailView::copyPathAction(const QString& path) {
  * @param name
  * @return
  */
-bool SearchDetailView::installAppAction(const QString & name)
-{
-    QDBusInterface * interface = new QDBusInterface( "com.kylin.softwarecenter",
-                              "/com/kylin/softwarecenter",
-                              "com.kylin.utiliface",
-                              QDBusConnection::sessionBus() );
+bool SearchDetailView::installAppAction(const QString & name) {
+    QDBusInterface * interface = new QDBusInterface("com.kylin.softwarecenter",
+                "/com/kylin/softwarecenter",
+                "com.kylin.utiliface",
+                QDBusConnection::sessionBus());
 
-    if (interface->isValid()) {
+    if(interface->isValid()) {
         //软件商店已打开，直接跳转
-        interface->call("show_search_result",name);
+        interface->call("show_search_result", name);
         bool reply = QDBusReply<bool>(interface->call(QString("show_search_result"), name));
         return reply;
     } else {
         //软件商店未打开，打开软件商店下载此软件
-        qDebug()<<"软件商店未打开，打开软件商店下载此软件"<<name;
+        qDebug() << "软件商店未打开，打开软件商店下载此软件" << name;
         QProcess process;
         return process.startDetached(QString("kylin-software-center -find %1").arg(name));
     }

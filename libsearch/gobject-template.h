@@ -25,21 +25,20 @@
 
 template<class T>
 
-class gobjecttemplate
-{
+class gobjecttemplate {
 public:
     //do not use this constructor.
     gobjecttemplate();
     gobjecttemplate(T *obj, bool ref = false) {
         m_obj = obj;
-        if (ref) {
+        if(ref) {
             g_object_ref(obj);
         }
     }
 
     ~gobjecttemplate() {
         //qDebug()<<"~GObjectTemplate";
-        if (m_obj)
+        if(m_obj)
             g_object_unref(m_obj);
     }
 
