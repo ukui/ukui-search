@@ -68,7 +68,9 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
         m_cache.insert(TRANSPARENCY_KEY, m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
     }
 
-    if(QGSettings::isSchemaInstalled(THEME_GSETTINGS_ID)) {
+    m_cache.insert(STYLE_NAME_KEY, "ukui-light");
+    m_cache.insert(FONT_SIZE_KEY, 11);
+    if (QGSettings::isSchemaInstalled(THEME_GSETTINGS_ID)) {
         m_theme_gsettings = new QGSettings(THEME_GSETTINGS_ID, QByteArray(), this);
         connect(m_theme_gsettings, &QGSettings::changed, this, [ = ](const QString & key) {
             if(key == STYLE_NAME_KEY) {
