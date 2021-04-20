@@ -71,7 +71,7 @@ int SearchItemModel::rowCount(const QModelIndex& index) const
  */
 int SearchItemModel::columnCount(const QModelIndex& index) const
 {
-    return index.isValid() ? 0 : 2;
+    return index.isValid() ? 0 : 1;
 }
 
 /**
@@ -96,29 +96,31 @@ QVariant SearchItemModel::data(const QModelIndex &index, int role) const
 {
     if(!index.isValid())
         return QVariant();
-    switch (index.column()) {
-    case Icon: {
+//    switch (index.column()) {
+//    case Icon: {
         switch (role) {
         case Qt::DecorationRole: {
             return m_item->getIcon(index.row());
         }
+        case Qt::DisplayRole: {
+            return QVariant(m_item->getName(index.row()));
         default:
             return QVariant();
         }
     }
-    case Name: {
-        switch (role) {
-        case Qt::DisplayRole: {
-            return QVariant(m_item->getName(index.row()));
-        }
+//    case Name: {
+//        switch (role) {
+//        case Qt::DisplayRole: {
+//            return QVariant(m_item->getName(index.row()));
+//        }
             //                case Qt::ForegroundRole: {
             //                  return QColor(50, 50, 50);
             //                }
-        default:
-            return QVariant();
-        }
-    }
-    }
+//        default:
+//            return QVariant();
+//        }
+//    }
+//    }
 
     return QVariant();
 }

@@ -39,7 +39,7 @@ struct SKeyWord{
     ~SKeyWord(){
         word = std::move("");
         offsets.clear();
-        offsets.shrink_to_fit();
+//        offsets.shrink_to_fit();
     }
 };
 

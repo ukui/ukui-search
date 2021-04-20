@@ -1,4 +1,4 @@
-QT       += core gui dbus  KWindowSystem xml x11extras
+QT       += core gui dbus  xml x11extras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,8 +32,8 @@ SOURCES += \
     mainwindow.cpp \
     search-app-thread.cpp \
     search-result.cpp \
-    settings-widget.cpp \
-    xatom-helper.cpp
+    settings-widget.cpp
+#    xatom-helper.cpp
 
 
 HEADERS += \
@@ -43,8 +43,8 @@ HEADERS += \
     mainwindow.h \
     search-app-thread.h \
     search-result.h \
-    settings-widget.h \
-    xatom-helper.h
+    settings-widget.h
+#    xatom-helper.h
 
 # Default rules for deployment.
 
@@ -78,9 +78,3 @@ DEPENDPATH += $$PWD/../libchinese-segmentation
 
 INCLUDEPATH += $$PWD/../libsearch
 DEPENDPATH += $$PWD/../libsearch
-
-#DISTFILES += \
-#    ../data/ukui-search-menu.desktop \
-#    $$OUT_PWD/.qm/bo.qm \
-#    $$OUT_PWD/.qm/tr.qm \
-#    $$OUT_PWD/.qm/zh_CN.qm

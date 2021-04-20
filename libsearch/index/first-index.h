@@ -33,6 +33,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include "assert.h"
 #include <sys/prctl.h>
 //#include <QtConcurrent>
 #include "traverse_bfs.h"

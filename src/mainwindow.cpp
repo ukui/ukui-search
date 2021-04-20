@@ -29,9 +29,9 @@
 #include <QPalette>
 #include <QScreen>
 #include <QStyleOption>
-#include <KWindowEffects>
+//#include <KWindowEffects>
 #include <QPixmap>
-#include "kwindowsystem.h"
+//#include "kwindowsystem.h"
 #include "qt-single-application.h"
 
 //#include "inotify-manager.h"
@@ -67,10 +67,10 @@ MainWindow::MainWindow(QWidget *parent) :
     initUi();
 
 //    setProperty("useStyleWindowManager", false); //禁止拖动
-    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
-    m_hints.functions = MWM_FUNC_ALL;
-    m_hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+//    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+//    m_hints.functions = MWM_FUNC_ALL;
+//    m_hints.decorations = MWM_DECOR_BORDER;
+//    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
 
     QPainterPath path;
     auto rect = this->rect();
@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    path.addRoundedRect(rect, 0, 0);
     path.addRect(rect);
     setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
-    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
+//    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
     const QByteArray id("org.ukui.control-center.personalise");
     if (QGSettings::isSchemaInstalled(id)) {
@@ -130,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 clearSearchResult();
 //                this->moveToPanel();
                 centerToScreen(this);
-                XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+//                XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
                 this->show();
                 this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
                 this->raise();
@@ -272,7 +272,7 @@ void MainWindow::bootOptionsFilter(QString opt)
         clearSearchResult();
 //        this->moveToPanel();
         centerToScreen(this);
-        XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+//        XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
         this->show();
         this->m_searchLayout->focusIn();
         this->raise();
@@ -438,10 +438,12 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
 
     switch (event->response_type & ~0x80) {
     case XCB_FOCUS_OUT:
-        this->hide();
-        m_contentFrame->closeWebView();
-        m_search_result_thread->requestInterruption();
-        m_search_result_thread->quit();
+        //iaom begian
+//        this->hide();
+//        m_contentFrame->closeWebView();
+//        m_search_result_thread->requestInterruption();
+//        m_search_result_thread->quit();
+        //iaom finish
 //        m_seach_app_thread->stop();
         break;
     default:

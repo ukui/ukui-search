@@ -37,16 +37,16 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     m_model->setItem(m_item);
     this->setModel(m_model);
     this->setHeaderHidden(true);
-    this->setColumnWidth(0, 20);
-    this->setColumnWidth(1, 80);
+//    this->setColumnWidth(0, 20);
+//    this->setColumnWidth(1, 80);
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
     this->setFixedHeight(list.count() * rowheight + 4);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
-    this->setStyleSheet("QWidget{background:transparent;}");
-    m_styleDelegate = new HighlightItemDelegate(this);
+//    this->setStyleSheet("QWidget{background:transparent;}");
+//    m_styleDelegate = new HighlightItemDelegate(this);
 //    m_styleDelegate->setSearchKeyword(keyword);
-    this->setItemDelegate(m_styleDelegate);
+//    this->setItemDelegate(m_styleDelegate);
 
     m_type = type;
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ](const QItemSelection &selected, const QItemSelection &deselected) {
@@ -99,6 +99,8 @@ void SearchListView::setList(QStringList list)
         this->blockSignals(false);
     }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+    qDebug()<<"setList rowheight"<< rowheight;
+    qDebug()<<"setList indexRowSizeHint"<<indexRowSizeHint(QModelIndex());
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
 
@@ -135,7 +137,7 @@ void SearchListView::clear()
  */
 void SearchListView::setKeyword(QString keyword)
 {
-    m_styleDelegate->setSearchKeyword(keyword);
+//    m_styleDelegate->setSearchKeyword(keyword);
 }
 
 /**

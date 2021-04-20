@@ -229,7 +229,8 @@ int main(int argc, char *argv[])
     // Load translations
     QTranslator translator;
     try {
-        if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw -1;
+//        if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw -1;
+        if (! translator.load(":/res/translations/zh_CN.qm" + QLocale::system().name())) throw -1;
         app.installTranslator(&translator);
     } catch (...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
@@ -263,7 +264,7 @@ int main(int argc, char *argv[])
     if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
 //        w->moveToPanel();
         centerToScreen(w);
-        XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
+//        XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
         w->show();
     }
 

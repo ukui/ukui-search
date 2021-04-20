@@ -34,13 +34,13 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
 {
     this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search-settings"));
-//    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 //    this->setAttribute(Qt::WA_TranslucentBackground);
 
-    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
-    m_hints.functions = MWM_FUNC_ALL;
-    m_hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+//    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+//    m_hints.functions = MWM_FUNC_ALL;
+//    m_hints.decorations = MWM_DECOR_BORDER;
+//    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
 
     initUi();
     refreshIndexState();
@@ -375,7 +375,7 @@ void SettingsWidget::showWidget()
     flags &= ~Qt::WindowStaysOnTopHint;
     this->setWindowFlags(flags);
     m_timer->start();
-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+//    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
     this->show();
 }
 

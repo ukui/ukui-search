@@ -33,7 +33,7 @@
 #include <QScrollArea>
 #include <QTimer>
 #include <libsearch.h>
-#include "xatom-helper.h"
+//#include "xatom-helper.h"
 
 class SettingsWidget : public QWidget
 {
@@ -56,7 +56,7 @@ private:
     void showWarningDialog(const int&);
     void resetWebEngine();
 
-    MotifWmHints m_hints;
+//    MotifWmHints m_hints;
 
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;

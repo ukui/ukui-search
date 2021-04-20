@@ -56,7 +56,8 @@ void HighlightItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem
         ctx.palette.setColor(QPalette::Text, optionV4.palette.color(QPalette::Active, QPalette::HighlightedText));
 
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &optionV4);
-    textRect.adjust(-20, -5, 0, 0);
+//    textRect.adjust(-20, -5, 0, 0);
+    textRect.adjust(0, -5, 0, 0);
     painter->save();
     painter->translate(textRect.topLeft());
     painter->setClipRect(textRect.translated(-textRect.topLeft()));

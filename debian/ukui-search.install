@@ -1,4 +1,3 @@
 usr/bin/ukui-search
 etc/xdg/autostart/*.desktop
 usr/share/applications/*.desktop
-src/.qm/*.qm usr/share/ukui-search/translations

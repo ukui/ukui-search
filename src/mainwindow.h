@@ -43,6 +43,7 @@
 #include <QKeyEvent>
 #include <QGSettings/QGSettings>
 #include <QSystemTrayIcon>
+#include <xcb/xcb.h>
 
 #include "content-widget.h"
 #include "input-box.h"
@@ -50,7 +51,7 @@
 #include "settings-widget.h"
 #include "libsearch.h"
 #include "search-app-thread.h"
-#include "xatom-helper.h"
+//#include "xatom-helper.h"
 
 class SearchResult;
 class MainWindow : public QMainWindow
@@ -74,7 +75,7 @@ public:
     // The position which mainwindow shows in the center of screen where the cursor in.
     void centerToScreen(QWidget* widget);
 
-    MotifWmHints m_hints;
+//    MotifWmHints m_hints;
 
 private:
 

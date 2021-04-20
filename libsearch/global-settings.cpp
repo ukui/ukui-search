@@ -55,9 +55,10 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         qWarning()<<"Kylinssoclient Dbus connect fail!";
 
     this->forceSync();
+    m_cache.insert(FONT_SIZE_KEY, 11);
     //the default number of transparency in mainwindow is 0.7
     //if someone changes the num in mainwindow, here should be modified too
-    m_cache.insert(TRANSPARENCY_KEY, 0.7);
+    m_cache.insert(TRANSPARENCY_KEY, 1);
     if (QGSettings::isSchemaInstalled(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID)) {
         m_trans_gsettings = new QGSettings(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID, QByteArray(), this);
         connect(m_trans_gsettings, &QGSettings::changed, this, [=](const QString& key) {
