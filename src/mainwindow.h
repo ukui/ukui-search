@@ -131,6 +131,7 @@ protected:
 
 Q_SIGNALS:
     void searchMethodChanged(FileUtils::SearchMethod);
+    void webEngineChanged();
 
 public Q_SLOTS:
     /**

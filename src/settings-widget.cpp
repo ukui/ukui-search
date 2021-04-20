@@ -42,16 +42,6 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
     m_hints.decorations = MWM_DECOR_BORDER;
     XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
 
-    const QByteArray id(UKUI_SEARCH_SCHEMAS);
-    if (QGSettings::isSchemaInstalled(id)) {
-        m_web_engine_gsettings = new QGSettings(id);
-        connect(m_web_engine_gsettings, &QGSettings::changed, this, [ = ](const QString &key) {
-            if (key == WEB_ENGINE_KEY) {
-                resetWebEngine();
-            }
-        });
-    }
-
     initUi();
     refreshIndexState();
     setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
@@ -329,12 +319,7 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
  */
 void SettingsWidget::resetWebEngine()
 {
-    QString engine;
-    if (m_web_engine_gsettings && m_web_engine_gsettings->keys().contains(WEB_ENGINE_KEY)) {
-        engine = m_web_engine_gsettings->get(WEB_ENGINE_KEY).toString();
-    } else {
-        engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
-    }
+    QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
     m_engineBtnGroup->blockSignals(true);
     if (!engine.isEmpty()) {
         if (engine == "360") {
@@ -356,11 +341,8 @@ void SettingsWidget::resetWebEngine()
  */
 void SettingsWidget::setWebEngine(const QString& engine)
 {
-    if (m_web_engine_gsettings && m_web_engine_gsettings->keys().contains(WEB_ENGINE_KEY)) {
-        m_web_engine_gsettings->set(WEB_ENGINE_KEY, engine);
-    } else {
-        GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
-    }
+//    GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+    Q_EMIT this->webEngineChanged(engine);
 }
 
 /**

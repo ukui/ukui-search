@@ -214,6 +214,16 @@ void MainWindow::initUi()
             return;
         }
         m_settingsWidget = new SettingsWidget();
+        connect(this, &MainWindow::webEngineChanged, m_settingsWidget, [ = ]() {
+            m_settingsWidget->resetWebEngine();
+        });
+        connect(m_settingsWidget, &SettingsWidget::webEngineChanged, this, [ = ](const QString &engine) {
+            if (m_search_gsettings && m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
+                m_search_gsettings->set(WEB_ENGINE_KEY, engine);
+            } else {
+                GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+            }
+        });
         centerToScreen(m_settingsWidget);
         m_settingsWidget->show();
         connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
@@ -478,6 +488,7 @@ void MainWindow::initGsettings()
             } else if (key == WEB_ENGINE_KEY) {
                 QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
                 GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
+                Q_EMIT this->webEngineChanged();
             }
         });
         if (m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {

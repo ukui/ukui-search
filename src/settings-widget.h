@@ -35,9 +35,6 @@
 #include <libsearch.h>
 #include "xatom-helper.h"
 
-#define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
-#define WEB_ENGINE_KEY "webEngine"
-
 class SettingsWidget : public QWidget
 {
     Q_OBJECT
@@ -48,6 +45,7 @@ public:
     void setIndexState(bool);
     void setIndexNum(int);
     void showWidget();
+    void resetWebEngine();
 
 private:
     void initUi();
@@ -57,7 +55,6 @@ private:
     void paintEvent(QPaintEvent *);
     void resize();
     void showWarningDialog(const int&);
-    void resetWebEngine();
 
     MotifWmHints m_hints;
 
@@ -110,10 +107,9 @@ private:
 
     int m_blockdirs = 0; //黑名单文件夹数量
 
-    QGSettings * m_web_engine_gsettings = nullptr;
-
 Q_SIGNALS:
     void settingWidgetClosed();
+    void webEngineChanged(const QString&);
 
 private Q_SLOTS:
 //    void onBtnConfirmClicked();
