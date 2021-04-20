@@ -117,24 +117,31 @@ void centerToScreen(QWidget* widget) {
     int y = widget->height();
     widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 }
-
+/*
 void searchMethod(FileUtils::SearchMethod sm){
-    if (FileUtils::SearchMethod::INDEXSEARCH == sm || FileUtils::SearchMethod::DIRECTSEARCH == sm){
+    qWarning() << "searchMethod start: " << static_cast<int>(sm);
+    if (FileUtils::SearchMethod::INDEXSEARCH == sm || FileUtils::SearchMethod::DIRECTSEARCH == sm) {
         FileUtils::searchMethod = sm;
     } else {
         printf("enum class error!!!\n");
         qWarning("enum class error!!!\n");
     }
-    if (FileUtils::SearchMethod::INDEXSEARCH == sm) {
+    if (FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::_index_status) {
+        qWarning() << "start first index";
         FirstIndex fi("/home/zhangzihao/Desktop");
         fi.start();
+        qWarning() << "start inotify index";
+//        InotifyIndex ii("/home");
+//        ii.start();
         InotifyIndex* ii = InotifyIndex::getInstance("/home");
-        ii->start();
-    } else if (FileUtils::SearchMethod::DIRECTSEARCH == sm) {
-        InotifyIndex::getInstance("/home")->requestInterruption();
+        if (!ii->isRunning()) {
+            ii->start();
+        }
+        qDebug()<<"Search method has been set to INDEXSEARCH";
     }
+    qWarning() << "searchMethod end: " << static_cast<int>(FileUtils::searchMethod);
 }
-
+*/
 int main(int argc, char *argv[])
 {
     // Determine whether the home directory has been created, and if not, keep waiting.
@@ -163,7 +170,7 @@ int main(int argc, char *argv[])
     }
 
     // Output log to file
-//    qInstallMessageHandler(messageOutput);
+    qInstallMessageHandler(messageOutput);
 
     // Register meta type
     qDebug() << "ukui-search main start";
@@ -265,6 +272,9 @@ int main(int argc, char *argv[])
 //    centerToScreen(w);
 //    w->moveToPanel();
     centerToScreen(w);
+
+    //请务必在connect之后初始化mainwindow的Gsettings，为了保证gsettings第一次读取到的配置值能成功应用
+    w->initGsettings();
 
     //使用窗管的无边框策略
 //    w->setProperty("useStyleWindowManager", false); //禁用拖动

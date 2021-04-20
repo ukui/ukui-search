@@ -45,7 +45,7 @@
 class FirstIndex : public QThread, public Traverse_BFS
 {
 public:
-    FirstIndex(const QString&);
+    FirstIndex();
     ~FirstIndex();
     virtual void DoSomething(const QFileInfo &) final;
 protected:

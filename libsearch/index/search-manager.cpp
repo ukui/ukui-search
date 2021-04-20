@@ -446,7 +446,7 @@ void DirectSearch::run()
             }
             if (i.fileName().contains(m_keyword)) {
                 SearchManager::m_mutex1.lock();
-                qWarning() << i.fileName() << m_keyword;
+//                qWarning() << i.fileName() << m_keyword;
                 if (m_uniqueSymbol == SearchManager::uniqueSymbol1) {
                     // TODO
                     if (i.isDir() && m_searchResultDir->length() < 51) {

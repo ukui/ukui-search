@@ -25,8 +25,36 @@
 #define NEW_QUEUE(a) a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
 //#define DELETE_QUEUE(a )
 
-FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
+FirstIndex::FirstIndex()
 {
+}
+
+FirstIndex::~FirstIndex()
+{
+    qDebug() << "~FirstIndex";
+    if(this->q_index)
+        delete this->q_index;
+    this->q_index = nullptr;
+    if(this->q_content_index)
+        delete this->q_content_index;
+    this->q_content_index = nullptr;
+    if (this->p_indexGenerator)
+        delete this->p_indexGenerator;
+    this->p_indexGenerator = nullptr;
+    qDebug() << "~FirstIndex end";
+}
+
+void FirstIndex::DoSomething(const QFileInfo& fileInfo){
+//    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
+    this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
+    if ((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])){
+        this->q_content_index->enqueue(fileInfo.absoluteFilePath());
+    }
+}
+
+void FirstIndex::run(){
+    QTime t1 = QTime::currentTime();
+
     // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
     QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
     if(!fifoDir.exists())
@@ -69,35 +97,6 @@ FirstIndex::FirstIndex(const QString& path) : Traverse_BFS(path)
     //this->q_content_index = new QQueue<QString>();
     NEW_QUEUE(this->q_content_index);
 //    this->mlm = new MessageListManager();
-}
-
-FirstIndex::~FirstIndex()
-{
-    qDebug() << "~FirstIndex";
-    if(this->q_index)
-        delete this->q_index;
-    this->q_index = nullptr;
-    if(this->q_content_index)
-        delete this->q_content_index;
-    this->q_content_index = nullptr;
-    if (this->p_indexGenerator)
-        delete this->p_indexGenerator;
-    this->p_indexGenerator = nullptr;
-    qDebug() << "~FirstIndex end";
-//    delete this->mlm;
-//    this->mlm = nullptr;
-}
-
-void FirstIndex::DoSomething(const QFileInfo& fileInfo){
-//    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
-    this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
-    if ((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])){
-        this->q_content_index->enqueue(fileInfo.absoluteFilePath());
-    }
-}
-
-void FirstIndex::run(){
-    QTime t1 = QTime::currentTime();
 
     int fifo_fd;
     char buffer[2];
@@ -205,7 +204,7 @@ void FirstIndex::run(){
         if (p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
-        GlobalSettings::getInstance()->forceSync();
+//        GlobalSettings::getInstance()->forceSync();
         ::_exit(0);
     }
     else if(pid < 0)
@@ -220,8 +219,8 @@ void FirstIndex::run(){
 
 
     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
-    int retval = write(fifo_fd, buffer, strlen(buffer));
-    if(retval == -1)
+    int retval1 = write(fifo_fd, buffer, strlen(buffer));
+    if(retval1 == -1)
     {
         qWarning("write error\n");
     }
