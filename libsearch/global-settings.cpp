@@ -268,14 +268,14 @@ void GlobalSettings::setValue(const QString &key, const QVariant &value)
     //     m_settings->sync();
     QtConcurrent::run([=]() {
         //        qDebug()<<m_settings->status();
-        //        if (m_mutex.tryLock(1000)) {
+//                if (m_mutex.tryLock(1000)) {
         //        m_mutex.lock();
         m_settings->setValue(key, value);
         //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
         m_settings->sync();
         //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
-        //            m_mutex.unlock();
-        //        }
+//                    m_mutex.unlock();
+//                }
     });
 }
 

@@ -8,6 +8,7 @@ HEADERS += \
     $$PWD/index-generator.h \
     $$PWD/inotify-index.h \
     $$PWD/search-manager.h \
+    $$PWD/searchmethodmanager.h \
     $$PWD/traverse_bfs.h \
     $$PWD/ukui-search-qdbus.h
 
@@ -19,6 +20,7 @@ SOURCES += \
     $$PWD/index-generator.cpp \
     $$PWD/inotify-index.cpp \
     $$PWD/search-manager.cpp \
+    $$PWD/searchmethodmanager.cpp \
     $$PWD/traverse_bfs.cpp \
     $$PWD/ukui-search-qdbus.cpp
 

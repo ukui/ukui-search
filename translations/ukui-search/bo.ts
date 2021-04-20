@@ -4,58 +4,91 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../../src/content-widget.cpp" line="377"/>
+        <location filename="../../src/content-widget.cpp" line="364"/>
         <source>Recently Opened</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="413"/>
+        <location filename="../../src/content-widget.cpp" line="400"/>
         <source>Open Quickly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="414"/>
+        <location filename="../../src/content-widget.cpp" line="401"/>
         <source>Commonly Used</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="681"/>
+        <location filename="../../src/content-widget.cpp" line="668"/>
         <source>Apps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="683"/>
+        <location filename="../../src/content-widget.cpp" line="670"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="685"/>
+        <location filename="../../src/content-widget.cpp" line="672"/>
         <source>Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="687"/>
+        <location filename="../../src/content-widget.cpp" line="674"/>
         <source>Dirs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="689"/>
+        <location filename="../../src/content-widget.cpp" line="676"/>
         <source>File Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="691"/>
+        <location filename="../../src/content-widget.cpp" line="678"/>
         <source>Best Matches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="693"/>
+        <location filename="../../src/content-widget.cpp" line="680"/>
         <source>Web Pages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/content-widget.cpp" line="695"/>
+        <location filename="../../src/content-widget.cpp" line="682"/>
         <source>Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateIndexAskDialog</name>
+    <message>
+        <location filename="../../src/create-index-ask-dialog.cpp" line="28"/>
+        <source>ukui-search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/create-index-ask-dialog.cpp" line="50"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/create-index-ask-dialog.cpp" line="75"/>
+        <source>Creating index can help you getting results quickly, whether to create or not?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/create-index-ask-dialog.cpp" line="84"/>
+        <source>Don&apos;t remind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/create-index-ask-dialog.cpp" line="95"/>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/create-index-ask-dialog.cpp" line="97"/>
+        <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -70,17 +103,17 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="75"/>
+        <location filename="../../src/mainwindow.cpp" line="66"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="126"/>
+        <location filename="../../src/mainwindow.cpp" line="120"/>
         <source>Global Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/mainwindow.cpp" line="188"/>
+        <location filename="../../src/mainwindow.cpp" line="196"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -121,7 +154,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/main.cpp" line="182"/>
+        <location filename="../../src/main.cpp" line="191"/>
         <source>ukui-search is already running!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -129,7 +162,7 @@
 <context>
     <name>SearchBarHLayout</name>
     <message>
-        <location filename="../../src/input-box.cpp" line="120"/>
+        <location filename="../../src/input-box.cpp" line="126"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -137,32 +170,32 @@
 <context>
     <name>SearchDetailView</name>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="525"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="545"/>
         <source>Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="533"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="553"/>
         <source>Last time modified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="234"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="235"/>
         <source>Application</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="215"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="216"/>
         <source>Introduction: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="353"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="373"/>
         <source>Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/control/search-detail-view.cpp" line="475"/>
+        <location filename="../../src/control/search-detail-view.cpp" line="495"/>
         <source>Preview is not avaliable</source>
         <translation type="unfinished"></translation>
     </message>
@@ -170,55 +203,55 @@
 <context>
     <name>SettingsWidget</name>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="69"/>
-        <location filename="../../src/settings-widget.cpp" line="286"/>
-        <location filename="../../src/settings-widget.cpp" line="519"/>
+        <location filename="../../src/settings-widget.cpp" line="75"/>
+        <location filename="../../src/settings-widget.cpp" line="292"/>
+        <location filename="../../src/settings-widget.cpp" line="526"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="105"/>
-        <location filename="../../src/settings-widget.cpp" line="107"/>
+        <location filename="../../src/settings-widget.cpp" line="111"/>
+        <location filename="../../src/settings-widget.cpp" line="113"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="117"/>
+        <location filename="../../src/settings-widget.cpp" line="123"/>
         <source>Following folders will not be searched. You can set it by adding and removing folders.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="126"/>
+        <location filename="../../src/settings-widget.cpp" line="132"/>
         <source>Add ignored folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="149"/>
+        <location filename="../../src/settings-widget.cpp" line="155"/>
         <source>Please select search engine you preferred.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="162"/>
+        <location filename="../../src/settings-widget.cpp" line="168"/>
         <source>baidu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="164"/>
+        <location filename="../../src/settings-widget.cpp" line="170"/>
         <source>sougou</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="166"/>
+        <location filename="../../src/settings-widget.cpp" line="172"/>
         <source>360</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="408"/>
+        <location filename="../../src/settings-widget.cpp" line="415"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="347"/>
+        <location filename="../../src/settings-widget.cpp" line="353"/>
         <source>Creating ...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -228,102 +261,102 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="98"/>
+        <location filename="../../src/settings-widget.cpp" line="104"/>
         <source>&lt;h2&gt;Settings&lt;/h2&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="103"/>
+        <location filename="../../src/settings-widget.cpp" line="109"/>
         <source>&lt;h3&gt;Index State&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="115"/>
+        <location filename="../../src/settings-widget.cpp" line="121"/>
         <source>&lt;h3&gt;File Index Settings&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="147"/>
+        <location filename="../../src/settings-widget.cpp" line="153"/>
         <source>&lt;h3&gt;Search Engine Settings&lt;/h3&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="286"/>
+        <location filename="../../src/settings-widget.cpp" line="292"/>
         <source>Whether to delete this directory?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="287"/>
+        <location filename="../../src/settings-widget.cpp" line="293"/>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="288"/>
+        <location filename="../../src/settings-widget.cpp" line="294"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="350"/>
+        <location filename="../../src/settings-widget.cpp" line="356"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="358"/>
+        <location filename="../../src/settings-widget.cpp" line="364"/>
         <source>Index Entry: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="402"/>
+        <location filename="../../src/settings-widget.cpp" line="409"/>
         <source>Directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="403"/>
+        <location filename="../../src/settings-widget.cpp" line="410"/>
         <source>select blocked folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="404"/>
+        <location filename="../../src/settings-widget.cpp" line="411"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="405"/>
+        <location filename="../../src/settings-widget.cpp" line="412"/>
         <source>Position: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="406"/>
+        <location filename="../../src/settings-widget.cpp" line="413"/>
         <source>FileName: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="407"/>
+        <location filename="../../src/settings-widget.cpp" line="414"/>
         <source>FileType: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="503"/>
+        <location filename="../../src/settings-widget.cpp" line="510"/>
         <source>Choosen path is Empty!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="507"/>
+        <location filename="../../src/settings-widget.cpp" line="514"/>
         <source>Choosen path is not in &quot;home&quot;!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="511"/>
+        <location filename="../../src/settings-widget.cpp" line="518"/>
         <source>Its&apos; parent folder has been blocked!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="515"/>
+        <location filename="../../src/settings-widget.cpp" line="522"/>
         <source>Set blocked folder failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/settings-widget.cpp" line="520"/>
+        <location filename="../../src/settings-widget.cpp" line="527"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>

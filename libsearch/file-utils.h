@@ -88,8 +88,8 @@ public:
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;
 
-//    enum class SearchMethod{ DIRECTSEARCH = 0, INDEXSEARCH = 1};
-//    static SearchMethod searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
+    enum class SearchMethod{ DIRECTSEARCH = 0, INDEXSEARCH = 1};
+    static SearchMethod searchMethod;
 
 private:
     FileUtils();
