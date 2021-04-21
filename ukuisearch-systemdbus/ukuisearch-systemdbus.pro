@@ -9,8 +9,6 @@ TEMPLATE = app
 CONFIG += console c++11 link_pkgconfig
 CONFIG -= app_bundle
 
-LIBS += -lukui-log4qt
-
 DESTDIR = .
 INCLUDEPATH += .
 

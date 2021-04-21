@@ -20,16 +20,11 @@
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusError>
-#include <ukui-log4qt.h>
 #include <QDebug>
 
 #include "sysdbusregister.h"
 
 int main(int argc, char *argv[]){
-
-    //init log module
-    initUkuiLog4qt("ukui-search-service");
-
     QCoreApplication app(argc, argv);
     app.setOrganizationName("Kylin Team");
     app.setApplicationName("ukui-search-service");
