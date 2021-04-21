@@ -48,7 +48,7 @@ public:
     ~InotifyIndex();
 
     bool AddWatch(const QString&);
-    bool RemoveWatch(const QString&);
+    bool RemoveWatch(const QString&, bool removeFromDatabase = true);
     virtual void DoSomething(const QFileInfo &) final;
 
     void eventProcess(const char*, ssize_t);
@@ -56,7 +56,6 @@ public:
 protected:
     void run() override;
 private:
-    QString* m_watch_path;
     int m_fd;
 
     QMap<int, QString> currentPath;

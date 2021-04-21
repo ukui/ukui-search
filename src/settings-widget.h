@@ -45,6 +45,7 @@ public:
     void setIndexState(bool);
     void setIndexNum(int);
     void showWidget();
+    void resetWebEngine();
 
 private:
     void initUi();
@@ -54,7 +55,6 @@ private:
     void paintEvent(QPaintEvent *);
     void resize();
     void showWarningDialog(const int&);
-    void resetWebEngine();
 
     MotifWmHints m_hints;
 
@@ -109,6 +109,7 @@ private:
 
 Q_SIGNALS:
     void settingWidgetClosed();
+    void webEngineChanged(const QString&);
 
 private Q_SLOTS:
 //    void onBtnConfirmClicked();

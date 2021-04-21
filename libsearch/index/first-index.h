@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/prctl.h>
+#include <syslog.h>
 //#include <QtConcurrent>
 #include "traverse_bfs.h"
 #include "global-settings.h"
@@ -44,7 +45,7 @@
 class FirstIndex : public QThread, public Traverse_BFS
 {
 public:
-    FirstIndex(const QString&);
+    FirstIndex();
     ~FirstIndex();
     virtual void DoSomething(const QFileInfo &) final;
 protected:

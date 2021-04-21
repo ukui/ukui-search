@@ -53,17 +53,12 @@ InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
     usQDBus.setInotifyMaxUserWatches();
     qDebug() << "setInotifyMaxUserWatches end";
 
-    m_fd = inotify_init();
-    qDebug() << "m_fd----------->" <<m_fd;
-
-    this->AddWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-    this->firstTraverse();
 }
 
 InotifyIndex::~InotifyIndex()
 {
     IndexGenerator::getInstance()->~IndexGenerator();
+    qWarning() << "~InotifyIndex";
 }
 
 void InotifyIndex::firstTraverse(){
@@ -113,7 +108,7 @@ bool InotifyIndex::AddWatch(const QString &path){
     return true;
 }
 
-bool InotifyIndex::RemoveWatch(const QString &path){
+bool InotifyIndex::RemoveWatch(const QString &path,  bool removeFromDatabase){
     int ret = inotify_rm_watch(m_fd, currentPath.key(path));
     if (ret){
         qDebug() << "remove path error";
@@ -122,33 +117,60 @@ bool InotifyIndex::RemoveWatch(const QString &path){
 //    Q_ASSERT(ret == 0);
     assert(ret == 0);
 
-    for (QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();){
-//        qDebug() << i.value();
-        if (i.value().length() > path.length()){
-//            if (i.value().mid(0, path.length()) == path){
-//            if (path.startsWith(i.value())){
-            if (i.value().startsWith(path)){
-                qDebug() << "remove path: " << i.value();
-                ret = inotify_rm_watch(m_fd, currentPath.key(path));
-                if (ret){
-                    qDebug() << "remove path error";
-//                    return false;
+    if (removeFromDatabase) {
+        for (QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
+    //        qDebug() << i.value();
+            if (i.value().length() > path.length()){
+    //            if (i.value().mid(0, path.length()) == path){
+    //            if (path.startsWith(i.value())){
+                if (i.value().startsWith(path)){
+                    qDebug() << "remove path: " << i.value();
+                    ret = inotify_rm_watch(m_fd, currentPath.key(path));
+                    if (ret){
+                        qDebug() << "remove path error";
+    //                    return false;
+                    }
+    //                assert(ret == 0);
+                    /*--------------------------------*/
+                    //在此调用删除索引
+                    qDebug() << i.value();
+                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(i.value()));
+                    /*--------------------------------*/
+                    currentPath.erase(i++);
+    //                i++;
                 }
-//                assert(ret == 0);
-                /*--------------------------------*/
-                //在此调用删除索引
-                qDebug() << i.value();
-                IndexGenerator::getInstance()->deleteAllIndex(new QStringList(i.value()));
-                /*--------------------------------*/
-                currentPath.erase(i++);
-//                i++;
+                else{
+                    i++;
+                }
             }
             else{
                 i++;
             }
         }
-        else{
-            i++;
+    } else {
+        for (QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
+    //        qDebug() << i.value();
+            if (i.value().length() > path.length()){
+    //            if (i.value().mid(0, path.length()) == path){
+    //            if (path.startsWith(i.value())){
+                if (i.value().startsWith(path)){
+                    qDebug() << "remove path: " << i.value();
+                    ret = inotify_rm_watch(m_fd, currentPath.key(path));
+                    if (ret){
+                        qDebug() << "remove path error";
+    //                    return false;
+                    }
+    //                assert(ret == 0);
+                    currentPath.erase(i++);
+    //                i++;
+                }
+                else{
+                    i++;
+                }
+            }
+            else{
+                i++;
+            }
         }
     }
 //    qDebug() << path;
@@ -228,6 +250,13 @@ next:
 }
 
 void InotifyIndex::run(){
+    m_fd = inotify_init();
+    qDebug() << "m_fd----------->" <<m_fd;
+
+    this->AddWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    this->firstTraverse();
+
     int fifo_fd;
     char buffer[2];
     memset(buffer, 0, sizeof(buffer));
@@ -256,8 +285,8 @@ void InotifyIndex::run(){
 
     ssize_t numRead;
 
-    for (;;) { /* Read events forever */
-read:
+    while (FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
+//    for (;;) { /* Read events forever */
         memset(buf, 0x00, BUF_LEN);
         numRead = read(m_fd, buf, BUF_LEN);
 
@@ -276,14 +305,14 @@ read:
     //        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
             if(event->name[0] != '.'){
                 GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
-                goto fork;
+                break;
             }
             tmp += sizeof(struct inotify_event) + event->len;
-
         }
-        goto read;
+        if (tmp >= buf + numRead) {
+            continue;
+        }
 
-fork:
         ++FileUtils::_index_status;
 
         pid_t pid;
@@ -323,7 +352,7 @@ fork:
                     qDebug() << "select timeout!";
                     ::free(read_timeout);
                     IndexGenerator::getInstance()->~IndexGenerator();
-                    GlobalSettings::getInstance()->forceSync();
+//                    GlobalSettings::getInstance()->forceSync();
                    ::_exit(0);
                 }else{
                     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
@@ -343,12 +372,18 @@ fork:
         else if (pid > 0){
             memset(buf, 0x00, BUF_LEN);
             waitpid(pid, NULL, 0);
-
             --FileUtils::_index_status;
         }
         else{
             assert(false);
         }
     }
+
+    if (FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
+        GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "3");
+        RemoveWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation), false);
+    }
+
+
 
 }

@@ -315,7 +315,7 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
 }
 
 /**
- * @brief SettingsWidget::resetWebEngine 获取当前的搜索引擎并反应在UI控件上
+ * @brief SettingsWidget::resetWebEngine 获取当前的搜索引擎并反映在UI控件上
  */
 void SettingsWidget::resetWebEngine()
 {
@@ -341,7 +341,8 @@ void SettingsWidget::resetWebEngine()
  */
 void SettingsWidget::setWebEngine(const QString& engine)
 {
-    GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+//    GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+    Q_EMIT this->webEngineChanged(engine);
 }
 
 /**

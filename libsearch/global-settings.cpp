@@ -71,6 +71,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         m_cache.insert(TRANSPARENCY_KEY, m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
     }
 
+    m_cache.insert(STYLE_NAME_KEY, "ukui-light");
+    m_cache.insert(FONT_SIZE_KEY, 11);
     if (QGSettings::isSchemaInstalled(THEME_GSETTINGS_ID)) {
         m_theme_gsettings = new QGSettings(THEME_GSETTINGS_ID, QByteArray(), this);
         connect(m_theme_gsettings, &QGSettings::changed, this, [=](const QString& key) {
@@ -268,14 +270,14 @@ void GlobalSettings::setValue(const QString &key, const QVariant &value)
     //     m_settings->sync();
     QtConcurrent::run([=]() {
         //        qDebug()<<m_settings->status();
-        //        if (m_mutex.tryLock(1000)) {
+//                if (m_mutex.tryLock(1000)) {
         //        m_mutex.lock();
         m_settings->setValue(key, value);
         //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
         m_settings->sync();
         //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
-        //            m_mutex.unlock();
-        //        }
+//                    m_mutex.unlock();
+//                }
     });
 }
 

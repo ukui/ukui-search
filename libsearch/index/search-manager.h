@@ -116,6 +116,7 @@ private:
     int m_begin = 0;
     int m_num = 20;
 };
+
 class FileContentSearch : public QRunnable
 {
 public:
@@ -132,5 +133,18 @@ private:
     QString m_keyword;
     int m_begin = 0;
     int m_num = 20;
+};
+
+class DirectSearch : public QRunnable
+{
+public:
+    explicit DirectSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, size_t uniqueSymbol);
+protected:
+    void run();
+private:
+    QString m_keyword;
+    QQueue<QString>* m_searchResultFile = nullptr;
+    QQueue<QString>* m_searchResultDir = nullptr;
+    size_t m_uniqueSymbol;
 };
 #endif // SEARCHMANAGER_H
