@@ -54,9 +54,9 @@
 #include "xatom-helper.h"
 #include "create-index-ask-dialog.h"
 
-
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "indexSearch"
+#define WEB_ENGINE_KEY "webEngine"
 
 class SearchResult;
 class MainWindow : public QMainWindow
@@ -99,8 +99,6 @@ private:
     SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
     SeachBarWidget * m_searchWidget = nullptr;   // Search bar
 
-
-
     QStringList m_dirList;
 
     QQueue<QString> *m_search_result_file = nullptr;
@@ -133,6 +131,7 @@ protected:
 
 Q_SIGNALS:
     void searchMethodChanged(FileUtils::SearchMethod);
+    void webEngineChanged();
 
 public Q_SLOTS:
     /**

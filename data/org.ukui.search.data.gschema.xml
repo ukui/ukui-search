@@ -5,5 +5,10 @@
             <summary>search method</summary>
             <description>Is current search-method index-search.</description>
         </key>
+        <key name="web-engine" type="s">
+            <default>"baidu"</default>
+            <summary>web engine</summary>
+            <description>Web engine to search keyword online.</description>
+        </key>
     </schema>
 </schemalist>
