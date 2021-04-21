@@ -32,7 +32,7 @@ class SearchItemModel : public QAbstractItemModel
     friend class SearchItem;
     Q_OBJECT
 public:
-    explicit SearchItemModel();
+    explicit SearchItemModel(QObject *parent = nullptr);
     ~SearchItemModel();
 
     enum SearchInfo {
@@ -54,8 +54,11 @@ public:
 
     void appendItem(QString);
     void setList(QStringList);
+    void setAppList(const QStringList&, const QStringList&);
+    void appendBestItem(const QPair<int, QString>&);
     void removeItem(QString);
     void clear();
+    void setBestAppIcon(const QString &, const bool &);
 
 private :
     SearchItem * m_item = nullptr;

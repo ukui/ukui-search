@@ -53,17 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
-    m_searcher = new FileSearcher();
-    //    FileUtils::findMultiToneWords("仇仇仇仇仇仇仇仇仇仇仇翟康宁test");
-    /*-------------Inotify Test Start---------------*/
-    //    QTime t1 = QTime::currentTime();
-    //    InotifyManagerRefact* im = new InotifyManagerRefact("/home");
-    //    im->Traverse();
-    //    QTime t2 = QTime::currentTime();
-    //    qDebug() << t1;
-    //    qDebug() << t2;
-    //    im->start();
-    /*-------------Inotify Test End-----------------*/
+    m_searcher = new SearchManager(this);
+    m_settingsMatch = new SettingsMatch(this);
 
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
@@ -75,10 +66,17 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle(tr("ukui-search"));
     initUi();
 
+//    setProperty("useStyleWindowManager", false); //禁止拖动
+    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+    m_hints.functions = MWM_FUNC_ALL;
+    m_hints.decorations = MWM_DECOR_BORDER;
+    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+
     QPainterPath path;
     auto rect = this->rect();
     rect.adjust(1, 1, -1, -1);
-    path.addRoundedRect(rect, 6, 6);
+//    path.addRoundedRect(rect, 0, 0);
+    path.addRect(rect);
     setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
     KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
@@ -90,24 +88,35 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette &pal) {
         this->setPalette(pal);
         this->update();
+        Q_FOREACH (QWidget *widget, this->findChildren<QWidget *>()) {
+            if (widget) {
+                widget->update();
+            }
+        }
     });
 
     m_search_result_file = new QQueue<QString>;
     m_search_result_dir = new QQueue<QString>;
     m_search_result_content = new QQueue<QPair<QString,QStringList>>;
     m_search_result_thread = new SearchResult(this);
+    m_seach_app_thread = new SearchAppThread(this);
 //    m_search_result_thread->start();
     connect(m_search_result_thread, &SearchResult::searchResultFile, this, [ = ](QString path) {
-        qDebug()<<"Append a file into list: "<<path;
+//        qDebug()<<"Append a file into list: "<<path;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Files, path);
     });
     connect(m_search_result_thread, &SearchResult::searchResultDir, this, [ = ](QString path) {
-        qDebug()<<"Append a dir into list: "<<path;
+//        qDebug()<<"Append a dir into list: "<<path;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Dirs, path);
     });
     connect(m_search_result_thread, &SearchResult::searchResultContent, this, [ = ](QPair<QString, QStringList> pair) {
-        qDebug()<<"Append a file content into list: "<<pair.first;
+//        qDebug()<<"Append a file content into list: "<<pair.first;
         m_contentFrame->appendSearchItem(SearchItem::SearchType::Contents, pair.first, pair.second);
+    });
+    qRegisterMetaType<QVector<QStringList>>("QVector<QStringList>");
+    connect(m_seach_app_thread, &SearchAppThread::searchResultApp, this, [ = ](const QVector<QStringList>& applist) {
+        qDebug()<<"Append applist: "<<applist;
+        m_contentFrame->setAppList(applist);
     });
 
     m_sys_tray_icon = new QSystemTrayIcon(this);
@@ -117,11 +126,22 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_sys_tray_icon,&QSystemTrayIcon::activated,this,[=](QSystemTrayIcon::ActivationReason reason){
         if(reason == QSystemTrayIcon::Trigger)
         {
-            clearSearchResult();
-            this->moveToPanel();
-            this->show();
-            this->raise();
-            this->activateWindow();
+            if (!this->isVisible()) {
+                clearSearchResult();
+//                this->moveToPanel();
+                centerToScreen(this);
+                XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+                this->show();
+                this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
+                this->raise();
+                this->activateWindow();
+            } else {
+                this->hide();
+                m_contentFrame->closeWebView();
+                m_search_result_thread->requestInterruption();
+                m_search_result_thread->quit();
+//                m_seach_app_thread->stop();
+            }
         }
     });
 }
@@ -148,18 +168,17 @@ MainWindow::~MainWindow()
  */
 void MainWindow::initUi()
 {
-    this->setFixedSize(640, 640);
+    this->setFixedSize(640, 590);
 
     m_frame = new QFrame(this);
 
     this->setCentralWidget(m_frame);
     QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
-    mainlayout->setContentsMargins(16, 0, 16, 16);
+    mainlayout->setContentsMargins(8, 0, 8, 6);
     m_frame->setLayout(mainlayout);
-    m_frame->setStyleSheet("QLabel{color: palette(text);}");
 
     m_titleFrame = new QFrame(m_frame);//标题栏
-    m_titleFrame->setFixedHeight(48);
+    m_titleFrame->setFixedHeight(40);
     m_titleLyt = new QHBoxLayout(m_titleFrame);
     m_titleLyt->setContentsMargins(0, 0, 0, 0);
     m_iconLabel = new QLabel(m_titleFrame);
@@ -168,7 +187,7 @@ void MainWindow::initUi()
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_menuBtn = new QPushButton(m_titleFrame);
-    m_menuBtn->setFixedSize(24, 24);
+    m_menuBtn->setFixedSize(30, 30);
 //    m_menuBtn->setIcon(QIcon(":/res/icons/commonuse.svg"));
     m_menuBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
     m_menuBtn->setProperty("useIconHighlightEffect", 0x2);
@@ -176,15 +195,18 @@ void MainWindow::initUi()
     m_menuBtn->setFlat(true);
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
         if (m_settingsWidget) { //当此窗口已存在时，仅需置顶
+            if (!m_settingsWidget->isVisible()) {
+                centerToScreen(m_settingsWidget);
+            }
             m_settingsWidget->showWidget();
             return;
         }
         m_settingsWidget = new SettingsWidget();
+        centerToScreen(m_settingsWidget);
         m_settingsWidget->show();
         connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
             QTimer::singleShot(100, this, [ = ] {
-                clearSearchResult();
-//                m_search_result_thread->start();
+//                clearSearchResult(); //现暂定从设置页返回主页面不清空搜索结果
                 this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
                 this->raise();
                 this->showNormal();
@@ -199,15 +221,15 @@ void MainWindow::initUi()
 
     m_contentFrame = new ContentWidget(m_frame);//内容栏
 
-    m_searchWidget = new SeachBarWidget;
-    m_searchLayout = new SearchBarHLayout;
+    m_searchWidget = new SeachBarWidget(this);
+    m_searchLayout = new SearchBarHLayout(this);
     m_searchWidget->setLayout(m_searchLayout);
     m_searchWidget->setFixedHeight(44);
 
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
     mainlayout->addWidget(m_searchWidget);
-    mainlayout->setContentsMargins(16, 0, 16, 10);
+    connect(m_contentFrame,&ContentWidget::mousePressed,m_searchLayout,&SearchBarHLayout::effectiveSearchRecord);
 
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged,
             this, &MainWindow::monitorResolutionChange);
@@ -219,6 +241,7 @@ void MainWindow::initUi()
                 m_search_result_thread->requestInterruption();
                 m_search_result_thread->quit();
             }
+//            m_seach_app_thread->stop();
             m_contentFrame->setCurrentIndex(0);
         } else {
             m_contentFrame->setCurrentIndex(1);
@@ -247,8 +270,11 @@ void MainWindow::bootOptionsFilter(QString opt)
 {
     if (opt == "-s" || opt == "--show") {
         clearSearchResult();
-        this->moveToPanel();
+//        this->moveToPanel();
+        centerToScreen(this);
+        XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
         this->show();
+        this->m_searchLayout->focusIn();
         this->raise();
         this->activateWindow();
 //        m_search_result_thread->start();
@@ -291,27 +317,21 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen)
  * @brief searchContent 搜索关键字
  * @param searchcontent
  */
-void MainWindow::searchContent(QString searchcontent){
-    m_app_setting_lists.clear();
-    m_contentFrame->setKeyword(searchcontent);
+void MainWindow::searchContent(QString keyword){
+    m_contentFrame->setKeyword(keyword);
 
-//    m_search_result_file->clear();
-//    m_search_result_dir->clear();
-//    m_search_result_content->clear();
-
-    AppMatch * appMatchor = new AppMatch(this);
-    SettingsMatch * settingMatchor = new SettingsMatch(this);
-    //应用与设置搜索
-    QStringList appList;
-    appList = appMatchor->startMatchApp(searchcontent);
+    //设置搜索
     QStringList settingList;
-    settingList = settingMatchor->startMatchApp(searchcontent);
-    m_app_setting_lists.append(appList);
-    m_app_setting_lists.append(settingList);
-    m_contentFrame->refreshSearchList(m_app_setting_lists);
+    settingList = m_settingsMatch->startMatchApp(keyword);
+    m_contentFrame->resetSearchList();
+    m_contentFrame->setSettingList(settingList);
+
+    //应用搜索
+//    m_seach_app_thread->stop();
+    m_seach_app_thread->startSearch(keyword);
 
     //文件、文件夹、内容搜索
-    this->m_searcher->onKeywordSearch(searchcontent, m_search_result_file, m_search_result_dir, m_search_result_content);
+    this->m_searcher->onKeywordSearch(keyword, m_search_result_file, m_search_result_dir, m_search_result_content);
 }
 
 /**
@@ -322,6 +342,25 @@ void MainWindow::moveToPanel()
     QRect availableGeometry = qApp->primaryScreen()->availableGeometry();
     QRect screenGeometry = qApp->primaryScreen()->geometry();
 
+    QDBusInterface primaryScreenInterface("org.ukui.SettingsDaemon",
+                                          "/org/ukui/SettingsDaemon/wayland",
+                                          "org.ukui.SettingsDaemon.wayland",
+                                          QDBusConnection::sessionBus());
+    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
+        QDBusReply<int> x = primaryScreenInterface.call("x");
+        QDBusReply<int> y = primaryScreenInterface.call("y");
+        QDBusReply<int> width = primaryScreenInterface.call("width");
+        QDBusReply<int> height = primaryScreenInterface.call("height");
+        screenGeometry.setX(x);
+        screenGeometry.setY(y);
+        screenGeometry.setWidth(width);
+        screenGeometry.setHeight(height);
+        availableGeometry.setX(x);
+        availableGeometry.setY(y);
+        availableGeometry.setWidth(width);
+        availableGeometry.setHeight(height);
+    }
+
     QDesktopWidget * desktopWidget = QApplication::desktop();
     QRect screenMainRect = desktopWidget->screenGeometry(0);//获取设备屏幕大小
 
@@ -331,30 +370,48 @@ void MainWindow::moveToPanel()
                               QDBusConnection::sessionBus() );
 
     int position = QDBusReply<int>(interface.call("GetPanelPosition", "position"));
-    int height = QDBusReply<int>(interface.call("GetPanelPosition", "height"));
-    int d = 2; //窗口边沿到任务栏距离
+    int height = QDBusReply<int>(interface.call("GetPanelSize", "height"));
+    int d = 8; //窗口边沿到任务栏距离
 
     if (position == 0) {
         //任务栏在下侧
-        this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + availableGeometry.height() - this->height() - height - d);
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + screenGeometry.height() - this->height() - height - d);
     } else if(position == 1) {
         //任务栏在上侧
-        this->move(availableGeometry.x() + availableGeometry.width() - this->width(), screenMainRect.y() + screenGeometry.height() - availableGeometry.height() + height + d);
+        this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + height + d);
     } else if (position == 2) {
         //任务栏在左侧
-        if (screenGeometry.x() == 0) {//主屏在左侧
-            this->move(height + d, screenMainRect.y() + screenMainRect.height() - this->height());
-        } else {//主屏在右侧
-            this->move(screenMainRect.x() + height + d, screenMainRect.y() + screenMainRect.height() - this->height());
-        }
+        this->move(screenGeometry.x() + height + d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     } else if (position == 3) {
         //任务栏在右侧
-        if (screenGeometry.x() == 0) {//主屏在左侧
-            this->move(screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
-        } else {//主屏在右侧
-            this->move(screenMainRect.x() + screenMainRect.width() - this->width() - height - d, screenMainRect.y() + screenMainRect.height() - this->height());
-        }
+        this->move(screenGeometry.x() + screenGeometry.width() - this->width() - height - d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     }
+}
+
+/**
+ * @brief MainWindow::centerToScreen 使窗口显示在屏幕中间
+ * @param widget
+ */
+void MainWindow::centerToScreen(QWidget* widget) {
+    if (!widget)
+      return;
+    QDesktopWidget* m = QApplication::desktop();
+    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
+    int desk_x = desk_rect.width();
+    int desk_y = desk_rect.height();
+    int x = widget->width();
+    int y = widget->height();
+    QDBusInterface primaryScreenInterface("org.ukui.SettingsDaemon",
+                                          "/org/ukui/SettingsDaemon/wayland",
+                                          "org.ukui.SettingsDaemon.wayland",
+                                          QDBusConnection::sessionBus());
+    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
+        QDBusReply<int> width = primaryScreenInterface.call("width");
+        QDBusReply<int> height = primaryScreenInterface.call("height");
+        desk_x = width;
+        desk_y = height;
+    }
+    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 }
 
 //使用GSetting获取当前窗口应该使用的透明度
@@ -382,8 +439,12 @@ bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *r
     switch (event->response_type & ~0x80) {
     case XCB_FOCUS_OUT:
         this->hide();
+        m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
+//        m_seach_app_thread->stop();
+        break;
+    default:
         break;
     }
 
@@ -394,8 +455,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
         this->hide();
+        m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
+//        m_seach_app_thread->stop();
     }
     return QWidget::keyPressEvent(event);
 }
@@ -414,7 +477,8 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     p.setBrush(opt.palette.color(QPalette::Base));
     p.setOpacity(trans);
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect, 6, 6);
+//    p.drawRoundedRect(rect, 6, 6);
+    p.drawRect(rect);
     return QWidget::paintEvent(event);
 
 }

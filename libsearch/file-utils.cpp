@@ -20,18 +20,6 @@
  *
  */
 #include "file-utils.h"
-#include <QDebug>
-#include <QFile>
-#include <QFileInfo>
-#include <QUrl>
-#include <QMap>
-#include "quazip/quazip.h"
-#include <quazip/quazipfile.h>
-#include <QDomDocument>
-#include <QMimeDatabase>
-#include <QMimeType>
-#include <QQueue>
-#include "uchardet/uchardet.h"
 
 
 size_t FileUtils::_max_index_count = 0;
@@ -211,14 +199,12 @@ void FileUtils::loadHanziTable(const QString &fileName)
     return;
 }
 
-QString FileUtils::getMimetype(QString &path, bool getsuffix)
+QMimeType FileUtils::getMimetype(QString &path)
 {
     QMimeDatabase mdb;
     QMimeType type = mdb.mimeTypeForFile(path,QMimeDatabase::MatchContent);
-    if(getsuffix)
-        return type.name();
-    else
-        return type.preferredSuffix();
+
+    return type;
 }
 
 //aborted
@@ -506,6 +492,7 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
  */
 void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
 {
+    //fix me :optimized by xpath??
     QFileInfo info = QFileInfo(path);
     if(!info.exists()||info.isDir())
         return;
@@ -521,6 +508,7 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
 
     QDomDocument doc;
     doc.setContent(fileR.readAll());
+    fileR.close();
     QDomElement first = doc.firstChildElement("w:document");
     QDomElement body = first.firstChildElement("w:body");
     while(!body.isNull())
@@ -533,6 +521,11 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
             {
                 QDomElement wt = wr.firstChildElement("w:t");
                 textcontent.append(wt.text().replace("\n",""));
+                if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+                {
+                    file.close();
+                    return;
+                }
                 wr = wr.nextSiblingElement();
             }
             wp = wp.nextSiblingElement();
@@ -543,13 +536,176 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
     return;
 }
 
+void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
+{
+    QFileInfo info = QFileInfo(path);
+    if(!info.exists()||info.isDir())
+        return;
+    QuaZip file(path);
+    if(!file.open(QuaZip::mdUnzip))
+        return;
+    QString prefix("ppt/slides/slide");
+    QStringList fileList;
+    for(QString i : file.getFileNameList())
+    {
+        if(i.startsWith(prefix))
+            fileList<<i;
+    }
+    if(fileList.isEmpty())
+        return;
+    QDomElement sptree;
+    QDomElement sp;
+    QDomElement txbody;
+    QDomElement ap;
+    QDomElement ar;
+    QDomDocument doc;
+    QDomElement at;
+//    QDomNodeList atList;
+    for(int i =0;i<fileList.size();++i)
+    {
+        QString name = prefix + QString::number(i+1) + ".xml";
+        if(!file.setCurrentFile(name))
+        {
+            continue;
+        }
+        QuaZipFile fileR(&file);
+        fileR.open(QIODevice::ReadOnly);
+        doc.clear();
+        doc.setContent(fileR.readAll());
+        fileR.close();
+
+        //fix me :optimized by xpath??
+        //This method looks better but slower,
+        //If xml file is very large with many useless node,this method will take a lot of time.
+
+//        atList = doc.elementsByTagName("a:t");
+//        for(int i = 0; i<atList.size(); ++i)
+//        {
+//            at = atList.at(i).toElement();
+//            if(!at.isNull())
+//            {
+//                textcontent.append(at.text().replace("\r","")).replace("\t"," ");
+//                if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+//                {
+//                    file.close();
+//                    return;
+//                }
+//            }
+//        }
+        //This is ugly but seems more efficient when handel a large file.
+        sptree = doc.firstChildElement("p:sld").firstChildElement("p:cSld").firstChildElement("p:spTree");
+        while(!sptree.isNull())
+        {
+            sp= sptree.firstChildElement("p:sp");
+            while(!sp.isNull())
+            {
+                txbody= sp.firstChildElement("p:txBody");
+                while(!txbody.isNull())
+                {
+                    ap = txbody.firstChildElement("a:p");
+                    while(!ap.isNull())
+                    {
+                        ar = ap.firstChildElement("a:r");
+                        while(!ar.isNull())
+                        {
+                            at = ar.firstChildElement("a:t");
+                            textcontent.append(at.text().replace("\r","")).replace("\t","");
+                            if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+                            {
+                                file.close();
+                                return;
+                            }
+                            ar = ar.nextSiblingElement();
+                        }
+                        ap = ap.nextSiblingElement();
+                    }
+                    txbody = txbody.nextSiblingElement();
+                }
+                sp = sp.nextSiblingElement();
+            }
+            sptree = sptree.nextSiblingElement();
+        }
+    }
+    file.close();
+    return;
+}
+
+void FileUtils::getXlsxTextContent(QString &path, QString &textcontent)
+{
+    QFileInfo info = QFileInfo(path);
+    if(!info.exists()||info.isDir())
+        return;
+    QuaZip file(path);
+    if(!file.open(QuaZip::mdUnzip))
+        return;
+
+    if(!file.setCurrentFile("xl/sharedStrings.xml",QuaZip::csSensitive))
+        return;
+    QuaZipFile fileR(&file);
+
+    fileR.open(QIODevice::ReadOnly);        //读取方式打开
+
+    QDomDocument doc;
+    doc.setContent(fileR.readAll());
+    fileR.close();
+    QDomElement sst = doc.firstChildElement("sst");
+    QDomElement si;
+    QDomElement r;
+    QDomElement t;
+    while(!sst.isNull())
+    {
+        si= sst.firstChildElement("si");
+        while(!si.isNull())
+        {
+            r= si.firstChildElement("r");
+            if(r.isNull())
+            {
+                t= si.firstChildElement("t");
+            }
+            else
+            {
+                t = r.firstChildElement("t");
+            }
+            if(t.isNull())
+                continue;
+            textcontent.append(t.text().replace("\r","").replace("\n",""));
+            if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+            {
+                file.close();
+                return;
+            }
+            si = si.nextSiblingElement();
+        }
+        sst = sst.nextSiblingElement();
+    }
+    file.close();
+    return;
+}
+
+void FileUtils::getPdfTextContent(QString &path, QString &textcontent)
+{
+    Poppler::Document *doc = Poppler::Document::load(path);
+    if(doc->isLocked())
+        return;
+    const QRectF qf;
+    int pageNum = doc->numPages();
+    for(int i = 0; i<pageNum; ++i)
+    {
+        textcontent.append(doc->page(i)->text(qf).replace("\n",""));
+        if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+            break;
+    }
+    delete doc;
+    return;
+}
+
 void FileUtils::getTxtContent(QString &path, QString &textcontent)
 {
     QFile file(path);
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
 
-    QByteArray encodedString = file.readAll();
+    QByteArray encodedString = file.read(MAX_CONTENT_LENGTH);
 
     uchardet_t chardet = uchardet_new();
     if(uchardet_handle_data(chardet,encodedString.constData(),encodedString.size()) !=0)
@@ -559,7 +715,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent)
     const char *codec = uchardet_get_charset(chardet);
 
     if(QTextCodec::codecForName(codec) == 0)
-        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec)<<"zpf666";
+        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec);
 
     QTextStream stream(encodedString,QIODevice::ReadOnly);
     stream.setCodec(codec);

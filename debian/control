@@ -16,7 +16,9 @@ Build-Depends: debhelper (>=9.0.0),
                libkf5windowsystem-dev,
                libgsettings-qt-dev,
                libqt5x11extras5-dev,
-               libuchardet-dev
+               libuchardet-dev,
+               libpoppler-qt5-dev,
+               libukui-log4qt-dev
 Standards-Version: 4.5.0
 Homepage: https://www.ukui.org/
 Vcs-Git:  https://github.com/ukui/ukui-search.git
@@ -47,7 +49,8 @@ Section: libs
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         libchinese-segmentation0 (= ${binary:Version})
+         libchinese-segmentation0 (= ${binary:Version}),
+         ukui-search-systemdbus (= ${binary:Version})
 Provides: libukui-search,
 Description: Libraries for ukui-search. 
 
@@ -57,7 +60,8 @@ Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libukui-search0 (= ${binary:Version}),
-         libchinese-segmentation0 (= ${binary:Version})
+         libchinese-segmentation0 (= ${binary:Version}),
+         ukui-search-systemdbus (= ${binary:Version})
 Description: Libraries for  ukui-search(development files).
 
 Package: ukui-search-systemdbus

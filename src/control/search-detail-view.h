@@ -23,7 +23,12 @@
 
 #include <QWidget>
 //#include <QWebEngineView>
+//#include <QWebEngineSettings>
+//#include <QWebEngineProfile>
+//#include <QWebEngineUrlRequestInterceptor>
+#include <QDesktopServices>
 #include "option-view.h"
+#include "global-settings.h"
 
 class SearchDetailView : public QWidget
 {
@@ -38,7 +43,10 @@ public:
     bool isEmpty();
     int getType();
     bool isContent = false;
-//    void setWebWidget(const QString&);
+    void setWebWidget(const QString&);
+    void setAppWidget(const QString &name, const QString &path, const QString &icon, const QString &description);
+    void closeWebWidget();
+    bool doubleClickAction(const int&, const QString&);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -52,12 +60,15 @@ private:
     bool addPanelShortcut(const QString&);
     bool openPathAction(const QString&);
     bool copyPathAction(const QString&);
+    bool installAppAction(const QString&);
     QString getHtmlText(const QString&, const QString&);
     QString escapeHtml(const QString&);
     bool writeConfigFile(const QString&);
     bool m_isEmpty = true;
     int m_type = 0;
     QString m_path = 0;
+    QString m_name = 0; //目前只有未安装应用在打开软件商店时需要此参数
+    QString m_pkgname = 0; //目前只有未安装应用在打开软件商店时需要此参数
 
     void initUI();
     QLabel * m_iconLabel = nullptr;
@@ -79,11 +90,29 @@ private:
     QLabel * m_timeLabel_2 = nullptr;
     QFrame * m_hLine_2 = nullptr;
     OptionView * m_optionView = nullptr;
+    QFrame * m_noNetFrame = nullptr;
+    QVBoxLayout * m_noNetLyt = nullptr;
+    QLabel * m_noNetIconLabel = nullptr;
+    QLabel * m_noNetTipsLabel = nullptr;
+
+//    QWebEngineView * m_webView = nullptr;
+//    QWebEngineProfile * m_engineProfile = nullptr;
+    bool m_reload = false;
+    bool m_net_enable = true;
+    QString m_currentKeyword;
 
 Q_SIGNALS:
     void configFileChanged();
 private Q_SLOTS:
     void execActions(const int&, const int&, const QString&);
 };
+
+//此类用于url拦截
+//class RequestInterceptor : public QWebEngineUrlRequestInterceptor
+//{
+//public:
+//    explicit RequestInterceptor(QObject * parent = nullptr) : QWebEngineUrlRequestInterceptor(parent) {}
+//    virtual void interceptRequest(QWebEngineUrlRequestInfo & info) Q_DECL_OVERRIDE;
+//};
 
 #endif // SEARCHDETAILVIEW_H

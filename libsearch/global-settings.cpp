@@ -35,30 +35,61 @@ GlobalSettings *GlobalSettings::getInstance()
 
 GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
 {
-    m_settings = new QSettings("org.ukui", "ukui-search", this);
-    m_block_dirs_settings = new QSettings("org.ukui","ukui-search-block-dirs",this);
+    m_settings = new QSettings(MAIN_SETTINGS, QSettings::IniFormat, this);
+//    m_settings->setAtomicSyncRequired(false);
+    m_block_dirs_settings = new QSettings(BLOCK_DIRS,QSettings::IniFormat, this);
     m_block_dirs_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+
+    m_search_record_settings = new QSettings(SEARCH_HISTORY, QSettings::IniFormat , this);
+    m_search_record_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+    for(QString i:m_search_record_settings->allKeys())
+    {
+        m_history.append(QUrl::fromPercentEncoding(i.toLocal8Bit()));
+    }
+    if(!QDBusConnection::sessionBus().connect("org.kylinssoclient.dbus",
+                                              "/org/kylinssoclient/path",
+                                              "org.freedesktop.kylinssoclient.interface",
+                                              "keyChanged",
+                                              this, SLOT(updateSearchHistory(QString))))
+
+        qWarning()<<"Kylinssoclient Dbus connect fail!";
+
     this->forceSync();
     //the default number of transparency in mainwindow is 0.7
     //if someone changes the num in mainwindow, here should be modified too
     m_cache.insert(TRANSPARENCY_KEY, 0.7);
     if (QGSettings::isSchemaInstalled(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID)) {
-        m_gsettings = new QGSettings(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID, QByteArray(), this);
-        connect(m_gsettings, &QGSettings::changed, this, [=](const QString& key) {
+        m_trans_gsettings = new QGSettings(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID, QByteArray(), this);
+        connect(m_trans_gsettings, &QGSettings::changed, this, [=](const QString& key) {
             if (key == TRANSPARENCY_KEY) {
                 m_cache.remove(TRANSPARENCY_KEY);
-                m_cache.insert(TRANSPARENCY_KEY, m_gsettings->get(TRANSPARENCY_KEY).toDouble());
+                m_cache.insert(TRANSPARENCY_KEY, m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
                 qApp->paletteChanged(qApp->palette());
             }
         });
         m_cache.remove(TRANSPARENCY_KEY);
-        m_cache.insert(TRANSPARENCY_KEY, m_gsettings->get(TRANSPARENCY_KEY).toDouble());
+        m_cache.insert(TRANSPARENCY_KEY, m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
     }
-}
 
-GlobalSettings::~GlobalSettings()
-{
-
+    if (QGSettings::isSchemaInstalled(THEME_GSETTINGS_ID)) {
+        m_theme_gsettings = new QGSettings(THEME_GSETTINGS_ID, QByteArray(), this);
+        connect(m_theme_gsettings, &QGSettings::changed, this, [=](const QString& key) {
+            if (key == STYLE_NAME_KEY) {
+                //当前主题改变时也发出paletteChanged信号，通知主界面刷新
+                qApp->paletteChanged(qApp->palette());
+                m_cache.remove(STYLE_NAME_KEY);
+                m_cache.insert(STYLE_NAME_KEY, m_theme_gsettings->get(STYLE_NAME_KEY).toString());
+            } else if (key == FONT_SIZE_KEY) {
+                qApp->paletteChanged(qApp->palette());
+                m_cache.remove(FONT_SIZE_KEY);
+                m_cache.insert(FONT_SIZE_KEY, m_theme_gsettings->get(FONT_SIZE_KEY).toDouble());
+            }
+        });
+        m_cache.remove(STYLE_NAME_KEY);
+        m_cache.insert(STYLE_NAME_KEY, m_theme_gsettings->get(STYLE_NAME_KEY).toString());
+        m_cache.remove(FONT_SIZE_KEY);
+        m_cache.insert(FONT_SIZE_KEY, m_theme_gsettings->get(FONT_SIZE_KEY).toDouble());
+    }
 }
 
 const QVariant GlobalSettings::getValue(const QString &key)
@@ -75,11 +106,11 @@ void GlobalSettings::reset(const QString &key)
 {
     m_cache.remove(key);
     QtConcurrent::run([=]() {
-        if (m_mutex.tryLock(1000)) {
+//        if (m_mutex.tryLock(1000)) {
             m_settings->remove(key);
             m_settings->sync();
-            m_mutex.unlock();
-        }
+//            m_mutex.unlock();
+//        }
     });
     Q_EMIT this->valueChanged(key);
 }
@@ -145,18 +176,106 @@ QStringList GlobalSettings::getBlockDirs()
     return m_block_dirs_settings->allKeys();
 }
 
+//void GlobalSettings::appendCloudData(const QString &key, const QString &value)
+//{
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    QStringList values = m_qSettings->value(key).toStringList();
+//    m_qSettings->endGroup();
+//    if (values.contains(value)) {
+//        values.removeOne(value);
+//    }
+//    values.insert(0,value);
+
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->setValue(key, values);
+//    m_qSettings->endGroup();
+//    if (m_qSettings) {
+//        delete m_qSettings;
+//        m_qSettings = NULL;
+//    }
+//}
+
+void GlobalSettings::setSearchRecord(const QString &word, const QDateTime &time)
+{
+    QStringList keys = m_search_record_settings->allKeys();
+    if(keys.contains(QString(QUrl::toPercentEncoding(word))))
+        m_history.removeOne(word);
+        m_search_record_settings->setValue(QString(QUrl::toPercentEncoding(word)), time.toString("yyyy-MM-dd hh:mm:ss"));
+    if(keys.size() >= 20)
+       m_search_record_settings->remove(QString(QUrl::toPercentEncoding(m_history.takeFirst())));
+    m_history.append(word);
+}
+
+QStringList GlobalSettings::getSearchRecord()
+{
+    return m_history;
+}
+
+//bool GlobalSettings::removeOneCloudData(const QString &key, const QString &value)
+//{
+//    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    QStringList values = m_qSettings->value(key).toStringList();
+//    m_qSettings->endGroup();
+//    if (values.contains(value)) {
+//        values.removeOne(value);
+//    } else return false;
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->setValue(key, values);
+//    m_qSettings->endGroup();
+//    if (m_qSettings) {
+//        delete m_qSettings;
+//        m_qSettings = NULL;
+//    }
+//    return true;
+//}
+
+//bool GlobalSettings::removeAllCloudData(const QString &key)
+//{
+//    if (!QFileInfo(CLOUD_FILE).isFile()) return false;
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->beginGroup(key);
+//    m_qSettings->setValue(key, QStringList());
+//    m_qSettings->endGroup();
+//    if (m_qSettings) {
+//        delete m_qSettings;
+//        m_qSettings = NULL;
+//    }
+//    return true;
+//}
+
+//QStringList GlobalSettings::getCloudData(const QString &key)
+//{
+//    if (!QFileInfo(CLOUD_FILE).isFile()) return QStringList();
+//    QSettings * m_qSettings = new QSettings(CLOUD_FILE, QSettings::IniFormat);
+//    m_qSettings->beginGroup(key);
+//    QStringList values = m_qSettings->value(key).toStringList();
+//    m_qSettings->endGroup();
+//    if(m_qSettings)
+//        delete m_qSettings;
+//    return values;
+//}
+
 //here should be override
 //MouseZhangZh
 void GlobalSettings::setValue(const QString &key, const QVariant &value)
 {
+    //    qDebug()<<"setvalue========"<<key<<":"<<value;
     m_cache.insert(key, value);
+    //     m_settings->sync();
     QtConcurrent::run([=]() {
-//        if (m_mutex.tryLock(1000)) {
-        m_mutex.lock();
-            m_settings->setValue(key, value);
-            m_settings->sync();
-            m_mutex.unlock();
-//        }
+        //        qDebug()<<m_settings->status();
+        //        if (m_mutex.tryLock(1000)) {
+        //        m_mutex.lock();
+        m_settings->setValue(key, value);
+        //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
+        m_settings->sync();
+        //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
+        //            m_mutex.unlock();
+        //        }
     });
 }
 
@@ -171,5 +290,18 @@ void GlobalSettings::forceSync(const QString &key)
     } else {
         m_cache.remove(key);
         m_cache.insert(key, m_settings->value(key));
+    }
+}
+
+void GlobalSettings::updateSearchHistory(QString key)
+{
+    if(key == "search")
+    {
+        m_search_record_settings->sync();
+        m_history.clear();
+        for(QString i:m_search_record_settings->allKeys())
+        {
+            m_history.append(QUrl::fromPercentEncoding(i.toLocal8Bit()));
+        }
     }
 }

@@ -19,30 +19,50 @@
  */
 #include "inotify-index.h"
 
+#define CREATE_FILE_NAME_INDEX \
+    indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0")); \
+    IndexGenerator::getInstance()->creatAllIndex(indexQueue); \
+    indexQueue->clear();
+
+#define CREATE_FILE_CONTENT_INDEX \
+    if ((!QString(event->name).split(".").isEmpty()) && (true == this->targetFileTypeMap[QString(event->name).split(".").last()])) { \
+        contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name)); \
+        IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue); \
+        contentIndexQueue->clear(); \
+        break; \
+    }
+
+#define TRAVERSE_DIR \
+    QString tmp = currentPath[event->wd] + '/' + event->name; \
+    QFileInfo fi(tmp); \
+    if(!fi.isSymLink()){ \
+        AddWatch(tmp); \
+        setPath(tmp); \
+        Traverse(); \
+    }
+
+
+#define CREATE_FILE \
+    CREATE_FILE_NAME_INDEX \
+    CREATE_FILE_CONTENT_INDEX
+
 InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path)
 {
-    /*-------------ukuisearchdbus Test start-----------------*/
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
     qDebug() << "setInotifyMaxUserWatches end";
-
-    /*-------------ukuisearchdbus Test End-----------------*/
-
-
 
     m_fd = inotify_init();
     qDebug() << "m_fd----------->" <<m_fd;
 
     this->AddWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-//    this->Traverse();
     this->firstTraverse();
 }
 
 InotifyIndex::~InotifyIndex()
 {
-//    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
     IndexGenerator::getInstance()->~IndexGenerator();
 }
 
@@ -57,7 +77,7 @@ void InotifyIndex::firstTraverse(){
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
         for (auto i : list){
-            if (i.isDir()){
+            if (i.isDir() && (!(i.isSymLink()))){
                 this->AddWatch(i.absoluteFilePath());
                 bfs.enqueue(i.absoluteFilePath());
             }
@@ -67,22 +87,16 @@ void InotifyIndex::firstTraverse(){
 
 void InotifyIndex::DoSomething(const QFileInfo& fileInfo){
     qDebug() << fileInfo.fileName() << "-------" << fileInfo.absoluteFilePath();
-    if(fileInfo.isDir()){
+    if(fileInfo.isDir() && (!fileInfo.isSymLink())){
         this->AddWatch(fileInfo.absoluteFilePath());
     }
-    QQueue<QVector<QString> >* tempFile = new QQueue<QVector<QString> >;
-    tempFile->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0"));
-    IndexGenerator::getInstance()->creatAllIndex(tempFile);
-    if (tempFile)
-        delete tempFile;
-    for (auto i : this->targetFileTypeVec){
-        if (fileInfo.fileName().endsWith(i)){
-            QQueue<QString>* tempContent = new QQueue<QString>;
-            tempContent->enqueue(fileInfo.absoluteFilePath());
-            IndexGenerator::getInstance()->creatAllIndex(tempContent);
-            if (tempContent)
-                delete tempContent;
-        }
+    QQueue<QVector<QString> > tempFile;
+    tempFile.enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
+    IndexGenerator::getInstance()->creatAllIndex(&tempFile);
+    if ((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])){
+        QQueue<QString> tmp;
+        tmp.enqueue(fileInfo.absoluteFilePath());
+        IndexGenerator::getInstance()->creatAllIndex(&tmp);
     }
 }
 
@@ -120,7 +134,6 @@ bool InotifyIndex::RemoveWatch(const QString &path){
                     qDebug() << "remove path error";
 //                    return false;
                 }
-//                Q_ASSERT(ret == 0);
 //                assert(ret == 0);
                 /*--------------------------------*/
                 //在此调用删除索引
@@ -163,28 +176,12 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
 
                 //Create top dir first, traverse it last.
                 qDebug() << "IN_CREATE";
-                /*--------------------------------*/
-                //                    IndexGenerator::getInstance()->creatAllIndex(QQueue<QVector<QString>>(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0")));
-                indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
-                IndexGenerator::getInstance()->creatAllIndex(indexQueue);
-                indexQueue->clear();
-                for (auto i : this->targetFileTypeVec){
-                    if (QString(currentPath[event->wd] + '/' + event->name).endsWith(i)){
-                        contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name));
-                        IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue);
-                        contentIndexQueue->clear();
-                        break;
-                    }
-                }
-
+                CREATE_FILE
                 if (event->mask & IN_ISDIR){
-                    AddWatch(currentPath[event->wd] + '/' + event->name);
-                    setPath(currentPath[event->wd] + '/' + event->name);
-                    Traverse();
+                    TRAVERSE_DIR
                 }
                 goto next;
             }
-
 
             if ((event->mask & IN_DELETE) | (event->mask & IN_MOVED_FROM)){
                 qDebug() << "IN_DELETE or IN_MOVED_FROM";
@@ -196,117 +193,29 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp){
                 goto next;
             }
 
-
             if (event->mask & IN_MODIFY){
                 qDebug() << "IN_MODIFY";
                 if (!(event->mask & IN_ISDIR)){
 //                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
-                    indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
-                    IndexGenerator::getInstance()->creatAllIndex(indexQueue);
-                    indexQueue->clear();
-                    for (auto i : this->targetFileTypeVec){
-                        if (QString(currentPath[event->wd] + '/' + event->name).endsWith(i)){
-                            contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name));
-                            IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue);
-                            contentIndexQueue->clear();
-                            break;
-                        }
-                    }
+                    CREATE_FILE
                 }
                 goto next;
             }
-
 
             if (event->mask & IN_MOVED_TO){
                 qDebug() << "IN_MOVED_TO";
                 if (event->mask & IN_ISDIR){
                     RemoveWatch(currentPath[event->wd] + '/' + event->name);
 //                    IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
-
-
-                    indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
-                    IndexGenerator::getInstance()->creatAllIndex(indexQueue);
-                    indexQueue->clear();
-                    for (auto i : this->targetFileTypeVec){
-                        if (QString(currentPath[event->wd] + '/' + event->name).endsWith(i)){
-                            contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name));
-                            IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue);
-                            contentIndexQueue->clear();
-                            break;
-                        }
-                    }
-
-                    AddWatch(currentPath[event->wd] + '/' + event->name);
-                    setPath(currentPath[event->wd] + '/' + event->name);
-                    Traverse();
-
+                    CREATE_FILE
+                    TRAVERSE_DIR
                 }
                 else {
                     IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
-                    indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
-                    IndexGenerator::getInstance()->creatAllIndex(indexQueue);
-                    indexQueue->clear();
-                    for (auto i : this->targetFileTypeVec){
-                        if (QString(currentPath[event->wd] + '/' + event->name).endsWith(i)){
-                            contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name));
-                            IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue);
-                            contentIndexQueue->clear();
-                            break;
-                        }
-                    }
+                    CREATE_FILE
                 }
                 goto next;
             }
-
-            //                }
-
-            //                //传创建或移动过来的文件路径
-            //                if((event->mask & IN_CREATE)){
-            //                    //添加监视要先序遍历，先添加top节点
-            //                    if (event->mask & IN_ISDIR){
-            //                        AddWatch(currentPath[event->wd] + '/' + event->name);
-            //                        this->setPath(currentPath[event->wd] + '/' + event->name);
-            //                        Traverse();
-            //                    }
-
-            //                    /*--------------------------------*/
-            ////                    IndexGenerator::getInstance()->creatAllIndex(QQueue<QVector<QString>>(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0")));
-            //                    indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
-            //                    IndexGenerator::getInstance()->creatAllIndex(indexQueue);
-            //                    indexQueue->clear();
-            //                    for (auto i : this->targetFileTypeVec){
-            //                        if (QString(currentPath[event->wd] + '/' + event->name).endsWith(i)){
-            //                            contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name));
-            //                            IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue);
-            //                            contentIndexQueue->clear();
-            //                            break;
-            //                        }
-            //                    }
-            //                    /*--------------------------------*/
-            //                }
-            //                else if((event->mask & IN_DELETE) | (event->mask & IN_MOVED_FROM)){
-            //                    if (event->mask & IN_ISDIR){
-            //                        RemoveWatch(currentPath[event->wd] + '/' + event->name);
-            //                    }
-            //                        IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
-            //                }
-            //                else if((event->mask & IN_MODIFY) | (event->mask & IN_MOVED_TO)){
-            //                    if (!(event->mask & IN_ISDIR)){
-            //                        IndexGenerator::getInstance()->deleteAllIndex(new QStringList(currentPath[event->wd] + '/' + event->name));
-            //                        indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0"));
-            //                        IndexGenerator::getInstance()->creatAllIndex(indexQueue);
-            //                        indexQueue->clear();
-            //                        for (auto i : this->targetFileTypeVec){
-            //                            if (QString(currentPath[event->wd] + '/' + event->name).endsWith(i)){
-            //                                contentIndexQueue->enqueue(QString(currentPath[event->wd] + '/' + event->name));
-            //                                IndexGenerator::getInstance()->creatAllIndex(contentIndexQueue);
-            //                                contentIndexQueue->clear();
-            //                                break;
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            /*--------------------------------*/
         }
 next:
         p += sizeof(struct inotify_event) + event->len;
@@ -317,12 +226,6 @@ next:
     delete contentIndexQueue;
     contentIndexQueue = nullptr;
 }
-
-/*
- * Symbolic Link!!!!!!!!!!!!!!!!!!
- * Sysmbolic link to database dir will make a Infinite loop !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * MouseZhangZh
-*/
 
 void InotifyIndex::run(){
     int fifo_fd;
@@ -355,6 +258,7 @@ void InotifyIndex::run(){
 
     for (;;) { /* Read events forever */
 read:
+        memset(buf, 0x00, BUF_LEN);
         numRead = read(m_fd, buf, BUF_LEN);
 
         if (numRead == -1){
@@ -401,7 +305,7 @@ fork:
             int rc;
             timeval* read_timeout = (timeval*)malloc(sizeof(timeval));
 
-            read_timeout->tv_sec = 60;
+            read_timeout->tv_sec = 40;
             read_timeout->tv_usec = 0;
             for(;;)
             {
@@ -419,9 +323,11 @@ fork:
                     qDebug() << "select timeout!";
                     ::free(read_timeout);
                     IndexGenerator::getInstance()->~IndexGenerator();
+                    GlobalSettings::getInstance()->forceSync();
                    ::_exit(0);
                 }else{
                     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
+                    memset(buf, 0x00, BUF_LEN);
                     numRead = read(m_fd, buf, BUF_LEN);
                     if (numRead == -1){
                         printf("\033[1;31;40mread event error\033[0m\n");
@@ -433,30 +339,6 @@ fork:
                     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
                 }
             }
-
-
-//            QTimer* liveTime = new QTimer();
-//            //restart inotify-index proccess per minute
-//            liveTime->setInterval(60000);
-//            liveTime->start();
-
-            //I don't know how to use QTimer, wish someone can fix it!
-            //MouseZhangZh
-
-//            connect(liveTime, &QTimer::timeout, [ = ](){
-////                ::_exit(0);
-//                *b_timeout = 1;
-//            });
-//            for (;;){
-//                qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
-//                numRead = read(m_fd, buf, BUF_LEN);
-//                this->eventProcess(buf, numRead);
-//                if (liveTime->remainingTime() < 1){
-//                    qDebug() << "liveTime->remainingTime():" << liveTime->remainingTime();
-//                    ::_exit(0);
-//                }
-//            }
-
         }
         else if (pid > 0){
             memset(buf, 0x00, BUF_LEN);

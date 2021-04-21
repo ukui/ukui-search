@@ -32,8 +32,10 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QTimer>
+#include <libsearch.h>
+#include "xatom-helper.h"
 
-class SettingsWidget : public QDialog
+class SettingsWidget : public QWidget
 {
     Q_OBJECT
 public:
@@ -52,8 +54,14 @@ private:
     void paintEvent(QPaintEvent *);
     void resize();
     void showWarningDialog(const int&);
+    void resetWebEngine();
+
+    MotifWmHints m_hints;
+
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
+    QFrame * m_contentFrame = nullptr;
+    QVBoxLayout * m_contentLyt = nullptr;
     QFrame * m_titleFrame = nullptr;
     QHBoxLayout * m_titleLyt = nullptr;
     QLabel * m_titleIcon = nullptr;
@@ -107,6 +115,7 @@ private Q_SLOTS:
 //    void onBtnCancelClicked();
     void onBtnAddClicked();
     void onBtnDelClicked(const QString&);
+    void setWebEngine(const QString&);
 };
 
 #endif // SETTINGSWIDGET_H

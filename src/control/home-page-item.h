@@ -36,9 +36,9 @@ public:
     ~HomePageItem();
 
     enum ItemType { //homepage中item的类型，包括常用应用、最近打开、快捷打开
-        Common,
+        Quick,
         Recent,
-        Quick
+        Common
     };
 
 protected:
@@ -47,6 +47,7 @@ protected:
 
 private:
     void setupUi(const int&, const QString&);
+    void onItemClicked();
 
     QWidget * m_widget = nullptr;
     QHBoxLayout * m_hlayout = nullptr;
@@ -54,9 +55,8 @@ private:
     QLabel * m_iconlabel = nullptr;
     QLabel * m_namelabel = nullptr;
     double m_transparency = 0;
-
-Q_SIGNALS:
-    void onItemClicked();
+    QString m_path;
+    int m_type = 0;
 };
 
 #endif // HOMEPAGEITEM_H

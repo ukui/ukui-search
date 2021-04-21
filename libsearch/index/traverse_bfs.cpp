@@ -30,13 +30,14 @@ void Traverse_BFS::Traverse(){
     bfs.enqueue(this->path);
     QFileInfoList list;
     QDir dir;
+    // QDir::Hidden
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
     while (!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
         for (auto i : list){
-            if (i.isDir()){
+            if (i.isDir() && (!(i.isSymLink()))){
                 bfs.enqueue(i.absoluteFilePath());
             }
             DoSomething(i);

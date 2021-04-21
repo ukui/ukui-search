@@ -5,7 +5,7 @@ TARGET = ukui-search
 TEMPLATE = lib
 DEFINES += LIBSEARCH_LIBRARY
 
-PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt
+PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt poppler-qt5
 
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 
@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 include(index/index.pri)
+include(parser/parser.pri))
 include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
 
@@ -67,9 +68,6 @@ unix {
 
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
-
-#INCLUDEPATH += $$PWD/../libfriso
-#DEPENDPATH += $$PWD/../libfriso
 
 #DISTFILES += \
 #    ../translations/libsearch/libukui-search_zh_CN.ts

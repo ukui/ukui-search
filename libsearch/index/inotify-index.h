@@ -60,14 +60,23 @@ private:
     int m_fd;
 
     QMap<int, QString> currentPath;
-    const QVector<QString> targetFileTypeVec ={
-//        QString(".doc"),
-        QString(".docx"),
-//        QString(".ppt"),
-//        QString(".pptx"),
-//        QString(".xls"),
-//        QString(".xlsx"),
-        QString(".txt")};
+
+    const QMap<QString, bool> targetFileTypeMap = {
+        std::map<QString, bool>::value_type("doc", true),
+        std::map<QString, bool>::value_type("docx", true),
+        std::map<QString, bool>::value_type("ppt", true),
+        std::map<QString, bool>::value_type("pptx", true),
+        std::map<QString, bool>::value_type("xls", true),
+        std::map<QString, bool>::value_type("xlsx", true),
+        std::map<QString, bool>::value_type("txt", true),
+        std::map<QString, bool>::value_type("dot", true),
+        std::map<QString, bool>::value_type("wps", true),
+        std::map<QString, bool>::value_type("pps", true),
+        std::map<QString, bool>::value_type("dps", true),
+        std::map<QString, bool>::value_type("et", true),
+        std::map<QString, bool>::value_type("pdf", true)
+    };
+
 };
 
 #endif // INOTIFYINDEX_H

@@ -21,13 +21,17 @@
 #include "search-list-view.h"
 #include <QDebug>
 #include <QFileInfo>
+#include "custom-style.h"
 
 SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent)
 {
+    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
+    this->setStyle(style);
+
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
-    m_model = new SearchItemModel;
+    m_model = new SearchItemModel(this);
     m_item = new SearchItem;
     m_item->setSearchList(type, list);
     m_model->setItem(m_item);
@@ -40,13 +44,24 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setStyleSheet("QWidget{background:transparent;}");
-    m_styleDelegate = new HighlightItemDelegate();
+    m_styleDelegate = new HighlightItemDelegate(this);
 //    m_styleDelegate->setSearchKeyword(keyword);
     this->setItemDelegate(m_styleDelegate);
 
     m_type = type;
-    connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ]() {
-        Q_EMIT this->currentRowChanged(getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+    connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ](const QItemSelection &selected, const QItemSelection &deselected) {
+        Q_EMIT this->currentRowChanged(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+        m_isSelected = true;
+        if(!selected.isEmpty())
+        {
+            QRegion region = visualRegionForSelection(selected);
+            QRect rect = region.boundingRect();
+            Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
+        }
+    });
+
+    connect(this, &SearchListView::activated, this, [ = ](const QModelIndex& index) {
+        Q_EMIT this->onRowDoubleClicked(this, getCurrentType(), m_item->m_pathlist.at(index.row()));
     });
 }
 
@@ -78,13 +93,23 @@ void SearchListView::setList(QStringList list)
 {
     QModelIndex index = this->currentIndex();
     m_model->setList(list);
-    if (index.row() >= 0 && index.row() < list.length()) {
+    if (index.row() >= 0 && index.row() < list.length() && m_isSelected) {
         this->blockSignals(true);
         this->setCurrentIndex(index);
         this->blockSignals(false);
     }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+}
+
+void SearchListView::setAppList(const QStringList &pathlist, const QStringList &iconlist)
+{
+    m_model->setAppList(pathlist, iconlist);
+}
+
+void SearchListView::appendBestItem(const QPair<int, QString> &pair)
+{
+    m_model->appendBestItem(pair);
 }
 
 /**
@@ -131,6 +156,15 @@ int SearchListView::getLength()
     return m_item->getCurrentSize();
 }
 
+void SearchListView::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        Q_EMIT mousePressed();
+    }
+    QTreeView::mousePressEvent(event);
+}
+
 //获取当前选项所属搜索类型
 int SearchListView::getCurrentType() {
     switch (m_type) {
@@ -149,8 +183,11 @@ int SearchListView::getCurrentType() {
     case SearchItem::SearchType::Contents:
 //        qDebug()<<"qDebug: One row selected, its type is content.";
         return ResType::Content;
+    case SearchItem::SearchType::Web:
+        return ResType::Web;
     default: //All或者Best的情况，需要自己判断文件类型
-        return getResType(m_item->m_pathlist.at(this->currentIndex().row()));
+//        return getResType(m_item->m_pathlist.at(this->currentIndex().row()));
+        return ResType::Best;
         break;
     }
 }
@@ -162,17 +199,12 @@ int SearchListView::getCurrentType() {
  */
 int SearchListView::getResType(const QString& path) {
     if (path.endsWith(".desktop")) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is application.";
         return SearchListView::ResType::App;
     } else if (QFileInfo(path).isFile()) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is file.";
-//        return SearchListView::ResType::File;
         return SearchListView::ResType::Best;
     } else if (QFileInfo(path).isDir()) {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is dir.";
         return SearchListView::ResType::Dir;
     } else {
-//        qDebug()<<"qDebug: One row selected, its path is "<<path<<". Its type is setting.";
         return SearchListView::ResType::Setting;
     }
 }
@@ -182,4 +214,5 @@ int SearchListView::getResType(const QString& path) {
  */
 void SearchListView::clearSelection() {
     this->selectionModel()->clearSelection();
+    m_isSelected = false;
 }

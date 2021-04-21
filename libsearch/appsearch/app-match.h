@@ -24,24 +24,71 @@
 #include <QDir>
 #include <QLocale>
 #include <QDebug>
-class AppMatch : public QObject
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QtDBus>
+#include <QElapsedTimer>
+#include <QThread>
+
+class NameString
+{
+public:
+    explicit NameString(const QString &str_) : app_name(str_) {}
+    NameString() = default;
+    QString app_name;
+    bool operator<(const NameString& name) const {
+        return this->app_name.length() <= name.app_name.length();
+    }
+};
+
+//struct NameString
+//{
+//    QString app_name;
+//    //重载操作符
+//    inline bool operator < (const NameString& name) const
+//    {
+////        return  name.app_name.length() >= app_name.length();
+//        return true;
+//    }
+//};
+
+class AppMatch : public QThread
 {
     Q_OBJECT
 public:
-    explicit AppMatch(QObject *parent = nullptr);
-    QStringList startMatchApp(QString input);
+    static AppMatch *getAppMatch();
+    void startMatchApp(QString input,QMap<NameString,QStringList> &installed,QMap<NameString,QStringList> &softwarereturn);
 
 private:
+    explicit AppMatch(QObject *parent = nullptr);
+    ~AppMatch();
     void getAllDesktopFilePath(QString path);
     void getDesktopFilePath();
-    void getAppName();
-    void appNameMatch(QString appname,QString desktoppath);
+    void getAppName(QMap<NameString,QStringList> &installed);
+//    void appNameMatch(QString appname,QString desktoppath,QString appicon);
+    void appNameMatch(QString appname,QMap<NameString,QStringList> &installed);
+
+    void softWareCenterSearch(QMap<NameString,QStringList> &softwarereturn);
+
+    void parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<NameString,QStringList> &softwarereturn);
+
+    void getInstalledAppsVersion(QString appname);
 
 private:
     QString m_sourceText;
     QStringList m_filePathList;
-    QStringList m_returnResult;
-    QStringList m_midResult;
+
+    QDBusInterface *m_interFace=nullptr;
+    QFileSystemWatcher *m_watchAppDir=nullptr;
+    QMap<NameString,QStringList> m_installAppMap;
+
+private Q_SLOTS:
+    void slotDBusCallFinished(QMap<NameString,QStringList> &softwarereturn);
+
+//Q_SIGNALS:
+
+protected:
+    void run() override;
 
 };
 

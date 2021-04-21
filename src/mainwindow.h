@@ -43,11 +43,14 @@
 #include <QKeyEvent>
 #include <QGSettings/QGSettings>
 #include <QSystemTrayIcon>
+
 #include "content-widget.h"
 #include "input-box.h"
 #include "index/index-generator.h"
 #include "settings-widget.h"
 #include "libsearch.h"
+#include "search-app-thread.h"
+#include "xatom-helper.h"
 
 class SearchResult;
 class MainWindow : public QMainWindow
@@ -61,41 +64,47 @@ public:
     /**
      * @brief Load the main window
      */
-    void searchContent(QString searchcontent);
+
+    // The parameter:keyword is the word or sentence which users want to search.
+    void searchContent(QString keyword);
+
+    // The position which mainwindow shows follow the ukui-panel.
     void moveToPanel();
 
+    // The position which mainwindow shows in the center of screen where the cursor in.
+    void centerToScreen(QWidget* widget);
+
+    MotifWmHints m_hints;
+
 private:
-    bool nativeEvent(const QByteArray&, void *, long *);
 
-    QFrame * m_line = nullptr;//Vertical dividing line
-    QFrame * m_frame = nullptr;
+    // MainWindow quit when focus out.
+    bool nativeEvent(const QByteArray&, void*, long*);
 
-    QFrame * m_titleFrame = nullptr;//标题栏
-    QHBoxLayout * m_titleLyt = nullptr;
-    QLabel * m_iconLabel = nullptr;
-    QLabel * m_titleLabel = nullptr;
-    QPushButton * m_menuBtn = nullptr;
-    SettingsWidget * m_settingsWidget = nullptr;
-
-    ContentWidget * m_contentFrame = nullptr;//内容栏
-
-    SeachBarWidget * m_searchWidget = nullptr;//搜索栏
-    SearchBarHLayout * m_searchLayout = nullptr;
-
-    bool m_winFlag = false;
+    QFrame * m_frame = nullptr;                  // Main frame
+    QFrame * m_titleFrame = nullptr;             // Title bar frame
+    QHBoxLayout * m_titleLyt = nullptr;          // Title layout
+    QLabel * m_iconLabel = nullptr;              // Icon lable
+    QLabel * m_titleLabel = nullptr;             // Title lable
+    QPushButton * m_menuBtn = nullptr;           // Menu button
+    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
+    ContentWidget * m_contentFrame = nullptr;    // Content frame
+    SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
+    SeachBarWidget * m_searchWidget = nullptr;   // Search bar
 
     QGSettings * m_transparency_gsettings = nullptr;
     double getTransparentData();
 
-    QVector<QStringList> m_app_setting_lists;
     QStringList m_dirList;
 
     QQueue<QString> *m_search_result_file = nullptr;
     QQueue<QString> *m_search_result_dir = nullptr;
     QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
     SearchResult * m_search_result_thread = nullptr;
+    SearchAppThread * m_seach_app_thread = nullptr;
 
-    FileSearcher* m_searcher = nullptr;
+    SearchManager* m_searcher = nullptr;
+    SettingsMatch *m_settingsMatch = nullptr;
     QSystemTrayIcon *m_sys_tray_icon;
 
 protected:

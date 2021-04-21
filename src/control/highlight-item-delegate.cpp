@@ -25,8 +25,9 @@
 #include <QDebug>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
+#include "global-settings.h"
 
-HighlightItemDelegate::HighlightItemDelegate()
+HighlightItemDelegate::HighlightItemDelegate(QObject *parent) : QStyledItemDelegate (parent)
 {
 }
 
@@ -83,8 +84,11 @@ QString HighlightItemDelegate::getHtmlText(QPainter *painter, const QStyleOption
 {
     int indexFindLeft = 0;
     QString indexString = index.model()->data(index,Qt::DisplayRole).toString();
-    QFontMetrics m_QFontMetrics = painter->fontMetrics();
-    QString indexColString = m_QFontMetrics.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() + 10); //当字体超过Item的长度时显示为省略号
+    QFont ft(painter->font().family(), GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toInt());
+    QFontMetrics fm(ft);
+    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() + 10); //当字体超过Item的长度时显示为省略号
+//    QFontMetrics m_QFontMetrics = painter->fontMetrics();
+//    QString indexColString = m_QFontMetrics.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() + 10); //当字体超过Item的长度时显示为省略号
     QString htmlString;
     if ((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
         indexFindLeft = indexColString.toUpper().indexOf(m_regFindKeyWords.toUpper()); //得到查找字体在当前整个Item字体中的位置

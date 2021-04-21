@@ -27,14 +27,10 @@
 //extern QList<Document> *_doc_list_path;
 //extern QMutex  _mutex_doc_list_path;
 
-ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list, IndexGenerator *parent)
+ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list)
 {
     this->setAutoDelete(true);
     m_list = std::move(list);
-}
-
-ConstructDocumentForPath::~ConstructDocumentForPath()
-{
 }
 
 void ConstructDocumentForPath::run()
@@ -43,7 +39,7 @@ void ConstructDocumentForPath::run()
     if (!_doc_list_path)
         _doc_list_path = new QList<Document>;
 //    qDebug()<<_doc_list_path->size();
-    QString index_text = m_list.at(0);
+    QString index_text = m_list.at(0).toLower();
     QString sourcePath = m_list.at(1);
     Document doc;
 
@@ -103,15 +99,10 @@ void ConstructDocumentForPath::run()
     return;
 }
 
-ConstructDocumentForContent::ConstructDocumentForContent(QString path,QObject *parent)
+ConstructDocumentForContent::ConstructDocumentForContent(QString path)
 {
     this->setAutoDelete(true);
     m_path = std::move(path);
-}
-
-ConstructDocumentForContent::~ConstructDocumentForContent()
-{
-
 }
 
 void ConstructDocumentForContent::run()
@@ -122,10 +113,12 @@ void ConstructDocumentForContent::run()
         _doc_list_content = new QList<Document>;
     QString content;
     FileReader::getTextContent(m_path,content);
+    if(content.isEmpty())
+        return;
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/",0,-2,QString::SectionIncludeLeadingSep)));
 
-    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content);
+    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000));
 
     Document doc;
     doc.setData(content);
@@ -142,6 +135,7 @@ void ConstructDocumentForContent::run()
     _doc_list_content->append(doc);
     _mutex_doc_list_content.unlock();
     content.clear();
+    content.squeeze();
     term.clear();
     return;
 }

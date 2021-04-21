@@ -226,11 +226,12 @@ int FileSearcher::keywordSearchContent(size_t uniqueSymbol, QString keyword, int
 }
 Xapian::Query FileSearcher::creatQueryForFileSearch(QString keyword, Xapian::Database &db)
 {
-    //    Xapian::QueryParser qp;
-    //    qp.set_default_op(Xapian::Query::OP_PHRASE);
-    //    qp.set_database(db);
-    auto userInput = keyword;
-    //    userInput = userInput.replace(".","").simplified();
+//        Xapian::QueryParser qp;
+//        qp.set_default_op(Xapian::Query::OP_PHRASE);
+//        qp.set_database(db);
+    auto userInput = keyword.toLower();
+//        userInput = userInput.replace(".","").simplified();
+//    userInput = QString(QUrl::toPercentEncoding(userInput)).replace(""," ").simplified();
 
     //    std::string queryStr = keyword.replace(".","").replace(" ","").replace(""," ").simplified().toStdString();
     //        std::string s =db.get_spelling_suggestion(queryStr,10);
@@ -238,7 +239,7 @@ Xapian::Query FileSearcher::creatQueryForFileSearch(QString keyword, Xapian::Dat
 
     //    qDebug()<<"queryStr!"<<QString::fromStdString(queryStr);
     //Creat a query
-    //    Xapian::Query queryPhrase = qp.parse_query(queryStr,Xapian::QueryParser::FLAG_PHRASE);
+//        Xapian::Query queryPhrase = qp.parse_query(userInput.toStdString(),Xapian::QueryParser::FLAG_PHRASE|Xapian::QueryParser::FLAG_SYNONYM);
     std::vector<Xapian::Query> v;
     for(int i=0;i<userInput.size();i++)
     {

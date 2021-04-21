@@ -2,11 +2,14 @@ QT       += core dbus
 QT       -= gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+VERSION = 0.0.1
 TARGET = ukui-search-systemdbus
 TEMPLATE = app
 
 CONFIG += console c++11 link_pkgconfig
 CONFIG -= app_bundle
+
+LIBS += -lukui-log4qt
 
 DESTDIR = .
 INCLUDEPATH += .

@@ -28,18 +28,24 @@
 #include "folder-list-item.h"
 #include "global-settings.h"
 #include "file-utils.h"
-#include "index/file-searcher.h"
 
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
-SettingsWidget::SettingsWidget(QWidget *parent) : QDialog(parent)
+SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
 {
     this->setWindowIcon(QIcon::fromTheme("kylin-search"));
-    this->setWindowTitle(tr("ukui-search"));
-    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-    this->setAttribute(Qt::WA_TranslucentBackground);
+    this->setWindowTitle(tr("ukui-search-settings"));
+//    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+//    this->setAttribute(Qt::WA_TranslucentBackground);
+
+    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
+    m_hints.functions = MWM_FUNC_ALL;
+    m_hints.decorations = MWM_DECOR_BORDER;
+    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+
     initUi();
     refreshIndexState();
     setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
+    resetWebEngine();
 }
 
 SettingsWidget::~SettingsWidget()
@@ -54,7 +60,7 @@ void SettingsWidget::initUi() {
 //    this->setMinimumHeight(460);
 //    this->setMaximumHeight(680);
     m_mainLyt = new QVBoxLayout(this);
-    m_mainLyt->setContentsMargins(24, 9, 24, 24);
+    m_mainLyt->setContentsMargins(16, 8, 16, 24);
     this->setLayout(m_mainLyt);
 
     //标题栏
@@ -87,30 +93,36 @@ void SettingsWidget::initUi() {
     m_titleLyt->addWidget(m_closeBtn);
     m_mainLyt->addWidget(m_titleFrame);
 
+    m_contentFrame = new QFrame(this);
+    m_contentLyt = new QVBoxLayout(m_contentFrame);
+    m_contentFrame->setLayout(m_contentLyt);
+    m_contentLyt->setContentsMargins(8,0,8,0);
+    m_mainLyt->addWidget(m_contentFrame);
+
     //设置
-    m_settingLabel = new QLabel(this);
+    m_settingLabel = new QLabel(m_contentFrame);
     m_settingLabel->setText(tr("<h2>Settings</h2>"));
-    m_mainLyt->addWidget(m_settingLabel);
+    m_contentLyt->addWidget(m_settingLabel);
 
     //文件索引
-    m_indexTitleLabel = new QLabel(this);
+    m_indexTitleLabel = new QLabel(m_contentFrame);
     m_indexTitleLabel->setText(tr("<h3>Index State</h3>"));
-    m_indexStateLabel = new QLabel(this);
+    m_indexStateLabel = new QLabel(m_contentFrame);
     m_indexStateLabel->setText(tr("..."));
-    m_indexNumLabel = new QLabel(this);
+    m_indexNumLabel = new QLabel(m_contentFrame);
     m_indexNumLabel->setText(tr("..."));
-    m_mainLyt->addWidget(m_indexTitleLabel);
-    m_mainLyt->addWidget(m_indexStateLabel);
+    m_contentLyt->addWidget(m_indexTitleLabel);
+    m_contentLyt->addWidget(m_indexStateLabel);
 //    m_mainLyt->addWidget(m_indexNumLabel);
     m_indexNumLabel->hide();
 
     //文件索引设置（黑名单）
-    m_indexSettingLabel = new QLabel(this);
+    m_indexSettingLabel = new QLabel(m_contentFrame);
     m_indexSettingLabel->setText(tr("<h3>File Index Settings</h3>"));
-    m_indexDescLabel = new QLabel(this);
+    m_indexDescLabel = new QLabel(m_contentFrame);
     m_indexDescLabel->setText(tr("Following folders will not be searched. You can set it by adding and removing folders."));
     m_indexDescLabel->setWordWrap(true);
-    m_indexBtnFrame = new QFrame(this);
+    m_indexBtnFrame = new QFrame(m_contentFrame);
     m_indexBtnLyt = new QHBoxLayout(m_indexBtnFrame);
     m_indexBtnLyt->setContentsMargins(0, 0, 0, 0);
     m_indexBtnFrame->setLayout(m_indexBtnLyt);
@@ -121,35 +133,35 @@ void SettingsWidget::initUi() {
     connect(m_addDirBtn, &QPushButton::clicked, this, &SettingsWidget::onBtnAddClicked);
     m_indexBtnLyt->addWidget(m_addDirBtn);
     m_indexBtnLyt->addStretch();
-    m_dirListArea = new QScrollArea(this);
+    m_dirListArea = new QScrollArea(m_contentFrame);
     m_dirListArea->setStyleSheet("QScrollArea{background:transparent;}");
-    m_dirListWidget = new QWidget(this);
+    m_dirListWidget = new QWidget(m_contentFrame);
     m_dirListWidget->setStyleSheet("QWidget{background:transparent;}");
     m_dirListLyt = new QVBoxLayout(m_dirListWidget);
     m_dirListLyt->setContentsMargins(0, 0, 0, 0);
     m_dirListLyt->setSpacing(0);
     m_dirListWidget->setLayout(m_dirListLyt);
     m_dirListArea->setWidget(m_dirListWidget);
-    m_dirListArea->setWidgetResizable(true);
-    m_mainLyt->addWidget(m_indexSettingLabel);
-    m_mainLyt->addWidget(m_indexDescLabel);
-    m_mainLyt->addWidget(m_indexBtnFrame);
-    m_mainLyt->addWidget(m_dirListArea);
+    m_dirListArea->setWidgetResizable(m_contentFrame);
+    m_contentLyt->addWidget(m_indexSettingLabel);
+    m_contentLyt->addWidget(m_indexDescLabel);
+    m_contentLyt->addWidget(m_indexBtnFrame);
+    m_contentLyt->addWidget(m_dirListArea);
 
     //搜索引擎设置
-    m_searchEngineLabel = new QLabel(this);
+    m_searchEngineLabel = new QLabel(m_contentFrame);
     m_searchEngineLabel->setText(tr("<h3>Search Engine Settings</h3>"));
-    m_engineDescLabel = new QLabel(this);
+    m_engineDescLabel = new QLabel(m_contentFrame);
     m_engineDescLabel->setText(tr("Please select search engine you preferred."));
     m_engineDescLabel->setWordWrap(true);
-    m_engineBtnGroup = new QButtonGroup(this);
-    m_baiduBtn = new QRadioButton(this);
-    m_sougouBtn = new QRadioButton(this);
-    m_360Btn = new QRadioButton(this);
+    m_engineBtnGroup = new QButtonGroup(m_contentFrame);
+    m_baiduBtn = new QRadioButton(m_contentFrame);
+    m_sougouBtn = new QRadioButton(m_contentFrame);
+    m_360Btn = new QRadioButton(m_contentFrame);
     m_baiduBtn->setFixedSize(16, 16);
     m_sougouBtn->setFixedSize(16, 16);
     m_360Btn->setFixedSize(16, 16);
-    m_radioBtnFrame = new QFrame(this);
+    m_radioBtnFrame = new QFrame(m_contentFrame);
     m_radioBtnLyt = new QHBoxLayout(m_radioBtnFrame);
     m_radioBtnFrame->setLayout(m_radioBtnLyt);
     m_baiduLabel = new QLabel();
@@ -170,12 +182,25 @@ void SettingsWidget::initUi() {
     m_engineBtnGroup->addButton(m_baiduBtn);
     m_engineBtnGroup->addButton(m_sougouBtn);
     m_engineBtnGroup->addButton(m_360Btn);
-    m_mainLyt->addWidget(m_searchEngineLabel);
-    m_mainLyt->addWidget(m_engineDescLabel);
-    m_mainLyt->addWidget(m_radioBtnFrame);
-    m_searchEngineLabel->hide();
-    m_engineDescLabel->hide();
-    m_radioBtnFrame->hide();
+//    m_engineBtnGroup->setId(m_baiduBtn, WebEngine::Baidu);
+//    m_engineBtnGroup->setId(m_sougouBtn, WebEngine::Sougou);
+//    m_engineBtnGroup->setId(m_360Btn, WebEngine::_360);
+//    connect(m_engineBtnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), [ = ] (int id) {
+//        setWebEngine(id);
+//    });
+    connect(m_baiduBtn, &QRadioButton::clicked, [ = ] (bool checked) {
+        if (checked) setWebEngine("baidu");
+    });
+    connect(m_sougouBtn, &QRadioButton::clicked, [ = ] (bool checked) {
+        if (checked) setWebEngine("sougou");
+    });
+    connect(m_360Btn, &QRadioButton::clicked, [ = ] (bool checked) {
+        if (checked) setWebEngine("360");
+    });
+
+    m_contentLyt->addWidget(m_searchEngineLabel);
+    m_contentLyt->addWidget(m_engineDescLabel);
+    m_contentLyt->addWidget(m_radioBtnFrame);
 
     //取消与确认按钮 （隐藏）
 //    m_bottomBtnFrame = new QFrame(this);
@@ -195,7 +220,7 @@ void SettingsWidget::initUi() {
 //    m_bottomBtnLyt->addWidget(m_confirmBtn);
 //    m_mainLyt->addWidget(m_bottomBtnFrame);
 
-    m_mainLyt->addStretch();
+    m_contentLyt->addStretch();
 }
 
 /**
@@ -209,11 +234,11 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
         FolderListItem * item = new FolderListItem(m_dirListWidget, path);
         m_dirListLyt->addWidget(item);
         item->setMaximumWidth(this->width() - 52);
-        connect(item, SIGNAL(onDelBtnClicked(const QString&)), this, SLOT(onBtnDelClicked(const QString&)));
+        connect(item, &FolderListItem::onDelBtnClicked, this, &SettingsWidget::onBtnDelClicked);
         m_blockdirs ++;
     }
     this->resize();
-    m_dirListWidget->setFixedWidth(this->width() - 52);
+    m_dirListWidget->setFixedWidth(this->width() - 68);
 //    m_dirListLyt->addStretch();
 }
 
@@ -245,7 +270,7 @@ void SettingsWidget::refreshIndexState()
     } else {
         this->setIndexState(false);
     }
-    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileSearcher::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
+    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
         qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
@@ -254,7 +279,7 @@ void SettingsWidget::refreshIndexState()
         } else {
             this->setIndexState(false);
         }
-        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(FileSearcher::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
+        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     });
     m_timer->start(0.5 * 1000);
 }
@@ -266,7 +291,7 @@ void SettingsWidget::refreshIndexState()
 void SettingsWidget::onBtnDelClicked(const QString& path) {
     QMessageBox message(QMessageBox::Question, tr("Search"), tr("Whether to delete this directory?"));
     QPushButton * buttonYes = message.addButton(tr("Yes"), QMessageBox::YesRole);
-    QPushButton * buttonNo = message.addButton(tr("No"), QMessageBox::NoRole);
+    message.addButton(tr("No"), QMessageBox::NoRole);
     message.exec();
     if (message.clickedButton() != buttonYes) {
         return;
@@ -287,6 +312,36 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
     } else {
         showWarningDialog(returnCode);
     }
+}
+
+/**
+ * @brief SettingsWidget::resetWebEngine 获取当前的搜索引擎并反应在UI控件上
+ */
+void SettingsWidget::resetWebEngine()
+{
+    QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
+    m_engineBtnGroup->blockSignals(true);
+    if (!engine.isEmpty()) {
+        if (engine == "360") {
+            m_360Btn->setChecked(true);
+        } else if (engine == "sougou") {
+            m_sougouBtn->setChecked(true);
+        } else {
+            m_baiduBtn->setChecked(true);
+        }
+    } else {
+        m_baiduBtn->setChecked(true);
+    }
+    m_engineBtnGroup->blockSignals(false);
+}
+
+/**
+ * @brief SettingsWidget::setWebEngine
+ * @param engine 选择的搜索引擎
+ */
+void SettingsWidget::setWebEngine(const QString& engine)
+{
+    GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
 }
 
 /**
@@ -320,6 +375,7 @@ void SettingsWidget::showWidget()
     flags &= ~Qt::WindowStaysOnTopHint;
     this->setWindowFlags(flags);
     m_timer->start();
+    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
     this->show();
 }
 
@@ -383,40 +439,40 @@ void SettingsWidget::paintEvent(QPaintEvent *event) {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     QPainterPath rectPath;
-    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
+//    rectPath.addRoundedRect(this->rect(), 6, 6);
+    rectPath.addRect(this->rect());
 
-    // 画一个黑底
-    QPixmap pixmap(this->rect().size());
-    pixmap.fill(Qt::transparent);
-    QPainter pixmapPainter(&pixmap);
-    pixmapPainter.setRenderHint(QPainter::Antialiasing);
-    pixmapPainter.setPen(Qt::transparent);
-    pixmapPainter.setBrush(Qt::black);
-    pixmapPainter.setOpacity(0.65);
-    pixmapPainter.drawPath(rectPath);
-    pixmapPainter.end();
+//    // 画一个黑底
+//    QPixmap pixmap(this->rect().size());
+//    pixmap.fill(Qt::transparent);
+//    QPainter pixmapPainter(&pixmap);
+//    pixmapPainter.setRenderHint(QPainter::Antialiasing);
+//    pixmapPainter.setPen(Qt::transparent);
+//    pixmapPainter.setBrush(Qt::black);
+//    pixmapPainter.setOpacity(0.65);
+//    pixmapPainter.drawPath(rectPath);
+//    pixmapPainter.end();
 
-    // 模糊这个黑底
-    QImage img = pixmap.toImage();
-    qt_blurImage(img, 10, false, false);
+//    // 模糊这个黑底
+//    QImage img = pixmap.toImage();
+//    qt_blurImage(img, 10, false, false);
 
-    // 挖掉中心
-    pixmap = QPixmap::fromImage(img);
-    QPainter pixmapPainter2(&pixmap);
-    pixmapPainter2.setRenderHint(QPainter::Antialiasing);
-    pixmapPainter2.setCompositionMode(QPainter::CompositionMode_Clear);
-    pixmapPainter2.setPen(Qt::transparent);
-    pixmapPainter2.setBrush(Qt::transparent);
-    pixmapPainter2.drawPath(rectPath);
+//    // 挖掉中心
+//    pixmap = QPixmap::fromImage(img);
+//    QPainter pixmapPainter2(&pixmap);
+//    pixmapPainter2.setRenderHint(QPainter::Antialiasing);
+//    pixmapPainter2.setCompositionMode(QPainter::CompositionMode_Clear);
+//    pixmapPainter2.setPen(Qt::transparent);
+//    pixmapPainter2.setBrush(Qt::transparent);
+//    pixmapPainter2.drawPath(rectPath);
 
-    // 绘制阴影
-    p.drawPixmap(this->rect(), pixmap, pixmap.rect());
+//    // 绘制阴影
+//    p.drawPixmap(this->rect(), pixmap, pixmap.rect());
 
     // 绘制一个背景
     p.save();
     p.fillPath(rectPath,palette().color(QPalette::Base));
     p.restore();
-
 }
 
 /**
@@ -432,13 +488,13 @@ void SettingsWidget::resize()
 //        this->setFixedSize(528, 515);
 //    }
     if (m_blockdirs <= 4) {
-        m_dirListArea->setFixedHeight(32 * m_blockdirs + 5);
+        m_dirListArea->setFixedHeight(32 * m_blockdirs + 4);
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
-        m_dirListWidget->setFixedHeight(32 * m_blockdirs + 5);
-        m_dirListArea->setFixedHeight(32 * 4);
+        m_dirListWidget->setFixedHeight(32 * m_blockdirs);
+        m_dirListArea->setFixedHeight(32 * 4 + 4);
     }
-    this->setFixedSize(528, 455);
+    this->setFixedSize(528, 410 + m_dirListArea->height());
 }
 
 /**
@@ -467,6 +523,7 @@ void SettingsWidget::showWarningDialog(const int & errorCode)
             break;
         }
     }
-    QMessageBox message(QMessageBox::Warning, tr("Search"), errorMessage, QMessageBox::Ok, this);
+    QMessageBox message(QMessageBox::Warning, tr("Search"), errorMessage);
+    message.addButton(tr("OK"), QMessageBox::AcceptRole);
     message.exec();
 }

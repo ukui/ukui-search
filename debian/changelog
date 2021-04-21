@@ -1,3 +1,110 @@
+ukui-search (0.3.0+0406) v101; urgency=medium
+
+  * Add support for '.xls', '.dot','.wps', '.pps', '.dps', '.et','.ppt'.
+    - 增加了对'.xls', '.dot','.wps', '.pps', '.dps',
+     '.et','.ppt'格式文本内容索引的支持。
+  * Fix: symbolic links may cause main blocked.
+    - 解决了符号链接有可能导致索引卡死的bug。
+  * Fix: Snippet will not be displayed correctly when file content is too short.
+    - 修复了当文件内容太短时，显示详情错误的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 06 Apr 2021 08:40:38 +0800
+
+ukui-search (0.3.0+0401) v101; urgency=medium
+
+  * Remove qtwebengineview dependence, remove web page load function.
+    - 移除了网页加载功能，点击网页搜索直接跳转到浏览器。
+  * Use kwin effect for settings widget.
+    - 设置页面使用了窗管特效，避免了失焦变黑的问题(45200)。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 01 Apr 2021 11:38:51 +0800
+
+ukui-search (0.2.0+0330) v101; urgency=medium
+
+  * Fix:Title bar will appear if open mainwindow which closed in panel.
+    - 修复了从任务栏预览窗关闭搜索后再打开搜索会出现两个标题栏的问题。
+  * Add function of historycal record.
+    - 增加搜索历史记录功能。
+  * Fix:Add support for polysyllabic character in app search and settings
+    search.
+    - 在应用搜索和设置搜索中增加对多音字的支持(43441,46289)。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 30 Mar 2021 09:52:15 +0800
+
+ukui-search (0.2.0+0325) v101; urgency=medium
+
+  * Changed name displayed in ukui-menu from 'ukui-search' to 'Search'.
+    - 更改了英文模式下开始菜单中显示的名字。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 25 Mar 2021 11:00:09 +0800
+
+ukui-search (0.2.0+0322) v101; urgency=medium
+
+  * Fit muti-screens mode. 
+    - 适配990多屏显示。
+  * Feat:Clear cache after web searching.
+    - 清除网页搜索缓存。
+  * Fix(frontend): Complete translations.
+    - 修复提示框按钮未汉化问题(bug38128)。
+  * Fix(frontend): NameLabel do not update when font-size changed.
+    - 修复字体大小更改时主页标签不刷新的bug(bug42681)。
+  * Feat(frontend): Reset geometry for ukui-search.
+    - 重新计算搜索主界面的显示位置,修复任务栏隐藏时主界面显示位置有误的问题(43730)。
+  * Fix(frontend): Mainwindow is blocked when searching.
+    - 修复搜索时主界面阻塞的问题(43315)。
+  * Fix:mkfifo fail when fifo path is not exits
+    - 修复切换用户后打开搜索失败的问题(42486)。
+  * Feat(frontend): Add tips when there is no network avaliable.
+    - 当无网络可用时添加提示图案。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 22 Mar 2021 10:43:51 +0800
+
+ukui-search (0.2.0+0312) v101; urgency=medium
+
+  * Fix: Index process may crash while system first boot.
+    - 解决了系统首次启动时偶现的崩溃问题。
+  * Fix: File with space in name can not be opened.
+    - 修复文件名带空格时无法从最近打开列表打开的问题 
+  * Feature: Add app description.
+    - 为未安装应用添加应用描述栏.
+  * Adjust spacing of UI controls according to blueprint.
+    - 根据设计稿调整UI控件间距.
+  * Fix: Software center will not refresh which is already opened.
+    - 修复软件商店打开后点击安装不会再跳转的bug.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 12 Mar 2021 08:59:29 +0800
+ukui-search (0.2.0+0306) v101; urgency=medium
+
+  * Feature: Add support for 'doc' file in file content search.
+    - 文本索引增加了对doc格式文件的支持。
+  * Fix: There is no web search result when there is no local result.
+    - 修复没有本地搜索结果时不显示网页搜索列表的问题。
+  * Fix:Files with special charactors can not be opened successfully.
+    - 修复带有特殊字符的文件无法正常打开的问题。
+  * Fix:Occasional crash during the first boot of system.
+    - 修复了在系统首次启动时偶现的崩溃问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 06 Mar 2021 11:03:20 +0800
+
+ukui-search (0.2.0+0301) v101; urgency=medium
+
+  * Fix: New result won't be added to expanded list.
+    - 修复展开列表后新增的搜索结果不会动态添加的bug。
+  * Fix: Selection canceled with 'Show More' button clicked.
+    - 修复点击显示更多按钮时列表选中项被取消的问题。
+  * Feature: Add web searching & web engine settings.
+    - 添加网页搜索功能和引擎设置功能。
+  * Fix: Two list items can be selected simultaneously.
+    - 修复可以同时选中两个列表项的bug(40056)。
+  * Fix: Web view will be refreshed when there is nothing to reload.
+    - 修复当网页未搜索新内容时每次打开会重新加载的问题。
+  * Feature: Connect with the latest API for app search.
+    - 对接应用搜索新接口(可搜索未安装应用)。
+  * Fix: Excessive use of resources。
+    - 优化了资源占用。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 01 Mar 2021 13:55:27 +0800
+
 ukui-search (0.1.1+0219-1) v101; urgency=medium
 
   * Remove QWebEngineView dependence.

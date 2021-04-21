@@ -20,7 +20,7 @@
 #include "config-file.h"
 
 bool ConfigFile::writeCommonly(QString message){
-    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
+    QSettings *m_qSettings=new QSettings(HOMEPAGE_SETTINGS,QSettings::IniFormat);
     QStringList messagelist=message.split("/");
     QString appname=messagelist.last();
     if(!appname.contains("desktop"))
@@ -39,7 +39,7 @@ bool ConfigFile::writeCommonly(QString message){
 }
 
 QStringList ConfigFile::readCommonly(){
-    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
+    QSettings *m_qSettings=new QSettings(HOMEPAGE_SETTINGS,QSettings::IniFormat);
     QStringList returnlist;
     QMap<QString,int> quicklycount;
     m_qSettings->beginGroup("Commonly");
@@ -66,7 +66,7 @@ QStringList ConfigFile::readCommonly(){
 }
 
 bool ConfigFile::writeRecently(QString message){
-    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
+    QSettings *m_qSettings=new QSettings(HOMEPAGE_SETTINGS,QSettings::IniFormat);
 
     m_qSettings->beginGroup("Recently");
     QStringList recently=m_qSettings->value("Recently").toStringList();
@@ -89,7 +89,7 @@ bool ConfigFile::writeRecently(QString message){
 }
 
 QStringList ConfigFile::readRecently(){
-    QSettings *m_qSettings=new QSettings(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf",QSettings::IniFormat);
+    QSettings *m_qSettings=new QSettings(HOMEPAGE_SETTINGS,QSettings::IniFormat);
 
     m_qSettings->beginGroup("Recently");
     QStringList recently=m_qSettings->value("Recently").toStringList();
@@ -113,7 +113,7 @@ QMap<QString,QStringList> ConfigFile::readConfig(){
 }
 
 void ConfigFile::receiveMessage(QString message){
-    QFile file(QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search.conf");
+    QFile file(HOMEPAGE_SETTINGS);
     if(!file.exists()){
         file.open( QIODevice::ReadWrite | QIODevice::Text );
         file.close();

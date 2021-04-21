@@ -23,7 +23,7 @@
 /**
  * @brief ukui-search顶部搜索界面
  */
-SeachBarWidget::SeachBarWidget()
+SeachBarWidget::SeachBarWidget(QWidget *parent):QWidget(parent)
 {
 }
 
@@ -54,7 +54,7 @@ SeachBar::~SeachBar()
 /**
  * @brief 顶部搜索框所在界面的布局
  */
-SearchBarHLayout::SearchBarHLayout()
+SearchBarHLayout::SearchBarHLayout(QWidget *parent):QHBoxLayout(parent)
 {
     initUI();
 
@@ -86,6 +86,11 @@ SearchBarHLayout::~SearchBarHLayout()
         delete m_timer;
         m_timer = NULL;
     }
+    if(m_queryLineEdit)
+    {
+        delete m_queryLineEdit;
+        m_queryLineEdit = nullptr;
+    }
 }
 
 /**
@@ -93,12 +98,13 @@ SearchBarHLayout::~SearchBarHLayout()
  */
 void SearchBarHLayout::initUI()
 {
-    m_queryLineEdit = new SearchLineEdit;
+    m_queryLineEdit = new SearchLineEdit();
     m_queryLineEdit->installEventFilter(this);
     m_queryLineEdit->setTextMargins(30,1,0,1);
     this->setContentsMargins(0,0,0,0);
     this->setAlignment(m_queryLineEdit,Qt::AlignCenter);
     this->addWidget(m_queryLineEdit);
+
     m_queryWidget = new QWidget(m_queryLineEdit);
     m_queryWidget->setFocusPolicy(Qt::NoFocus);
     m_queryWidget->setStyleSheet("border:0px;background:transparent");
@@ -137,6 +143,11 @@ void SearchBarHLayout::initUI()
             m_queryWidget->layout()->addWidget(m_queryText);
         }
     });
+}
+
+void SearchBarHLayout::effectiveSearchRecord()
+{
+    m_queryLineEdit->record();
 }
 
 void SearchBarHLayout::focusIn() {
@@ -201,6 +212,14 @@ SearchLineEdit::SearchLineEdit()
 //    this->setContextMenuPolicy(Qt::NoContextMenu);
     this->setMaxLength(100);
 
+    m_completer = new QCompleter(this);
+    m_model = new QStringListModel(this);
+    m_model->setStringList(GlobalSettings::getInstance()->getSearchRecord());
+    m_completer->setModel(m_model);
+    m_completer->setCompletionMode(QCompleter::InlineCompletion);
+    m_completer->setMaxVisibleItems(14);
+
+    setCompleter(m_completer);
 
     //这是搜索框图标，要改
 //    QAction *searchAction = new QAction(this);
@@ -213,6 +232,18 @@ SearchLineEdit::SearchLineEdit()
     QDBusConnection::sessionBus().registerObject("/lineEdit/textChanged", this,QDBusConnection :: ExportAllSlots | QDBusConnection :: ExportAllSignals);
 
     connect(this, &QLineEdit::textChanged, this, &SearchLineEdit::lineEditTextChanged);
+    connect(this, &QLineEdit::textChanged, this, [=](){
+        m_isRecorded = false;
+    });
+}
+
+void SearchLineEdit::record()
+{
+    if(m_isRecorded == true||text().size() <= 1||text().isEmpty())
+        return;
+    GlobalSettings::getInstance()->setSearchRecord(text(),QDateTime::currentDateTime());
+    m_isRecorded = true;
+    m_model->setStringList(GlobalSettings::getInstance()->getSearchRecord());
 }
 
 SearchLineEdit::~SearchLineEdit()

@@ -21,23 +21,42 @@
  */
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
-#include "gobject-template.h"
+#include <QString>
+#include <QCryptographicHash>
+#include <QIcon>
+#include <QMap>
+#include <QMimeDatabase>
+#include <QMimeType>
+#include <QDir>
+#include <QDebug>
+#include <QFile>
+#include <QFileInfo>
+#include <QUrl>
+#include <QMap>
+#include <QDomDocument>
+#include <QQueue>
+
+#include <quazip/quazipfile.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <QString>
-#include <QCryptographicHash>
-#include <QIcon>
-#include <QMap>
+#include <quazip/quazip.h>
+#include <uchardet/uchardet.h>
+//#include <poppler-qt5.h>
+#include <poppler/qt5/poppler-qt5.h>
+
 #include "libsearch_global.h"
+#include "gobject-template.h"
+
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
 //#define FINISH_CREATING_INDEX 2
+#define MAX_CONTENT_LENGTH 20480000
 
-#define UKUI_SEARCH_PIPE_PATH "/tmp/ukuisearch"
+#define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
 
 
 class  LIBSEARCH_EXPORT FileUtils
@@ -59,12 +78,18 @@ public:
     static void loadHanziTable(const QString&);
 
     //parse text,docx.....
-    static QString getMimetype(QString &path, bool getsuffix = false);
+    static QMimeType getMimetype(QString &path);
     static void getDocxTextContent(QString &path, QString &textcontent);
+    static void getPptxTextContent(QString &path, QString &textcontent);
+    static void getXlsxTextContent(QString &path, QString &textcontent);
+    static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;
+
+//    enum class SearchMethod{ DIRECTSEARCH = 0, INDEXSEARCH = 1};
+//    static SearchMethod searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
 
 private:
     FileUtils();

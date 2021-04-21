@@ -28,8 +28,13 @@ ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
 {
     initUI();
     initListView();
-//    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"Background/背景/更改壁纸";
-    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
+    //快速入口应用列表
+//    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
+    m_quicklyOpenList << "/usr/share/applications/ksc-defender.desktop"
+                                        << "/usr/share/applications/ukui-notebook.desktop"
+                                        << "/usr/share/applications/eom.desktop"
+                                        << "/usr/share/applications/pluma.desktop"
+                                        << "/usr/share/applications/claws-mail.desktop" ;
 }
 
 ContentWidget::~ContentWidget()
@@ -48,12 +53,13 @@ ContentWidget::~ContentWidget()
  * @brief initUI 初始化homepage和resultpage
  */
 void ContentWidget::initUI() {
-    m_homePage = new QWidget;
+    m_homePage = new QWidget(this);
     m_homePageLyt = new QVBoxLayout(m_homePage);
     m_homePageLyt->setSpacing(0);
+    m_homePageLyt->setContentsMargins(0,0,0,0);
     m_homePage->setLayout(m_homePageLyt);
 
-    m_resultPage = new QWidget;
+    m_resultPage = new QWidget(this);
     m_resultPageLyt = new QHBoxLayout(m_resultPage);
     m_resultPageLyt->setSpacing(0);
     m_resultPageLyt->setContentsMargins(0, 0, 0, 0);
@@ -68,14 +74,14 @@ void ContentWidget::initUI() {
     m_resultPageLyt->addWidget(m_resultDetailArea);
     m_resultPage->setLayout(m_resultPageLyt);
 
-    m_resultList = new QWidget(m_resultDetailArea);
+    m_resultList = new QWidget(m_resultListArea);
     m_resultDetail = new QWidget(m_resultDetailArea);
     m_listLyt = new QVBoxLayout(m_resultList);
     m_detailLyt = new QVBoxLayout(m_resultDetail);
-    m_resultList->setFixedWidth(240);
+    m_resultList->setFixedWidth(236);
     m_resultList->setFixedHeight(0);
     m_resultList->setStyleSheet("QWidget{background:transparent;}");
-    m_listLyt->setContentsMargins(0, 0, 15, 0);
+    m_listLyt->setContentsMargins(0, 0, 12, 0);
     m_listLyt->setSpacing(0);
     m_resultListArea->setWidget(m_resultList);
     m_resultListArea->setWidgetResizable(true);
@@ -105,12 +111,15 @@ void ContentWidget::initListView()
     m_settingListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Settings);
     m_appListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Apps);
     m_bestListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Best);
+    m_webListView = new SearchListView(m_resultList, QStringList(), SearchItem::SearchType::Web);
+
     setupConnect(m_fileListView);
     setupConnect(m_dirListView);
     setupConnect(m_contentListView);
     setupConnect(m_settingListView);
     setupConnect(m_appListView);
     setupConnect(m_bestListView);
+    setupConnect(m_webListView);
 
     m_fileTitleLabel = new TitleLabel(m_resultList);
     m_fileTitleLabel->setText(getTitleName(SearchItem::SearchType::Files));
@@ -124,6 +133,8 @@ void ContentWidget::initListView()
     m_settingTitleLabel->setText(getTitleName(SearchItem::SearchType::Settings));
     m_bestTitleLabel = new TitleLabel(m_resultList);
     m_bestTitleLabel->setText(getTitleName(SearchItem::SearchType::Best));
+    m_webTitleLabel = new TitleLabel(m_resultList);
+    m_webTitleLabel->setText(getTitleName(SearchItem::SearchType::Web));
 
     m_appShowMoreLabel = new ShowMoreLabel(m_resultList);
     m_settingShowMoreLabel = new ShowMoreLabel(m_resultList);
@@ -148,14 +159,20 @@ void ContentWidget::initListView()
     m_listLyt->addWidget(m_contentTitleLabel);
     m_listLyt->addWidget(m_contentListView);
     m_listLyt->addWidget(m_contentShowMoreLabel);
+    m_listLyt->addWidget(m_webTitleLabel);
+    m_listLyt->addWidget(m_webListView);
 
     this->hideListView();
     m_resultList->setFixedHeight(0);
 
+    m_resultListArea->setFocusProxy(m_bestListView);
+    m_bestListView->setFocus();
     connect(m_appShowMoreLabel, &ShowMoreLabel::showMoreClicked, this, [ = ]() {
         m_appListView->setList(m_appList);
         m_appShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_appListView);
+        m_appListView->setFocus();
     });
     connect(m_appShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_appListView->setList(m_appList.mid(0, 5));
@@ -166,6 +183,8 @@ void ContentWidget::initListView()
         m_settingListView->setList(m_settingList);
         m_settingShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_settingListView);
+        m_settingListView->setFocus();
     });
     connect(m_settingShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_settingListView->setList(m_settingList.mid(0, 5));
@@ -176,6 +195,8 @@ void ContentWidget::initListView()
         m_dirListView->setList(m_dirList);
         m_dirShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_dirListView);
+        m_dirListView->setFocus();
     });
     connect(m_dirShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_dirListView->setList(m_dirList.mid(0, 5));
@@ -186,6 +207,8 @@ void ContentWidget::initListView()
         m_fileListView->setList(m_fileList);
         m_fileShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_fileListView);
+        m_fileListView->setFocus();
     });
     connect(m_fileShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_fileListView->setList(m_fileList.mid(0, 5));
@@ -196,6 +219,8 @@ void ContentWidget::initListView()
         m_contentListView->setList(m_contentList);
         m_contentShowMoreLabel->stopLoading();
         this->resetListHeight();
+        m_resultListArea->setFocusProxy(m_contentListView);
+        m_contentListView->setFocus();
     });
     connect(m_contentShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_contentListView->setList(m_contentList.mid(0, 5));
@@ -226,6 +251,8 @@ void ContentWidget::hideListView()
     m_contentTitleLabel->hide();
     m_contentListView->hide();
     m_contentShowMoreLabel->hide();
+    m_webTitleLabel->hide();
+    m_webListView->hide();
 }
 
 /**
@@ -233,34 +260,20 @@ void ContentWidget::hideListView()
  * @param listview
  */
 void ContentWidget::setupConnect(SearchListView * listview) {
-    connect(listview, &SearchListView::currentRowChanged, this, [ = ](const int& type, const QString& path) {
-        if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
-            m_detailView->isContent = true;
-            m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
-        } else if (type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
-            m_detailView->setContent(m_bestContent, m_keyword);
-            m_detailView->isContent = true;
-            m_detailView->setupWidget(type == SearchItem::SearchType::Contents, path);
-            listview->is_current_list = true;
-            Q_EMIT this->currentItemChanged();
-            listview->is_current_list = false;
-            return;
-        } else {
-            m_detailView->isContent = false;
-        }
-        m_detailView->setupWidget(type, path);
-//        m_detailView->setWebWidget(this->m_keyword);
-        listview->is_current_list = true;
-        Q_EMIT this->currentItemChanged();
-        listview->is_current_list = false;
-    });
     connect(this, &ContentWidget::currentItemChanged, listview, [ = ]() {
+
         if (! listview->is_current_list) {
             listview->blockSignals(true);
             listview->clearSelection();
             listview->blockSignals(false);
         }
     });
+    connect(listview,&SearchListView::currentSelectPos,[=](QPoint pos){
+        m_resultListArea->ensureVisible(pos.x(),pos.y());
+    });
+    connect(listview,&SearchListView::mousePressed,this,&ContentWidget::mousePressed);
+    connect(listview, &SearchListView::currentRowChanged, this, &ContentWidget::onListViewRowChanged);
+    connect(listview, &SearchListView::onRowDoubleClicked, this, &ContentWidget::onListViewRowDoubleClicked);
 }
 
 /**
@@ -308,7 +321,18 @@ void ContentWidget::resetListHeight()
             height += m_contentShowMoreLabel->height();
         }
     }
+    if (! m_webListView->isHidden) {
+        height += m_webTitleLabel->height();
+        height += m_webListView->height();
+    }
     m_resultList->setFixedHeight(height);
+}
+
+void ContentWidget::appendBestItem(const int &type, const QString &path)
+{
+    m_bestList.append(QPair<int, QString>(type, path));
+    m_bestListView->appendBestItem(QPair<int, QString>(type, path));
+    appendSearchItem(SearchItem::SearchType::Best, path);
 }
 
 /**
@@ -322,9 +346,10 @@ void ContentWidget::initHomePage() {
     commonlyList = map.value("Commonly");
     QStringList recentlyList;
     recentlyList = map.value("Recently");
-    lists.append(commonlyList);
-    lists.append(recentlyList);
+
     lists.append(m_quicklyOpenList);
+    lists.append(recentlyList);
+    lists.append(commonlyList);
 
     for (int i = 0; i < lists.count(); i++) {
         if (lists.at(i).isEmpty())
@@ -335,7 +360,7 @@ void ContentWidget::initHomePage() {
         QWidget * itemWidget = new QWidget(listWidget);
         if (i == 1) {
             if (lists.at(i).length() <= 2) itemWidget->setFixedHeight(48);
-            else itemWidget->setFixedHeight(112);
+            else itemWidget->setFixedHeight(104);
             titleLabel->setText(tr("Recently Opened"));
             QGridLayout * layout = new QGridLayout(itemWidget);
             layout->setSpacing(8);
@@ -343,36 +368,36 @@ void ContentWidget::initHomePage() {
             itemWidget->setLayout(layout);
             for (int j = 0; j < lists.at(i).count(); j++) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, lists.at(i).at(j));
-                item->setFixedSize(265, 48);
+                item->setFixedSize(300, 48);
                 layout->addWidget(item, j / 2, j % 2);
             }
             if (lists.at(i).length() == 1) {
                 QWidget * emptyItem = new QWidget(itemWidget);
-                emptyItem->setFixedSize(265, 48); //占位用widget,只有一项时在右方补全
+                emptyItem->setFixedSize(300, 48); //占位用widget,只有一项时在右方补全
                 layout->addWidget(emptyItem, 1, 2);
             }
         } else {
-            itemWidget->setFixedHeight(136);
+            itemWidget->setFixedHeight(116);
             QHBoxLayout * layout = new QHBoxLayout(itemWidget);
             layout->setSpacing(8);
             layout->setContentsMargins(0, 0, 0, 0);
             itemWidget->setLayout(layout);
             int shownItem = lists.at(i).length();
             Q_FOREACH(QString path, lists.at(i)){
-                if (i && QString::compare(FileUtils::getAppName(path),"Unknown App") == 0) {
+                if (i == 0 && QString::compare(FileUtils::getAppName(path),"Unknown App") == 0) {
                     shownItem --;
                     continue;
                 }
                 HomePageItem * item = new HomePageItem(itemWidget, i, path);
-                item->setFixedSize(100, 100);
+                item->setFixedSize(116, 116);
                 layout->addWidget(item);
             }
             for (int j = 0; j < 5 - shownItem; j++) {
                 QWidget * emptyItem = new QWidget(itemWidget);
-                emptyItem->setFixedSize(100, 100); //占位用widget,少于5项会补全后方占位
+                emptyItem->setFixedSize(116, 116); //占位用widget,少于5项会补全后方占位
                 layout->addWidget(emptyItem);
             }
-            if (i && shownItem) titleLabel->setText(tr("Open Quickly"));
+            if (i == 0 && shownItem) titleLabel->setText(tr("Open Quickly"));
             else titleLabel->setText(tr("Commonly Used"));
         }
         itemWidgetLyt->setSpacing(6);
@@ -401,11 +426,11 @@ int ContentWidget::currentPage() {
 }
 
 /**
- * @brief ContentWidget::refreshSearchList 刷新/构建搜索结果列表
- * @param lists 获取到的应用与设置结果列表，list.at(0)是应用， list.at(1)是设置
+ * @brief ContentWidget::resetSearchList 在构建新的搜索结果列表前，先重置所有控件
  */
-void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
-    this->hideListView();
+void ContentWidget::resetSearchList()
+{
+//    this->hideListView();
     if (m_fileListView) {
         m_fileListView->hide();
         m_fileTitleLabel->hide();
@@ -447,7 +472,15 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
         m_bestListView->isHidden = true;
         m_bestListView->clear();
     }
-    m_resultList->setFixedHeight(0);
+    if (m_webListView) {
+        m_webListView->clear();
+        m_webListView->appendItem(m_keyword);
+        m_webTitleLabel->show();
+        m_webListView->show();
+        m_webListView->isHidden = false;
+    }
+
+    resetListHeight();
     m_detailView->clearLayout();
     m_contentDetailList.clear();
     m_bestContent.clear();
@@ -458,6 +491,7 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
     m_fileShowMoreLabel->resetLabel();
     m_contentShowMoreLabel->resetLabel();
 
+    m_bestList.clear();
     if (! m_appList.isEmpty())
         m_appList.clear();
     if (! m_settingList.isEmpty())
@@ -468,34 +502,65 @@ void ContentWidget::refreshSearchList(const QVector<QStringList>& lists) {
         m_fileList.clear();
     if (! m_contentList.isEmpty())
         m_contentList.clear();
+    if (! m_appPathList.isEmpty())
+        m_appPathList.clear();
+    if (! m_appIconList.isEmpty())
+        m_appIconList.clear();
+    if (!m_appDescList.isEmpty())
+        m_appDescList.clear();
+}
 
-    if (!lists.at(0).isEmpty()) {
-        m_appList = lists.at(0);
-        qDebug()<<"Append a best item into list: "<<lists.at(0).at(0);
-        appendSearchItem(SearchItem::SearchType::Best, lists.at(0).at(0));
-        m_appListView->show();
-        m_appTitleLabel->show();
-        m_appListView->isHidden = false;
-        if (m_appList.length() <= 5) {
-            m_appListView->setList(m_appList);
-        } else {
-            m_appShowMoreLabel->show();
-            m_appListView->setList(m_appList.mid(0, 5));
-        }
+/**
+ * @brief ContentWidget::setSettingList 插入设置项搜索结果列表
+ * @param settingList
+ */
+void ContentWidget::setSettingList(const QStringList & settingList)
+{
+    if (settingList.isEmpty())
+        return;
+    m_settingList = settingList;
+    qDebug()<<"Append a best item into list: "<<settingList.at(0);
+    this->appendBestItem(SearchItem::SearchType::Settings, settingList.at(0));
+    m_settingListView->show();
+    m_settingTitleLabel->show();
+    m_settingListView->isHidden = false;
+    if (m_settingList.length() <= 5) {
+        m_settingListView->setList(m_settingList);
+    } else {
+        m_settingShowMoreLabel->show();
+        m_settingListView->setList(m_settingList.mid(0, 5));
     }
-    if (!lists.at(1).isEmpty()) {
-        m_settingList = lists.at(1);
-        qDebug()<<"Append a best item into list: "<<lists.at(1).at(0);
-        appendSearchItem(SearchItem::SearchType::Best, lists.at(1).at(0));
-        m_settingListView->show();
-        m_settingTitleLabel->show();
-        m_settingListView->isHidden = false;
-        if (m_settingList.length() <= 5) {
-            m_settingListView->setList(m_settingList);
-        } else {
-            m_settingShowMoreLabel->show();
-            m_settingListView->setList(m_settingList.mid(0, 5));
-        }
+    this->resetListHeight();
+}
+
+/**
+ * @brief ContentWidget::setAppList 插入应用搜索结果
+ * @param appList QVector<namelist,pathlist,iconlist>
+ */
+void ContentWidget::setAppList(const QVector<QStringList>& appList) {
+    if (appList.at(0).isEmpty())
+        return;
+    m_appList = appList.at(0);
+    m_appPathList = appList.at(1);
+    m_appIconList = appList.at(2);
+    m_appDescList = appList.at(3);
+    m_appListView->setAppList(m_appPathList, m_appIconList);
+    qDebug()<<"Append a best item into list: "<<appList.at(0).at(0);
+    SearchItemModel * model = qobject_cast<SearchItemModel *>(m_bestListView->model());
+    if (appList.at(1).at(0).isEmpty() || appList.at(1).at(0) == "") {
+        model->setBestAppIcon(appList.at(2).at(0), false);
+    } else {
+        model->setBestAppIcon(appList.at(2).at(0), true);
+    }
+    this->appendBestItem(SearchItem::SearchType::Apps, appList.at(0).at(0));
+    m_appListView->show();
+    m_appTitleLabel->show();
+    m_appListView->isHidden = false;
+    if (m_appList.length() <= 5) {
+        m_appListView->setList(m_appList);
+    } else {
+        m_appShowMoreLabel->show();
+        m_appListView->setList(m_appList.mid(0, 5));
     }
     this->resetListHeight();
 }
@@ -520,40 +585,12 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
             }
             break;
         }
-//        case SearchItem::SearchType::Apps: {
-//            if (m_appListView->isHidden) {
-//                m_appListView->show();
-//                m_appTitleLabel->show();
-//                m_appListView->isHidden = false;
-//                if (!m_detailView->isEmpty() && m_detailView->getType() > type) {
-//                    m_appListView->setCurrentIndex(m_appListView->model()->index(0, 0, QModelIndex()));
-//                }
-//            }
-//            m_appListView->appendItem(path);
-//            currentList = m_appListView;
-
-//            this->resetListHeight();
-//            break;
-//        }
-//        case SearchItem::SearchType::Settings: {
-//            if (m_settingListView->isHidden) {
-//                m_settingListView->show();
-//                m_settingTitleLabel->show();
-//                m_settingListView->isHidden = false;
-//                if (!m_detailView->isEmpty() && m_detailView->getType() > type) {
-//                    m_settingListView->setCurrentIndex(m_settingListView->model()->index(0, 0, QModelIndex()));
-//                }
-//            }
-//            m_settingListView->appendItem(path);
-//            currentList = m_settingListView;
-//            break;
-//        }
         case SearchItem::SearchType::Files: {
             if (m_fileListView->isHidden) {
                 m_fileListView->show();
                 m_fileTitleLabel->show();
                 m_fileListView->isHidden = false;
-                appendSearchItem(SearchItem::SearchType::Best, path);
+                this->appendBestItem(SearchItem::SearchType::Files, path);
             }
             if (m_fileListView->getLength() < 5) { //当已搜索结果列表少于5项，直接将搜索结果添加到列表中
                 m_fileListView->appendItem(path);
@@ -570,7 +607,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                 m_dirListView->show();
                 m_dirTitleLabel->show();
                 m_dirListView->isHidden = false;
-                appendSearchItem(SearchItem::SearchType::Best, path);
+                this->appendBestItem(SearchItem::SearchType::Dirs, path);
             }
             if (m_dirListView->getLength() < 5) {
                 m_dirListView->appendItem(path);
@@ -593,7 +630,7 @@ void ContentWidget::appendSearchItem(const int& type, const QString& path, QStri
                         m_bestContent.append("\n");
                     }
                 }
-                appendSearchItem(SearchItem::SearchType::Best, path);
+                this->appendBestItem(SearchItem::SearchType::Contents, path);
             }
             if (m_contentListView->getLength() < 5) {
                 m_contentListView->appendItem(path);
@@ -639,6 +676,8 @@ QString ContentWidget::getTitleName(const int& type) {
             return tr("File Contents");
         case SearchItem::SearchType::Best :
             return tr("Best Matches");
+        case SearchItem::SearchType::Web :
+            return tr("Web Pages");
         default :
             return tr("Unknown");
     }
@@ -659,6 +698,74 @@ void ContentWidget::clearLayout(QLayout * layout) {
         delete child;
     }
     child = NULL;
+}
+
+/**
+ * @brief ContentWidget::onListViewRowChanged 点击某列表某一行的槽函数
+ * @param type
+ * @param path
+ */
+void ContentWidget::onListViewRowChanged(SearchListView * listview, const int &type, const QString &path)
+{
+    if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
+        m_detailView->isContent = true;
+        m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
+    } else if (type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
+        m_detailView->setContent(m_bestContent, m_keyword);
+        m_detailView->isContent = true;
+        m_detailView->setupWidget(SearchItem::SearchType::Contents, path);
+        listview->is_current_list = true;
+        Q_EMIT this->currentItemChanged();
+        listview->is_current_list = false;
+        return;
+    } else {
+        m_detailView->isContent = false;
+    }
+    if (type == SearchItem::SearchType::Web) {
+        m_detailView->setWebWidget(this->m_keyword);
+    } else if (type == SearchItem::SearchType::Apps) {
+        int index = listview->currentIndex().row();
+        m_detailView->setAppWidget(m_appList.at(index), m_appPathList.at(index), m_appIconList.at(index), m_appDescList.at(index));
+    } else if (type == SearchItem::SearchType::Best) {
+        if (m_bestList.at(listview->currentIndex().row()).first ==  SearchItem::SearchType::Apps) {
+           m_detailView->setAppWidget(m_appList.at(0), m_appPathList.at(0), m_appIconList.at(0), m_appDescList.at(0));
+        } else {
+            m_detailView->setupWidget(m_bestList.at(listview->currentIndex().row()).first, m_bestList.at(listview->currentIndex().row()).second);
+        }
+    } else {
+        m_detailView->setupWidget(type, path);
+    }
+    listview->is_current_list = true;
+    Q_EMIT this->currentItemChanged();
+    listview->is_current_list = false;
+}
+
+/**
+ * @brief ContentWidget::onListViewRowDoubleClicked 双击某列表某一行的槽函数
+ * @param type
+ * @param path
+ */
+void ContentWidget::onListViewRowDoubleClicked(SearchListView * listview, const int &type, const QString &path)
+{
+    qDebug()<<"A row has been double clicked.Type = "<<type<<"; Name = "<<path;
+    if (type == SearchItem::SearchType::Best && m_bestList.at(listview->currentIndex().row()).first != SearchItem::SearchType::Apps) {
+        m_detailView->doubleClickAction(m_bestList.at(listview->currentIndex().row()).first, path);
+    } else if (type == SearchItem::SearchType::Best && m_bestList.at(listview->currentIndex().row()).first == SearchItem::SearchType::Apps) {
+        if (m_appPathList.at(0) == "" || m_appPathList.at(0).isEmpty()){
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appList.at(0));
+        } else {
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appPathList.at(0));
+        }
+    } else if (type == SearchItem::SearchType::Apps) {
+        int index = listview->currentIndex().row();
+        if (m_appPathList.at(index) == "" || m_appPathList.at(index).isEmpty()){
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appList.at(index));
+        } else {
+            m_detailView->doubleClickAction(SearchListView::ResType::App, m_appPathList.at(index));
+        }
+    } else {
+        m_detailView->doubleClickAction(type, path);
+    }
 }
 
 
@@ -684,6 +791,7 @@ void ContentWidget::setKeyword(QString keyword)
     m_settingListView->setKeyword(keyword);
     m_appListView->setKeyword(keyword);
     m_bestListView->setKeyword(keyword);
+    m_webListView->setKeyword(keyword);
 }
 
 /**
@@ -693,4 +801,12 @@ void ContentWidget::setKeyword(QString keyword)
 void ContentWidget::setQuicklyOpenList(const QStringList & list)
 {
     m_quicklyOpenList = list;
+}
+
+/**
+ * @brief ContentWidget::closeWebView 在主界面失焦消失的时候调用，（若webview未关闭）关闭网页搜索界面
+ */
+void ContentWidget::closeWebView()
+{
+    m_detailView->closeWebWidget();
 }

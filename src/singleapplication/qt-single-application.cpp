@@ -145,7 +145,8 @@ void QtSingleApplication::sysInit(const QString &appId)
 {
     actWin = 0;
     peer = new QtLocalPeer(this, appId);
-    connect(peer, SIGNAL(messageReceived(const QString&)), SIGNAL(messageReceived(const QString&)));
+//    connect(peer, SIGNAL(messageReceived(const QString&)), SIGNAL(messageReceived(const QString&)));
+    connect(peer, &QtLocalPeer::messageReceived, this, &QtSingleApplication::messageReceived);
 }
 
 
@@ -295,10 +296,11 @@ QString QtSingleApplication::id() const
 void QtSingleApplication::setActivationWindow(QWidget* aw, bool activateOnMessage)
 {
     actWin = aw;
-    if (activateOnMessage)
-        connect(peer, SIGNAL(messageReceived(const QString&)), this, SLOT(activateWindow()));
-    else
-        disconnect(peer, SIGNAL(messageReceived(const QString&)), this, SLOT(activateWindow()));
+    //目前不需要用到此处的置顶方法，故此信号槽暂时注释掉，若后续需要根据新起进程传递的信号执行部分操作时可以把这里放开
+//    if (activateOnMessage)
+//        connect(peer, &QtLocalPeer::messageReceived, this, &QtSingleApplication::activateWindow);
+//    else
+//        disconnect(peer, &QtLocalPeer::messageReceived, this, &QtSingleApplication::activateWindow);
 }
 
 

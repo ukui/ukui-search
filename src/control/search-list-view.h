@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QTreeView>
+#include <QMouseEvent>
 #include "model/search-item-model.h"
 #include "model/search-item.h"
 #include "highlight-item-delegate.h"
@@ -40,7 +41,8 @@ public:
         Setting,
         Dir,
         File,
-        Content
+        Content,
+        Web
     };
 
     int getCurrentType();
@@ -51,22 +53,30 @@ public:
 
     void appendItem(QString);
     void setList(QStringList);
+    void setAppList(const QStringList&, const QStringList&);
+    void appendBestItem(const QPair<int, QString>&);
     void removeItem(QString);
     void clear();
     void setKeyword(QString);
     int getType();
     int getLength();
     bool isHidden = false;
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 private:
     SearchItemModel * m_model = nullptr;
     SearchItem * m_item = nullptr;
+    bool m_isSelected = false;
 
     HighlightItemDelegate * m_styleDelegate = nullptr;
 
     int m_type;
 
 Q_SIGNALS:
-    void currentRowChanged(const int&, const QString&);
+    void currentRowChanged(SearchListView *,const int&, const QString&);
+    void onRowDoubleClicked(SearchListView *, const int&, const QString&);
+    void currentSelectPos(QPoint pos);
+    void mousePressed();
 
 public Q_SLOTS:
     void clearSelection();

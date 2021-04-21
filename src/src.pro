@@ -9,6 +9,7 @@ TEMPLATE = app
 PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 LIBS += -lxapian -lgsettings-qt -lquazip5 -lX11
+LIBS += -lukui-log4qt
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -26,9 +27,11 @@ include(singleapplication/qt-single-application.pri)
 
 SOURCES += \
     content-widget.cpp \
+    custom-style.cpp \
     input-box.cpp \
     main.cpp \
     mainwindow.cpp \
+    search-app-thread.cpp \
     search-result.cpp \
     settings-widget.cpp \
     xatom-helper.cpp
@@ -36,8 +39,10 @@ SOURCES += \
 
 HEADERS += \
     content-widget.h \
+    custom-style.h \
     input-box.h \
     mainwindow.h \
+    search-app-thread.h \
     search-result.h \
     settings-widget.h \
     xatom-helper.h
@@ -66,15 +71,14 @@ qm_files.files = $$OUT_PWD/.qm/*.qm
 
 INSTALLS += qm_files
 
-LIBS += -L$$OUT_PWD/../libsearch -lukui-search \
-        -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation
-#        -L$$OUT_PWD/../libfriso -lfriso
+LIBS += -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
+        -L$$OUT_PWD/../libsearch -lukui-search
+
+INCLUDEPATH += $$PWD/../libchinese-segmentation
+DEPENDPATH += $$PWD/../libchinese-segmentation
 
 INCLUDEPATH += $$PWD/../libsearch
 DEPENDPATH += $$PWD/../libsearch
-
-#INCLUDEPATH += $$PWD/../libfriso
-#DEPENDPATH += $$PWD/../libfriso
 
 #DISTFILES += \
 #    ../data/ukui-search-menu.desktop \
