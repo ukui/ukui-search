@@ -20,13 +20,11 @@
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusError>
-
 #include <QDebug>
 
 #include "sysdbusregister.h"
 
 int main(int argc, char *argv[]){
-
     QCoreApplication app(argc, argv);
     app.setOrganizationName("Kylin Team");
     app.setApplicationName("ukui-search-service");
