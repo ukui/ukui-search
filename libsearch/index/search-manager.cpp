@@ -444,7 +444,7 @@ void DirectSearch::run()
             if (i.isDir() && (!(i.isSymLink()))) {
                 bfs.enqueue(i.absoluteFilePath());
             }
-            if (i.fileName().contains(m_keyword)) {
+            if (i.fileName().contains(m_keyword, Qt::CaseInsensitive)) {
                 SearchManager::m_mutex1.lock();
 //                qWarning() << i.fileName() << m_keyword;
                 if (m_uniqueSymbol == SearchManager::uniqueSymbol1) {
