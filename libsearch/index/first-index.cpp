@@ -144,15 +144,15 @@ void FirstIndex::run(){
         mutex2.lock();
         mutex3.lock();
         sem.acquire(4);
-        QtConcurrent::run([&](){
-            sem.acquire(1);
-            mutex1.unlock();
-            this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-            this->Traverse();
-            FileUtils::_max_index_count = this->q_index->length();
-            qDebug()<<"max_index_count:"<<FileUtils::_max_index_count;
-            sem.release(5);
-        });
+//        QtConcurrent::run([&](){
+        sem.acquire(1);
+        mutex1.unlock();
+        this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        this->Traverse();
+        FileUtils::_max_index_count = this->q_index->length();
+        qDebug()<<"max_index_count:"<<FileUtils::_max_index_count;
+        sem.release(5);
+//        });
         QtConcurrent::run([&](){
             sem.acquire(2);
             mutex2.unlock();
