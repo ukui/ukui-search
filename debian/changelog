@@ -1,3 +1,25 @@
+ukui-search (0.4.0+0422-1) v101; urgency=medium
+
+  * Bug 45037,45035,47971,26454.
+  * 任务 25405.
+  * 其他改动：
+  * Add support for 'pptx','xlsx','pdf'.
+    - 增加了对'pptx','xlsx','pdf'格式文本内容解析的支持。
+  * Fix(frontend): Width of scrollArea is not enough which caused some text displayed incompletely.
+    - 修复部分区域预留宽度不够导致控件显示不全
+    - 和出现不必要滚动条的问题(45037,45035)
+  * Feature(frontend):Add double click event to search list view.
+    - 新增搜索结果列表双击打开功能。
+  * Fix: Mainwindow will not refresh sometime theme changed.
+    - 修复修改完透明度后修改主题，主界面颜色未随主题切换的问题。
+  * Fix: Font-size & row height will not refresh in search list.
+    - 修复字体大小改变时搜索结果列表行高和fontmetircs不刷新的bug(47971,26454)。
+  * Add search method changed function --index search and bfs search.
+    - 增加搜索方式切换功能，可以在遍历搜索和索引搜索之间切换。
+  * Use ukui-log4qt for log printing.
+    - 使用ukui-log4qt打印日志(25405)。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 21 Apr 2021 09:36:39 +0800
 ukui-search (0.3.0+0406) v101; urgency=medium
 
   * Add support for '.xls', '.dot','.wps', '.pps', '.dps', '.et','.ppt'.
