@@ -59,7 +59,7 @@ data-menu.files += ../data/ukui-search-menu.desktop
 data.path = /etc/xdg/autostart
 data.files += ../data/ukui-search.desktop
 schemes.path =  /usr/share/glib-2.0/schemas/
-schemes.files += ../data/org.ukui.search.data.gschema.xml
+schemes.files += ../data/org.ukui.search.data.gschema.xml ../data/org.ukui.log4qt.ukui-search.gschema.xml
 INSTALLS += data data-menu schemes
 
 RESOURCES += \
@@ -91,4 +91,5 @@ DEPENDPATH += $$PWD/../libsearch
 #    $$OUT_PWD/.qm/zh_CN.qm
 
 DISTFILES += \
+    ../data/org.ukui.log4qt.ukui-search.gschema.xml \
     ../data/org.ukui.search.data.gschema.xml
