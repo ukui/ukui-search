@@ -28,8 +28,7 @@
 #include <QHBoxLayout>
 #include "search-list-view.h"
 
-class OptionView : public QWidget
-{
+class OptionView : public QWidget {
     Q_OBJECT
 public:
     explicit OptionView(QWidget *);

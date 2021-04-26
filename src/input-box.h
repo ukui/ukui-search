@@ -34,16 +34,14 @@
 
 class SearchLineEdit;
 
-class SeachBarWidget:public QWidget
-{
+class SeachBarWidget: public QWidget {
 public:
-  SeachBarWidget(QWidget *parent = nullptr);
-  ~SeachBarWidget();
+    SeachBarWidget(QWidget *parent = nullptr);
+    ~SeachBarWidget();
 };
 
-class SeachBar:public QWidget
-{
-  public:
+class SeachBar: public QWidget {
+public:
     SeachBar();
     ~SeachBar();
 
@@ -51,8 +49,7 @@ private:
 //    QLineEdit *m_queryLineEdit=nullptr;
 };
 
-class SearchBarHLayout : public QHBoxLayout
-{
+class SearchBarHLayout : public QHBoxLayout {
     Q_OBJECT
 public:
     SearchBarHLayout(QWidget *parent = nullptr);
@@ -83,8 +80,7 @@ public Q_SLOTS:
     void effectiveSearchRecord();
 
 };
-class SearchBarWidgetLayout : public QHBoxLayout
-{
+class SearchBarWidgetLayout : public QHBoxLayout {
 public:
     SearchBarWidgetLayout();
     ~SearchBarWidgetLayout();
@@ -93,14 +89,13 @@ private:
 
 };
 
-class SearchLineEdit : public QLineEdit
-{
+class SearchLineEdit : public QLineEdit {
     Q_OBJECT
 
     /*
      * 负责与ukui桌面环境应用通信的dbus
      * 搜索框文本改变的时候发送信号
-　　　*/
+    　　　*/
     Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
 public:
     SearchLineEdit();
@@ -111,6 +106,6 @@ private Q_SLOTS:
     void  lineEditTextChanged(QString arg);
 private:
     QStringListModel *m_model = nullptr;
-    QCompleter *m_completer= nullptr;
+    QCompleter *m_completer = nullptr;
     bool m_isRecorded = false;
 };

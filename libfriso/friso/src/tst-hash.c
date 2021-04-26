@@ -1,19 +1,18 @@
 /**
  * hashmap testing program
- * 
+ *
  * @author  lionsoul<chenxin619315@gmail.com>
  */
 
 #include "friso_API.h"
 #include <stdio.h>
 
-void print_hash_info( friso_hash_t _hash ) {
+void print_hash_info(friso_hash_t _hash) {
     printf("info:length=%d, size=%d, facotr=%f, threshold=%d\n", _hash->length, \
-        _hash->size, _hash->factor, _hash->threshold);
-} 
+           _hash->size, _hash->factor, _hash->threshold);
+}
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     friso_hash_t _hash = new_hash_table();
     char *names[] = {
         "陈满文", "阳清华",
@@ -31,13 +30,13 @@ int main(int argc, char **argv)
         "周安", "郭桥安",
         "刘敏", "黄广华",
         "李胜", "黄海清"
-    }; 
+    };
     //char *str[] = {"陈鑫", "张仁芳", "比比"};
     char **str = names;
     int j, len = 30;
 
-    print_hash_info( _hash );
-    for (j = 0; j < len; j++) {
+    print_hash_info(_hash);
+    for(j = 0; j < len; j++) {
         hash_put_mapping(_hash, names[j], names[j]);
     }
 
@@ -47,7 +46,7 @@ int main(int argc, char **argv)
     getchar();
 
     //remove mappings
-    for (j = 0; j < len; j++) {
+    for(j = 0; j < len; j++) {
         printf("Exist %s?%2d\n", str[j], hash_exist_mapping(_hash, str[j]));
         printf("Now, remove %s\n", str[j]);
         hash_remove_mapping(_hash, str[j]);

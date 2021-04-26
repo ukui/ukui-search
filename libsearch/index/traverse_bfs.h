@@ -25,8 +25,7 @@
 #include <QDir>
 #include <QQueue>
 
-class Traverse_BFS
-{
+class Traverse_BFS {
 public:
     Traverse_BFS() = default;
     void Traverse();

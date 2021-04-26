@@ -22,38 +22,36 @@
 #include <QDebug>
 #include <QEvent>
 
-OptionView::OptionView(QWidget *parent) : QWidget(parent)
-{
+OptionView::OptionView(QWidget *parent) : QWidget(parent) {
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
-    m_mainLyt->setContentsMargins(0,8,0,0);
+    m_mainLyt->setContentsMargins(0, 8, 0, 0);
     m_mainLyt->setSpacing(8);
     initUI();
 }
 
-OptionView::~OptionView()
-{
-    if (m_openLabel) {
+OptionView::~OptionView() {
+    if(m_openLabel) {
         delete m_openLabel;
         m_openLabel = NULL;
     }
-    if (m_shortcutLabel) {
+    if(m_shortcutLabel) {
         delete m_shortcutLabel;
         m_shortcutLabel = NULL;
     }
-    if (m_panelLabel) {
+    if(m_panelLabel) {
         delete m_panelLabel;
         m_panelLabel = NULL;
     }
-    if (m_openPathLabel) {
+    if(m_openPathLabel) {
         delete m_openPathLabel;
         m_openPathLabel = NULL;
     }
-    if (m_copyPathLabel) {
+    if(m_copyPathLabel) {
         delete m_copyPathLabel;
         m_copyPathLabel = NULL;
     }
-    if (m_installLabel) {
+    if(m_installLabel) {
         delete m_installLabel;
         m_installLabel = NULL;
     }
@@ -66,33 +64,32 @@ OptionView::~OptionView()
  */
 void OptionView::setupOptions(const int& type, bool is_appInstalled) {
     this->hideOptions();
-    switch (type) {
-        case SearchListView::ResType::App : {
-            setupAppOptions(is_appInstalled);
-            break;
-        }
-        case SearchListView::ResType::Content:
-        case SearchListView::ResType::Best:
-        case SearchListView::ResType::File : {
-            setupFileOptions();
-            break;
-        }
-        case SearchListView::ResType::Setting : {
-            setupSettingOptions();
-            break;
-        }
-        case SearchListView::ResType::Dir : {
-            setupDirOptions();
-            break;
-        }
-        default:
-            break;
+    switch(type) {
+    case SearchListView::ResType::App : {
+        setupAppOptions(is_appInstalled);
+        break;
+    }
+    case SearchListView::ResType::Content:
+    case SearchListView::ResType::Best:
+    case SearchListView::ResType::File : {
+        setupFileOptions();
+        break;
+    }
+    case SearchListView::ResType::Setting : {
+        setupSettingOptions();
+        break;
+    }
+    case SearchListView::ResType::Dir : {
+        setupDirOptions();
+        break;
+    }
+    default:
+        break;
     }
 }
 
 
-void OptionView::initUI()
-{
+void OptionView::initUI() {
     m_optionFrame = new QFrame(this);
     m_optionLyt = new QVBoxLayout(m_optionFrame);
     m_optionLyt->setContentsMargins(8, 0, 0, 0);
@@ -150,38 +147,37 @@ void OptionView::initUI()
  * @param opt 选项类型
  */
 void OptionView::setupOptionLabel(const int& opt) {
-    switch (opt) {
-        case Options::Open: {
-            m_openLabel->show();
-            break;
-        }
-        case Options::Shortcut: {
-            m_shortcutLabel->show();
-            break;
-        }
-        case Options::Panel: {
-            m_panelLabel->show();
-            break;
-        }
-        case Options::OpenPath: {
-            m_openPathLabel->show();
-            break;
-        }
-        case Options::CopyPath: {
-            m_copyPathLabel->show();
-            break;
-        }
-        case Options::Install: {
-            m_installLabel->show();
-            break;
-        }
-        default:
-            break;
+    switch(opt) {
+    case Options::Open: {
+        m_openLabel->show();
+        break;
+    }
+    case Options::Shortcut: {
+        m_shortcutLabel->show();
+        break;
+    }
+    case Options::Panel: {
+        m_panelLabel->show();
+        break;
+    }
+    case Options::OpenPath: {
+        m_openPathLabel->show();
+        break;
+    }
+    case Options::CopyPath: {
+        m_copyPathLabel->show();
+        break;
+    }
+    case Options::Install: {
+        m_installLabel->show();
+        break;
+    }
+    default:
+        break;
     }
 }
 
-void OptionView::hideOptions()
-{
+void OptionView::hideOptions() {
     m_openLabel->hide();
     m_shortcutLabel->hide();
     m_panelLabel->hide();
@@ -195,7 +191,7 @@ void OptionView::hideOptions()
  * @param is_installed 应用是否已安装
  */
 void OptionView::setupAppOptions(bool is_installed) {
-    if (is_installed) {
+    if(is_installed) {
         setupOptionLabel(Options::Open);
         setupOptionLabel(Options::Shortcut);
         setupOptionLabel(Options::Panel);
@@ -235,94 +231,94 @@ void OptionView::setupSettingOptions() {
  * @param event
  * @return
  */
-bool OptionView::eventFilter(QObject *watched, QEvent *event){
-    if (m_openLabel && watched == m_openLabel){
-        if (event->type() == QEvent::MouseButtonPress) {
+bool OptionView::eventFilter(QObject *watched, QEvent *event) {
+    if(m_openLabel && watched == m_openLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
             m_openLabel->setStyleSheet("QLabel{font-size: 14px; color: #296CD9;}");
             return true;
-        } else if (event->type() == QEvent::MouseButtonRelease) {
+        } else if(event->type() == QEvent::MouseButtonRelease) {
             m_openLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             Q_EMIT this->onOptionClicked(Options::Open);
             return true;
-        } else if (event->type() == QEvent::Enter) {
+        } else if(event->type() == QEvent::Enter) {
             m_openLabel->setStyleSheet("QLabel{font-size: 14px; color: #40A9FB;}");
             return true;
-        } else if (event->type() == QEvent::Leave) {
+        } else if(event->type() == QEvent::Leave) {
             m_openLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             return true;
         }
-    } else if (m_shortcutLabel && watched == m_shortcutLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
+    } else if(m_shortcutLabel && watched == m_shortcutLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
             m_shortcutLabel->setStyleSheet("QLabel{font-size: 14px; color: #296CD9;}");
             return true;
-        } else if (event->type() == QEvent::MouseButtonRelease) {
+        } else if(event->type() == QEvent::MouseButtonRelease) {
             m_shortcutLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             Q_EMIT this->onOptionClicked(Options::Shortcut);
             return true;
-        } else if (event->type() == QEvent::Enter) {
+        } else if(event->type() == QEvent::Enter) {
             m_shortcutLabel->setStyleSheet("QLabel{font-size: 14px; color: #40A9FB;}");
             return true;
-        } else if (event->type() == QEvent::Leave) {
+        } else if(event->type() == QEvent::Leave) {
             m_shortcutLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             return true;
         }
-    } else if (m_panelLabel && watched == m_panelLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
+    } else if(m_panelLabel && watched == m_panelLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
             m_panelLabel->setStyleSheet("QLabel{font-size: 14px; color: #296CD9;}");
             return true;
-        } else if (event->type() == QEvent::MouseButtonRelease) {
+        } else if(event->type() == QEvent::MouseButtonRelease) {
             m_panelLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             Q_EMIT this->onOptionClicked(Options::Panel);
             return true;
-        } else if (event->type() == QEvent::Enter) {
+        } else if(event->type() == QEvent::Enter) {
             m_panelLabel->setStyleSheet("QLabel{font-size: 14px; color: #40A9FB;}");
             return true;
-        } else if (event->type() == QEvent::Leave) {
+        } else if(event->type() == QEvent::Leave) {
             m_panelLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             return true;
         }
-    } else if (m_openPathLabel && watched == m_openPathLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
+    } else if(m_openPathLabel && watched == m_openPathLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
             m_openPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #296CD9;}");
             return true;
-        } else if (event->type() == QEvent::MouseButtonRelease) {
+        } else if(event->type() == QEvent::MouseButtonRelease) {
             m_openPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             Q_EMIT this->onOptionClicked(Options::OpenPath);
             return true;
-        } else if (event->type() == QEvent::Enter) {
+        } else if(event->type() == QEvent::Enter) {
             m_openPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #40A9FB;}");
             return true;
-        } else if (event->type() == QEvent::Leave) {
+        } else if(event->type() == QEvent::Leave) {
             m_openPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             return true;
         }
-    } else if (m_copyPathLabel && watched == m_copyPathLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
+    } else if(m_copyPathLabel && watched == m_copyPathLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
             m_copyPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #296CD9;}");
             return true;
-        } else if (event->type() == QEvent::MouseButtonRelease) {
+        } else if(event->type() == QEvent::MouseButtonRelease) {
             m_copyPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             Q_EMIT this->onOptionClicked(Options::CopyPath);
             return true;
-        } else if (event->type() == QEvent::Enter) {
+        } else if(event->type() == QEvent::Enter) {
             m_copyPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #40A9FB;}");
             return true;
-        } else if (event->type() == QEvent::Leave) {
+        } else if(event->type() == QEvent::Leave) {
             m_copyPathLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             return true;
         }
-    } else if (m_installLabel && watched == m_installLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
+    } else if(m_installLabel && watched == m_installLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
             m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #296CD9;}");
             return true;
-        } else if (event->type() == QEvent::MouseButtonRelease) {
+        } else if(event->type() == QEvent::MouseButtonRelease) {
             m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             Q_EMIT this->onOptionClicked(Options::Install);
             return true;
-        } else if (event->type() == QEvent::Enter) {
+        } else if(event->type() == QEvent::Enter) {
             m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #40A9FB;}");
             return true;
-        } else if (event->type() == QEvent::Leave) {
+        } else if(event->type() == QEvent::Leave) {
             m_installLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
             return true;
         }

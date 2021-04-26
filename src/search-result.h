@@ -25,8 +25,7 @@
 #include <QTimer>
 #include "mainwindow.h"
 
-class SearchResult : public QThread
-{
+class SearchResult : public QThread {
     Q_OBJECT
 public:
     SearchResult(QObject * parent = nullptr);

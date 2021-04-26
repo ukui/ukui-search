@@ -26,8 +26,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-class FolderListItem : public QWidget
-{
+class FolderListItem : public QWidget {
     Q_OBJECT
 public:
     explicit FolderListItem(QWidget *parent = nullptr, const QString &path = 0);

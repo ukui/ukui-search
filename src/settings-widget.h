@@ -35,8 +35,7 @@
 #include <libsearch.h>
 #include "xatom-helper.h"
 
-class SettingsWidget : public QWidget
-{
+class SettingsWidget : public QWidget {
     Q_OBJECT
 public:
     explicit SettingsWidget(QWidget *parent = nullptr);

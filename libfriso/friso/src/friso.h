@@ -1,7 +1,7 @@
 /*
  * main interface file for friso tokenizer.
  * you could modify it and re-release and free for commercial use.
- * 
+ *
  * @author  lionsoul<chenxin619315@gmail.com>
  */
 
@@ -25,7 +25,7 @@
 /*
  * Type: friso_lex_t
  * -----------
- * This type used to represent the type of the lexicon. 
+ * This type used to represent the type of the lexicon.
  */
 typedef enum {
     __LEX_CJK_WORDS__ = 0,
@@ -47,7 +47,7 @@ typedef enum {
 } friso_lex_t;
 
 typedef friso_hash_t * friso_dic_t;
-#define __FRISO_LEXICON_LENGTH__ 12 
+#define __FRISO_LEXICON_LENGTH__ 12
 
 
 //charset that Friso now support.
@@ -59,7 +59,7 @@ typedef enum {
 /*
  * Type: friso_mode_t
  * ------------------
- * use to identidy the mode that the friso use. 
+ * use to identidy the mode that the friso use.
  */
 typedef enum {
     __FRISO_SIMPLE_MODE__   = 1,
@@ -79,7 +79,7 @@ typedef friso_entry * friso_t;
 /*
  * Type: lex_entry_cdt
  * -------------------
- * This type used to represent the lexicon entry struct. 
+ * This type used to represent the lexicon entry struct.
  */
 #define _LEX_APPENSYN_MASK (1 << 0)    //append synoyums words.
 #define lex_appensyn_open(e)    e->ctrlMask |= _LEX_APPENSYN_MASK
@@ -123,7 +123,7 @@ typedef friso_token_entry * friso_token_t;
 /*
  * Type: friso_task_entry
  * This type used to represent the current segmentation content.
- *         like the text to split, and the current index, token buffer eg.... 
+ *         like the text to split, and the current index, token buffer eg....
  */
 //action control mask for #FRISO_TASK_T#.
 #define _TASK_CHECK_CF_MASK (1 << 0)     //Wether to check the chinese fraction.
@@ -166,9 +166,9 @@ struct friso_config_struct {
     friso_mode_t mode;            //Complex mode or simple mode
 
     //pointer to the function to get the next token
-    friso_token_t (*next_token) (friso_t, struct friso_config_struct *, friso_task_t);
+    friso_token_t (*next_token)(friso_t, struct friso_config_struct *, friso_task_t);
     //pointer to the function to get the next cjk lex_entry_t
-    lex_entry_t   (*next_cjk  ) (friso_t, struct friso_config_struct *, friso_task_t);        
+    lex_entry_t (*next_cjk)(friso_t, struct friso_config_struct *, friso_task_t);
 
     char kpuncs[_FRISO_KEEP_PUNC_LEN]; //keep punctuations buffer.
 };
@@ -181,28 +181,28 @@ typedef friso_config_entry * friso_config_t;
  * Function: friso_new;
  * Usage: vars = friso_new( void );
  * --------------------------------
- * This function used to create a new empty friso friso_t; 
+ * This function used to create a new empty friso friso_t;
  *        with default value.
  */
-FRISO_API friso_t friso_new( void );
+FRISO_API friso_t friso_new(void);
 
 //creat a friso entry with a default value from a configuratile file.
 //@return 1 for successfully and 0 for failed.
-FRISO_API int friso_init_from_ifile( friso_t, friso_config_t, fstring );
+FRISO_API int friso_init_from_ifile(friso_t, friso_config_t, fstring);
 
 /*
  * Function: friso_free_vars;
  * Usage: friso_free( vars );
  * --------------------------
- * This function is used to free the allocation of the given vars. 
+ * This function is used to free the allocation of the given vars.
  */
-FRISO_API void friso_free( friso_t );
+FRISO_API void friso_free(friso_t);
 
 /*
  * Function: friso_set_dic
  * Usage: dic = friso_set_dic( vars, dic );
  * ----------------------------------------
- * This function is used to set the dictionary for friso. 
+ * This function is used to set the dictionary for friso.
  *         and firso_dic_t is the pointer of a hash table array.
  */
 //FRISO_API void friso_set_dic( friso_t, friso_dic_t );
@@ -217,14 +217,14 @@ do {\
  * ------------------------------------
  * This function is used to set the mode(complex or simple) that you want to friso to use.
  */
-FRISO_API void friso_set_mode( friso_config_t, friso_mode_t );
+FRISO_API void friso_set_mode(friso_config_t, friso_mode_t);
 
-/*create a new friso configuration entry and initialize 
+/*create a new friso configuration entry and initialize
   it with the default value.*/
-FRISO_API friso_config_t friso_new_config( void );
+FRISO_API friso_config_t friso_new_config(void);
 
 //initialize the specified friso config entry with default value.
-FRISO_API void friso_init_config( friso_config_t );
+FRISO_API void friso_init_config(friso_config_t);
 
 //free the specified friso configuration entry.
 //FRISO_API void friso_free_config( friso_config_t );
@@ -234,20 +234,20 @@ FRISO_API void friso_init_config( friso_config_t );
  * Function: friso_new_task;
  * Usage: segment = friso_new_task( void );
  * ----------------------------------------
- * This function is used to create a new friso segment type; 
+ * This function is used to create a new friso segment type;
  */
-FRISO_API friso_task_t friso_new_task( void );
+FRISO_API friso_task_t friso_new_task(void);
 
 /*
  * Function: friso_free_task;
- * Usage: friso_free_task( task ); 
+ * Usage: friso_free_task( task );
  * -------------------------------
  * This function is used to free the allocation of function friso_new_segment();
  */
-FRISO_API void friso_free_task( friso_task_t );
+FRISO_API void friso_free_task(friso_task_t);
 
 //create a new friso token
-FRISO_API friso_token_t friso_new_token( void );
+FRISO_API friso_token_t friso_new_token(void);
 
 //free the given friso token
 //FRISO_API void friso_free_token( friso_token_t );
@@ -257,16 +257,16 @@ FRISO_API friso_token_t friso_new_token( void );
  * Function: friso_set_text
  * Usage: friso_set_text( task, text );
  * ------------------------------------
- * This function is used to set the text that is going to segment. 
+ * This function is used to set the text that is going to segment.
  */
-FRISO_API void friso_set_text( friso_task_t, fstring );
+FRISO_API void friso_set_text(friso_task_t, fstring);
 
 
 //get the next cjk word with mmseg simple mode
-FRISO_API lex_entry_t next_simple_cjk( friso_t, friso_config_t, friso_task_t );
+FRISO_API lex_entry_t next_simple_cjk(friso_t, friso_config_t, friso_task_t);
 
 //get the next cjk word with mmseg complex mode(mmseg core algorithm)
-FRISO_API lex_entry_t next_complex_cjk( friso_t, friso_config_t, friso_task_t );
+FRISO_API lex_entry_t next_complex_cjk(friso_t, friso_config_t, friso_task_t);
 
 /*
  * Function: next_mmseg_token
@@ -275,10 +275,10 @@ FRISO_API lex_entry_t next_complex_cjk( friso_t, friso_config_t, friso_task_t );
  * This function is used to get next word that friso segmented
  *     with a split mode of __FRISO_SIMPLE_MODE__ or __FRISO_COMPLEX_MODE__
  */
-FRISO_API friso_token_t next_mmseg_token( friso_t, friso_config_t, friso_task_t );
+FRISO_API friso_token_t next_mmseg_token(friso_t, friso_config_t, friso_task_t);
 
 //__FRISO_DETECT_MODE__
-FRISO_API friso_token_t next_detect_token( friso_t, friso_config_t, friso_task_t );
+FRISO_API friso_token_t next_detect_token(friso_t, friso_config_t, friso_task_t);
 /* }}} friso main interface define :: end*/
 
 /* {{{ lexicon interface define :: start*/
@@ -289,42 +289,42 @@ FRISO_API friso_token_t next_detect_token( friso_t, friso_config_t, friso_task_t
  * -----------------------------
  * This function used to create a new dictionary.(memory allocation).
  */
-FRISO_API friso_dic_t friso_dic_new( void );
+FRISO_API friso_dic_t friso_dic_new(void);
 
-FRISO_API fstring file_get_line( fstring, FILE * );
+FRISO_API fstring file_get_line(fstring, FILE *);
 
 /*
  * Function: friso_dic_free
  * Usage: friso_dic_free( void );
  * ------------------------------
- * This function is used to free all the allocation of friso_dic_new. 
+ * This function is used to free all the allocation of friso_dic_new.
  */
-FRISO_API void friso_dic_free( friso_dic_t );
+FRISO_API void friso_dic_free(friso_dic_t);
 
 //create a new lexicon entry.
-FRISO_API lex_entry_t new_lex_entry( fstring, friso_array_t, uint_t, uint_t, uint_t );
+FRISO_API lex_entry_t new_lex_entry(fstring, friso_array_t, uint_t, uint_t, uint_t);
 
 //free the given lexicon entry.
 //free all the allocations that its synonyms word's items pointed to
 //when the second arguments is 1
-FRISO_API void free_lex_entry_full( lex_entry_t );
-FRISO_API void free_lex_entry( lex_entry_t );
+FRISO_API void free_lex_entry_full(lex_entry_t);
+FRISO_API void free_lex_entry(lex_entry_t);
 
 /*
  * Function: friso_dic_load
- * Usage: friso_dic_load( friso, friso_lex_t, path, length ); 
+ * Usage: friso_dic_load( friso, friso_lex_t, path, length );
  * --------------------------------------------------
  * This function is used to load dictionary from a given path.
  *         no length limit when length less than 0.
  */
-FRISO_API void friso_dic_load( friso_t, friso_config_t, 
-        friso_lex_t, fstring, uint_t );
+FRISO_API void friso_dic_load(friso_t, friso_config_t,
+                              friso_lex_t, fstring, uint_t);
 
 /*
  * load the lexicon configuration file.
  *    and load all the valid lexicon from the conf file.
  */
-FRISO_API void friso_dic_load_from_ifile( friso_t, friso_config_t, fstring, uint_t );
+FRISO_API void friso_dic_load_from_ifile(friso_t, friso_config_t, fstring, uint_t);
 
 /*
  * Function: friso_dic_match
@@ -332,7 +332,7 @@ FRISO_API void friso_dic_load_from_ifile( friso_t, friso_config_t, fstring, uint
  * ----------------------------------------------
  * This function used to put new word into the dictionary.
  */
-FRISO_API void friso_dic_add( friso_dic_t, friso_lex_t, fstring, friso_array_t );
+FRISO_API void friso_dic_add(friso_dic_t, friso_lex_t, fstring, friso_array_t);
 
 /*
  * Function: friso_dic_add_with_fre
@@ -340,15 +340,15 @@ FRISO_API void friso_dic_add( friso_dic_t, friso_lex_t, fstring, friso_array_t )
  * -------------------------------------------------------------------
  * This function used to put new word width frequency into the dictionary.
  */
-FRISO_API void friso_dic_add_with_fre( friso_dic_t, friso_lex_t, fstring, friso_array_t, uint_t );
+FRISO_API void friso_dic_add_with_fre(friso_dic_t, friso_lex_t, fstring, friso_array_t, uint_t);
 
 /*
  * Function: friso_dic_match
  * Usage: result = friso_dic_match( dic, friso_lex_t, word );
  * ----------------------------------------------------
- * This function is used to check the given word is in the dictionary or not. 
+ * This function is used to check the given word is in the dictionary or not.
  */
-FRISO_API int friso_dic_match( friso_dic_t, friso_lex_t, fstring );
+FRISO_API int friso_dic_match(friso_dic_t, friso_lex_t, fstring);
 
 /*
  * Function: friso_dic_get
@@ -356,15 +356,15 @@ FRISO_API int friso_dic_match( friso_dic_t, friso_lex_t, fstring );
  * -----------------------------------------
  * This function is used to search the specified lex_entry_t.
  */
-FRISO_API lex_entry_t friso_dic_get( friso_dic_t, friso_lex_t, fstring );
+FRISO_API lex_entry_t friso_dic_get(friso_dic_t, friso_lex_t, fstring);
 
 /*
  * Function: friso_spec_dic_size
  * Usage: friso_spec_dic_size( dic, friso_lex_t )
- * This function is used to get the size of the dictionary with a specified type. 
+ * This function is used to get the size of the dictionary with a specified type.
  */
-FRISO_API uint_t friso_spec_dic_size( friso_dic_t, friso_lex_t );
-FRISO_API uint_t friso_all_dic_size( friso_dic_t );
+FRISO_API uint_t friso_spec_dic_size(friso_dic_t, friso_lex_t);
+FRISO_API uint_t friso_all_dic_size(friso_dic_t);
 /* }}} lexicon interface define :: end*/
 
 #endif /*end ifndef*/
