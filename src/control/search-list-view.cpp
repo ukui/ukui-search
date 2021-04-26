@@ -129,6 +129,16 @@ void SearchListView::clear()
 }
 
 /**
+ * @brief SearchListView::refresh 重新绘制当前列表
+ */
+void SearchListView::refresh()
+{
+    m_model->refresh();
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+}
+
+/**
  * @brief SearchListView::setKeyword 设置关键词
  * @param keyword 关键词
  */

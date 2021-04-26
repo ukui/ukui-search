@@ -123,6 +123,7 @@ private:
     void setSearchMethod(const bool&);
     double getTransparentData();
     void initTimer();
+    bool tryHideMainwindow();
 
 protected:
     void paintEvent(QPaintEvent *);

@@ -57,6 +57,7 @@ public:
     void appendBestItem(const QPair<int, QString>&);
     void removeItem(QString);
     void clear();
+    void refresh();
     void setKeyword(QString);
     int getType();
     int getLength();

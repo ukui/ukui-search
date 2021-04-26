@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QTimer>
+#include <QApplication>
 #include "config-file.h"
 
 ContentWidget::ContentWidget(QWidget * parent):QStackedWidget(parent)
@@ -225,6 +226,17 @@ void ContentWidget::initListView()
     connect(m_contentShowMoreLabel, &ShowMoreLabel::retractClicked, this, [ = ]() {
         m_contentListView->setList(m_contentList.mid(0, 5));
         m_contentShowMoreLabel->stopLoading();
+        this->resetListHeight();
+    });
+
+    connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette &pal) {
+        m_fileListView->refresh();
+        m_dirListView->refresh();
+        m_contentListView->refresh();
+        m_settingListView->refresh();
+        m_appListView->refresh();
+        m_bestListView->refresh();
+        m_webListView->refresh();
         this->resetListHeight();
     });
 }

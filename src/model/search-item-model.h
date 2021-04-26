@@ -59,6 +59,7 @@ public:
     void removeItem(QString);
     void clear();
     void setBestAppIcon(const QString &, const bool &);
+    void refresh();
 
 private :
     SearchItem * m_item = nullptr;
