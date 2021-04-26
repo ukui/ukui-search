@@ -22,8 +22,7 @@
 #include "custom-style.h"
 
 static CustomStyle *customstyle_global_instance = nullptr;
-CustomStyle::CustomStyle(QStyle *style)
-{
+CustomStyle::CustomStyle(QStyle *style) {
 
 }
 CustomStyle *CustomStyle::getStyle()
@@ -33,14 +32,15 @@ CustomStyle *CustomStyle::getStyle()
     return customstyle_global_instance;
 }
 
-QSize CustomStyle::sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget) const
-{
-    switch (type) {
-        case CT_ItemViewItem: {
-            QSize size(0, GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toDouble() * 2);
-            return size;
-        } break;
-        default: break;
+QSize CustomStyle::sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget) const {
+    switch(type) {
+    case CT_ItemViewItem: {
+        QSize size(0, GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toDouble() * 2);
+        return size;
+    }
+    break;
+    default:
+        break;
     }
     return QProxyStyle::sizeFromContents(type, option, contentsSize, widget);
 }

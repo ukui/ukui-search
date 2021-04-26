@@ -24,8 +24,7 @@
 #include <QProxyStyle>
 #include "global-settings.h"
 
-class CustomStyle : public QProxyStyle
-{
+class CustomStyle : public QProxyStyle {
     Q_OBJECT
 public:
     static CustomStyle *getStyle();

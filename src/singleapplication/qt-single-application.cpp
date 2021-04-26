@@ -141,8 +141,7 @@
 */
 
 
-void QtSingleApplication::sysInit(const QString &appId)
-{
+void QtSingleApplication::sysInit(const QString &appId) {
     actWin = 0;
     peer = new QtLocalPeer(this, appId);
 //    connect(peer, SIGNAL(messageReceived(const QString&)), SIGNAL(messageReceived(const QString&)));
@@ -161,8 +160,7 @@ void QtSingleApplication::sysInit(const QString &appId)
 */
 
 QtSingleApplication::QtSingleApplication(int &argc, char **argv, bool GUIenabled)
-    : QApplication(argc, argv, GUIenabled)
-{
+    : QApplication(argc, argv, GUIenabled) {
     sysInit();
 }
 
@@ -174,8 +172,7 @@ QtSingleApplication::QtSingleApplication(int &argc, char **argv, bool GUIenabled
 */
 
 QtSingleApplication::QtSingleApplication(const QString &appId, int &argc, char **argv)
-    : QApplication(argc, argv)
-{
+    : QApplication(argc, argv) {
     sysInit(appId);
 }
 
@@ -187,8 +184,7 @@ QtSingleApplication::QtSingleApplication(const QString &appId, int &argc, char *
     argv, and \a type are passed on to the QAppliation constructor.
 */
 QtSingleApplication::QtSingleApplication(int &argc, char **argv, Type type)
-    : QApplication(argc, argv, type)
-{
+    : QApplication(argc, argv, type) {
     sysInit();
 }
 
@@ -201,8 +197,7 @@ QtSingleApplication::QtSingleApplication(int &argc, char **argv, Type type)
   and \a cmap are passed on to the QApplication constructor.
 */
 QtSingleApplication::QtSingleApplication(Display* dpy, Qt::HANDLE visual, Qt::HANDLE cmap)
-    : QApplication(dpy, visual, cmap)
-{
+    : QApplication(dpy, visual, cmap) {
     sysInit();
 }
 
@@ -214,8 +209,7 @@ QtSingleApplication::QtSingleApplication(Display* dpy, Qt::HANDLE visual, Qt::HA
   constructor.
 */
 QtSingleApplication::QtSingleApplication(Display *dpy, int &argc, char **argv, Qt::HANDLE visual, Qt::HANDLE cmap)
-    : QApplication(dpy, argc, argv, visual, cmap)
-{
+    : QApplication(dpy, argc, argv, visual, cmap) {
     sysInit();
 }
 
@@ -227,8 +221,7 @@ QtSingleApplication::QtSingleApplication(Display *dpy, int &argc, char **argv, Q
   constructor.
 */
 QtSingleApplication::QtSingleApplication(Display* dpy, const QString &appId, int argc, char **argv, Qt::HANDLE visual, Qt::HANDLE cmap)
-    : QApplication(dpy, argc, argv, visual, cmap)
-{
+    : QApplication(dpy, argc, argv, visual, cmap) {
     sysInit(appId);
 }
 #  endif // Q_WS_X11
@@ -246,8 +239,7 @@ QtSingleApplication::QtSingleApplication(Display* dpy, const QString &appId, int
     \sa sendMessage()
 */
 
-bool QtSingleApplication::isRunning()
-{
+bool QtSingleApplication::isRunning() {
     return peer->isClient();
 }
 
@@ -265,8 +257,7 @@ bool QtSingleApplication::isRunning()
 
     \sa isRunning(), messageReceived()
 */
-bool QtSingleApplication::sendMessage(const QString &message, int timeout)
-{
+bool QtSingleApplication::sendMessage(const QString &message, int timeout) {
     return peer->sendMessage(message, timeout);
 }
 
@@ -275,8 +266,7 @@ bool QtSingleApplication::sendMessage(const QString &message, int timeout)
     Returns the application identifier. Two processes with the same
     identifier will be regarded as instances of the same application.
 */
-QString QtSingleApplication::id() const
-{
+QString QtSingleApplication::id() const {
     return peer->applicationId();
 }
 
@@ -293,8 +283,7 @@ QString QtSingleApplication::id() const
   \sa activateWindow(), messageReceived()
 */
 
-void QtSingleApplication::setActivationWindow(QWidget* aw, bool activateOnMessage)
-{
+void QtSingleApplication::setActivationWindow(QWidget* aw, bool activateOnMessage) {
     actWin = aw;
     //目前不需要用到此处的置顶方法，故此信号槽暂时注释掉，若后续需要根据新起进程传递的信号执行部分操作时可以把这里放开
 //    if (activateOnMessage)
@@ -310,8 +299,7 @@ void QtSingleApplication::setActivationWindow(QWidget* aw, bool activateOnMessag
 
     \sa setActivationWindow()
 */
-QWidget* QtSingleApplication::activationWindow() const
-{
+QWidget* QtSingleApplication::activationWindow() const {
     return actWin;
 }
 
@@ -330,8 +318,7 @@ QWidget* QtSingleApplication::activationWindow() const
 
   \sa setActivationWindow(), messageReceived(), initialize()
 */
-void QtSingleApplication::activateWindow()
-{
+void QtSingleApplication::activateWindow() {
     //单例置顶策略，由于bootOptionsFilter in mainwindow自带置顶策略，故注掉此处
 //    if (actWin) {
 //        if(this->applicationState() & Qt::ApplicationInactive)

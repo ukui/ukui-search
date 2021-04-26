@@ -3,14 +3,12 @@
 size_t uniqueSymbol = 0;
 QMutex  m_mutex;
 
-SearchAppThread::SearchAppThread(QObject *parent) : QObject(parent)
-{
+SearchAppThread::SearchAppThread(QObject *parent) : QObject(parent) {
     m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
 }
 
-void SearchAppThread::startSearch(const QString & keyword)
-{
+void SearchAppThread::startSearch(const QString & keyword) {
     SearchApp *appsearch;
     appsearch = new SearchApp(keyword);
 //    appsearch->setKeyword(keyword);
@@ -19,13 +17,11 @@ void SearchAppThread::startSearch(const QString & keyword)
 }
 
 
-SearchApp::SearchApp(const QString& keyword, QObject * parent) : QObject(parent)
-{
+SearchApp::SearchApp(const QString& keyword, QObject * parent) : QObject(parent) {
     m_keyword = keyword;
 }
 
-SearchApp::~SearchApp()
-{
+SearchApp::~SearchApp() {
 }
 
 ///**
@@ -37,8 +33,7 @@ SearchApp::~SearchApp()
 //    m_keyword = keyword;
 //}
 
-void SearchApp::run()
-{
+void SearchApp::run() {
     m_mutex.lock();
     uniqueSymbol++;
     m_mutex.unlock();
@@ -46,22 +41,20 @@ void SearchApp::run()
     QStringList nameList, pathList, iconList, descList;
     QVector<QStringList> appVector;
     AppMatch::getAppMatch()->startMatchApp(m_keyword, m_installed_apps, m_uninstalled_apps);
-    QMapIterator<NameString,QStringList> installed_iter(m_installed_apps);
-    while(installed_iter.hasNext())
-    {
+    QMapIterator<NameString, QStringList> installed_iter(m_installed_apps);
+    while(installed_iter.hasNext()) {
         installed_iter.next();
         nameList << installed_iter.key().app_name;
         pathList << installed_iter.value().at(0);
         iconList << installed_iter.value().at(1);
         descList << installed_iter.value().at(3);
     }
-    QMapIterator<NameString,QStringList> uninstalled_iter(m_uninstalled_apps);
-    while(uninstalled_iter.hasNext())
-    {
+    QMapIterator<NameString, QStringList> uninstalled_iter(m_uninstalled_apps);
+    while(uninstalled_iter.hasNext()) {
         uninstalled_iter.next();
         QString name;
         //当返回列表的value中含包名时，将名称按“应用名/包名”的格式存储
-        if (!uninstalled_iter.value().at(2).isEmpty() && uninstalled_iter.value().at(2) != "") {
+        if(!uninstalled_iter.value().at(2).isEmpty() && uninstalled_iter.value().at(2) != "") {
             name = uninstalled_iter.key().app_name + "/" + uninstalled_iter.value().at(2);
         } else name = uninstalled_iter.key().app_name;
         nameList << name;
@@ -74,7 +67,7 @@ void SearchApp::run()
     appVector.append(iconList);
     appVector.append(descList);
     m_mutex.lock();
-    if (uniqueSymbol == uniqueSymbol) {
+    if(uniqueSymbol == uniqueSymbol) {
         Q_EMIT this->searchResultApp(appVector);
     }
     m_mutex.unlock();

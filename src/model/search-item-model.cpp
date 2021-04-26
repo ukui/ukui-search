@@ -21,11 +21,10 @@
 #include "search-item-model.h"
 #include <QDebug>
 
-SearchItemModel::SearchItemModel(QObject *parent) : QAbstractItemModel (parent)
-{
+SearchItemModel::SearchItemModel(QObject *parent) : QAbstractItemModel(parent) {
 
 }
-SearchItemModel::~SearchItemModel(){
+SearchItemModel::~SearchItemModel() {
 
 }
 
@@ -36,9 +35,8 @@ SearchItemModel::~SearchItemModel(){
  * @param parent
  * @return
  */
-QModelIndex SearchItemModel::index(int row, int column, const QModelIndex &parent) const
-{
-    if (row < 0 || row > m_item->m_pathlist.count() - 1)
+QModelIndex SearchItemModel::index(int row, int column, const QModelIndex &parent) const {
+    if(row < 0 || row > m_item->m_pathlist.count() - 1)
         return QModelIndex();
     return createIndex(row, column, m_item);
 }
@@ -48,8 +46,7 @@ QModelIndex SearchItemModel::index(int row, int column, const QModelIndex &paren
  * @param child
  * @return
  */
-QModelIndex SearchItemModel::parent(const QModelIndex &child) const
-{
+QModelIndex SearchItemModel::parent(const QModelIndex &child) const {
     return QModelIndex();
 }
 
@@ -59,8 +56,7 @@ QModelIndex SearchItemModel::parent(const QModelIndex &child) const
  * @param index 条目的索引
  * @return model显示的行数
  */
-int SearchItemModel::rowCount(const QModelIndex& index) const
-{
+int SearchItemModel::rowCount(const QModelIndex& index) const {
     return index.isValid() ? 0 : m_item->m_pathlist.count();
 }
 
@@ -69,8 +65,7 @@ int SearchItemModel::rowCount(const QModelIndex& index) const
  * @param index 条目的索引
  * @return model显示的列数
  */
-int SearchItemModel::columnCount(const QModelIndex& index) const
-{
+int SearchItemModel::columnCount(const QModelIndex& index) const {
     return index.isValid() ? 0 : 2;
 }
 
@@ -92,13 +87,12 @@ int SearchItemModel::columnCount(const QModelIndex& index) const
  * @param role 显示内容的类型
  * @return 显示内容数据
  */
-QVariant SearchItemModel::data(const QModelIndex &index, int role) const
-{
+QVariant SearchItemModel::data(const QModelIndex &index, int role) const {
     if(!index.isValid())
         return QVariant();
-    switch (index.column()) {
+    switch(index.column()) {
     case Icon: {
-        switch (role) {
+        switch(role) {
         case Qt::DecorationRole: {
             return m_item->getIcon(index.row());
         }
@@ -107,13 +101,13 @@ QVariant SearchItemModel::data(const QModelIndex &index, int role) const
         }
     }
     case Name: {
-        switch (role) {
+        switch(role) {
         case Qt::DisplayRole: {
             return QVariant(m_item->getName(index.row()));
         }
-            //                case Qt::ForegroundRole: {
-            //                  return QColor(50, 50, 50);
-            //                }
+        //                case Qt::ForegroundRole: {
+        //                  return QColor(50, 50, 50);
+        //                }
         default:
             return QVariant();
         }
@@ -123,8 +117,7 @@ QVariant SearchItemModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-bool SearchItemModel::insertRows(int row, int count, const QModelIndex &parent)
-{
+bool SearchItemModel::insertRows(int row, int count, const QModelIndex &parent) {
     this->beginInsertRows(parent, row, count);
     this->endInsertRows();
     return true;
@@ -152,15 +145,13 @@ void SearchItemModel::appendItem(QString path) {
  * @brief SearchItemModel::setList 直接以列表形式添加搜索结果
  * @param list
  */
-void SearchItemModel::setList(QStringList list)
-{
+void SearchItemModel::setList(QStringList list) {
     this->beginResetModel();
     m_item->m_pathlist = list;
     this->endResetModel();
 }
 
-void SearchItemModel::setAppList(const QStringList &pathlist, const QStringList &iconlist)
-{
+void SearchItemModel::setAppList(const QStringList &pathlist, const QStringList &iconlist) {
     this->beginResetModel();
     m_item->m_app_pathlist = pathlist;
     m_item->m_app_iconlist = iconlist;
@@ -171,9 +162,8 @@ void SearchItemModel::setAppList(const QStringList &pathlist, const QStringList 
  * @brief SearchItemModel::insertBestItem 向最佳匹配列表添加一项
  * @param pair <类型，路径或名称>
  */
-void SearchItemModel::appendBestItem(const QPair<int, QString> & pair)
-{
-        m_item->m_bestList.append(pair);
+void SearchItemModel::appendBestItem(const QPair<int, QString> & pair) {
+    m_item->m_bestList.append(pair);
 }
 
 /**
@@ -183,8 +173,7 @@ void SearchItemModel::removeItem(QString path) {
     m_item->removeItem(path);
 }
 
-void SearchItemModel::clear()
-{
+void SearchItemModel::clear() {
     this->beginResetModel();
     m_item->clear();
     this->endResetModel();
@@ -195,9 +184,8 @@ void SearchItemModel::clear()
  * @param str 图标名称或路径，应用安装时为图标名，未安装时为路径
  * @param is_installed 应用是否已安装
  */
-void SearchItemModel::setBestAppIcon(const QString &str, const bool & is_installed)
-{
-    if (is_installed) {
+void SearchItemModel::setBestAppIcon(const QString &str, const bool & is_installed) {
+    if(is_installed) {
         m_item->m_bestAppIcon = QIcon::fromTheme(str);
     } else {
         m_item->m_bestAppIcon = QIcon(str);

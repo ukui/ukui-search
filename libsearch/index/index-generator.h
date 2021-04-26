@@ -37,11 +37,10 @@ extern QMutex  _mutex_doc_list_path;
 extern QList<Document> *_doc_list_content;
 extern QMutex  _mutex_doc_list_content;
 
-class IndexGenerator : public QObject
-{
+class IndexGenerator : public QObject {
     Q_OBJECT
 public:
-    static IndexGenerator *getInstance(bool rebuild = false,QObject *parent = nullptr);
+    static IndexGenerator *getInstance(bool rebuild = false, QObject *parent = nullptr);
     ~IndexGenerator();
     bool setIndexdataPath();
     bool isIndexdataExist();
@@ -58,7 +57,7 @@ public Q_SLOTS:
     bool deleteAllIndex(QStringList *pathlist);
 
 private:
-    explicit IndexGenerator(bool rebuild = false,QObject *parent = nullptr);
+    explicit IndexGenerator(bool rebuild = false, QObject *parent = nullptr);
     static QMutex m_mutex;
     //For file name index
     void HandlePathList(QQueue<QVector<QString> > *messageList);
@@ -72,7 +71,7 @@ private:
 
 //    QList<Document> *m_doc_list_path;  //for path index
 //    QList<Document> *m_doc_list_content;  // for text content index
-    QMap<QString,QStringList> m_index_map;
+    QMap<QString, QStringList> m_index_map;
     QString m_index_data_path;
     Xapian::WritableDatabase* m_database_path;
     Xapian::WritableDatabase* m_database_content;

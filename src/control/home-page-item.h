@@ -28,8 +28,7 @@
 #include "file-utils.h"
 #include "search-list-view.h"
 
-class HomePageItem : public QWidget
-{
+class HomePageItem : public QWidget {
     Q_OBJECT
 public:
     explicit HomePageItem(QWidget *, const int&, const QString&);
