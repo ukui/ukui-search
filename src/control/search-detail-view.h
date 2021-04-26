@@ -30,8 +30,7 @@
 #include "option-view.h"
 #include "global-settings.h"
 
-class SearchDetailView : public QWidget
-{
+class SearchDetailView : public QWidget {
     Q_OBJECT
 public:
     explicit SearchDetailView(QWidget *parent = nullptr);

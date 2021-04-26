@@ -30,8 +30,7 @@
 #include <QStringList>
 #include <QTimer>
 #include <QDebug>
-class SettingsMatch : public QObject
-{
+class SettingsMatch : public QObject {
     Q_OBJECT
 public:
     explicit SettingsMatch(QObject *parent = nullptr);
@@ -42,8 +41,8 @@ private:
     QStringList matching();
 
 private:
-    QMap<QString,QStringList> m_chine_searchList;
-    QMap<QString,QStringList> m_English_searchList;
+    QMap<QString, QStringList> m_chine_searchList;
+    QMap<QString, QStringList> m_English_searchList;
     QStringList m_chine_searchResult;
     QStringList m_English_searchResult;
     QString m_sourceText;

@@ -26,8 +26,7 @@
 #include <QHBoxLayout>
 #include <QTimer>
 
-class ShowMoreLabel : public QWidget
-{
+class ShowMoreLabel : public QWidget {
     Q_OBJECT
 public:
     explicit ShowMoreLabel(QWidget *parent = nullptr);

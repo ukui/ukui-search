@@ -30,8 +30,7 @@
 #include <QElapsedTimer>
 #include <QThread>
 
-class NameString
-{
+class NameString {
 public:
     explicit NameString(const QString &str_) : app_name(str_) {}
     NameString() = default;
@@ -52,25 +51,24 @@ public:
 //    }
 //};
 
-class AppMatch : public QThread
-{
+class AppMatch : public QThread {
     Q_OBJECT
 public:
     static AppMatch *getAppMatch();
-    void startMatchApp(QString input,QMap<NameString,QStringList> &installed,QMap<NameString,QStringList> &softwarereturn);
+    void startMatchApp(QString input, QMap<NameString, QStringList> &installed, QMap<NameString, QStringList> &softwarereturn);
 
 private:
     explicit AppMatch(QObject *parent = nullptr);
     ~AppMatch();
     void getAllDesktopFilePath(QString path);
     void getDesktopFilePath();
-    void getAppName(QMap<NameString,QStringList> &installed);
+    void getAppName(QMap<NameString, QStringList> &installed);
 //    void appNameMatch(QString appname,QString desktoppath,QString appicon);
-    void appNameMatch(QString appname,QMap<NameString,QStringList> &installed);
+    void appNameMatch(QString appname, QMap<NameString, QStringList> &installed);
 
-    void softWareCenterSearch(QMap<NameString,QStringList> &softwarereturn);
+    void softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn);
 
-    void parseSoftWareCenterReturn(QList<QMap<QString,QString>> list,QMap<NameString,QStringList> &softwarereturn);
+    void parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, QMap<NameString, QStringList> &softwarereturn);
 
     void getInstalledAppsVersion(QString appname);
 
@@ -78,12 +76,12 @@ private:
     QString m_sourceText;
     QStringList m_filePathList;
 
-    QDBusInterface *m_interFace=nullptr;
-    QFileSystemWatcher *m_watchAppDir=nullptr;
-    QMap<NameString,QStringList> m_installAppMap;
+    QDBusInterface *m_interFace = nullptr;
+    QFileSystemWatcher *m_watchAppDir = nullptr;
+    QMap<NameString, QStringList> m_installAppMap;
 
 private Q_SLOTS:
-    void slotDBusCallFinished(QMap<NameString,QStringList> &softwarereturn);
+    void slotDBusCallFinished(QMap<NameString, QStringList> &softwarereturn);
 
 //Q_SIGNALS:
 

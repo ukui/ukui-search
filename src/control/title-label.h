@@ -23,8 +23,7 @@
 
 #include <QLabel>
 
-class TitleLabel : public QLabel
-{
+class TitleLabel : public QLabel {
 public:
     TitleLabel(QWidget * parent = nullptr);
     ~TitleLabel();

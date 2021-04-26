@@ -31,8 +31,7 @@
 #include <QPushButton>
 #include <QStyleOption>
 
-class CreateIndexAskDialog : public QDialog
-{
+class CreateIndexAskDialog : public QDialog {
     Q_OBJECT
 public:
     CreateIndexAskDialog(QWidget *parent = nullptr);

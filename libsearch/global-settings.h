@@ -56,8 +56,7 @@
 //#define CLOUD_HISTORY "history"
 //#define CLOUD_APPLICATIONS "applications"
 
-class LIBSEARCH_EXPORT GlobalSettings : public QObject
-{
+class LIBSEARCH_EXPORT GlobalSettings : public QObject {
     Q_OBJECT
 public:
     static GlobalSettings *getInstance();
@@ -65,8 +64,8 @@ public:
     bool isExist(const QString&);
 
 Q_SIGNALS:
-    void valueChanged (const QString&);
-    void transparencyChanged (const double&);
+    void valueChanged(const QString&);
+    void transparencyChanged(const double&);
 
 public Q_SLOTS:
     void setValue(const QString&, const QVariant&);
@@ -80,7 +79,7 @@ public Q_SLOTS:
      * @param true to remove blocking,false to set blocking,default set false.
      * @return
      */
-    bool setBlockDirs(const QString& path, int &returnCode,bool remove = false);
+    bool setBlockDirs(const QString& path, int &returnCode, bool remove = false);
     QStringList getBlockDirs();
 //    void appendCloudData(const QString& key, const QString& value);
     void setSearchRecord(const QString &word, const QDateTime &time);

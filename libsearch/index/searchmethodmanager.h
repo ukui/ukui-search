@@ -4,8 +4,7 @@
 #include "first-index.h"
 #include "inotify-index.h"
 
-class SearchMethodManager
-{
+class SearchMethodManager {
 public:
     SearchMethodManager() = default;
     void searchMethod(FileUtils::SearchMethod sm);

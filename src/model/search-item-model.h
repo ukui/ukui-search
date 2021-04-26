@@ -27,8 +27,7 @@
 
 class SearchItem;
 
-class SearchItemModel : public QAbstractItemModel
-{
+class SearchItemModel : public QAbstractItemModel {
     friend class SearchItem;
     Q_OBJECT
 public:

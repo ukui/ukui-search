@@ -1,6 +1,6 @@
 /*
  * link list test programe.
- * 
+ *
  * @author  lionsoul<chenxin619315@gmail.com>
  */
 
@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main( int argc, char **args ) {
+int main(int argc, char **args) {
 
     friso_link_t link;
     fstring keys[] = {
@@ -19,32 +19,32 @@ int main( int argc, char **args ) {
         "chenpei", "liheng", "zhangzhigang", "zhgangyishao", "yangjiangbo",
         "caizaili", "panpan", "xiaolude", "yintanwen"
     };
-    int j, len = sizeof( keys ) / sizeof( fstring );
+    int j, len = sizeof(keys) / sizeof(fstring);
 
     link = new_link_list();
 
     //print the size of the link
-    printf("size=%d\n", link->size );
+    printf("size=%d\n", link->size);
 
-    for ( j = 0; j < len; j++ ) {
+    for(j = 0; j < len; j++) {
         //link_add( link, keys[j] );
-        link_list_add_last( link, keys[j] );
+        link_list_add_last(link, keys[j]);
     }
 
-    printf("size=%d\n", link->size );
+    printf("size=%d\n", link->size);
 
-    for ( j = 0; j < len / 2; j++ ) {
+    for(j = 0; j < len / 2; j++) {
         //printf("idx=%d, remove %s\n", j, ( fstring ) link_remove( link, 0 ) );
-        printf("idx=%d, remove %s\n", j, ( fstring ) link_list_remove_first( link ) );
+        printf("idx=%d, remove %s\n", j, (fstring) link_list_remove_first(link));
     }
 
-    printf("size=%d\n", link->size );
+    printf("size=%d\n", link->size);
 
     //clear all the nodes
-    link_list_clear( link );
-    printf("size=%d, head->next->value=%s\n", link->size, ( fstring ) link->head->next->value );
+    link_list_clear(link);
+    printf("size=%d, head->next->value=%s\n", link->size, (fstring) link->head->next->value);
 
-    free_link_list( link );
+    free_link_list(link);
 
     return 0;
 }

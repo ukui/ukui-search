@@ -28,8 +28,7 @@
 #include "model/search-item.h"
 #include "highlight-item-delegate.h"
 
-class SearchListView : public QTreeView
-{
+class SearchListView : public QTreeView {
     Q_OBJECT
 public:
     explicit SearchListView(QWidget *, const QStringList&, const int&);
@@ -73,7 +72,7 @@ private:
     int m_type;
 
 Q_SIGNALS:
-    void currentRowChanged(SearchListView *,const int&, const QString&);
+    void currentRowChanged(SearchListView *, const int&, const QString&);
     void onRowDoubleClicked(SearchListView *, const int&, const QString&);
     void currentSelectPos(QPoint pos);
     void mousePressed();

@@ -23,12 +23,11 @@
 #include <QObject>
 #include <QFileInfo>
 
-class FileReader : public QObject
-{
+class FileReader : public QObject {
     Q_OBJECT
 public:
     explicit FileReader(QObject *parent = nullptr);
-    ~FileReader()=default;
+    ~FileReader() = default;
     static void getTextContent(QString path, QString &textContent);
 
 };

@@ -5,8 +5,7 @@
 #include <QRunnable>
 #include "libsearch.h"
 
-class SearchAppThread : public QObject
-{
+class SearchAppThread : public QObject {
     Q_OBJECT
 
 public:
@@ -20,8 +19,7 @@ Q_SIGNALS:
 };
 
 
-class SearchApp : public QObject, public QRunnable
-{
+class SearchApp : public QObject, public QRunnable {
     Q_OBJECT
 public:
     SearchApp(const QString& keyword, QObject * parent = nullptr);
@@ -31,8 +29,8 @@ protected:
     void run() override;
 private:
     QString m_keyword;
-    QMap<NameString,QStringList> m_installed_apps;
-    QMap<NameString,QStringList> m_uninstalled_apps;
+    QMap<NameString, QStringList> m_installed_apps;
+    QMap<NameString, QStringList> m_uninstalled_apps;
 Q_SIGNALS:
     void searchResultApp(const QVector<QStringList>&);
 };
