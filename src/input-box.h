@@ -30,6 +30,7 @@
 #include <QCompleter>
 #include <QAbstractItemView>
 #include <QVector4D>
+#include <QListView>
 #include "global-settings.h"
 
 class SearchLineEdit;

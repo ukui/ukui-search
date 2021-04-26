@@ -85,7 +85,7 @@ public:
 private:
 
     // MainWindow quit when focus out.
-    bool nativeEvent(const QByteArray&, void*, long*);
+//    bool nativeEvent(const QByteArray&, void*, long*);
 
     QFrame * m_frame = nullptr;                  // Main frame
     QFrame * m_titleFrame = nullptr;             // Title bar frame
@@ -126,6 +126,7 @@ private:
 protected:
     void paintEvent(QPaintEvent *);
     void keyPressEvent(QKeyEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
     void initUi();
 
 Q_SIGNALS:

@@ -311,6 +311,7 @@ void MainWindow::initUi() {
             }
         }
     });
+    installEventFilter(this);
 }
 
 /**
@@ -541,33 +542,34 @@ void MainWindow::setSearchMethod(const bool &is_index_search) {
  * @param result
  * @return
  */
-bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *result) {
-    Q_UNUSED(result);
-    if(eventType != "xcb_generic_event_t") {
-        return false;
-    }
+//bool MainWindow::nativeEvent(const QByteArray &eventType, void *message, long *result)
+//{
+//    Q_UNUSED(result);
+//    if (eventType != "xcb_generic_event_t") {
+//        return false;
+//    }
 
-    xcb_generic_event_t *event = (xcb_generic_event_t*)message;
+//    xcb_generic_event_t *event = (xcb_generic_event_t*)message;
 
-    switch(event->response_type & ~0x80) {
-    case XCB_FOCUS_OUT:
-        if(!m_isAskDialogVisible) {
-            m_currentSearchAsked = false;
-            this->hide();
-            m_askTimer->stop();
-            m_researchTimer->stop();
-            m_contentFrame->closeWebView();
-            m_search_result_thread->requestInterruption();
-            m_search_result_thread->quit();
-        }
-//        m_seach_app_thread->stop();
-        break;
-    default:
-        break;
-    }
+//    switch (event->response_type & ~0x80) {
+//    case XCB_FOCUS_OUT:
+//        if (!m_isAskDialogVisible) {
+//            m_currentSearchAsked = false;
+//            this->hide();
+//            m_askTimer->stop();
+//            m_researchTimer->stop();
+//            m_contentFrame->closeWebView();
+//            m_search_result_thread->requestInterruption();
+//            m_search_result_thread->quit();
+//        }
+////        m_seach_app_thread->stop();
+//        break;
+//    default:
+//        break;
+//    }
 
-    return false;
-}
+//    return false;
+//}
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     if(event->key() == Qt::Key_Escape) {
@@ -578,6 +580,23 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 //        m_seach_app_thread->stop();
     }
     return QWidget::keyPressEvent(event);
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::ActivationChange) {
+        if(QApplication::activeWindow() != this) {
+            if (!m_isAskDialogVisible) {
+                m_currentSearchAsked = false;
+                this->hide();
+                m_askTimer->stop();
+                m_researchTimer->stop();
+                m_contentFrame->closeWebView();
+                m_search_result_thread->requestInterruption();
+            }
+        }
+    }
+    return QMainWindow::eventFilter(watched,event);
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {

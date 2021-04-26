@@ -204,6 +204,17 @@ SearchLineEdit::SearchLineEdit() {
     m_model->setStringList(GlobalSettings::getInstance()->getSearchRecord());
     m_completer->setModel(m_model);
     m_completer->setCompletionMode(QCompleter::InlineCompletion);
+    //TODO make a popup window to show the completer.
+//    QListView *popView = new QListView(this);
+//    popView->setFocusPolicy(Qt::NoFocus);
+//    popView->setProperty("useCustomShadow", true);
+//    popView->setProperty("customShadowDarkness", 0.5);
+//    popView->setProperty("customShadowWidth", 20);
+//    popView->setProperty("customShadowRadius", QVector4D(6, 6, 6, 6));
+//    popView->setProperty("customShadowMargins", QVector4D(20, 20, 20, 20));
+//    popView->setAttribute(Qt::WA_TranslucentBackground);
+//    m_completer->setPopup(popView);
+//    m_completer->popup()->setStyle(CustomStyle::getStyle());
     m_completer->setMaxVisibleItems(14);
 
     setCompleter(m_completer);

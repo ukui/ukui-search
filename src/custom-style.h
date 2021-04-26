@@ -27,8 +27,11 @@
 class CustomStyle : public QProxyStyle {
     Q_OBJECT
 public:
-    explicit CustomStyle(const QString &proxyStyleName = "windows", QObject *parent = nullptr);
+    static CustomStyle *getStyle();
     virtual QSize sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget = nullptr) const;
+private:
+    explicit CustomStyle(QStyle *style = nullptr);
+    ~CustomStyle() override {}
 };
 
 #endif // CUSTOMSTYLE_H
