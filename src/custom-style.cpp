@@ -21,9 +21,16 @@
 
 #include "custom-style.h"
 
-CustomStyle::CustomStyle(const QString &proxyStyleName, QObject *parent) : QProxyStyle(proxyStyleName)
+static CustomStyle *customstyle_global_instance = nullptr;
+CustomStyle::CustomStyle(QStyle *style)
 {
 
+}
+CustomStyle *CustomStyle::getStyle()
+{
+    if (!customstyle_global_instance)
+        customstyle_global_instance = new CustomStyle;
+    return customstyle_global_instance;
 }
 
 QSize CustomStyle::sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget) const
@@ -37,3 +44,5 @@ QSize CustomStyle::sizeFromContents(QStyle::ContentsType type, const QStyleOptio
     }
     return QProxyStyle::sizeFromContents(type, option, contentsSize, widget);
 }
+
+

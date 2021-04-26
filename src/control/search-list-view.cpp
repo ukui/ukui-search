@@ -25,8 +25,8 @@
 
 SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent)
 {
-    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
-    this->setStyle(style);
+//    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
+    this->setStyle(CustomStyle::getStyle());
 
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionBehavior(QAbstractItemView::SelectRows);
