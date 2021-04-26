@@ -35,6 +35,10 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
 {
     m_watchAppDir=new QFileSystemWatcher(this);
     m_watchAppDir->addPath("/usr/share/applications/");
+    QDir androidPath(QDir::homePath()+"/.local/share/applications/");
+    if(androidPath.exists()){
+        m_watchAppDir->addPath(QDir::homePath()+"/.local/share/applications/");
+    }
     qDBusRegisterMetaType<QMap<QString,QString>>();
     qDBusRegisterMetaType<QList<QMap<QString,QString>>>();
     m_interFace=new QDBusInterface ("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
@@ -59,9 +63,6 @@ AppMatch::~AppMatch(){
 }
 
 void AppMatch::startMatchApp(QString input,QMap<NameString,QStringList> &installed,QMap<NameString,QStringList> &softwarereturn){
-    input.replace(" ","");
-    if(input.isEmpty())
-        return;
     m_sourceText=input;
     getAppName(installed);
     softWareCenterSearch(softwarereturn);
@@ -363,8 +364,18 @@ void AppMatch::run(){
     qDebug()<<"AppMatch is run";
     this->getDesktopFilePath();
     this->getAllDesktopFilePath("/usr/share/applications/");
-    connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,[this](){
+    QDir androidPath(QDir::homePath()+"/.local/share/applications/");
+    if(androidPath.exists())
+        this->getAllDesktopFilePath(QDir::homePath()+"/.local/share/applications/");
+    connect(m_watchAppDir,&QFileSystemWatcher::directoryChanged,this,[=](const QString &path){
         this->getDesktopFilePath();
+        if(path=="/usr/share/applications/"){
         this->getAllDesktopFilePath("/usr/share/applications/");
+        }
+        if(androidPath.exists()){
+            if(path==QDir::homePath()+"/.local/share/applications/"){
+                this->getAllDesktopFilePath(QDir::homePath()+"/.local/share/applications/");
+            }
+        }
     });
 }
