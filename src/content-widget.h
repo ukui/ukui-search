@@ -30,8 +30,7 @@
 #include "show-more-label.h"
 #include "title-label.h"
 
-class ContentWidget : public QStackedWidget
-{
+class ContentWidget : public QStackedWidget {
     Q_OBJECT
 public:
     ContentWidget(QWidget *);

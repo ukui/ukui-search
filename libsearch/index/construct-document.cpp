@@ -27,16 +27,14 @@
 //extern QList<Document> *_doc_list_path;
 //extern QMutex  _mutex_doc_list_path;
 
-ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list)
-{
+ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
     this->setAutoDelete(true);
     m_list = std::move(list);
 }
 
-void ConstructDocumentForPath::run()
-{
+void ConstructDocumentForPath::run() {
 //    qDebug()<<"ConstructDocumentForPath";
-    if (!_doc_list_path)
+    if(!_doc_list_path)
         _doc_list_path = new QList<Document>;
 //    qDebug()<<_doc_list_path->size();
     QString index_text = m_list.at(0).toLower();
@@ -45,7 +43,7 @@ void ConstructDocumentForPath::run()
 
     //多音字版
     //现加入首字母
-    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(m_list.at(0)).replace(".",""));
+    QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(m_list.at(0)).replace(".", ""));
 //    if(!pinyin_text_list.isEmpty())
 //    {
 //        for (QString& i : pinyin_text_list){
@@ -56,7 +54,7 @@ void ConstructDocumentForPath::run()
 //    }
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
-    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep)));
+    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
 //    qDebug()<<"sourcePath"<<sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep);
 //    qDebug() << "sourcePath ---------------------------: " << sourcePath;
 //    qDebug() << "sourcePath.section -------------------: " << sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep);
@@ -68,24 +66,21 @@ void ConstructDocumentForPath::run()
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
     doc.addValue(m_list.at(2));
-/*    QStringList temp;
-//    temp.append(index_text);
-    temp.append(pinyin_text_list)*/;
+    /*    QStringList temp;
+    //    temp.append(index_text);
+        temp.append(pinyin_text_list)*/;
     int postingCount = 0;
-    while(postingCount < index_text.size())
-    {
+    while(postingCount < index_text.size()) {
 //        QVector<size_t> p;
 //        p.append(postingCount);
-        doc.addPosting(QUrl::toPercentEncoding(index_text.at(postingCount)).toStdString(),postingCount);
+        doc.addPosting(QUrl::toPercentEncoding(index_text.at(postingCount)).toStdString(), postingCount);
         ++postingCount;
     }
     int i = 0;
-    for (QString& s : pinyin_text_list)
-    {
+    for(QString& s : pinyin_text_list) {
         i = 0;
-        while(i < s.size())
-        {
-            doc.addPosting(QUrl::toPercentEncoding(s.at(i)).toStdString(),postingCount);
+        while(i < s.size()) {
+            doc.addPosting(QUrl::toPercentEncoding(s.at(i)).toStdString(), postingCount);
             ++postingCount;
             ++i;
         }
@@ -99,24 +94,22 @@ void ConstructDocumentForPath::run()
     return;
 }
 
-ConstructDocumentForContent::ConstructDocumentForContent(QString path)
-{
+ConstructDocumentForContent::ConstructDocumentForContent(QString path) {
     this->setAutoDelete(true);
     m_path = std::move(path);
 }
 
-void ConstructDocumentForContent::run()
-{
+void ConstructDocumentForContent::run() {
 //    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
     //      构造文本索引的document
-    if (!_doc_list_content)
+    if(!_doc_list_content)
         _doc_list_content = new QList<Document>;
     QString content;
-    FileReader::getTextContent(m_path,content);
+    FileReader::getTextContent(m_path, content);
     if(content.isEmpty())
         return;
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
-    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/",0,-2,QString::SectionIncludeLeadingSep)));
+    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
 
     QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000));
 
@@ -125,9 +118,8 @@ void ConstructDocumentForContent::run()
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
     doc.addValue(m_path);
-    for(int i = 0;i<term.size();++i)
-    {
-        doc.addPosting(term.at(i).word,term.at(i).offsets,static_cast<int>(term.at(i).weight));
+    for(int i = 0; i < term.size(); ++i) {
+        doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
 
     }
 

@@ -26,8 +26,7 @@
 #include <QFile>
 #include <QSettings>
 
-class SysdbusRegister : public QObject
-{
+class SysdbusRegister : public QObject {
     Q_OBJECT
 
     Q_CLASSINFO("D-Bus Interface", "com.ukui.search.interface")

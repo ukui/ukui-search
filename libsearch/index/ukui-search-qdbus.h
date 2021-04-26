@@ -22,8 +22,7 @@
 
 #include <QDBusInterface>
 
-class UkuiSearchQDBus
-{
+class UkuiSearchQDBus {
 public:
     UkuiSearchQDBus();
     ~UkuiSearchQDBus();
