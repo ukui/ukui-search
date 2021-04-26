@@ -39,9 +39,6 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setColumnWidth(0, 20);
     this->setColumnWidth(1, 80);
     this->setFixedHeight(list.count() * rowheight + 4);
-    this->setAttribute(Qt::WA_TranslucentBackground, true);
-    this->setAutoFillBackground(false);
-    this->setStyleSheet("QWidget{background:transparent;}");
     m_styleDelegate = new HighlightItemDelegate(this);
 //    m_styleDelegate->setSearchKeyword(keyword);
     this->setItemDelegate(m_styleDelegate);
@@ -119,6 +116,16 @@ void SearchListView::clear() {
     m_model->clear();
     this->setFixedHeight(0);
     this->isHidden = true;
+}
+
+/**
+ * @brief SearchListView::refresh 重新绘制当前列表
+ */
+void SearchListView::refresh()
+{
+    m_model->refresh();
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
 
 /**

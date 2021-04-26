@@ -191,3 +191,9 @@ void SearchItemModel::setBestAppIcon(const QString &str, const bool & is_install
         m_item->m_bestAppIcon = QIcon(str);
     }
 }
+
+void SearchItemModel::refresh()
+{
+    this->beginResetModel();
+    this->endResetModel();
+}

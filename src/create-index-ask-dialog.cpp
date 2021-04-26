@@ -34,6 +34,7 @@ void CreateIndexAskDialog::initUi() {
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
     m_mainLyt->setContentsMargins(0, 0, 0, 0);
+    m_mainLyt->setSpacing(0);
 
     //标题栏
     m_titleFrame = new QFrame(this);
@@ -67,11 +68,13 @@ void CreateIndexAskDialog::initUi() {
     m_contentFrame = new QFrame(this);
     m_contentLyt = new QVBoxLayout(m_contentFrame);
     m_contentFrame->setLayout(m_contentLyt);
-    m_contentLyt->setContentsMargins(32, 16, 32, 24);
+    m_contentLyt->setContentsMargins(32, 0, 32, 24);
 
     m_tipLabel = new QLabel(m_contentFrame);
     m_tipLabel->setText(tr("Creating index can help you getting results quickly, whether to create or not?"));
     m_tipLabel->setWordWrap(true);
+    m_tipLabel->setAlignment(Qt::AlignVCenter);
+    m_tipLabel->setMinimumHeight(64);
     m_contentLyt->addWidget(m_tipLabel);
 
     m_checkFrame = new QFrame(m_contentFrame);
