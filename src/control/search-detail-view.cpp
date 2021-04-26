@@ -351,7 +351,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     case SearchListView::ResType::Content:
     case SearchListView::ResType::Dir :
     case SearchListView::ResType::File : {
-        QIcon icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
+        QIcon icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
         m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
         QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
         QString wholeName = FileUtils::getFileName(path);
