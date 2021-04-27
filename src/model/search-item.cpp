@@ -42,7 +42,8 @@ QIcon SearchItem::getIcon(int index) {
     case Contents:
     case Dirs :
     case Files : //文件，返回文件图标
-        return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
+//        return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
+        return FileUtils::getFileIcon(QUrl::fromLocalFile(m_pathlist.at(index)).toString());
     case Apps : {//应用，返回应用图标
 //            return FileUtils::getAppIcon(m_pathlist.at(index));
         if(m_app_pathlist.length() > index && m_app_pathlist.at(index) == "") {  //未安装，存储的是图标路径
@@ -115,7 +116,7 @@ QIcon SearchItem::getBestIcon(const int &index) {
         return FileUtils::getSettingIcon(m_pathlist.at(index), false);
     }
     default: {
-        return FileUtils::getFileIcon(QString("file://%1").arg(m_pathlist.at(index)));
+        return FileUtils::getFileIcon(QUrl::fromLocalFile(m_pathlist.at(index)).toString());
     }
     }
 }
