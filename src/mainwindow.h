@@ -48,7 +48,7 @@
 #include "content-widget.h"
 #include "input-box.h"
 #include "index/index-generator.h"
-#include "settings-widget.h"
+//#include "settings-widget.h"
 #include "libsearch.h"
 #include "search-app-thread.h"
 #include "xatom-helper.h"
@@ -93,7 +93,7 @@ private:
     QLabel * m_iconLabel = nullptr;              // Icon lable
     QLabel * m_titleLabel = nullptr;             // Title lable
     QPushButton * m_menuBtn = nullptr;           // Menu button
-    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
+//    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
     ContentWidget * m_contentFrame = nullptr;    // Content frame
     SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
     SeachBarWidget * m_searchWidget = nullptr;   // Search bar

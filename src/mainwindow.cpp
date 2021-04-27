@@ -35,7 +35,7 @@
 #include "qt-single-application.h"
 
 //#include "inotify-manager.h"
-#include "settings-widget.h"
+//#include "settings-widget.h"
 
 
 #include "global-settings.h"
@@ -153,10 +153,10 @@ MainWindow::~MainWindow() {
         delete m_searchLayout;
         m_searchLayout = NULL;
     }
-    if(m_settingsWidget) {
-        delete m_settingsWidget;
-        m_settingsWidget = NULL;
-    }
+//    if(m_settingsWidget) {
+//        delete m_settingsWidget;
+//        m_settingsWidget = NULL;
+//    }
     if(m_askDialog) {
         delete m_askDialog;
         m_askDialog = NULL;
@@ -202,35 +202,38 @@ void MainWindow::initUi() {
     m_menuBtn->setProperty("isWindowButton", 0x01);
     m_menuBtn->setFlat(true);
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
-        if(m_settingsWidget) {  //当此窗口已存在时，仅需置顶
-            if(!m_settingsWidget->isVisible()) {
-                centerToScreen(m_settingsWidget);
-            }
-            m_settingsWidget->showWidget();
-            return;
-        }
-        m_settingsWidget = new SettingsWidget();
-        connect(this, &MainWindow::webEngineChanged, m_settingsWidget, [ = ]() {
-            m_settingsWidget->resetWebEngine();
-        });
-        connect(m_settingsWidget, &SettingsWidget::webEngineChanged, this, [ = ](const QString & engine) {
-            if(m_search_gsettings && m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
-                m_search_gsettings->set(WEB_ENGINE_KEY, engine);
-            } else {
-                GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
-            }
-        });
-        centerToScreen(m_settingsWidget);
-        m_settingsWidget->show();
-        connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
-            QTimer::singleShot(100, this, [ = ] {
-//                clearSearchResult(); //现暂定从设置页返回主页面不清空搜索结果
-                this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
-                this->raise();
-                this->showNormal();
-                this->activateWindow();
-            });
-        });
+//        if(m_settingsWidget) {  //当此窗口已存在时，仅需置顶
+//            if(!m_settingsWidget->isVisible()) {
+//                centerToScreen(m_settingsWidget);
+//            }
+//            m_settingsWidget->showWidget();
+//            return;
+//        }
+//        m_settingsWidget = new SettingsWidget();
+//        connect(this, &MainWindow::webEngineChanged, m_settingsWidget, [ = ]() {
+//            m_settingsWidget->resetWebEngine();
+//        });
+//        connect(m_settingsWidget, &SettingsWidget::webEngineChanged, this, [ = ](const QString & engine) {
+//            if(m_search_gsettings && m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
+//                m_search_gsettings->set(WEB_ENGINE_KEY, engine);
+//            } else {
+//                GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+//            }
+//        });
+//        centerToScreen(m_settingsWidget);
+//        m_settingsWidget->show();
+//        connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
+//            QTimer::singleShot(100, this, [ = ] {
+////                clearSearchResult(); //现暂定从设置页返回主页面不清空搜索结果
+//                this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
+//                this->raise();
+//                this->showNormal();
+//                this->activateWindow();
+//            });
+//        });
+        //打开控制面板的设置页
+        QProcess process;
+        process.startDetached("ukui-control-center --search");
     });
     m_titleLyt->addWidget(m_iconLabel);
     m_titleLyt->addWidget(m_titleLabel);
