@@ -22,6 +22,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
+using namespace Zeeker;
 TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
     this->setContentsMargins(8, 0, 0, 0);
     this->setFixedHeight(24);

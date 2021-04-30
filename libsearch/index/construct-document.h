@@ -25,8 +25,9 @@
 //#include <QMetaObject>
 #include "document.h"
 #include "index-generator.h"
-//extern QList<Document> *_doc_list_path;
-//extern QMutex  _mutex_doc_list_path;
+
+namespace Zeeker {
+
 class IndexGenerator;
 class ConstructDocumentForPath : public QRunnable {
 public:
@@ -47,5 +48,6 @@ protected:
 private:
     QString m_path;
 };
+}
 
 #endif // CONSTRUCTDOCUMENT_H

@@ -22,6 +22,7 @@
 #include <QEvent>
 #include <QDebug>
 
+using namespace Zeeker;
 ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
     initUi();
     m_timer = new QTimer;

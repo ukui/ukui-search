@@ -28,7 +28,7 @@
 #include "file-utils.h"
 #include "index-generator.h"
 #include "global-settings.h"
-#include "chinese-segmentation.h"
+#include "chinese-seg/chinese-segmentation.h"
 #include "construct-document.h"
 #include <QStandardPaths>
 
@@ -36,12 +36,15 @@
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
+using namespace Zeeker;
+
 static IndexGenerator *global_instance = nullptr;
 QMutex  IndexGenerator::m_mutex;
-QList<Document> *_doc_list_path;
-QMutex  _mutex_doc_list_path;
-QList<Document> *_doc_list_content;
-QMutex  _mutex_doc_list_content;
+QList<Document> *Zeeker::_doc_list_path;
+QMutex  Zeeker::_mutex_doc_list_path;
+QList<Document> *Zeeker::_doc_list_content;
+QMutex  Zeeker::_mutex_doc_list_content;
+
 IndexGenerator *IndexGenerator::getInstance(bool rebuild, QObject *parent) {
     QMutexLocker locker(&m_mutex);
     if(!global_instance) {

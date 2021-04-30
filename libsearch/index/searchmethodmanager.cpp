@@ -1,5 +1,5 @@
 #include "searchmethodmanager.h"
-
+using namespace Zeeker;
 void SearchMethodManager::searchMethod(FileUtils::SearchMethod sm) {
     qWarning() << "searchMethod start: " << static_cast<int>(sm);
     if(FileUtils::SearchMethod::INDEXSEARCH == sm || FileUtils::SearchMethod::DIRECTSEARCH == sm) {

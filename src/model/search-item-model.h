@@ -25,6 +25,7 @@
 #include <QAbstractItemModel>
 #include "search-item.h"
 
+namespace Zeeker {
 class SearchItem;
 
 class SearchItemModel : public QAbstractItemModel {
@@ -63,5 +64,6 @@ public:
 private :
     SearchItem * m_item = nullptr;
 };
+}
 
 #endif // SEARCHITEMMODEL_H

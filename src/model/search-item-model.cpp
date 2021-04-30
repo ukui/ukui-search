@@ -21,6 +21,7 @@
 #include "search-item-model.h"
 #include <QDebug>
 
+using namespace Zeeker;
 SearchItemModel::SearchItemModel(QObject *parent) : QAbstractItemModel(parent) {
 
 }
@@ -66,7 +67,7 @@ int SearchItemModel::rowCount(const QModelIndex& index) const {
  * @return model显示的列数
  */
 int SearchItemModel::columnCount(const QModelIndex& index) const {
-    return index.isValid() ? 0 : 2;
+    return index.isValid() ? 0 : 1;
 }
 
 /**
@@ -87,33 +88,21 @@ int SearchItemModel::columnCount(const QModelIndex& index) const {
  * @param role 显示内容的类型
  * @return 显示内容数据
  */
+
+using namespace Zeeker;
 QVariant SearchItemModel::data(const QModelIndex &index, int role) const {
     if(!index.isValid())
         return QVariant();
-    switch(index.column()) {
-    case Icon: {
-        switch(role) {
-        case Qt::DecorationRole: {
-            return m_item->getIcon(index.row());
-        }
-        default:
-            return QVariant();
-        }
+    switch(role) {
+    case Qt::DecorationRole: {
+        return m_item->getIcon(index.row());
     }
-    case Name: {
-        switch(role) {
-        case Qt::DisplayRole: {
-            return QVariant(m_item->getName(index.row()));
-        }
-        //                case Qt::ForegroundRole: {
-        //                  return QColor(50, 50, 50);
-        //                }
-        default:
-            return QVariant();
-        }
+    case Qt::DisplayRole: {
+        return QVariant(m_item->getName(index.row()));
     }
+    default:
+        return QVariant();
     }
-
     return QVariant();
 }
 

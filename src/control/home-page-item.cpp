@@ -28,6 +28,7 @@
 #include <QUrl>
 #include <QApplication>
 
+using namespace Zeeker;
 HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path) : QWidget(parent) {
     setupUi(type, path);
     m_transparency = 0.06;
@@ -77,7 +78,7 @@ void HomePageItem::setupUi(const int& type, const QString& path) {
         case SearchListView::ResType::Content:
         case SearchListView::ResType::Dir :
         case SearchListView::ResType::File : {
-            icon = FileUtils::getFileIcon(QString("file://%1").arg(path));
+            icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
 //                m_namelabel->setText(FileUtils::getFileName(path));
             QFontMetrics fontMetrics = m_namelabel->fontMetrics();
             QString name = FileUtils::getFileName(path);

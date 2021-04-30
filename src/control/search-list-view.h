@@ -28,6 +28,7 @@
 #include "model/search-item.h"
 #include "highlight-item-delegate.h"
 
+namespace Zeeker {
 class SearchListView : public QTreeView {
     Q_OBJECT
 public:
@@ -81,5 +82,6 @@ Q_SIGNALS:
 public Q_SLOTS:
     void clearSelection();
 };
+}
 
 #endif // SEARCHLISTVIEW_H

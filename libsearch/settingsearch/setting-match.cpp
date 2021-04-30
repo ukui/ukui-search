@@ -19,6 +19,7 @@
  */
 #include "setting-match.h"
 #include "file-utils.h"
+using namespace Zeeker;
 SettingsMatch::SettingsMatch(QObject *parent) : QObject(parent) {
     xmlElement();
 }

@@ -33,6 +33,7 @@
 #include <QListView>
 #include "global-settings.h"
 
+namespace Zeeker {
 class SearchLineEdit;
 
 class SeachBarWidget: public QWidget {
@@ -110,3 +111,4 @@ private:
     QCompleter *m_completer = nullptr;
     bool m_isRecorded = false;
 };
+}

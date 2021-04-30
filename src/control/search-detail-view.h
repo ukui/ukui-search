@@ -28,8 +28,9 @@
 //#include <QWebEngineUrlRequestInterceptor>
 #include <QDesktopServices>
 #include "option-view.h"
-#include "global-settings.h"
+#include "ukui-search/global-settings.h"
 
+namespace Zeeker {
 class SearchDetailView : public QWidget {
     Q_OBJECT
 public:
@@ -113,5 +114,6 @@ private Q_SLOTS:
 //    explicit RequestInterceptor(QObject * parent = nullptr) : QWebEngineUrlRequestInterceptor(parent) {}
 //    virtual void interceptRequest(QWebEngineUrlRequestInfo & info) Q_DECL_OVERRIDE;
 //};
+}
 
 #endif // SEARCHDETAILVIEW_H
