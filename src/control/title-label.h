@@ -23,6 +23,7 @@
 
 #include <QLabel>
 
+namespace Zeeker {
 class TitleLabel : public QLabel {
 public:
     TitleLabel(QWidget * parent = nullptr);
@@ -31,5 +32,6 @@ public:
 protected:
     void paintEvent(QPaintEvent *);
 };
+}
 
 #endif // TITLELABEL_H

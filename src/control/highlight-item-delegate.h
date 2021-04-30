@@ -23,6 +23,7 @@
 
 #include <QStyledItemDelegate>
 
+namespace Zeeker {
 class HighlightItemDelegate : public QStyledItemDelegate {
     Q_OBJECT
 public:
@@ -35,5 +36,6 @@ private:
     QString escapeHtml(const QString&) const;
     void paintKeywordHighlight(QPainter *, const QStyleOptionViewItem &, const QString &, const int &, const int &) const;
 };
+}
 
 #endif // HIGHLIGHTITEMDELEGATE_H

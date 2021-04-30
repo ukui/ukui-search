@@ -30,6 +30,7 @@
 #include "show-more-label.h"
 #include "title-label.h"
 
+namespace Zeeker {
 class ContentWidget : public QStackedWidget {
     Q_OBJECT
 public:
@@ -115,5 +116,6 @@ private Q_SLOTS:
     void onListViewRowChanged(SearchListView * listview, const int& type, const QString& path);
     void onListViewRowDoubleClicked(SearchListView * listview, const int& type, const QString& path);
 };
+}
 
 #endif // CONTENTWIDGET_H

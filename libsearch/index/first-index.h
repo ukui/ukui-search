@@ -42,6 +42,7 @@
 #include "inotify-index.h"
 #include "file-utils.h"
 
+namespace Zeeker {
 class FirstIndex : public QThread, public Traverse_BFS {
 public:
     FirstIndex();
@@ -82,5 +83,6 @@ private:
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;
 };
+}
 
 #endif // FIRSTINDEX_H

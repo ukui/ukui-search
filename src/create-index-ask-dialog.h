@@ -31,6 +31,7 @@
 #include <QPushButton>
 #include <QStyleOption>
 
+namespace Zeeker {
 class CreateIndexAskDialog : public QDialog {
     Q_OBJECT
 public:
@@ -67,5 +68,6 @@ Q_SIGNALS:
     void btnClicked(const bool&, const bool&);
 
 };
+}
 
 #endif // CREATEINDEXASKDIALOG_H

@@ -29,7 +29,7 @@
 #include <QtDBus>
 #include <QElapsedTimer>
 #include <QThread>
-
+namespace Zeeker {
 class NameString {
 public:
     explicit NameString(const QString &str_) : app_name(str_) {}
@@ -89,5 +89,6 @@ protected:
     void run() override;
 
 };
+}
 
 #endif // APPMATCH_H

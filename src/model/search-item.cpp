@@ -22,6 +22,8 @@
 #include <QDebug>
 #include <QFileInfo>
 
+
+using namespace Zeeker;
 SearchItem::SearchItem(QObject *parent) : QObject(parent) {
 }
 

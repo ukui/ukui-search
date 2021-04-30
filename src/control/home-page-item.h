@@ -25,9 +25,10 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "file-utils.h"
+#include "ukui-search/file-utils.h"
 #include "search-list-view.h"
 
+namespace Zeeker {
 class HomePageItem : public QWidget {
     Q_OBJECT
 public:
@@ -57,5 +58,6 @@ private:
     QString m_path;
     int m_type = 0;
 };
+}
 
 #endif // HOMEPAGEITEM_H

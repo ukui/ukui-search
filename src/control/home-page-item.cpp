@@ -28,6 +28,7 @@
 #include <QUrl>
 #include <QApplication>
 
+using namespace Zeeker;
 HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path) : QWidget(parent) {
     setupUi(type, path);
     m_transparency = 0.06;

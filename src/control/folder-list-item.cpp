@@ -22,6 +22,7 @@
 #include <QIcon>
 #include <QEvent>
 
+using namespace Zeeker;
 FolderListItem::FolderListItem(QWidget *parent, const QString &path) : QWidget(parent) {
     m_path = path;
     initUi();

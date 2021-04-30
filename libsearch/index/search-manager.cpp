@@ -19,6 +19,7 @@
  */
 #include "search-manager.h"
 
+using namespace Zeeker;
 size_t SearchManager::uniqueSymbol1 = 0;
 size_t SearchManager::uniqueSymbol2 = 0;
 size_t SearchManager::uniqueSymbol3 = 0;

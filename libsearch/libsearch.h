@@ -32,13 +32,15 @@
 #include "index/inotify-index.h"
 #include "index/search-manager.h"
 
-class  LIBSEARCH_EXPORT GlobalSearch {
-public:
+namespace Zeeker {
+//class  LIBSEARCH_EXPORT GlobalSearch {
+//public:
 
-    static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);
+//    static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);
 
-private:
-    GlobalSearch();
-};
+//private:
+//    GlobalSearch();
+//};
+}
 
 #endif // LIBSEARCH_H

@@ -20,7 +20,7 @@
 #include "app-match.h"
 #include <glib.h>
 #include "file-utils.h"
-
+using namespace Zeeker;
 static AppMatch *app_match_Class = nullptr;
 
 AppMatch *AppMatch::getAppMatch() {

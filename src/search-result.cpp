@@ -20,6 +20,7 @@
  */
 #include "search-result.h"
 
+using namespace Zeeker;
 SearchResult::SearchResult(QObject * parent) : QThread(parent) {
     m_mainwindow = static_cast<MainWindow *>(parent);
 //    m_timer = new QTimer;

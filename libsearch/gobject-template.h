@@ -54,4 +54,5 @@ private:
 std::shared_ptr<gobjecttemplate<GFile>> wrapGFile(GFile *file);
 std::shared_ptr<gobjecttemplate<GFileInfo>> wrapGFileInfo(GFileInfo *info);
 
+
 #endif // GT_H

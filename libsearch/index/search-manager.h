@@ -37,16 +37,17 @@
 #include <QThread>
 #include <QUrl>
 
-#include "file-utils.h"
-#include "global-settings.h"
-#include "chinese-segmentation.h"
+#include "../file-utils.h"
+#include "../global-settings.h"
+#include "chinese-seg/chinese-segmentation.h"
 
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
+namespace Zeeker {
 
-class SearchManager : public QObject {
+class LIBSEARCH_EXPORT SearchManager : public QObject {
     friend class FileSearch;
     friend class FileContentSearch;
     Q_OBJECT
@@ -143,4 +144,6 @@ private:
     QQueue<QString>* m_searchResultDir = nullptr;
     size_t m_uniqueSymbol;
 };
+
+}
 #endif // SEARCHMANAGER_H

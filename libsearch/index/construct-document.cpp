@@ -19,14 +19,14 @@
  */
 #include "construct-document.h"
 #include "file-utils.h"
-#include "chinese-segmentation.h"
+#include "chinese-seg/chinese-segmentation.h"
 #include <QDebug>
 #include <QThread>
 #include <QUrl>
 
 //extern QList<Document> *_doc_list_path;
 //extern QMutex  _mutex_doc_list_path;
-
+using namespace Zeeker;
 ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
     this->setAutoDelete(true);
     m_list = std::move(list);
@@ -34,8 +34,8 @@ ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
 
 void ConstructDocumentForPath::run() {
 //    qDebug()<<"ConstructDocumentForPath";
-    if(!_doc_list_path)
-        _doc_list_path = new QList<Document>;
+    if(!Zeeker::_doc_list_path)
+        Zeeker::_doc_list_path = new QList<Document>;
 //    qDebug()<<_doc_list_path->size();
     QString index_text = m_list.at(0).toLower();
     QString sourcePath = m_list.at(1);
@@ -87,9 +87,9 @@ void ConstructDocumentForPath::run() {
     }
 
 //    QMetaObject::invokeMethod(m_indexGenerator,"appendDocListPath",Q_ARG(Document,doc));
-    _mutex_doc_list_path.lock();
-    _doc_list_path->append(doc);
-    _mutex_doc_list_path.unlock();
+    Zeeker::_mutex_doc_list_path.lock();
+    Zeeker::_doc_list_path->append(doc);
+    Zeeker::_mutex_doc_list_path.unlock();
 //    qDebug()<<"ConstructDocumentForPath finish";
     return;
 }
@@ -102,8 +102,8 @@ ConstructDocumentForContent::ConstructDocumentForContent(QString path) {
 void ConstructDocumentForContent::run() {
 //    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
     //      构造文本索引的document
-    if(!_doc_list_content)
-        _doc_list_content = new QList<Document>;
+    if(!Zeeker::_doc_list_content)
+        Zeeker::_doc_list_content = new QList<Document>;
     QString content;
     FileReader::getTextContent(m_path, content);
     if(content.isEmpty())
@@ -123,9 +123,9 @@ void ConstructDocumentForContent::run() {
 
     }
 
-    _mutex_doc_list_content.lock();
-    _doc_list_content->append(doc);
-    _mutex_doc_list_content.unlock();
+    Zeeker::_mutex_doc_list_content.lock();
+    Zeeker::_doc_list_content->append(doc);
+    Zeeker::_mutex_doc_list_content.unlock();
     content.clear();
     content.squeeze();
     term.clear();

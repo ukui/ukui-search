@@ -26,6 +26,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
+namespace Zeeker {
 class FolderListItem : public QWidget {
     Q_OBJECT
 public:
@@ -52,5 +53,6 @@ private:
 Q_SIGNALS:
     void onDelBtnClicked(const QString&);
 };
+}
 
 #endif // FOLDERLISTITEM_H

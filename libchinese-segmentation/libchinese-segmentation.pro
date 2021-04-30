@@ -39,6 +39,12 @@ unix {
 }
 !isEmpty(target.path): INSTALLS += target
 
+    header.path = /usr/include/chinese-seg/
+    header.files += *.h
+    header_cppjieba.path = /usr/include/chinese-seg/cppjieba/
+    header_cppjieba.files = cppjieba/*
+    INSTALLS += header header_cppjieba
+
 #DISTFILES += \
 #    jiaba/jieba.pri
 

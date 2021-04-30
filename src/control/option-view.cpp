@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QEvent>
 
+using namespace Zeeker;
 OptionView::OptionView(QWidget *parent) : QWidget(parent) {
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);

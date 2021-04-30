@@ -56,6 +56,7 @@
 //#define CLOUD_HISTORY "history"
 //#define CLOUD_APPLICATIONS "applications"
 
+namespace Zeeker {
 class LIBSEARCH_EXPORT GlobalSettings : public QObject {
     Q_OBJECT
 public:
@@ -105,8 +106,8 @@ private:
 
     QMutex m_mutex;
 
-
-
 };
+
+}
 
 #endif // GLOBALSETTINGS_H

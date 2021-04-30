@@ -37,6 +37,7 @@
 //#include <QWebEngineCookieStore>
 #include "config-file.h"
 
+using namespace Zeeker;
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent) {
     initUI();
 }

@@ -24,6 +24,7 @@
 #include <QProxyStyle>
 #include "global-settings.h"
 
+namespace Zeeker {
 class CustomStyle : public QProxyStyle {
     Q_OBJECT
 public:
@@ -33,5 +34,6 @@ private:
     explicit CustomStyle(QStyle *style = nullptr);
     ~CustomStyle() override {}
 };
+}
 
 #endif // CUSTOMSTYLE_H

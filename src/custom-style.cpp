@@ -21,6 +21,7 @@
 
 #include "custom-style.h"
 
+using namespace Zeeker;
 static CustomStyle *customstyle_global_instance = nullptr;
 CustomStyle::CustomStyle(QStyle *style) {
 

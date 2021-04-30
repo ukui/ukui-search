@@ -45,7 +45,7 @@
 #define CREATE_FILE \
     CREATE_FILE_NAME_INDEX \
     CREATE_FILE_CONTENT_INDEX
-
+using namespace Zeeker;
 InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path) {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;

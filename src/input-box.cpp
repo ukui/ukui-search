@@ -20,6 +20,7 @@
  */
 #include "input-box.h"
 
+using namespace Zeeker;
 /**
  * @brief ukui-search顶部搜索界面
  */

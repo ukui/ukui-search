@@ -26,6 +26,7 @@
 #include <QHBoxLayout>
 #include <QTimer>
 
+namespace Zeeker {
 class ShowMoreLabel : public QWidget {
     Q_OBJECT
 public:
@@ -56,5 +57,6 @@ public Q_SLOTS:
     void stopLoading();
     void refreshLoadState();
 };
+}
 
 #endif // SHOWMORELABEL_H

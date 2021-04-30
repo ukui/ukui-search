@@ -24,7 +24,7 @@
 
 #define NEW_QUEUE(a) a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
 //#define DELETE_QUEUE(a )
-
+using namespace Zeeker;
 FirstIndex::FirstIndex() {
 }
 

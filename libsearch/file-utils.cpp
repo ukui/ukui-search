@@ -21,7 +21,7 @@
  */
 #include "file-utils.h"
 
-
+using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
 size_t FileUtils::_current_index_count = 0;
 unsigned short FileUtils::_index_status = 0;

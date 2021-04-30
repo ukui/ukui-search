@@ -58,6 +58,7 @@
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
 
+namespace Zeeker {
 class SearchResult;
 class MainWindow : public QMainWindow {
     friend class SearchResult;
@@ -149,5 +150,6 @@ public Q_SLOTS:
     void clearSearchResult(); //清空搜索结果
     void createIndexSlot();
 };
+}
 
 #endif // MAINWINDOW_H
