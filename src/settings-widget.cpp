@@ -29,6 +29,7 @@
 #include "global-settings.h"
 #include "file-utils.h"
 
+using namespace Zeeker;
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent) {
     this->setWindowIcon(QIcon::fromTheme("kylin-search"));

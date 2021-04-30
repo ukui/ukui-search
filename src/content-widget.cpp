@@ -24,6 +24,7 @@
 #include <QTimer>
 #include "config-file.h"
 
+using namespace Zeeker;
 ContentWidget::ContentWidget(QWidget * parent): QStackedWidget(parent) {
     initUI();
     initListView();

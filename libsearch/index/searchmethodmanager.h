@@ -4,6 +4,7 @@
 #include "first-index.h"
 #include "inotify-index.h"
 
+namespace Zeeker {
 class SearchMethodManager {
 public:
     SearchMethodManager() = default;
@@ -12,5 +13,6 @@ private:
     FirstIndex m_fi;
     InotifyIndex* m_ii;
 };
+}
 
 #endif // SEARCHMETHODMANAGER_H

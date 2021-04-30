@@ -23,6 +23,7 @@
 #include <QPalette>
 #include "global-settings.h"
 
+using namespace Zeeker;
 static GlobalSettings *global_instance_of_global_settings = nullptr;
 
 GlobalSettings *GlobalSettings::getInstance() {

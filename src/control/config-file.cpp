@@ -19,6 +19,7 @@
  */
 #include "config-file.h"
 
+using namespace Zeeker;
 bool ConfigFile::writeCommonly(QString message) {
     QSettings *m_qSettings = new QSettings(HOMEPAGE_SETTINGS, QSettings::IniFormat);
     QStringList messagelist = message.split("/");

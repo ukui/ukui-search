@@ -25,6 +25,7 @@ include(index/index.pri)
 include(parser/parser.pri))
 include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
+include(plugininterface/plugininterface.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5 -luchardet
@@ -60,14 +61,20 @@ unix {
     INSTALLS += target
 
     header.path = /usr/include/ukui-search
-    header.files += libsearch.h
-    INSTALLS += header
+    header.files += *.h
+    header_index.path = /usr/include/ukui-search/index
+    header_index.files = index/*.h
+    header_appsearch.path = /usr/include/ukui-search/appsearch
+    header_appsearch.files = appsearch/*.h
+    header_settingsearch.path = /usr/include/ukui-search/settingsearch
+    header_settingsearch.files = settingsearch/*.h
+    INSTALLS += header header_index header_appsearch header_settingsearch
 }
 
 
 
-INCLUDEPATH += $$PWD/../libchinese-segmentation
-DEPENDPATH += $$PWD/../libchinese-segmentation
+#INCLUDEPATH += $$PWD/../libchinese-segmentation
+#DEPENDPATH += $$PWD/../libchinese-segmentation
 
 #DISTFILES += \
 #    ../translations/libsearch/libukui-search_zh_CN.ts

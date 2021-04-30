@@ -3,8 +3,9 @@
 #include <QThread>
 #include <QObject>
 #include <QRunnable>
-#include "libsearch.h"
+#include "ukui-search/libsearch.h"
 
+namespace Zeeker {
 class SearchAppThread : public QObject {
     Q_OBJECT
 
@@ -34,5 +35,6 @@ private:
 Q_SIGNALS:
     void searchResultApp(const QVector<QStringList>&);
 };
+}
 
 #endif // SEARCHAPPTHREAD_H

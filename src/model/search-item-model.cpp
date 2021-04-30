@@ -21,6 +21,7 @@
 #include "search-item-model.h"
 #include <QDebug>
 
+using namespace Zeeker;
 SearchItemModel::SearchItemModel(QObject *parent) : QAbstractItemModel(parent) {
 
 }
@@ -87,6 +88,8 @@ int SearchItemModel::columnCount(const QModelIndex& index) const {
  * @param role 显示内容的类型
  * @return 显示内容数据
  */
+
+using namespace Zeeker;
 QVariant SearchItemModel::data(const QModelIndex &index, int role) const {
     if(!index.isValid())
         return QVariant();

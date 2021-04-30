@@ -24,7 +24,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QQueue>
-
+namespace Zeeker {
 class Traverse_BFS {
 public:
     Traverse_BFS() = default;
@@ -39,5 +39,6 @@ private:
     Traverse_BFS(const Traverse_BFS&) = delete;
     void operator=(const Traverse_BFS&) = delete;
 };
+}
 
 #endif // TRAVERSE_BFS_H

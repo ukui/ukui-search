@@ -32,6 +32,7 @@
 #include "document.h"
 #include "file-reader.h"
 
+namespace Zeeker {
 extern QList<Document> *_doc_list_path;
 extern QMutex  _mutex_doc_list_path;
 extern QList<Document> *_doc_list_content;
@@ -79,5 +80,6 @@ private:
     std::string m_index_text_str;
     Xapian::TermGenerator m_indexer;
 };
+}
 
 #endif // INDEXGENERATOR_H

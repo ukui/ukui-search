@@ -26,6 +26,7 @@
 #include <QFileInfo>
 #include <QDir>
 #define HOMEPAGE_SETTINGS  QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search-homepage.conf"
+namespace Zeeker {
 class ConfigFile : public QObject {
     Q_OBJECT
 public:
@@ -39,5 +40,6 @@ private:
     static QStringList readRecently();
 
 };
+}
 
 #endif // CONFIGFILE_H

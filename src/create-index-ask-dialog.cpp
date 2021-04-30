@@ -22,6 +22,7 @@
 #include "create-index-ask-dialog.h"
 #include <QPainter>
 
+using namespace Zeeker;
 CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent) {
     this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search"));

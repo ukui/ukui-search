@@ -19,7 +19,7 @@
  */
 #include "document.h"
 #include <QDebug>
-
+using namespace Zeeker;
 void Document::setData(QString data) {
     if(data.isEmpty())
         return;

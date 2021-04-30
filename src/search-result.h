@@ -25,6 +25,7 @@
 #include <QTimer>
 #include "mainwindow.h"
 
+namespace Zeeker {
 class SearchResult : public QThread {
     Q_OBJECT
 public:
@@ -44,4 +45,5 @@ Q_SIGNALS:
     void searchResultContent(const QPair<QString, QStringList>);
 
 };
+}
 #endif // SEARCHRESULT_H

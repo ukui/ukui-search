@@ -1,5 +1,6 @@
 #include "search-app-thread.h"
 
+using namespace Zeeker;
 size_t uniqueSymbol = 0;
 QMutex  m_mutex;
 

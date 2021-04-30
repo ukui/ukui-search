@@ -25,8 +25,9 @@
 #include <QDebug>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
-#include "global-settings.h"
+#include "ukui-search/global-settings.h"
 
+using namespace Zeeker;
 HighlightItemDelegate::HighlightItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {
 }
 

@@ -22,7 +22,7 @@
 
 #include <QObject>
 #include <QFileInfo>
-
+namespace Zeeker {
 class FileReader : public QObject {
     Q_OBJECT
 public:
@@ -31,5 +31,5 @@ public:
     static void getTextContent(QString path, QString &textContent);
 
 };
-
+}
 #endif // FILEREADER_H

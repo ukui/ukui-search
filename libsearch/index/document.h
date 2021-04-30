@@ -24,7 +24,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
-
+namespace Zeeker {
 class Document {
 public:
     Document() = default;
@@ -55,5 +55,6 @@ private:
     QString m_unique_term;
 
 };
+}
 
 #endif // DOCUMENT_H

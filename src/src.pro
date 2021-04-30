@@ -58,9 +58,8 @@ data-menu.path = /usr/share/applications
 data-menu.files += ../data/ukui-search-menu.desktop
 data.path = /etc/xdg/autostart
 data.files += ../data/ukui-search.desktop
-schemes.path =  /usr/share/glib-2.0/schemas/
-schemes.files += ../data/org.ukui.search.data.gschema.xml ../data/org.ukui.log4qt.ukui-search.gschema.xml
-INSTALLS += data data-menu schemes
+
+INSTALLS += data data-menu
 
 RESOURCES += \
     resource.qrc
@@ -73,7 +72,10 @@ TRANSLATIONS += \
 qm_files.path = /usr/share/ukui-search/translations/
 qm_files.files = $$OUT_PWD/.qm/*.qm
 
-INSTALLS += qm_files
+schemes.path =  /usr/share/glib-2.0/schemas/
+schemes.files += ../data/org.ukui.search.data.gschema.xml ../data/org.ukui.log4qt.ukui-search.gschema.xml
+
+INSTALLS += qm_files schemes
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
         -L$$OUT_PWD/../libsearch -lukui-search

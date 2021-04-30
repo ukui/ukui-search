@@ -32,6 +32,8 @@
 #include "first-index.h"
 
 #define BUF_LEN 1024000
+
+namespace Zeeker {
 class InotifyIndex;
 static InotifyIndex* global_instance_of_index = nullptr;
 class InotifyIndex : public QThread, public Traverse_BFS {
@@ -76,5 +78,6 @@ private:
     };
 
 };
+}
 
 #endif // INOTIFYINDEX_H

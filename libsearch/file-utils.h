@@ -58,7 +58,7 @@
 
 #define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
 
-
+namespace Zeeker {
 class  LIBSEARCH_EXPORT FileUtils {
 public:
     static std::string makeDocUterm(QString);
@@ -93,5 +93,7 @@ public:
 private:
     FileUtils();
 };
+
+}
 
 #endif // FILEUTILS_H

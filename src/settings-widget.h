@@ -35,6 +35,7 @@
 #include <libsearch.h>
 #include "xatom-helper.h"
 
+namespace Zeeker {
 class SettingsWidget : public QWidget {
     Q_OBJECT
 public:
@@ -117,5 +118,6 @@ private Q_SLOTS:
     void onBtnDelClicked(const QString&);
     void setWebEngine(const QString&);
 };
+}
 
 #endif // SETTINGSWIDGET_H

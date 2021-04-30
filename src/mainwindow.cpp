@@ -41,6 +41,7 @@
 #include "global-settings.h"
 #include "search-result.h"
 
+using namespace Zeeker;
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
  * @brief MainWindow 主界面

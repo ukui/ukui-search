@@ -30,6 +30,7 @@
 #include <QStringList>
 #include <QTimer>
 #include <QDebug>
+namespace Zeeker {
 class SettingsMatch : public QObject {
     Q_OBJECT
 public:
@@ -48,5 +49,6 @@ private:
     QString m_sourceText;
 
 };
+}
 
 #endif // SETTINGSEARCH_H

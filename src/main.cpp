@@ -37,7 +37,7 @@
 #include "libsearch.h"
 #include "global-settings.h"
 
-
+using namespace Zeeker;
 //void handler(int){
 //    qDebug() << "Recieved SIGTERM!";
 
