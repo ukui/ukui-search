@@ -6,7 +6,7 @@ namespace Zeeker {
 class PluginInterface
 {
 public:
-    enum PluginType
+    enum class PluginType
     {
         MenuPlugin,
         PreviewPagePlugin,

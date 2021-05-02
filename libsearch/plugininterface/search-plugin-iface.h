@@ -11,9 +11,9 @@ namespace Zeeker {
 class SearchPluginIface : public PluginInterface
 {
 public:
-    ///
-    /// \brief The resultInfo struct
-    ///
+    /**
+     * @brief The resultInfo struct
+     */
     struct resultInfo
     {
         QIcon icon;
@@ -21,13 +21,13 @@ public:
         QString description;
         QMap<QString,QString> actionMap;//action name and action key
     };
-    virtual ~SearchInterface(){}
+    virtual ~SearchPluginIface() {}
     virtual QString getPluginName() = 0;
-    virtual void KeywordSearch(QString keyword,QQueue<resultInfo>);
-    virtual void openAction(QString key);
+    virtual void KeywordSearch(QString keyword,QQueue<resultInfo> *searchResult);
+    virtual void openAction(QString name, QString key);
 
 };
 }
-Q_DECLARE_INTERFACE(SearchPluginIface, SearchPluginIface_iid)
+Q_DECLARE_INTERFACE(Zeeker::SearchPluginIface, SearchPluginIface_iid)
 
 #endif // SEARCHPLUGINIFACE_H

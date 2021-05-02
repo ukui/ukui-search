@@ -1,5 +1,6 @@
 QT += core xml widgets dbus concurrent
 VERSION = 0.0.1
+DEFINES += VERSION='\\"$${VERSION}\\"'
 
 TARGET = ukui-search
 TEMPLATE = lib
@@ -16,6 +17,9 @@ CONFIG += c++11 link_pkgconfig no_keywords lrelease
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+PLUGIN_INSTALL_DIRS = $$[QT_INSTALL_LIBS]/ukui-search-plugins
+DEFINES += PLUGIN_INSTALL_DIRS='\\"$${PLUGIN_INSTALL_DIRS}\\"'
+
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -25,7 +29,8 @@ include(index/index.pri)
 include(parser/parser.pri))
 include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
-include(plugininterface/plugininterface.pri)
+include(plugininterface/plugin-interface.pri)
+include(pluginmanage/plugin-manager.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5 -luchardet
