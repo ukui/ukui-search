@@ -42,6 +42,14 @@ Description: Libraries for chinese-segmentation
  This package contains a few runtime libraries needed by 
  libsearch.
 
+Package: libchinese-segmentation-dev
+Section: libdevel
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         libchinese-segmentation0 (= ${binary:Version})
+Description: Libraries for chinese-segmentation(development files).
+
 Package: libukui-search0
 Section: libs
 Architecture: any

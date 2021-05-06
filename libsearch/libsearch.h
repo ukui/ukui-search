@@ -31,14 +31,14 @@
 #include "index/ukui-search-qdbus.h"
 #include "index/inotify-index.h"
 
-class  LIBSEARCH_EXPORT GlobalSearch
-{
-public:
+//class  LIBSEARCH_EXPORT GlobalSearch
+//{
+//public:
 
-    static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);
+//    static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);
 
-private:
-    GlobalSearch();
-};
+//private:
+//    GlobalSearch();
+//};
 
 #endif // LIBSEARCH_H
