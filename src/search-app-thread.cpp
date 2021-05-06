@@ -36,7 +36,9 @@ SearchApp::~SearchApp() {
 
 void SearchApp::run() {
     m_mutex.lock();
+    size_t tmp_uniqueSymbol;
     uniqueSymbol++;
+    tmp_uniqueSymbol = uniqueSymbol;
     m_mutex.unlock();
     //nameList:应用名，pathList:已安装的是.desktop路径，未安装为空，iconList:已安装的是图标名，未安装的是图标路径
     QStringList nameList, pathList, iconList, descList;
@@ -68,7 +70,7 @@ void SearchApp::run() {
     appVector.append(iconList);
     appVector.append(descList);
     m_mutex.lock();
-    if(uniqueSymbol == uniqueSymbol) {
+    if (tmp_uniqueSymbol == uniqueSymbol) {
         Q_EMIT this->searchResultApp(appVector);
     }
     m_mutex.unlock();

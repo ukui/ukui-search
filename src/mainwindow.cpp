@@ -131,11 +131,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 this->raise();
                 this->activateWindow();
             } else {
-                this->hide();
-                m_contentFrame->closeWebView();
-                m_search_result_thread->requestInterruption();
-                m_search_result_thread->quit();
-//                m_seach_app_thread->stop();
+                tryHideMainwindow();
             }
         }
     });
@@ -524,6 +520,28 @@ void MainWindow::initTimer() {
 }
 
 /**
+ * @brief MainWindow::tryHideMainwindow 尝试隐藏主界面并停止部分未完成的动作，重置部分状态值
+ */
+bool MainWindow::tryHideMainwindow()
+{
+    if (!m_isAskDialogVisible) {
+        qDebug()<<"Mainwindow will be hidden";
+        m_currentSearchAsked = false;
+        this->hide();
+        m_askTimer->stop();
+        m_researchTimer->stop();
+        m_contentFrame->closeWebView();
+        m_search_result_thread->requestInterruption();
+        m_search_result_thread->quit();
+        return true;
+    } else {
+        //有上层弹窗未关闭，不允许隐藏主界面
+        qWarning()<<"There is a dialog onside, so that mainwindow can not be hidden.";
+        return false;
+    }
+}
+
+/**
  * @brief MainWindow::setSearchMethod 设置搜索模式
  * @param is_index_search true为索引搜索，false为暴力搜索
  */
@@ -557,15 +575,7 @@ void MainWindow::setSearchMethod(const bool &is_index_search) {
 
 //    switch (event->response_type & ~0x80) {
 //    case XCB_FOCUS_OUT:
-//        if (!m_isAskDialogVisible) {
-//            m_currentSearchAsked = false;
-//            this->hide();
-//            m_askTimer->stop();
-//            m_researchTimer->stop();
-//            m_contentFrame->closeWebView();
-//            m_search_result_thread->requestInterruption();
-//            m_search_result_thread->quit();
-//        }
+//        tryHideMainwindow();
 ////        m_seach_app_thread->stop();
 //        break;
 //    default:
@@ -575,12 +585,14 @@ void MainWindow::setSearchMethod(const bool &is_index_search) {
 //    return false;
 //}
 
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-    if(event->key() == Qt::Key_Escape) {
-        this->hide();
-        m_contentFrame->closeWebView();
-        m_search_result_thread->requestInterruption();
-        m_search_result_thread->quit();
+/**
+ * @brief MainWindow::keyPressEvent 按esc键关闭主界面
+ * @param event
+ */
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        tryHideMainwindow();
 //        m_seach_app_thread->stop();
     }
     return QWidget::keyPressEvent(event);
@@ -590,14 +602,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::ActivationChange) {
         if(QApplication::activeWindow() != this) {
-            if (!m_isAskDialogVisible) {
-                m_currentSearchAsked = false;
-                this->hide();
-                m_askTimer->stop();
-                m_researchTimer->stop();
-                m_contentFrame->closeWebView();
-                m_search_result_thread->requestInterruption();
-            }
+            tryHideMainwindow();
         }
     }
     return QMainWindow::eventFilter(watched,event);
