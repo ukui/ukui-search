@@ -25,7 +25,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "ukui-search/file-utils.h"
+#include "file-utils.h"
 #include "search-list-view.h"
 
 namespace Zeeker {

@@ -28,7 +28,7 @@
 //#include <QWebEngineUrlRequestInterceptor>
 #include <QDesktopServices>
 #include "option-view.h"
-#include "ukui-search/global-settings.h"
+#include "global-settings.h"
 
 namespace Zeeker {
 class SearchDetailView : public QWidget {
