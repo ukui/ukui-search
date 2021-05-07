@@ -38,3 +38,8 @@ void SearchPluginManager::close()
 SearchPluginManager::SearchPluginManager(QObject *parent)
 {
 }
+
+SearchPluginManager::~SearchPluginManager()
+{
+    m_hash.clear();
+}

@@ -23,11 +23,12 @@ public:
     };
     virtual ~SearchPluginIface() {}
     virtual QString getPluginName() = 0;
-    virtual void KeywordSearch(QString keyword,QQueue<resultInfo> *searchResult);
-    virtual void openAction(QString name, QString key);
+    virtual void KeywordSearch(QString keyword,QQueue<resultInfo> *searchResult) = 0;
+    virtual void openAction(QString name, QString key) = 0;
 
 };
 }
+
 Q_DECLARE_INTERFACE(Zeeker::SearchPluginIface, SearchPluginIface_iid)
 
 #endif // SEARCHPLUGINIFACE_H
