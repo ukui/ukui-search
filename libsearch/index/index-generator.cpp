@@ -28,7 +28,7 @@
 #include "file-utils.h"
 #include "index-generator.h"
 #include "global-settings.h"
-#include "chinese-segmentation.h"
+#include "chinese-seg/chinese-segmentation.h"
 #include "construct-document.h"
 #include <QStandardPaths>
 

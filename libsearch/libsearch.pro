@@ -59,15 +59,22 @@ unix {
     target.path = $$[QT_INSTALL_LIBS]
     INSTALLS += target
 
-    header.path = /usr/include/ukui-search
-    header.files += libsearch.h
-    INSTALLS += header
+    header.path = /usr/include/ukui-search/
+    header.files += *.h
+    header_appsearch.path = /usr/include/ukui-search/appsearch/
+    header_appsearch.files = appsearch/*.h
+    header_index.path = /usr/include/ukui-search/index/
+    header_index.files = index/*.h
+    header_settingsearch.path = /usr/include/ukui-search/settingsearch/
+    header_settingsearch.files = settingsearch/*.h
+
+    INSTALLS += header header_appsearch header_index header_settingsearch
 }
 
 
 
-INCLUDEPATH += $$PWD/../libchinese-segmentation
-DEPENDPATH += $$PWD/../libchinese-segmentation
+#INCLUDEPATH += $$PWD/../libchinese-segmentation
+#DEPENDPATH += $$PWD/../libchinese-segmentation
 
 #DISTFILES += \
 #    ../translations/libsearch/libukui-search_zh_CN.ts
