@@ -8,7 +8,4 @@ Comment[zh_CN]=全局搜索
 Exec=/usr/bin/ukui-search -s
 Type=Application
 Icon=kylin-search
-X-UKUI-AutoRestart=true
-OnlyShowIn=UKUI
-X-UKUI-Autostart-Phase=Application
 Terminal=false
