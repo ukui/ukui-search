@@ -129,7 +129,7 @@ void FirstIndex::run(){
         mutex2.lock();
         mutex3.lock();
         sem.acquire(4);
-        QtConcurrent::run([&](){
+//        QtConcurrent::run([&](){
             sem.acquire(1);
             mutex1.unlock();
             this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
@@ -137,7 +137,7 @@ void FirstIndex::run(){
             FileUtils::_max_index_count = this->q_index->length();
             qDebug()<<"max_index_count:"<<FileUtils::_max_index_count;
             sem.release(5);
-        });
+//        });
         QtConcurrent::run([&](){
             sem.acquire(2);
             mutex2.unlock();
@@ -189,7 +189,7 @@ void FirstIndex::run(){
         if (p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
-        GlobalSettings::getInstance()->forceSync();
+//        GlobalSettings::getInstance()->forceSync();
         ::_exit(0);
     }
     else if(pid < 0)

@@ -323,7 +323,7 @@ fork:
                     qDebug() << "select timeout!";
                     ::free(read_timeout);
                     IndexGenerator::getInstance()->~IndexGenerator();
-                    GlobalSettings::getInstance()->forceSync();
+//                    GlobalSettings::getInstance()->forceSync();
                    ::_exit(0);
                 }else{
                     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
