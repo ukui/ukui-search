@@ -27,6 +27,7 @@
 #include <QHBoxLayout>
 #include <QPropertyAnimation>
 #include <QPaintEvent>
+#include <QPainterPath>
 #include <QPainter>
 #include <QtMath>
 #include <QEvent>
