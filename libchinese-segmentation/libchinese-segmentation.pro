@@ -35,14 +35,12 @@ INSTALLS += \
 
 # Default rules for deployment.
 unix {
-    target.path = /usr/lib
+    target.path = $$[QT_INSTALL_LIBS]
 }
 !isEmpty(target.path): INSTALLS += target
 
     header.path = /usr/include/chinese-seg/
-    header.files += *.h
-    header_cppjieba.path = /usr/include/chinese-seg/cppjieba/
-    header_cppjieba.files = cppjieba/*
+    header.files += *.h cppjieba/*
     INSTALLS += header header_cppjieba
 
 #DISTFILES += \

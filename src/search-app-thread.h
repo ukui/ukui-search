@@ -3,7 +3,7 @@
 #include <QThread>
 #include <QObject>
 #include <QRunnable>
-#include "ukui-search/libsearch.h"
+#include "libsearch.h"
 
 namespace Zeeker {
 class SearchAppThread : public QObject {
