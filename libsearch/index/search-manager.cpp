@@ -422,8 +422,24 @@ void DirectSearch::run() {
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
-        for(auto i : list) {
-            if(i.isDir() && (!(i.isSymLink()))) {
+        for (auto i : list) {
+            if (i.isDir() && (!(i.isSymLink()))) {
+
+                bool findIndex = false;
+
+                QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
+                for (QString j : blockList) {
+                    if (i.absoluteFilePath().startsWith(j.prepend("/"))) {
+                        findIndex = true;
+                        break;
+                    }
+                }
+
+                if (findIndex == true) {
+                    qDebug() << "path is blocked:" << i.absoluteFilePath();
+                    continue;
+                }
+
                 bfs.enqueue(i.absoluteFilePath());
             }
             if(i.fileName().contains(m_keyword, Qt::CaseInsensitive)) {
