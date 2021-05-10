@@ -1,6 +1,6 @@
-ukui-search (0.4.0+0508) v101; urgency=medium
+ukui-search (0.4.0+0508hw1) v101.hw; urgency=medium
 
-  * Bug 49153.
+  * Bug 49153 52085 52066 51710 50972.
   * 任务 
   * 其他改动：
   * Android app can be search now.
