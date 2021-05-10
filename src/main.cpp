@@ -29,7 +29,9 @@
 #include <QLocale>
 #include <X11/Xlib.h>
 #include <syslog.h>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include <ukui-log4qt.h>
+#endif
 #include <QObject>
 #include <QApplication>
 #include "qt-single-application.h"
@@ -39,6 +41,7 @@
 #include "global-settings.h"
 
 using namespace Zeeker;
+
 //void handler(int){
 //    qDebug() << "Recieved SIGTERM!";
 
@@ -62,51 +65,50 @@ using namespace Zeeker;
 //    while (true);
 //}
 
+void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QByteArray localMsg = msg.toLocal8Bit();
+    QByteArray currentTime = QTime::currentTime().toString().toLocal8Bit();
 
-//void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
-//{
-//    QByteArray localMsg = msg.toLocal8Bit();
-//    QByteArray currentTime = QTime::currentTime().toString().toLocal8Bit();
+    bool showDebug = true;
+//    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/ukui-search.log";
+//    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search/ukui-search.log";
+    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search.log";
+    if (!QFile::exists(logFilePath)) {
+        showDebug = false;
+    }
+    FILE *log_file = nullptr;
 
-//    bool showDebug = true;
-////    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/ukui-search.log";
-////    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search/ukui-search.log";
-//    QString logFilePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/org.ukui/ukui-search.log";
-//    if (!QFile::exists(logFilePath)) {
-//        showDebug = false;
-//    }
-//    FILE *log_file = nullptr;
+    if (showDebug) {
+        log_file = fopen(logFilePath.toLocal8Bit().constData(), "a+");
+    }
 
-//    if (showDebug) {
-//        log_file = fopen(logFilePath.toLocal8Bit().constData(), "a+");
-//    }
+    const char *file = context.file ? context.file : "";
+    const char *function = context.function ? context.function : "";
+    switch (type) {
+    case QtDebugMsg:
+        if (!log_file) {
+            break;
+        }
+        fprintf(log_file, "Debug: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtInfoMsg:
+        fprintf(log_file? log_file: stdout, "Info: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtWarningMsg:
+        fprintf(log_file? log_file: stderr, "Warning: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtCriticalMsg:
+        fprintf(log_file? log_file: stderr, "Critical: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    case QtFatalMsg:
+        fprintf(log_file? log_file: stderr, "Fatal: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
+        break;
+    }
 
-//    const char *file = context.file ? context.file : "";
-//    const char *function = context.function ? context.function : "";
-//    switch (type) {
-//    case QtDebugMsg:
-//        if (!log_file) {
-//            break;
-//        }
-//        fprintf(log_file, "Debug: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
-//        break;
-//    case QtInfoMsg:
-//        fprintf(log_file? log_file: stdout, "Info: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
-//        break;
-//    case QtWarningMsg:
-//        fprintf(log_file? log_file: stderr, "Warning: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
-//        break;
-//    case QtCriticalMsg:
-//        fprintf(log_file? log_file: stderr, "Critical: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
-//        break;
-//    case QtFatalMsg:
-//        fprintf(log_file? log_file: stderr, "Fatal: %s: %s (%s:%u, %s)\n", currentTime.constData(), localMsg.constData(), file, context.line, function);
-//        break;
-//    }
-
-//    if (log_file)
-//        fclose(log_file);
-//}
+    if (log_file)
+        fclose(log_file);
+}
 
 void centerToScreen(QWidget* widget) {
     if(!widget)
@@ -145,8 +147,10 @@ void searchMethod(FileUtils::SearchMethod sm){
 }
 */
 int main(int argc, char *argv[]) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     //Init log module
     initUkuiLog4qt("ukui-search");
+#endif
 
     // Determine whether the home directory has been created, and if not, keep waiting.
     char *p_home = NULL;
@@ -170,8 +174,10 @@ int main(int argc, char *argv[]) {
         ::sleep(1);
     }
 
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 12, 0))
     // Output log to file
-//    qInstallMessageHandler(messageOutput);
+    qInstallMessageHandler(messageOutput);
+#endif
 
     // Register meta type
     qDebug() << "ukui-search main start";
