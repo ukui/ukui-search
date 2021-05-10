@@ -24,7 +24,7 @@
 
 using namespace Zeeker;
 CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent) {
-    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
+//    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search"));
 
     initUi();
@@ -113,6 +113,10 @@ void CreateIndexAskDialog::initUi() {
     m_contentLyt->addWidget(m_btnFrame);
 
     m_mainLyt->addWidget(m_contentFrame);
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 12, 0))
+    m_titleFrame->hide();
+    this->setFixedSize(380, 162);
+#endif
 }
 
 /**

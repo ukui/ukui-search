@@ -31,6 +31,7 @@
 #include <syslog.h>
 #include <ukui-log4qt.h>
 #include <QObject>
+#include <QApplication>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
@@ -284,12 +285,15 @@ int main(int argc, char *argv[]) {
 //    XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), hints);
 
     app.setActivationWindow(w);
+    qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
 
     // Processing startup parameters
     if(QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
 //        w->moveToPanel();
         centerToScreen(w);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
+#endif
         w->show();
     }
 

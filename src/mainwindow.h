@@ -51,7 +51,12 @@
 //#include "settings-widget.h"
 #include "libsearch.h"
 #include "search-app-thread.h"
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include "xatom-helper.h"
+#endif
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 12, 0))
+#include "settings-widget.h"
+#endif
 #include "create-index-ask-dialog.h"
 
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
@@ -80,8 +85,9 @@ public:
     // The position which mainwindow shows in the center of screen where the cursor in.
     void centerToScreen(QWidget* widget);
     void initGsettings();
-
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     MotifWmHints m_hints;
+#endif
 
 private:
 
@@ -94,7 +100,9 @@ private:
     QLabel * m_iconLabel = nullptr;              // Icon lable
     QLabel * m_titleLabel = nullptr;             // Title lable
     QPushButton * m_menuBtn = nullptr;           // Menu button
-//    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 12, 0))
+    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
+#endif
     ContentWidget * m_contentFrame = nullptr;    // Content frame
     SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
     SeachBarWidget * m_searchWidget = nullptr;   // Search bar
