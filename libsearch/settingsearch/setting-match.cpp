@@ -19,6 +19,7 @@
  */
 #include "setting-match.h"
 #include "file-utils.h"
+#include <QProcessEnvironment>
 using namespace Zeeker;
 SettingsMatch::SettingsMatch(QObject *parent) : QObject(parent) {
     xmlElement();
@@ -62,6 +63,12 @@ void SettingsMatch::xmlElement() {
         QDomNodeList list = element.childNodes();
         for(int i = 0; i < list.count(); ++i) {
             QDomNode n = list.at(i);
+            if(n.nodeName()==QString::fromLocal8Bit("Environment")){
+                QString path = QProcessEnvironment::systemEnvironment().value("XDG_SESSION_TYPE");
+                if(path=="wayland"){
+                    break;
+                }
+            }
             if(n.nodeName() == QString::fromLocal8Bit("ChinesePlugin")) {
                 ChineseIndex = n.toElement().text();
             }
