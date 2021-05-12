@@ -252,17 +252,22 @@ void GlobalSettings::setValue(const QString &key, const QVariant &value) {
     //    qDebug()<<"setvalue========"<<key<<":"<<value;
     m_cache.insert(key, value);
     //     m_settings->sync();
-    QtConcurrent::run([ = ]() {
+//    QtConcurrent::run([ = ]() {
         //        qDebug()<<m_settings->status();
 //                if (m_mutex.tryLock(1000)) {
         //        m_mutex.lock();
-        m_settings->setValue(key, value);
-        //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
-        m_settings->sync();
+
+//    test++;
+//    qDebug()<<"QtConcurrent::run=========start!!!"<<key<<":"<<value<<test<<QTime::currentTime();
+    m_settings->setValue(key, value);
+//    qDebug()<<"QtConcurrent::run=========sync!!!";
+    m_settings->sync();
+//    qDebug()<<"QtConcurrent::run========finished!!!"<<key<<":"<<value<<test<<QTime::currentTime();
+
         //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
 //                    m_mutex.unlock();
 //                }
-    });
+//    });
 }
 
 void GlobalSettings::forceSync(const QString &key) {

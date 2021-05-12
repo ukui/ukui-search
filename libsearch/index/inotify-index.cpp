@@ -180,12 +180,14 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp) {
     ssize_t numRead = 0;
     numRead = tmp;
     char * p = const_cast<char*>(buf);
-
+    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
     for(; p < buf + numRead;) {
         struct inotify_event * event = reinterpret_cast<inotify_event *>(p);
-        qDebug() << "Read Event event->wd: " << event->wd;
-        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
         if(event->name[0] != '.') {
+
+            qDebug() << "Read Event event->wd: " << event->wd;
+            qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
+
             qDebug() << QString(currentPath[event->wd] + '/' + event->name);
             //                switch (event->mask) {
             if(event->mask & IN_CREATE) {
@@ -235,7 +237,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp) {
 next:
         p += sizeof(struct inotify_event) + event->len;
     }
-
+    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
     delete indexQueue;
     indexQueue = nullptr;
     delete contentIndexQueue;
@@ -288,14 +290,13 @@ void InotifyIndex::run() {
             assert(false);
         }
 
-
         char * tmp = const_cast<char*>(buf);
 
         for(; tmp < buf + numRead;) {
             struct inotify_event * event = reinterpret_cast<inotify_event *>(tmp);
-            //        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
             if(event->name[0] != '.') {
-                GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
+//                qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
+//                qDebug("mask:0x%x,",event->mask);
                 break;
             }
             tmp += sizeof(struct inotify_event) + event->len;
@@ -318,7 +319,6 @@ void InotifyIndex::run() {
                 qDebug() << "read";
             }
             eventProcess(buf, numRead);
-            GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
 
             fd_set read_fds;
             int rc;
@@ -343,7 +343,6 @@ void InotifyIndex::run() {
 //                    GlobalSettings::getInstance()->forceSync();
                     ::_exit(0);
                 } else {
-                    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
                     memset(buf, 0x00, BUF_LEN);
                     numRead = read(m_fd, buf, BUF_LEN);
                     if(numRead == -1) {
@@ -351,9 +350,22 @@ void InotifyIndex::run() {
                         fflush(stdout);
                         assert(false);
                     }
+
+                    char * tmp = const_cast<char*>(buf);
+
+                    for(; tmp < buf + numRead; ) {
+                        struct inotify_event * event = reinterpret_cast<inotify_event *>(tmp);
+                        if(event->name[0] != '.') {
+                            break;
+                        }
+                        tmp += sizeof(struct inotify_event) + event->len;
+                    }
+                    if(tmp >= buf + numRead) {
+                        continue;
+                    }
+
                     qDebug() << "Read " << numRead << " bytes from inotify fd";
                     this->eventProcess(buf, numRead);
-                    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
                 }
             }
         } else if(pid > 0) {
@@ -369,7 +381,4 @@ void InotifyIndex::run() {
         GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "3");
         RemoveWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation), false);
     }
-
-
-
 }

@@ -82,7 +82,8 @@ void FirstIndex::run() {
     } else {
         this->bool_dataBaseExist = true;
     }
-    if(indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2") {
+//    if(indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2") {
+    if(indexDataBaseStatus == "1" or contentIndexDataBaseStatus == "1" or inotifyIndexStatus != "2"){
         this->bool_dataBaseStatusOK = false;
     } else {
         this->bool_dataBaseStatusOK = true;
@@ -196,6 +197,8 @@ void FirstIndex::run() {
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
 //        GlobalSettings::getInstance()->forceSync();
+        GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
+        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
         ::_exit(0);
     } else if(pid < 0) {
         qWarning() << "First Index fork error!!";
@@ -203,7 +206,6 @@ void FirstIndex::run() {
         waitpid(pid, NULL, 0);
         --FileUtils::_index_status;
     }
-
 
     GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
     int retval1 = write(fifo_fd, buffer, strlen(buffer));

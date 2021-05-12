@@ -105,6 +105,8 @@ private:
     QStringList m_history;
 
     QMutex m_mutex;
+//    size_t test = 0;
+
 
 };
 
