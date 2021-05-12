@@ -128,7 +128,13 @@ void SearchListView::clear() {
  */
 void SearchListView::refresh()
 {
+    QModelIndex index = this->currentIndex();
     m_model->refresh();
+    if(index.row() >= 0 && index.row() < m_model->length() && m_isSelected) {
+        this->blockSignals(true);
+        this->setCurrentIndex(index);
+        this->blockSignals(false);
+    }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
