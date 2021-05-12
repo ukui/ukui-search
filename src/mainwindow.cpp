@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
+//    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
@@ -189,6 +189,10 @@ void MainWindow::initUi() {
     m_iconLabel = new QLabel(m_titleFrame);
     m_iconLabel->setFixedSize(24, 24);
     m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    //主题改变时，更新自定义标题栏的图标
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    });
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_menuBtn = new QPushButton(m_titleFrame);

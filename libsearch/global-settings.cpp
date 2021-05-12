@@ -19,7 +19,6 @@
  *
  */
 #include <QtConcurrent>
-#include <QApplication>
 #include <QPalette>
 #include "global-settings.h"
 
@@ -83,6 +82,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
                 qApp->paletteChanged(qApp->palette());
                 m_cache.remove(FONT_SIZE_KEY);
                 m_cache.insert(FONT_SIZE_KEY, m_theme_gsettings->get(FONT_SIZE_KEY).toDouble());
+            } else if (key == ICON_THEME_KEY) {
+                qApp->paletteChanged(qApp->palette());
             }
         });
         m_cache.remove(STYLE_NAME_KEY);

@@ -31,6 +31,7 @@
 #include <syslog.h>
 #include <ukui-log4qt.h>
 #include <QObject>
+#include <QApplication>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
@@ -268,6 +269,7 @@ int main(int argc, char *argv[]) {
 
     //set main window to the center of screen
     MainWindow *w = new MainWindow;
+    qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
 //    centerToScreen(w);
 //    w->moveToPanel();
     centerToScreen(w);

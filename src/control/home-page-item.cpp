@@ -26,7 +26,6 @@
 #include <QPainter>
 #include <QDesktopServices>
 #include <QUrl>
-#include <QApplication>
 
 using namespace Zeeker;
 HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path) : QWidget(parent) {
