@@ -37,10 +37,12 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent) {
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 //    this->setAttribute(Qt::WA_TranslucentBackground);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     m_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
     m_hints.functions = MWM_FUNC_ALL;
     m_hints.decorations = MWM_DECOR_BORDER;
     XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
 
     initUi();
     refreshIndexState();
@@ -224,6 +226,11 @@ void SettingsWidget::initUi() {
 //    m_mainLyt->addWidget(m_bottomBtnFrame);
 
     m_contentLyt->addStretch();
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+    this->m_titleFrame->hide();
+    setAttribute(Qt::WA_DeleteOnClose);
+#endif
 }
 
 /**
@@ -374,7 +381,9 @@ void SettingsWidget::showWidget() {
     flags &= ~Qt::WindowStaysOnTopHint;
     this->setWindowFlags(flags);
     m_timer->start();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
     this->show();
 }
 
