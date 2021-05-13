@@ -29,8 +29,10 @@
 #include <QMutex>
 #include <QQueue>
 //#include <QMetaObject>
+#include "index-status-recorder.h"
 #include "document.h"
 #include "file-reader.h"
+#include "common.h"
 
 namespace Zeeker {
 extern QList<Document> *_doc_list_path;

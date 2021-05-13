@@ -180,7 +180,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp) {
     ssize_t numRead = 0;
     numRead = tmp;
     char * p = const_cast<char*>(buf);
-    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "0");
+    IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "0");
     for(; p < buf + numRead;) {
         struct inotify_event * event = reinterpret_cast<inotify_event *>(p);
         if(event->name[0] != '.') {
@@ -237,7 +237,7 @@ void InotifyIndex::eventProcess(const char* buf, ssize_t tmp) {
 next:
         p += sizeof(struct inotify_event) + event->len;
     }
-    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
+    IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
     delete indexQueue;
     indexQueue = nullptr;
     delete contentIndexQueue;
@@ -285,11 +285,12 @@ void InotifyIndex::run() {
 
         if(numRead == -1) {
             printf("\033[1;31;40mread event error\033[0m\n");
-            GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "1");
+            IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "1");
             fflush(stdout);
             assert(false);
         }
 
+        //TODO: Merge multiple signals.
         char * tmp = const_cast<char*>(buf);
 
         for(; tmp < buf + numRead;) {
@@ -334,7 +335,7 @@ void InotifyIndex::run() {
                 if(rc < 0) {
                     // error
                     qWarning() << "select result < 0, error!";
-                    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "1");
+                    IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "1");
                     assert(false);
                 } else if(rc == 0) {
                     qDebug() << "select timeout!";
@@ -351,6 +352,7 @@ void InotifyIndex::run() {
                         assert(false);
                     }
 
+                    //TODO: Merge multiple signals.
                     char * tmp = const_cast<char*>(buf);
 
                     for(; tmp < buf + numRead; ) {
@@ -378,7 +380,7 @@ void InotifyIndex::run() {
     }
 
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
-        GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "3");
+        IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "3");
         RemoveWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation), false);
     }
 }

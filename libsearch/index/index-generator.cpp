@@ -27,7 +27,6 @@
 #include <QFile>
 #include "file-utils.h"
 #include "index-generator.h"
-#include "global-settings.h"
 #include "chinese-segmentation.h"
 #include "construct-document.h"
 #include <QStandardPaths>
@@ -91,7 +90,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList) {
     } catch(const Xapian::Error &e) {
         qWarning() << "creatAllIndex fail!" << QString::fromStdString(e.get_description());
         //need a record
-        GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "1");
+       IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "1");
 //        FileUtils::_index_status &= ~0x1;
         assert(false);
     }
@@ -127,7 +126,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
             m_database_content->commit();
         } catch(const Xapian::Error &e) {
             qWarning() << "creat content Index fail!" << QString::fromStdString(e.get_description());
-            GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "1");
+            IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "1");
 //            FileUtils::_index_status &= ~0x2;
             assert(false);
         }

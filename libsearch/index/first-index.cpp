@@ -68,9 +68,9 @@ void FirstIndex::run() {
     }
     qDebug() << "create fifo success\n";
 
-    QString indexDataBaseStatus =  GlobalSettings::getInstance()->getValue(INDEX_DATABASE_STATE).toString();
-    QString contentIndexDataBaseStatus = GlobalSettings::getInstance()->getValue(CONTENT_INDEX_DATABASE_STATE).toString();
-    QString inotifyIndexStatus = GlobalSettings::getInstance()->getValue(INOTIFY_NORMAL_EXIT).toString();
+    QString indexDataBaseStatus =  IndexStatusRecorder::getInstance()->getStatus(INDEX_DATABASE_STATE).toString();
+    QString contentIndexDataBaseStatus = IndexStatusRecorder::getInstance()->getStatus(CONTENT_INDEX_DATABASE_STATE).toString();
+    QString inotifyIndexStatus = IndexStatusRecorder::getInstance()->getStatus(INOTIFY_NORMAL_EXIT).toString();
 
     qDebug() << "indexDataBaseStatus: " << indexDataBaseStatus;
     qDebug() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
@@ -82,8 +82,7 @@ void FirstIndex::run() {
     } else {
         this->bool_dataBaseExist = true;
     }
-//    if(indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2") {
-    if(indexDataBaseStatus == "1" or contentIndexDataBaseStatus == "1" or inotifyIndexStatus != "2"){
+    if(indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2") {
         this->bool_dataBaseStatusOK = false;
     } else {
         this->bool_dataBaseStatusOK = true;
@@ -197,8 +196,8 @@ void FirstIndex::run() {
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
 //        GlobalSettings::getInstance()->forceSync();
-        GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
-        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
+        IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "2");
+        IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "2");
         ::_exit(0);
     } else if(pid < 0) {
         qWarning() << "First Index fork error!!";
@@ -207,7 +206,7 @@ void FirstIndex::run() {
         --FileUtils::_index_status;
     }
 
-    GlobalSettings::getInstance()->setValue(INOTIFY_NORMAL_EXIT, "2");
+    IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
     int retval1 = write(fifo_fd, buffer, strlen(buffer));
     if(retval1 == -1) {
         qWarning("write error\n");
