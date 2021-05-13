@@ -29,8 +29,11 @@
 #include <QLocale>
 #include <X11/Xlib.h>
 #include <syslog.h>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include <ukui-log4qt.h>
+#endif
 #include <QObject>
+#include <QApplication>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
@@ -144,8 +147,11 @@ void searchMethod(FileUtils::SearchMethod sm){
 }
 */
 int main(int argc, char *argv[]) {
-    //Init log module
+//v101日志模块
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+//    //Init log module
 //    initUkuiLog4qt("ukui-search");
+//#endif
 
     // Determine whether the home directory has been created, and if not, keep waiting.
     char *p_home = NULL;
@@ -171,6 +177,11 @@ int main(int argc, char *argv[]) {
 
     // Output log to file
     qInstallMessageHandler(messageOutput);
+//若使用v101日志模块，可以解放如下判断条件
+//#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+//    // Output log to file
+//    qInstallMessageHandler(messageOutput);
+//#endif
 
     // Register meta type
     qDebug() << "ukui-search main start";
@@ -268,6 +279,7 @@ int main(int argc, char *argv[]) {
 
     //set main window to the center of screen
     MainWindow *w = new MainWindow;
+    qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
 //    centerToScreen(w);
 //    w->moveToPanel();
     centerToScreen(w);
@@ -289,7 +301,9 @@ int main(int argc, char *argv[]) {
     if(QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
 //        w->moveToPanel();
         centerToScreen(w);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
+#endif
         w->show();
     }
 

@@ -30,6 +30,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QStyleOption>
+#include <QApplication>
+#include <QPainter>
 
 namespace Zeeker {
 class CreateIndexAskDialog : public QDialog {
