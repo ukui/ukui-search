@@ -19,7 +19,7 @@
  */
 #include "construct-document.h"
 #include "file-utils.h"
-#include "chinese-seg/chinese-segmentation.h"
+#include "chinese-segmentation.h"
 #include <QDebug>
 #include <QThread>
 #include <QUrl>
