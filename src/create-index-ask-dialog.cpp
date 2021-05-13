@@ -20,11 +20,10 @@
  */
 
 #include "create-index-ask-dialog.h"
-#include <QPainter>
 
 using namespace Zeeker;
 CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent) {
-    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
+//    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search"));
 
     initUi();
@@ -46,6 +45,10 @@ void CreateIndexAskDialog::initUi() {
     m_iconLabel = new QLabel(m_titleFrame);
     m_iconLabel->setFixedSize(24, 24);
     m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    //主题改变时，更新自定义标题栏的图标
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    });
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_closeBtn = new QPushButton(m_titleFrame);
@@ -113,6 +116,10 @@ void CreateIndexAskDialog::initUi() {
     m_contentLyt->addWidget(m_btnFrame);
 
     m_mainLyt->addWidget(m_contentFrame);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+    m_titleFrame->hide();
+    this->setFixedSize(380, 162);
+#endif
 }
 
 /**

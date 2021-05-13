@@ -33,6 +33,7 @@
 #include <QGSettings/QGSettings>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QApplication>
 #include "libsearch_global.h"
 
 #define CONTROL_CENTER_PERSONALISE_GSETTINGS_ID "org.ukui.control-center.personalise"
@@ -40,6 +41,7 @@
 #define THEME_GSETTINGS_ID "org.ukui.style"
 #define STYLE_NAME_KEY "styleName"
 #define FONT_SIZE_KEY "systemFontSize"
+#define ICON_THEME_KEY "iconThemeName"
 #define INDEX_DATABASE_STATE "index_database_state"
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"

@@ -186,3 +186,8 @@ void SearchItemModel::refresh()
     this->beginResetModel();
     this->endResetModel();
 }
+
+int SearchItemModel::length()
+{
+    return m_item->m_pathlist.length();
+}

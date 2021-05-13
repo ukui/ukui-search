@@ -22,7 +22,6 @@
 #include <QDebug>
 #include <QLabel>
 #include <QTimer>
-#include <QApplication>
 #include "config-file.h"
 
 using namespace Zeeker;

@@ -32,15 +32,17 @@
 using namespace Zeeker;
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent) {
-    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
+//    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search-settings"));
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 //    this->setAttribute(Qt::WA_TranslucentBackground);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     m_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
     m_hints.functions = MWM_FUNC_ALL;
     m_hints.decorations = MWM_DECOR_BORDER;
     XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
 
     initUi();
     refreshIndexState();
@@ -70,6 +72,10 @@ void SettingsWidget::initUi() {
     m_titleFrame->setLayout(m_titleLyt);
     m_titleIcon = new QLabel(m_titleFrame);
     m_titleIcon->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    //主题改变时，更新自定义标题栏的图标
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+        m_titleIcon->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    });
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_closeBtn = new QPushButton(m_titleFrame);
@@ -220,6 +226,11 @@ void SettingsWidget::initUi() {
 //    m_mainLyt->addWidget(m_bottomBtnFrame);
 
     m_contentLyt->addStretch();
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+    this->m_titleFrame->hide();
+    setAttribute(Qt::WA_DeleteOnClose);
+#endif
 }
 
 /**
@@ -370,7 +381,9 @@ void SettingsWidget::showWidget() {
     flags &= ~Qt::WindowStaysOnTopHint;
     this->setWindowFlags(flags);
     m_timer->start();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
     this->show();
 }
 

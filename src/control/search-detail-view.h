@@ -71,6 +71,8 @@ private:
     QString m_pkgname = 0; //目前只有未安装应用在打开软件商店时需要此参数
 
     void initUI();
+    void setIcon(const QString& path, const bool &installed = true);
+    QString m_iconPath;
     QLabel * m_iconLabel = nullptr;
     QFrame * m_nameFrame = nullptr;
     QHBoxLayout * m_nameLayout = nullptr;
@@ -105,6 +107,7 @@ Q_SIGNALS:
     void configFileChanged();
 private Q_SLOTS:
     void execActions(const int&, const int&, const QString&);
+    void refreshIcon();
 };
 
 //此类用于url拦截
