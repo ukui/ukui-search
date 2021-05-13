@@ -39,9 +39,9 @@
 #include <list>
 #include <queue>
 
-#include "../file-utils.h"
-#include "../global-settings.h"
-#include "chinese-seg/chinese-segmentation.h"
+#include "file-utils.h"
+#include "global-settings.h"
+#include "chinese-segmentation.h"
 
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
