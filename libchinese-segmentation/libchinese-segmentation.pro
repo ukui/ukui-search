@@ -40,8 +40,10 @@ unix {
 !isEmpty(target.path): INSTALLS += target
 
     header.path = /usr/include/chinese-seg/
-    header.files += *.h cppjieba/*
-    INSTALLS += header header_cppjieba
+    header.files += *.h
+    headercppjieba.path = /usr/include/chinese-seg/cppjieba/
+    headercppjieba.files = cppjieba/*
+    INSTALLS += header headercppjieba
 
 #DISTFILES += \
 #    jiaba/jieba.pri

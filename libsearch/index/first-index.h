@@ -37,11 +37,11 @@
 #include <syslog.h>
 //#include <QtConcurrent>
 #include "traverse_bfs.h"
-#include "global-settings.h"
+#include "index-status-recorder.h"
 #include "index-generator.h"
 #include "inotify-index.h"
 #include "file-utils.h"
-
+#include "common.h"
 namespace Zeeker {
 class FirstIndex : public QThread, public Traverse_BFS {
 public:

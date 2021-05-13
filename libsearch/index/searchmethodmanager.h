@@ -3,7 +3,6 @@
 
 #include "first-index.h"
 #include "inotify-index.h"
-
 namespace Zeeker {
 class SearchMethodManager {
 public:

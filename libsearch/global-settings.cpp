@@ -247,22 +247,15 @@ QStringList GlobalSettings::getSearchRecord() {
 //    return values;
 //}
 
-//here should be override
-//MouseZhangZh
+//this method is designed for main process settings only!!
 void GlobalSettings::setValue(const QString &key, const QVariant &value) {
-    //    qDebug()<<"setvalue========"<<key<<":"<<value;
     m_cache.insert(key, value);
-    //     m_settings->sync();
     QtConcurrent::run([ = ]() {
-        //        qDebug()<<m_settings->status();
-//                if (m_mutex.tryLock(1000)) {
-        //        m_mutex.lock();
-        m_settings->setValue(key, value);
-        //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
-        m_settings->sync();
-        //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
-//                    m_mutex.unlock();
-//                }
+        if (m_mutex.tryLock(1000)) {
+            m_settings->setValue(key, value);
+            m_settings->sync();
+            m_mutex.unlock();
+        }
     });
 }
 

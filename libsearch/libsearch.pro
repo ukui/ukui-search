@@ -42,6 +42,7 @@ SOURCES += \
     libsearch.cpp
 
 HEADERS += \
+    common.h \
     file-utils.h \
     global-settings.h \
     gobject-template.h \

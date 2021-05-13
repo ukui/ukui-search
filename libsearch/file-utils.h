@@ -56,8 +56,6 @@
 //#define FINISH_CREATING_INDEX 2
 #define MAX_CONTENT_LENGTH 20480000
 
-#define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
-
 namespace Zeeker {
 class  LIBSEARCH_EXPORT FileUtils {
 public:
