@@ -57,6 +57,8 @@ SettingsWidget::~SettingsWidget() {
  * @brief SettingsWidget::initUi 初始化界面UI
  */
 void SettingsWidget::initUi() {
+    QPalette pal = palette();
+    pal.setColor(QPalette::Window, QColor(0, 0, 0, 0));
 //    this->setFixedWidth(528);
 //    this->setMinimumHeight(460);
 //    this->setMaximumHeight(680);
@@ -81,8 +83,6 @@ void SettingsWidget::initUi() {
     m_closeBtn = new QPushButton(m_titleFrame);
     m_closeBtn->setFixedSize(24, 24);
 //    m_closeBtn->setIcon(QIcon(":/res/icons/close.svg"));
-//    m_closeBtn->setStyleSheet("QPushButton{background: transparent;}"
-//                              "QPushButton:hover:!pressed{background: transparent;}");
     m_closeBtn->setIcon(QIcon::fromTheme("window-close-symbolic"));
     m_closeBtn->setProperty("isWindowButton", 0x02);
     m_closeBtn->setProperty("useIconHighlightEffect", 0x08);
@@ -139,9 +139,9 @@ void SettingsWidget::initUi() {
     m_indexBtnLyt->addWidget(m_addDirBtn);
     m_indexBtnLyt->addStretch();
     m_dirListArea = new QScrollArea(m_contentFrame);
-    m_dirListArea->setStyleSheet("QScrollArea{background:transparent;}");
+    m_dirListArea->setPalette(pal);
+    m_dirListArea->setFrameShape(QFrame::Shape::NoFrame);
     m_dirListWidget = new QWidget(m_contentFrame);
-    m_dirListWidget->setStyleSheet("QWidget{background:transparent;}");
     m_dirListLyt = new QVBoxLayout(m_dirListWidget);
     m_dirListLyt->setContentsMargins(0, 0, 0, 0);
     m_dirListLyt->setSpacing(0);

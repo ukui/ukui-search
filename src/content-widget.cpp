@@ -52,6 +52,9 @@ ContentWidget::~ContentWidget() {
  * @brief initUI 初始化homepage和resultpage
  */
 void ContentWidget::initUI() {
+    QPalette pal = palette();
+    pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
+    pal.setColor(QPalette::Window, QColor(0, 0, 0, 0)); //使用此palette的窗口背景将为透明
     m_homePage = new QWidget(this);
     m_homePageLyt = new QVBoxLayout(m_homePage);
     m_homePageLyt->setSpacing(0);
@@ -79,7 +82,6 @@ void ContentWidget::initUI() {
     m_detailLyt = new QVBoxLayout(m_resultDetail);
     m_resultList->setFixedWidth(236);
     m_resultList->setFixedHeight(0);
-    m_resultList->setStyleSheet("QWidget{background:transparent;}");
     m_listLyt->setContentsMargins(0, 0, 12, 0);
     m_listLyt->setSpacing(0);
     m_resultListArea->setWidget(m_resultList);
@@ -91,8 +93,10 @@ void ContentWidget::initUI() {
     });
     m_resultDetailArea->setWidget(m_detailView);
     m_resultDetailArea->setWidgetResizable(true);
-    m_resultListArea->setStyleSheet("QScrollArea{background: transparent;}");
-    m_resultDetailArea->setStyleSheet("QScrollArea{background: transparent; border-radius: 4px;}");
+    m_resultListArea->setFrameShape(QFrame::NoFrame);
+    m_resultDetailArea->setFrameShape(QFrame::NoFrame);
+    m_resultListArea->setPalette(pal);
+    m_resultDetailArea->setPalette(pal);
     this->addWidget(m_homePage);
     this->addWidget(m_resultPage);
 
@@ -226,7 +230,7 @@ void ContentWidget::initListView() {
         this->resetListHeight();
     });
 
-    connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette &pal) {
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
         m_fileListView->refresh();
         m_dirListView->refresh();
         m_contentListView->refresh();

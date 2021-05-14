@@ -77,7 +77,7 @@ public:
      */
 
     // The parameter:keyword is the word or sentence which users want to search.
-    void searchContent(QString keyword);
+    void startSearch(QString keyword);
 
     // The position which mainwindow shows follow the ukui-panel.
     void moveToPanel();

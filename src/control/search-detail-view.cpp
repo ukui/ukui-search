@@ -217,7 +217,8 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
 
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(showname);
+//    m_nameLabel->setText(showname);
+    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(showname)));
     if(QString::compare(showname, m_name)) {
         m_nameLabel->setToolTip(m_name);
     }
@@ -350,18 +351,19 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
         QString wholeName = FileUtils::getFileName(path);
         QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
-        m_nameLabel->setText(name);
+//        m_nameLabel->setText(name);
+        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
         if(QString::compare(name, wholeName)) {
             m_nameLabel->setToolTip(wholeName);
         }
-        m_nameLabel->setTextFormat(Qt::PlainText); //显示纯文本
         m_typeLabel->setText(tr("Document"));
         break;
     }
     case SearchListView::ResType::Setting : {
         setIcon(path);
         QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
-        m_nameLabel->setText(settingType);
+//        m_nameLabel->setText(settingType);
+        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(settingType)));
         m_typeLabel->setText(FileUtils::getSettingName(path));
         break;
     }
@@ -462,8 +464,6 @@ void SearchDetailView::initUI() {
     m_layout = new QVBoxLayout(this);
     this->setLayout(m_layout);
     m_layout->setContentsMargins(16, 60, 16, 24);
-    this->setObjectName("detailView");
-    this->setStyleSheet("QWidget#detailView{background:transparent;}");
     this->setFixedWidth(378);
 
     //没有网络的时候的提示信息
@@ -491,8 +491,7 @@ void SearchDetailView::initUI() {
     m_nameLayout = new QHBoxLayout(m_nameFrame);
     m_nameLabel = new QLabel(m_nameFrame);
     m_typeLabel = new QLabel(m_nameFrame);
-    m_nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
-    m_typeLabel->setStyleSheet("QLabel{font-size: 14px; color: palette(mid);}");
+    m_typeLabel->setEnabled(false);
     m_nameFrame->setFixedHeight(48);
     m_nameLabel->setMaximumWidth(280);
     m_nameLayout->addWidget(m_nameLabel);
