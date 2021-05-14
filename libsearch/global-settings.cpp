@@ -19,50 +19,47 @@
  *
  */
 #include <QtConcurrent>
-#include <QApplication>
 #include <QPalette>
 #include "global-settings.h"
 
+using namespace Zeeker;
 static GlobalSettings *global_instance_of_global_settings = nullptr;
 
-GlobalSettings *GlobalSettings::getInstance()
-{
-    if (!global_instance_of_global_settings) {
+GlobalSettings *GlobalSettings::getInstance() {
+    if(!global_instance_of_global_settings) {
         global_instance_of_global_settings = new GlobalSettings;
     }
     return global_instance_of_global_settings;
 }
 
-GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
-{
+GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
     m_settings = new QSettings(MAIN_SETTINGS, QSettings::IniFormat, this);
 //    m_settings->setAtomicSyncRequired(false);
-    m_block_dirs_settings = new QSettings(BLOCK_DIRS,QSettings::IniFormat, this);
+    m_block_dirs_settings = new QSettings(BLOCK_DIRS, QSettings::IniFormat, this);
     m_block_dirs_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
 
-    m_search_record_settings = new QSettings(SEARCH_HISTORY, QSettings::IniFormat , this);
+    m_search_record_settings = new QSettings(SEARCH_HISTORY, QSettings::IniFormat, this);
     m_search_record_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
-    for(QString i:m_search_record_settings->allKeys())
-    {
+    for(QString i : m_search_record_settings->allKeys()) {
         m_history.append(QUrl::fromPercentEncoding(i.toLocal8Bit()));
     }
     if(!QDBusConnection::sessionBus().connect("org.kylinssoclient.dbus",
-                                              "/org/kylinssoclient/path",
-                                              "org.freedesktop.kylinssoclient.interface",
-                                              "keyChanged",
-                                              this, SLOT(updateSearchHistory(QString))))
+            "/org/kylinssoclient/path",
+            "org.freedesktop.kylinssoclient.interface",
+            "keyChanged",
+            this, SLOT(updateSearchHistory(QString))))
 
-        qWarning()<<"Kylinssoclient Dbus connect fail!";
+        qWarning() << "Kylinssoclient Dbus connect fail!";
 
     this->forceSync();
     m_cache.insert(FONT_SIZE_KEY, 11);
     //the default number of transparency in mainwindow is 0.7
     //if someone changes the num in mainwindow, here should be modified too
     m_cache.insert(TRANSPARENCY_KEY, 1);
-    if (QGSettings::isSchemaInstalled(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID)) {
+    if(QGSettings::isSchemaInstalled(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID)) {
         m_trans_gsettings = new QGSettings(CONTROL_CENTER_PERSONALISE_GSETTINGS_ID, QByteArray(), this);
-        connect(m_trans_gsettings, &QGSettings::changed, this, [=](const QString& key) {
-            if (key == TRANSPARENCY_KEY) {
+        connect(m_trans_gsettings, &QGSettings::changed, this, [ = ](const QString & key) {
+            if(key == TRANSPARENCY_KEY) {
                 m_cache.remove(TRANSPARENCY_KEY);
                 m_cache.insert(TRANSPARENCY_KEY, m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
                 qApp->paletteChanged(qApp->palette());
@@ -72,18 +69,22 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
         m_cache.insert(TRANSPARENCY_KEY, m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
     }
 
-    if (QGSettings::isSchemaInstalled(THEME_GSETTINGS_ID)) {
+    m_cache.insert(STYLE_NAME_KEY, "ukui-light");
+    m_cache.insert(FONT_SIZE_KEY, 11);
+    if(QGSettings::isSchemaInstalled(THEME_GSETTINGS_ID)) {
         m_theme_gsettings = new QGSettings(THEME_GSETTINGS_ID, QByteArray(), this);
-        connect(m_theme_gsettings, &QGSettings::changed, this, [=](const QString& key) {
-            if (key == STYLE_NAME_KEY) {
+        connect(m_theme_gsettings, &QGSettings::changed, this, [ = ](const QString & key) {
+            if(key == STYLE_NAME_KEY) {
                 //当前主题改变时也发出paletteChanged信号，通知主界面刷新
                 qApp->paletteChanged(qApp->palette());
                 m_cache.remove(STYLE_NAME_KEY);
                 m_cache.insert(STYLE_NAME_KEY, m_theme_gsettings->get(STYLE_NAME_KEY).toString());
-            } else if (key == FONT_SIZE_KEY) {
+            } else if(key == FONT_SIZE_KEY) {
                 qApp->paletteChanged(qApp->palette());
                 m_cache.remove(FONT_SIZE_KEY);
                 m_cache.insert(FONT_SIZE_KEY, m_theme_gsettings->get(FONT_SIZE_KEY).toDouble());
+            } else if (key == ICON_THEME_KEY) {
+                qApp->paletteChanged(qApp->palette());
             }
         });
         m_cache.remove(STYLE_NAME_KEY);
@@ -93,38 +94,34 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent)
     }
 }
 
-const QVariant GlobalSettings::getValue(const QString &key)
-{
+const QVariant GlobalSettings::getValue(const QString &key) {
     return m_cache.value(key);
 }
 
-bool GlobalSettings::isExist(const QString &key)
-{
+bool GlobalSettings::isExist(const QString &key) {
     return !m_cache.value(key).isNull();
 }
 
-void GlobalSettings::reset(const QString &key)
-{
+void GlobalSettings::reset(const QString &key) {
     m_cache.remove(key);
-    QtConcurrent::run([=]() {
+    QtConcurrent::run([ = ]() {
 //        if (m_mutex.tryLock(1000)) {
-            m_settings->remove(key);
-            m_settings->sync();
+        m_settings->remove(key);
+        m_settings->sync();
 //            m_mutex.unlock();
 //        }
     });
     Q_EMIT this->valueChanged(key);
 }
 
-void GlobalSettings::resetAll()
-{
+void GlobalSettings::resetAll() {
     QStringList tmp = m_cache.keys();
     m_cache.clear();
-    for (auto key : tmp) {
+    for(auto key : tmp) {
         Q_EMIT this->valueChanged(key);
     }
-    QtConcurrent::run([=]() {
-        if (m_mutex.tryLock(1000)) {
+    QtConcurrent::run([ = ]() {
+        if(m_mutex.tryLock(1000)) {
             m_settings->clear();
             m_settings->sync();
             m_mutex.unlock();
@@ -132,12 +129,9 @@ void GlobalSettings::resetAll()
     });
 }
 
-bool GlobalSettings::setBlockDirs(const QString &path, int &returnCode, bool remove)
-{
-    if(remove)
-    {
-        if(path.isEmpty())
-        {
+bool GlobalSettings::setBlockDirs(const QString &path, int &returnCode, bool remove) {
+    if(remove) {
+        if(path.isEmpty()) {
             returnCode = PATH_EMPTY;
             return false;
         }
@@ -145,21 +139,18 @@ bool GlobalSettings::setBlockDirs(const QString &path, int &returnCode, bool rem
         m_block_dirs_settings->remove(path);
         return true;
     }
-    if(!path.startsWith("/home"))
-    {
+    if(!path.startsWith("/home")) {
 //        returnCode = QString(tr("I can only search your user directory, it doesn't make any sense if you block an directory which is not in user directory!"));
         returnCode = PATH_NOT_IN_HOME;
         return false;
     }
 
     //why QSetting's key can't start with "/"??
-    QString pathKey = path.right(path.length()-1);
+    QString pathKey = path.right(path.length() - 1);
 
     QStringList blockDirs = m_block_dirs_settings->allKeys();
-    for(QString i:blockDirs)
-    {
-        if(pathKey.startsWith(i))
-        {
+    for(QString i : blockDirs) {
+        if(pathKey.startsWith(i)) {
 //            returnCode = QString(tr("My parent folder has been blocked!"));
             returnCode = PATH_PARENT_BLOCKED;
             return false;
@@ -168,12 +159,11 @@ bool GlobalSettings::setBlockDirs(const QString &path, int &returnCode, bool rem
         if(i.startsWith(pathKey))
             m_block_dirs_settings->remove(i);
     }
-    m_block_dirs_settings->setValue(pathKey,"0");
+    m_block_dirs_settings->setValue(pathKey, "0");
     return true;
 }
 
-QStringList GlobalSettings::getBlockDirs()
-{
+QStringList GlobalSettings::getBlockDirs() {
     return m_block_dirs_settings->allKeys();
 }
 
@@ -197,19 +187,17 @@ QStringList GlobalSettings::getBlockDirs()
 //    }
 //}
 
-void GlobalSettings::setSearchRecord(const QString &word, const QDateTime &time)
-{
+void GlobalSettings::setSearchRecord(const QString &word, const QDateTime &time) {
     QStringList keys = m_search_record_settings->allKeys();
     if(keys.contains(QString(QUrl::toPercentEncoding(word))))
         m_history.removeOne(word);
-        m_search_record_settings->setValue(QString(QUrl::toPercentEncoding(word)), time.toString("yyyy-MM-dd hh:mm:ss"));
+    m_search_record_settings->setValue(QString(QUrl::toPercentEncoding(word)), time.toString("yyyy-MM-dd hh:mm:ss"));
     if(keys.size() >= 20)
-       m_search_record_settings->remove(QString(QUrl::toPercentEncoding(m_history.takeFirst())));
+        m_search_record_settings->remove(QString(QUrl::toPercentEncoding(m_history.takeFirst())));
     m_history.append(word);
 }
 
-QStringList GlobalSettings::getSearchRecord()
-{
+QStringList GlobalSettings::getSearchRecord() {
     return m_history;
 }
 
@@ -260,32 +248,23 @@ QStringList GlobalSettings::getSearchRecord()
 //    return values;
 //}
 
-//here should be override
-//MouseZhangZh
-void GlobalSettings::setValue(const QString &key, const QVariant &value)
-{
-    //    qDebug()<<"setvalue========"<<key<<":"<<value;
+//this method is designed for main process settings only!!
+void GlobalSettings::setValue(const QString &key, const QVariant &value) {
     m_cache.insert(key, value);
-    //     m_settings->sync();
-    QtConcurrent::run([=]() {
-        //        qDebug()<<m_settings->status();
-        //        if (m_mutex.tryLock(1000)) {
-        //        m_mutex.lock();
-        m_settings->setValue(key, value);
-        //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
-        m_settings->sync();
-        //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
-        //            m_mutex.unlock();
-        //        }
+    QtConcurrent::run([ = ]() {
+        if (m_mutex.tryLock(1000)) {
+            m_settings->setValue(key, value);
+            m_settings->sync();
+            m_mutex.unlock();
+        }
     });
 }
 
-void GlobalSettings::forceSync(const QString &key)
-{
+void GlobalSettings::forceSync(const QString &key) {
     m_settings->sync();
-    if (key.isNull()) {
+    if(key.isNull()) {
         m_cache.clear();
-        for (auto key : m_settings->allKeys()) {
+        for(auto key : m_settings->allKeys()) {
             m_cache.insert(key, m_settings->value(key));
         }
     } else {
@@ -294,14 +273,11 @@ void GlobalSettings::forceSync(const QString &key)
     }
 }
 
-void GlobalSettings::updateSearchHistory(QString key)
-{
-    if(key == "search")
-    {
+void GlobalSettings::updateSearchHistory(QString key) {
+    if(key == "search") {
         m_search_record_settings->sync();
         m_history.clear();
-        for(QString i:m_search_record_settings->allKeys())
-        {
+        for(QString i : m_search_record_settings->allKeys()) {
             m_history.append(QUrl::fromPercentEncoding(i.toLocal8Bit()));
         }
     }

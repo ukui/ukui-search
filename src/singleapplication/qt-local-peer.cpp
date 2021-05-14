@@ -61,10 +61,9 @@ namespace QtLP_Private {
 const char* QtLocalPeer::ack = "ack";
 
 QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
-    : QObject(parent), id(appId)
-{
+    : QObject(parent), id(appId) {
     QString prefix = id;
-    if (id.isEmpty()) {
+    if(id.isEmpty()) {
         id = QCoreApplication::applicationFilePath();
 #if defined(Q_OS_WIN)
         id = id.toLower();
@@ -80,11 +79,11 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
                  + QLatin1Char('-') + QString::number(idNum, 16);
 
 #if defined(Q_OS_WIN)
-    if (!pProcessIdToSessionId) {
+    if(!pProcessIdToSessionId) {
         QLibrary lib("kernel32");
         pProcessIdToSessionId = (PProcessIdToSessionId)lib.resolve("ProcessIdToSessionId");
     }
-    if (pProcessIdToSessionId) {
+    if(pProcessIdToSessionId) {
         DWORD sessionId = 0;
         pProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
         socketName += QLatin1Char('-') + QString::number(sessionId, 16);
@@ -103,33 +102,31 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
 
 
 
-bool QtLocalPeer::isClient()
-{
-    if (lockFile.isLocked())
+bool QtLocalPeer::isClient() {
+    if(lockFile.isLocked())
         return false;
 
-    if (!lockFile.lock(QtLP_Private::QtLockedFile::WriteLock, false))
+    if(!lockFile.lock(QtLP_Private::QtLockedFile::WriteLock, false))
         return true;
 
     //由于文件锁的存在，仅当本进程第一次启动时能执行到此并使server进行监听和关联槽函数
     bool res = server->listen(socketName);
 #if defined(Q_OS_UNIX) && (QT_VERSION >= QT_VERSION_CHECK(4,5,0))
     // ### Workaround
-    if (!res && server->serverError() == QAbstractSocket::AddressInUseError) {
-        QFile::remove(QDir::cleanPath(QDir::tempPath())+QLatin1Char('/')+socketName);
+    if(!res && server->serverError() == QAbstractSocket::AddressInUseError) {
+        QFile::remove(QDir::cleanPath(QDir::tempPath()) + QLatin1Char('/') + socketName);
         res = server->listen(socketName);
     }
 #endif
-    if (!res)
+    if(!res)
         qWarning("QtSingleCoreApplication: listen on local socket failed, %s", qPrintable(server->errorString()));
     QObject::connect(server, &QLocalServer::newConnection, this, &QtLocalPeer::receiveConnection);
     return false;
 }
 
 
-bool QtLocalPeer::sendMessage(const QString &message, int timeout)
-{
-    if (!isClient())
+bool QtLocalPeer::sendMessage(const QString &message, int timeout) {
+    if(!isClient())
         return false;
 
     QLocalSocket socket;
@@ -137,8 +134,8 @@ bool QtLocalPeer::sendMessage(const QString &message, int timeout)
     for(int i = 0; i < 2; i++) {
         // Try twice, in case the other instance is just starting up
         socket.connectToServer(socketName);
-        connOk = socket.waitForConnected(timeout/2);
-        if (connOk || i)
+        connOk = socket.waitForConnected(timeout / 2);
+        if(connOk || i)
             break;
         int ms = 250;
 #if defined(Q_OS_WIN)
@@ -148,16 +145,16 @@ bool QtLocalPeer::sendMessage(const QString &message, int timeout)
         nanosleep(&ts, NULL);
 #endif
     }
-    if (!connOk)
+    if(!connOk)
         return false;
 
     QByteArray uMsg(message.toUtf8());
     QDataStream ds(&socket);
     ds.writeBytes(uMsg.constData(), uMsg.size());
     bool res = socket.waitForBytesWritten(timeout);
-    if (res) {
+    if(res) {
         res &= socket.waitForReadyRead(timeout);   // wait for ack
-        if (res)
+        if(res)
             res &= (socket.read(qstrlen(ack)) == ack);
     }
     return res;
@@ -166,19 +163,18 @@ bool QtLocalPeer::sendMessage(const QString &message, int timeout)
 /**
  * @brief QtLocalPeer::receiveConnection 当新进程启动时，会尝试连接此进程server,server接收到newConnection信号并触发此槽函数
  */
-void QtLocalPeer::receiveConnection()
-{
+void QtLocalPeer::receiveConnection() {
     QLocalSocket* socket = server->nextPendingConnection(); //获取新进程的socket
-    if (!socket)
+    if(!socket)
         return;
 
-    while (true) {
-        if (socket->state() == QLocalSocket::UnconnectedState) {
+    while(true) {
+        if(socket->state() == QLocalSocket::UnconnectedState) {
             qWarning("QtLocalPeer: Peer disconnected");
             delete socket;
             return;
         }
-        if (socket->bytesAvailable() >= qint64(sizeof(quint32)))
+        if(socket->bytesAvailable() >= qint64(sizeof(quint32)))
             break;
         socket->waitForReadyRead();
     }
@@ -194,8 +190,8 @@ void QtLocalPeer::receiveConnection()
         got = ds.readRawData(uMsgBuf, remaining);
         remaining -= got;
         uMsgBuf += got;
-    } while (remaining && got >= 0 && socket->waitForReadyRead(2000));
-    if (got < 0) {
+    } while(remaining && got >= 0 && socket->waitForReadyRead(2000));
+    if(got < 0) {
         qWarning("QtLocalPeer: Message reception failed %s", socket->errorString().toLatin1().constData());
         delete socket;
         return;

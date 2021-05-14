@@ -32,24 +32,23 @@
 #include <QDebug>
 #include <QMutex>
 
-struct SKeyWord{
+struct SKeyWord {
     std::string word;
     QVector<size_t> offsets;
     double weight;
-    ~SKeyWord(){
+    ~SKeyWord() {
         word = std::move("");
         offsets.clear();
 //        offsets.shrink_to_fit();
     }
 };
 
-class CHINESESEGMENTATION_EXPORT ChineseSegmentation
-{
+class CHINESESEGMENTATION_EXPORT ChineseSegmentation {
 public:
     static ChineseSegmentation *getInstance();
     ~ChineseSegmentation();
     QVector<SKeyWord> callSegement(QString str);
-    void convert(std::vector<cppjieba::KeywordExtractor::Word>& keywordres,QVector<SKeyWord>& kw);
+    void convert(std::vector<cppjieba::KeywordExtractor::Word>& keywordres, QVector<SKeyWord>& kw);
 private:
     static QMutex m_mutex;
     cppjieba::Jieba *m_jieba;

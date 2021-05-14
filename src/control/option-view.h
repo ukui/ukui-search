@@ -28,8 +28,8 @@
 #include <QHBoxLayout>
 #include "search-list-view.h"
 
-class OptionView : public QWidget
-{
+namespace Zeeker {
+class OptionView : public QWidget {
     Q_OBJECT
 public:
     explicit OptionView(QWidget *);
@@ -72,5 +72,6 @@ private:
 Q_SIGNALS:
     void onOptionClicked(const int&);
 };
+}
 
 #endif // OPTIONVIEW_H

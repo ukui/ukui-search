@@ -27,6 +27,7 @@
 #include <QHBoxLayout>
 #include <QPropertyAnimation>
 #include <QPaintEvent>
+#include <QPainterPath>
 #include <QPainter>
 #include <QtMath>
 #include <QEvent>
@@ -43,19 +44,32 @@
 #include <QKeyEvent>
 #include <QGSettings/QGSettings>
 #include <QSystemTrayIcon>
-#include <xcb/xcb.h>
+
+#include <QTimer>
+
 
 #include "content-widget.h"
 #include "input-box.h"
 #include "index/index-generator.h"
-#include "settings-widget.h"
 #include "libsearch.h"
 #include "search-app-thread.h"
-//#include "xatom-helper.h"
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include "xatom-helper.h"
+#endif
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+#include "settings-widget.h"
+#endif
+#include "create-index-ask-dialog.h"
+
+#define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
+#define SEARCH_METHOD_KEY "indexSearch"
+#define WEB_ENGINE_KEY "webEngine"
+
+
+namespace Zeeker {
 class SearchResult;
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     friend class SearchResult;
     Q_OBJECT
 
@@ -74,13 +88,17 @@ public:
 
     // The position which mainwindow shows in the center of screen where the cursor in.
     void centerToScreen(QWidget* widget);
+    void initGsettings();
 
-//    MotifWmHints m_hints;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    MotifWmHints m_hints;
+#endif
+
 
 private:
 
     // MainWindow quit when focus out.
-    bool nativeEvent(const QByteArray&, void*, long*);
+//    bool nativeEvent(const QByteArray&, void*, long*);
 
     QFrame * m_frame = nullptr;                  // Main frame
     QFrame * m_titleFrame = nullptr;             // Title bar frame
@@ -88,30 +106,48 @@ private:
     QLabel * m_iconLabel = nullptr;              // Icon lable
     QLabel * m_titleLabel = nullptr;             // Title lable
     QPushButton * m_menuBtn = nullptr;           // Menu button
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
     SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
+#endif
     ContentWidget * m_contentFrame = nullptr;    // Content frame
     SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
     SeachBarWidget * m_searchWidget = nullptr;   // Search bar
-
-    QGSettings * m_transparency_gsettings = nullptr;
-    double getTransparentData();
 
     QStringList m_dirList;
 
     QQueue<QString> *m_search_result_file = nullptr;
     QQueue<QString> *m_search_result_dir = nullptr;
-    QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
+    QQueue<QPair<QString, QStringList>> *m_search_result_content = nullptr;
     SearchResult * m_search_result_thread = nullptr;
     SearchAppThread * m_seach_app_thread = nullptr;
 
     SearchManager* m_searcher = nullptr;
     SettingsMatch *m_settingsMatch = nullptr;
-    QSystemTrayIcon *m_sys_tray_icon;
+    QSystemTrayIcon *m_sys_tray_icon = nullptr;
+//    CreateIndexAskDialog * m_askDialog = nullptr;
+    bool m_isAskDialogVisible = false;
+
+    QTimer * m_askTimer = nullptr; //询问是否创建索引弹窗弹出的计时器
+    QTimer * m_researchTimer = nullptr; //创建索引后重新执行一次搜索的计时器
+    bool m_currentSearchAsked = false; //本次搜索是否已经询问过是否创建索引了
+    QGSettings * m_search_gsettings = nullptr;
+
+    SearchMethodManager m_searchMethodManager;
+
+//    void setSearchMethod(const bool&);
+    double getTransparentData();
+//    void initTimer();
+    bool tryHideMainwindow();
 
 protected:
     void paintEvent(QPaintEvent *);
     void keyPressEvent(QKeyEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
     void initUi();
+
+Q_SIGNALS:
+//    void searchMethodChanged(FileUtils::SearchMethod);
+    void webEngineChanged();
 
 public Q_SLOTS:
     /**
@@ -127,6 +163,8 @@ public Q_SLOTS:
 
     void bootOptionsFilter(QString opt);                              // 过滤终端命令
     void clearSearchResult(); //清空搜索结果
+    void createIndexSlot();
 };
+}
 
 #endif // MAINWINDOW_H

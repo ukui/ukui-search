@@ -26,8 +26,8 @@
 #include <QHBoxLayout>
 #include <QTimer>
 
-class ShowMoreLabel : public QWidget
-{
+namespace Zeeker {
+class ShowMoreLabel : public QWidget {
     Q_OBJECT
 public:
     explicit ShowMoreLabel(QWidget *parent = nullptr);
@@ -57,5 +57,6 @@ public Q_SLOTS:
     void stopLoading();
     void refreshLoadState();
 };
+}
 
 #endif // SHOWMORELABEL_H

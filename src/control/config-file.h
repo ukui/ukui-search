@@ -26,19 +26,20 @@
 #include <QFileInfo>
 #include <QDir>
 #define HOMEPAGE_SETTINGS  QDir::homePath()+"/.config/org.ukui/ukui-search/ukui-search-homepage.conf"
-class ConfigFile : public QObject
-{
+namespace Zeeker {
+class ConfigFile : public QObject {
     Q_OBJECT
 public:
     static bool writeConfig(QString message);
-    static QMap<QString,QStringList> readConfig();
+    static QMap<QString, QStringList> readConfig();
     static void receiveMessage(QString message);
 private:
-   static bool writeCommonly(QString message);
-   static QStringList readCommonly();
-   static bool writeRecently(QString message);
-   static QStringList readRecently();
+    static bool writeCommonly(QString message);
+    static QStringList readCommonly();
+    static bool writeRecently(QString message);
+    static QStringList readRecently();
 
 };
+}
 
 #endif // CONFIGFILE_H

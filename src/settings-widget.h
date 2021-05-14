@@ -33,10 +33,12 @@
 #include <QScrollArea>
 #include <QTimer>
 #include <libsearch.h>
-//#include "xatom-helper.h"
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include "xatom-helper.h"
+#endif
 
-class SettingsWidget : public QWidget
-{
+namespace Zeeker {
+class SettingsWidget : public QWidget {
     Q_OBJECT
 public:
     explicit SettingsWidget(QWidget *parent = nullptr);
@@ -45,6 +47,7 @@ public:
     void setIndexState(bool);
     void setIndexNum(int);
     void showWidget();
+    void resetWebEngine();
 
 private:
     void initUi();
@@ -54,9 +57,11 @@ private:
     void paintEvent(QPaintEvent *);
     void resize();
     void showWarningDialog(const int&);
-    void resetWebEngine();
 
-//    MotifWmHints m_hints;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    MotifWmHints m_hints;
+#endif
+
 
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
@@ -109,6 +114,7 @@ private:
 
 Q_SIGNALS:
     void settingWidgetClosed();
+    void webEngineChanged(const QString&);
 
 private Q_SLOTS:
 //    void onBtnConfirmClicked();
@@ -117,5 +123,6 @@ private Q_SLOTS:
     void onBtnDelClicked(const QString&);
     void setWebEngine(const QString&);
 };
+}
 
 #endif // SETTINGSWIDGET_H

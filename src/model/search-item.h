@@ -26,8 +26,8 @@
 #include "search-item-model.h"
 #include "file-utils.h"
 
-class SearchItem : public QObject
-{
+namespace Zeeker {
+class SearchItem : public QObject {
     friend class SearchItemModel;
     friend class SearchListView;
     Q_OBJECT
@@ -70,5 +70,6 @@ private:
 Q_SIGNALS:
 
 };
+}
 
 #endif // SEARCHITEM_H

@@ -56,13 +56,10 @@
 //#define FINISH_CREATING_INDEX 2
 #define MAX_CONTENT_LENGTH 20480000
 
-#define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
-
-
-class  LIBSEARCH_EXPORT FileUtils
-{
+namespace Zeeker {
+class  LIBSEARCH_EXPORT FileUtils {
 public:
-    static std::string makeDocUterm(QString );
+    static std::string makeDocUterm(QString);
     static QIcon getFileIcon(const QString &, bool checkValid = true);
     static QIcon getAppIcon(const QString &);
     static QIcon getSettingIcon(const QString &, const bool&);
@@ -88,11 +85,13 @@ public:
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;
 
-//    enum class SearchMethod{ DIRECTSEARCH = 0, INDEXSEARCH = 1};
-//    static SearchMethod searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
+    enum class SearchMethod { DIRECTSEARCH = 0, INDEXSEARCH = 1};
+    static SearchMethod searchMethod;
 
 private:
     FileUtils();
 };
+
+}
 
 #endif // FILEUTILS_H
