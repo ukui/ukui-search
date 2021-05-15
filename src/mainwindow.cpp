@@ -85,16 +85,6 @@ MainWindow::MainWindow(QWidget *parent) :
     KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 #endif
 
-    connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette & pal) {
-        this->setPalette(pal);
-        this->update();
-        Q_FOREACH(QWidget *widget, this->findChildren<QWidget *>()) {
-            if(widget) {
-                widget->update();
-            }
-        }
-    });
-
     m_search_result_file = new QQueue<QString>;
     m_search_result_dir = new QQueue<QString>;
     m_search_result_content = new QQueue<QPair<QString, QStringList>>;
@@ -287,7 +277,7 @@ void MainWindow::initUi() {
                 if(! m_search_result_thread->isRunning()) {
                     m_search_result_thread->start();
                 }
-                searchContent(text);
+                startSearch(text);
                 //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
                 if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
                     m_askTimer->start();
@@ -389,10 +379,10 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen) {
 }
 
 /**
- * @brief searchContent 搜索关键字
- * @param searchcontent
+ * @brief startSearch 搜索关键字
+ * @param keyword
  */
-void MainWindow::searchContent(QString keyword) {
+void MainWindow::startSearch(QString keyword) {
     m_contentFrame->setKeyword(keyword);
 
     //设置搜索
@@ -533,7 +523,7 @@ void MainWindow::initTimer() {
     m_researchTimer->setInterval(10 * 1000);
     connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
         if(this->isVisible()) {
-            searchContent(m_searchLayout->text());
+            startSearch(m_searchLayout->text());
         }
         m_researchTimer->stop();
     });

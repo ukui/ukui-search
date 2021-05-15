@@ -98,7 +98,6 @@ void SearchBarHLayout::initUI() {
 
     m_queryWidget = new QWidget(m_queryLineEdit);
     m_queryWidget->setFocusPolicy(Qt::NoFocus);
-    m_queryWidget->setStyleSheet("border:0px;background:transparent");
 
     QHBoxLayout* queryWidLayout = new QHBoxLayout;
     queryWidLayout->setContentsMargins(8, 4, 0, 0);
@@ -109,13 +108,12 @@ void SearchBarHLayout::initUI() {
 
     QPixmap pixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(20, 20)));
     m_queryIcon = new QLabel;
-    m_queryIcon->setStyleSheet("background:transparent");
     m_queryIcon->setFixedSize(pixmap.size());
     m_queryIcon->setPixmap(pixmap);
 
     m_queryText = new QLabel;
     m_queryText->setText(tr("Search"));
-    m_queryText->setStyleSheet("background:transparent;color:#626c6e;");
+    m_queryText->setEnabled(false);
     m_queryText->setContentsMargins(0, 0, 0, 4);
     m_queryText->adjustSize();
 
@@ -215,7 +213,6 @@ SearchLineEdit::SearchLineEdit() {
 //    popView->setProperty("customShadowMargins", QVector4D(20, 20, 20, 20));
 //    popView->setAttribute(Qt::WA_TranslucentBackground);
 //    m_completer->setPopup(popView);
-//    m_completer->popup()->setStyle(CustomStyle::getStyle());
     m_completer->setMaxVisibleItems(14);
 
     setCompleter(m_completer);
