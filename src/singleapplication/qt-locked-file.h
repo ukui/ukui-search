@@ -65,8 +65,7 @@
 
 namespace QtLP_Private {
 
-class QT_QTLOCKEDFILE_EXPORT QtLockedFile : public QFile
-{
+class QT_QTLOCKEDFILE_EXPORT QtLockedFile : public QFile {
 public:
     enum LockMode { NoLock = 0, ReadLock, WriteLock };
 

@@ -18,6 +18,6 @@
  *
  */
 #include "libsearch.h"
-
+using namespace Zeeker;
 
 // Encapsulate advanced interfaces here.

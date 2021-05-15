@@ -23,10 +23,11 @@
 #include <QFileInfo>
 #include "custom-style.h"
 
-SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent)
-{
-    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
-    this->setStyle(style);
+using namespace Zeeker;
+SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent) {
+//    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
+    this->setStyle(CustomStyle::getStyle());
+    setRootIsDecorated(false);
 
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -39,39 +40,36 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setHeaderHidden(true);
 //    this->setColumnWidth(0, 20);
 //    this->setColumnWidth(1, 80);
-    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
-    this->setFixedHeight(list.count() * rowheight + 4);
+//    this->setFixedHeight(list.count() * rowheight + 4);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
 //    this->setStyleSheet("QWidget{background:transparent;}");
-//    m_styleDelegate = new HighlightItemDelegate(this);
+    m_styleDelegate = new HighlightItemDelegate(this);
 //    m_styleDelegate->setSearchKeyword(keyword);
-//    this->setItemDelegate(m_styleDelegate);
+    this->setItemDelegate(m_styleDelegate);
 
     m_type = type;
-    connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ](const QItemSelection &selected, const QItemSelection &deselected) {
+    connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ](const QItemSelection & selected, const QItemSelection & deselected) {
         Q_EMIT this->currentRowChanged(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
         m_isSelected = true;
-        if(!selected.isEmpty())
-        {
+        if(!selected.isEmpty()) {
             QRegion region = visualRegionForSelection(selected);
             QRect rect = region.boundingRect();
             Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
         }
     });
 
-    connect(this, &SearchListView::activated, this, [ = ](const QModelIndex& index) {
+    connect(this, &SearchListView::activated, this, [ = ](const QModelIndex & index) {
         Q_EMIT this->onRowDoubleClicked(this, getCurrentType(), m_item->m_pathlist.at(index.row()));
     });
 }
 
-SearchListView::~SearchListView()
-{
-    if (m_model) {
+SearchListView::~SearchListView() {
+    if(m_model) {
         delete m_model;
         m_model = NULL;
     }
-    if (m_item) {
+    if(m_item) {
         delete m_item;
         m_item = NULL;
     }
@@ -89,11 +87,10 @@ void SearchListView::appendItem(QString path) {
 /**
  * @brief SearchListView::setList 设置整个列表
  */
-void SearchListView::setList(QStringList list)
-{
+void SearchListView::setList(QStringList list) {
     QModelIndex index = this->currentIndex();
     m_model->setList(list);
-    if (index.row() >= 0 && index.row() < list.length() && m_isSelected) {
+    if(index.row() >= 0 && index.row() < list.length() && m_isSelected) {
         this->blockSignals(true);
         this->setCurrentIndex(index);
         this->blockSignals(false);
@@ -104,13 +101,11 @@ void SearchListView::setList(QStringList list)
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
 
-void SearchListView::setAppList(const QStringList &pathlist, const QStringList &iconlist)
-{
+void SearchListView::setAppList(const QStringList &pathlist, const QStringList &iconlist) {
     m_model->setAppList(pathlist, iconlist);
 }
 
-void SearchListView::appendBestItem(const QPair<int, QString> &pair)
-{
+void SearchListView::appendBestItem(const QPair<int, QString> &pair) {
     m_model->appendBestItem(pair);
 }
 
@@ -121,8 +116,7 @@ void SearchListView::removeItem(QString path) {
     m_model->removeItem(path);
 }
 
-void SearchListView::clear()
-{
+void SearchListView::clear() {
     this->blockSignals(true);
     this->clearSelection();
     this->blockSignals(false);
@@ -132,20 +126,35 @@ void SearchListView::clear()
 }
 
 /**
+ * @brief SearchListView::refresh 重新绘制当前列表
+ */
+void SearchListView::refresh()
+{
+    QModelIndex index = this->currentIndex();
+    m_model->refresh();
+    if(index.row() >= 0 && index.row() < m_model->length() && m_isSelected) {
+        this->blockSignals(true);
+        this->setCurrentIndex(index);
+        this->blockSignals(false);
+    }
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+}
+
+/**
  * @brief SearchListView::setKeyword 设置关键词
  * @param keyword 关键词
  */
-void SearchListView::setKeyword(QString keyword)
-{
-//    m_styleDelegate->setSearchKeyword(keyword);
+
+void SearchListView::setKeyword(QString keyword) {
+    m_styleDelegate->setSearchKeyword(keyword);
 }
 
 /**
  * @brief SearchListView::getType 获取此列表类型
  * @return
  */
-int SearchListView::getType()
-{
+int SearchListView::getType() {
     return m_type;
 }
 
@@ -153,15 +162,12 @@ int SearchListView::getType()
  * @brief SearchListView::getLength 获取当前显示的列表项数量
  * @return
  */
-int SearchListView::getLength()
-{
+int SearchListView::getLength() {
     return m_item->getCurrentSize();
 }
 
-void SearchListView::mousePressEvent(QMouseEvent *event)
-{
-    if(event->button() == Qt::LeftButton)
-    {
+void SearchListView::mousePressEvent(QMouseEvent *event) {
+    if(event->button() == Qt::LeftButton) {
         Q_EMIT mousePressed();
     }
     QTreeView::mousePressEvent(event);
@@ -169,7 +175,7 @@ void SearchListView::mousePressEvent(QMouseEvent *event)
 
 //获取当前选项所属搜索类型
 int SearchListView::getCurrentType() {
-    switch (m_type) {
+    switch(m_type) {
     case SearchItem::SearchType::Apps :
 //        qDebug()<<"qDebug: One row selected, its type is application.";
         return ResType::App;
@@ -200,11 +206,11 @@ int SearchListView::getCurrentType() {
  * @return
  */
 int SearchListView::getResType(const QString& path) {
-    if (path.endsWith(".desktop")) {
+    if(path.endsWith(".desktop")) {
         return SearchListView::ResType::App;
-    } else if (QFileInfo(path).isFile()) {
+    } else if(QFileInfo(path).isFile()) {
         return SearchListView::ResType::Best;
-    } else if (QFileInfo(path).isDir()) {
+    } else if(QFileInfo(path).isDir()) {
         return SearchListView::ResType::Dir;
     } else {
         return SearchListView::ResType::Setting;

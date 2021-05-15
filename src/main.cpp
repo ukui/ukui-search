@@ -29,14 +29,18 @@
 #include <QLocale>
 #include <X11/Xlib.h>
 #include <syslog.h>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <ukui-log4qt.h>
+#endif
 #include <QObject>
+#include <QApplication>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
 #include "libsearch.h"
 #include "global-settings.h"
 
-
+using namespace Zeeker;
 //void handler(int){
 //    qDebug() << "Recieved SIGTERM!";
 
@@ -107,8 +111,8 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 }
 
 void centerToScreen(QWidget* widget) {
-    if (!widget)
-      return;
+    if(!widget)
+        return;
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
     int desk_x = desk_rect.width();
@@ -117,57 +121,87 @@ void centerToScreen(QWidget* widget) {
     int y = widget->height();
     widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
 }
+/*
+void searchMethod(FileUtils::SearchMethod sm){
+    qWarning() << "searchMethod start: " << static_cast<int>(sm);
+    if (FileUtils::SearchMethod::INDEXSEARCH == sm || FileUtils::SearchMethod::DIRECTSEARCH == sm) {
+        FileUtils::searchMethod = sm;
+    } else {
+        printf("enum class error!!!\n");
+        qWarning("enum class error!!!\n");
+    }
+    if (FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::_index_status) {
+        qWarning() << "start first index";
+        FirstIndex fi("/home/zhangzihao/Desktop");
+        fi.start();
+        qWarning() << "start inotify index";
+//        InotifyIndex ii("/home");
+//        ii.start();
+        InotifyIndex* ii = InotifyIndex::getInstance("/home");
+        if (!ii->isRunning()) {
+            ii->start();
+        }
+        qDebug()<<"Search method has been set to INDEXSEARCH";
+    }
+    qWarning() << "searchMethod end: " << static_cast<int>(FileUtils::searchMethod);
+}
+*/
+int main(int argc, char *argv[]) {
+//v101日志模块
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+//    //Init log module
+//    initUkuiLog4qt("ukui-search");
+//#endif
 
-int main(int argc, char *argv[])
-{
     // Determine whether the home directory has been created, and if not, keep waiting.
     char *p_home = NULL;
 
     unsigned int i = 0;
-    while(p_home == NULL)
-    {
+    while(p_home == NULL) {
         ::sleep(1);
         ++i;
         p_home = getenv("HOME");
-        if(i%5==0)
-        {
-            qWarning()<<"I can't find home! I'm done here!!";
+        if(i % 5 == 0) {
+            qWarning() << "I can't find home! I'm done here!!";
             printf("I can't find home! I'm done here!!");
-            syslog(LOG_ERR,"I can't find home! I'm done here!!\n");
+            syslog(LOG_ERR, "I can't find home! I'm done here!!\n");
         }
     }
     p_home = NULL;
-    while(!QDir(QDir::homePath()).exists())
-    {
-        qWarning()<<"Home is not exits!!";
+    while(!QDir(QDir::homePath()).exists()) {
+        qWarning() << "Home is not exits!!";
         printf("Home is not exits!!");
-        syslog(LOG_ERR,"Home is not exits!!\n");
+        syslog(LOG_ERR, "Home is not exits!!\n");
         ::sleep(1);
     }
 
     // Output log to file
     qInstallMessageHandler(messageOutput);
+//若使用v101日志模块，可以解放如下判断条件
+//#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+//    // Output log to file
+//    qInstallMessageHandler(messageOutput);
+//#endif
 
     // Register meta type
     qDebug() << "ukui-search main start";
-    qRegisterMetaType<QPair<QString,QStringList>>("QPair<QString,QStringList>");
+    qRegisterMetaType<QPair<QString, QStringList>>("QPair<QString,QStringList>");
     qRegisterMetaType<Document>("Document");
 
     // If qt version bigger than 5.12, enable high dpi scaling and use high dpi pixmaps?
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-  QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+    QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
 
     // Make sure only one ukui-search is running.
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    if(app.isRunning())
-    {
+    if(app.isRunning()) {
         app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
         qDebug() << QObject::tr("ukui-search is already running!");
         return EXIT_SUCCESS;
@@ -178,23 +212,23 @@ int main(int argc, char *argv[])
         parser.addOptions({debugOption, showsearch});
         parser.process(app);
     }*/
+    /*
+        // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
+        QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
+        if(!fifoDir.exists())
+            qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
 
-    // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
-    QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
-    if(!fifoDir.exists())
-        qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
-
-    unlink(UKUI_SEARCH_PIPE_PATH);
-    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
-    if(retval == -1)
-    {
-        qCritical()<<"creat fifo error!!";
-        syslog(LOG_ERR,"creat fifo error!!\n");
-        assert(false);
-        return -1;
-    }
-    qDebug()<<"create fifo success\n";
-
+        unlink(UKUI_SEARCH_PIPE_PATH);
+        int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
+        if(retval == -1)
+        {
+            qCritical()<<"creat fifo error!!";
+            syslog(LOG_ERR,"creat fifo error!!\n");
+            assert(false);
+            return -1;
+        }
+        qDebug()<<"create fifo success\n";
+    */
     // Set max_user_watches to a number which is enough big.
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
@@ -230,25 +264,29 @@ int main(int argc, char *argv[])
     QTranslator translator;
     try {
 //        if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw -1;
-        if (! translator.load(":/res/translations/zh_CN.qm" + QLocale::system().name())) throw -1;
+        if (! translator.load(":/res/translations/zh_CN.qm")) throw -1;
         app.installTranslator(&translator);
-    } catch (...) {
+    } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
     QTranslator qt_translator;
     try {
-        if (! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw -1;
+        if(! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
         app.installTranslator(&qt_translator);
-    } catch (...) {
+    } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
     //set main window to the center of screen
     MainWindow *w = new MainWindow;
+    qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
 //    centerToScreen(w);
 //    w->moveToPanel();
     centerToScreen(w);
+
+    //请务必在connect之后初始化mainwindow的Gsettings，为了保证gsettings第一次读取到的配置值能成功应用
+    w->initGsettings();
 
     //使用窗管的无边框策略
 //    w->setProperty("useStyleWindowManager", false); //禁用拖动
@@ -261,10 +299,14 @@ int main(int argc, char *argv[])
     app.setActivationWindow(w);
 
     // Processing startup parameters
-    if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
+    if(QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
 //        w->moveToPanel();
         centerToScreen(w);
-//        XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+        XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
+#endif
+
         w->show();
     }
 
@@ -279,13 +321,13 @@ int main(int argc, char *argv[])
 
     // TODO
     // First insdex start, the parameter us useless, should remove the parameter
-    FirstIndex fi("/home/zhangzihao/Desktop");
-    fi.start();
+//    FirstIndex fi("/home/zhangzihao/Desktop");
+//    fi.start();
 
     // TODO
     // Inotify index start, the parameter us useless, should remove the parameter
-    InotifyIndex* ii = InotifyIndex::getInstance("/home");
-    ii->start();
+//    InotifyIndex* ii = InotifyIndex::getInstance("/home");
+//    ii->start();
 
     return app.exec();
 }

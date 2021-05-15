@@ -1,2 +1,2 @@
 usr/include/chinese-seg/*
-usr/lib/*.so
+usr/lib/*/libchinese-segmentation.so

@@ -24,25 +24,24 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
-
-class Document
-{
+namespace Zeeker {
+class Document {
 public:
     Document() = default;
-    ~Document(){}
-    Document(const Document& other){
+    ~Document() {}
+    Document(const Document& other) {
         m_document = other.m_document;
         m_index_text = other.m_index_text;
         m_unique_term = other.m_unique_term;
     }
-    void operator=(const Document& other){
-            m_document = other.m_document;
-            m_index_text = other.m_index_text;
-            m_unique_term = other.m_unique_term;
+    void operator=(const Document& other) {
+        m_document = other.m_document;
+        m_index_text = other.m_index_text;
+        m_unique_term = other.m_unique_term;
     }
     void setData(QString data);
-    void addPosting(std::string term, QVector<size_t> offset, int weight =1);
-    void addPosting(std::string term, unsigned int offset, int weight =1);
+    void addPosting(std::string term, QVector<size_t> offset, int weight = 1);
+    void addPosting(std::string term, unsigned int offset, int weight = 1);
     void addTerm(QString term);
     void addValue(QString value);
     void setUniqueTerm(QString term);
@@ -56,5 +55,6 @@ private:
     QString m_unique_term;
 
 };
+}
 
 #endif // DOCUMENT_H

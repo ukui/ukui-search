@@ -24,20 +24,21 @@
 #include <QDebug>
 #include <QDir>
 #include <QQueue>
-
-class Traverse_BFS
-{
+namespace Zeeker {
+class Traverse_BFS {
 public:
+    Traverse_BFS() = default;
     void Traverse();
     virtual ~Traverse_BFS() = default;
     virtual void DoSomething(const QFileInfo&) = 0;
     void setPath(const QString&);
 protected:
-    explicit Traverse_BFS(const QString&);
+    Traverse_BFS(const QString&);
     QString path = "/home";
 private:
     Traverse_BFS(const Traverse_BFS&) = delete;
     void operator=(const Traverse_BFS&) = delete;
 };
+}
 
 #endif // TRAVERSE_BFS_H

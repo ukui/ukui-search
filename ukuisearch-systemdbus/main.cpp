@@ -20,25 +20,23 @@
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusError>
-
 #include <QDebug>
 
 #include "sysdbusregister.h"
 
-int main(int argc, char *argv[]){
-
+int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
     app.setOrganizationName("Kylin Team");
     app.setApplicationName("ukui-search-service");
 
 
     QDBusConnection systemBus = QDBusConnection::systemBus();
-    if (!systemBus.registerService("com.ukui.search.qt.systemdbus")){
+    if(!systemBus.registerService("com.ukui.search.qt.systemdbus")) {
         qCritical() << "QDbus register service failed reason:" << systemBus.lastError();
         exit(1);
     }
 
-    if (!systemBus.registerObject("/", new SysdbusRegister(), QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals)){
+    if(!systemBus.registerObject("/", new SysdbusRegister(), QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals)) {
         qCritical() << "QDbus register object failed reason:" << systemBus.lastError();
         exit(2);
     }

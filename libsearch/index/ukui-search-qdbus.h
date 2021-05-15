@@ -21,9 +21,8 @@
 #define UKUISEARCHQDBUS_H
 
 #include <QDBusInterface>
-
-class UkuiSearchQDBus
-{
+namespace Zeeker {
+class UkuiSearchQDBus {
 public:
     UkuiSearchQDBus();
     ~UkuiSearchQDBus();
@@ -31,5 +30,6 @@ public:
 private:
     QDBusInterface* tmpSystemQDBusInterface;
 };
+}
 
 #endif // UKUISEARCHQDBUS_H

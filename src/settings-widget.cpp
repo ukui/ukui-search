@@ -29,18 +29,20 @@
 #include "global-settings.h"
 #include "file-utils.h"
 
+using namespace Zeeker;
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
-SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
-{
-    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
+SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent) {
+//    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search-settings"));
     this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 //    this->setAttribute(Qt::WA_TranslucentBackground);
 
-//    m_hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
-//    m_hints.functions = MWM_FUNC_ALL;
-//    m_hints.decorations = MWM_DECOR_BORDER;
-//    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    m_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+    m_hints.functions = MWM_FUNC_ALL;
+    m_hints.decorations = MWM_DECOR_BORDER;
+    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
 
     initUi();
     refreshIndexState();
@@ -48,8 +50,7 @@ SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent)
     resetWebEngine();
 }
 
-SettingsWidget::~SettingsWidget()
-{
+SettingsWidget::~SettingsWidget() {
 }
 
 /**
@@ -71,6 +72,10 @@ void SettingsWidget::initUi() {
     m_titleFrame->setLayout(m_titleLyt);
     m_titleIcon = new QLabel(m_titleFrame);
     m_titleIcon->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    //主题改变时，更新自定义标题栏的图标
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+        m_titleIcon->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    });
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_closeBtn = new QPushButton(m_titleFrame);
@@ -96,7 +101,7 @@ void SettingsWidget::initUi() {
     m_contentFrame = new QFrame(this);
     m_contentLyt = new QVBoxLayout(m_contentFrame);
     m_contentFrame->setLayout(m_contentLyt);
-    m_contentLyt->setContentsMargins(8,0,8,0);
+    m_contentLyt->setContentsMargins(8, 0, 8, 0);
     m_mainLyt->addWidget(m_contentFrame);
 
     //设置
@@ -188,14 +193,14 @@ void SettingsWidget::initUi() {
 //    connect(m_engineBtnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), [ = ] (int id) {
 //        setWebEngine(id);
 //    });
-    connect(m_baiduBtn, &QRadioButton::clicked, [ = ] (bool checked) {
-        if (checked) setWebEngine("baidu");
+    connect(m_baiduBtn, &QRadioButton::clicked, [ = ](bool checked) {
+        if(checked) setWebEngine("baidu");
     });
-    connect(m_sougouBtn, &QRadioButton::clicked, [ = ] (bool checked) {
-        if (checked) setWebEngine("sougou");
+    connect(m_sougouBtn, &QRadioButton::clicked, [ = ](bool checked) {
+        if(checked) setWebEngine("sougou");
     });
-    connect(m_360Btn, &QRadioButton::clicked, [ = ] (bool checked) {
-        if (checked) setWebEngine("360");
+    connect(m_360Btn, &QRadioButton::clicked, [ = ](bool checked) {
+        if(checked) setWebEngine("360");
     });
 
     m_contentLyt->addWidget(m_searchEngineLabel);
@@ -247,11 +252,10 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
  * @param layout 需要清空的布局
  */
 void SettingsWidget::clearLayout(QLayout * layout) {
-    if (! layout) return;
+    if(! layout) return;
     QLayoutItem * child;
-    while ((child = layout->takeAt(0)) != 0) {
-        if(child->widget())
-        {
+    while((child = layout->takeAt(0)) != 0) {
+        if(child->widget()) {
             child->widget()->setParent(NULL);
         }
         delete child;
@@ -262,10 +266,9 @@ void SettingsWidget::clearLayout(QLayout * layout) {
 /**
  * @brief SettingsWidget::refreshIndexState 定时刷新索引项
  */
-void SettingsWidget::refreshIndexState()
-{
+void SettingsWidget::refreshIndexState() {
 //    qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
-    if (FileUtils::_index_status != 0) {
+    if(FileUtils::_index_status != 0) {
         this->setIndexState(true);
     } else {
         this->setIndexState(false);
@@ -273,8 +276,8 @@ void SettingsWidget::refreshIndexState()
     m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
-        qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
-        if (FileUtils::_index_status != 0) {
+        qDebug() << "FileUtils::_index_status: " << FileUtils::_index_status;
+        if(FileUtils::_index_status != 0) {
             this->setIndexState(true);
         } else {
             this->setIndexState(false);
@@ -293,15 +296,15 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
     QPushButton * buttonYes = message.addButton(tr("Yes"), QMessageBox::YesRole);
     message.addButton(tr("No"), QMessageBox::NoRole);
     message.exec();
-    if (message.clickedButton() != buttonYes) {
+    if(message.clickedButton() != buttonYes) {
         return;
     }
 
     int returnCode = 0;
-    if (GlobalSettings::getInstance()->setBlockDirs(path, returnCode, true)) {
-        qDebug()<<"Remove block dir in onBtnDelClicked() successed.";
-        Q_FOREACH (FolderListItem * item, m_dirListWidget->findChildren<FolderListItem*>()) {
-            if (item->getPath() == path) {
+    if(GlobalSettings::getInstance()->setBlockDirs(path, returnCode, true)) {
+        qDebug() << "Remove block dir in onBtnDelClicked() successed.";
+        Q_FOREACH(FolderListItem * item, m_dirListWidget->findChildren<FolderListItem*>()) {
+            if(item->getPath() == path) {
                 item->deleteLater();
                 item = NULL;
                 m_blockdirs --;
@@ -315,16 +318,15 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
 }
 
 /**
- * @brief SettingsWidget::resetWebEngine 获取当前的搜索引擎并反应在UI控件上
+ * @brief SettingsWidget::resetWebEngine 获取当前的搜索引擎并反映在UI控件上
  */
-void SettingsWidget::resetWebEngine()
-{
+void SettingsWidget::resetWebEngine() {
     QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
     m_engineBtnGroup->blockSignals(true);
-    if (!engine.isEmpty()) {
-        if (engine == "360") {
+    if(!engine.isEmpty()) {
+        if(engine == "360") {
             m_360Btn->setChecked(true);
-        } else if (engine == "sougou") {
+        } else if(engine == "sougou") {
             m_sougouBtn->setChecked(true);
         } else {
             m_baiduBtn->setChecked(true);
@@ -339,9 +341,9 @@ void SettingsWidget::resetWebEngine()
  * @brief SettingsWidget::setWebEngine
  * @param engine 选择的搜索引擎
  */
-void SettingsWidget::setWebEngine(const QString& engine)
-{
-    GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+void SettingsWidget::setWebEngine(const QString& engine) {
+//    GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+    Q_EMIT this->webEngineChanged(engine);
 }
 
 /**
@@ -349,7 +351,7 @@ void SettingsWidget::setWebEngine(const QString& engine)
  * @param isCreatingIndex 是否正在创建索引
  */
 void SettingsWidget::setIndexState(bool isCreatingIndex) {
-    if (isCreatingIndex) {
+    if(isCreatingIndex) {
         m_indexStateLabel->setText(tr("Creating ..."));
         return;
     }
@@ -367,15 +369,16 @@ void SettingsWidget::setIndexNum(int num) {
 /**
  * @brief SettingsWidget::showWidget 显示此窗口
  */
-void SettingsWidget::showWidget()
-{
+void SettingsWidget::showWidget() {
     Qt::WindowFlags flags = this->windowFlags();
     flags |= Qt::WindowStaysOnTopHint;
     this->setWindowFlags(flags);
     flags &= ~Qt::WindowStaysOnTopHint;
     this->setWindowFlags(flags);
     m_timer->start();
-//    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
     this->show();
 }
 
@@ -413,17 +416,17 @@ void SettingsWidget::onBtnAddClicked() {
     fileDialog->setLabelText(QFileDialog::FileName, tr("FileName: "));
     fileDialog->setLabelText(QFileDialog::FileType, tr("FileType: "));
     fileDialog->setLabelText(QFileDialog::Reject, tr("Cancel"));
-    if (fileDialog->exec() != QDialog::Accepted) {
+    if(fileDialog->exec() != QDialog::Accepted) {
         fileDialog->deleteLater();
         return;
     }
     QString selectedDir = 0;
     int returnCode;
     selectedDir = fileDialog->selectedFiles().first();
-    qDebug()<<"Selected a folder in onBtnAddClicked(): "<<selectedDir<<". ->settings-widget.cpp #238";
-    if (GlobalSettings::getInstance()->setBlockDirs(selectedDir, returnCode)) {
+    qDebug() << "Selected a folder in onBtnAddClicked(): " << selectedDir << ". ->settings-widget.cpp #238";
+    if(GlobalSettings::getInstance()->setBlockDirs(selectedDir, returnCode)) {
         setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
-        qDebug()<<"Add block dir in onBtnAddClicked() successed. ->settings-widget.cpp #238";
+        qDebug() << "Add block dir in onBtnAddClicked() successed. ->settings-widget.cpp #238";
     } else {
         showWarningDialog(returnCode);
     }
@@ -471,15 +474,14 @@ void SettingsWidget::paintEvent(QPaintEvent *event) {
 
     // 绘制一个背景
     p.save();
-    p.fillPath(rectPath,palette().color(QPalette::Base));
+    p.fillPath(rectPath, palette().color(QPalette::Base));
     p.restore();
 }
 
 /**
  * @brief SettingsWidget::resize 重新计算窗口应有大小
  */
-void SettingsWidget::resize()
-{
+void SettingsWidget::resize() {
 //    if (m_blockdirs <= 1) {
 //        this->setFixedSize(528, 455);
 //    } else if (m_blockdirs <= 3) {
@@ -487,7 +489,7 @@ void SettingsWidget::resize()
 //    } else {
 //        this->setFixedSize(528, 515);
 //    }
-    if (m_blockdirs <= 4) {
+    if(m_blockdirs <= 4) {
         m_dirListArea->setFixedHeight(32 * m_blockdirs + 4);
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
@@ -501,27 +503,26 @@ void SettingsWidget::resize()
  * @brief SettingsWidget::showWarningDialog 显示警告弹窗
  * @param errorCode 错误码
  */
-void SettingsWidget::showWarningDialog(const int & errorCode)
-{
-    qWarning()<<"Add block dir in onBtnAddClicked() failed. Code: "<<errorCode<<" ->settings-widget.cpp #238";
+void SettingsWidget::showWarningDialog(const int & errorCode) {
+    qWarning() << "Add block dir in onBtnAddClicked() failed. Code: " << errorCode << " ->settings-widget.cpp #238";
     QString errorMessage;
-    switch (errorCode) {
-        case 1: {
-            errorMessage = tr("Choosen path is Empty!");
-            break;
-        }
-        case 2: {
-            errorMessage = tr("Choosen path is not in \"home\"!");
-            break;
-        }
-        case 3: {
-            errorMessage = tr("Its' parent folder has been blocked!");
-            break;
-        }
-        default: {
-            errorMessage = tr("Set blocked folder failed!");
-            break;
-        }
+    switch(errorCode) {
+    case 1: {
+        errorMessage = tr("Choosen path is Empty!");
+        break;
+    }
+    case 2: {
+        errorMessage = tr("Choosen path is not in \"home\"!");
+        break;
+    }
+    case 3: {
+        errorMessage = tr("Its' parent folder has been blocked!");
+        break;
+    }
+    default: {
+        errorMessage = tr("Set blocked folder failed!");
+        break;
+    }
     }
     QMessageBox message(QMessageBox::Warning, tr("Search"), errorMessage);
     message.addButton(tr("OK"), QMessageBox::AcceptRole);
