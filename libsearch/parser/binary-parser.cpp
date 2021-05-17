@@ -4457,15 +4457,14 @@ bool bReadBuffer(FILE *pFile, ULONG ulStartBlock,
     ULONG	ulBegin, ulIndex;
     size_t	tLen;
 
-    for(ulIndex = ulStartBlock;
-            ulIndex != END_OF_CHAIN && tToRead != 0;
-            ulIndex = aulBlockDepot[ulIndex]) {
+    for(ulIndex = ulStartBlock;ulIndex != END_OF_CHAIN && tToRead != 0;ulIndex = aulBlockDepot[ulIndex]) {
         if(ulIndex >= (ULONG)tBlockDepotLen) {
             if(tBlockSize >= BIG_BLOCK_SIZE) {
                 qWarning() << "The Big Block Depot is damaged";
             } else {
                 qWarning() << "The Small Block Depot is damaged";
             }
+            return (tToRead == 0);
         }
         if(ulOffset >= (ULONG)tBlockSize) {
             ulOffset -= tBlockSize;
