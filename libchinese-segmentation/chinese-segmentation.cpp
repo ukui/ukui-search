@@ -52,10 +52,10 @@ ChineseSegmentation *ChineseSegmentation::getInstance() {
     return global_instance_chinese_segmentation;
 }
 
-QVector<SKeyWord> ChineseSegmentation::callSegement(QString str) {
-    std::string s;
-    s = str.toStdString();
-    str.squeeze();
+QVector<SKeyWord> ChineseSegmentation::callSegement(std::string s) {
+//    std::string s;
+//    s = str.toStdString();
+//    str.squeeze();
 
     const size_t topk = -1;
     std::vector<cppjieba::KeywordExtractor::Word> keywordres;

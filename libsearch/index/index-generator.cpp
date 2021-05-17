@@ -354,7 +354,7 @@ Document IndexGenerator::GenerateContentDocument(const QString &path) {
     QString upTerm;
     FileReader::getTextContent(path, content);
 
-    term = ChineseSegmentation::getInstance()->callSegement(content);
+    term = ChineseSegmentation::getInstance()->callSegement(content.toStdString());
 //    QStringList  term = content.split("");
 
     doc.setData(content);
