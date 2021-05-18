@@ -26,6 +26,7 @@
 #include <QMutex>
 #include <QVector>
 #include <QDir>
+#include <QFileSystemWatcher>
 //#include <QGSettings>
 //If use pkg_config, it wont build succes,why?????????
 //My demo can build access yet.
@@ -102,6 +103,7 @@ private:
     QSettings *m_search_record_settings;
     QMap<QString, QVariant> m_cache;
     QStringList m_history;
+    QFileSystemWatcher *m_confWatcher;
 
     QMutex m_mutex;
 //    size_t test = 0;
