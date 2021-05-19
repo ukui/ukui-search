@@ -253,7 +253,7 @@ void MainWindow::initUi() {
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
     mainlayout->addWidget(m_searchWidget);
-    connect(m_contentFrame, &ContentWidget::mousePressed, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
+    connect(m_contentFrame, &ContentWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
 
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged,
             this, &MainWindow::monitorResolutionChange);
