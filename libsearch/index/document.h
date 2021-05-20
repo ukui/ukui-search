@@ -39,7 +39,7 @@ public:
         m_index_text = other.m_index_text;
         m_unique_term = other.m_unique_term;
     }
-    void setData(QString data);
+    void setData(QString &data);
     void addPosting(std::string term, QVector<size_t> offset, int weight = 1);
     void addPosting(std::string term, unsigned int offset, int weight = 1);
     void addTerm(QString term);

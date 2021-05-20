@@ -53,8 +53,9 @@ void FolderListItem::initUi() {
     m_iconLabel->setPixmap(QIcon::fromTheme("inode-directory").pixmap(QSize(16, 16)));
     m_pathLabel->setText(m_path);
     m_delLabel->setText(tr("Delete the folder out of blacklist"));
-    m_pathLabel->setStyleSheet("QLabel{color: palette(text); background: transparent;}");
-    m_delLabel->setStyleSheet("QLabel{color: #3790FA; background: transparent;}");
+    QPalette pal = palette();
+    pal.setColor(QPalette::WindowText, QColor(55, 144, 250, 255));
+    m_delLabel->setPalette(pal);
     m_delLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_delLabel->installEventFilter(this);
     m_delLabel->hide();

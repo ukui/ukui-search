@@ -19,7 +19,6 @@
  *
  */
 #include <QtConcurrent>
-#include <QApplication>
 #include <QPalette>
 #include "global-settings.h"
 
@@ -38,6 +37,14 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
 //    m_settings->setAtomicSyncRequired(false);
     m_block_dirs_settings = new QSettings(BLOCK_DIRS, QSettings::IniFormat, this);
     m_block_dirs_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+    m_block_dirs_settings->setValue("These_are_block_dirs_conf_for_ukui_search","0");
+    m_block_dirs_settings->sync();
+    m_confWatcher = new QFileSystemWatcher(this);
+    m_confWatcher->addPath(BLOCK_DIRS);
+    connect(m_confWatcher, &QFileSystemWatcher::fileChanged, this, [ & ]() {
+        m_block_dirs_settings->sync();
+        m_confWatcher->addPath(BLOCK_DIRS);
+    });
 
     m_search_record_settings = new QSettings(SEARCH_HISTORY, QSettings::IniFormat, this);
     m_search_record_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
@@ -83,6 +90,8 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
                 qApp->paletteChanged(qApp->palette());
                 m_cache.remove(FONT_SIZE_KEY);
                 m_cache.insert(FONT_SIZE_KEY, m_theme_gsettings->get(FONT_SIZE_KEY).toDouble());
+            } else if (key == ICON_THEME_KEY) {
+                qApp->paletteChanged(qApp->palette());
             }
         });
         m_cache.remove(STYLE_NAME_KEY);
@@ -246,22 +255,15 @@ QStringList GlobalSettings::getSearchRecord() {
 //    return values;
 //}
 
-//here should be override
-//MouseZhangZh
+//this method is designed for main process settings only!!
 void GlobalSettings::setValue(const QString &key, const QVariant &value) {
-    //    qDebug()<<"setvalue========"<<key<<":"<<value;
     m_cache.insert(key, value);
-    //     m_settings->sync();
     QtConcurrent::run([ = ]() {
-        //        qDebug()<<m_settings->status();
-//                if (m_mutex.tryLock(1000)) {
-        //        m_mutex.lock();
-        m_settings->setValue(key, value);
-        //            qDebug()<<"setvalue========finish!!!"<<key<<":"<<value;
-        m_settings->sync();
-        //            qDebug()<<"setvalue========sync!!!"<<key<<":"<<value;
-//                    m_mutex.unlock();
-//                }
+        if (m_mutex.tryLock(1000)) {
+            m_settings->setValue(key, value);
+            m_settings->sync();
+            m_mutex.unlock();
+        }
     });
 }
 

@@ -102,12 +102,12 @@ void AppMatch::getAllDesktopFilePath(QString path) {
         } else {
             //过滤LXQt、KDE
             QString filePathStr = fileInfo.filePath();
-            if(filePathStr.contains("KDE", Qt::CaseInsensitive) ||
+//            if(filePathStr.contains("KDE", Qt::CaseInsensitive) ||
 //               filePathStr.contains("mate",Qt::CaseInsensitive)||
-                    filePathStr.contains("LX", Qt::CaseInsensitive)) {
-                i++;
-                continue;
-            }
+//                    filePathStr.contains("LX", Qt::CaseInsensitive)) {
+//                i++;
+//                continue;
+//            }
             //过滤后缀不是.desktop的文件
             if(!filePathStr.endsWith(".desktop")) {
                 i++;

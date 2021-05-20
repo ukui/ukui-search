@@ -11,20 +11,26 @@ namespace Zeeker {
 class SearchPluginIface : public PluginInterface
 {
 public:
+    struct DescriptionInfo
+    {
+        QString key;
+        QString value;
+    };
     /**
-     * @brief The resultInfo struct
+     * @brief The ResultInfo struct
      */
-    struct resultInfo
+    struct ResultInfo
     {
         QIcon icon;
         QString name;
-        QString description;
-        QMap<QString,QString> actionMap;//action name and action key
+        QVector<DescriptionInfo> description;
+        QStringList actionList; //all actions, take fist for double click action.
+        QString key;
     };
     virtual ~SearchPluginIface() {}
     virtual QString getPluginName() = 0;
-    virtual void KeywordSearch(QString keyword,QQueue<resultInfo> *searchResult) = 0;
-    virtual void openAction(QString name, QString key) = 0;
+    virtual void KeywordSearch(QString keyword,QQueue<ResultInfo> *searchResult) = 0;
+    virtual void openAction(QString action, QString key) = 0;
 
 };
 }
