@@ -1,3 +1,21 @@
+ukui-search (0.4.0+0521hw1) v101.hw; urgency=medium
+
+  * Bug 55791,55782
+  * 任务
+  * 其他改动：
+  * Fix:Seletion is cleared when paletted changed.
+    - 修复收到palettechanged信号时列表选中状态消失的问题。
+  * Fix:Icon in detail view will not refresh when icon-theme changed.
+    - 修复主题图标改变时详情页图标未更新的问题。
+  * Fix:Index process crashed when parsing some wps templates.
+    - 修复了解析某些wps模板文件时索引崩溃的问题。
+  * Fix:Block list conf won't work.
+    - 修复了在控制面板设置黑名单不能及时生效的问题。
+  * Fix:Automatic completion won't work in next search after clicked actions in detial widget.
+    - 修复了点击详情页不会保存搜索历史记录的bug。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 20 May 2021 09:08:15 +0800
+
 ukui-search (0.4.0+0508hw1) v101.hw; urgency=medium
 
   * Bug 49153 52085 52066 51710 50972.
