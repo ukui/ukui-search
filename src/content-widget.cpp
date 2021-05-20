@@ -91,6 +91,7 @@ void ContentWidget::initUI() {
         clearLayout(m_homePageLyt);
         initHomePage();
     });
+    connect(m_detailView, &SearchDetailView::actionTriggerd, this, &ContentWidget::effectiveSearch);
     m_resultDetailArea->setWidget(m_detailView);
     m_resultDetailArea->setWidgetResizable(true);
     m_resultListArea->setFrameShape(QFrame::NoFrame);
@@ -283,7 +284,7 @@ void ContentWidget::setupConnect(SearchListView * listview) {
     connect(listview, &SearchListView::currentSelectPos, [ = ](QPoint pos) {
         m_resultListArea->ensureVisible(pos.x(), pos.y());
     });
-    connect(listview, &SearchListView::mousePressed, this, &ContentWidget::mousePressed);
+    connect(listview, &SearchListView::mousePressed, this, &ContentWidget::effectiveSearch);
     connect(listview, &SearchListView::currentRowChanged, this, &ContentWidget::onListViewRowChanged);
     connect(listview, &SearchListView::onRowDoubleClicked, this, &ContentWidget::onListViewRowDoubleClicked);
 }

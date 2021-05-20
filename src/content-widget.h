@@ -109,7 +109,7 @@ private:
 
 Q_SIGNALS:
     void currentItemChanged();
-    void mousePressed();
+    void effectiveSearch();
 
 private Q_SLOTS:
     void clearLayout(QLayout *);

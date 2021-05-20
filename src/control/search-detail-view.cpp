@@ -406,6 +406,7 @@ void SearchDetailView::execActions(const int& type, const int& option, const QSt
     default:
         break;
     }
+    Q_EMIT this->actionTriggerd();
 }
 
 /**

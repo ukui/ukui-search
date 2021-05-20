@@ -24,12 +24,13 @@ public:
         QIcon icon;
         QString name;
         QVector<DescriptionInfo> description;
-        QMap<QString,QString> actionMap;//action name and action key
+        QStringList actionList; //all actions, take fist for double click action.
+        QString key;
     };
     virtual ~SearchPluginIface() {}
     virtual QString getPluginName() = 0;
     virtual void KeywordSearch(QString keyword,QQueue<ResultInfo> *searchResult) = 0;
-    virtual void openAction(QString name, QString key) = 0;
+    virtual void openAction(QString action, QString key) = 0;
 
 };
 }
