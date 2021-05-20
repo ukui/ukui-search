@@ -27,7 +27,6 @@
 #include <QFile>
 #include "file-utils.h"
 #include "index-generator.h"
-#include "global-settings.h"
 #include "chinese-segmentation.h"
 #include "construct-document.h"
 #include <QStandardPaths>
@@ -69,7 +68,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList) {
         return false;
     }
     qDebug() << "begin creatAllIndex";
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "0");
+//    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "0");
     try {
 //        m_indexer = new Xapian::TermGenerator();
 //        m_indexer.set_database(*m_database_path);
@@ -91,11 +90,11 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList) {
     } catch(const Xapian::Error &e) {
         qWarning() << "creatAllIndex fail!" << QString::fromStdString(e.get_description());
         //need a record
-        GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "1");
+       IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "1");
 //        FileUtils::_index_status &= ~0x1;
         assert(false);
     }
-    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
+//    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
     qDebug() << "finish creatAllIndex";
 //    FileUtils::_index_status &= ~0x1;
     _doc_list_path->clear();
@@ -114,7 +113,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
     int size = _doc_list_content->size();
     qDebug() << "begin creatAllIndex for content" << size;
     if(!size == 0) {
-        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "0");
+//        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "0");
         try {
             int count = 0;
             for(auto i : *_doc_list_content) {
@@ -127,11 +126,11 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
             m_database_content->commit();
         } catch(const Xapian::Error &e) {
             qWarning() << "creat content Index fail!" << QString::fromStdString(e.get_description());
-            GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "1");
+            IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "1");
 //            FileUtils::_index_status &= ~0x2;
             assert(false);
         }
-        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
+//        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
 //        FileUtils::_index_status &= ~0x2;
         qDebug() << "finish creatAllIndex for content";
         _doc_list_content->clear();
@@ -355,7 +354,7 @@ Document IndexGenerator::GenerateContentDocument(const QString &path) {
     QString upTerm;
     FileReader::getTextContent(path, content);
 
-    term = ChineseSegmentation::getInstance()->callSegement(content);
+    term = ChineseSegmentation::getInstance()->callSegement(content.toStdString());
 //    QStringList  term = content.split("");
 
     doc.setData(content);

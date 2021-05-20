@@ -22,6 +22,7 @@
 #define HIGHLIGHTITEMDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include "global-settings.h"
 
 namespace Zeeker {
 class HighlightItemDelegate : public QStyledItemDelegate {

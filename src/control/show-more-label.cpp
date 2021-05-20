@@ -47,6 +47,8 @@ bool ShowMoreLabel::getExpanded() {
 }
 
 void ShowMoreLabel::initUi() {
+    QPalette pal = palette();
+    pal.setColor(QPalette::WindowText, QColor(55, 144, 250, 255));
     m_layout = new QHBoxLayout(this);
     m_layout->setContentsMargins(0, 0, 0, 6);
     m_textLabel = new QLabel(this);
@@ -58,7 +60,7 @@ void ShowMoreLabel::initUi() {
 //    m_loadingIconLabel->hide();
     m_layout->setAlignment(Qt::AlignRight);
     m_layout->addWidget(m_textLabel);
-    m_textLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
+    m_textLabel->setPalette(pal);
 //    m_layout->addWidget(m_loadingIconLabel);
 }
 

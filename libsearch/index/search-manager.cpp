@@ -273,7 +273,7 @@ int FileContentSearch::keywordSearchContent() {
                 ret.erase(ret.begin(), ret.end());
                 ::friso::ResultMap().swap(ret);
         */
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword);
+        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
         //Creat a query
         std::string words;
         for(int i = 0; i < sKeyWord.size(); i++) {
@@ -419,6 +419,7 @@ void DirectSearch::run() {
     // QDir::Hidden
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
+    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
@@ -426,8 +427,6 @@ void DirectSearch::run() {
             if (i.isDir() && (!(i.isSymLink()))) {
 
                 bool findIndex = false;
-
-                QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
                 for (QString j : blockList) {
                     if (i.absoluteFilePath().startsWith(j.prepend("/"))) {
                         findIndex = true;

@@ -27,9 +27,10 @@
 #include "index-generator.h"
 #include "traverse_bfs.h"
 #include "ukui-search-qdbus.h"
-#include "global-settings.h"
+#include "index-status-recorder.h"
 #include "file-utils.h"
 #include "first-index.h"
+#include "common.h"
 
 #define BUF_LEN 1024000
 

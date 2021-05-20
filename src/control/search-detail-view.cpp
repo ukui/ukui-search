@@ -30,7 +30,6 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QClipboard>
-#include <QApplication>
 #include <QFileInfo>
 #include <QDateTime>
 #include <QDBusMetaType>
@@ -40,6 +39,7 @@
 using namespace Zeeker;
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent) {
     initUI();
+    connect(qApp, &QApplication::paletteChanged, this, &SearchDetailView::refreshIcon);
 }
 
 SearchDetailView::~SearchDetailView() {
@@ -200,9 +200,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     m_typeLabel->show();
     m_hLine->show();
 
-    QIcon icon;
     if(path.isEmpty() || path == "") {
-        icon = QIcon(iconpath);
         m_optionView->setupOptions(m_type, false);
         //未安装应用有一个label显示软件描述
         if(description != "" && !description.isEmpty()) {
@@ -210,20 +208,17 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
             m_contentLabel->show();
             m_contentLabel->setText(QString(tr("Introduction: %1")).arg(description));
         }
+        setIcon(iconpath, false);
     } else {
         m_optionView->setupOptions(m_type, true);
-        if(QIcon::fromTheme(iconpath).isNull()) {
-            icon = QIcon(":/res/icons/desktop.png");
-        } else {
-            icon = QIcon::fromTheme(iconpath);
-        }
+        setIcon(iconpath, true);
     }
     m_optionView->show();
 
-    m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(showname);
+//    m_nameLabel->setText(showname);
+    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(showname)));
     if(QString::compare(showname, m_name)) {
         m_nameLabel->setToolTip(m_name);
     }
@@ -352,24 +347,23 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
     case SearchListView::ResType::Content:
     case SearchListView::ResType::Dir :
     case SearchListView::ResType::File : {
-        QIcon icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        setIcon(path);
         QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
         QString wholeName = FileUtils::getFileName(path);
         QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
-        m_nameLabel->setText(name);
+//        m_nameLabel->setText(name);
+        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
         if(QString::compare(name, wholeName)) {
             m_nameLabel->setToolTip(wholeName);
         }
-        m_nameLabel->setTextFormat(Qt::PlainText); //显示纯文本
         m_typeLabel->setText(tr("Document"));
         break;
     }
     case SearchListView::ResType::Setting : {
-        QIcon icon = FileUtils::getSettingIcon(path, true);
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        setIcon(path);
         QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
-        m_nameLabel->setText(settingType);
+//        m_nameLabel->setText(settingType);
+        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(settingType)));
         m_typeLabel->setText(FileUtils::getSettingName(path));
         break;
     }
@@ -412,6 +406,7 @@ void SearchDetailView::execActions(const int& type, const int& option, const QSt
     default:
         break;
     }
+    Q_EMIT this->actionTriggerd();
 }
 
 /**
@@ -470,8 +465,6 @@ void SearchDetailView::initUI() {
     m_layout = new QVBoxLayout(this);
     this->setLayout(m_layout);
     m_layout->setContentsMargins(16, 60, 16, 24);
-    this->setObjectName("detailView");
-    this->setStyleSheet("QWidget#detailView{background:transparent;}");
     this->setFixedWidth(378);
 
     //没有网络的时候的提示信息
@@ -499,8 +492,7 @@ void SearchDetailView::initUI() {
     m_nameLayout = new QHBoxLayout(m_nameFrame);
     m_nameLabel = new QLabel(m_nameFrame);
     m_typeLabel = new QLabel(m_nameFrame);
-    m_nameLabel->setStyleSheet("QLabel{font-size: 18px;}");
-    m_typeLabel->setStyleSheet("QLabel{font-size: 14px; color: palette(mid);}");
+    m_typeLabel->setEnabled(false);
     m_nameFrame->setFixedHeight(48);
     m_nameLabel->setMaximumWidth(280);
     m_nameLayout->addWidget(m_nameLabel);
@@ -565,6 +557,42 @@ void SearchDetailView::initUI() {
     m_layout->addStretch();
 
     this->clearLayout(); //初始化时隐藏所有控件
+}
+
+/**
+ * @brief SearchDetailView::refreshIcon 图标主题变更时，刷新图标的槽函数
+ */
+void SearchDetailView::refreshIcon() {
+    this->setIcon(m_iconPath);
+}
+
+/**
+ * @brief SearchDetailView::setIcon 设置图标区域
+ * @param path 图标路径或图标名
+ * @param installed 如果是应用，是否已安装
+ */
+void SearchDetailView::setIcon(const QString &path, const bool &installed)
+{
+    m_iconPath = path;
+    if (m_type == SearchListView::ResType::App) {
+        QIcon icon;
+        if(!installed) {
+            icon = QIcon(path);
+        } else {
+            if(QIcon::fromTheme(path).isNull()) {
+                icon = QIcon(":/res/icons/desktop.png");
+            } else {
+                icon = QIcon::fromTheme(path);
+            }
+        }
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+    } else if (m_type == SearchListView::ResType::Setting) {
+        QIcon icon = FileUtils::getSettingIcon(path, true);
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+    } else {
+        QIcon icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+    }
 }
 
 /**

@@ -20,12 +20,10 @@
  */
 #include "highlight-item-delegate.h"
 #include <QPainter>
-#include <QApplication>
 #include <QStyle>
 #include <QDebug>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
-#include "global-settings.h"
 
 using namespace Zeeker;
 HighlightItemDelegate::HighlightItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {

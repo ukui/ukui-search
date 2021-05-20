@@ -19,6 +19,7 @@
  */
 #include "setting-match.h"
 #include "file-utils.h"
+#include <QProcessEnvironment>
 using namespace Zeeker;
 SettingsMatch::SettingsMatch(QObject *parent) : QObject(parent) {
     xmlElement();
@@ -44,6 +45,8 @@ QStringList SettingsMatch::startMatchApp(const QString &source) {
 void SettingsMatch::xmlElement() {
     QString ChineseIndex;
     QString EnglishIndex;
+    QString path = QProcessEnvironment::systemEnvironment().value("XDG_SESSION_TYPE");
+    QString version;
     QFile file(QString::fromLocal8Bit("/usr/share/ukui-control-center/shell/res/search.xml"));
     if(!file.open(QIODevice::ReadOnly)) {
         return;
@@ -62,6 +65,12 @@ void SettingsMatch::xmlElement() {
         QDomNodeList list = element.childNodes();
         for(int i = 0; i < list.count(); ++i) {
             QDomNode n = list.at(i);
+            if(n.nodeName()==QString::fromLocal8Bit("Environment")){
+                version=n.toElement().text();
+                if((version=="v101"&&path=="wayland")||(version=="hw990"&&path=="x11")){
+                    break;
+                }
+            }
             if(n.nodeName() == QString::fromLocal8Bit("ChinesePlugin")) {
                 ChineseIndex = n.toElement().text();
             }

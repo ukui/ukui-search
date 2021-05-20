@@ -29,9 +29,11 @@
 #include <QPalette>
 #include <QScreen>
 #include <QStyleOption>
-#include <KWindowEffects>
 #include <QPixmap>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#include <KWindowEffects>
 #include "kwindowsystem.h"
+#endif
 #include "qt-single-application.h"
 
 //#include "inotify-manager.h"
@@ -58,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
 //    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
+//    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
@@ -67,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initUi();
     initTimer();
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 //    setProperty("useStyleWindowManager", false); //禁止拖动
     m_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
     m_hints.functions = MWM_FUNC_ALL;
@@ -80,16 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     path.addRect(rect);
     setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
     KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-
-    connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette & pal) {
-        this->setPalette(pal);
-        this->update();
-        Q_FOREACH(QWidget *widget, this->findChildren<QWidget *>()) {
-            if(widget) {
-                widget->update();
-            }
-        }
-    });
+#endif
 
     m_search_result_file = new QQueue<QString>;
     m_search_result_dir = new QQueue<QString>;
@@ -125,7 +119,9 @@ MainWindow::MainWindow(QWidget *parent) :
                 clearSearchResult();
 //                this->moveToPanel();
                 centerToScreen(this);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
                 XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
                 this->show();
                 this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
                 this->raise();
@@ -150,10 +146,12 @@ MainWindow::~MainWindow() {
         delete m_searchLayout;
         m_searchLayout = NULL;
     }
-//    if(m_settingsWidget) {
-//        delete m_settingsWidget;
-//        m_settingsWidget = NULL;
-//    }
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+    if(m_settingsWidget) {
+        delete m_settingsWidget;
+        m_settingsWidget = NULL;
+    }
+#endif
     if(m_askDialog) {
         delete m_askDialog;
         m_askDialog = NULL;
@@ -189,6 +187,10 @@ void MainWindow::initUi() {
     m_iconLabel = new QLabel(m_titleFrame);
     m_iconLabel->setFixedSize(24, 24);
     m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    //主题改变时，更新自定义标题栏的图标
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(24, 24)));
+    });
     m_titleLabel = new QLabel(m_titleFrame);
     m_titleLabel->setText(tr("Search"));
     m_menuBtn = new QPushButton(m_titleFrame);
@@ -199,38 +201,42 @@ void MainWindow::initUi() {
     m_menuBtn->setProperty("isWindowButton", 0x01);
     m_menuBtn->setFlat(true);
     connect(m_menuBtn, &QPushButton::clicked, this, [ = ]() {
-//        if(m_settingsWidget) {  //当此窗口已存在时，仅需置顶
-//            if(!m_settingsWidget->isVisible()) {
-//                centerToScreen(m_settingsWidget);
-//            }
-//            m_settingsWidget->showWidget();
-//            return;
-//        }
-//        m_settingsWidget = new SettingsWidget();
-//        connect(this, &MainWindow::webEngineChanged, m_settingsWidget, [ = ]() {
-//            m_settingsWidget->resetWebEngine();
-//        });
-//        connect(m_settingsWidget, &SettingsWidget::webEngineChanged, this, [ = ](const QString & engine) {
-//            if(m_search_gsettings && m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
-//                m_search_gsettings->set(WEB_ENGINE_KEY, engine);
-//            } else {
-//                GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
-//            }
-//        });
-//        centerToScreen(m_settingsWidget);
-//        m_settingsWidget->show();
-//        connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
-//            QTimer::singleShot(100, this, [ = ] {
-////                clearSearchResult(); //现暂定从设置页返回主页面不清空搜索结果
-//                this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
-//                this->raise();
-//                this->showNormal();
-//                this->activateWindow();
-//            });
-//        });
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+        if(m_settingsWidget) {  //当此窗口已存在时，仅需置顶
+            if(!m_settingsWidget->isVisible()) {
+                centerToScreen(m_settingsWidget);
+            }
+            m_settingsWidget->showWidget();
+            return;
+        }
+        m_settingsWidget = new SettingsWidget();
+        connect(this, &MainWindow::webEngineChanged, m_settingsWidget, [ = ]() {
+            m_settingsWidget->resetWebEngine();
+        });
+        connect(m_settingsWidget, &SettingsWidget::webEngineChanged, this, [ = ](const QString & engine) {
+            if(m_search_gsettings && m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
+                m_search_gsettings->set(WEB_ENGINE_KEY, engine);
+            } else {
+                GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
+            }
+        });
+        centerToScreen(m_settingsWidget);
+        m_settingsWidget->show();
+        connect(m_settingsWidget, &SettingsWidget::settingWidgetClosed, this, [ = ]() {
+            QTimer::singleShot(100, this, [ = ] {
+//                clearSearchResult(); //现暂定从设置页返回主页面不清空搜索结果
+                this->setWindowState(this->windowState() & ~Qt::WindowMinimized);
+                this->raise();
+                this->showNormal();
+                this->activateWindow();
+            });
+        });
+#endif
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         //打开控制面板的设置页
         QProcess process;
         process.startDetached("ukui-control-center --search");
+#endif
     });
     m_titleLyt->addWidget(m_iconLabel);
     m_titleLyt->addWidget(m_titleLabel);
@@ -247,7 +253,7 @@ void MainWindow::initUi() {
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
     mainlayout->addWidget(m_searchWidget);
-    connect(m_contentFrame, &ContentWidget::mousePressed, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
+    connect(m_contentFrame, &ContentWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
 
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged,
             this, &MainWindow::monitorResolutionChange);
@@ -271,7 +277,7 @@ void MainWindow::initUi() {
                 if(! m_search_result_thread->isRunning()) {
                     m_search_result_thread->start();
                 }
-                searchContent(text);
+                startSearch(text);
                 //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
                 if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
                     m_askTimer->start();
@@ -286,11 +292,13 @@ void MainWindow::initUi() {
 
     //创建索引询问弹窗
     m_askDialog = new CreateIndexAskDialog(this);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     MotifWmHints ask_dialog_hints;
     ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
     ask_dialog_hints.functions = MWM_FUNC_ALL;
     ask_dialog_hints.decorations = MWM_DECOR_BORDER;
     XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
+#endif
     connect(m_askDialog, &CreateIndexAskDialog::closed, this, [ = ]() {
         m_isAskDialogVisible = false;
     });
@@ -323,7 +331,9 @@ void MainWindow::bootOptionsFilter(QString opt) {
         clearSearchResult();
 //        this->moveToPanel();
         centerToScreen(this);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
+#endif
         this->show();
         this->m_searchLayout->focusIn();
         this->raise();
@@ -369,10 +379,10 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen) {
 }
 
 /**
- * @brief searchContent 搜索关键字
- * @param searchcontent
+ * @brief startSearch 搜索关键字
+ * @param keyword
  */
-void MainWindow::searchContent(QString keyword) {
+void MainWindow::startSearch(QString keyword) {
     m_contentFrame->setKeyword(keyword);
 
     //设置搜索
@@ -513,7 +523,7 @@ void MainWindow::initTimer() {
     m_researchTimer->setInterval(10 * 1000);
     connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
         if(this->isVisible()) {
-            searchContent(m_searchLayout->text());
+            startSearch(m_searchLayout->text());
         }
         m_researchTimer->stop();
     });

@@ -181,8 +181,7 @@ void SearchItemModel::setBestAppIcon(const QString &str, const bool & is_install
     }
 }
 
-void SearchItemModel::refresh()
+int SearchItemModel::length()
 {
-    this->beginResetModel();
-    this->endResetModel();
+    return m_item->m_pathlist.length();
 }

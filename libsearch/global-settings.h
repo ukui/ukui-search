@@ -26,6 +26,7 @@
 #include <QMutex>
 #include <QVector>
 #include <QDir>
+#include <QFileSystemWatcher>
 //#include <QGSettings>
 //If use pkg_config, it wont build succes,why?????????
 //My demo can build access yet.
@@ -33,6 +34,7 @@
 #include <QGSettings/QGSettings>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QApplication>
 #include "libsearch_global.h"
 
 #define CONTROL_CENTER_PERSONALISE_GSETTINGS_ID "org.ukui.control-center.personalise"
@@ -40,10 +42,8 @@
 #define THEME_GSETTINGS_ID "org.ukui.style"
 #define STYLE_NAME_KEY "styleName"
 #define FONT_SIZE_KEY "systemFontSize"
-#define INDEX_DATABASE_STATE "index_database_state"
-#define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
-#define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
-#define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
+#define ICON_THEME_KEY "iconThemeName"
+
 #define ENABLE_CREATE_INDEX_ASK_DIALOG "enable_create_index_ask_dialog"
 #define WEB_ENGINE "web_engine"
 #define PATH_EMPTY 1;
@@ -103,8 +103,11 @@ private:
     QSettings *m_search_record_settings;
     QMap<QString, QVariant> m_cache;
     QStringList m_history;
+    QFileSystemWatcher *m_confWatcher;
 
     QMutex m_mutex;
+//    size_t test = 0;
+
 
 };
 

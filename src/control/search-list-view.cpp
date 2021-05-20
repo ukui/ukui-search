@@ -21,12 +21,11 @@
 #include "search-list-view.h"
 #include <QDebug>
 #include <QFileInfo>
-#include "custom-style.h"
 
 using namespace Zeeker;
 SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent) {
-//    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
-    this->setStyle(CustomStyle::getStyle());
+    this->setFrameShape(QFrame::NoFrame);
+    this->viewport()->setAutoFillBackground(false);
     setRootIsDecorated(false);
 
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -43,7 +42,6 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
 //    this->setFixedHeight(list.count() * rowheight + 4);
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAutoFillBackground(false);
-//    this->setStyleSheet("QWidget{background:transparent;}");
     m_styleDelegate = new HighlightItemDelegate(this);
 //    m_styleDelegate->setSearchKeyword(keyword);
     this->setItemDelegate(m_styleDelegate);
@@ -128,7 +126,6 @@ void SearchListView::clear() {
  */
 void SearchListView::refresh()
 {
-    m_model->refresh();
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }

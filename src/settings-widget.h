@@ -33,7 +33,9 @@
 #include <QScrollArea>
 #include <QTimer>
 #include <libsearch.h>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include "xatom-helper.h"
+#endif
 
 namespace Zeeker {
 class SettingsWidget : public QWidget {
@@ -56,7 +58,9 @@ private:
     void resize();
     void showWarningDialog(const int&);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     MotifWmHints m_hints;
+#endif
 
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
