@@ -18,33 +18,42 @@
  * Authors: zhangjiaping <zhangjiaping@kylinos.cn>
  *
  */
-#include "title-label.h"
-#include <QPainter>
-#include <QStyleOption>
+#ifndef SHOWMORELABEL_H
+#define SHOWMORELABEL_H
 
-using namespace Zeeker;
-TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
-    this->setContentsMargins(8, 0, 0, 0);
-    this->setFixedHeight(24);
+#include <QWidget>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QTimer>
+
+namespace Zeeker {
+class ShowMoreLabel : public QWidget {
+    Q_OBJECT
+public:
+    explicit ShowMoreLabel(QWidget *parent = nullptr);
+    ~ShowMoreLabel() = default;
+    void resetLabel();
+    bool getExpanded();
+
+protected:
+    bool eventFilter(QObject *, QEvent *);
+
+private:
+    QHBoxLayout * m_layout = nullptr;
+    QLabel * m_textLabel = nullptr;
+    QLabel * m_loadingIconLabel = nullptr;
+    QTimer * m_timer = nullptr;
+    bool m_isOpen = false;
+    int m_currentState = 0;
+
+    void initUi();
+
+Q_SIGNALS:
+    void showMoreClicked();
+    void retractClicked();
+
+public Q_SLOTS:
+};
 }
 
-TitleLabel::~TitleLabel() {
-
-}
-
-void TitleLabel::paintEvent(QPaintEvent * event) {
-    Q_UNUSED(event)
-
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-
-    QRect rect = this->rect();
-    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    p.setBrush(opt.palette.color(QPalette::Text));
-    p.setOpacity(0.04);
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect, 0, 0);
-    return QLabel::paintEvent(event);
-}
+#endif // SHOWMORELABEL_H

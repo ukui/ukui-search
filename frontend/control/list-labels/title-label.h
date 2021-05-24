@@ -18,33 +18,20 @@
  * Authors: zhangjiaping <zhangjiaping@kylinos.cn>
  *
  */
-#include "title-label.h"
-#include <QPainter>
-#include <QStyleOption>
+#ifndef TITLELABEL_H
+#define TITLELABEL_H
 
-using namespace Zeeker;
-TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
-    this->setContentsMargins(8, 0, 0, 0);
-    this->setFixedHeight(24);
+#include <QLabel>
+
+namespace Zeeker {
+class TitleLabel : public QLabel {
+public:
+    TitleLabel(QWidget * parent = nullptr);
+    ~TitleLabel();
+
+protected:
+    void paintEvent(QPaintEvent *);
+};
 }
 
-TitleLabel::~TitleLabel() {
-
-}
-
-void TitleLabel::paintEvent(QPaintEvent * event) {
-    Q_UNUSED(event)
-
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-
-    QRect rect = this->rect();
-    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    p.setBrush(opt.palette.color(QPalette::Text));
-    p.setOpacity(0.04);
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect, 0, 0);
-    return QLabel::paintEvent(event);
-}
+#endif // TITLELABEL_H

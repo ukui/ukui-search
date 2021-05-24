@@ -18,33 +18,31 @@
  * Authors: zhangjiaping <zhangjiaping@kylinos.cn>
  *
  */
-#include "title-label.h"
-#include <QPainter>
-#include <QStyleOption>
+#ifndef HOMEPAGE_H
+#define HOMEPAGE_H
 
-using namespace Zeeker;
-TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
-    this->setContentsMargins(8, 0, 0, 0);
-    this->setFixedHeight(24);
+#include <QScrollArea>
+#include "home-page-section.h"
+#include "file-utils.h"
+
+namespace Zeeker {
+class HomePage : public QScrollArea
+{
+    Q_OBJECT
+public:
+    explicit HomePage(QWidget *parent = nullptr);
+    ~HomePage() = default;
+
+private:
+    void initUi();
+    void appendSection(HomePageSection *);
+    QWidget * m_widget = nullptr;
+    QVBoxLayout * m_mainLyt = nullptr;
+
+    void registerSections();
+Q_SIGNALS:
+
+};
 }
 
-TitleLabel::~TitleLabel() {
-
-}
-
-void TitleLabel::paintEvent(QPaintEvent * event) {
-    Q_UNUSED(event)
-
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-
-    QRect rect = this->rect();
-    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    p.setBrush(opt.palette.color(QPalette::Text));
-    p.setOpacity(0.04);
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect, 0, 0);
-    return QLabel::paintEvent(event);
-}
+#endif // HOMEPAGE_H

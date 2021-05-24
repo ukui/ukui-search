@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 SUBDIRS += $$PWD/libchinese-segmentation \
            $$PWD/libsearch \
            $$PWD/src \
+           $$PWD/frontend \
            $$PWD/ukuisearch-systemdbus
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -17,5 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 libsearch.depends += libchinese-segmentation
 src.depends = libsearch
 
-CONFIG += ordered
+CONFIG += ordered \
+    qt
+
+QT += widgets
 
