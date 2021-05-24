@@ -46,7 +46,8 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
-        this->q_content_index->enqueue(fileInfo.absoluteFilePath());
+        //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
+        this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
     }
 }
 
@@ -90,8 +91,9 @@ void FirstIndex::run() {
 
     this->q_index = new QQueue<QVector<QString>>();
     //this->q_content_index = new QQueue<QString>();
-    NEW_QUEUE(this->q_content_index);
+    //NEW_QUEUE(this->q_content_index);
 //    this->mlm = new MessageListManager();
+    this->q_content_index = new QQueue<QPair<QString,qint64>>();
 
     int fifo_fd;
     char buffer[2];
@@ -168,9 +170,14 @@ void FirstIndex::run() {
             qDebug() << "q_content_index:" << q_content_index->size();
             while(!this->q_content_index->empty()) {
 //                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
-                for(size_t i = 0; (i < 30) && (!this->q_content_index->empty()); ++i) {
-                    tmp->enqueue(this->q_content_index->dequeue());
+                qint64 fileSize = 0;
+                //修改一次处理的数据量，从30个文件改为文件总大小为50M以下，50M为暂定值--jxx20210519
+                for(size_t i = 0;/* (i < 30) && */(fileSize < 50*1024*1024) && (!this->q_content_index->empty()); ++i) {
+                    QPair<QString,qint64> tempPair = this->q_content_index->dequeue();
+                    fileSize += tempPair.second;
+                    tmp->enqueue(tempPair.first);
                 }
+//                qDebug() << ">>>>>>>>all fileSize:" << fileSize << "file num:" << tmp->size() << "<<<<<<<<<<<<<<<<<<<";
                 this->p_indexGenerator->creatAllIndex(tmp);
                 tmp->clear();
             }
