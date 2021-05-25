@@ -40,13 +40,13 @@ static InotifyIndex* global_instance_of_index = nullptr;
 class InotifyIndex : public QThread, public Traverse_BFS {
     Q_OBJECT
 public:
-    static InotifyIndex* getInstance(const QString& path) {
+    static InotifyIndex* getInstance(const QStringList &pathList) {
         if(!global_instance_of_index) {
-            global_instance_of_index = new InotifyIndex(path);
+            global_instance_of_index = new InotifyIndex(pathList);
         }
         return global_instance_of_index;
     }
-    InotifyIndex(const QString&);
+    InotifyIndex(const QStringList &pathList);
     ~InotifyIndex();
 
     bool AddWatch(const QString&);

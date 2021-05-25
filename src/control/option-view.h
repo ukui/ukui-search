@@ -28,6 +28,10 @@
 #include <QHBoxLayout>
 #include "search-list-view.h"
 
+#define NORMAL_COLOR QColor(55, 144, 250, 255)
+#define HOVER_COLOR QColor(64, 169, 251, 255)
+#define PRESS_COLOR QColor(41, 108, 217, 255)
+
 namespace Zeeker {
 class OptionView : public QWidget {
     Q_OBJECT

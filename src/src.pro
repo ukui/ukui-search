@@ -28,7 +28,6 @@ include(singleapplication/qt-single-application.pri)
 SOURCES += \
     content-widget.cpp \
     create-index-ask-dialog.cpp \
-    custom-style.cpp \
     input-box.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -41,7 +40,6 @@ SOURCES += \
 HEADERS += \
     content-widget.h \
     create-index-ask-dialog.h \
-    custom-style.h \
     input-box.h \
     mainwindow.h \
     search-app-thread.h \

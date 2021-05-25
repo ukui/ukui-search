@@ -105,6 +105,7 @@ private:
 
 Q_SIGNALS:
     void configFileChanged();
+    void actionTriggerd();
 private Q_SLOTS:
     void execActions(const int&, const int&, const QString&);
     void refreshIcon();

@@ -26,6 +26,7 @@
 #include <QMutex>
 #include <QVector>
 #include <QDir>
+#include <QFileSystemWatcher>
 //#include <QGSettings>
 //If use pkg_config, it wont build succes,why?????????
 //My demo can build access yet.
@@ -49,9 +50,13 @@
 #define PATH_NOT_IN_HOME 2;
 #define PATH_PARENT_BLOCKED 3;
 
-#define MAIN_SETTINGS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search.conf"
-#define BLOCK_DIRS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-block-dirs.conf"
-#define SEARCH_HISTORY QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-history.conf"
+//#define MAIN_SETTINGS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search.conf"
+//#define BLOCK_DIRS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-block-dirs.conf"
+//#define SEARCH_HISTORY QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-history.conf"
+
+#define MAIN_SETTINGS "/media/用户保险箱/.ukui-search/ukui-search.conf"
+#define BLOCK_DIRS "/media/用户保险箱/.ukui-search/ukui-search-block-dirs.conf"
+#define SEARCH_HISTORY "/media/用户保险箱/.ukui-search/ukui-search-history.conf"
 //#define CLOUD_HISTORY "history"
 //#define CLOUD_APPLICATIONS "applications"
 
@@ -102,6 +107,7 @@ private:
     QSettings *m_search_record_settings;
     QMap<QString, QVariant> m_cache;
     QStringList m_history;
+    QFileSystemWatcher *m_confWatcher;
 
     QMutex m_mutex;
 //    size_t test = 0;

@@ -37,6 +37,14 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
 //    m_settings->setAtomicSyncRequired(false);
     m_block_dirs_settings = new QSettings(BLOCK_DIRS, QSettings::IniFormat, this);
     m_block_dirs_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));
+//    m_block_dirs_settings->setValue("These_are_block_dirs_conf_for_ukui_search","0");
+//    m_block_dirs_settings->sync();
+//    m_confWatcher = new QFileSystemWatcher(this);
+//    m_confWatcher->addPath(BLOCK_DIRS);
+//    connect(m_confWatcher, &QFileSystemWatcher::fileChanged, this, [ & ]() {
+//        m_block_dirs_settings->sync();
+//        m_confWatcher->addPath(BLOCK_DIRS);
+//    });
 
     m_search_record_settings = new QSettings(SEARCH_HISTORY, QSettings::IniFormat, this);
     m_search_record_settings->setIniCodec(QTextCodec::codecForName("UTF-8"));

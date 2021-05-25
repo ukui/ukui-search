@@ -111,7 +111,7 @@ void ConstructDocumentForContent::run() {
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
 
-    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000));
+    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000).toStdString());
 
     Document doc;
     doc.setData(content);

@@ -138,7 +138,12 @@ void FirstIndex::run() {
 //        QtConcurrent::run([&](){
         sem.acquire(1);
         mutex1.unlock();
-        this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+        QStringList pathList;
+        pathList.append("/media/用户保险箱");
+        pathList.append("/media/邮件保险箱");
+        pathList.append("/media/公共保险箱");
+        pathList.append("/media/备份保险箱");
+        this->setPath(pathList);
         this->Traverse();
         FileUtils::_max_index_count = this->q_index->length();
         qDebug() << "max_index_count:" << FileUtils::_max_index_count;

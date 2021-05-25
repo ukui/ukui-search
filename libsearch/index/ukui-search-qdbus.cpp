@@ -38,7 +38,7 @@ UkuiSearchQDBus::~UkuiSearchQDBus() {
 //一键三连
 void UkuiSearchQDBus::setInotifyMaxUserWatches() {
     // /proc/sys/fs/inotify/max_user_watches
-    this->tmpSystemQDBusInterface->call("setInotifyMaxUserWatchesStep1");
+//    this->tmpSystemQDBusInterface->call("setInotifyMaxUserWatchesStep1");
     // sysctl
     this->tmpSystemQDBusInterface->call("setInotifyMaxUserWatchesStep2");
     // /etc/sysctl.conf
