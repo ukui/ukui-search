@@ -51,9 +51,9 @@ public:
 
 public Q_SLOTS:
     void appendInfo(const SearchPluginIface::ResultInfo &);
+    void startSearch(const QString &);
 
 Q_SIGNALS:
-    void startSearch(const QString &);
     void stopSearch();
 
 private:

@@ -91,6 +91,23 @@ private:
 Q_SIGNALS:
     void setWidgetInfo(const QString&, const SearchPluginIface::ResultInfo&);
 };
+
+class ActionLabel : public QLabel
+{
+    Q_OBJECT
+public:
+    ActionLabel(const QString &action, const QString &key, const QString &plugin, QWidget *parent = nullptr);
+    ~ActionLabel() = default;
+private:
+    void initUi();
+    QString m_action;
+    QString m_key;
+    QString m_plugin;
+
+protected:
+    bool eventFilter(QObject *, QEvent *);
+};
+
 }
 
 #endif // SEARCHPAGESECTION_H

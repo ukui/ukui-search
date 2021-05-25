@@ -66,6 +66,7 @@ void HomePage::appendSection(HomePageSection *section)
 
 //以下为homepage各版块的信息获取的回调
 
+//NEW_TODO
 //获取快速打开应用的列表
 QVector<HomePageItem> get_quickly_cb()
 {
@@ -114,18 +115,25 @@ QVector<HomePageItem> get_commonly_cb()
 void HomePage::registerSections()
 {
     //快速打开
-    HomePageSection *quickly_section = new HomePageSection(tr("Open Quickly"), HomePageItemShape::Square, m_widget);
-    quickly_section->setItems(get_quickly_cb());
-    if (quickly_section->length())
-        this->appendSection(quickly_section);
+    createSection(tr("Open Quickly"), HomePageItemShape::Square, get_quickly_cb());
     //最近打开
-    HomePageSection *recently_section = new HomePageSection(tr("Recently Opened"), HomePageItemShape::Bar, m_widget);
-    recently_section->setItems(get_recently_cb());
-    if (recently_section->length())
-        this->appendSection(recently_section);
+    createSection(tr("Recently Opened"), HomePageItemShape::Bar, get_recently_cb());
     //常用应用
-    HomePageSection *commonly_section = new HomePageSection(tr("Commonly Used"), HomePageItemShape::Square, m_widget);
-    commonly_section->setItems(get_commonly_cb());
-    if (commonly_section->length())
-        this->appendSection(commonly_section);
+    createSection(tr("Commonly Used"), HomePageItemShape::Square, get_commonly_cb());
+}
+
+void HomePage::createSection(const QString &section_name, const HomePageItemShape &shape, QVector<HomePageItem> items)
+{
+    HomePageSection *section = new HomePageSection(section_name, shape, m_widget);
+    section->setItems(items);
+    if (section->length())
+        this->appendSection(section);
+    connect(section, &HomePageSection::requestAction, this, [ = ](const QString &key, const QString &action, const QString &pluginId) {
+        SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(pluginId);
+        if (plugin) {
+            plugin->openAction(action, key);
+        } else {
+            qWarning()<<"Get plugin failed!";
+        }
+    });
 }

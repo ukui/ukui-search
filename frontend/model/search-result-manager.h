@@ -34,12 +34,12 @@ class ReceiveResultThread : public QThread {
 public:
     ReceiveResultThread(QQueue<SearchPluginIface::ResultInfo> * result_queue, QObject * parent = nullptr);
     ~ReceiveResultThread() = default;
+    void stop();
 protected:
     void run() override;
 
 private:
     QQueue<SearchPluginIface::ResultInfo> * m_result_queue;
-
 
 Q_SIGNALS:
     void gotResultInfo(const SearchPluginIface::ResultInfo&);

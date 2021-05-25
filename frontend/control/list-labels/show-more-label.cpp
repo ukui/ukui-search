@@ -56,6 +56,7 @@ void ShowMoreLabel::initUi() {
     m_layout->setAlignment(Qt::AlignRight);
     m_layout->addWidget(m_textLabel);
     m_textLabel->setPalette(pal);
+    m_textLabel->setCursor(QCursor(Qt::PointingHandCursor));
 //    m_layout->addWidget(m_loadingIconLabel);
 }
 
@@ -64,9 +65,11 @@ bool ShowMoreLabel::eventFilter(QObject *watched, QEvent *event) {
         if(event->type() == QEvent::MouseButtonPress) {
             if(! m_timer->isActive()) {
                 if(!m_isOpen) {
+                    m_textLabel->setText(tr("Retract"));
                     m_isOpen = true;
                     Q_EMIT this->showMoreClicked();
                 } else {
+                    m_textLabel->setText(tr("Show More..."));
                     m_isOpen = false;
                     Q_EMIT this->retractClicked();
                 }

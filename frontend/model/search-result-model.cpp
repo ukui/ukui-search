@@ -79,14 +79,23 @@ QVariant SearchResultModel::data(const QModelIndex &index, int role) const
 void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)
 {
     this->beginResetModel();
-    qWarning()<<"Got a result. name ="<<info.name;
+    qDebug()<<"Got a result. name ="<<info.name;
     m_item->m_result_info_list.append(info);
     this->endResetModel();
 }
 
+void SearchResultModel::startSearch(const QString &keyword)
+{
+    if (!m_item->m_result_info_list.isEmpty()) {
+        this->beginResetModel();
+        m_item->m_result_info_list.clear();
+        this->endResetModel();
+    }
+    m_search_manager->startSearch(keyword);
+}
+
 void SearchResultModel::initConnections()
 {
-    connect(this, &SearchResultModel::startSearch, m_search_manager, &SearchResultManager::startSearch);
     connect(this, &SearchResultModel::stopSearch, m_search_manager, &SearchResultManager::stopSearch);
     connect(m_search_manager, &SearchResultManager::gotResultInfo, this, &SearchResultModel::appendInfo);
 }

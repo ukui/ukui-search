@@ -32,7 +32,11 @@ SearchResultManager::SearchResultManager(const QString& plugin_id, QObject *pare
 void SearchResultManager::startSearch(const QString &keyword)
 {
     //NEW_TODO 加锁？停止线程？重新搜索？
-    stopSearch();
+//    stopSearch();
+    qDebug()<<m_plugin_id<<"------------------>start by others";
+    if(! m_get_result_thread->isRunning()) {
+        m_get_result_thread->start();
+    }
     m_result_queue->clear();
     SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
 //    plugin->KeywordSearch(keyword, m_result_queue);
@@ -46,34 +50,31 @@ void SearchResultManager::startSearch(const QString &keyword)
         desc_1.key = "描述";
         desc_1.value = "控制面板搜索插件";
         desc.append(desc_1);
-        QMap<QString,QString> actions;
-        actions.insert("ukcc-search","打开");
+        QStringList actions;
+        actions.append("打开");
         test_info.description = desc;
-        test_info.actionMap = actions;
+        test_info.actionList = actions;
         m_result_queue->append(test_info);
     } else {
-        test_info.icon = QIcon::fromTheme("ukui-control-center");
-        test_info.name = "文件";
+        test_info.icon = QIcon::fromTheme("unknown");
+        test_info.name = "文件12345abcde.txt";
         QVector<SearchPluginIface::DescriptionInfo> desc;
         SearchPluginIface::DescriptionInfo desc_1;
         SearchPluginIface::DescriptionInfo desc_2;
         desc_1.key = "描述";
         desc_1.value = "一个文件";
         desc_2.key = "路径";
-        desc_2.value = "一个路径";
+        desc_2.value = "一个路径/a/b/c/d/e/fffffff/文件12345abcde.txt";
         desc.append(desc_1);
         desc.append(desc_2);
-        QMap<QString,QString> actions;
-        actions.insert("file1","打开");
-        actions.insert("file2","复制路径");
+        QStringList actions;
+        actions.append("打开");
+        actions.append("复制路径");
         test_info.description = desc;
-        test_info.actionMap = actions;
+        test_info.actionList = actions;
         m_result_queue->append(test_info);
     }
     /********************测试用数据********************/
-
-    qWarning()<<m_plugin_id<<"------------------>start by others";
-    m_get_result_thread->start();
 }
 
 /**
@@ -82,9 +83,9 @@ void SearchResultManager::startSearch(const QString &keyword)
 void SearchResultManager::stopSearch()
 {
     if(m_get_result_thread->isRunning()) {
-        qWarning()<<m_plugin_id<<"-------------->stopped by others";
-        m_get_result_thread->requestInterruption();
-        m_get_result_thread->quit();
+        qDebug()<<m_plugin_id<<"-------------->stopped by others";
+        m_get_result_thread->stop();
+//        m_get_result_thread->quit();
     }
 }
 
@@ -96,6 +97,12 @@ void SearchResultManager::initConnections()
 ReceiveResultThread::ReceiveResultThread(QQueue<SearchPluginIface::ResultInfo> * result_queue, QObject *parent)
 {
     m_result_queue = result_queue;
+}
+
+void ReceiveResultThread::stop()
+{
+    this->requestInterruption();
+    this->quit();
 }
 
 //NEW_TODO 还未对队列加锁
