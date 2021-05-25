@@ -33,6 +33,9 @@ using namespace Zeeker;
 #define NAME_LABEL_WIDTH 280
 #define ICON_SIZE QSize(96, 96)
 #define LINE_STYLE "QFrame{background: rgba(0,0,0,0.2);}"
+#define ACTION_NORMAL_COLOR QColor(55, 144, 250, 255)
+#define ACTION_HOVER_COLOR QColor(64, 169, 251, 255)
+#define ACTION_PRESS_COLOR QColor(41, 108, 217, 255)
 
 ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 {
@@ -110,6 +113,7 @@ void DetailArea::initUi()
 DetailWidget::DetailWidget(QWidget *parent) : QWidget(parent)
 {
     initUi();
+    clear();
 }
 
 QString escapeHtml(const QString & str) {
@@ -131,21 +135,22 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
     m_nameFrame->show();
     m_line_1->show();
     if (info.description.length() > 0) {
-        //NEW_TODO
+        //NEW_TODO 样式待优化
         clearLayout(m_descFrameLyt);
         Q_FOREACH (SearchPluginIface::DescriptionInfo desc, info.description) {
             QLabel * descLabel = new QLabel(m_descFrame);
+            descLabel->setTextFormat(Qt::PlainText);
+            descLabel->setWordWrap(true);
             QString show_desc = desc.key + ":    " + desc.value;
             descLabel->setText(show_desc);
             m_descFrameLyt->addWidget(descLabel);
         }
+        m_descFrame->show();
         m_line_2->show();
     }
     clearLayout(m_actionFrameLyt);
-    Q_FOREACH (auto action, info.actionMap) {
-        //NEW_TODO
-        QLabel * actionLabel = new QLabel(m_actionFrame);
-        actionLabel->setText(action);
+    Q_FOREACH (auto action, info.actionList) {
+        ActionLabel * actionLabel = new ActionLabel(action, info.key, plugin_name, m_actionFrame);
         m_actionFrameLyt->addWidget(actionLabel);
     }
     m_actionFrame->show();
@@ -179,6 +184,7 @@ void DetailWidget::initUi()
     m_nameLabel = new QLabel(m_nameFrame);
     m_nameLabel->setMaximumWidth(NAME_LABEL_WIDTH);
     m_pluginLabel = new QLabel(m_nameFrame);
+    m_pluginLabel->setEnabled(false);
     m_nameFrameLyt->addWidget(m_nameLabel);
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
@@ -238,4 +244,49 @@ void DetailWidget::clearLayout(QLayout *layout)
         delete child;
     }
     child = NULL;
+}
+
+ActionLabel::ActionLabel(const QString &action, const QString &key, const QString &plugin, QWidget *parent) : QLabel(parent)
+{
+    m_action = action;
+    m_key = key;
+    m_plugin = plugin;
+    this->initUi();
+    this->installEventFilter(this);
+}
+
+void ActionLabel::initUi()
+{
+    this->setText(m_action);
+    QPalette pal = palette();
+    pal.setColor(QPalette::WindowText, ACTION_NORMAL_COLOR);
+    pal.setColor(QPalette::Light, ACTION_HOVER_COLOR);
+    pal.setColor(QPalette::Dark, ACTION_PRESS_COLOR);
+    this->setPalette(pal);
+    this->setForegroundRole(QPalette::WindowText);
+    this->setCursor(QCursor(Qt::PointingHandCursor));
+}
+
+bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == this) {
+        if(event->type() == QEvent::MouseButtonPress) {
+            this->setForegroundRole(QPalette::Dark);
+            return true;
+        } else if(event->type() == QEvent::MouseButtonRelease) {
+            SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin);
+            if (plugin)
+                plugin->openAction(m_action, m_key);
+            else
+                qWarning()<<"Get plugin failed!";
+            this->setForegroundRole(QPalette::Light);
+            return true;
+        } else if(event->type() == QEvent::Enter) {
+            this->setForegroundRole(QPalette::Light);
+            return true;
+        } else if(event->type() == QEvent::Leave) {
+            this->setForegroundRole(QPalette::WindowText);
+            return true;
+        }
+    }
 }

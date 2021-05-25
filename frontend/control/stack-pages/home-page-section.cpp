@@ -229,6 +229,12 @@ void ItemWidget::initUi(HomePageItemShape shape, const QString& name, const QIco
     }
 }
 
+/**
+ * @brief ItemWidget::eventFilter 处理悬停、离开、点击的窗格样式和点击时发出的信号
+ * @param watched
+ * @param event
+ * @return
+ */
 bool ItemWidget::eventFilter(QObject *watched, QEvent *event) {
     if(watched == this) {
         if(event->type() == QEvent::MouseButtonPress) {

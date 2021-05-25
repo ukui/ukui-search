@@ -18,33 +18,29 @@
  * Authors: zhangjiaping <zhangjiaping@kylinos.cn>
  *
  */
-#ifndef HOMEPAGE_H
-#define HOMEPAGE_H
+#ifndef RESULTVIEWDELEGATE_H
+#define RESULTVIEWDELEGATE_H
 
-#include <QScrollArea>
-#include "home-page-section.h"
-#include "file-utils.h"
-#include "pluginmanage/search-plugin-manager.h"
+#include <QStyledItemDelegate>
+#include <QPainter>
+#include <QStyle>
+#include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
+#include "global-settings.h"
 
 namespace Zeeker {
-class HomePage : public QScrollArea
-{
+class ResultViewDelegate : public QStyledItemDelegate {
     Q_OBJECT
 public:
-    explicit HomePage(QWidget *parent = nullptr);
-    ~HomePage() = default;
-
+    explicit ResultViewDelegate(QObject *parent = nullptr);
+    ~ResultViewDelegate() = default;
+    void setSearchKeyword(const QString &);
 private:
-    void initUi();
-    void appendSection(HomePageSection *);
-    QWidget * m_widget = nullptr;
-    QVBoxLayout * m_mainLyt = nullptr;
-
-    void registerSections();
-    void createSection(const QString &, const HomePageItemShape &, QVector<HomePageItem>);
-Q_SIGNALS:
-
+    QString m_regFindKeyWords = 0;
+    void paint(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const override;
+    QString getHtmlText(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const;
+    QString escapeHtml(const QString&) const;
 };
 }
 
-#endif // HOMEPAGE_H
+#endif // RESULTVIEWDELEGATE_H

@@ -6,6 +6,7 @@
 #include "search-result-model.h"
 #include "show-more-label.h"
 #include "title-label.h"
+#include "result-view-delegate.h"
 
 namespace Zeeker {
 
@@ -19,12 +20,15 @@ public:
 
 public Q_SLOTS:
     void clearSelectedRow();
+    void onRowDoubleClickedSlot(const QModelIndex &);
+    void onRowSelectedSlot(const QItemSelection &, const QItemSelection &);
 
 private:
     void initConnections();
     SearchResultModel * m_model = nullptr;
     QString m_plugin_id;
     bool m_is_selected = false;
+    ResultViewDelegate * m_style_delegate = nullptr;
 
 Q_SIGNALS:
     void startSearch(const QString &);
@@ -41,6 +45,11 @@ public:
     ~ResultWidget() = default;
     QString pluginId();
     void setEnabled(const bool&);
+
+public Q_SLOTS:
+    void expandListSlot();
+    void reduceListSlot();
+
 private:
     QString m_plugin_id;
     bool m_enabled = true;
