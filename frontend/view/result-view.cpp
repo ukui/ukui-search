@@ -2,7 +2,7 @@
 #define MAIN_MARGINS 0,0,0,0
 #define MAIN_SPACING 0
 #define TITLE_HEIGHT 30
-#define UNFOLD_LABEL_HEIGHT 24
+#define UNFOLD_LABEL_HEIGHT 30
 
 using namespace Zeeker;
 ResultWidget::ResultWidget(const QString &plugin_id, QWidget *parent) : QWidget(parent)
@@ -27,8 +27,8 @@ void ResultWidget::setEnabled(const bool &enabled)
  */
 void ResultWidget::expandListSlot()
 {
-//NEW_TODO
     qWarning()<<"List will be expanded!";
+    m_resultView->setExpanded(true);
 }
 
 /**
@@ -36,8 +36,21 @@ void ResultWidget::expandListSlot()
  */
 void ResultWidget::reduceListSlot()
 {
-//NEW_TODO
     qWarning()<<"List will be reduced!";
+    m_resultView->setExpanded(false);
+}
+
+/**
+ * @brief ResultWidget::onListLengthChanged 响应列表长度改变的槽函数
+ */
+void ResultWidget::onListLengthChanged(const int &length)
+{
+    this->setVisible(length > 0);
+    m_showMoreLabel->setVisible(length >= NUM_LIMIT_SHOWN_DEFAULT);
+    int show_more_height = m_showMoreLabel->isVisible() ? UNFOLD_LABEL_HEIGHT : 0;
+    int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT + show_more_height : 0;
+    this->setFixedHeight(whole_height);
+    Q_EMIT this->sizeChanged();
 }
 
 void ResultWidget::initUi()
@@ -53,15 +66,14 @@ void ResultWidget::initUi()
 
     m_resultView = new ResultView(m_plugin_id, this);
 
-    //NEW_TODO 当列表条目大于n？时显示
     m_showMoreLabel = new ShowMoreLabel(this);
     m_showMoreLabel->setFixedHeight(UNFOLD_LABEL_HEIGHT);
-//    m_showMoreLabel->hide();
+    m_showMoreLabel->hide();
 
     m_mainLyt->addWidget(m_titleLabel);
     m_mainLyt->addWidget(m_resultView);
     m_mainLyt->addWidget(m_showMoreLabel);
-    this->setFixedHeight(m_resultView->height() + TITLE_HEIGHT + UNFOLD_LABEL_HEIGHT);
+    this->setFixedHeight(m_resultView->height() + TITLE_HEIGHT);
 }
 
 void ResultWidget::initConnections()
@@ -73,11 +85,20 @@ void ResultWidget::initConnections()
     connect(this, &ResultWidget::stopSearch, m_resultView, &ResultView::stopSearch);
     connect(this, &ResultWidget::stopSearch, this, [ = ]() {
         m_showMoreLabel->resetLabel();
+        m_resultView->setExpanded(false);
     });
     connect(m_resultView, &ResultView::currentRowChanged, this, &ResultWidget::currentRowChanged);
     connect(this, &ResultWidget::clearSelectedRow, m_resultView, &ResultView::clearSelectedRow);
     connect(m_showMoreLabel, &ShowMoreLabel::showMoreClicked, this, &ResultWidget::expandListSlot);
     connect(m_showMoreLabel, &ShowMoreLabel::retractClicked, this, &ResultWidget::reduceListSlot);
+    connect(m_resultView, &ResultView::listLengthChanged, this, &ResultWidget::onListLengthChanged);
+    connect(m_resultView, &ResultView::rowClicked, this, &ResultWidget::rowClicked);
+    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+        int show_more_height = m_showMoreLabel->isVisible() ? UNFOLD_LABEL_HEIGHT : 0;
+        int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT + show_more_height : 0;
+        this->setFixedHeight(whole_height);
+        Q_EMIT this->sizeChanged();
+    });
 }
 
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
@@ -100,6 +121,19 @@ ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(pa
 bool ResultView::isSelected()
 {
     return m_is_selected;
+}
+
+int ResultView::showHeight()
+{
+    int height;
+    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    if (this->isExpanded()) {
+        height = m_count * rowheight;
+    } else {
+        int show_count = m_count > NUM_LIMIT_SHOWN_DEFAULT ? NUM_LIMIT_SHOWN_DEFAULT : m_count;
+        height = show_count * rowheight;
+    }
+    return height;
 }
 
 void ResultView::clearSelectedRow()
@@ -152,6 +186,56 @@ void ResultView::onRowSelectedSlot(const QItemSelection &selected, const QItemSe
     }
 }
 
+void ResultView::onItemListChanged(const int &count)
+{
+    m_count = count;
+    Q_EMIT this->listLengthChanged(count);
+}
+
+void ResultView::setExpanded(const bool &is_expanded)
+{
+    m_model->setExpanded(is_expanded);
+}
+
+const bool &ResultView::isExpanded()
+{
+    return m_model->isExpanded();
+}
+
+/**
+ * @brief ResultView::onMenuTriggered 点击右键菜单的槽函数
+ * @param action
+ */
+void ResultView::onMenuTriggered(QAction *action)
+{
+    //NEW_TODO 接口调整后需要修改
+    SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
+    if (plugin) {
+        plugin->openAction(action->text(), m_model->getKey(this->currentIndex()));
+    } else {
+        qWarning()<<"Get plugin failed!";
+    }
+}
+
+void ResultView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton) {
+        //加一点点延时，等待列表先被选中
+        QTimer::singleShot(10, this, [ = ] {
+            QMenu * menu = new QMenu(this);
+            QStringList actions = m_model->getActions(this->currentIndex());
+            Q_FOREACH (QString action, actions) {
+                menu->addAction(new QAction(action, this));
+            }
+            menu->move(cursor().pos());
+            menu->show();
+            connect(menu, &QMenu::triggered, this, &ResultView::onMenuTriggered);
+        });
+    }
+    Q_EMIT this->rowClicked();
+    return QTreeView::mousePressEvent(event);
+}
+
 void ResultView::initConnections()
 {
 //    connect(this, &ResultView::startSearch, m_model, &SearchResultModel::startSearch);
@@ -162,4 +246,5 @@ void ResultView::initConnections()
     connect(this, &ResultView::stopSearch, m_model, &SearchResultModel::stopSearch);
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ResultView::onRowSelectedSlot);
     connect(this, &ResultView::activated, this, &ResultView::onRowDoubleClickedSlot);
+    connect(m_model, &SearchResultModel::itemListChanged, this, &ResultView::onItemListChanged);
 }

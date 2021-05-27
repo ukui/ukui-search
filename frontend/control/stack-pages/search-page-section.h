@@ -36,6 +36,10 @@ public:
     ~ResultArea() = default;
     void appendWidet(ResultWidget *);
     void setVisibleList(const QStringList &);
+
+public Q_SLOTS:
+    void onWidgetSizeChanged();
+
 private:
     void initUi();
     void setupConnectionsForWidget(ResultWidget *);

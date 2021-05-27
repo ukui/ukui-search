@@ -3,6 +3,8 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QMenu>
+#include <QApplication>
 #include "search-result-model.h"
 #include "show-more-label.h"
 #include "title-label.h"
@@ -17,11 +19,19 @@ public:
     ResultView(const QString &plugin_id, QWidget *parent = nullptr);
     ~ResultView() = default;
     bool isSelected();
+    int showHeight();
 
 public Q_SLOTS:
     void clearSelectedRow();
     void onRowDoubleClickedSlot(const QModelIndex &);
     void onRowSelectedSlot(const QItemSelection &, const QItemSelection &);
+    void onItemListChanged(const int &);
+    void setExpanded(const bool &);
+    const bool &isExpanded();
+    void onMenuTriggered(QAction *);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     void initConnections();
@@ -29,12 +39,14 @@ private:
     QString m_plugin_id;
     bool m_is_selected = false;
     ResultViewDelegate * m_style_delegate = nullptr;
+    int m_count = 0;
 
 Q_SIGNALS:
     void startSearch(const QString &);
     void stopSearch();
     void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
-
+    void listLengthChanged(const int &);
+    void rowClicked();
 };
 
 class ResultWidget : public QWidget
@@ -49,6 +61,7 @@ public:
 public Q_SLOTS:
     void expandListSlot();
     void reduceListSlot();
+    void onListLengthChanged(const int &);
 
 private:
     QString m_plugin_id;
@@ -66,6 +79,8 @@ Q_SIGNALS:
     void stopSearch();
     void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
     void clearSelectedRow();
+    void sizeChanged();
+    void rowClicked();
 };
 }
 
