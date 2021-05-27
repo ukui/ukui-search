@@ -126,14 +126,14 @@ const bool &SearchResultModel::isExpanded()
 QStringList SearchResultModel::getActions(const QModelIndex &index)
 {
     if (m_item->m_result_info_list.length() > index.row() && index.row() >= 0)
-        return m_item->m_result_info_list.at(index.row()).actionList;
+//        return m_item->m_result_info_list.at(index.row()).actionList;
     return QStringList();
 }
 
 QString SearchResultModel::getKey(const QModelIndex &index)
 {
     if (m_item->m_result_info_list.length() > index.row() && index.row() >= 0)
-        return m_item->m_result_info_list.at(index.row()).key;
+//        return m_item->m_result_info_list.at(index.row()).key;
     return NULL;
 }
 

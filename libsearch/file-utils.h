@@ -35,6 +35,9 @@
 #include <QMap>
 #include <QDomDocument>
 #include <QQueue>
+#include <QDesktopServices>
+#include <QApplication>
+#include <QClipboard>
 
 #include <quazip/quazipfile.h>
 #include <stdio.h>
@@ -81,6 +84,9 @@ public:
     static void getXlsxTextContent(QString &path, QString &textcontent);
     static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
+
+    static bool openFile(QString &path, bool openInDir = false);
+    static bool copyPath(QString &path);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;

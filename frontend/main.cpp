@@ -253,6 +253,14 @@ int main(int argc, char *argv[]) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
+    QTranslator lib_translator;
+    try {
+        if(! lib_translator.load("/usr/share/ukui-search/translations/libukui-search_" + QLocale::system().name())) throw - 1;
+        app.installTranslator(&lib_translator);
+    } catch(...) {
+        qDebug() << "Load translations file" << QLocale() << "failed!";
+    }
+
     //set main window to the center of screen
     MainWindow *w = new MainWindow;
     qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));

@@ -37,19 +37,19 @@
 #include <QThread>
 #include <QUrl>
 
+#include "search-plugin-iface.h"
 #include "file-utils.h"
 #include "global-settings.h"
 #include "chinese-segmentation.h"
-
+#include "common.h"
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
-
 namespace Zeeker {
-
 class LIBSEARCH_EXPORT SearchManager : public QObject {
     friend class FileSearch;
     friend class FileContentSearch;
+    friend class DirectSearch;
     Q_OBJECT
 public:
     explicit SearchManager(QObject *parent = nullptr);
@@ -72,33 +72,15 @@ Q_SIGNALS:
     void resultDir(QQueue<QString> *);
     void resultContent(QQueue<QPair<QString, QStringList>> *);
 private:
-//    int keywordSearchfile(size_t uniqueSymbol, QString keyword, QString value,unsigned slot = 1,int begin = 0, int num = 20);
-//    int keywordSearchContent(size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
-
-    /**
-     * @brief SearchManager::creatQueryForFileSearch
-     * This part shall be optimized frequently to provide a more stable search function.
-     * @param keyword
-     * @param db
-     * @return Xapian::Query
-     */
-//    Xapian::Query creatQueryForFileSearch(QString keyword, Xapian::Database &db);
-//    Xapian::Query creatQueryForContentSearch(QString keyword, Xapian::Database &db);
-
-//    int getResult(size_t uniqueSymbol, Xapian::MSet &result, QString value);
-//    int getContentResult(size_t uniqueSymbol, Xapian::MSet &result,std::string &keyWord);
-
     static bool isBlocked(QString &path);
+    static bool creatResultInfo(Zeeker::SearchPluginIface::ResultInfo &ri, QString path);
 
-//    QQueue<QString> *m_search_result_file = nullptr;
-//    QQueue<QString> *m_search_result_dir = nullptr;
-//    QQueue<QPair<QString,QStringList>> *m_search_result_content = nullptr;
     QThreadPool m_pool;
 };
 
 class FileSearch : public QRunnable {
 public:
-    explicit FileSearch(QQueue<QString> *searchResult, size_t uniqueSymbol, QString keyword, QString value, unsigned slot = 1, int begin = 0, int num = 20);
+    explicit FileSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol, QString keyword, QString value, unsigned slot = 1, int begin = 0, int num = 20);
     ~FileSearch();
 protected:
     void run();
@@ -107,7 +89,7 @@ private:
     Xapian::Query creatQueryForFileSearch(Xapian::Database &db);
     int getResult(Xapian::MSet &result);
 
-    QQueue<QString> *m_search_result = nullptr;
+    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
     QString m_value;
     unsigned m_slot = 1;
     size_t m_uniqueSymbol;
@@ -118,7 +100,7 @@ private:
 
 class FileContentSearch : public QRunnable {
 public:
-    explicit FileContentSearch(QQueue<QPair<QString, QStringList>> *searchResult, size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
+    explicit FileContentSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
     ~FileContentSearch();
 protected:
     void run();
@@ -126,7 +108,7 @@ private:
     int keywordSearchContent();
     int getResult(Xapian::MSet &result, std::string &keyWord);
 
-    QQueue<QPair<QString, QStringList>> *m_search_result = nullptr;
+    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
     size_t m_uniqueSymbol;
     QString m_keyword;
     int m_begin = 0;
@@ -135,14 +117,14 @@ private:
 
 class DirectSearch : public QRunnable {
 public:
-    explicit DirectSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, size_t uniqueSymbol);
+    explicit DirectSearch(QString keyword, DataQueue<SearchPluginIface::ResultInfo> *searchResult, QString value, size_t uniqueSymbol);
 protected:
     void run();
 private:
     QString m_keyword;
-    QQueue<QString>* m_searchResultFile = nullptr;
-    QQueue<QString>* m_searchResultDir = nullptr;
+    DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr;
     size_t m_uniqueSymbol;
+    QString m_value;
 };
 
 }

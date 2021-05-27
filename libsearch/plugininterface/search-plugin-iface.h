@@ -4,8 +4,11 @@
 
 #include <QString>
 #include <QIcon>
-#include <QMap>
+#include <QList>
+#include <QMutex>
+#include <QtPlugin>
 #include "plugin-iface.h"
+#include "data-queue.h"
 
 namespace Zeeker {
 class SearchPluginIface : public PluginInterface
@@ -16,6 +19,11 @@ public:
         QString key;
         QString value;
     };
+    struct Actioninfo
+    {
+        int actionkey;
+        QString displayName;
+    };
     /**
      * @brief The ResultInfo struct
      */
@@ -24,13 +32,15 @@ public:
         QIcon icon;
         QString name;
         QVector<DescriptionInfo> description;
-        QStringList actionList; //all actions, take fist for double click action.
-        QString key;
+        QString actionKey;
+        int type;
     };
+
     virtual ~SearchPluginIface() {}
     virtual QString getPluginName() = 0;
-    virtual void KeywordSearch(QString keyword,QQueue<ResultInfo> *searchResult) = 0;
-    virtual void openAction(QString action, QString key) = 0;
+    virtual void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult) = 0;
+    virtual QList<Actioninfo> getActioninfo(int type) = 0;
+    virtual void openAction(int actionkey, QString key) = 0;
 
 };
 }

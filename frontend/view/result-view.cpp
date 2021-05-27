@@ -155,11 +155,11 @@ void ResultView::onRowDoubleClickedSlot(const QModelIndex &index)
     SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
     try {
         if (plugin) {
-            if (!info.actionList.isEmpty()) {
-                plugin->openAction(info.actionList.at(0), info.key);
-            } else {
-                throw -2;
-            }
+//            if (!info.actionList.isEmpty()) {
+//                plugin->openAction(info.actionList.at(0), info.key);
+//            } else {
+//                throw -2;
+//            }
         } else {
             throw -1;
         }
@@ -211,7 +211,7 @@ void ResultView::onMenuTriggered(QAction *action)
     //NEW_TODO 接口调整后需要修改
     SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
     if (plugin) {
-        plugin->openAction(action->text(), m_model->getKey(this->currentIndex()));
+//        plugin->openAction(action->text(), m_model->getKey(this->currentIndex()));
     } else {
         qWarning()<<"Get plugin failed!";
     }

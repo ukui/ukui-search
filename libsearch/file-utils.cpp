@@ -688,3 +688,18 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
 
     return;
 }
+
+bool FileUtils::openFile(QString &path, bool openInDir)
+{
+    if(openInDir) {
+        return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+    } else {
+        return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    }
+}
+
+bool FileUtils::copyPath(QString &path)
+{
+    QApplication::clipboard()->setText(path);
+    return true;
+}

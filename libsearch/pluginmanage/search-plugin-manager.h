@@ -2,7 +2,7 @@
 #define SEARCHPLUGINFACTORY_H
 
 #include <QObject>
-#include "plugininterface/search-plugin-iface.h"
+#include "search-plugin-iface.h"
 
 namespace Zeeker {
 class SearchPluginManager : public QObject
