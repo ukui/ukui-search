@@ -76,4 +76,5 @@ void SearchPage::setupConnectionsForWidget(ResultWidget *widget)
     connect(widget, &ResultWidget::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(widget, &ResultWidget::currentRowChanged, this, &SearchPage::currentRowChanged);
     connect(this, &SearchPage::currentRowChanged, widget, &ResultWidget::clearSelectedRow);
+    connect(widget, &ResultWidget::rowClicked, this, &SearchPage::effectiveSearch);
 }

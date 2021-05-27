@@ -44,7 +44,7 @@ QModelIndex SearchResultModel::parent(const QModelIndex &child) const
 
 int SearchResultModel::rowCount(const QModelIndex &index) const
 {
-    return index.isValid() ? 0 : m_item->m_result_info_list.length();
+    return index.isValid() ? 0 : (m_isExpanded ? m_item->m_result_info_list.length() : NUM_LIMIT_SHOWN_DEFAULT);
 }
 
 int SearchResultModel::columnCount(const QModelIndex &index) const
@@ -54,8 +54,6 @@ int SearchResultModel::columnCount(const QModelIndex &index) const
 
 QVariant SearchResultModel::data(const QModelIndex &index, int role) const
 {
-    if(!index.isValid())
-        return QVariant();
     switch(role) {
     case Qt::DecorationRole: {
         return m_item->m_result_info_list.at(index.row()).icon;
@@ -81,6 +79,7 @@ void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)
     this->beginResetModel();
     qDebug()<<"Got a result. name ="<<info.name;
     m_item->m_result_info_list.append(info);
+    Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
     this->endResetModel();
 }
 
@@ -89,6 +88,7 @@ void SearchResultModel::startSearch(const QString &keyword)
     if (!m_item->m_result_info_list.isEmpty()) {
         this->beginResetModel();
         m_item->m_result_info_list.clear();
+        Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
         this->endResetModel();
     }
     m_search_manager->startSearch(keyword);
@@ -103,6 +103,38 @@ void SearchResultModel::initConnections()
 const SearchPluginIface::ResultInfo &SearchResultModel::getInfo(const QModelIndex &index)
 {
     return m_item->m_result_info_list.at(index.row());
+}
+
+void SearchResultModel::setExpanded(const bool &is_expanded)
+{
+    this->beginResetModel();
+    m_isExpanded = is_expanded;
+    this->endResetModel();
+    Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
+}
+
+const bool &SearchResultModel::isExpanded()
+{
+    return m_isExpanded;
+}
+
+/**
+ * @brief SearchResultModel::getActions 获取操作列表
+ * @param index
+ * @return
+ */
+QStringList SearchResultModel::getActions(const QModelIndex &index)
+{
+    if (m_item->m_result_info_list.length() > index.row() && index.row() >= 0)
+        return m_item->m_result_info_list.at(index.row()).actionList;
+    return QStringList();
+}
+
+QString SearchResultModel::getKey(const QModelIndex &index)
+{
+    if (m_item->m_result_info_list.length() > index.row() && index.row() >= 0)
+        return m_item->m_result_info_list.at(index.row()).key;
+    return NULL;
 }
 
 SearchResultItem::SearchResultItem(QObject *parent) : QObject(parent)

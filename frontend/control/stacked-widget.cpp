@@ -88,4 +88,5 @@ void StackedWidget::initConnections()
 {
     connect(this, &StackedWidget::startSearch, m_searchPage, &SearchPage::startSearch);
     connect(this, &StackedWidget::stopSearch, m_searchPage, &SearchPage::stopSearch);
+    connect(m_searchPage, &SearchPage::effectiveSearch, this, &StackedWidget::effectiveSearch);
 }

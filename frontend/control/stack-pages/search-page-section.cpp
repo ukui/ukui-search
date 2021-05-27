@@ -48,7 +48,9 @@ void ResultArea::appendWidet(ResultWidget *widget)
     //NEW_TODO
     m_mainLyt->addWidget(widget);
     setupConnectionsForWidget(widget);
-    m_widget->setFixedHeight(m_widget->height() + widget->height());
+    m_widget_list.append(widget);
+    int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
+    m_widget->setFixedHeight(m_widget->height() + widget->height() + spacing_height);
 }
 
 /**
@@ -64,6 +66,16 @@ void ResultArea::setVisibleList(const QStringList &list)
             widget->setEnabled(false);
         }
     }
+}
+
+void ResultArea::onWidgetSizeChanged()
+{
+    int whole_height = 0;
+    Q_FOREACH (ResultWidget *widget, m_widget_list) {
+        whole_height += widget->height();
+    }
+    int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
+    m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
 }
 
 void ResultArea::initUi()
@@ -88,6 +100,7 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(this, &ResultArea::startSearch, widget, &ResultWidget::startSearch);
     connect(this, &ResultArea::stopSearch, widget, &ResultWidget::stopSearch);
+    connect(widget, &ResultWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
 }
 
 DetailArea::DetailArea(QWidget *parent) : QScrollArea(parent)

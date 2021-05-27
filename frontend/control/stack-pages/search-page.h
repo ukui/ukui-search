@@ -47,6 +47,7 @@ Q_SIGNALS:
     void startSearch(const QString &);
     void stopSearch();
     void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
+    void effectiveSearch();
 };
 }
 

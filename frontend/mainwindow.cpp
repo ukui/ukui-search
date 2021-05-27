@@ -201,6 +201,7 @@ void MainWindow::initConnections()
         m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
     });
     connect(m_searchLayout, &SearchBarHLayout::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
+    connect(m_stackedWidget, &StackedWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
 }
 
 /**

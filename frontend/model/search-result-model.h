@@ -23,6 +23,8 @@
 #include <QAbstractItemModel>
 #include "search-result-manager.h"
 
+#define NUM_LIMIT_SHOWN_DEFAULT 5
+
 namespace Zeeker {
 
 class SearchResultItem : public QObject {
@@ -48,6 +50,10 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
 //    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex())override;
     const SearchPluginIface::ResultInfo & getInfo(const QModelIndex&);
+    void setExpanded(const bool&);
+    const bool &isExpanded();
+    QStringList getActions(const QModelIndex &);
+    QString getKey(const QModelIndex &);
 
 public Q_SLOTS:
     void appendInfo(const SearchPluginIface::ResultInfo &);
@@ -55,12 +61,14 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void stopSearch();
+    void itemListChanged(const int&);
 
 private:
     void initConnections();
     SearchResultItem * m_item = nullptr;
     QString m_plugin_id;
     SearchResultManager * m_search_manager = nullptr;
+    bool m_isExpanded = false;
 };
 }
 

@@ -48,6 +48,7 @@ public:
 Q_SIGNALS:
     void startSearch(const QString &);
     void stopSearch();
+    void effectiveSearch();
 
 private:
     void initWidgets();

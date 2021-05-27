@@ -72,7 +72,25 @@ void SearchResultManager::startSearch(const QString &keyword)
         actions.append("复制路径");
         test_info.description = desc;
         test_info.actionList = actions;
+        SearchPluginIface::ResultInfo test_info_1 = test_info;
+        test_info_1.name = "文件1";
+        SearchPluginIface::ResultInfo test_info_2 = test_info;
+        test_info_2.name = "文件2";
+        SearchPluginIface::ResultInfo test_info_3 = test_info;
+        test_info_3.name = "文件3";
+        SearchPluginIface::ResultInfo test_info_4 = test_info;
+        test_info_4.name = "文件4";
+        SearchPluginIface::ResultInfo test_info_5 = test_info;
+        test_info_5.name = "文件5";
+        SearchPluginIface::ResultInfo test_info_6 = test_info;
+        test_info_6.name = "文件6";
         m_result_queue->append(test_info);
+        m_result_queue->append(test_info_1);
+        m_result_queue->append(test_info_2);
+        m_result_queue->append(test_info_3);
+        m_result_queue->append(test_info_4);
+        m_result_queue->append(test_info_5);
+        m_result_queue->append(test_info_6);
     }
     /********************测试用数据********************/
 }
