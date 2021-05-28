@@ -67,7 +67,7 @@ unix {
     INSTALLS += target
 
     header.path = /usr/include/ukui-search
-    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h
+    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h plugininterface/*.h
     INSTALLS += header
 }
 
