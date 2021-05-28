@@ -287,7 +287,7 @@ int FileContentSearch::keywordSearchContent() {
             v.push_back(Xapian::Query(sKeyWord.at(i).word));
             qDebug() << QString::fromStdString(sKeyWord.at(i).word);
         }
-        Xapian::Query query =Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
+        Xapian::Query query = Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
 
         qDebug() << "keywordSearchContent:" << QString::fromStdString(query.get_description());
 
