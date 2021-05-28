@@ -103,11 +103,15 @@ public:
 
         res.clear();
         res.resize(end - begin);
-        const string text_str = EncodeRunesToString(begin, end);
+
+        string text_str;
+        EncodeRunesToString(begin, end, text_str);
+
+        static const size_t max_num = 128;
+        JiebaDAT::result_pair_type result_pairs[max_num] = {};
 
         for (size_t i = 0, begin_pos = 0; i < size_t(end - begin); i++) {
-            static const size_t max_num = 128;
-            JiebaDAT::result_pair_type result_pairs[max_num] = {};
+
             std::size_t num_results = dat_.commonPrefixSearch(&text_str[begin_pos], &result_pairs[0], max_num);
 
             res[i].nexts.push_back(pair<size_t, const DatMemElem *>(i + 1, nullptr));

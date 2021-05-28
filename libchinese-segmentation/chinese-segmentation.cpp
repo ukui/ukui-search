@@ -77,10 +77,8 @@ std::vector<cppjieba::KeywordExtractor::Word> ChineseSegmentation::callSegementS
     const size_t topk = -1;
     std::vector<cppjieba::KeywordExtractor::Word> keywordres;
     ChineseSegmentation::m_jieba->extractor.Extract(str, keywordres, topk);
-//    std::string().swap(s);
 
     return keywordres;
-
 }
 
 void ChineseSegmentation::convert(std::vector<cppjieba::KeywordExtractor::Word> &keywordres, QVector<SKeyWord> &kw) {
