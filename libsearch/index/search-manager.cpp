@@ -283,10 +283,9 @@ int FileContentSearch::keywordSearchContent() {
 //        Xapian::Query query = qp.parse_query(words);
 
         std::vector<Xapian::Query> v;
-        for(int i=0;i<sKeyWord.size();i++)
-        {
+        for(int i=0; i<sKeyWord.size(); i++) {
             v.push_back(Xapian::Query(sKeyWord.at(i).word));
-            qDebug()<<QString::fromStdString(sKeyWord.at(i).word);
+            qDebug() << QString::fromStdString(sKeyWord.at(i).word);
         }
         Xapian::Query query =Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
 
