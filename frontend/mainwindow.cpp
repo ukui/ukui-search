@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
-    m_stackedWidget->setPlugins(QStringList()<<"File"<<"Folder");
+    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
 }
 
 MainWindow::~MainWindow() {

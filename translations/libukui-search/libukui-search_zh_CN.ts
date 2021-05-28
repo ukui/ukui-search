@@ -84,7 +84,7 @@
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="17"/>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="27"/>
         <source>File Search</source>
-        <translation></translation>
+        <translation>文件搜索</translation>
     </message>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="22"/>
@@ -95,9 +95,14 @@
 <context>
     <name>Zeeker::SearchManager</name>
     <message>
-        <location filename="../../libsearch/index/search-manager.cpp" line="98"/>
+        <location filename="../../libsearch/index/search-manager.cpp" line="100"/>
         <source>Path:</source>
         <translation>路径：</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/index/search-manager.cpp" line="101"/>
+        <source>Modified time:</source>
+        <translation>修改时间：</translation>
     </message>
 </context>
 </TS>

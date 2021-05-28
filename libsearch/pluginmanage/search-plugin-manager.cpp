@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "search-plugin-manager.h"
 #include "file-search-plugin.h"
 

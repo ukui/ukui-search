@@ -90,17 +90,15 @@ bool SearchManager::isBlocked(QString &path) {
 
 bool SearchManager::creatResultInfo(SearchPluginIface::ResultInfo &ri, QString path)
 {
-    QFileInfo info(info);
+    QFileInfo info(path);
     if(!info.exists()) {
         return false;
     }
-    SearchPluginIface::DescriptionInfo di;
-    di.key = tr("Path:");
-    di.value = path;
-
     ri.icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
     ri.name = info.fileName();
-    ri.description = QVector<SearchPluginIface::DescriptionInfo>() << di;
+    ri.description = QVector<SearchPluginIface::DescriptionInfo>() \
+                    << SearchPluginIface::DescriptionInfo{tr("Path:"), path} \
+                    << SearchPluginIface::DescriptionInfo{tr("Modified time:"), info.lastModified().toString("yyyy/MM/dd hh:mm:ss")};
     ri.actionKey = path;
     ri.type = 0;
     return true;

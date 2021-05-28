@@ -24,7 +24,7 @@ using namespace Zeeker;
 SearchResultManager::SearchResultManager(const QString& plugin_id, QObject *parent) : QObject(parent)
 {
     m_plugin_id = plugin_id;
-    m_result_queue = new QQueue<SearchPluginIface::ResultInfo>;
+    m_result_queue = new DataQueue<SearchPluginIface::ResultInfo>;
     m_get_result_thread = new ReceiveResultThread(m_result_queue);
     initConnections();
 }
@@ -39,7 +39,7 @@ void SearchResultManager::startSearch(const QString &keyword)
     }
     m_result_queue->clear();
     SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
-//    plugin->KeywordSearch(keyword, m_result_queue);
+    plugin->KeywordSearch(keyword, m_result_queue);
     /*********************测试用数据*********************/
 //    SearchPluginIface::ResultInfo test_info;
 //    if (m_plugin_id == "File") {
@@ -112,7 +112,7 @@ void SearchResultManager::initConnections()
     connect(m_get_result_thread, &ReceiveResultThread::gotResultInfo, this, &SearchResultManager::gotResultInfo);
 }
 
-ReceiveResultThread::ReceiveResultThread(QQueue<SearchPluginIface::ResultInfo> * result_queue, QObject *parent)
+ReceiveResultThread::ReceiveResultThread(DataQueue<SearchPluginIface::ResultInfo> * result_queue, QObject *parent)
 {
     m_result_queue = result_queue;
 }
