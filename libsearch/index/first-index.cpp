@@ -46,7 +46,54 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
-        this->q_content_index->enqueue(fileInfo.absoluteFilePath());
+        //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
+        if(fileInfo.fileName().split(".").last() == "docx"){
+            QuaZip file(fileInfo.absoluteFilePath());
+            if(!file.open(QuaZip::mdUnzip))
+                return;
+            if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
+                return;
+            QuaZipFile fileR(&file);
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//docx解压缩后的xml文件为实际需要解析文件大小
+            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
+            qDebug() << "文件大小:" << fileR.usize();
+            file.close();
+        }else if(fileInfo.fileName().split(".").last() == "pptx"){
+            QuaZip file(fileInfo.absoluteFilePath());
+            if(!file.open(QuaZip::mdUnzip))
+                return;
+            QString prefix("ppt/slides/slide");
+            qint64 fileSize(0);
+            qint64 fileIndex(0);
+            for(QString i : file.getFileNameList()) {
+                if(i.startsWith(prefix)){
+                    QString name = prefix + QString::number(fileIndex + 1) + ".xml";
+                    fileIndex++;
+                    if(!file.setCurrentFile(name)) {
+                        continue;
+                    }
+                    QuaZipFile fileR(&file);
+                    fileSize += fileR.usize();
+                }
+            }
+            file.close();
+            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
+            qDebug() << "文件大小:" << fileSize;
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileSize));//pptx解压缩后的xml文件为实际需要解析文件大小
+        }else if(fileInfo.fileName().split(".").last() == "xlsx"){
+            QuaZip file(fileInfo.absoluteFilePath());
+            if(!file.open(QuaZip::mdUnzip))
+                return;
+            if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
+                return;
+            QuaZipFile fileR(&file);
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//xlsx解压缩后的xml文件为实际解析文件大小
+            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
+            qDebug() << "文件大小:" << fileR.usize();
+            file.close();
+        }else{
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
+        }
     }
 }
 
@@ -90,8 +137,9 @@ void FirstIndex::run() {
 
     this->q_index = new QQueue<QVector<QString>>();
     //this->q_content_index = new QQueue<QString>();
-    NEW_QUEUE(this->q_content_index);
+    //NEW_QUEUE(this->q_content_index);
 //    this->mlm = new MessageListManager();
+    this->q_content_index = new QQueue<QPair<QString,qint64>>();
 
     int fifo_fd;
     char buffer[2];
@@ -173,9 +221,14 @@ void FirstIndex::run() {
             qDebug() << "q_content_index:" << q_content_index->size();
             while(!this->q_content_index->empty()) {
 //                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
-                for(size_t i = 0; (i < 30) && (!this->q_content_index->empty()); ++i) {
-                    tmp->enqueue(this->q_content_index->dequeue());
+                qint64 fileSize = 0;
+                //修改一次处理的数据量，从30个文件改为文件总大小为50M以下，50M为暂定值--jxx20210519
+                for(size_t i = 0;/* (i < 30) && */(fileSize < 50*1024*1024) && (!this->q_content_index->empty()); ++i) {
+                    QPair<QString,qint64> tempPair = this->q_content_index->dequeue();
+                    fileSize += tempPair.second;
+                    tmp->enqueue(tempPair.first);
                 }
+//                qDebug() << ">>>>>>>>all fileSize:" << fileSize << "file num:" << tmp->size() << "<<<<<<<<<<<<<<<<<<<";
                 this->p_indexGenerator->creatAllIndex(tmp);
                 tmp->clear();
             }
