@@ -1,26 +1,6 @@
-/*
- * Copyright (C) 2020, KylinSoft Co., Ltd.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *
- */
-#ifndef CPPJIEBA_HMMMODEL_H
-#define CPPJIEBA_HMMMODEL_H
+#pragma once
 
 #include "limonp/StringUtil.hpp"
-#include "Trie.hpp"
 
 namespace cppjieba {
 
@@ -59,16 +39,18 @@ struct HMMModel {
         XCHECK(GetLine(ifile, line));
         Split(line, tmp, " ");
         XCHECK(tmp.size() == STATUS_SUM);
-        for(size_t j = 0; j < tmp.size(); j++) {
+
+        for (size_t j = 0; j < tmp.size(); j++) {
             startProb[j] = atof(tmp[j].c_str());
         }
 
         //Load transProb
-        for(size_t i = 0; i < STATUS_SUM; i++) {
+        for (size_t i = 0; i < STATUS_SUM; i++) {
             XCHECK(GetLine(ifile, line));
             Split(line, tmp, " ");
             XCHECK(tmp.size() == STATUS_SUM);
-            for(size_t j = 0; j < STATUS_SUM; j++) {
+
+            for (size_t j = 0; j < tmp.size(); j++) {
                 transProb[i][j] = atof(tmp[j].c_str());
             }
         }
@@ -92,43 +74,55 @@ struct HMMModel {
     double GetEmitProb(const EmitProbMap* ptMp, Rune key,
                        double defVal)const {
         EmitProbMap::const_iterator cit = ptMp->find(key);
-        if(cit == ptMp->end()) {
+
+        if (cit == ptMp->end()) {
             return defVal;
         }
+
         return cit->second;
     }
     bool GetLine(ifstream& ifile, string& line) {
-        while(getline(ifile, line)) {
+        while (getline(ifile, line)) {
             Trim(line);
-            if(line.empty()) {
+
+            if (line.empty()) {
                 continue;
             }
-            if(StartsWith(line, "#")) {
+
+            if (StartsWith(line, "#")) {
                 continue;
             }
+
             return true;
         }
+
         return false;
     }
     bool LoadEmitProb(const string& line, EmitProbMap& mp) {
-        if(line.empty()) {
+        if (line.empty()) {
             return false;
         }
+
         vector<string> tmp, tmp2;
-        Unicode unicode;
+        RuneArray unicode;
         Split(line, tmp, ",");
-        for(size_t i = 0; i < tmp.size(); i++) {
+
+        for (size_t i = 0; i < tmp.size(); i++) {
             Split(tmp[i], tmp2, ":");
-            if(2 != tmp2.size()) {
+
+            if (2 != tmp2.size()) {
                 XLOG(ERROR) << "emitProb illegal.";
                 return false;
             }
-            if(!DecodeRunesInString(tmp2[0], unicode) || unicode.size() != 1) {
+
+            if (!DecodeRunesInString(tmp2[0], unicode) || unicode.size() != 1) {
                 XLOG(ERROR) << "TransCode failed.";
                 return false;
             }
+
             mp[unicode[0]] = atof(tmp2[1].c_str());
         }
+
         return true;
     }
 
@@ -144,4 +138,3 @@ struct HMMModel {
 
 } // namespace cppjieba
 
-#endif

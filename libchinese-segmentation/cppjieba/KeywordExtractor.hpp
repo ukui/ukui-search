@@ -1,23 +1,4 @@
-/*
- * Copyright (C) 2020, KylinSoft Co., Ltd.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *
- */
-#ifndef CPPJIEBA_KEYWORD_EXTRACTOR_H
-#define CPPJIEBA_KEYWORD_EXTRACTOR_H
+#pragma once
 
 #include <cmath>
 #include <set>
@@ -37,15 +18,6 @@ public:
         double weight;
     }; // struct Word
 
-    KeywordExtractor(const string& dictPath,
-                     const string& hmmFilePath,
-                     const string& idfPath,
-                     const string& stopWordPath,
-                     const string& userDict = "")
-        : segment_(dictPath, hmmFilePath, userDict) {
-        LoadIdfDict(idfPath);
-        LoadStopWordDict(stopWordPath);
-    }
     KeywordExtractor(const DictTrie* dictTrie,
                      const HMMModel* model,
                      const string& idfPath,
@@ -60,7 +32,8 @@ public:
     void Extract(const string& sentence, vector<string>& keywords, size_t topN) const {
         vector<Word> topWords;
         Extract(sentence, topWords, topN);
-        for(size_t i = 0; i < topWords.size(); i++) {
+
+        for (size_t i = 0; i < topWords.size(); i++) {
             keywords.push_back(topWords[i].word);
         }
     }
@@ -68,43 +41,52 @@ public:
     void Extract(const string& sentence, vector<pair<string, double> >& keywords, size_t topN) const {
         vector<Word> topWords;
         Extract(sentence, topWords, topN);
-        for(size_t i = 0; i < topWords.size(); i++) {
+
+        for (size_t i = 0; i < topWords.size(); i++) {
             keywords.push_back(pair<string, double>(topWords[i].word, topWords[i].weight));
         }
     }
 
     void Extract(const string& sentence, vector<Word>& keywords, size_t topN) const {
         vector<string> words;
-        segment_.Cut(sentence, words);
+        segment_.CutToStr(sentence, words);//将字符串string分解为words放入vector
 
-        map<string, Word> wordmap;
+        map<string, Word> wordmap;//插入字符串与Word的map，相同string统计词频叠加权重
         size_t offset = 0;
-        for(size_t i = 0; i < words.size(); ++i) {
+
+        for (size_t i = 0; i < words.size(); ++i) {
             size_t t = offset;
             offset += words[i].size();
-            if(IsSingleWord(words[i]) || stopWords_.find(words[i]) != stopWords_.end()) {
+
+            if (IsSingleWord(words[i]) || stopWords_.find(words[i]) != stopWords_.end()) {
                 continue;
             }
+
             wordmap[words[i]].offsets.push_back(t);
             wordmap[words[i]].weight += 1.0;
         }
-        if(offset != sentence.size()) {
+
+        if (offset != sentence.size()) {
             XLOG(ERROR) << "words illegal";
             return;
         }
 
         keywords.clear();
         keywords.reserve(wordmap.size());
-        for(map<string, Word>::iterator itr = wordmap.begin(); itr != wordmap.end(); ++itr) {
-            unordered_map<string, double>::const_iterator cit = idfMap_.find(itr->first);
-            if(cit != idfMap_.end()) {
+
+        for (map<string, Word>::iterator itr = wordmap.begin(); itr != wordmap.end(); ++itr) {
+            unordered_map<string, double>::const_iterator cit = idfMap_.find(itr->first);//IDF词典查找
+
+            if (cit != idfMap_.end()) {
                 itr->second.weight *= cit->second;
             } else {
                 itr->second.weight *= idfAverage_;
             }
+
             itr->second.word = itr->first;
             keywords.push_back(itr->second);
         }
+
         topN = min(topN, keywords.size());
         partial_sort(keywords.begin(), keywords.begin() + topN, keywords.end(), Compare);
         keywords.resize(topN);
@@ -112,23 +94,31 @@ public:
 private:
     void LoadIdfDict(const string& idfPath) {
         ifstream ifs(idfPath.c_str());
+        if(not ifs.is_open()){
+            return ;
+        }
         XCHECK(ifs.is_open()) << "open " << idfPath << " failed";
         string line ;
         vector<string> buf;
         double idf = 0.0;
         double idfSum = 0.0;
         size_t lineno = 0;
-        for(; getline(ifs, line); lineno++) {
+
+        for (; getline(ifs, line); lineno++) {
             buf.clear();
-            if(line.empty()) {
+
+            if (line.empty()) {
                 XLOG(ERROR) << "lineno: " << lineno << " empty. skipped.";
                 continue;
             }
+
             Split(line, buf, " ");
-            if(buf.size() != 2) {
+
+            if (buf.size() != 2) {
                 XLOG(ERROR) << "line: " << line << ", lineno: " << lineno << " empty. skipped.";
                 continue;
             }
+
             idf = atof(buf[1].c_str());
             idfMap_[buf[0]] = idf;
             idfSum += idf;
@@ -141,11 +131,16 @@ private:
     }
     void LoadStopWordDict(const string& filePath) {
         ifstream ifs(filePath.c_str());
+        if(not ifs.is_open()){
+            return ;
+        }
         XCHECK(ifs.is_open()) << "open " << filePath << " failed";
         string line ;
-        while(getline(ifs, line)) {
+
+        while (getline(ifs, line)) {
             stopWords_.insert(line);
         }
+
         assert(stopWords_.size());
     }
 
@@ -161,11 +156,11 @@ private:
 }; // class KeywordExtractor
 
 inline ostream& operator << (ostream& os, const KeywordExtractor::Word& word) {
-    return os << "{\"word\": \"" << word.word << "\", \"offset\": " << word.offsets << ", \"weight\": " << word.weight << "}";
+    return os << "{\"word\": \"" << word.word << "\", \"offset\": " << word.offsets << ", \"weight\": " << word.weight <<
+           "}";
 }
 
 } // namespace cppjieba
 
-#endif
 
 
