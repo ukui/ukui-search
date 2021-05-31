@@ -22,20 +22,18 @@
 #include <QEvent>
 #include <QDebug>
 
-ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent)
-{
+using namespace Zeeker;
+ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
     initUi();
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, &ShowMoreLabel::refreshLoadState);
     connect(this, &ShowMoreLabel::showMoreClicked, this, &ShowMoreLabel::startLoading);
 }
 
-ShowMoreLabel::~ShowMoreLabel()
-{
+ShowMoreLabel::~ShowMoreLabel() {
 }
 
-void ShowMoreLabel::resetLabel()
-{
+void ShowMoreLabel::resetLabel() {
     m_isOpen = false;
     m_textLabel->setText(tr("Show More..."));
 }
@@ -44,15 +42,15 @@ void ShowMoreLabel::resetLabel()
  * @brief ShowMoreLabel::getExpanded 获取当前是否是展开状态
  * @return true已展开，false已收起
  */
-bool ShowMoreLabel::getExpanded()
-{
+bool ShowMoreLabel::getExpanded() {
     return m_isOpen;
 }
 
-void ShowMoreLabel::initUi()
-{
+void ShowMoreLabel::initUi() {
+    QPalette pal = palette();
+    pal.setColor(QPalette::WindowText, QColor(55, 144, 250, 255));
     m_layout = new QHBoxLayout(this);
-    m_layout->setContentsMargins(0,0,0,6);
+    m_layout->setContentsMargins(0, 0, 0, 6);
     m_textLabel = new QLabel(this);
     m_textLabel->setText(tr("Show More..."));
     m_textLabel->setCursor(QCursor(Qt::PointingHandCursor));
@@ -62,26 +60,24 @@ void ShowMoreLabel::initUi()
 //    m_loadingIconLabel->hide();
     m_layout->setAlignment(Qt::AlignRight);
     m_layout->addWidget(m_textLabel);
-    m_textLabel->setStyleSheet("QLabel{font-size: 14px; color: #3790FA}");
+    m_textLabel->setPalette(pal);
 //    m_layout->addWidget(m_loadingIconLabel);
 }
 
-void ShowMoreLabel::startLoading()
-{
+void ShowMoreLabel::startLoading() {
 //    m_textLabel->hide();
 //    m_loadingIconLabel->show();
     m_timer->start(0.4 * 1000);
     m_textLabel->setCursor(QCursor(Qt::ArrowCursor));
 }
 
-void ShowMoreLabel::stopLoading()
-{
+void ShowMoreLabel::stopLoading() {
 //    m_loadingIconLabel->hide();
 //    m_textLabel->show();
-    if (m_timer->isActive()) {
+    if(m_timer->isActive()) {
         m_timer->stop();
     }
-    if (m_isOpen) {
+    if(m_isOpen) {
         m_textLabel->setText(tr("Retract"));
     } else {
         m_textLabel->setText(tr("Show More..."));
@@ -89,39 +85,38 @@ void ShowMoreLabel::stopLoading()
     m_textLabel->setCursor(QCursor(Qt::PointingHandCursor));
 }
 
-void ShowMoreLabel::refreshLoadState()
-{
-    switch (m_currentState) {
-        case 0: {
-            m_textLabel->setText(tr("Loading"));
-            m_currentState ++;
-            break;
-        }
-        case 1: {
-            m_textLabel->setText(tr("Loading."));
-            m_currentState ++;
-            break;
-        }
-        case 2: {
-            m_textLabel->setText(tr("Loading.."));
-            m_currentState ++;
-            break;
-        }
-        case 3: {
-            m_textLabel->setText(tr("Loading..."));
-            m_currentState = 0;
-            break;
-        }
-        default:
-            break;
+void ShowMoreLabel::refreshLoadState() {
+    switch(m_currentState) {
+    case 0: {
+        m_textLabel->setText(tr("Loading"));
+        m_currentState ++;
+        break;
+    }
+    case 1: {
+        m_textLabel->setText(tr("Loading."));
+        m_currentState ++;
+        break;
+    }
+    case 2: {
+        m_textLabel->setText(tr("Loading.."));
+        m_currentState ++;
+        break;
+    }
+    case 3: {
+        m_textLabel->setText(tr("Loading..."));
+        m_currentState = 0;
+        break;
+    }
+    default:
+        break;
     }
 }
 
-bool ShowMoreLabel::eventFilter(QObject *watched, QEvent *event){
-    if (watched == m_textLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
-            if (! m_timer->isActive()) {
-                if (!m_isOpen) {
+bool ShowMoreLabel::eventFilter(QObject *watched, QEvent *event) {
+    if(watched == m_textLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
+            if(! m_timer->isActive()) {
+                if(!m_isOpen) {
                     m_isOpen = true;
                     Q_EMIT this->showMoreClicked();
                 } else {

@@ -27,19 +27,21 @@
 #include "index-generator.h"
 #include "traverse_bfs.h"
 #include "ukui-search-qdbus.h"
-#include "global-settings.h"
+#include "index-status-recorder.h"
 #include "file-utils.h"
 #include "first-index.h"
+#include "common.h"
 
 #define BUF_LEN 1024000
+
+namespace Zeeker {
 class InotifyIndex;
 static InotifyIndex* global_instance_of_index = nullptr;
-class InotifyIndex : public QThread, public Traverse_BFS
-{
+class InotifyIndex : public QThread, public Traverse_BFS {
     Q_OBJECT
 public:
-    static InotifyIndex* getInstance(const QString& path){
-        if (!global_instance_of_index) {
+    static InotifyIndex* getInstance(const QString& path) {
+        if(!global_instance_of_index) {
             global_instance_of_index = new InotifyIndex(path);
         }
         return global_instance_of_index;
@@ -48,7 +50,7 @@ public:
     ~InotifyIndex();
 
     bool AddWatch(const QString&);
-    bool RemoveWatch(const QString&);
+    bool RemoveWatch(const QString&, bool removeFromDatabase = true);
     virtual void DoSomething(const QFileInfo &) final;
 
     void eventProcess(const char*, ssize_t);
@@ -56,7 +58,6 @@ public:
 protected:
     void run() override;
 private:
-    QString* m_watch_path;
     int m_fd;
 
     QMap<int, QString> currentPath;
@@ -78,5 +79,6 @@ private:
     };
 
 };
+}
 
 #endif // INOTIFYINDEX_H

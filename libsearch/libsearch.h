@@ -21,24 +21,26 @@
 #define LIBSEARCH_H
 
 #include "libsearch_global.h"
-#include "index/search-manager.h"
 #include "appsearch/app-match.h"
 #include "settingsearch/setting-match.h"
 #include "file-utils.h"
 #include "global-settings.h"
-#include "index/first-index.h"
 
+#include "index/searchmethodmanager.h"
+#include "index/first-index.h"
 #include "index/ukui-search-qdbus.h"
 #include "index/inotify-index.h"
+#include "index/search-manager.h"
 
-class  LIBSEARCH_EXPORT GlobalSearch
-{
-public:
+namespace Zeeker {
+//class  LIBSEARCH_EXPORT GlobalSearch {
+//public:
 
-    static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);
+//    static QStringList fileSearch(QString keyword, int begin = 0, int num = -1);
 
-private:
-    GlobalSearch();
-};
+//private:
+//    GlobalSearch();
+//};
+}
 
 #endif // LIBSEARCH_H

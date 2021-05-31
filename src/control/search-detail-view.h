@@ -30,8 +30,8 @@
 #include "option-view.h"
 #include "global-settings.h"
 
-class SearchDetailView : public QWidget
-{
+namespace Zeeker {
+class SearchDetailView : public QWidget {
     Q_OBJECT
 public:
     explicit SearchDetailView(QWidget *parent = nullptr);
@@ -71,6 +71,8 @@ private:
     QString m_pkgname = 0; //目前只有未安装应用在打开软件商店时需要此参数
 
     void initUI();
+    void setIcon(const QString& path, const bool &installed = true);
+    QString m_iconPath;
     QLabel * m_iconLabel = nullptr;
     QFrame * m_nameFrame = nullptr;
     QHBoxLayout * m_nameLayout = nullptr;
@@ -103,8 +105,10 @@ private:
 
 Q_SIGNALS:
     void configFileChanged();
+    void actionTriggerd();
 private Q_SLOTS:
     void execActions(const int&, const int&, const QString&);
+    void refreshIcon();
 };
 
 //此类用于url拦截
@@ -114,5 +118,6 @@ private Q_SLOTS:
 //    explicit RequestInterceptor(QObject * parent = nullptr) : QWebEngineUrlRequestInterceptor(parent) {}
 //    virtual void interceptRequest(QWebEngineUrlRequestInfo & info) Q_DECL_OVERRIDE;
 //};
+}
 
 #endif // SEARCHDETAILVIEW_H

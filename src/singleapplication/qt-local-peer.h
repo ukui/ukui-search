@@ -50,16 +50,16 @@
 
 #include "qt-locked-file.h"
 
-class QtLocalPeer : public QObject
-{
+class QtLocalPeer : public QObject {
     Q_OBJECT
 
 public:
     QtLocalPeer(QObject *parent = 0, const QString &appId = QString());
     bool isClient();
     bool sendMessage(const QString &message, int timeout);
-    QString applicationId() const
-        { return id; }
+    QString applicationId() const {
+        return id;
+    }
 
 Q_SIGNALS:
     void messageReceived(const QString &message);

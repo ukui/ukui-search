@@ -34,17 +34,18 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/prctl.h>
+#include <syslog.h>
 //#include <QtConcurrent>
 #include "traverse_bfs.h"
-#include "global-settings.h"
+#include "index-status-recorder.h"
 #include "index-generator.h"
 #include "inotify-index.h"
 #include "file-utils.h"
-
-class FirstIndex : public QThread, public Traverse_BFS
-{
+#include "common.h"
+namespace Zeeker {
+class FirstIndex : public QThread, public Traverse_BFS {
 public:
-    FirstIndex(const QString&);
+    FirstIndex();
     ~FirstIndex();
     virtual void DoSomething(const QFileInfo &) final;
 protected:
@@ -82,5 +83,6 @@ private:
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;
 };
+}
 
 #endif // FIRSTINDEX_H

@@ -28,8 +28,8 @@
 #include "model/search-item.h"
 #include "highlight-item-delegate.h"
 
-class SearchListView : public QTreeView
-{
+namespace Zeeker {
+class SearchListView : public QTreeView {
     Q_OBJECT
 public:
     explicit SearchListView(QWidget *, const QStringList&, const int&);
@@ -57,6 +57,7 @@ public:
     void appendBestItem(const QPair<int, QString>&);
     void removeItem(QString);
     void clear();
+    void refresh();
     void setKeyword(QString);
     int getType();
     int getLength();
@@ -73,7 +74,7 @@ private:
     int m_type;
 
 Q_SIGNALS:
-    void currentRowChanged(SearchListView *,const int&, const QString&);
+    void currentRowChanged(SearchListView *, const int&, const QString&);
     void onRowDoubleClicked(SearchListView *, const int&, const QString&);
     void currentSelectPos(QPoint pos);
     void mousePressed();
@@ -81,5 +82,6 @@ Q_SIGNALS:
 public Q_SLOTS:
     void clearSelection();
 };
+}
 
 #endif // SEARCHLISTVIEW_H

@@ -25,12 +25,10 @@
 #include <stdlib.h>
 #include <QGraphicsView>
 
-SysdbusRegister::SysdbusRegister()
-{
+SysdbusRegister::SysdbusRegister() {
 }
 
-SysdbusRegister::~SysdbusRegister()
-{
+SysdbusRegister::~SysdbusRegister() {
 }
 
 void SysdbusRegister::exitService() {
@@ -44,67 +42,61 @@ void SysdbusRegister::exitService() {
  *   sprintf(cmd, "echo fs.inotify.max_user_watches=9999999 | sudo tee -a /etc/sysctl.conf");
 */
 
-QString SysdbusRegister::setInotifyMaxUserWatchesStep1()
-{
+QString SysdbusRegister::setInotifyMaxUserWatchesStep1() {
     QByteArray ba;
     FILE * fp = NULL;
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "echo 9999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches");
-    if ((fp = popen(cmd, "r")) != NULL){
+    if((fp = popen(cmd, "r")) != NULL) {
         rewind(fp);
-        while (!feof(fp)) {
-            fgets(buf, sizeof (buf), fp);
+        while(!feof(fp)) {
+            fgets(buf, sizeof(buf), fp);
             ba.append(buf);
         }
         pclose(fp);
         fp = NULL;
-    }
-    else{
+    } else {
         return QString("popen open failed");
     }
     return QString(ba);
 }
 
-QString SysdbusRegister::setInotifyMaxUserWatchesStep2()
-{
+QString SysdbusRegister::setInotifyMaxUserWatchesStep2() {
     QByteArray ba;
     FILE * fp = NULL;
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "sysctl -w fs.inotify.max_user_watches=\"9999999\"");
-    if ((fp = popen(cmd, "r")) != NULL){
+    if((fp = popen(cmd, "r")) != NULL) {
         rewind(fp);
-        while (!feof(fp)) {
-            fgets(buf, sizeof (buf), fp);
+        while(!feof(fp)) {
+            fgets(buf, sizeof(buf), fp);
             ba.append(buf);
         }
         pclose(fp);
         fp = NULL;
-    }
-    else{
+    } else {
         return QString("popen open failed");
     }
     return QString(ba);
 }
 
-QString SysdbusRegister::setInotifyMaxUserWatchesStep3()
-{
+QString SysdbusRegister::setInotifyMaxUserWatchesStep3() {
     QByteArray ba;
     FILE * fp = NULL;
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "echo fs.inotify.max_user_watches=9999999 | sudo tee -a /etc/sysctl.conf");
-    if ((fp = popen(cmd, "r")) != NULL){
+    if((fp = popen(cmd, "r")) != NULL) {
         rewind(fp);
-        while (!feof(fp)) {
-            fgets(buf, sizeof (buf), fp);
+        while(!feof(fp)) {
+            fgets(buf, sizeof(buf), fp);
             ba.append(buf);
         }
         pclose(fp);
         fp = NULL;
-    }
-    else{
+    } else {
         return QString("popen open failed");
     }
     return QString(ba);

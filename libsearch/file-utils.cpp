@@ -20,31 +20,19 @@
  *
  */
 #include "file-utils.h"
-#include <QDebug>
-#include <QFile>
-#include <QFileInfo>
-#include <QUrl>
-#include <QMap>
-#include "quazip/quazip.h"
-#include <quazip/quazipfile.h>
-#include <QDomDocument>
-#include <QQueue>
-#include "uchardet/uchardet.h"
-#include "poppler-qt5.h"
 
-
+using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
 size_t FileUtils::_current_index_count = 0;
 unsigned short FileUtils::_index_status = 0;
+FileUtils::SearchMethod FileUtils::searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
 QMap<QString, QStringList> FileUtils::map_chinese2pinyin = QMap<QString, QStringList>();
 
-FileUtils::FileUtils()
-{
+FileUtils::FileUtils() {
 }
 
-std::string FileUtils::makeDocUterm(QString path)
-{
-    return QCryptographicHash::hash(path.toUtf8(),QCryptographicHash::Md5).toHex().toStdString();
+std::string FileUtils::makeDocUterm(QString path) {
+    return QCryptographicHash::hash(path.toUtf8(), QCryptographicHash::Md5).toHex().toStdString();
 }
 
 /**
@@ -53,30 +41,29 @@ std::string FileUtils::makeDocUterm(QString path)
  * @param checkValid
  * @return
  */
-QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid)
-{
+QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
     auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
     auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
-                                                G_FILE_ATTRIBUTE_STANDARD_ICON,
-                                                G_FILE_QUERY_INFO_NONE,
-                                                nullptr,
-                                                nullptr));
-    if (!G_IS_FILE_INFO (info.get()->get()))
+                              G_FILE_ATTRIBUTE_STANDARD_ICON,
+                              G_FILE_QUERY_INFO_NONE,
+                              nullptr,
+                              nullptr));
+    if(!G_IS_FILE_INFO(info.get()->get()))
         return QIcon::fromTheme("unknown");
-    GIcon *g_icon = g_file_info_get_icon (info.get()->get());
+    GIcon *g_icon = g_file_info_get_icon(info.get()->get());
     QString icon_name;
     //do not unref the GIcon from info.
-    if (G_IS_ICON(g_icon)) {
-        const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON (g_icon));
-        if (icon_names) {
+    if(G_IS_ICON(g_icon)) {
+        const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON(g_icon));
+        if(icon_names) {
             auto p = icon_names;
-            if (*p)
-                icon_name = QString (*p);
-            if (checkValid) {
-                while (*p) {
+            if(*p)
+                icon_name = QString(*p);
+            if(checkValid) {
+                while(*p) {
                     QIcon icon = QIcon::fromTheme(*p);
-                    if (!icon.isNull()) {
-                        icon_name = QString (*p);
+                    if(!icon.isNull()) {
+                        icon_name = QString(*p);
                         break;
                     } else {
                         p++;
@@ -85,7 +72,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid)
             }
         }
     }
-    if (QIcon::fromTheme(icon_name).isNull()) {
+    if(QIcon::fromTheme(icon_name).isNull()) {
         return QIcon::fromTheme("unknown");
     }
     return QIcon::fromTheme(icon_name);
@@ -101,13 +88,13 @@ QIcon FileUtils::getAppIcon(const QString &path) {
     ba = path.toUtf8();
     GKeyFile * keyfile;
     keyfile = g_key_file_new();
-    if (!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)){
-        g_key_file_free (keyfile);
+    if(!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)) {
+        g_key_file_free(keyfile);
         return QIcon::fromTheme("unknown");
     }
     QString icon = QString(g_key_file_get_locale_string(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, NULL, NULL));
     g_key_file_free(keyfile);
-    if (QIcon::fromTheme(icon).isNull()) {
+    if(QIcon::fromTheme(icon).isNull()) {
         return QIcon(":/res/icons/desktop.png");
     }
     return QIcon::fromTheme(icon);
@@ -121,17 +108,17 @@ QIcon FileUtils::getAppIcon(const QString &path) {
  */
 QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
     QString name = setting.left(setting.indexOf("/"));
-    if (! name.isEmpty()) {
+    if(! name.isEmpty()) {
         name.replace(QString(name.at(0)), QString(name.at(0).toUpper()));
     }
     QString path;
-    if (is_white) {
+    if(is_white) {
         path = QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg(name);
     } else {
         path = QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1.svg").arg(name);
     }
     QFile file(path);
-    if (file.exists()) {
+    if(file.exists()) {
         return QIcon(path);
     } else {
         return QIcon::fromTheme("ukui-control-center"); //无插件图标时，返回控制面板应用图标
@@ -150,7 +137,7 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
  */
 QString FileUtils::getFileName(const QString& uri) {
     QFileInfo info(uri);
-    if (info.exists()) {
+    if(info.exists()) {
         return info.fileName();
     } else {
         return "Unknown File";
@@ -172,8 +159,8 @@ QString FileUtils::getAppName(const QString& path) {
     ba = path.toUtf8();
     GKeyFile * keyfile;
     keyfile = g_key_file_new();
-    if (!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)){
-        g_key_file_free (keyfile);
+    if(!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)) {
+        g_key_file_free(keyfile);
         return "Unknown App";
     }
     QString name = QString(g_key_file_get_locale_string(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_NAME, NULL, NULL));
@@ -191,10 +178,9 @@ QString FileUtils::getSettingName(const QString& setting) {
 }
 
 
-void FileUtils::loadHanziTable(const QString &fileName)
-{
+void FileUtils::loadHanziTable(const QString &fileName) {
     QFile file(fileName);
-    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+    if(!file.open(QFile::ReadOnly | QFile::Text)) {
         qDebug("File: '%s' open failed!", file.fileName().toStdString().c_str());
         return;
     }
@@ -210,25 +196,23 @@ void FileUtils::loadHanziTable(const QString &fileName)
     return;
 }
 
-QMimeType FileUtils::getMimetype(QString &path)
-{
+QMimeType FileUtils::getMimetype(QString &path) {
     QMimeDatabase mdb;
-    QMimeType type = mdb.mimeTypeForFile(path,QMimeDatabase::MatchContent);
+    QMimeType type = mdb.mimeTypeForFile(path, QMimeDatabase::MatchContent);
 
     return type;
 }
 
 //aborted
-QString FileUtils::find(const QString &hanzi)
-{
+QString FileUtils::find(const QString &hanzi) {
     //        static QMap<QString, QStringList> map = loadHanziTable("://index/pinyinWithoutTone.txt");
     //        static QMap<QString, QStringList> map;
     QString output;
     QStringList stringList = hanzi.split("");
 
     /* 遍历查找汉字-拼音对照表的内容并将汉字替换为拼音 */
-    for (const QString &str : stringList) {
-        if (FileUtils::map_chinese2pinyin.contains(str))
+    for(const QString &str : stringList) {
+        if(FileUtils::map_chinese2pinyin.contains(str))
             output += FileUtils::map_chinese2pinyin[str].first();
         else
             output += str;
@@ -238,93 +222,88 @@ QString FileUtils::find(const QString &hanzi)
 }
 
 //DFS多音字太多直接GG
-void stitchMultiToneWordsDFS(const QString& hanzi, const QString& resultAllPinYin, const QString& resultFirst, QStringList& resultList){
-    if (hanzi.size() == 0){
+void stitchMultiToneWordsDFS(const QString& hanzi, const QString& resultAllPinYin, const QString& resultFirst, QStringList& resultList) {
+    if(hanzi.size() == 0) {
         resultList.append(resultAllPinYin);
         resultList.append(resultFirst);
         return;
     }
-    if (FileUtils::map_chinese2pinyin.contains(hanzi.at(0))){
-        for (auto i : FileUtils::map_chinese2pinyin[hanzi.at(0)]){
+    if(FileUtils::map_chinese2pinyin.contains(hanzi.at(0))) {
+        for(auto i : FileUtils::map_chinese2pinyin[hanzi.at(0)]) {
             stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), resultAllPinYin + i, resultFirst + i.at(0), resultList);
         }
-    }
-    else{
+    } else {
         stitchMultiToneWordsDFS(hanzi.right(hanzi.size() - 1), resultAllPinYin + hanzi.at(0), resultFirst + hanzi.at(0), resultList);
     }
 }
 
 //BFS+Stack多音字太多会爆栈
-void stitchMultiToneWordsBFSStack(const QString& hanzi, QStringList& resultList){
+void stitchMultiToneWordsBFSStack(const QString& hanzi, QStringList& resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString> tempQueue;
     tempHanzi = hanzi;
     int tempQueueSize = 0;
-    if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-        for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+    if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+        for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
             tempQueue.enqueue(i);
         }
-    }
-    else{
+    } else {
         tempQueue.enqueue(tempHanzi.at(0));
     }
     tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
-    while (tempHanzi.size() != 0) {
+    while(tempHanzi.size() != 0) {
         tempQueueSize = tempQueue.size();
-        if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-            for (int j = 0; j < tempQueueSize; ++j){
-                for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+        if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+            for(int j = 0; j < tempQueueSize; ++j) {
+                for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
                     tempQueue.enqueue(tempQueue.head() + i);
                 }
                 tempQueue.dequeue();
             }
-        }
-        else{
-            for (int j = 0; j < tempQueueSize; ++j){
+        } else {
+            for(int j = 0; j < tempQueueSize; ++j) {
                 tempQueue.enqueue(tempQueue.head() + tempHanzi.at(0));
                 tempQueue.dequeue();
             }
         }
         tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
     }
-    while(!tempQueue.empty()){
+    while(!tempQueue.empty()) {
         resultList.append(tempQueue.dequeue());
     }
 }
 //BFS+Heap，多音字太多会耗尽内存
-void stitchMultiToneWordsBFSHeap(const QString& hanzi, QStringList& resultList){
+void stitchMultiToneWordsBFSHeap(const QString& hanzi, QStringList& resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString>* tempQueue = new QQueue<QString>;
     tempHanzi = hanzi;
     int tempQueueSize = 0;
-    if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-        for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+    if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+        for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
             tempQueue->enqueue(i);
         }
-    }
-    else{
+    } else {
         tempQueue->enqueue(tempHanzi.at(0));
     }
     tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
-    while (tempHanzi.size() != 0) {
+    while(tempHanzi.size() != 0) {
         tempQueueSize = tempQueue->size();
-        if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-            for (int j = 0; j < tempQueueSize; ++j){
-                for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+        if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+            for(int j = 0; j < tempQueueSize; ++j) {
+                for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
                     tempQueue->enqueue(tempQueue->head() + i);
                 }
                 tempQueue->dequeue();
             }
-        }
-        else{
-            for (int j = 0; j < tempQueueSize; ++j){
+        } else {
+            for(int j = 0; j < tempQueueSize; ++j) {
                 tempQueue->enqueue(tempQueue->head() + tempHanzi.at(0));
                 tempQueue->dequeue();
             }
         }
         tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
     }
-    while(!tempQueue->empty()){
+    while(!tempQueue->empty()) {
         resultList.append(tempQueue->dequeue());
     }
     delete tempQueue;
@@ -332,28 +311,27 @@ void stitchMultiToneWordsBFSHeap(const QString& hanzi, QStringList& resultList){
 }
 
 //BFS+Heap+超过3个多音字只建一个索引，比较折中的方案
-void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultList){
+void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString>* tempQueue = new QQueue<QString>;
     QQueue<QString>* tempQueueFirst = new QQueue<QString>;
     tempHanzi = hanzi;
     int tempQueueSize = 0;
     int multiToneWordNum = 0;
-    for (auto i : hanzi){
-        if (FileUtils::map_chinese2pinyin.contains(i)){
-            if (FileUtils::map_chinese2pinyin[i].size() > 1){
+    for(auto i : hanzi) {
+        if(FileUtils::map_chinese2pinyin.contains(i)) {
+            if(FileUtils::map_chinese2pinyin[i].size() > 1) {
                 ++multiToneWordNum;
             }
         }
     }
-    if (multiToneWordNum > 3){
+    if(multiToneWordNum > 3) {
         QString oneResult, oneResultFirst;
-        for (auto i : hanzi){
-            if (FileUtils::map_chinese2pinyin.contains(i)){
+        for(auto i : hanzi) {
+            if(FileUtils::map_chinese2pinyin.contains(i)) {
                 oneResult += FileUtils::map_chinese2pinyin[i].first();
                 oneResultFirst += FileUtils::map_chinese2pinyin[i].first().at(0);
-            }
-            else{
+            } else {
                 oneResult += i;
                 oneResultFirst += i;
             }
@@ -363,31 +341,29 @@ void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultL
         return;
     }
 
-    if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-        for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+    if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+        for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
             tempQueue->enqueue(i);
             tempQueueFirst->enqueue(i.at(0));
         }
-    }
-    else{
+    } else {
         tempQueue->enqueue(tempHanzi.at(0));
         tempQueueFirst->enqueue(tempHanzi.at(0));
     }
     tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
-    while (tempHanzi.size() != 0) {
+    while(tempHanzi.size() != 0) {
         tempQueueSize = tempQueue->size();
-        if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-            for (int j = 0; j < tempQueueSize; ++j){
-                for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+        if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+            for(int j = 0; j < tempQueueSize; ++j) {
+                for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
                     tempQueue->enqueue(tempQueue->head() + i);
                     tempQueueFirst->enqueue(tempQueueFirst->head() + i.at(0));
                 }
                 tempQueue->dequeue();
                 tempQueueFirst->dequeue();
             }
-        }
-        else{
-            for (int j = 0; j < tempQueueSize; ++j){
+        } else {
+            for(int j = 0; j < tempQueueSize; ++j) {
                 tempQueue->enqueue(tempQueue->head() + tempHanzi.at(0));
                 tempQueueFirst->enqueue(tempQueueFirst->head() + tempHanzi.at(0));
                 tempQueue->dequeue();
@@ -396,7 +372,7 @@ void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultL
         }
         tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
     }
-    while(!tempQueue->empty()){
+    while(!tempQueue->empty()) {
         resultList.append(tempQueue->dequeue());
         resultList.append(tempQueueFirst->dequeue());
     }
@@ -408,28 +384,27 @@ void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultL
 }
 
 //BFS+Stack+超过3个多音字只建一个索引，比较折中的方案
-void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& resultList){
+void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString> tempQueue;
     QQueue<QString> tempQueueFirst;
     tempHanzi = hanzi;
     int tempQueueSize = 0;
     int multiToneWordNum = 0;
-    for (auto i : hanzi){
-        if (FileUtils::map_chinese2pinyin.contains(i)){
-            if (FileUtils::map_chinese2pinyin[i].size() > 1){
+    for(auto i : hanzi) {
+        if(FileUtils::map_chinese2pinyin.contains(i)) {
+            if(FileUtils::map_chinese2pinyin[i].size() > 1) {
                 ++multiToneWordNum;
             }
         }
     }
-    if (multiToneWordNum > 3){
+    if(multiToneWordNum > 3) {
         QString oneResult, oneResultFirst;
-        for (auto i : hanzi){
-            if (FileUtils::map_chinese2pinyin.contains(i)){
+        for(auto i : hanzi) {
+            if(FileUtils::map_chinese2pinyin.contains(i)) {
                 oneResult += FileUtils::map_chinese2pinyin[i].first();
                 oneResultFirst += FileUtils::map_chinese2pinyin[i].first().at(0);
-            }
-            else{
+            } else {
                 oneResult += i;
                 oneResultFirst += i;
             }
@@ -439,31 +414,29 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
         return;
     }
 
-    if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-        for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+    if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+        for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
             tempQueue.enqueue(i);
             tempQueueFirst.enqueue(i.at(0));
         }
-    }
-    else{
+    } else {
         tempQueue.enqueue(tempHanzi.at(0));
         tempQueueFirst.enqueue(tempHanzi.at(0));
     }
     tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
-    while (tempHanzi.size() != 0) {
+    while(tempHanzi.size() != 0) {
         tempQueueSize = tempQueue.size();
-        if (FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))){
-            for (int j = 0; j < tempQueueSize; ++j){
-                for (auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]){
+        if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+            for(int j = 0; j < tempQueueSize; ++j) {
+                for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
                     tempQueue.enqueue(tempQueue.head() + i);
                     tempQueueFirst.enqueue(tempQueueFirst.head() + i.at(0));
                 }
                 tempQueue.dequeue();
                 tempQueueFirst.dequeue();
             }
-        }
-        else{
-            for (int j = 0; j < tempQueueSize; ++j){
+        } else {
+            for(int j = 0; j < tempQueueSize; ++j) {
                 tempQueue.enqueue(tempQueue.head() + tempHanzi.at(0));
                 tempQueueFirst.enqueue(tempQueueFirst.head() + tempHanzi.at(0));
                 tempQueue.dequeue();
@@ -472,7 +445,7 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
         }
         tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
     }
-    while(!tempQueue.empty()){
+    while(!tempQueue.empty()) {
         resultList.append(tempQueue.dequeue());
         resultList.append(tempQueueFirst.dequeue());
     }
@@ -483,8 +456,7 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
     return;
 }
 
-QStringList FileUtils::findMultiToneWords(const QString& hanzi)
-{
+QStringList FileUtils::findMultiToneWords(const QString& hanzi) {
     //    QStringList* output = new QStringList();
     QStringList output;
     QString tempAllPinYin, tempFirst;
@@ -501,17 +473,16 @@ QStringList FileUtils::findMultiToneWords(const QString& hanzi)
  * @param path: abs path
  * @return docx to QString
  */
-void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
-{
+void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
     //fix me :optimized by xpath??
     QFileInfo info = QFileInfo(path);
-    if(!info.exists()||info.isDir())
+    if(!info.exists() || info.isDir())
         return;
     QuaZip file(path);
     if(!file.open(QuaZip::mdUnzip))
         return;
 
-    if(!file.setCurrentFile("word/document.xml",QuaZip::csSensitive))
+    if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
         return;
     QuaZipFile fileR(&file);
 
@@ -522,18 +493,14 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
     fileR.close();
     QDomElement first = doc.firstChildElement("w:document");
     QDomElement body = first.firstChildElement("w:body");
-    while(!body.isNull())
-    {
-        QDomElement wp= body.firstChildElement("w:p");
-        while(!wp.isNull())
-        {
-            QDomElement wr= wp.firstChildElement("w:r");
-            while(!wr.isNull())
-            {
+    while(!body.isNull()) {
+        QDomElement wp = body.firstChildElement("w:p");
+        while(!wp.isNull()) {
+            QDomElement wr = wp.firstChildElement("w:r");
+            while(!wr.isNull()) {
                 QDomElement wt = wr.firstChildElement("w:t");
-                textcontent.append(wt.text().replace("\n",""));
-                if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
-                {
+                textcontent.append(wt.text().replace("\n", ""));
+                if(textcontent.length() >= MAX_CONTENT_LENGTH / 3) {
                     file.close();
                     return;
                 }
@@ -547,20 +514,18 @@ void FileUtils::getDocxTextContent(QString &path,QString &textcontent)
     return;
 }
 
-void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
-{
+void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
     QFileInfo info = QFileInfo(path);
-    if(!info.exists()||info.isDir())
+    if(!info.exists() || info.isDir())
         return;
     QuaZip file(path);
     if(!file.open(QuaZip::mdUnzip))
         return;
     QString prefix("ppt/slides/slide");
     QStringList fileList;
-    for(QString i : file.getFileNameList())
-    {
+    for(QString i : file.getFileNameList()) {
         if(i.startsWith(prefix))
-            fileList<<i;
+            fileList << i;
     }
     if(fileList.isEmpty())
         return;
@@ -572,11 +537,9 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
     QDomDocument doc;
     QDomElement at;
 //    QDomNodeList atList;
-    for(int i =0;i<fileList.size();++i)
-    {
-        QString name = prefix + QString::number(i+1) + ".xml";
-        if(!file.setCurrentFile(name))
-        {
+    for(int i = 0; i < fileList.size(); ++i) {
+        QString name = prefix + QString::number(i + 1) + ".xml";
+        if(!file.setCurrentFile(name)) {
             continue;
         }
         QuaZipFile fileR(&file);
@@ -605,24 +568,18 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
 //        }
         //This is ugly but seems more efficient when handel a large file.
         sptree = doc.firstChildElement("p:sld").firstChildElement("p:cSld").firstChildElement("p:spTree");
-        while(!sptree.isNull())
-        {
-            sp= sptree.firstChildElement("p:sp");
-            while(!sp.isNull())
-            {
-                txbody= sp.firstChildElement("p:txBody");
-                while(!txbody.isNull())
-                {
+        while(!sptree.isNull()) {
+            sp = sptree.firstChildElement("p:sp");
+            while(!sp.isNull()) {
+                txbody = sp.firstChildElement("p:txBody");
+                while(!txbody.isNull()) {
                     ap = txbody.firstChildElement("a:p");
-                    while(!ap.isNull())
-                    {
+                    while(!ap.isNull()) {
                         ar = ap.firstChildElement("a:r");
-                        while(!ar.isNull())
-                        {
+                        while(!ar.isNull()) {
                             at = ar.firstChildElement("a:t");
-                            textcontent.append(at.text().replace("\r","")).replace("\t","");
-                            if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
-                            {
+                            textcontent.append(at.text().replace("\r", "")).replace("\t", "");
+                            if(textcontent.length() >= MAX_CONTENT_LENGTH / 3) {
                                 file.close();
                                 return;
                             }
@@ -641,16 +598,15 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent)
     return;
 }
 
-void FileUtils::getXlsxTextContent(QString &path, QString &textcontent)
-{
+void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
     QFileInfo info = QFileInfo(path);
-    if(!info.exists()||info.isDir())
+    if(!info.exists() || info.isDir())
         return;
     QuaZip file(path);
     if(!file.open(QuaZip::mdUnzip))
         return;
 
-    if(!file.setCurrentFile("xl/sharedStrings.xml",QuaZip::csSensitive))
+    if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
         return;
     QuaZipFile fileR(&file);
 
@@ -663,25 +619,19 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent)
     QDomElement si;
     QDomElement r;
     QDomElement t;
-    while(!sst.isNull())
-    {
-        si= sst.firstChildElement("si");
-        while(!si.isNull())
-        {
-            r= si.firstChildElement("r");
-            if(r.isNull())
-            {
-                t= si.firstChildElement("t");
-            }
-            else
-            {
+    while(!sst.isNull()) {
+        si = sst.firstChildElement("si");
+        while(!si.isNull()) {
+            r = si.firstChildElement("r");
+            if(r.isNull()) {
+                t = si.firstChildElement("t");
+            } else {
                 t = r.firstChildElement("t");
             }
             if(t.isNull())
                 continue;
-            textcontent.append(t.text().replace("\r","").replace("\n",""));
-            if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
-            {
+            textcontent.append(t.text().replace("\r", "").replace("\n", ""));
+            if(textcontent.length() >= MAX_CONTENT_LENGTH / 3) {
                 file.close();
                 return;
             }
@@ -693,46 +643,43 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent)
     return;
 }
 
-void FileUtils::getPdfTextContent(QString &path, QString &textcontent)
-{
+void FileUtils::getPdfTextContent(QString &path, QString &textcontent) {
     Poppler::Document *doc = Poppler::Document::load(path);
     if(doc->isLocked())
         return;
     const QRectF qf;
     int pageNum = doc->numPages();
-    for(int i = 0; i<pageNum; ++i)
-    {
-        textcontent.append(doc->page(i)->text(qf).replace("\n",""));
-        if(textcontent.length() >= MAX_CONTENT_LENGTH/3)
+    for(int i = 0; i < pageNum; ++i) {
+        textcontent.append(doc->page(i)->text(qf).replace("\n", ""));
+        if(textcontent.length() >= MAX_CONTENT_LENGTH / 3)
             break;
     }
     delete doc;
     return;
 }
 
-void FileUtils::getTxtContent(QString &path, QString &textcontent)
-{
+void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     QFile file(path);
-    if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
 
     QByteArray encodedString = file.read(MAX_CONTENT_LENGTH);
 
     uchardet_t chardet = uchardet_new();
-    if(uchardet_handle_data(chardet,encodedString.constData(),encodedString.size()) !=0)
-        qWarning()<<"Txt file encoding format detect fail!"<<path;
+    if(uchardet_handle_data(chardet, encodedString.constData(), encodedString.size()) != 0)
+        qWarning() << "Txt file encoding format detect fail!" << path;
 
     uchardet_data_end(chardet);
     const char *codec = uchardet_get_charset(chardet);
 
     if(QTextCodec::codecForName(codec) == 0)
-        qWarning()<<"Unsupported Text encoding format"<<path<<QString::fromLocal8Bit(codec);
+        qWarning() << "Unsupported Text encoding format" << path << QString::fromLocal8Bit(codec);
 
-    QTextStream stream(encodedString,QIODevice::ReadOnly);
+    QTextStream stream(encodedString, QIODevice::ReadOnly);
     stream.setCodec(codec);
     uchardet_delete(chardet);
 
-    textcontent = stream.readAll().replace("\n","");
+    textcontent = stream.readAll().replace("\n", "");
 
     file.close();
     encodedString.clear();

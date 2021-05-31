@@ -22,14 +22,13 @@
 #include <QIcon>
 #include <QEvent>
 
-FolderListItem::FolderListItem(QWidget *parent, const QString &path) : QWidget(parent)
-{
+using namespace Zeeker;
+FolderListItem::FolderListItem(QWidget *parent, const QString &path) : QWidget(parent) {
     m_path = path;
     initUi();
 }
 
-FolderListItem::~FolderListItem()
-{
+FolderListItem::~FolderListItem() {
 
 }
 
@@ -39,7 +38,7 @@ FolderListItem::~FolderListItem()
 void FolderListItem::initUi() {
     m_layout = new QVBoxLayout(this);
     m_layout->setSpacing(0);
-    m_layout->setContentsMargins(0,0,0,0);
+    m_layout->setContentsMargins(0, 0, 0, 0);
     m_widget = new QWidget(this);
     m_widget->setObjectName("mWidget");
     this->setFixedHeight(32);
@@ -54,8 +53,9 @@ void FolderListItem::initUi() {
     m_iconLabel->setPixmap(QIcon::fromTheme("inode-directory").pixmap(QSize(16, 16)));
     m_pathLabel->setText(m_path);
     m_delLabel->setText(tr("Delete the folder out of blacklist"));
-    m_pathLabel->setStyleSheet("QLabel{color: palette(text); background: transparent;}");
-    m_delLabel->setStyleSheet("QLabel{color: #3790FA; background: transparent;}");
+    QPalette pal = palette();
+    pal.setColor(QPalette::WindowText, QColor(55, 144, 250, 255));
+    m_delLabel->setPalette(pal);
     m_delLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_delLabel->installEventFilter(this);
     m_delLabel->hide();
@@ -77,7 +77,7 @@ QString FolderListItem::getPath() {
  * @brief FolderListItem::enterEvent 鼠标移入事件
  * @param event
  */
-void FolderListItem::enterEvent(QEvent *event){
+void FolderListItem::enterEvent(QEvent *event) {
     m_delLabel->show();
     m_widget->setStyleSheet("QWidget#mWidget{background: rgba(0,0,0,0.1);}");
     QWidget::enterEvent(event);
@@ -87,7 +87,7 @@ void FolderListItem::enterEvent(QEvent *event){
  * @brief FolderListItem::leaveEvent 鼠标移出事件
  * @param event
  */
-void FolderListItem::leaveEvent(QEvent *event){
+void FolderListItem::leaveEvent(QEvent *event) {
     m_delLabel->hide();
     m_widget->setStyleSheet("QWidget#mWidget{background: transparent;}");
     QWidget::leaveEvent(event);
@@ -100,9 +100,9 @@ void FolderListItem::leaveEvent(QEvent *event){
  * @param event
  * @return
  */
-bool FolderListItem::eventFilter(QObject *watched, QEvent *event){
-    if (watched == m_delLabel) {
-        if (event->type() == QEvent::MouseButtonPress) {
+bool FolderListItem::eventFilter(QObject *watched, QEvent *event) {
+    if(watched == m_delLabel) {
+        if(event->type() == QEvent::MouseButtonPress) {
 //            qDebug()<<"pressed!";
             Q_EMIT this->onDelBtnClicked(m_path);
         }

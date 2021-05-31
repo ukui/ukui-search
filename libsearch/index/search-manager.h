@@ -31,14 +31,23 @@
 #include <thread>
 #include <QRunnable>
 #include <QThreadPool>
+#include <QFileInfo>
+#include <QDebug>
+#include <QtConcurrent/QtConcurrent>
+#include <QThread>
+#include <QUrl>
+
+#include "file-utils.h"
+#include "global-settings.h"
+#include "chinese-segmentation.h"
 
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
+namespace Zeeker {
 
-class SearchManager : public QObject
-{
+class LIBSEARCH_EXPORT SearchManager : public QObject {
     friend class FileSearch;
     friend class FileContentSearch;
     Q_OBJECT
@@ -56,12 +65,12 @@ public:
     static QMutex m_mutex3;
 
 public Q_SLOTS:
-    void onKeywordSearch(QString keyword,QQueue<QString> *searchResultFile,QQueue<QString> *searchResultDir,QQueue<QPair<QString,QStringList>> *searchResultContent);
+    void onKeywordSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, QQueue<QPair<QString, QStringList>> *searchResultContent);
 
 Q_SIGNALS:
     void resultFile(QQueue<QString> *);
     void resultDir(QQueue<QString> *);
-    void resultContent(QQueue<QPair<QString,QStringList>> *);
+    void resultContent(QQueue<QPair<QString, QStringList>> *);
 private:
 //    int keywordSearchfile(size_t uniqueSymbol, QString keyword, QString value,unsigned slot = 1,int begin = 0, int num = 20);
 //    int keywordSearchContent(size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
@@ -87,10 +96,9 @@ private:
     QThreadPool m_pool;
 };
 
-class FileSearch : public QRunnable
-{
+class FileSearch : public QRunnable {
 public:
-    explicit FileSearch(QQueue<QString> *searchResult,size_t uniqueSymbol, QString keyword, QString value,unsigned slot = 1,int begin = 0, int num = 20);
+    explicit FileSearch(QQueue<QString> *searchResult, size_t uniqueSymbol, QString keyword, QString value, unsigned slot = 1, int begin = 0, int num = 20);
     ~FileSearch();
 protected:
     void run();
@@ -107,21 +115,35 @@ private:
     int m_begin = 0;
     int m_num = 20;
 };
-class FileContentSearch : public QRunnable
-{
+
+class FileContentSearch : public QRunnable {
 public:
-    explicit FileContentSearch(QQueue<QPair<QString,QStringList>> *searchResult,size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
+    explicit FileContentSearch(QQueue<QPair<QString, QStringList>> *searchResult, size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
     ~FileContentSearch();
 protected:
     void run();
 private:
     int keywordSearchContent();
-    int getResult(Xapian::MSet &result,std::string &keyWord);
+    int getResult(Xapian::MSet &result, std::string &keyWord);
 
-    QQueue<QPair<QString,QStringList>> *m_search_result = nullptr;
+    QQueue<QPair<QString, QStringList>> *m_search_result = nullptr;
     size_t m_uniqueSymbol;
     QString m_keyword;
     int m_begin = 0;
     int m_num = 20;
 };
+
+class DirectSearch : public QRunnable {
+public:
+    explicit DirectSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, size_t uniqueSymbol);
+protected:
+    void run();
+private:
+    QString m_keyword;
+    QQueue<QString>* m_searchResultFile = nullptr;
+    QQueue<QString>* m_searchResultDir = nullptr;
+    size_t m_uniqueSymbol;
+};
+
+}
 #endif // SEARCHMANAGER_H

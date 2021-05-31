@@ -1,3 +1,61 @@
+ukui-search (0.4.0+0520) v101; urgency=medium
+
+  * Bug 55034,55545,55326,55496
+  * 任务29459
+  * 其他改动：
+  * Fix:Seletion is cleared when paletted changed.
+    - 修复收到palettechanged信号时列表选中状态消失的问题。
+  * Fix:Icon in detail view will not refresh when icon-theme changed.
+    - 修复主题图标改变时详情页图标未更新的问题。
+  * Fix:Index process crashed when parsing some wps templates.
+    - 修复了解析某些wps模板文件时索引崩溃的问题。
+  * Fix:Block list conf won't work.
+    - 修复了在控制面板设置黑名单不能及时生效的问题。
+  * Fix:Automatic completion won't work in next search after clicked actions in detial widget.
+    - 修复了点击详情页不会保存搜索历史记录的bug。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 20 May 2021 09:08:15 +0800
+
+ukui-search (0.4.0+0508) v101; urgency=medium
+
+  * Bug 49153.
+  * 任务 
+  * 其他改动：
+  * Android app can be search now.
+    - 新增搜索安卓兼容目录下应用功能。
+  * Start ukui-control-center on settings button clicked.
+    - 点击设置按钮，跳转到控制面板。
+  * Fix(frontend): Ssearch list & dialog will not refresh when fontsize changed.
+    - 修复了当弹出创建索引提示框时修改系统字体大小，会出现显示错乱的bug。
+  * Fix: blacklist will not effective when search method is direct search.
+    -修复了当选择搜索方式为不创建索引搜索时黑名单无效的问题。
+  * Discard ukui-log4qt for log printing.
+    -由于日志模块偶现卡死bug，移除了ukui-log4qt日志打印功能。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 08 May 2021 15:35:06 +0800
+
+ukui-search (0.4.0+0422-1) v101; urgency=medium
+
+  * Bug 45037,45035,47971,26454.
+  * 任务 25405.
+  * 其他改动：
+  * Add support for 'pptx','xlsx','pdf'.
+    - 增加了对'pptx','xlsx','pdf'格式文本内容解析的支持。
+  * Fix(frontend): Width of scrollArea is not enough which caused some text displayed incompletely.
+    - 修复部分区域预留宽度不够导致控件显示不全
+    - 和出现不必要滚动条的问题(45037,45035)
+  * Feature(frontend):Add double click event to search list view.
+    - 新增搜索结果列表双击打开功能。
+  * Fix: Mainwindow will not refresh sometime theme changed.
+    - 修复修改完透明度后修改主题，主界面颜色未随主题切换的问题。
+  * Fix: Font-size & row height will not refresh in search list.
+    - 修复字体大小改变时搜索结果列表行高和fontmetircs不刷新的bug(47971,26454)。
+  * Add search method changed function --index search and bfs search.
+    - 增加搜索方式切换功能，可以在遍历搜索和索引搜索之间切换。
+  * Use ukui-log4qt for log printing.
+    - 使用ukui-log4qt打印日志(25405)。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 21 Apr 2021 09:36:39 +0800
 ukui-search (0.3.0+0406) v101; urgency=medium
 
   * Add support for '.xls', '.dot','.wps', '.pps', '.dps', '.et','.ppt'.

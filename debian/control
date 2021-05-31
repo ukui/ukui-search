@@ -17,7 +17,8 @@ Build-Depends: debhelper (>=9.0.0),
                libgsettings-qt-dev,
                libqt5x11extras5-dev,
                libuchardet-dev,
-               libpoppler-qt5-dev
+               libpoppler-qt5-dev,
+               libukui-log4qt-dev
 Standards-Version: 4.5.0
 Homepage: https://www.ukui.org/
 Vcs-Git:  https://github.com/ukui/ukui-search.git

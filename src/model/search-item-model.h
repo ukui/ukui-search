@@ -25,10 +25,10 @@
 #include <QAbstractItemModel>
 #include "search-item.h"
 
+namespace Zeeker {
 class SearchItem;
 
-class SearchItemModel : public QAbstractItemModel
-{
+class SearchItemModel : public QAbstractItemModel {
     friend class SearchItem;
     Q_OBJECT
 public:
@@ -59,9 +59,11 @@ public:
     void removeItem(QString);
     void clear();
     void setBestAppIcon(const QString &, const bool &);
+    int length();
 
 private :
     SearchItem * m_item = nullptr;
 };
+}
 
 #endif // SEARCHITEMMODEL_H

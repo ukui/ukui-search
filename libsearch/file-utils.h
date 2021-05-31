@@ -21,13 +21,6 @@
  */
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
-#include "gobject-template.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <QString>
 #include <QCryptographicHash>
 #include <QIcon>
@@ -35,20 +28,38 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QDir>
+#include <QDebug>
+#include <QFile>
+#include <QFileInfo>
+#include <QUrl>
+#include <QMap>
+#include <QDomDocument>
+#include <QQueue>
+
+#include <quazip/quazipfile.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <quazip/quazip.h>
+#include <uchardet/uchardet.h>
+//#include <poppler-qt5.h>
+#include <poppler/qt5/poppler-qt5.h>
 
 #include "libsearch_global.h"
+#include "gobject-template.h"
+
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
 //#define FINISH_CREATING_INDEX 2
 #define MAX_CONTENT_LENGTH 20480000
 
-#define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
-
-
-class  LIBSEARCH_EXPORT FileUtils
-{
+namespace Zeeker {
+class  LIBSEARCH_EXPORT FileUtils {
 public:
-    static std::string makeDocUterm(QString );
+    static std::string makeDocUterm(QString);
     static QIcon getFileIcon(const QString &, bool checkValid = true);
     static QIcon getAppIcon(const QString &);
     static QIcon getSettingIcon(const QString &, const bool&);
@@ -74,8 +85,13 @@ public:
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;
 
+    enum class SearchMethod { DIRECTSEARCH = 0, INDEXSEARCH = 1};
+    static SearchMethod searchMethod;
+
 private:
     FileUtils();
 };
+
+}
 
 #endif // FILEUTILS_H

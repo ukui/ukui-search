@@ -28,8 +28,8 @@
 #include "file-utils.h"
 #include "search-list-view.h"
 
-class HomePageItem : public QWidget
-{
+namespace Zeeker {
+class HomePageItem : public QWidget {
     Q_OBJECT
 public:
     explicit HomePageItem(QWidget *, const int&, const QString&);
@@ -56,6 +56,8 @@ private:
     QLabel * m_namelabel = nullptr;
     double m_transparency = 0;
     QString m_path;
+    int m_type = 0;
 };
+}
 
 #endif // HOMEPAGEITEM_H

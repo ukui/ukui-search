@@ -30,8 +30,8 @@
 #include "show-more-label.h"
 #include "title-label.h"
 
-class ContentWidget : public QStackedWidget
-{
+namespace Zeeker {
+class ContentWidget : public QStackedWidget {
     Q_OBJECT
 public:
     ContentWidget(QWidget *);
@@ -109,12 +109,13 @@ private:
 
 Q_SIGNALS:
     void currentItemChanged();
-    void mousePressed();
+    void effectiveSearch();
 
 private Q_SLOTS:
     void clearLayout(QLayout *);
     void onListViewRowChanged(SearchListView * listview, const int& type, const QString& path);
     void onListViewRowDoubleClicked(SearchListView * listview, const int& type, const QString& path);
 };
+}
 
 #endif // CONTENTWIDGET_H

@@ -26,6 +26,7 @@
 #include <QMutex>
 #include <QVector>
 #include <QDir>
+#include <QFileSystemWatcher>
 //#include <QGSettings>
 //If use pkg_config, it wont build succes,why?????????
 //My demo can build access yet.
@@ -33,16 +34,17 @@
 #include <QGSettings/QGSettings>
 #include <QDBusConnection>
 #include <QDBusInterface>
+#include <QApplication>
 #include "libsearch_global.h"
 
 #define CONTROL_CENTER_PERSONALISE_GSETTINGS_ID "org.ukui.control-center.personalise"
 #define TRANSPARENCY_KEY "transparency"
 #define THEME_GSETTINGS_ID "org.ukui.style"
 #define STYLE_NAME_KEY "styleName"
-#define INDEX_DATABASE_STATE "index_database_state"
-#define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
-#define INDEX_GENERATOR_NORMAL_EXIT "index_generator_normal_exit"
-#define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
+#define FONT_SIZE_KEY "systemFontSize"
+#define ICON_THEME_KEY "iconThemeName"
+
+#define ENABLE_CREATE_INDEX_ASK_DIALOG "enable_create_index_ask_dialog"
 #define WEB_ENGINE "web_engine"
 #define PATH_EMPTY 1;
 #define PATH_NOT_IN_HOME 2;
@@ -54,8 +56,8 @@
 //#define CLOUD_HISTORY "history"
 //#define CLOUD_APPLICATIONS "applications"
 
-class LIBSEARCH_EXPORT GlobalSettings : public QObject
-{
+namespace Zeeker {
+class LIBSEARCH_EXPORT GlobalSettings : public QObject {
     Q_OBJECT
 public:
     static GlobalSettings *getInstance();
@@ -63,8 +65,8 @@ public:
     bool isExist(const QString&);
 
 Q_SIGNALS:
-    void valueChanged (const QString&);
-    void transparencyChanged (const double&);
+    void valueChanged(const QString&);
+    void transparencyChanged(const double&);
 
 public Q_SLOTS:
     void setValue(const QString&, const QVariant&);
@@ -78,7 +80,7 @@ public Q_SLOTS:
      * @param true to remove blocking,false to set blocking,default set false.
      * @return
      */
-    bool setBlockDirs(const QString& path, int &returnCode,bool remove = false);
+    bool setBlockDirs(const QString& path, int &returnCode, bool remove = false);
     QStringList getBlockDirs();
 //    void appendCloudData(const QString& key, const QString& value);
     void setSearchRecord(const QString &word, const QDateTime &time);
@@ -101,11 +103,14 @@ private:
     QSettings *m_search_record_settings;
     QMap<QString, QVariant> m_cache;
     QStringList m_history;
+    QFileSystemWatcher *m_confWatcher;
 
     QMutex m_mutex;
-
+//    size_t test = 0;
 
 
 };
+
+}
 
 #endif // GLOBALSETTINGS_H
