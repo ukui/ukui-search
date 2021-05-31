@@ -26,7 +26,8 @@ public:
         WordRange range(cursor_, cursor_);
 
         while (cursor_ != sentence_.end()) {
-            if (IsIn(symbols_, cursor_->rune)) {
+            //if (IsIn(symbols_, cursor_->rune)) {
+            if (cursor_->rune == 0x20) {
                 if (range.left == cursor_) {
                     cursor_ ++;
                 }

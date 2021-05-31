@@ -195,6 +195,12 @@ inline string EncodeRunesToString(RuneStrArray::const_iterator begin, RuneStrArr
     return str;
 }
 
+inline void EncodeRunesToString(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, string& str) {
+    RunePtrWrapper it_begin(begin), it_end(end);
+    limonp::Unicode32ToUtf8(it_begin, it_end, str);
+    return;
+}
+
 class Unicode32Counter {
 public :
     size_t length = 0;

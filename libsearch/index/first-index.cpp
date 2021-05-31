@@ -47,7 +47,53 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
         //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
-        this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
+        if(fileInfo.fileName().split(".").last() == "docx"){
+            QuaZip file(fileInfo.absoluteFilePath());
+            if(!file.open(QuaZip::mdUnzip))
+                return;
+            if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
+                return;
+            QuaZipFile fileR(&file);
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//docx解压缩后的xml文件为实际需要解析文件大小
+            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
+            qDebug() << "文件大小:" << fileR.usize();
+            file.close();
+        }else if(fileInfo.fileName().split(".").last() == "pptx"){
+            QuaZip file(fileInfo.absoluteFilePath());
+            if(!file.open(QuaZip::mdUnzip))
+                return;
+            QString prefix("ppt/slides/slide");
+            qint64 fileSize(0);
+            qint64 fileIndex(0);
+            for(QString i : file.getFileNameList()) {
+                if(i.startsWith(prefix)){
+                    QString name = prefix + QString::number(fileIndex + 1) + ".xml";
+                    fileIndex++;
+                    if(!file.setCurrentFile(name)) {
+                        continue;
+                    }
+                    QuaZipFile fileR(&file);
+                    fileSize += fileR.usize();
+                }
+            }
+            file.close();
+            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
+            qDebug() << "文件大小:" << fileSize;
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileSize));//pptx解压缩后的xml文件为实际需要解析文件大小
+        }else if(fileInfo.fileName().split(".").last() == "xlsx"){
+            QuaZip file(fileInfo.absoluteFilePath());
+            if(!file.open(QuaZip::mdUnzip))
+                return;
+            if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
+                return;
+            QuaZipFile fileR(&file);
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//xlsx解压缩后的xml文件为实际解析文件大小
+            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
+            qDebug() << "文件大小:" << fileR.usize();
+            file.close();
+        }else{
+            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
+        }
     }
 }
 
