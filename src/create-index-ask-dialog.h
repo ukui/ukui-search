@@ -32,6 +32,7 @@
 #include <QStyleOption>
 #include <QApplication>
 #include <QPainter>
+#include <QPainterPath>
 
 namespace Zeeker {
 class CreateIndexAskDialog : public QDialog {
