@@ -116,7 +116,8 @@ void ConstructDocumentForContent::run() {
     doc.addTerm(upTerm);
     doc.addValue(m_path);
 
-    content = content.replace("\t", " ").replace("\xEF\xBC\x8C", " ").replace("\xE3\x80\x82", " ");
+    //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.
+    content = content.replace("\t", " ").replace("\xEF\xBC\x8C", "   ").replace("\xE3\x80\x82", "   ");
 
 //    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000));
     //修改函数返回类型，修改入参为std::string引用--jxx20210519
