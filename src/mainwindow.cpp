@@ -271,16 +271,7 @@ void MainWindow::initUi() {
         } else {
             m_contentFrame->setCurrentIndex(1);
             QTimer::singleShot(10, this, [ = ]() {
-                m_search_result_file->clear();
-                m_search_result_dir->clear();
-                m_search_result_content->clear();
-                if(! m_search_result_thread->isRunning()) {
-                    m_search_result_thread->start();
-                }
                 startSearch(text);
-                //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
-                if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
-                    m_askTimer->start();
             });
         }
         m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
@@ -383,7 +374,20 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen) {
  * @param keyword
  */
 void MainWindow::startSearch(QString keyword) {
+    m_search_result_file->clear();
+    m_search_result_dir->clear();
+    m_search_result_content->clear();
+    if(! m_search_result_thread->isRunning()) {
+        m_search_result_thread->start();
+    }
+    //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
+    if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
+        m_askTimer->start();
+
     m_contentFrame->setKeyword(keyword);
+
+    //文件、文件夹、内容搜索
+    this->m_searcher->onKeywordSearch(keyword, m_search_result_file, m_search_result_dir, m_search_result_content);
 
     //设置搜索
     QStringList settingList;
@@ -394,9 +398,6 @@ void MainWindow::startSearch(QString keyword) {
     //应用搜索
 //    m_seach_app_thread->stop();
     m_seach_app_thread->startSearch(keyword);
-
-    //文件、文件夹、内容搜索
-    this->m_searcher->onKeywordSearch(keyword, m_search_result_file, m_search_result_dir, m_search_result_content);
 }
 
 /**
