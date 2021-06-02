@@ -194,7 +194,8 @@ bool SearchBarHLayout::eventFilter(QObject *watched, QEvent *event) {
  */
 SearchLineEdit::SearchLineEdit() {
     this->setFocusPolicy(Qt::ClickFocus);
-    this->installEventFilter(this);
+    this->setAttribute(Qt::WA_InputMethodEnabled);
+//    this->installEventFilter(this);
 //    this->setContextMenuPolicy(Qt::NoContextMenu);
     this->setMaxLength(100);
 
