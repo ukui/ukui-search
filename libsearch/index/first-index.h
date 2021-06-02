@@ -56,6 +56,7 @@ private:
     bool bool_dataBaseStatusOK = false;
     bool bool_dataBaseExist = false;
     IndexGenerator* p_indexGenerator = nullptr;
+    QThreadPool m_pool;
 
     //here should be refact
 //    MessageListManager* mlm;
