@@ -27,7 +27,7 @@ QMutex  SearchManager::m_mutex1;
 QMutex  SearchManager::m_mutex2;
 QMutex  SearchManager::m_mutex3;
 SearchManager::SearchManager(QObject *parent) : QObject(parent) {
-    m_pool.setMaxThreadCount(2);
+    m_pool.setMaxThreadCount(3);
     m_pool.setExpiryTimeout(1000);
 }
 
@@ -301,36 +301,22 @@ int FileContentSearch::keywordSearchContent() {
                 ret.erase(ret.begin(), ret.end());
                 ::friso::ResultMap().swap(ret);
         */
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword);
+        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
         //Creat a query
         std::string words;
         for(int i = 0; i < sKeyWord.size(); i++) {
             words.append(sKeyWord.at(i).word).append(" ");
         }
 
-        Xapian::Query query = qp.parse_query(words);
-//        Xapian::Query query = qp.parse_query(keyword.toStdString());
-
-
-
-//        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(keyword);
-//        //Creat a query
-//        std::string words;
-//        for(int i=0;i<sKeyWord.size();i++)
-//        {
-//            words.append(sKeyWord.at(i).word).append(" ");
-//        }
-
-
 //        Xapian::Query query = qp.parse_query(words);
 
-        //        std::vector<Xapian::Query> v;
-        //        for(int i=0;i<sKeyWord.size();i++)
-        //        {
-        //            v.push_back(Xapian::Query(sKeyWord.at(i).word));
-        //            qDebug()<<QString::fromStdString(sKeyWord.at(i).word);
-        //        }
-        //        Xapian::Query queryPhrase =Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
+        std::vector<Xapian::Query> v;
+        for(int i=0; i<sKeyWord.size(); i++) {
+            v.push_back(Xapian::Query(sKeyWord.at(i).word));
+            qDebug() << QString::fromStdString(sKeyWord.at(i).word);
+        }
+        Xapian::Query query = Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
+
         qDebug() << "keywordSearchContent:" << QString::fromStdString(query.get_description());
 
         enquire.set_query(query);
@@ -645,7 +631,7 @@ int FileContentSearchV4::keywordSearchContent()
         ret.erase(ret.begin(), ret.end());
         ::friso::ResultMap().swap(ret);
 */
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword);
+        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
         //Creat a query
         std::string words;
         for(int i=0;i<sKeyWord.size();i++)
@@ -803,6 +789,7 @@ void DirectSearch::run() {
     // QDir::Hidden
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
+    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
@@ -810,8 +797,6 @@ void DirectSearch::run() {
             if (i.isDir() && (!(i.isSymLink()))) {
 
                 bool findIndex = false;
-
-                QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
                 for (QString j : blockList) {
                     if (i.absoluteFilePath().startsWith(j.prepend("/"))) {
                         findIndex = true;

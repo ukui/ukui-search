@@ -47,7 +47,10 @@ class CHINESESEGMENTATION_EXPORT ChineseSegmentation {
 public:
     static ChineseSegmentation *getInstance();
     ~ChineseSegmentation();
-    QVector<SKeyWord> callSegement(QString str);
+    QVector<SKeyWord> callSegement(std::string s);
+    //新添加callSegementStd函数，修改返回值为std：：vector<cppjieba::KeywordExtractor::Word>并简化内部处理流程--jxx20210517
+    //修改函数入参形式为引用，去掉Qstring与std::string转换代码--jxx20210519
+    std::vector<cppjieba::KeywordExtractor::Word> callSegementStd(const std::string& str);
     void convert(std::vector<cppjieba::KeywordExtractor::Word>& keywordres, QVector<SKeyWord>& kw);
 private:
     static QMutex m_mutex;

@@ -174,6 +174,13 @@ int main(int argc, char *argv[]) {
         syslog(LOG_ERR, "Home is not exits!!\n");
         ::sleep(1);
     }
+    while(!QDir("/media/用户保险箱").exists()) {
+        qWarning() << "集中管控目录未挂载!!";
+        printf("集中管控目录未挂载!!");
+        syslog(LOG_ERR, "集中管控目录未挂载!!\n");
+        ::sleep(1);
+    }
+
 
     // Output log to file
     qInstallMessageHandler(messageOutput);

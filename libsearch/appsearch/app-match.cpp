@@ -46,6 +46,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
     if(!m_interFace->isValid()) {
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
+    m_interFace->setTimeout(200);
     qDebug() << "AppMatch is new";
 }
 
@@ -102,12 +103,12 @@ void AppMatch::getAllDesktopFilePath(QString path) {
         } else {
             //过滤LXQt、KDE
             QString filePathStr = fileInfo.filePath();
-            if(filePathStr.contains("KDE", Qt::CaseInsensitive) ||
+//            if(filePathStr.contains("KDE", Qt::CaseInsensitive) ||
 //               filePathStr.contains("mate",Qt::CaseInsensitive)||
-                    filePathStr.contains("LX", Qt::CaseInsensitive)) {
-                i++;
-                continue;
-            }
+//                    filePathStr.contains("LX", Qt::CaseInsensitive)) {
+//                i++;
+//                continue;
+//            }
             //过滤后缀不是.desktop的文件
             if(!filePathStr.endsWith(".desktop")) {
                 i++;
@@ -277,10 +278,10 @@ void AppMatch::appNameMatch(QString appname, QMap<NameString, QStringList> &inst
 }
 
 void AppMatch::softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn) {
-    if(m_interFace->timeout() != -1) {
-        qWarning() << "softWareCente Dbus is timeout !";
-        return;
-    }
+//    if(m_interFace->timeout() != -1) {
+//        qWarning() << "softWareCente Dbus is timeout !";
+//        return;
+//    }
     slotDBusCallFinished(softwarereturn);
     qDebug() << "softWareCenter match app is successful!";
 }

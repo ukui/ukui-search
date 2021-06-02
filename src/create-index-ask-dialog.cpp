@@ -126,8 +126,6 @@ void CreateIndexAskDialog::initUi() {
  * @brief CreateIndexAskDialog::paintEvent 绘制窗口背景（默认背景较暗）
  */
 void CreateIndexAskDialog::paintEvent(QPaintEvent *event) {
-    Q_UNUSED(event)
-
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     QPainterPath rectPath;

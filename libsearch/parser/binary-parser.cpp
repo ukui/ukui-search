@@ -4457,15 +4457,14 @@ bool bReadBuffer(FILE *pFile, ULONG ulStartBlock,
     ULONG	ulBegin, ulIndex;
     size_t	tLen;
 
-    for(ulIndex = ulStartBlock;
-            ulIndex != END_OF_CHAIN && tToRead != 0;
-            ulIndex = aulBlockDepot[ulIndex]) {
+    for(ulIndex = ulStartBlock;ulIndex != END_OF_CHAIN && tToRead != 0;ulIndex = aulBlockDepot[ulIndex]) {
         if(ulIndex >= (ULONG)tBlockDepotLen) {
             if(tBlockSize >= BIG_BLOCK_SIZE) {
                 qWarning() << "The Big Block Depot is damaged";
             } else {
                 qWarning() << "The Small Block Depot is damaged";
             }
+            return (tToRead == 0);
         }
         if(ulOffset >= (ULONG)tBlockSize) {
             ulOffset -= tBlockSize;
@@ -4964,7 +4963,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 
                 if(bUsesUnicode) {
                     ushort* usAucData = (ushort*)ptaucBytes;
-                    content.append(QString::fromUtf16(usAucData).replace("\r", ""));
+                    content.append(QString::fromUtf16(usAucData).replace("\n", "").replace("\r", " "));
                     usAucData = (ushort*)xfree((void*)usAucData);
                     ptaucBytes = NULL;
                     if(content.length() >= 682666) //20480000/3
@@ -5067,7 +5066,7 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
         } else {
             ushort* usData = (ushort*)chData;
 
-            content.append(QString::fromUtf16(usData).replace("\r", ""));
+            content.append(QString::fromUtf16(usData).replace("\n", "").replace("\r", " "));
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
             if(content.length() >= 682666) //20480000/3
@@ -5132,7 +5131,7 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
                 return -1;
             ushort* usData = (ushort*)chData;
 
-            content.append(QString::fromUtf16(usData).replace("\r", ""));
+            content.append(QString::fromUtf16(usData).replace("\n", "").replace("\r", " "));
 
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;

@@ -15,7 +15,12 @@ void SearchMethodManager::searchMethod(FileUtils::SearchMethod sm) {
         qWarning() << "start inotify index";
 //        InotifyIndex ii("/home");
 //        ii.start();
-        this->m_ii = InotifyIndex::getInstance("/home");
+        QStringList pathList;
+        pathList.append("/media/用户保险箱");
+        pathList.append("/media/邮件保险箱");
+        pathList.append("/media/公共保险箱");
+        pathList.append("/media/备份保险箱");
+        this->m_ii = InotifyIndex::getInstance(pathList);
         if(!this->m_ii->isRunning()) {
             this->m_ii->start();
         }

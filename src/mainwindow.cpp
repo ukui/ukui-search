@@ -263,7 +263,7 @@ void MainWindow::initUi() {
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
     mainlayout->addWidget(m_searchWidget);
-    connect(m_contentFrame, &ContentWidget::mousePressed, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
+    connect(m_contentFrame, &ContentWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
 
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged,
             this, &MainWindow::monitorResolutionChange);
@@ -287,7 +287,7 @@ void MainWindow::initUi() {
                 if(! m_search_result_thread->isRunning()) {
                     m_search_result_thread->start();
                 }
-                searchContent(text);
+                startSearch(text);
 //                //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
 //                if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
 //                    m_askTimer->start();
@@ -389,10 +389,10 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen) {
 }
 
 /**
- * @brief searchContent 搜索关键字
- * @param searchcontent
+ * @brief startSearch 搜索关键字
+ * @param keyword
  */
-void MainWindow::searchContent(QString keyword) {
+void MainWindow::startSearch(QString keyword) {
     m_contentFrame->setKeyword(keyword);
 
     //设置搜索
