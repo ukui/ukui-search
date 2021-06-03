@@ -502,7 +502,6 @@ void SearchDetailView::initUI() {
     m_hLine = new QFrame(this);
     m_hLine->setLineWidth(0);
     m_hLine->setFixedHeight(1);
-    m_hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
     m_layout->addWidget(m_iconLabel);
     m_layout->addWidget(m_nameFrame);
     m_layout->addWidget(m_hLine);
@@ -543,7 +542,6 @@ void SearchDetailView::initUI() {
     m_hLine_2 = new QFrame(this);
     m_hLine_2->setLineWidth(0);
     m_hLine_2->setFixedHeight(1);
-    m_hLine_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
     m_layout->addWidget(m_detailFrame);
     m_layout->addWidget(m_hLine_2);
 
@@ -557,6 +555,8 @@ void SearchDetailView::initUI() {
     m_layout->addStretch();
 
     this->clearLayout(); //初始化时隐藏所有控件
+    resetLineColor();
+    connect(qApp, &QApplication::paletteChanged, this, &SearchDetailView::resetLineColor);
 }
 
 /**
@@ -564,6 +564,17 @@ void SearchDetailView::initUI() {
  */
 void SearchDetailView::refreshIcon() {
     this->setIcon(m_iconPath);
+}
+
+void SearchDetailView::resetLineColor()
+{
+    if (GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString() != "ukui-dark") {
+        m_hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.06);}");
+        m_hLine_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.06);}");
+    } else {
+        m_hLine->setStyleSheet("QFrame{background: rgba(255,255,255,0.08);}");
+        m_hLine_2->setStyleSheet("QFrame{background: rgba(255,255,255,0.08);}");
+    }
 }
 
 /**
