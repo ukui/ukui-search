@@ -24,11 +24,20 @@
 #include <QObject>
 #include <QTreeView>
 #include <QMouseEvent>
+#include <QProxyStyle>
 #include "model/search-item-model.h"
 #include "model/search-item.h"
 #include "highlight-item-delegate.h"
 
 namespace Zeeker {
+class CustomStyle : public QProxyStyle
+{
+    Q_OBJECT
+public:
+    explicit CustomStyle(const QString &proxyStyleName = "windows",QObject *parent = nullptr);
+    virtual QSize sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget = nullptr) const;
+};
+
 class SearchListView : public QTreeView {
     Q_OBJECT
 public:

@@ -24,6 +24,8 @@
 
 using namespace Zeeker;
 SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent) {
+    CustomStyle * style = new CustomStyle(GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString());
+    this->setStyle(style);
     this->setFrameShape(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
     setRootIsDecorated(false);
@@ -78,8 +80,8 @@ SearchListView::~SearchListView() {
  */
 void SearchListView::appendItem(QString path) {
     m_model->appendItem(path);
-    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
-    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight);
 }
 
 /**
@@ -94,7 +96,7 @@ void SearchListView::setList(QStringList list) {
         this->blockSignals(false);
     }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
-    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight);
 }
 
 void SearchListView::setAppList(const QStringList &pathlist, const QStringList &iconlist) {
@@ -126,8 +128,8 @@ void SearchListView::clear() {
  */
 void SearchListView::refresh()
 {
-    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
-    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight);
 }
 
 /**
@@ -211,4 +213,28 @@ int SearchListView::getResType(const QString& path) {
 void SearchListView::clearSelection() {
     this->selectionModel()->clearSelection();
     m_isSelected = false;
+}
+
+CustomStyle::CustomStyle(const QString &proxyStyleName, QObject *parent) : QProxyStyle(proxyStyleName)
+{
+}
+
+/**
+ * @brief CustomStyle::sizeFromContents 重写此方法以加高行高
+ * @param type
+ * @param option
+ * @param contentsSize
+ * @param widget
+ * @return
+ */
+QSize CustomStyle::sizeFromContents(QStyle::ContentsType type, const QStyleOption *option, const QSize &contentsSize, const QWidget *widget) const
+{
+    switch (type) {
+        case CT_ItemViewItem: {
+            QSize size(0, GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toDouble() * 2 + 8);
+            return size;
+        } break;
+        default: break;
+    }
+    return QProxyStyle::sizeFromContents(type, option, contentsSize, widget);
 }
