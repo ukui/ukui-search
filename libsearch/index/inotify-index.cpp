@@ -18,6 +18,7 @@
  *
  */
 #include "inotify-index.h"
+#include <QDataStream>
 
 #define CREATE_FILE_NAME_INDEX \
     indexQueue->enqueue(QVector<QString>() << QString(event->name) << QString(currentPath[event->wd] + '/' + event->name) << QString((event->mask & IN_ISDIR) ? "1" : "0")); \
@@ -51,7 +52,7 @@ InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path) {
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
     qDebug() << "setInotifyMaxUserWatches end";
-
+    m_sharedMemory = new QSharedMemory("ukui-search-shared-map", this);
 }
 
 InotifyIndex::~InotifyIndex() {
@@ -341,7 +342,24 @@ void InotifyIndex::run() {
                     qDebug() << "select timeout!";
                     ::free(read_timeout);
                     IndexGenerator::getInstance()->~IndexGenerator();
-//                    GlobalSettings::getInstance()->forceSync();
+                    QBuffer buffer;
+                    QDataStream out(&buffer);
+                    if (m_sharedMemory->isAttached()) {
+                        m_sharedMemory->detach();
+                    }
+                    buffer.open(QBuffer::ReadWrite);
+                    out << currentPath;
+                    int size = buffer.size();
+                    if (!m_sharedMemory->create(size)) {
+                        qDebug() << "Create sharedMemory Error: " << m_sharedMemory->errorString();
+                    } else {
+                        m_sharedMemory->lock();
+                        char *to = static_cast<char *>(m_sharedMemory->data());
+                        const char *from = buffer.data().constData();
+                        memcpy(to, from, qMin(size, m_sharedMemory->size()));
+                        m_sharedMemory->unlock();
+                    }
+                    //                    GlobalSettings::getInstance()->forceSync();
                     ::_exit(0);
                 } else {
                     memset(buf, 0x00, BUF_LEN);
@@ -373,6 +391,20 @@ void InotifyIndex::run() {
         } else if(pid > 0) {
             memset(buf, 0x00, BUF_LEN);
             waitpid(pid, NULL, 0);
+            if (!m_sharedMemory->attach()) {
+                qDebug() << "SharedMemory attach Error: " << m_sharedMemory->errorString();
+            } else {
+                QBuffer buffer;
+                QDataStream in(&buffer);
+                QMap<int, QString> pathMap;
+                m_sharedMemory->lock();
+                buffer.setData(static_cast<const char *>(m_sharedMemory->constData()), m_sharedMemory->size());
+                buffer.open(QBuffer::ReadWrite);
+                in >> pathMap;
+                m_sharedMemory->unlock();
+                m_sharedMemory->detach();
+                currentPath = pathMap;
+            }
             --FileUtils::_index_status;
         } else {
             assert(false);
