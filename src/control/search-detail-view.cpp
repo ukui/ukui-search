@@ -487,7 +487,7 @@ void SearchDetailView::initUI() {
     //图标和名称、分割线区域
     m_iconLabel = new QLabel(this);
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_iconLabel->setFixedHeight(120);
+    m_iconLabel->setFixedHeight(128);
     m_nameFrame = new QFrame(this);
     m_nameLayout = new QHBoxLayout(m_nameFrame);
     m_nameLabel = new QLabel(m_nameFrame);
@@ -596,13 +596,13 @@ void SearchDetailView::setIcon(const QString &path, const bool &installed)
                 icon = QIcon::fromTheme(path);
             }
         }
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
     } else if (m_type == SearchListView::ResType::Setting) {
         QIcon icon = FileUtils::getSettingIcon(path, true);
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
     } else {
         QIcon icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
     }
 }
 
