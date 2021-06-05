@@ -1,3 +1,37 @@
+ukui-search (0.4.0+0605) v101; urgency=medium
+
+  * Bug 58229,58171,57963
+  * 任务 33340
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 05 Jun 2021 14:28:08 +0800
+
+ukui-search (0.4.0+0604) v101; urgency=medium
+
+  * Bug 无
+  * 任务 33347, 33346, 33337
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 04 Jun 2021 11:23:51 +0800
+
+ukui-search (0.4.0+0602) v101; urgency=medium
+
+  * Bug 58540,58539,58581
+  * 任务 无
+  * 其他改动：
+  * Reduced the memory footprint of file indexing,and reduced the time it
+    takes.
+    - 减少了文件索引的内存占用并且缩短了文件索引的时间。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 02 Jun 2021 15:32:04 +0800
+
+ukui-search (0.4.0+0530) v101; urgency=medium
+
+  * Bug 57129
+  * 任务 无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sun, 30 May 2021 11:21:37 +0800
+
 ukui-search (0.4.0+0520) v101; urgency=medium
 
   * Bug 55034,55545,55326,55496

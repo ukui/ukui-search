@@ -110,17 +110,21 @@ void ConstructDocumentForContent::run() {
         return;
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
     QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
-
-    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000).toStdString());
-
     Document doc;
     doc.setData(content);
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
     doc.addValue(m_path);
-    for(int i = 0; i < term.size(); ++i) {
-        doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
 
+    //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.
+    content = content.replace("\t", " ").replace("\xEF\xBC\x8C", "   ").replace("\xE3\x80\x82", "   ");
+
+//    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000));
+    //修改函数返回类型，修改入参为std::string引用--jxx20210519
+    std::vector<cppjieba::KeywordExtractor::Word> term = ChineseSegmentation::getInstance()->callSegementStd(content.left(20480000).toStdString());
+
+    for(size_t i = 0; i < term.size(); ++i) {
+        doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
     }
 
     Zeeker::_mutex_doc_list_content.lock();
