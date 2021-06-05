@@ -174,7 +174,7 @@ MainWindow::~MainWindow() {
  * 设置本窗口的大小 this->setFixedSize(640, 640);
  */
 void MainWindow::initUi() {
-    this->setFixedSize(640, 590);
+    this->setFixedSize(680, 590);
 
     m_frame = new QFrame(this);
 

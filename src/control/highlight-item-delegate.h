@@ -30,6 +30,8 @@ class HighlightItemDelegate : public QStyledItemDelegate {
 public:
     explicit HighlightItemDelegate(QObject *parent = nullptr);
     void setSearchKeyword(const QString &);
+protected:
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 private:
     QString m_regFindKeyWords = 0;
     void paint(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const override;
