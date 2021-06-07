@@ -32,7 +32,10 @@ public:
                      size_t) const override {
 
     }
+    virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, unordered_map<string, KeyWord>& res, bool hmm,
+                     size_t) const override {
 
+    }
     const DictTrie* GetDictTrie() const override {
         return dictTrie_;
     }
@@ -46,13 +49,14 @@ public:
     }
 private:
     void CalcDP(vector<DatDag>& dags) const {
+        double val(0);
         for (auto rit = dags.rbegin(); rit != dags.rend(); rit++) {
             rit->max_next = -1;
             rit->max_weight = MIN_DOUBLE;
 
             for (const auto & it : rit->nexts) {
                 const auto nextPos = it.first;
-                double val = dictTrie_->GetMinWeight();
+                val = dictTrie_->GetMinWeight();
 
                 if (nullptr != it.second) {
                     val = it.second->weight;

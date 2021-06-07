@@ -18,9 +18,9 @@ public:
           model_(model_path),
           mp_seg_(&dict_trie_),
           hmm_seg_(&model_),
-          mix_seg_(&dict_trie_, &model_),
+          mix_seg_(&dict_trie_, &model_, stopWordPath),
           full_seg_(&dict_trie_),
-          query_seg_(&dict_trie_, &model_),
+          query_seg_(&dict_trie_, &model_, stopWordPath),
           extractor(&dict_trie_, &model_, idfPath, stopWordPath){ }
     ~Jieba() { }
 

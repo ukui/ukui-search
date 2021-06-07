@@ -23,23 +23,28 @@ public:
     //添加基于sentence的cut方法，减少中间变量的存储与格式转换--jxx20210517
     virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, vector<string>& res, bool hmm,
                      size_t max_word_len) const = 0;
+    virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, unordered_map<string, KeyWord>& res, bool hmm,
+                     size_t max_word_len) const = 0;
     //重写CutToStr函数，简化获取vector<string>& words的流程，降低内存占用--jxx20210517
     void CutToStr(const string& sentence, vector<string>& words, bool hmm = true,
                   size_t max_word_len = MAX_WORD_LENGTH) const {
-/*
-        vector<Word> tmp;
-        CutToWord(sentence, tmp, hmm, max_word_len);
-        GetStringsFromWords(tmp, words);
-*/
         PreFilter pre_filter(symbols_, sentence);
         words.clear();
         words.reserve(sentence.size() / 2);//todo 参考源码，参数待定
-        while (pre_filter.HasNext()) {
-            auto range = pre_filter.Next();
+        RuneStrArray::const_iterator null_p;
+        WordRange range(null_p, null_p);
+        while (pre_filter.Next(range)) {
             CutWithSentence(sentence, range.left, range.right, words, hmm, max_word_len);
         }
     }
-
+    void CutToStr(const string& sentence, WordRange range, vector<string>& words, bool hmm = true,
+                  size_t max_word_len = MAX_WORD_LENGTH) const {
+        CutWithSentence(sentence, range.left, range.right, words, hmm, max_word_len);
+    }
+    void CutToStr(const string& sentence, WordRange range, unordered_map<string, KeyWord>& words, bool hmm = true,
+                  size_t max_word_len = MAX_WORD_LENGTH) const {
+        CutWithSentence(sentence, range.left, range.right, words, hmm, max_word_len);
+    }
     void CutToWord(const string& sentence, vector<Word>& words, bool hmm = true,
                    size_t max_word_len = MAX_WORD_LENGTH) const {
         PreFilter pre_filter(symbols_, sentence);
