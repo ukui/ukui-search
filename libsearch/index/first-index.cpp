@@ -26,6 +26,8 @@
 //#define DELETE_QUEUE(a )
 using namespace Zeeker;
 FirstIndex::FirstIndex() {
+    m_pool.setMaxThreadCount(2);
+    m_pool.setExpiryTimeout(100);
 }
 
 FirstIndex::~FirstIndex() {
@@ -177,6 +179,7 @@ void FirstIndex::run() {
             p_indexGenerator = IndexGenerator::getInstance(true, this);
 
         }
+        //TODO Fix these weird code.
         QSemaphore sem(5);
         QMutex mutex1, mutex2, mutex3;
         mutex1.lock();
@@ -192,42 +195,41 @@ void FirstIndex::run() {
         qDebug() << "max_index_count:" << FileUtils::_max_index_count;
         sem.release(5);
 //        });
-        QtConcurrent::run([&]() {
+        QtConcurrent::run(&m_pool, [&]() {
             sem.acquire(2);
             mutex2.unlock();
             qDebug() << "index start;";
-            QQueue<QVector<QString>>* tmp = new QQueue<QVector<QString>>();
+            QQueue<QVector<QString>>* tmp1 = new QQueue<QVector<QString>>();
             while(!this->q_index->empty()) {
                 for(size_t i = 0; (i < 8192) && (!this->q_index->empty()); ++i) {
-                    tmp->enqueue(this->q_index->dequeue());
+                    tmp1->enqueue(this->q_index->dequeue());
                 }
-                this->p_indexGenerator->creatAllIndex(tmp);
-                tmp->clear();
+                this->p_indexGenerator->creatAllIndex(tmp1);
+                tmp1->clear();
             }
-//            this->p_indexGenerator->setSynonym();
-            delete tmp;
+            delete tmp1;
             qDebug() << "index end;";
             sem.release(2);
         });
-        QtConcurrent::run([&]() {
+        QtConcurrent::run(&m_pool,[&]() {
             sem.acquire(2);
             mutex3.unlock();
-            QQueue<QString>* tmp = new QQueue<QString>();
+            QQueue<QString>* tmp2 = new QQueue<QString>();
             qDebug() << "q_content_index:" << q_content_index->size();
             while(!this->q_content_index->empty()) {
-//                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
+                //                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
                 qint64 fileSize = 0;
                 //修改一次处理的数据量，从30个文件改为文件总大小为50M以下，50M为暂定值--jxx20210519
                 for(size_t i = 0;/* (i < 30) && */(fileSize < 50*1024*1024) && (!this->q_content_index->empty()); ++i) {
                     QPair<QString,qint64> tempPair = this->q_content_index->dequeue();
                     fileSize += tempPair.second;
-                    tmp->enqueue(tempPair.first);
+                    tmp2->enqueue(tempPair.first);
                 }
-//                qDebug() << ">>>>>>>>all fileSize:" << fileSize << "file num:" << tmp->size() << "<<<<<<<<<<<<<<<<<<<";
-                this->p_indexGenerator->creatAllIndex(tmp);
-                tmp->clear();
+                //                qDebug() << ">>>>>>>>all fileSize:" << fileSize << "file num:" << tmp->size() << "<<<<<<<<<<<<<<<<<<<";
+                this->p_indexGenerator->creatAllIndex(tmp2);
+                tmp2->clear();
             }
-            delete tmp;
+            delete tmp2;
             qDebug() << "content index end;";
             sem.release(2);
         });
