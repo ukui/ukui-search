@@ -81,9 +81,10 @@ void ContentWidget::initUI() {
     m_resultDetail = new QWidget(m_resultDetailArea);
     m_listLyt = new QVBoxLayout(m_resultList);
     m_detailLyt = new QVBoxLayout(m_resultDetail);
-    m_resultList->setFixedWidth(280);
+    //需要给滚动条留出16个像素点的宽度
+    m_resultList->setFixedWidth(280 - 16);
     m_resultList->setFixedHeight(0);
-    m_listLyt->setContentsMargins(0, 0, 12, 0);
+    m_listLyt->setContentsMargins(0, 0, 0, 0);
     m_listLyt->setSpacing(0);
     m_resultListArea->setWidget(m_resultList);
     m_resultListArea->setWidgetResizable(true);
