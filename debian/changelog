@@ -1,3 +1,20 @@
+ukui-search (0.4.0+0608hw1) v101.hw; urgency=medium
+
+  * Bug 58748, 58535, 58574, 60232 
+  * 任务 无
+  * 其他改动：
+  * Reduced the memory footprint of file indexing,and reduced the time it
+    takes.
+    - 减少了文件索引的内存占用并且缩短了文件索引的时间。
+  * Optimized app search function.
+    - 优化应用搜索，避免偶现的无法显示或显示错误搜索结果的情况。
+  * Fix: File index fails to update sometimes.
+    - 修复了文建索引偶现的更新失败问题。
+  * Make a slight adjustment to the UI.
+    - 略微调整一些UI细节。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 07 Jun 2021 09:56:18 +0800
+
 ukui-search (0.4.0+0521hw1) v101.hw; urgency=medium
 
   * Bug 55791,55782
