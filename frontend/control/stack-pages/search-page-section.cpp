@@ -162,10 +162,10 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
         m_line_2->show();
     }
     clearLayout(m_actionFrameLyt);
-    Q_FOREACH (auto action, info.actionList) {
-        ActionLabel * actionLabel = new ActionLabel(action, info.key, plugin_name, m_actionFrame);
-        m_actionFrameLyt->addWidget(actionLabel);
-    }
+//    Q_FOREACH (auto action, info.actionList) {
+//        ActionLabel * actionLabel = new ActionLabel(action, info.key, plugin_name, m_actionFrame);
+//        m_actionFrameLyt->addWidget(actionLabel);
+//    }
     m_actionFrame->show();
 }
 
@@ -288,9 +288,9 @@ bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
             return true;
         } else if(event->type() == QEvent::MouseButtonRelease) {
             SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin);
-            if (plugin)
-                plugin->openAction(m_action, m_key);
-            else
+//            if (plugin)
+//                plugin->openAction(m_action, m_key);
+//            else
                 qWarning()<<"Get plugin failed!";
             this->setForegroundRole(QPalette::Light);
             return true;

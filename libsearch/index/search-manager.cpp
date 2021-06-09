@@ -56,25 +56,25 @@ void SearchManager::onKeywordSearch(QString keyword, QQueue<QString> *searchResu
     ++uniqueSymbol3;
     m_mutex3.unlock();
 
-    if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
-        DirectSearch *directSearch;
-        directSearch = new DirectSearch(keyword, searchResultFile, searchResultDir, uniqueSymbol1);
-        m_pool.start(directSearch);
-    } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
-        FileSearch *filesearch;
-        filesearch = new FileSearch(searchResultFile, uniqueSymbol1, keyword, "0", 1, 0, 5);
-        m_pool.start(filesearch);
+//    if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
+//        DirectSearch *directSearch;
+//        directSearch = new DirectSearch(keyword, searchResultFile, searchResultDir, uniqueSymbol1);
+//        m_pool.start(directSearch);
+//    } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
+//        FileSearch *filesearch;
+//        filesearch = new FileSearch(searchResultFile, uniqueSymbol1, keyword, "0", 1, 0, 5);
+//        m_pool.start(filesearch);
 
-        FileSearch *dirsearch;
-        dirsearch = new FileSearch(searchResultDir, uniqueSymbol2, keyword, "1", 1, 0, 5);
-        m_pool.start(dirsearch);
+//        FileSearch *dirsearch;
+//        dirsearch = new FileSearch(searchResultDir, uniqueSymbol2, keyword, "1", 1, 0, 5);
+//        m_pool.start(dirsearch);
 
-        FileContentSearch *contentSearch;
-        contentSearch = new FileContentSearch(searchResultContent, uniqueSymbol3, keyword, 0, 5);
-        m_pool.start(contentSearch);
-    } else {
-        qWarning() << "Unknown search method! FileUtils::searchMethod: " << static_cast<int>(FileUtils::searchMethod);
-    }
+//        FileContentSearch *contentSearch;
+//        contentSearch = new FileContentSearch(searchResultContent, uniqueSymbol3, keyword, 0, 5);
+//        m_pool.start(contentSearch);
+//    } else {
+//        qWarning() << "Unknown search method! FileUtils::searchMethod: " << static_cast<int>(FileUtils::searchMethod);
+//    }
     return;
 }
 
@@ -88,7 +88,22 @@ bool SearchManager::isBlocked(QString &path) {
 
 }
 
-FileSearch::FileSearch(QQueue<QString> *searchResult, size_t uniqueSymbol, QString keyword, QString value, unsigned slot, int begin, int num) {
+bool SearchManager::creatResultInfo(SearchPluginIface::ResultInfo &ri, QString path)
+{
+    QFileInfo info(path);
+    if(!info.exists()) {
+        return false;
+    }
+    ri.icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
+    ri.name = info.fileName();
+    ri.description = QVector<SearchPluginIface::DescriptionInfo>() \
+                    << SearchPluginIface::DescriptionInfo{tr("Path:"), path} \
+                    << SearchPluginIface::DescriptionInfo{tr("Modified time:"), info.lastModified().toString("yyyy/MM/dd hh:mm:ss")};
+    ri.actionKey = path;
+    ri.type = 0;
+    return true;
+}
+FileSearch::FileSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol, QString keyword, QString value, unsigned slot, int begin, int num) {
     this->setAutoDelete(true);
     m_search_result = searchResult;
     m_uniqueSymbol = uniqueSymbol;
@@ -178,18 +193,13 @@ int FileSearch::getResult(Xapian::MSet &result) {
         if(SearchManager::isBlocked(path)) {
             continue;
         }
-
-        QFileInfo info(path);
-
-        if(!info.exists()) {
-//            pathTobeDelete->append(QString::fromStdString(data));
-            qDebug() << path << "is not exist!!";
-        } else {
+        SearchPluginIface::ResultInfo ri;
+        if(SearchManager::creatResultInfo(ri, path)) {
             switch(m_value.toInt()) {
             case 1:
                 SearchManager::m_mutex1.lock();
                 if(m_uniqueSymbol == SearchManager::uniqueSymbol2) {
-                    m_search_result->enqueue(path);
+                    m_search_result->enqueue(ri);
                     SearchManager::m_mutex1.unlock();
                 } else {
                     SearchManager::m_mutex1.unlock();
@@ -200,7 +210,7 @@ int FileSearch::getResult(Xapian::MSet &result) {
             case 0:
                 SearchManager::m_mutex2.lock();
                 if(m_uniqueSymbol == SearchManager::uniqueSymbol1) {
-                    m_search_result->enqueue(path);
+                    m_search_result->enqueue(ri);
                     SearchManager::m_mutex2.unlock();
                 } else {
                     SearchManager::m_mutex2.unlock();
@@ -210,8 +220,8 @@ int FileSearch::getResult(Xapian::MSet &result) {
             default:
                 break;
             }
-            //            searchResult.append(path);
         }
+            //            searchResult.append(path);
         qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
@@ -219,7 +229,7 @@ int FileSearch::getResult(Xapian::MSet &result) {
     return 0;
 }
 
-FileContentSearch::FileContentSearch(QQueue<QPair<QString, QStringList>> *searchResult, size_t uniqueSymbol, QString keyword, int begin, int num) {
+FileContentSearch::FileContentSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol, QString keyword, int begin, int num) {
     this->setAutoDelete(true);
     m_search_result = searchResult;
     m_uniqueSymbol = uniqueSymbol;
@@ -339,15 +349,12 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
             continue;
         }
 
-        QFileInfo info(path);
-
-        if(!info.exists()) {
-            //                pathTobeDelete->append(QString::fromStdString(data));
-            qDebug() << path << "is not exist!!";
+        SearchPluginIface::ResultInfo ri;
+        if(!SearchManager::creatResultInfo(ri, path)) {
             continue;
         }
         // Construct snippets containing keyword.
-        QStringList snippets;
+//        QStringList snippets;
 //        snippets.append(QString::fromStdString( result.snippet(doc.get_data(),400)));
 //        qWarning()<<QString::fromStdString(s);
         auto term = doc.termlist_begin();
@@ -363,12 +370,15 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
             } else {
                 snippet.append("...").prepend("...");
             }
-            snippets.append(snippet);
+            ri.description.prepend(SearchPluginIface::DescriptionInfo{"",snippet});
+//            snippets.append(snippet);
             QString().swap(snippet);
             std::string().swap(s);
             ++count;
         }
         std::string().swap(data);
+
+
 
 //        for(QString i : QString::fromStdString(keyWord).split(" ",QString::SkipEmptyParts))
 //        {
@@ -387,10 +397,10 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
 
         SearchManager::m_mutex3.lock();
         if(m_uniqueSymbol == SearchManager::uniqueSymbol3) {
-            m_search_result->enqueue(qMakePair(path, snippets));
+            m_search_result->enqueue(ri);
             SearchManager::m_mutex3.unlock();
-            snippets.clear();
-            QStringList().swap(snippets);
+//            snippets.clear();
+//            QStringList().swap(snippets);
         } else {
             SearchManager::m_mutex3.unlock();
             return -1;
@@ -403,12 +413,12 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
     return 0;
 }
 
-DirectSearch::DirectSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, size_t uniqueSymbol) {
+DirectSearch::DirectSearch(QString keyword, DataQueue<SearchPluginIface::ResultInfo> *searchResult, QString value, size_t uniqueSymbol) {
     this->setAutoDelete(true);
     m_keyword = keyword;
-    m_searchResultFile = searchResultFile;
-    m_searchResultDir = searchResultDir;
+    m_searchResult = searchResult;
     m_uniqueSymbol = uniqueSymbol;
+    m_value = value;
 }
 
 void DirectSearch::run() {
@@ -417,8 +427,13 @@ void DirectSearch::run() {
     QFileInfoList list;
     QDir dir;
     // QDir::Hidden
-    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
-    dir.setSorting(QDir::DirsFirst);
+    if(m_value == DIR_SEARCH_VALUE) {
+         dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+    } else {
+        dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+        dir.setSorting(QDir::DirsFirst);
+    }
+
     QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
@@ -442,26 +457,22 @@ void DirectSearch::run() {
                 bfs.enqueue(i.absoluteFilePath());
             }
             if(i.fileName().contains(m_keyword, Qt::CaseInsensitive)) {
-                SearchManager::m_mutex1.lock();
 //                qWarning() << i.fileName() << m_keyword;
-                if(m_uniqueSymbol == SearchManager::uniqueSymbol1) {
-                    // TODO
-                    if(i.isDir() && m_searchResultDir->length() < 51) {
-                        m_searchResultDir->enqueue(i.absoluteFilePath());
-                    } else if(m_searchResultFile->length() < 51) {
-                        m_searchResultFile->enqueue(i.absoluteFilePath());
-                    }
-                    SearchManager::m_mutex1.unlock();
-                    if(m_searchResultDir->length() > 49 && m_searchResultFile->length() > 49) {
-                        return;
-                    }
-                } else {
-                    // TODO
-                    // More suitable method?
-                    m_searchResultFile->clear();
-                    m_searchResultDir->clear();
-                    SearchManager::m_mutex1.unlock();
+                if(m_searchResult->length() > 49)
                     return;
+                if((i.isDir() && m_value == DIR_SEARCH_VALUE) || (i.isFile() && m_value == FILE_SEARCH_VALUE)) {
+                    SearchPluginIface::ResultInfo ri;
+                    if(SearchManager::creatResultInfo(ri,i.absoluteFilePath())) {
+                        SearchManager::m_mutex1.lock();
+                        if(m_uniqueSymbol == SearchManager::uniqueSymbol1) {
+                            m_searchResult->enqueue(ri);
+                            SearchManager::m_mutex1.unlock();
+                        } else {
+                            SearchManager::m_mutex1.unlock();
+                            return;
+                        }
+
+                    }
                 }
             }
         }

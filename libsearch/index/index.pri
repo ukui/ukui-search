@@ -4,6 +4,7 @@ HEADERS += \
     $$PWD/construct-document.h \
     $$PWD/document.h \
     $$PWD/file-reader.h \
+    $$PWD/file-search-plugin.h \
     $$PWD/first-index.h \
     $$PWD/index-generator.h \
     $$PWD/index-status-recorder.h \
@@ -17,6 +18,7 @@ SOURCES += \
     $$PWD/construct-document.cpp \
     $$PWD/document.cpp \
     $$PWD/file-reader.cpp \
+    $$PWD/file-search-plugin.cpp \
     $$PWD/first-index.cpp \
     $$PWD/index-generator.cpp \
     $$PWD/index-status-recorder.cpp \

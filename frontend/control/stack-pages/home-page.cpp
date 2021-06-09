@@ -130,10 +130,10 @@ void HomePage::createSection(const QString &section_name, const HomePageItemShap
         this->appendSection(section);
     connect(section, &HomePageSection::requestAction, this, [ = ](const QString &key, const QString &action, const QString &pluginId) {
         SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(pluginId);
-        if (plugin) {
-            plugin->openAction(action, key);
-        } else {
-            qWarning()<<"Get plugin failed!";
-        }
+//        if (plugin) {
+//            plugin->openAction(action, key);
+//        } else {
+//            qWarning()<<"Get plugin failed!";
+//        }
     });
 }

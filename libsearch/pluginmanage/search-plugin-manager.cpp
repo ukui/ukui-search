@@ -1,8 +1,17 @@
+#include <QDebug>
 #include "search-plugin-manager.h"
+#include "file-search-plugin.h"
 
 using namespace Zeeker;
 
 static SearchPluginManager *global_instance = nullptr;
+SearchPluginManager::SearchPluginManager(QObject *parent)
+{
+    registerPlugin(new FileSearchPlugin(this));
+    registerPlugin(new DirSearchPlugin(this));
+    registerPlugin(new FileContengSearchPlugin(this));
+}
+
 bool SearchPluginManager::registerPlugin(Zeeker::SearchPluginIface *plugin)
 {
     if (m_hash.value(plugin->name())) {
@@ -33,10 +42,6 @@ SearchPluginIface *SearchPluginManager::getPlugin(const QString &pluginId)
 void SearchPluginManager::close()
 {
     this->deleteLater();
-}
-
-SearchPluginManager::SearchPluginManager(QObject *parent)
-{
 }
 
 SearchPluginManager::~SearchPluginManager()

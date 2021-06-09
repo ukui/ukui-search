@@ -24,13 +24,14 @@ DEFINES += PLUGIN_INSTALL_DIRS='\\"$${PLUGIN_INSTALL_DIRS}\\"'
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
+include(pluginmanage/plugin-manager.pri)
+include(plugininterface/plugin-interface.pri)
 include(index/index.pri)
 include(parser/parser.pri))
 include(appsearch/appsearch.pri)
 include(settingsearch/settingsearch.pri))
-include(plugininterface/plugin-interface.pri)
-include(pluginmanage/plugin-manager.pri)
+
+
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5 -luchardet
@@ -52,13 +53,13 @@ HEADERS += \
 RESOURCES += \
     resource1.qrc \
 
-#TRANSLATIONS += \
-#    ../translations/libsearch/libukui-search_zh_CN.ts
+TRANSLATIONS += \
+    ../translations/libukui-search/libukui-search_zh_CN.ts
 
-#qm_files.path = /usr/share/ukui-search/translations/libsearch/
-#qm_files.files = $$OUT_PWD/.qm/*.qm
+qm_files.path = /usr/share/ukui-search/translations/
+qm_files.files = $$OUT_PWD/.qm/*.qm
 
-#INSTALLS += qm_files
+INSTALLS += qm_files
 
 
 # Default rules for deployment.
@@ -67,11 +68,9 @@ unix {
     INSTALLS += target
 
     header.path = /usr/include/ukui-search
-    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h
+    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h plugininterface/*.h
     INSTALLS += header
 }
-
-
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
 
