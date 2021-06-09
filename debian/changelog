@@ -1,8 +1,8 @@
 ukui-search (0.4.0+0608hw1) v101.hw; urgency=medium
 
-  * Bug 58748, 58535, 58574, 60232 
-  * 任务 无
-  * 其他改动：
+  * BUG号 58748-9A0, 58535-9A0, 58574-9A0, 60232-9A0
+  * 需求号 无
+  * 其他改动说明：
   * Reduced the memory footprint of file indexing,and reduced the time it
     takes.
     - 减少了文件索引的内存占用并且缩短了文件索引的时间。
