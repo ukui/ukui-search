@@ -34,8 +34,8 @@ ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
 
 void ConstructDocumentForPath::run() {
 //    qDebug()<<"ConstructDocumentForPath";
-    if(!Zeeker::_doc_list_path)
-        Zeeker::_doc_list_path = new QList<Document>;
+//    if(!Zeeker::_doc_list_path)
+//        Zeeker::_doc_list_path = new QVector<Document>;
 //    qDebug()<<_doc_list_path->size();
     QString index_text = m_list.at(0).toLower();
     QString sourcePath = m_list.at(1);
@@ -87,9 +87,9 @@ void ConstructDocumentForPath::run() {
     }
 
 //    QMetaObject::invokeMethod(m_indexGenerator,"appendDocListPath",Q_ARG(Document,doc));
-    Zeeker::_mutex_doc_list_path.lock();
-    Zeeker::_doc_list_path->append(doc);
-    Zeeker::_mutex_doc_list_path.unlock();
+    IndexGenerator::_mutex_doc_list_path.lock();
+    IndexGenerator::_doc_list_path.append(doc);
+    IndexGenerator::_mutex_doc_list_path.unlock();
 //    qDebug()<<"ConstructDocumentForPath finish";
     return;
 }
@@ -102,8 +102,8 @@ ConstructDocumentForContent::ConstructDocumentForContent(QString path) {
 void ConstructDocumentForContent::run() {
 //    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
     //      构造文本索引的document
-    if(!Zeeker::_doc_list_content)
-        Zeeker::_doc_list_content = new QList<Document>;
+//    if(!Zeeker::_doc_list_content)
+//        Zeeker::_doc_list_content = new QVector<Document>;
     QString content;
     FileReader::getTextContent(m_path, content);
     if(content.isEmpty())
@@ -127,11 +127,12 @@ void ConstructDocumentForContent::run() {
         doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
     }
 
-    Zeeker::_mutex_doc_list_content.lock();
-    Zeeker::_doc_list_content->append(doc);
-    Zeeker::_mutex_doc_list_content.unlock();
+    IndexGenerator::_mutex_doc_list_content.lock();
+    IndexGenerator::_doc_list_content.append(doc);
+    IndexGenerator::_mutex_doc_list_content.unlock();
     content.clear();
     content.squeeze();
     term.clear();
+    term.shrink_to_fit();
     return;
 }
