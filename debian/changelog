@@ -1,3 +1,10 @@
+ukui-search (0.4.0+0610) focal; urgency=medium
+
+  * Bugs Fixed and performance optimized.
+    - 解决bug，优化性能。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 10 Jun 2021 20:58:32 +0800
+
 ukui-search (0.4.0+0608) v101; urgency=medium
 
   * Bug 无 
