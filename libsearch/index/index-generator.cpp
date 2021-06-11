@@ -455,26 +455,26 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist) {
     QStringList *list = pathlist;
     if(list->isEmpty())
         return true;
-    for(int i = 0; i < list->size(); i++) {
-        QString doc = list->at(i);
-        std::string uniqueterm = FileUtils::makeDocUterm(doc);
-        try {
+    try {
+        for(int i = 0; i < list->size(); i++) {
+            QString doc = list->at(i);
+            std::string uniqueterm = FileUtils::makeDocUterm(doc);
             qDebug() << "--delete start--";
             m_database_path->delete_document(uniqueterm);
             m_database_content->delete_document(uniqueterm);
             qDebug() << "delete path" << doc;
             qDebug() << "delete md5" << QString::fromStdString(uniqueterm);
-            m_database_path->commit();
-            m_database_content->commit();
             qDebug() << "--delete finish--";
-//            qDebug()<<"m_database_path->get_lastdocid()!!!"<<m_database_path->get_lastdocid();
-
-//            qDebug()<<"m_database_path->get_doccount()!!!"<<m_database_path->get_doccount();
-        } catch(const Xapian::Error &e) {
-            qWarning() << QString::fromStdString(e.get_description());
-            return false;
+            //            qDebug()<<"m_database_path->get_lastdocid()!!!"<<m_database_path->get_lastdocid();
+            //            qDebug()<<"m_database_path->get_doccount()!!!"<<m_database_path->get_doccount();
         }
+        m_database_path->commit();
+        m_database_content->commit();
+    } catch(const Xapian::Error &e) {
+        qWarning() << QString::fromStdString(e.get_description());
+        return false;
     }
+
     Q_EMIT this->transactionFinished();
     return true;
 }

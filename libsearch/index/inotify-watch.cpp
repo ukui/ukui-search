@@ -198,6 +198,11 @@ void InotifyWatch::run()
                 slotEvent(buf, len);
                 free(buf);
             }
+        } else if(rc < 0) {
+            // error
+            qWarning() << "select result < 0, error!";
+            IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "1");
+            assert(false);
         }
     }
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
@@ -220,7 +225,6 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
         if(pid  == 0) {
             prctl(PR_SET_PDEATHSIG, SIGTERM);
             prctl(PR_SET_NAME, "inotify-index");
-
             this->eventProcess(buf, len);
             fd_set read_fds;
             int rc;
@@ -230,11 +234,10 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
             for(;;) {
                 FD_ZERO(&read_fds);
                 FD_SET(m_inotifyFd, &read_fds);
-                qDebug() << read_timeout->tv_sec;
                 rc = select(m_inotifyFd + 1, &read_fds, NULL, NULL, read_timeout);
                 if(rc < 0) {
                     // error
-                    qWarning() << "select result < 0, error!";
+                    qWarning() << "fork select result < 0, error!";
                     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "1");
                     assert(false);
                 } else if(rc == 0) {
@@ -263,9 +266,9 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
                     PendingFileQueue::getInstance()->~PendingFileQueue();
                     ::_exit(0);
                 } else {
-                    qDebug() << "Select remain:" <<read_timeout->tv_sec;
+//                    qDebug() << "Select remain:" <<read_timeout->tv_sec;
                     this->eventProcess(m_inotifyFd);
-                    qDebug() << "Select remain:" <<read_timeout->tv_sec;
+//                    qDebug() << "Select remain:" <<read_timeout->tv_sec;
                 }
             }
         } else if(pid > 0) {
@@ -323,7 +326,7 @@ char * InotifyWatch::filter()
 }
 void InotifyWatch::eventProcess(int socket)
 {
-    qDebug()<< "Enter eventProcess!";
+//    qDebug()<< "Enter eventProcess!";
     int avail;
     if (ioctl(socket, FIONREAD, &avail) == EINVAL) {
         qWarning() << "Did not receive an entire inotify event.";
@@ -342,8 +345,8 @@ void InotifyWatch::eventProcess(int socket)
     while (i < len) {
         const struct inotify_event* event = (struct inotify_event*)&buffer[i];
         if(event->name[0] != '.') {
-            qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
-            qDebug("mask:0x%x,",event->mask);
+//            qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
+//            qDebug("mask:0x%x,",event->mask);
             break;
         }
         i += sizeof(struct inotify_event) + event->len;
@@ -358,8 +361,7 @@ void InotifyWatch::eventProcess(int socket)
 
 void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
 {
-    qDebug()<< "Begin eventProcess! len:" << len;
-    IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "0");
+//    qDebug()<< "Begin eventProcess! len:" << len;
 
     char * p = const_cast<char*>(buffer);
     while (p < buffer + len) {
@@ -370,7 +372,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
             QString path = currentPath[event->wd] + '/' + event->name;
             //Create top dir first, traverse it last.
             if(event->mask & IN_CREATE) {
-                qDebug() << "IN_CREATE";
+//                qDebug() << "IN_CREATE";
                 PendingFile f(path);
                 if(event->mask & IN_ISDIR) {
                     f.setIsDir();
@@ -401,7 +403,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
                 continue;
             }
             if(event->mask & IN_MODIFY) {
-                qDebug() << "IN_MODIFY";
+//                qDebug() << "IN_MODIFY";
                 if(!(event->mask & IN_ISDIR)) {
                     PendingFileQueue::getInstance()->enqueue(PendingFile(path));
                 }
@@ -437,7 +439,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
 next:
         p += sizeof(struct inotify_event) + event->len;
     }
-    qDebug()<< "Finish eventProcess!";
+//    qDebug()<< "Finish eventProcess!";
 }
 
 

@@ -40,10 +40,11 @@ PendingFileQueue::PendingFileQueue(QObject *parent) : QThread(parent)
 //    connect(this, &PendingFileQueue::minProcessTimerStart, m_minProcessTimer, f,Qt::DirectConnection);
     connect(this, SIGNAL(cacheTimerStart()), m_cacheTimer, SLOT(start()));
     connect(this, SIGNAL(minProcessTimerStart()), m_minProcessTimer, SLOT(start()));
+    connect(this, &PendingFileQueue::timerStop, m_cacheTimer, &QTimer::stop);
+    connect(this, &PendingFileQueue::timerStop, m_minProcessTimer, &QTimer::stop);
 
     connect(m_cacheTimer, &QTimer::timeout, this, &PendingFileQueue::processCache, Qt::DirectConnection);
     connect(m_minProcessTimer, &QTimer::timeout, this, &PendingFileQueue::processCache, Qt::DirectConnection);
-
 }
 
 PendingFileQueue *PendingFileQueue::getInstance(QObject *parent)
@@ -71,13 +72,18 @@ PendingFileQueue::~PendingFileQueue()
 void PendingFileQueue::forceFinish()
 {
     QThread::msleep(600);
+    Q_EMIT timerStop();
     this->quit();
     this->wait();
 }
 void PendingFileQueue::enqueue(const PendingFile &file)
 {
-    qDebug() << "enqueuq file: " << file.path();
+//    qDebug() << "enqueuq file: " << file.path();
     m_mutex.lock();
+    m_enqueuetimes++;
+    if(m_cache.isEmpty()) {
+        IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "0");
+    }
     // Remove all indexs of files under a dir which is to about be deleted,but keep delete signals.
     // Because our datebase need to delete those indexs one by one.
     if(file.shouldRemoveIndex() && file.isDir()) {
@@ -94,29 +100,29 @@ void PendingFileQueue::enqueue(const PendingFile &file)
     }
     int i = m_cache.indexOf(file);
     if (i == -1) {
-        qDebug() << "insert file" << file.path() << file.shouldRemoveIndex();
+//        qDebug() << "insert file" << file.path() << file.shouldRemoveIndex();
         m_cache << file;
     } else {
-        qDebug() << "merge file" << file.path() << file.shouldRemoveIndex();
+//        qDebug() << "merge file" << file.path() << file.shouldRemoveIndex();
         m_cache[i].merge(file);
     }
 
     if(!m_cacheTimer->isActive()) {
-        qDebug()<<"m_cacheTimer-----start!!";
+//        qDebug()<<"m_cacheTimer-----start!!";
 //        m_cacheTimer->start();
         Q_EMIT cacheTimerStart();
     }
     Q_EMIT minProcessTimerStart();
 //    m_minProcessTimer->start();
-    qDebug()<<"m_minProcessTimer-----start!!";
+//    qDebug()<<"m_minProcessTimer-----start!!";
     m_mutex.unlock();
-    qDebug() << "Current cache-------------";
-    for(PendingFile i : m_cache) {
-        qDebug() << "|" << i.path();
-        qDebug() << "|" <<i.shouldRemoveIndex();
-    }
-    qDebug() << "Current cache-------------";
-    qDebug()<<"enqueuq file finish!!"<<file.path();
+//    qDebug() << "Current cache-------------";
+//    for(PendingFile i : m_cache) {
+//        qDebug() << "|" << i.path();
+//        qDebug() << "|" <<i.shouldRemoveIndex();
+//    }
+//    qDebug() << "Current cache-------------";
+//    qDebug()<<"enqueuq file finish!!"<<file.path();
 }
 
 void PendingFileQueue::run()
@@ -126,13 +132,21 @@ void PendingFileQueue::run()
 
 void PendingFileQueue::processCache()
 {
-    qDebug()<< "Begin processCache!";
+    qDebug()<< "Begin processCache!" ;
     m_mutex.lock();
+    qDebug() << "Events:" << m_enqueuetimes;
+    m_enqueuetimes = 0;
     m_cache.swap(m_pendingFiles);
 //    m_pendingFiles = m_cache;
 //    m_cache.clear();
 //    m_cache.squeeze();
     m_mutex.unlock();
+    qDebug() << "Current process-------------";
+    for(PendingFile i : m_pendingFiles) {
+        qDebug() << "|" << i.path();
+        qDebug() << "|" <<i.shouldRemoveIndex();
+    }
+    qDebug() << "Current process-------------";
     if(m_pendingFiles.isEmpty()) {
         qDebug()<< "Empty, finish processCache!";
         return;

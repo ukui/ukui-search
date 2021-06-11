@@ -48,6 +48,7 @@ protected:
 Q_SIGNALS:
     void cacheTimerStart();
     void minProcessTimerStart();
+    void timerStop();
 private:
     void processCache();
     explicit PendingFileQueue(QObject *parent = nullptr);
@@ -59,6 +60,7 @@ private:
 
     QThread *m_timerThread = nullptr;
     bool m_timeout = false;
+    int m_enqueuetimes = 0;
 
 };
 }
