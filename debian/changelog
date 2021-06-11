@@ -1,3 +1,11 @@
+ukui-search (0.4.0+0611) v101; urgency=medium
+
+  * Bug 61034
+  * 需求6448
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 11 Jun 2021 14:05:18 +0800
+
 ukui-search (0.4.0+0610) focal; urgency=medium
 
   * Bugs Fixed and performance optimized.
