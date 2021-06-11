@@ -32,9 +32,15 @@ ContentWidget::ContentWidget(QWidget * parent): QStackedWidget(parent) {
 //    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
     m_quicklyOpenList << "/usr/share/applications/ksc-defender.desktop"
                       << "/usr/share/applications/ukui-notebook.desktop"
-                      << "/usr/share/applications/eom.desktop"
+                      << "/usr/share/applications/kylin-photo-viewer.desktop"
                       << "/usr/share/applications/pluma.desktop"
                       << "/usr/share/applications/claws-mail.desktop" ;
+    if (QString::compare(FileUtils::getAppName(m_quicklyOpenList.at(2)), "Unknown App") == 0) {
+        m_quicklyOpenList.replace(2, "/usr/share/applications/eom.desktop");
+    }
+    if (QString::compare(FileUtils::getAppName(m_quicklyOpenList.at(4)), "Unknown App") == 0) {
+        m_quicklyOpenList.replace(4, "/usr/share/applications/org.gnome.Evolution.desktop");
+    }
 }
 
 ContentWidget::~ContentWidget() {

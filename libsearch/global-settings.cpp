@@ -83,13 +83,13 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
         connect(m_theme_gsettings, &QGSettings::changed, this, [ = ](const QString & key) {
             if(key == STYLE_NAME_KEY) {
                 //当前主题改变时也发出paletteChanged信号，通知主界面刷新
-                qApp->paletteChanged(qApp->palette());
                 m_cache.remove(STYLE_NAME_KEY);
                 m_cache.insert(STYLE_NAME_KEY, m_theme_gsettings->get(STYLE_NAME_KEY).toString());
-            } else if(key == FONT_SIZE_KEY) {
                 qApp->paletteChanged(qApp->palette());
+            } else if(key == FONT_SIZE_KEY) {
                 m_cache.remove(FONT_SIZE_KEY);
                 m_cache.insert(FONT_SIZE_KEY, m_theme_gsettings->get(FONT_SIZE_KEY).toDouble());
+                qApp->paletteChanged(qApp->palette());
             } else if (key == ICON_THEME_KEY) {
                 qApp->paletteChanged(qApp->palette());
             }
