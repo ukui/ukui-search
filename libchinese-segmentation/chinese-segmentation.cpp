@@ -58,7 +58,7 @@ QVector<SKeyWord> ChineseSegmentation::callSegement(std::string s) {
 //    str.squeeze();
 
     const size_t topk = -1;
-    std::vector<cppjieba::KeywordExtractor::Word> keywordres;
+    std::vector<cppjieba::KeyWord> keywordres;
     ChineseSegmentation::m_jieba->extractor.Extract(s, keywordres, topk);
     std::string().swap(s);
     QVector<SKeyWord> vecNeeds;
@@ -72,16 +72,16 @@ QVector<SKeyWord> ChineseSegmentation::callSegement(std::string s) {
 
 }
 
-std::vector<cppjieba::KeywordExtractor::Word> ChineseSegmentation::callSegementStd(const std::string &str) {
+std::vector<cppjieba::KeyWord> ChineseSegmentation::callSegementStd(const std::string &str) {
 
     const size_t topk = -1;
-    std::vector<cppjieba::KeywordExtractor::Word> keywordres;
+    std::vector<cppjieba::KeyWord> keywordres;
     ChineseSegmentation::m_jieba->extractor.Extract(str, keywordres, topk);
 
     return keywordres;
 }
 
-void ChineseSegmentation::convert(std::vector<cppjieba::KeywordExtractor::Word> &keywordres, QVector<SKeyWord> &kw) {
+void ChineseSegmentation::convert(std::vector<cppjieba::KeyWord> &keywordres, QVector<SKeyWord> &kw) {
     for(auto i : keywordres) {
         SKeyWord temp;
         temp.word = i.word;

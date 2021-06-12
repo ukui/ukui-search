@@ -21,7 +21,7 @@ public:
         RuneStrArray::const_iterator right = begin;
 
         while (right != end) {
-            if (right->rune < 0x80) {
+            if (right->rune < 0x80) { //asc码
                 if (left != right) {
                     InternalCut(left, right, res);
                 }
@@ -29,13 +29,13 @@ public:
                 left = right;
 
                 do {
-                    right = SequentialLetterRule(left, end);
+                    right = SequentialLetterRule(left, end);//非英文字符则返回left，否则返回left后非英文字母的位置
 
                     if (right != left) {
                         break;
                     }
 
-                    right = NumbersRule(left, end);
+                    right = NumbersRule(left, end);//非数字则返回left，否则返回left后非数字的位置
 
                     if (right != left) {
                         break;
@@ -61,7 +61,10 @@ public:
                      size_t) const override {
 
     }
+    virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, unordered_map<string, KeyWord>& res, bool hmm,
+                     size_t) const override {
 
+    }
 private:
     // sequential letters rule
     RuneStrArray::const_iterator SequentialLetterRule(RuneStrArray::const_iterator begin,
@@ -135,8 +138,10 @@ private:
         size_t now, old, stat;
         double tmp, endE, endS;
 
-        vector<int> path(XYSize);
-        vector<double> weight(XYSize);
+        //vector<int> path(XYSize);
+        //vector<double> weight(XYSize);
+        int path[XYSize];
+        double weight[XYSize];
 
         //start
         for (size_t y = 0; y < Y; y++) {
