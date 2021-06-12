@@ -1,3 +1,13 @@
+ukui-search (0.4.0+0612) v101; urgency=medium
+
+  * Bug 无
+  * 任务 无
+  * 其他改动：
+  * Startup time optimization.
+    - 更改托盘图标注册时间，优化开机启动速度。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 12 Jun 2021 08:53:45 +0800
+
 ukui-search (0.4.0+0611) v101; urgency=medium
 
   * Bug 61034
