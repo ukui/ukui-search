@@ -31,9 +31,8 @@ void FileReader::getTextContent(QString path, QString &textContent) {
     QFileInfo file(path);
     QString strsfx =  file.suffix();
     if(name == "application/zip") {
-        if(strsfx.endsWith("docx")){
+        if(strsfx.endsWith("docx"))
             FileUtils::getDocxTextContent(path, textContent);
-        }
         if(strsfx.endsWith("pptx"))
             FileUtils::getPptxTextContent(path, textContent);
         if(strsfx.endsWith("xlsx"))

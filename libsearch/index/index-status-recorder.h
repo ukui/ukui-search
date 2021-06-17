@@ -4,9 +4,11 @@
 #include <QObject>
 #include <QSettings>
 #include <QDir>
+#include <QMutex>
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_DATABASE_STATE "index_database_state"
 #define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
+#define PENDING_FILE_QUEUE_FINISH "pending_file_queue_finish"
 #define INDEX_STATUS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-index-status.conf"
 namespace Zeeker {
 //fixme: we need a better way to record index status.
@@ -21,6 +23,7 @@ public:
 private:
     explicit IndexStatusRecorder(QObject *parent = nullptr);
     QSettings *m_status;
+    QMutex m_mutex;
 };
 }
 
