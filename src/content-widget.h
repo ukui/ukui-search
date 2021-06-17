@@ -25,6 +25,7 @@
 #include <QStackedWidget>
 #include <QScrollArea>
 #include <QGridLayout>
+#include <QScrollBar>
 #include "control/search-detail-view.h"
 #include "home-page-item.h"
 #include "show-more-label.h"
