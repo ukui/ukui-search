@@ -24,7 +24,7 @@ public:
 
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
-    void openAction(int actionkey, QString key);
+    void openAction(int actionkey, QString key, int type = 0);
 
 private:
     bool m_enable = true;
@@ -47,7 +47,7 @@ public:
 
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
-    void openAction(int actionkey, QString key);
+    void openAction(int actionkey, QString key, int type = 0);
 
 private:
     bool m_enable = true;
@@ -70,7 +70,7 @@ public:
 
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
-    void openAction(int actionkey, QString key);
+    void openAction(int actionkey, QString key, int type = 0);
 
 private:
     bool m_enable = true;

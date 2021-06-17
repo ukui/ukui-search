@@ -283,7 +283,7 @@ int main(int argc, char *argv[]) {
     QObject::connect(&app, &QtSingleApplication::messageReceived, w, &MainWindow::bootOptionsFilter);
 
     // Start app search thread
-    AppMatch::getAppMatch()->start();
+//    AppMatch::getAppMatch()->start();
 
     // NEW_TODO
     // Set threads which in global thread pool expiry time in 5ms, some prolems here

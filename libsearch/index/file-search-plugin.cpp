@@ -49,7 +49,7 @@ QList<SearchPluginIface::Actioninfo> FileSearchPlugin::getActioninfo(int type)
     return m_actionInfo;
 }
 
-void FileSearchPlugin::openAction(int actionkey, QString key)
+void FileSearchPlugin::openAction(int actionkey, QString key, int type)
 {
     //TODO add some return message here.
     switch (actionkey) {
@@ -112,7 +112,7 @@ QList<SearchPluginIface::Actioninfo> DirSearchPlugin::getActioninfo(int type)
     return m_actionInfo;
 }
 
-void DirSearchPlugin::openAction(int actionkey, QString key)
+void DirSearchPlugin::openAction(int actionkey, QString key, int type)
 {
     //TODO add some return message here.
     switch (actionkey) {
@@ -173,7 +173,7 @@ QList<SearchPluginIface::Actioninfo> FileContengSearchPlugin::getActioninfo(int 
     return m_actionInfo;
 }
 
-void FileContengSearchPlugin::openAction(int actionkey, QString key)
+void FileContengSearchPlugin::openAction(int actionkey, QString key, int type)
 {
     //TODO add some return message here.
     switch (actionkey) {

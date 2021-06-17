@@ -40,7 +40,7 @@ public:
     virtual QString getPluginName() = 0;
     virtual void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult) = 0;
     virtual QList<Actioninfo> getActioninfo(int type) = 0;
-    virtual void openAction(int actionkey, QString key) = 0;
+    virtual void openAction(int actionkey, QString key, int type) = 0;
 
 };
 }
