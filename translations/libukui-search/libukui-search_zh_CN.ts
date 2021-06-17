@@ -2,6 +2,48 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>Zeeker::AppSearch</name>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="196"/>
+        <source>Application Description:</source>
+        <translation>应用描述：</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::AppSearchPlugin</name>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="8"/>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="9"/>
+        <source>Add Shortcut to Desktop</source>
+        <translation>添加到桌面快捷方式</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="10"/>
+        <source>Add Shortcut to Panel</source>
+        <translation>添加到任务栏快捷方式</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="11"/>
+        <source>Install</source>
+        <translation>安装</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="21"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="26"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="31"/>
+        <source>Applications Search</source>
+        <translation>应用搜索</translation>
+    </message>
+    <message>
+        <source>Application Description:</source>
+        <translation type="vanished">应用描述：</translation>
+    </message>
+</context>
+<context>
     <name>Zeeker::DirSearchPlugin</name>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="70"/>
