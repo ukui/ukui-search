@@ -146,11 +146,11 @@ bool GlobalSettings::setBlockDirs(const QString &path, int &returnCode, bool rem
         m_block_dirs_settings->remove(path);
         return true;
     }
-    if(!path.startsWith("/home")) {
+//    if(!path.startsWith("/home")) {
 //        returnCode = QString(tr("I can only search your user directory, it doesn't make any sense if you block an directory which is not in user directory!"));
-        returnCode = PATH_NOT_IN_HOME;
-        return false;
-    }
+//        returnCode = PATH_NOT_IN_HOME;
+//        return false;
+//    }
 
     //why QSetting's key can't start with "/"??
     QString pathKey = path.right(path.length() - 1);
