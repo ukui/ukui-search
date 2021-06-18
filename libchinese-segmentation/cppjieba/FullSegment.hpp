@@ -47,7 +47,10 @@ public:
                      size_t) const override {
 
     }
+    virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, unordered_map<string, KeyWord>& res, bool hmm,
+                     size_t) const override {
 
+    }
 private:
     const DictTrie* dictTrie_;
 };
