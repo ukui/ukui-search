@@ -59,7 +59,7 @@ void SettingsMatch::xmlElement() {
 
     while(!node.isNull()) {
         QDomElement element = node.toElement();
-        QString key = element.attribute("name");;
+        QString key = element.attribute("name");
         m_chine_searchResult = m_chine_searchList.value(key);
         m_English_searchResult = m_English_searchList.value(key);
         QDomNodeList list = element.childNodes();
