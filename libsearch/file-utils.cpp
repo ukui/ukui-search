@@ -517,7 +517,7 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
             QDomElement wr = wp.firstChildElement("w:r");
             while(!wr.isNull()) {
                 QDomElement wt = wr.firstChildElement("w:t");
-                textcontent.append(wt.text().replace("\n", ""));
+                textcontent.append(wt.text().replace("\n", "")).replace("\r", " ");
                 if(textcontent.length() >= MAX_CONTENT_LENGTH / 3) {
                     file.close();
                     return;

@@ -49,7 +49,7 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
         //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
-        if(fileInfo.fileName().split(".").last() == "docx"){
+        if (fileInfo.fileName().split(".").last() == "docx") {
             QuaZip file(fileInfo.absoluteFilePath());
             if(!file.open(QuaZip::mdUnzip))
                 return;
@@ -57,10 +57,8 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
                 return;
             QuaZipFile fileR(&file);
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//docx解压缩后的xml文件为实际需要解析文件大小
-            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
-            qDebug() << "文件大小:" << fileR.usize();
             file.close();
-        }else if(fileInfo.fileName().split(".").last() == "pptx"){
+        } else if (fileInfo.fileName().split(".").last() == "pptx") {
             QuaZip file(fileInfo.absoluteFilePath());
             if(!file.open(QuaZip::mdUnzip))
                 return;
@@ -79,10 +77,8 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
                 }
             }
             file.close();
-            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
-            qDebug() << "文件大小:" << fileSize;
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileSize));//pptx解压缩后的xml文件为实际需要解析文件大小
-        }else if(fileInfo.fileName().split(".").last() == "xlsx"){
+        } else if (fileInfo.fileName().split(".").last() == "xlsx") {
             QuaZip file(fileInfo.absoluteFilePath());
             if(!file.open(QuaZip::mdUnzip))
                 return;
@@ -90,10 +86,8 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
                 return;
             QuaZipFile fileR(&file);
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//xlsx解压缩后的xml文件为实际解析文件大小
-            qDebug() << "文件路径:" <<fileInfo.absoluteFilePath();
-            qDebug() << "文件大小:" << fileR.usize();
             file.close();
-        }else{
+        } else {
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
         }
     }
@@ -225,9 +219,17 @@ void FirstIndex::run() {
                 //                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
                 qint64 fileSize = 0;
                 //修改一次处理的数据量，从30个文件改为文件总大小为50M以下，50M为暂定值--jxx20210519
-                for(size_t i = 0;/* (i < 30) && */(fileSize < 50*1024*1024) && (!this->q_content_index->empty()); ++i) {
+                for(size_t i = 0;/* (i < 30) && (fileSize < 52428800) && */(!this->q_content_index->empty()); ++i) {
                     QPair<QString,qint64> tempPair = this->q_content_index->dequeue();
                     fileSize += tempPair.second;
+                    if (fileSize > 52428800 ) {
+                        if (tmp2->size() == 0) {
+                            tmp2->enqueue(tempPair.first);
+                            break;
+                        }
+                        this->q_content_index->enqueue(tempPair);
+                        break;
+                    }
                     tmp2->enqueue(tempPair.first);
                 }
                 //                qDebug() << ">>>>>>>>all fileSize:" << fileSize << "file num:" << tmp->size() << "<<<<<<<<<<<<<<<<<<<";

@@ -89,7 +89,7 @@ SearchBarHLayout::~SearchBarHLayout() {
  * @brief 初始化ui
  */
 void SearchBarHLayout::initUI() {
-    m_queryLineEdit = new SearchLineEdit();
+    m_queryLineEdit = new SearchLineEdit(this->parentWidget());
     m_queryLineEdit->installEventFilter(this);
     m_queryLineEdit->setTextMargins(30, 1, 0, 1);
     this->setContentsMargins(0, 0, 0, 0);
@@ -150,7 +150,8 @@ void SearchBarHLayout::effectiveSearchRecord() {
 }
 
 void SearchBarHLayout::focusIn() {
-    m_queryLineEdit->setFocus();
+    if (!m_queryLineEdit->hasFocus())
+        m_queryLineEdit->setFocus(Qt::MouseFocusReason);
 }
 
 void SearchBarHLayout::focusOut() {
@@ -203,7 +204,7 @@ bool SearchBarHLayout::eventFilter(QObject *watched, QEvent *event) {
 /**
  * @brief UKuiSearchLineEdit  全局搜索的输入框
  */
-SearchLineEdit::SearchLineEdit() {
+SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     this->setFocusPolicy(Qt::ClickFocus);
     this->setAttribute(Qt::WA_InputMethodEnabled);
 //    this->installEventFilter(this);
