@@ -22,6 +22,7 @@
 
 #include <QThread>
 #include <QTimer>
+#include <QSharedMemory>
 #include <unistd.h>
 #include <sys/inotify.h>
 #include "index-generator.h"
@@ -77,6 +78,7 @@ private:
         std::map<QString, bool>::value_type("et", true),
         std::map<QString, bool>::value_type("pdf", true)
     };
+    QSharedMemory *m_sharedMemory = nullptr;
 
 };
 }

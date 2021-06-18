@@ -109,6 +109,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void execActions(const int&, const int&, const QString&);
     void refreshIcon();
+    void resetLineColor();
 };
 
 //此类用于url拦截

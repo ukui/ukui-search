@@ -14,8 +14,10 @@
 namespace cppjieba {
 class QuerySegment: public SegmentBase {
 public:
-    QuerySegment(const DictTrie* dictTrie, const HMMModel* model)
-        : mixSeg_(dictTrie, model), trie_(dictTrie) {
+    QuerySegment(const DictTrie* dictTrie,
+                 const HMMModel* model,
+                 const string& stopWordPath)
+        : mixSeg_(dictTrie, model, stopWordPath), trie_(dictTrie) {
     }
     ~QuerySegment() {
     }
@@ -59,7 +61,10 @@ public:
                      size_t) const override {
 
     }
+    virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, unordered_map<string, KeyWord>& res, bool hmm,
+                     size_t) const override {
 
+    }
 private:
     bool IsAllAscii(const RuneArray& s) const {
         for (size_t i = 0; i < s.size(); i++) {
