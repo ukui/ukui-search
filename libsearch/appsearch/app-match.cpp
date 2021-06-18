@@ -349,7 +349,7 @@ void AppMatch::run() {
     QDir androidPath(QDir::homePath() + "/.local/share/applications/");
     if(androidPath.exists())
         this->getAllDesktopFilePath(QDir::homePath() + "/.local/share/applications/");
-    connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
+        connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
         this->getDesktopFilePath();
         if(path == "/usr/share/applications/") {
             this->getAllDesktopFilePath("/usr/share/applications/");

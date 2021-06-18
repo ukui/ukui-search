@@ -147,4 +147,23 @@
         <translation>修改时间：</translation>
     </message>
 </context>
+<context>
+    <name>Zeeker::SettingsSearchPlugin</name>
+    <message>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="10"/>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="19"/>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="29"/>
+        <source>Settings Search</source>
+        <translation>设置</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="24"/>
+        <source>Settings search.</source>
+        <translation>设置。</translation>
+    </message>
+</context>
 </TS>

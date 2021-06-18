@@ -2,6 +2,7 @@
 #include "search-plugin-manager.h"
 #include "file-search-plugin.h"
 #include "app-search-plugin.h"-
+#include "settings-search-plugin.h"
 
 using namespace Zeeker;
 
@@ -12,6 +13,7 @@ SearchPluginManager::SearchPluginManager(QObject *parent)
     registerPlugin(new DirSearchPlugin(this));
     registerPlugin(new FileContengSearchPlugin(this));
     registerPlugin(new AppSearchPlugin(this));
+    registerPlugin(new SettingsSearchPlugin(this));
 }
 
 bool SearchPluginManager::registerPlugin(Zeeker::SearchPluginIface *plugin)
