@@ -56,13 +56,16 @@ private:
     bool bool_dataBaseStatusOK = false;
     bool bool_dataBaseExist = false;
     IndexGenerator* p_indexGenerator = nullptr;
+    QThreadPool m_pool;
 
     //here should be refact
 //    MessageListManager* mlm;
 
     //test
     QQueue<QVector<QString>>* q_index;
-    QQueue<QString>* q_content_index;
+//    QQueue<QString>* q_content_index;
+    //修改QQueue存储数据为QPair<QString,qint64>，增加存储文件大小数据便于处理时统计--jxx20210519
+    QQueue<QPair<QString,qint64>>* q_content_index;
 
     const QMap<QString, bool> targetFileTypeMap = {
         std::map<QString, bool>::value_type("doc", true),

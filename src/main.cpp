@@ -314,7 +314,7 @@ int main(int argc, char *argv[]) {
 
     // TODO
     // Set threads which in global thread pool expiry time in 5ms, some prolems here
-    QThreadPool::globalInstance()->setExpiryTimeout(5);
+//    QThreadPool::globalInstance()->setExpiryTimeout(5);
 
     // TODO
     // First insdex start, the parameter us useless, should remove the parameter

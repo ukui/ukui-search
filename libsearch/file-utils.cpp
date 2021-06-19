@@ -20,6 +20,7 @@
  *
  */
 #include "file-utils.h"
+#include <QXmlStreamReader>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -488,6 +489,22 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
 
     fileR.open(QIODevice::ReadOnly);        //读取方式打开
 
+    QXmlStreamReader reader(&fileR);
+
+    while (!reader.atEnd()){
+       if(reader.readNextStartElement() and reader.name().toString() == "t"){
+           textcontent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+           if(textcontent.length() >= MAX_CONTENT_LENGTH/3){
+               break;
+           }
+       }
+    }
+
+    fileR.close();
+    file.close();
+    return;
+
+/*    //原加载DOM文档方式；
     QDomDocument doc;
     doc.setContent(fileR.readAll());
     fileR.close();
@@ -499,7 +516,7 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
             QDomElement wr = wp.firstChildElement("w:r");
             while(!wr.isNull()) {
                 QDomElement wt = wr.firstChildElement("w:t");
-                textcontent.append(wt.text().replace("\n", ""));
+                textcontent.append(wt.text().replace("\n", "")).replace("\r", " ");
                 if(textcontent.length() >= MAX_CONTENT_LENGTH / 3) {
                     file.close();
                     return;
@@ -512,6 +529,7 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
     }
     file.close();
     return;
+*/
 }
 
 void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
@@ -529,6 +547,31 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
     }
     if(fileList.isEmpty())
         return;
+
+    for(int i = 0; i < fileList.size(); ++i){
+        QString name = prefix + QString::number(i + 1) + ".xml";
+        if(!file.setCurrentFile(name)) {
+            continue;
+        }
+        QuaZipFile fileR(&file);
+        fileR.open(QIODevice::ReadOnly);
+
+        QXmlStreamReader reader(&fileR);
+
+        while (!reader.atEnd()){
+           if(reader.readNextStartElement() and reader.name().toString() == "t"){
+               textcontent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+               if(textcontent.length() >= MAX_CONTENT_LENGTH/3){
+                   break;
+               }
+           }
+        }
+        fileR.close();
+    }
+    file.close();
+    return;
+
+/*
     QDomElement sptree;
     QDomElement sp;
     QDomElement txbody;
@@ -596,6 +639,7 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
     }
     file.close();
     return;
+*/
 }
 
 void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
@@ -610,8 +654,24 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
         return;
     QuaZipFile fileR(&file);
 
-    fileR.open(QIODevice::ReadOnly);        //读取方式打开
+    fileR.open(QIODevice::ReadOnly);
 
+    QXmlStreamReader reader(&fileR);
+
+    while (!reader.atEnd()){
+       if(reader.readNextStartElement() and reader.name().toString() == "t"){
+           textcontent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+           if(textcontent.length() >= MAX_CONTENT_LENGTH/3){
+               break;
+           }
+       }
+    }
+
+    fileR.close();
+    file.close();
+    return;
+
+/*
     QDomDocument doc;
     doc.setContent(fileR.readAll());
     fileR.close();
@@ -641,6 +701,7 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
     }
     file.close();
     return;
+*/
 }
 
 void FileUtils::getPdfTextContent(QString &path, QString &textcontent) {
@@ -650,7 +711,7 @@ void FileUtils::getPdfTextContent(QString &path, QString &textcontent) {
     const QRectF qf;
     int pageNum = doc->numPages();
     for(int i = 0; i < pageNum; ++i) {
-        textcontent.append(doc->page(i)->text(qf).replace("\n", ""));
+        textcontent.append(doc->page(i)->text(qf).replace("\n", "").replace("\r", " "));
         if(textcontent.length() >= MAX_CONTENT_LENGTH / 3)
             break;
     }
@@ -679,7 +740,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     stream.setCodec(codec);
     uchardet_delete(chardet);
 
-    textcontent = stream.readAll().replace("\n", "");
+    textcontent = stream.readAll().replace("\n", "").replace("\r", " ");
 
     file.close();
     encodedString.clear();

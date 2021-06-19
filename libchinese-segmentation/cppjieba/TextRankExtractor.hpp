@@ -1,23 +1,3 @@
-/*
- * Copyright (C) 2020, KylinSoft Co., Ltd.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *
- */
-#ifndef CPPJIEBA_TEXTRANK_EXTRACTOR_H
-#define CPPJIEBA_TEXTRANK_EXTRACTOR_H
 
 #include <cmath>
 #include "Jieba.hpp"
@@ -67,54 +47,57 @@ private:
             WordMap outSum;
             Score wsdef, min_rank, max_rank;
 
-            if(graph.size() == 0)
+            if (graph.size() == 0) {
                 return;
+            }
 
             wsdef = 1.0 / graph.size();
 
-            for(Graph::iterator edges = graph.begin(); edges != graph.end(); ++edges) {
+            for (Graph::iterator edges = graph.begin(); edges != graph.end(); ++edges) {
                 // edges->first start节点；edge->first end节点；edge->second 权重
                 ws[edges->first].word = edges->first;
                 ws[edges->first].weight = wsdef;
                 outSum[edges->first].weight = 0;
-                for(Edges::iterator edge = edges->second.begin(); edge != edges->second.end(); ++edge) {
+
+                for (Edges::iterator edge = edges->second.begin(); edge != edges->second.end(); ++edge) {
                     outSum[edges->first].weight += edge->second;
                 }
             }
+
             //sort(nodeSet.begin(),nodeSet.end()); 是否需要排序?
-            for(size_t i = 0; i < rankTime; i++) {
-                for(NodeSet::iterator node = nodeSet.begin(); node != nodeSet.end(); node++) {
+            for (size_t i = 0; i < rankTime; i++) {
+                for (NodeSet::iterator node = nodeSet.begin(); node != nodeSet.end(); node++) {
                     double s = 0;
-                    for(Edges::iterator edge = graph[*node].begin(); edge != graph[*node].end(); edge++)
+
+                    for (Edges::iterator edge = graph[*node].begin(); edge != graph[*node].end(); edge++)
                         // edge->first end节点；edge->second 权重
+                    {
                         s += edge->second / outSum[edge->first].weight * ws[edge->first].weight;
+                    }
+
                     ws[*node].weight = (1 - d) + d * s;
                 }
             }
 
             min_rank = max_rank = ws.begin()->second.weight;
-            for(WordMap::iterator i = ws.begin(); i != ws.end(); i ++) {
-                if(i->second.weight < min_rank) {
+
+            for (WordMap::iterator i = ws.begin(); i != ws.end(); i ++) {
+                if (i->second.weight < min_rank) {
                     min_rank = i->second.weight;
                 }
-                if(i->second.weight > max_rank) {
+
+                if (i->second.weight > max_rank) {
                     max_rank = i->second.weight;
                 }
             }
-            for(WordMap::iterator i = ws.begin(); i != ws.end(); i ++) {
+
+            for (WordMap::iterator i = ws.begin(); i != ws.end(); i ++) {
                 ws[i->first].weight = (i->second.weight - min_rank / 10.0) / (max_rank - min_rank / 10.0);
             }
         }
     };
 
 public:
-    TextRankExtractor(const string& dictPath,
-                      const string& hmmFilePath,
-                      const string& stopWordPath,
-                      const string& userDict = "")
-        : segment_(dictPath, hmmFilePath, userDict) {
-        LoadStopWordDict(stopWordPath);
-    }
     TextRankExtractor(const DictTrie* dictTrie,
                       const HMMModel* model,
                       const string& stopWordPath)
@@ -130,7 +113,8 @@ public:
     void Extract(const string& sentence, vector<string>& keywords, size_t topN) const {
         vector<Word> topWords;
         Extract(sentence, topWords, topN);
-        for(size_t i = 0; i < topWords.size(); i++) {
+
+        for (size_t i = 0; i < topWords.size(); i++) {
             keywords.push_back(topWords[i].word);
         }
     }
@@ -138,35 +122,41 @@ public:
     void Extract(const string& sentence, vector<pair<string, double> >& keywords, size_t topN) const {
         vector<Word> topWords;
         Extract(sentence, topWords, topN);
-        for(size_t i = 0; i < topWords.size(); i++) {
+
+        for (size_t i = 0; i < topWords.size(); i++) {
             keywords.push_back(pair<string, double>(topWords[i].word, topWords[i].weight));
         }
     }
 
     void Extract(const string& sentence, vector<Word>& keywords, size_t topN, size_t span = 5, size_t rankTime = 10) const {
         vector<string> words;
-        segment_.Cut(sentence, words);
+        segment_.CutToStr(sentence, words);
 
         TextRankExtractor::WordGraph graph;
         WordMap wordmap;
         size_t offset = 0;
 
-        for(size_t i = 0; i < words.size(); i++) {
+        for (size_t i = 0; i < words.size(); i++) {
             size_t t = offset;
             offset += words[i].size();
-            if(IsSingleWord(words[i]) || stopWords_.find(words[i]) != stopWords_.end()) {
+
+            if (IsSingleWord(words[i]) || stopWords_.find(words[i]) != stopWords_.end()) {
                 continue;
             }
-            for(size_t j = i + 1, skip = 0; j < i + span + skip && j < words.size(); j++) {
-                if(IsSingleWord(words[j]) || stopWords_.find(words[j]) != stopWords_.end()) {
+
+            for (size_t j = i + 1, skip = 0; j < i + span + skip && j < words.size(); j++) {
+                if (IsSingleWord(words[j]) || stopWords_.find(words[j]) != stopWords_.end()) {
                     skip++;
                     continue;
                 }
+
                 graph.addEdge(words[i], words[j], 1);
             }
+
             wordmap[words[i]].offsets.push_back(t);
         }
-        if(offset != sentence.size()) {
+
+        if (offset != sentence.size()) {
             XLOG(ERROR) << "words illegal";
             return;
         }
@@ -175,7 +165,8 @@ public:
 
         keywords.clear();
         keywords.reserve(wordmap.size());
-        for(WordMap::iterator itr = wordmap.begin(); itr != wordmap.end(); ++itr) {
+
+        for (WordMap::iterator itr = wordmap.begin(); itr != wordmap.end(); ++itr) {
             keywords.push_back(itr->second);
         }
 
@@ -188,9 +179,11 @@ private:
         ifstream ifs(filePath.c_str());
         XCHECK(ifs.is_open()) << "open " << filePath << " failed";
         string line ;
-        while(getline(ifs, line)) {
+
+        while (getline(ifs, line)) {
             stopWords_.insert(line);
         }
+
         assert(stopWords_.size());
     }
 
@@ -203,10 +196,10 @@ private:
 }; // class TextRankExtractor
 
 inline ostream& operator << (ostream& os, const TextRankExtractor::Word& word) {
-    return os << "{\"word\": \"" << word.word << "\", \"offset\": " << word.offsets << ", \"weight\": " << word.weight << "}";
+    return os << "{\"word\": \"" << word.word << "\", \"offset\": " << word.offsets << ", \"weight\": " << word.weight <<
+           "}";
 }
 } // namespace cppjieba
 
-#endif
 
 

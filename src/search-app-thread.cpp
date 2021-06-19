@@ -5,21 +5,32 @@ size_t uniqueSymbol = 0;
 QMutex  m_mutex;
 
 SearchAppThread::SearchAppThread(QObject *parent) : QObject(parent) {
-    m_pool.setMaxThreadCount(1);
+    m_pool.setMaxThreadCount(2);
     m_pool.setExpiryTimeout(1000);
 }
 
 void SearchAppThread::startSearch(const QString & keyword) {
+    m_mutex.lock();
+    ++uniqueSymbol;
+    m_mutex.unlock();
     SearchApp *appsearch;
-    appsearch = new SearchApp(keyword);
+    appsearch = new SearchApp(keyword,uniqueSymbol,this);
 //    appsearch->setKeyword(keyword);
-    connect(appsearch, &SearchApp::searchResultApp, this, &SearchAppThread::searchResultApp);
+//    connect(appsearch, &SearchApp::searchResultApp, this, &SearchAppThread::searchResultApp);
     m_pool.start(appsearch);
 }
 
+void SearchAppThread::sendResult(const QVector<QStringList> result)
+{
+    Q_EMIT this->searchResultApp(result);
+}
 
-SearchApp::SearchApp(const QString& keyword, QObject * parent) : QObject(parent) {
+
+SearchApp::SearchApp(const QString& keyword, size_t uniqueSymbol, QObject * parent) : QObject(parent) {
+    this->setAutoDelete(true);
+    m_searchappThread = qobject_cast<SearchAppThread *>(parent);
     m_keyword = keyword;
+    m_uniqueSymbol = uniqueSymbol;
 }
 
 SearchApp::~SearchApp() {
@@ -35,11 +46,6 @@ SearchApp::~SearchApp() {
 //}
 
 void SearchApp::run() {
-    m_mutex.lock();
-    size_t tmp_uniqueSymbol;
-    uniqueSymbol++;
-    tmp_uniqueSymbol = uniqueSymbol;
-    m_mutex.unlock();
     //nameList:应用名，pathList:已安装的是.desktop路径，未安装为空，iconList:已安装的是图标名，未安装的是图标路径
     QStringList nameList, pathList, iconList, descList;
     QVector<QStringList> appVector;
@@ -70,8 +76,9 @@ void SearchApp::run() {
     appVector.append(iconList);
     appVector.append(descList);
     m_mutex.lock();
-    if (tmp_uniqueSymbol == uniqueSymbol) {
-        Q_EMIT this->searchResultApp(appVector);
+    if (m_uniqueSymbol == uniqueSymbol) {
+        QMetaObject::invokeMethod(m_searchappThread, "sendResult", Q_ARG(const QVector<QStringList>, appVector));
+//        Q_EMIT this->searchResultApp(appVector);
     }
     m_mutex.unlock();
     m_installed_apps.clear();
