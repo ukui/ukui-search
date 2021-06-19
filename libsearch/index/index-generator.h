@@ -29,18 +29,22 @@
 #include <QMutex>
 #include <QQueue>
 //#include <QMetaObject>
+#include "construct-document.h"
 #include "index-status-recorder.h"
 #include "document.h"
 #include "file-reader.h"
 #include "common.h"
+#include "pending-file.h"
 
 namespace Zeeker {
-extern QList<Document> *_doc_list_path;
-extern QMutex  _mutex_doc_list_path;
-extern QList<Document> *_doc_list_content;
-extern QMutex  _mutex_doc_list_content;
+//extern QVector<Document> *_doc_list_path;
+//extern QMutex  _mutex_doc_list_path;
+//extern QVector<Document> *_doc_list_content;
+//extern QMutex  _mutex_doc_list_content;
 
 class IndexGenerator : public QObject {
+    friend class ConstructDocumentForPath;
+    friend class ConstructDocumentForContent;
     Q_OBJECT
 public:
     static IndexGenerator *getInstance(bool rebuild = false, QObject *parent = nullptr);
@@ -58,6 +62,7 @@ public Q_SLOTS:
     bool creatAllIndex(QQueue<QVector<QString>> *messageList);
     bool creatAllIndex(QQueue<QString> *messageList);
     bool deleteAllIndex(QStringList *pathlist);
+    bool updateIndex(QVector<PendingFile> *pendingFiles);
 
 private:
     explicit IndexGenerator(bool rebuild = false, QObject *parent = nullptr);
@@ -72,8 +77,10 @@ private:
     void insertIntoDatabase(Document& doc);
     void insertIntoContentDatabase(Document& doc);
 
-//    QList<Document> *m_doc_list_path;  //for path index
-//    QList<Document> *m_doc_list_content;  // for text content index
+    static QVector<Document> _doc_list_path;
+    static QMutex  _mutex_doc_list_path;
+    static QVector<Document> _doc_list_content;
+    static QMutex  _mutex_doc_list_content;
     QMap<QString, QStringList> m_index_map;
     QString m_index_data_path;
     Xapian::WritableDatabase* m_database_path;

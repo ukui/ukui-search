@@ -60,8 +60,10 @@ ContentWidget::~ContentWidget() {
 void ContentWidget::initUI() {
     this->setFixedHeight(486);
     QPalette pal = palette();
-    pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
+    QPalette scroll_bar_pal = palette();
+//    pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
     pal.setColor(QPalette::Window, QColor(0, 0, 0, 0)); //使用此palette的窗口背景将为透明
+    scroll_bar_pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
     m_homePage = new QWidget(this);
     m_homePageLyt = new QVBoxLayout(m_homePage);
     m_homePageLyt->setSpacing(0);
@@ -106,6 +108,8 @@ void ContentWidget::initUI() {
     m_resultDetailArea->setFrameShape(QFrame::NoFrame);
     m_resultListArea->setPalette(pal);
     m_resultDetailArea->setPalette(pal);
+    m_resultListArea->verticalScrollBar()->setPalette(scroll_bar_pal);
+    m_resultDetailArea->verticalScrollBar()->setPalette(scroll_bar_pal);
     this->addWidget(m_homePage);
     this->addWidget(m_resultPage);
 
@@ -387,7 +391,7 @@ void ContentWidget::initHomePage() {
             itemWidget->setLayout(layout);
             for(int j = 0; j < lists.at(i).count(); j++) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, lists.at(i).at(j));
-                item->setFixedSize(300, 48);
+                item->setFixedSize(312, 48);
                 layout->addWidget(item, j / 2, j % 2);
             }
             if(lists.at(i).length() == 1) {
@@ -421,6 +425,7 @@ void ContentWidget::initHomePage() {
         }
         itemWidgetLyt->setSpacing(6);
         titleLabel->setFixedHeight(24);
+        titleLabel->setContentsMargins(6,0,0,0);
         itemWidgetLyt->addWidget(titleLabel);
         itemWidgetLyt->addWidget(itemWidget);
         m_homePageLyt->addWidget(listWidget);
