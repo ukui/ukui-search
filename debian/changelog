@@ -1,3 +1,13 @@
+ukui-search (0.4.0+0619) v101; urgency=medium
+
+  * Bug 无
+  * 需求6732,6733,6734,6938
+  * 其他改动：
+  * Add inotify events queue for merging events，reduce disk io operations.
+    - 增加inotify信号合并缓冲队列，减少90%以上磁盘io操作。 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 19 Jun 2021 09:12:10 +0800
+
 ukui-search (0.4.0+0612) v101; urgency=medium
 
   * Bug 无
