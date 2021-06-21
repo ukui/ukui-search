@@ -313,25 +313,26 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         m_pathLabel_1->show();
         m_pathLabel_2->show();
 //        m_pathLabel_2->setText(path);
-        QString showPath = path;
-        QFontMetrics fontMetrics = m_pathLabel_2->fontMetrics();
-        if(fontMetrics.width(path) > m_pathLabel_2->width() - 10) {
-            //路径长度超过230,手动添加换行符以实现折叠
-            int lastIndex = 0;
-            for(int i = lastIndex; i < path.length(); i++) {
-                if(fontMetrics.width(path.mid(lastIndex, i - lastIndex)) == m_pathLabel_2->width() - 10) {
-                    lastIndex = i;
-                    showPath.insert(i, '\n');
-                } else if(fontMetrics.width(path.mid(lastIndex, i - lastIndex)) > m_pathLabel_2->width() - 10) {
-                    lastIndex = i;
-                    showPath.insert(i - 1, '\n');
-                } else {
-                    continue;
-                }
-            }
-        }
-        m_pathLabel_2->setText(showPath);
-
+//        QString showPath = path;
+//        QFontMetrics fontMetrics = m_pathLabel_2->fontMetrics();
+//        if(fontMetrics.width(path) > m_pathLabel_2->width() - 10) {
+//            //路径长度超过230,手动添加换行符以实现折叠
+//            int lastIndex = 0;
+//            for(int i = lastIndex; i < path.length(); i++) {
+//                if(fontMetrics.width(path.mid(lastIndex, i - lastIndex)) == m_pathLabel_2->width() - 10) {
+//                    lastIndex = i;
+//                    showPath.insert(i, '\n');
+//                } else if(fontMetrics.width(path.mid(lastIndex, i - lastIndex)) > m_pathLabel_2->width() - 10) {
+//                    lastIndex = i;
+//                    showPath.insert(i - 1, '\n');
+//                } else {
+//                    continue;
+//                }
+//            }
+//        }
+//        m_pathLabel_2->setText(showPath);
+        m_pathLabel_2->setText(m_pathLabel_2->fontMetrics().elidedText(path, Qt::ElideRight, m_pathLabel_2->width()));
+        m_pathLabel_2->setToolTip(path);
         m_timeLabel_1->show();
         m_timeLabel_2->show();
         QFileInfo fileInfo(path);
@@ -465,7 +466,7 @@ void SearchDetailView::initUI() {
     m_layout = new QVBoxLayout(this);
     this->setLayout(m_layout);
     m_layout->setContentsMargins(16, 60, 16, 24);
-    this->setFixedWidth(378);
+    this->setFixedWidth(368);
 
     //没有网络的时候的提示信息
     m_noNetFrame = new QFrame(this);
@@ -487,7 +488,7 @@ void SearchDetailView::initUI() {
     //图标和名称、分割线区域
     m_iconLabel = new QLabel(this);
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_iconLabel->setFixedHeight(120);
+    m_iconLabel->setFixedHeight(128);
     m_nameFrame = new QFrame(this);
     m_nameLayout = new QHBoxLayout(m_nameFrame);
     m_nameLabel = new QLabel(m_nameFrame);
@@ -502,7 +503,6 @@ void SearchDetailView::initUI() {
     m_hLine = new QFrame(this);
     m_hLine->setLineWidth(0);
     m_hLine->setFixedHeight(1);
-    m_hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
     m_layout->addWidget(m_iconLabel);
     m_layout->addWidget(m_nameFrame);
     m_layout->addWidget(m_hLine);
@@ -527,12 +527,14 @@ void SearchDetailView::initUI() {
     m_pathLabel_2 = new QLabel(m_pathFrame);
     m_pathLabel_1->setText(tr("Path"));
     m_pathLabel_2->setFixedWidth(240);
+    m_pathLabel_2->setAlignment(Qt::AlignRight);
 //    m_pathLabel_2->setWordWrap(true);
     m_pathLyt->addWidget(m_pathLabel_1);
     m_pathLyt->addStretch();
     m_pathLyt->addWidget(m_pathLabel_2);
     m_timeLabel_1 = new QLabel(m_timeFrame);
     m_timeLabel_2 = new QLabel(m_timeFrame);
+    m_timeLabel_2->setAlignment(Qt::AlignRight);
     m_timeLabel_1->setText(tr("Last time modified"));
     m_timeLyt->addWidget(m_timeLabel_1);
     m_timeLyt->addStretch();
@@ -543,7 +545,6 @@ void SearchDetailView::initUI() {
     m_hLine_2 = new QFrame(this);
     m_hLine_2->setLineWidth(0);
     m_hLine_2->setFixedHeight(1);
-    m_hLine_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
     m_layout->addWidget(m_detailFrame);
     m_layout->addWidget(m_hLine_2);
 
@@ -557,6 +558,8 @@ void SearchDetailView::initUI() {
     m_layout->addStretch();
 
     this->clearLayout(); //初始化时隐藏所有控件
+    resetLineColor();
+    connect(qApp, &QApplication::paletteChanged, this, &SearchDetailView::resetLineColor);
 }
 
 /**
@@ -564,6 +567,17 @@ void SearchDetailView::initUI() {
  */
 void SearchDetailView::refreshIcon() {
     this->setIcon(m_iconPath);
+}
+
+void SearchDetailView::resetLineColor()
+{
+    if (GlobalSettings::getInstance()->getValue(STYLE_NAME_KEY).toString() != "ukui-dark") {
+        m_hLine->setStyleSheet("QFrame{background: rgba(0,0,0,0.06);}");
+        m_hLine_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.06);}");
+    } else {
+        m_hLine->setStyleSheet("QFrame{background: rgba(255,255,255,0.08);}");
+        m_hLine_2->setStyleSheet("QFrame{background: rgba(255,255,255,0.08);}");
+    }
 }
 
 /**
@@ -585,13 +599,13 @@ void SearchDetailView::setIcon(const QString &path, const bool &installed)
                 icon = QIcon::fromTheme(path);
             }
         }
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
     } else if (m_type == SearchListView::ResType::Setting) {
         QIcon icon = FileUtils::getSettingIcon(path, true);
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
     } else {
         QIcon icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
-        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(96, 96))));
+        m_iconLabel->setPixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
     }
 }
 

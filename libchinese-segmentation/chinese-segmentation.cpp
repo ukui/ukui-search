@@ -30,12 +30,12 @@ ChineseSegmentation::ChineseSegmentation() {
     const char * const USER_DICT_PATH = "/usr/share/ukui-search/res/dict/user.dict.utf8";
     const char * const  IDF_PATH = "/usr/share/ukui-search/res/dict/idf.utf8";
     const char * const  STOP_WORD_PATH = "/usr/share/ukui-search/res/dict/stop_words.utf8";
-
     m_jieba = new cppjieba::Jieba(DICT_PATH,
                                   HMM_PATH,
                                   USER_DICT_PATH,
                                   IDF_PATH,
-                                  STOP_WORD_PATH);
+                                  STOP_WORD_PATH,
+                                  "");
 }
 
 ChineseSegmentation::~ChineseSegmentation() {
@@ -58,7 +58,7 @@ QVector<SKeyWord> ChineseSegmentation::callSegement(std::string s) {
 //    str.squeeze();
 
     const size_t topk = -1;
-    std::vector<cppjieba::KeywordExtractor::Word> keywordres;
+    std::vector<cppjieba::KeyWord> keywordres;
     ChineseSegmentation::m_jieba->extractor.Extract(s, keywordres, topk);
     std::string().swap(s);
     QVector<SKeyWord> vecNeeds;
@@ -72,7 +72,16 @@ QVector<SKeyWord> ChineseSegmentation::callSegement(std::string s) {
 
 }
 
-void ChineseSegmentation::convert(std::vector<cppjieba::KeywordExtractor::Word> &keywordres, QVector<SKeyWord> &kw) {
+std::vector<cppjieba::KeyWord> ChineseSegmentation::callSegementStd(const std::string &str) {
+
+    const size_t topk = -1;
+    std::vector<cppjieba::KeyWord> keywordres;
+    ChineseSegmentation::m_jieba->extractor.Extract(str, keywordres, topk);
+
+    return keywordres;
+}
+
+void ChineseSegmentation::convert(std::vector<cppjieba::KeyWord> &keywordres, QVector<SKeyWord> &kw) {
     for(auto i : keywordres) {
         SKeyWord temp;
         temp.word = i.word;

@@ -37,6 +37,17 @@ void Document::addPosting(std::string term, QVector<size_t> offset, int weight) 
     }
 }
 
+void Document::addPosting(std::string term, std::vector<size_t> offset, int weight) {
+    if(term == "")
+        return;
+    if(term.length() > 240)
+        term = QString::fromStdString(term).left(30).toStdString();
+
+    for(size_t i : offset) {
+        m_document.add_posting(term, i, weight);
+    }
+}
+
 void Document::addPosting(std::string term, unsigned int offset, int weight) {
     if(term == "")
         return;
