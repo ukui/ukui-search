@@ -154,7 +154,6 @@ void FirstIndex::run() {
 
 
     ++FileUtils::_index_status;
-
     pid_t pid;
     pid = fork();
     if(pid  == 0) {
@@ -235,6 +234,7 @@ void FirstIndex::run() {
             qDebug() << "content index end;";
             sem.release(2);
         });
+
         mutex1.lock();
         mutex2.lock();
         mutex3.lock();
