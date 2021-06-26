@@ -29,7 +29,7 @@
 #include "index-generator.h"
 #include "chinese-segmentation.h"
 #include <QStandardPaths>
-
+#include <malloc.h>
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
@@ -127,11 +127,11 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
 //        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
 //        FileUtils::_index_status &= ~0x2;
         qDebug() << "finish creatAllIndex for content";
+
         IndexGenerator::_doc_list_content.clear();
         IndexGenerator::_doc_list_content.squeeze();
         QVector<Document>().swap(IndexGenerator::_doc_list_content);
-//        delete _doc_list_content;
-//        _doc_list_content = nullptr;
+        malloc_trim(0);
     }
     Q_EMIT this->transactionFinished();
     return true;
