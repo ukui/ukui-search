@@ -130,6 +130,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
                 this->raise();
                 this->activateWindow();
+            } else if(this->isVisible()&&!this->isActiveWindow()) {
+                this->activateWindow();
             } else {
                 tryHideMainwindow();
             }
