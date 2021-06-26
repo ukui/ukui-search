@@ -22,6 +22,78 @@ public:
     bool HasNext() const {
         return cursor_ != sentence_.end();
     }
+    bool Next(WordRange& wordRange) {
+
+        if (cursor_ == sentence_.end()) {
+            return false;
+        }
+
+        wordRange.left = cursor_;
+
+        while (cursor_->rune == 0x20 && cursor_ != sentence_.end()) {
+            cursor_++;
+        }
+
+        if (cursor_ == sentence_.end()) {
+            wordRange.right = cursor_;
+            return true;
+        }
+
+        while (++cursor_ != sentence_.end()) {
+            if (cursor_->rune == 0x20) {
+                wordRange.right = cursor_;
+                return true;
+            }
+        }
+
+        wordRange.right = sentence_.end();
+        return true;
+    }
+
+    bool Next(WordRange& wordRange, bool& isNull) {
+        isNull = false;
+        if (cursor_ == sentence_.end()) {
+            return false;
+        }
+
+        wordRange.left = cursor_;
+
+        if (cursor_->rune == 0x20) {
+            while (cursor_ != sentence_.end()) {
+                if (cursor_->rune != 0x20) {
+                    if (wordRange.left == cursor_) {
+                        cursor_ ++;
+                    }
+                    wordRange.right = cursor_;
+                    isNull = true;
+                    return true;
+                }
+                cursor_ ++;
+            }
+        }
+        int num = 0;
+        while (cursor_ != sentence_.end()) {
+            if (cursor_->rune == 0x20) {
+                if (wordRange.left == cursor_) {
+                    cursor_ ++;
+                }
+
+                wordRange.right = cursor_;
+                return true;
+            }
+
+            cursor_ ++;
+            num++;
+            if (num >= 1024) { //todo 防止一次性传入过多字节，暂定限制为1024个字
+                wordRange.right = cursor_;
+                return true;
+            }
+        }
+
+        wordRange.right = sentence_.end();
+        return true;
+    }
+
     WordRange Next() {
         WordRange range(cursor_, cursor_);
 

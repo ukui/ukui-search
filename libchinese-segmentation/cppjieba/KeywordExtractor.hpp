@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cmath>
-#include <set>
 #include "MixSegment.hpp"
+#include "IdfTrie.hpp"
 
 namespace cppjieba {
 
@@ -12,25 +12,20 @@ using namespace std;
 /*utf8*/
 class KeywordExtractor {
 public:
-    struct Word {
-        string word;
-        vector<size_t> offsets;
-        double weight;
-    }; // struct Word
 
     KeywordExtractor(const DictTrie* dictTrie,
                      const HMMModel* model,
                      const string& idfPath,
+                     const string& dat_cache_path,
                      const string& stopWordPath)
-        : segment_(dictTrie, model) {
-        LoadIdfDict(idfPath);
-        LoadStopWordDict(stopWordPath);
+        : segment_(dictTrie, model, stopWordPath),
+        idf_trie_(idfPath,dat_cache_path){
     }
     ~KeywordExtractor() {
     }
 
     void Extract(const string& sentence, vector<string>& keywords, size_t topN) const {
-        vector<Word> topWords;
+        vector<KeyWord> topWords;
         Extract(sentence, topWords, topN);
 
         for (size_t i = 0; i < topWords.size(); i++) {
@@ -39,7 +34,7 @@ public:
     }
 
     void Extract(const string& sentence, vector<pair<string, double> >& keywords, size_t topN) const {
-        vector<Word> topWords;
+        vector<KeyWord> topWords;
         Extract(sentence, topWords, topN);
 
         for (size_t i = 0; i < topWords.size(); i++) {
@@ -47,40 +42,29 @@ public:
         }
     }
 
-    void Extract(const string& sentence, vector<Word>& keywords, size_t topN) const {
-        vector<string> words;
-        segment_.CutToStr(sentence, words);//将字符串string分解为words放入vector
+    void Extract(const string& sentence, vector<KeyWord>& keywords, size_t topN) const {
 
-        map<string, Word> wordmap;//插入字符串与Word的map，相同string统计词频叠加权重
-        size_t offset = 0;
-
-        for (size_t i = 0; i < words.size(); ++i) {
-            size_t t = offset;
-            offset += words[i].size();
-
-            if (IsSingleWord(words[i]) || stopWords_.find(words[i]) != stopWords_.end()) {
+        unordered_map<string, KeyWord> wordmap;//插入字符串与Word的map，相同string统计词频叠加权重
+        PreFilter pre_filter(symbols_, sentence);
+        RuneStrArray::const_iterator null_p;
+        WordRange range(null_p, null_p);
+        bool isNull(false);
+        while (pre_filter.Next(range, isNull)) {
+            if (isNull) {
                 continue;
             }
-
-            wordmap[words[i]].offsets.push_back(t);
-            wordmap[words[i]].weight += 1.0;
-        }
-
-        if (offset != sentence.size()) {
-            XLOG(ERROR) << "words illegal";
-            return;
+            segment_.CutToStr(sentence, range,  wordmap);
         }
 
         keywords.clear();
         keywords.reserve(wordmap.size());
 
-        for (map<string, Word>::iterator itr = wordmap.begin(); itr != wordmap.end(); ++itr) {
-            unordered_map<string, double>::const_iterator cit = idfMap_.find(itr->first);//IDF词典查找
-
-            if (cit != idfMap_.end()) {
-                itr->second.weight *= cit->second;
+        for (unordered_map<string, KeyWord>::iterator itr = wordmap.begin(); itr != wordmap.end(); ++itr) {
+            double idf = idf_trie_.Find(itr->first);
+            if (-1 != idf) {//IDF词典查找
+                itr->second.weight *= idf;
             } else {
-                itr->second.weight *= idfAverage_;
+                itr->second.weight *= idf_trie_.idfAverage_;
             }
 
             itr->second.word = itr->first;
@@ -92,70 +76,18 @@ public:
         keywords.resize(topN);
     }
 private:
-    void LoadIdfDict(const string& idfPath) {
-        ifstream ifs(idfPath.c_str());
-        if(not ifs.is_open()){
-            return ;
-        }
-        XCHECK(ifs.is_open()) << "open " << idfPath << " failed";
-        string line ;
-        vector<string> buf;
-        double idf = 0.0;
-        double idfSum = 0.0;
-        size_t lineno = 0;
 
-        for (; getline(ifs, line); lineno++) {
-            buf.clear();
-
-            if (line.empty()) {
-                XLOG(ERROR) << "lineno: " << lineno << " empty. skipped.";
-                continue;
-            }
-
-            Split(line, buf, " ");
-
-            if (buf.size() != 2) {
-                XLOG(ERROR) << "line: " << line << ", lineno: " << lineno << " empty. skipped.";
-                continue;
-            }
-
-            idf = atof(buf[1].c_str());
-            idfMap_[buf[0]] = idf;
-            idfSum += idf;
-
-        }
-
-        assert(lineno);
-        idfAverage_ = idfSum / lineno;
-        assert(idfAverage_ > 0.0);
-    }
-    void LoadStopWordDict(const string& filePath) {
-        ifstream ifs(filePath.c_str());
-        if(not ifs.is_open()){
-            return ;
-        }
-        XCHECK(ifs.is_open()) << "open " << filePath << " failed";
-        string line ;
-
-        while (getline(ifs, line)) {
-            stopWords_.insert(line);
-        }
-
-        assert(stopWords_.size());
-    }
-
-    static bool Compare(const Word& lhs, const Word& rhs) {
+    static bool Compare(const KeyWord& lhs, const KeyWord& rhs) {
         return lhs.weight > rhs.weight;
     }
 
     MixSegment segment_;
-    unordered_map<string, double> idfMap_;
-    double idfAverage_;
+    IdfTrie idf_trie_;
 
-    unordered_set<string> stopWords_;
+    unordered_set<Rune> symbols_;
 }; // class KeywordExtractor
 
-inline ostream& operator << (ostream& os, const KeywordExtractor::Word& word) {
+inline ostream& operator << (ostream& os, const KeyWord& word) {
     return os << "{\"word\": \"" << word.word << "\", \"offset\": " << word.offsets << ", \"weight\": " << word.weight <<
            "}";
 }

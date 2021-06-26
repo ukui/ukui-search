@@ -100,7 +100,7 @@ class SearchLineEdit : public QLineEdit {
     　　　*/
     Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
 public:
-    SearchLineEdit();
+    SearchLineEdit(QWidget *parent = nullptr);
     void record();
     ~SearchLineEdit();
 

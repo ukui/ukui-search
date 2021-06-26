@@ -15,6 +15,12 @@ using std::vector;
 
 typedef uint32_t Rune;
 
+struct KeyWord {
+    string word;
+    vector<size_t> offsets;
+    double weight;
+}; // struct Word
+
 struct Word {
     string word;
     uint32_t offset;
@@ -63,7 +69,7 @@ struct WordRange {
         : left(l), right(r) {
     }
     size_t Length() const {
-        return right - left + 1;
+        return right - left;
     }
 
     bool IsAllAscii() const {
@@ -91,33 +97,17 @@ inline RuneArray DecodeRunesInString(const string& s) {
 
 //重写DecodeRunesInString函数，将实现放入函数中降低内存占用加快处理流程--jxx20210518
 inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
-/*
-    RuneArray arr;
-
-    if (not DecodeRunesInString(s, arr)) {
-        return false;
-    }
-
-    runes.clear();
-
-    uint32_t offset = 0;
-
-    for (uint32_t i = 0; i < arr.size(); ++i) {
-        const uint32_t len = limonp::UnicodeToUtf8Bytes(arr[i]);
-        RuneInfo x(arr[i], offset, len, i, 1);
-        runes.push_back(x);
-        offset += len;
-    }
-*/
 
     uint32_t tmp;
     uint32_t offset = 0;
     runes.clear();
-    for(size_t i = 0; i < s.size();) {
-      if(!(s.data()[i] & 0x80)) { // 0xxxxxxx
+    uint32_t len(0);
+    for (size_t i = 0; i < s.size();) {
+      if (!(s.data()[i] & 0x80)) { // 0xxxxxxx
         // 7bit, total 7bit
         tmp = (uint8_t)(s.data()[i]) & 0x7f;
         i++;
+        len = 1;
       } else if ((uint8_t)s.data()[i] <= 0xdf && i + 1 < s.size()) { // 110xxxxxx
         // 5bit, total 5bit
         tmp = (uint8_t)(s.data()[i]) & 0x1f;
@@ -126,6 +116,7 @@ inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
         tmp <<= 6;
         tmp |= (uint8_t)(s.data()[i+1]) & 0x3f;
         i += 2;
+        len = 2;
       } else if((uint8_t)s.data()[i] <= 0xef && i + 2 < s.size()) { // 1110xxxxxx
         // 4bit, total 4bit
         tmp = (uint8_t)(s.data()[i]) & 0x0f;
@@ -139,6 +130,7 @@ inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
         tmp |= (uint8_t)(s.data()[i+2]) & 0x3f;
 
         i += 3;
+        len = 3;
       } else if((uint8_t)s.data()[i] <= 0xf7 && i + 3 < s.size()) { // 11110xxxx
         // 3bit, total 3bit
         tmp = (uint8_t)(s.data()[i]) & 0x07;
@@ -156,10 +148,10 @@ inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
         tmp |= (uint8_t)(s.data()[i+3]) & 0x3f;
 
         i += 4;
+        len = 4;
       } else {
         return false;
       }
-      uint32_t len = limonp::UnicodeToUtf8Bytes(tmp);
       RuneInfo x(tmp, offset, len, i, 1);
       runes.push_back(x);
       offset += len;
@@ -241,9 +233,8 @@ inline Word GetWordFromRunes(const string& s, RuneStrArray::const_iterator left,
 
 inline string GetStringFromRunes(const string& s, RuneStrArray::const_iterator left, RuneStrArray::const_iterator right) {
     assert(right->offset >= left->offset);
-    uint32_t len = right->offset - left->offset + right->len;
-    uint32_t unicode_length = right->unicode_offset - left->unicode_offset + right->unicode_length;
-    return Word(s.substr(left->offset, len), left->offset, left->unicode_offset, unicode_length).word;
+    //uint32_t len = right->offset - left->offset + right->len;
+    return s.substr(left->offset, right->offset - left->offset + right->len);
 }
 
 inline void GetWordsFromWordRanges(const string& s, const vector<WordRange>& wrs, vector<Word>& words) {
