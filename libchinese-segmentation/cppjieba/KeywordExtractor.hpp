@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include "MixSegment.hpp"
+#include "IdfTrie.hpp"
 
 namespace cppjieba {
 
@@ -11,18 +12,14 @@ using namespace std;
 /*utf8*/
 class KeywordExtractor {
 public:
-//    struct Word {
-//        string word;
-//        vector<size_t> offsets;
-//        double weight;
-//    }; // struct Word
 
     KeywordExtractor(const DictTrie* dictTrie,
                      const HMMModel* model,
                      const string& idfPath,
+                     const string& dat_cache_path,
                      const string& stopWordPath)
-        : segment_(dictTrie, model, stopWordPath) {
-        LoadIdfDict(idfPath);
+        : segment_(dictTrie, model, stopWordPath),
+        idf_trie_(idfPath,dat_cache_path){
     }
     ~KeywordExtractor() {
     }
@@ -63,12 +60,11 @@ public:
         keywords.reserve(wordmap.size());
 
         for (unordered_map<string, KeyWord>::iterator itr = wordmap.begin(); itr != wordmap.end(); ++itr) {
-            unordered_map<string, double>::const_iterator cit = idfMap_.find(itr->first);//IDF词典查找
-
-            if (cit != idfMap_.end()) {
-                itr->second.weight *= cit->second;
+            double idf = idf_trie_.Find(itr->first);
+            if (-1 != idf) {//IDF词典查找
+                itr->second.weight *= idf;
             } else {
-                itr->second.weight *= idfAverage_;
+                itr->second.weight *= idf_trie_.idfAverage_;
             }
 
             itr->second.word = itr->first;
@@ -80,51 +76,13 @@ public:
         keywords.resize(topN);
     }
 private:
-    void LoadIdfDict(const string& idfPath) {
-        ifstream ifs(idfPath.c_str());
-        if(not ifs.is_open()){
-            return ;
-        }
-        XCHECK(ifs.is_open()) << "open " << idfPath << " failed";
-        string line ;
-        vector<string> buf;
-        double idf = 0.0;
-        double idfSum = 0.0;
-        size_t lineno = 0;
-
-        for (; getline(ifs, line); lineno++) {
-            buf.clear();
-
-            if (line.empty()) {
-                XLOG(ERROR) << "lineno: " << lineno << " empty. skipped.";
-                continue;
-            }
-
-            Split(line, buf, " ");
-
-            if (buf.size() != 2) {
-                XLOG(ERROR) << "line: " << line << ", lineno: " << lineno << " empty. skipped.";
-                continue;
-            }
-
-            idf = atof(buf[1].c_str());
-            idfMap_[buf[0]] = idf;
-            idfSum += idf;
-
-        }
-
-        assert(lineno);
-        idfAverage_ = idfSum / lineno;
-        assert(idfAverage_ > 0.0);
-    }
 
     static bool Compare(const KeyWord& lhs, const KeyWord& rhs) {
         return lhs.weight > rhs.weight;
     }
 
     MixSegment segment_;
-    unordered_map<string, double> idfMap_;
-    double idfAverage_;
+    IdfTrie idf_trie_;
 
     unordered_set<Rune> symbols_;
 }; // class KeywordExtractor
