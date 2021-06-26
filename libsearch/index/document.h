@@ -41,11 +41,13 @@ public:
     }
     void setData(QString &data);
     void addPosting(std::string term, QVector<size_t> offset, int weight = 1);
-    void addPosting(std::string term, std::vector<size_t> offset, int weight = 1);
+    void addPosting(std::string &term, std::vector<size_t> &offset, int weight = 1);
     void addPosting(std::string term, unsigned int offset, int weight = 1);
     void addTerm(QString term);
+    void addTerm(std::string term);
     void addValue(QString value);
     void setUniqueTerm(QString term);
+    void setUniqueTerm(std::string term);
     std::string getUniqueTerm();
     void setIndexText(QStringList indexText);
     QStringList getIndexText();
@@ -53,7 +55,8 @@ public:
 private:
     Xapian::Document m_document;
     QStringList m_index_text;
-    QString m_unique_term;
+    //QString m_unique_term;
+    std::string m_unique_term;
 
 };
 }

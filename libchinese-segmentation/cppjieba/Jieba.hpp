@@ -18,10 +18,10 @@ public:
           model_(model_path),
           mp_seg_(&dict_trie_),
           hmm_seg_(&model_),
-          mix_seg_(&dict_trie_, &model_),
+          mix_seg_(&dict_trie_, &model_, stopWordPath),
           full_seg_(&dict_trie_),
-          query_seg_(&dict_trie_, &model_),
-          extractor(&dict_trie_, &model_, idfPath, stopWordPath){ }
+          query_seg_(&dict_trie_, &model_, stopWordPath),
+          extractor(&dict_trie_, &model_, idfPath, dat_cache_path,stopWordPath){ }
     ~Jieba() { }
 
     void Cut(const string& sentence, vector<string>& words, bool hmm = true) const {

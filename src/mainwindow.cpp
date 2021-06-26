@@ -55,6 +55,14 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
 
+    m_sys_tray_icon = new QSystemTrayIcon(this);
+    if (!QIcon::fromTheme("system-search-symbolic").isNull())
+        m_sys_tray_icon->setIcon(QIcon::fromTheme("system-search-symbolic"));
+    else
+        m_sys_tray_icon->setIcon(QIcon(":/res/icons/system-search.symbolic.png"));
+    m_sys_tray_icon->setToolTip(tr("Global Search"));
+    m_sys_tray_icon->show();
+    
     m_searcher = new SearchManager(this);
     m_settingsMatch = new SettingsMatch(this);
 
@@ -109,13 +117,6 @@ MainWindow::MainWindow(QWidget *parent) :
         m_contentFrame->setAppList(applist);
     });
 
-    m_sys_tray_icon = new QSystemTrayIcon(this);
-    if (!QIcon::fromTheme("system-search-symbolic").isNull())
-        m_sys_tray_icon->setIcon(QIcon::fromTheme("system-search-symbolic"));
-    else
-        m_sys_tray_icon->setIcon(QIcon(":/res/icons/system-search.symbolic.png"));
-    m_sys_tray_icon->setToolTip(tr("Global Search"));
-    m_sys_tray_icon->show();
     connect(m_sys_tray_icon, &QSystemTrayIcon::activated, this, [ = ](QSystemTrayIcon::ActivationReason reason) {
         if(reason == QSystemTrayIcon::Trigger) {
             if(!this->isVisible()) {
@@ -128,6 +129,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 this->show();
                 this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
                 this->raise();
+                this->activateWindow();
+            } else if(this->isVisible()&&!this->isActiveWindow()) {
                 this->activateWindow();
             } else {
                 tryHideMainwindow();

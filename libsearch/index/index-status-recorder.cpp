@@ -13,8 +13,10 @@ IndexStatusRecorder *IndexStatusRecorder::getInstance()
 
 void IndexStatusRecorder::setStatus(const QString &key, const QVariant &value)
 {
+    m_mutex.lock();
     m_status->setValue(key, value);
     m_status->sync();
+    m_mutex.unlock();
 }
 
 const QVariant IndexStatusRecorder::getStatus(const QString &key)
