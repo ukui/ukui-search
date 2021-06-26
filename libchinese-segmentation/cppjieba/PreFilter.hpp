@@ -71,7 +71,7 @@ public:
                 cursor_ ++;
             }
         }
-
+        int num = 0;
         while (cursor_ != sentence_.end()) {
             if (cursor_->rune == 0x20) {
                 if (wordRange.left == cursor_) {
@@ -83,6 +83,11 @@ public:
             }
 
             cursor_ ++;
+            num++;
+            if (num >= 1024) { //todo 防止一次性传入过多字节，暂定限制为1024个字
+                wordRange.right = cursor_;
+                return true;
+            }
         }
 
         wordRange.right = sentence_.end();
