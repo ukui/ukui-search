@@ -65,6 +65,7 @@ private:
     void getAppName(QMap<NameString, QStringList> &installed);
 //    void appNameMatch(QString appname,QString desktoppath,QString appicon);
     void appNameMatch(QString appname, QMap<NameString, QStringList> &installed);
+    void appNameMatch(QMap<NameString, QStringList> &installed);
 
     void softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn);
 
