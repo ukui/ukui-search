@@ -1,3 +1,23 @@
+ukui-search (0.4.0+0629) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix:App search error when display applications of the same name.
+    - 修复了当存在重名应用时应用搜索显示错误的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 29 Jun 2021 11:19:25 +0800
+
+ukui-search (0.4.0+0628) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:41543
+  * 其他改动：
+  * Fix: Tray icon click won't work after Win+D.
+    -修复了在弹出建立索引提示弹窗后按WIN+D之后，点击任务栏托盘无法呼出页面的问题。 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 28 Jun 2021 09:35:15 +0800
+
 ukui-search (0.4.0+0619) v101; urgency=medium
 
   * Bug 无
