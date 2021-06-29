@@ -97,24 +97,6 @@ inline RuneArray DecodeRunesInString(const string& s) {
 
 //重写DecodeRunesInString函数，将实现放入函数中降低内存占用加快处理流程--jxx20210518
 inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
-/*
-    RuneArray arr;
-
-    if (not DecodeRunesInString(s, arr)) {
-        return false;
-    }
-
-    runes.clear();
-
-    uint32_t offset = 0;
-
-    for (uint32_t i = 0; i < arr.size(); ++i) {
-        const uint32_t len = limonp::UnicodeToUtf8Bytes(arr[i]);
-        RuneInfo x(arr[i], offset, len, i, 1);
-        runes.push_back(x);
-        offset += len;
-    }
-*/
 
     uint32_t tmp;
     uint32_t offset = 0;

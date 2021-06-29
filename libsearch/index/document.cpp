@@ -37,7 +37,7 @@ void Document::addPosting(std::string term, QVector<size_t> offset, int weight) 
     }
 }
 
-void Document::addPosting(std::string term, std::vector<size_t> offset, int weight) {
+void Document::addPosting(std::string &term, std::vector<size_t> &offset, int weight) {
     if(term == "")
         return;
     if(term.length() > 240)
@@ -63,6 +63,12 @@ void Document::addTerm(QString term) {
     m_document.add_term(term.toStdString());
 }
 
+void Document::addTerm(std::string term) {
+    if(term.empty())
+        return;
+    m_document.add_term(term);
+}
+
 void Document::addValue(QString value) {
     m_document.add_value(1, value.toStdString());
 }
@@ -73,12 +79,20 @@ void Document::setUniqueTerm(QString term) {
     m_document.add_term(term.toStdString());
 
 //    m_unique_term = new QString(term);
-    m_unique_term = std::move(term);
+    m_unique_term = std::move(term.toStdString());
 }
+
+void Document::setUniqueTerm(std::string term) {
+    if(term.empty())
+        return;
+    m_document.add_term(term);
+    m_unique_term = term;
+}
+
 std::string Document::getUniqueTerm() {
 //    qDebug()<<"m_unique_term!"<<*m_unique_term;
 //    qDebug() << QString::fromStdString(m_unique_term.toStdString());
-    return m_unique_term.toStdString();
+    return m_unique_term;//.toStdString();
 }
 
 void Document::setIndexText(QStringList indexText) {

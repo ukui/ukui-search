@@ -138,10 +138,10 @@ private:
         size_t now, old, stat;
         double tmp, endE, endS;
 
-        //vector<int> path(XYSize);
-        //vector<double> weight(XYSize);
-        int path[XYSize];
-        double weight[XYSize];
+        vector<int> path(XYSize);
+        vector<double> weight(XYSize);
+        //int path[XYSize];
+        //double weight[XYSize];
 
         //start
         for (size_t y = 0; y < Y; y++) {
