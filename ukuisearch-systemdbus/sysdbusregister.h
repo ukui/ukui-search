@@ -52,6 +52,7 @@ public slots:
     Q_SCRIPTABLE QString setInotifyMaxUserWatchesStep1();
     Q_SCRIPTABLE QString setInotifyMaxUserWatchesStep2();
     Q_SCRIPTABLE QString setInotifyMaxUserWatchesStep3();
+    Q_SCRIPTABLE int AddInotifyMaxUserInstance(int addNum);
 
 //    // 设置免密登录状态
 //    Q_SCRIPTABLE void setNoPwdLoginStatus();
