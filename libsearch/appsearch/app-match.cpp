@@ -297,14 +297,14 @@ void AppMatch::appNameMatch(QMap<NameString, QStringList> &installed) {
             QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
             if(shouzimu.contains(m_sourceText, Qt::CaseInsensitive)) {
                 installed.insert(name, list);
-                continue;
+                break;
             }
             if(m_sourceText.size() < 2)
-                continue;
+                break;
             QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
             if(pinyin.contains(m_sourceText, Qt::CaseInsensitive)) {
                 installed.insert(name, list);
-                continue;
+                break;
             }
         }
     }

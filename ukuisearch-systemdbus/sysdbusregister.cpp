@@ -102,6 +102,36 @@ QString SysdbusRegister::setInotifyMaxUserWatchesStep3() {
     return QString(ba);
 }
 
+int SysdbusRegister::AddInotifyMaxUserInstance(int addNum)
+{
+    QFile file("/proc/sys/fs/inotify/max_user_instances");
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return -1;
+    QTextStream ts(&file);
+    QString s = ts.read(512);
+    int instances = s.toInt() + addNum;
+
+    QByteArray ba;
+    FILE * fp = NULL;
+    char cmd[128];
+    char buf[1024];
+    sprintf(cmd, "sysctl -w fs.inotify.max_user_instances=\"%d\"", instances);
+    if((fp = popen(cmd, "r")) != NULL) {
+        rewind(fp);
+        while(!feof(fp)) {
+            fgets(buf, sizeof(buf), fp);
+            ba.append(buf);
+        }
+        pclose(fp);
+        fp = NULL;
+    } else {
+        qWarning() << "popen open failed";
+        return -1;
+    }
+    return instances;
+
+}
+
 //The following example comes from control center
 
 //void SysdbusRegister::setAutoLoginStatus(QString username) {
