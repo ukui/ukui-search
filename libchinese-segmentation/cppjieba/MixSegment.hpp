@@ -156,8 +156,9 @@ public:
             // if mp Get a single one and it is not in userdict, collect it in sequence
             size_t j = i + 1; //当前i字符为单独的字符并且不在用户字典里（i字符不是最后一个字符），直接判定j字符
 
-            while (j < (words.size() - 1) && words[j].left == words[j].right &&
-                   !mpSeg_.IsUserDictSingleChineseWord(words[j].left->rune)) {
+            while (j < (words.size() - 1)
+                   && words[j].left == words[j].right
+                   && !mpSeg_.IsUserDictSingleChineseWord(words[j].left->rune)) {
                 j++;
             }
 

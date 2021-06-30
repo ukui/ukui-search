@@ -34,7 +34,7 @@ include(settingsearch/settingsearch.pri))
 
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
-LIBS += -lxapian -lquazip5 -luchardet
+LIBS += -lxapian -lquazip5 -luchardet #-L/usr/local/lib/libjemalloc -ljemalloc
 
 SOURCES += \
     file-utils.cpp \

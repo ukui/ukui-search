@@ -2,6 +2,7 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/DictTrie.hpp \
+    $$PWD/IdfTrie.hpp \
     $$PWD/FullSegment.hpp \
     $$PWD/HMMModel.hpp \
     $$PWD/HMMSegment.hpp \
@@ -17,5 +18,4 @@ HEADERS += \
     $$PWD/TextRankExtractor.hpp \
     $$PWD/Trie.hpp \
     $$PWD/Unicode.hpp
-
 include(limonp/limonp.pri)
