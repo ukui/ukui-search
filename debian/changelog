@@ -1,3 +1,15 @@
+ukui-search (0.4.0+0630) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Add a systembus iface for add inotify_max_user_instance, avoid inotify_init fail.
+    - 增加修改inotify_max_user_instance配置的dbus接口，避免由于超出最大数量导致的inotify_init失败问题。
+  * Fix: Detail page display incorrectly occasionally.
+    - 修复了偶现的点击最佳列表，右侧详情显示错误的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 30 Jun 2021 11:38:31 +0800
+
 ukui-search (0.4.0+0629) v101; urgency=medium
 
   * Bug 无

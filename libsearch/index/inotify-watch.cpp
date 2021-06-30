@@ -133,9 +133,17 @@ void InotifyWatch::run()
     if (m_inotifyFd > 0) {
         qDebug()<<"Inotify init success!";
     } else {
-        printf("errno=%d\n",errno);
-        printf("Mesg:%s\n",strerror(errno));
-        Q_ASSERT_X(0, "InotifyWatch", "Failed to initialize inotify");
+        qWarning() << "Inotify init fail! Now try add inotify_user_instances.";
+        UkuiSearchQDBus usQDBus;
+        usQDBus.addInotifyUserInstances(128);
+        m_inotifyFd = inotify_init();
+        if (m_inotifyFd > 0) {
+            qDebug()<<"Inotify init success!";
+        } else {
+            printf("errno=%d\n",errno);
+            printf("Mesg:%s\n",strerror(errno));
+            Q_ASSERT_X(0, "InotifyWatch", "Failed to initialize inotify");
+        }
     }
 
     this->addWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));

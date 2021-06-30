@@ -730,7 +730,7 @@ void ContentWidget::onListViewRowChanged(SearchListView * listview, const int &t
     if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
         m_detailView->isContent = true;
         m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
-    } else if(type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
+    } else if(type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && SearchItem::SearchType::Contents == m_bestList.at(listview->currentIndex().row()).first) {
         m_detailView->setContent(m_bestContent, m_keyword);
         m_detailView->isContent = true;
         m_detailView->setupWidget(SearchItem::SearchType::Contents, path);
