@@ -97,19 +97,6 @@ void FirstIndex::run() {
     QTime t1 = QTime::currentTime();
 
     // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
-    QDir fifoDir = QDir(QDir::homePath() + "/.config/org.ukui/ukui-search");
-    if(!fifoDir.exists())
-        qDebug() << "create fifo path" << fifoDir.mkpath(fifoDir.absolutePath());
-
-    unlink(UKUI_SEARCH_PIPE_PATH);
-    int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
-    if(retval == -1) {
-        qCritical() << "creat fifo error!!";
-        syslog(LOG_ERR, "creat fifo error!!\n");
-        assert(false);
-        return;
-    }
-    qDebug() << "create fifo success\n";
 
     QString indexDataBaseStatus =  IndexStatusRecorder::getInstance()->getStatus(INDEX_DATABASE_STATE).toString();
     QString contentIndexDataBaseStatus = IndexStatusRecorder::getInstance()->getStatus(CONTENT_INDEX_DATABASE_STATE).toString();
