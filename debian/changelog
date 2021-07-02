@@ -1,3 +1,11 @@
+ukui-search (0.4.0+0701hw1) v101; urgency=medium
+
+  * BUG号 64138-990
+  * 需求号 无
+  * 其他改动说明：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 30 Jun 2021 14:39:54 +0800
+
 ukui-search (0.4.0+0627hw1) v101.hw; urgency=medium
 
   * BUG号 63361-9A0,58759-9A0,57561-990,57560-990,57417-990,57403-990
