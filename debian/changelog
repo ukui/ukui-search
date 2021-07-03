@@ -1,3 +1,15 @@
+ukui-search (0.4.0+0703) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix:Creat fifo error sometimes.
+    - 修复了在开关索引时偶现的由于创建管道失败导致的崩溃问题。
+  * Remove entry from ukui-menu.
+    - 移除了开始菜单入口（开始菜单里的搜索应用显示）。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 03 Jul 2021 10:13:23 +0800
+
 ukui-search (0.4.0+0630) v101; urgency=medium
 
   * Bug 无
