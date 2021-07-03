@@ -154,7 +154,7 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
             QLabel * descLabel = new QLabel(m_descFrame);
             descLabel->setTextFormat(Qt::PlainText);
             descLabel->setWordWrap(true);
-            QString show_desc = desc.key + ":    " + desc.value;
+            QString show_desc = desc.key + "    " + desc.value;
             descLabel->setText(show_desc);
             m_descFrameLyt->addWidget(descLabel);
         }
