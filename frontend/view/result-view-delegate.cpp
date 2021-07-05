@@ -12,6 +12,13 @@ void ResultViewDelegate::setSearchKeyword(const QString &regFindKeyWords)
     m_regFindKeyWords = regFindKeyWords;
 }
 
+QSize ResultViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QSize size =  QStyledItemDelegate::sizeHint(option,index);
+    size.setHeight(size.height() + 10);
+    return size;
+}
+
 void ResultViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const {
     QStyleOptionViewItemV4 optionV4 = option;
     initStyleOption(&optionV4, index);
@@ -30,7 +37,7 @@ void ResultViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         ctx.palette.setColor(QPalette::Text, optionV4.palette.color(QPalette::Active, QPalette::HighlightedText));
 
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &optionV4);
-    textRect.adjust(0, -5, 0, 0);
+    textRect.adjust(0, 0, 0, 0);
     painter->save();
     painter->translate(textRect.topLeft());
     painter->setClipRect(textRect.translated(-textRect.topLeft()));

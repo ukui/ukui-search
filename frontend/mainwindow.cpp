@@ -42,12 +42,12 @@
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 590
+#define WINDOW_WIDTH 680
+#define WINDOW_HEIGHT 600
 #define TITLE_HEIGHT 40
 #define WINDOW_ICON_SIZE 24
 #define SETTING_BTN_SIZE 30
-#define SEARCH_BAR_SIZE 44
+#define SEARCH_BAR_SIZE 48
 #define ASK_INDEX_TIME 5*1000
 #define RESEARCH_TIME 10*1000
 

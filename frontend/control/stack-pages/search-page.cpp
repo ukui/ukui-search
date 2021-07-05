@@ -21,7 +21,7 @@
 #include "search-page.h"
 using namespace Zeeker;
 
-#define RESULT_WIDTH 240
+#define RESULT_WIDTH 298
 #define DETAIL_WIDTH 400
 
 SearchPage::SearchPage(QWidget *parent) : QWidget(parent)
