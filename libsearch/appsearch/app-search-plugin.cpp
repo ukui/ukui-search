@@ -104,11 +104,11 @@ bool AppSearchPlugin::addPanelShortcut(const QString& path) {
     if(iface.isValid()) {
         QDBusReply<bool> isExist = iface.call("CheckIfExist", path);
         if(isExist) {
-            qWarning() << "qDebug: Add shortcut to panel failed, because it is already existed!";
+            qWarning() << "Add shortcut to panel failed, because it is already existed!";
             return false;
         }
         QDBusReply<QVariant> ret = iface.call("AddToTaskbar", path);
-        qDebug() << "qDebug: Add shortcut to panel successed!";
+        qDebug() << "Add shortcut to panel successed!";
         return true;
     }
     return false;

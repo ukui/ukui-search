@@ -138,6 +138,7 @@ QString escapeHtml(const QString & str) {
 
 void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginIface::ResultInfo &info)
 {
+    clearLayout(m_descFrameLyt);
     m_iconLabel->setPixmap(info.icon.pixmap(info.icon.actualSize(ICON_SIZE)));
     m_iconLabel->show();
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
@@ -147,6 +148,7 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
     m_pluginLabel->setText(plugin_name);
     m_nameFrame->show();
     m_line_1->show();
+
     if (info.description.length() > 0) {
         //NEW_TODO 样式待优化
         clearLayout(m_descFrameLyt);
@@ -154,7 +156,7 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
             QLabel * descLabel = new QLabel(m_descFrame);
             descLabel->setTextFormat(Qt::PlainText);
             descLabel->setWordWrap(true);
-            QString show_desc = desc.key + ":    " + desc.value;
+            QString show_desc = desc.key + "    " + desc.value;
             descLabel->setText(show_desc);
             m_descFrameLyt->addWidget(descLabel);
         }
@@ -162,10 +164,10 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
         m_line_2->show();
     }
     clearLayout(m_actionFrameLyt);
-//    Q_FOREACH (auto action, info.actionList) {
-//        ActionLabel * actionLabel = new ActionLabel(action, info.key, plugin_name, m_actionFrame);
-//        m_actionFrameLyt->addWidget(actionLabel);
-//    }
+    Q_FOREACH (SearchPluginIface::Actioninfo actioninfo, SearchPluginManager::getInstance()->getPlugin(plugin_name)->getActioninfo(info.type)) {
+        ActionLabel * actionLabel = new ActionLabel(actioninfo.displayName, info.actionKey, actioninfo.actionkey, plugin_name, info.type, m_actionFrame);
+        m_actionFrameLyt->addWidget(actionLabel);
+    }
     m_actionFrame->show();
 }
 
@@ -248,7 +250,7 @@ void DetailWidget::paintEvent(QPaintEvent * event)
 
 void DetailWidget::clearLayout(QLayout *layout)
 {
-    if(! layout) return;
+    if(!layout) return;
     QLayoutItem * child;
     while((child = layout->takeAt(0)) != 0) {
         if(child->widget()) {
@@ -259,11 +261,13 @@ void DetailWidget::clearLayout(QLayout *layout)
     child = NULL;
 }
 
-ActionLabel::ActionLabel(const QString &action, const QString &key, const QString &plugin, QWidget *parent) : QLabel(parent)
+ActionLabel::ActionLabel(const QString &action, const QString &key, const int &ActionKey, const QString &pluginId, const int type, QWidget *parent) : QLabel(parent)
 {
     m_action = action;
     m_key = key;
-    m_plugin = plugin;
+    m_actionKey = ActionKey;
+    m_type = type;
+    m_pluginId = pluginId;
     this->initUi();
     this->installEventFilter(this);
 }
@@ -287,10 +291,10 @@ bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
             this->setForegroundRole(QPalette::Dark);
             return true;
         } else if(event->type() == QEvent::MouseButtonRelease) {
-            SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin);
-//            if (plugin)
-//                plugin->openAction(m_action, m_key);
-//            else
+            SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_pluginId);
+            if (plugin)
+                plugin->openAction(m_actionKey, m_key, m_type);
+            else
                 qWarning()<<"Get plugin failed!";
             this->setForegroundRole(QPalette::Light);
             return true;
