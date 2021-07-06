@@ -178,6 +178,25 @@ QString FileUtils::getSettingName(const QString& setting) {
     return setting.right(setting.length() - setting.lastIndexOf("/") - 1);
 }
 
+bool FileUtils::isOrUnder(QString pathA, QString pathB)
+{
+    if(!pathA.startsWith("/"))
+        pathA.prepend("/");
+    if(!pathB.startsWith("/"))
+        pathB.prepend("/");
+
+    if(pathA == pathB)
+        return true;
+
+    if(pathA.length() > pathB.length())
+        return false;
+
+    if(pathA.startsWith(pathB + "/"))
+        return true;
+
+    return false;
+}
+
 
 void FileUtils::loadHanziTable(const QString &fileName) {
     QFile file(fileName);

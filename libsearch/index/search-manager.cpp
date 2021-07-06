@@ -81,7 +81,7 @@ void SearchManager::onKeywordSearch(QString keyword, QQueue<QString> *searchResu
 bool SearchManager::isBlocked(QString &path) {
     QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
     for(QString i : blockList) {
-        if(path.startsWith(i.prepend("/")))
+        if(FileUtils::isOrUnder(path, i))
             return true;
     }
     return false;
@@ -414,7 +414,7 @@ void DirectSearch::run() {
 
                 bool findIndex = false;
                 for (QString j : blockList) {
-                    if (i.absoluteFilePath().startsWith(j.prepend("/"))) {
+                    if (FileUtils::isOrUnder(i.absoluteFilePath(), j)) {
                         findIndex = true;
                         break;
                     }

@@ -36,6 +36,7 @@
 #include <QDBusInterface>
 #include <QApplication>
 #include "libsearch_global.h"
+#include "file-utils.h"
 
 #define CONTROL_CENTER_PERSONALISE_GSETTINGS_ID "org.ukui.control-center.personalise"
 #define TRANSPARENCY_KEY "transparency"
