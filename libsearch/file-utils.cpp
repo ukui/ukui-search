@@ -180,18 +180,15 @@ QString FileUtils::getSettingName(const QString& setting) {
 
 bool FileUtils::isOrUnder(QString pathA, QString pathB)
 {
-    if(!pathA.startsWith("/"))
+    if(pathA[0] != "/")
         pathA.prepend("/");
-    if(!pathB.startsWith("/"))
+    if(pathA[0] != "/")
         pathB.prepend("/");
 
-    if(pathA == pathB)
-        return true;
-
-    if(pathA.length() > pathB.length())
+    if(pathA.length() < pathB.length())
         return false;
 
-    if(pathA.startsWith(pathB + "/"))
+    if(pathA == pathB || pathA.startsWith(pathB + "/"))
         return true;
 
     return false;
