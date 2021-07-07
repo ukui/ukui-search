@@ -182,7 +182,7 @@ bool FileUtils::isOrUnder(QString pathA, QString pathB)
 {
     if(pathA[0] != "/")
         pathA.prepend("/");
-    if(pathA[0] != "/")
+    if(pathB[0] != "/")
         pathB.prepend("/");
 
     if(pathA.length() < pathB.length())
