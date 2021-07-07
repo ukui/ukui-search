@@ -57,7 +57,6 @@ public:
         }
 
         wordRange.left = cursor_;
-
         if (cursor_->rune == 0x20) {
             while (cursor_ != sentence_.end()) {
                 if (cursor_->rune != 0x20) {
@@ -71,7 +70,10 @@ public:
                 cursor_ ++;
             }
         }
-        int num = 0;
+
+        int max_num = 0;
+        uint32_t utf8_num = cursor_->len;
+
         while (cursor_ != sentence_.end()) {
             if (cursor_->rune == 0x20) {
                 if (wordRange.left == cursor_) {
@@ -83,8 +85,8 @@ public:
             }
 
             cursor_ ++;
-            num++;
-            if (num >= 1024) { //todo 防止一次性传入过多字节，暂定限制为1024个字
+            max_num++;
+            if (max_num >= 1024 or cursor_->len != utf8_num) { //todo 防止一次性传入过多字节，暂定限制为1024个字
                 wordRange.right = cursor_;
                 return true;
             }
