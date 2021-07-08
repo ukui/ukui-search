@@ -70,6 +70,8 @@ private:
     void clearLayout(QLayout *);
     QVBoxLayout * m_mainLyt = nullptr;
     QLabel * m_iconLabel = nullptr;
+    QFrame *m_previewFrame = nullptr;
+    QHBoxLayout *m_previewFrameLyt = nullptr;
     QFrame * m_nameFrame = nullptr;
     QHBoxLayout * m_nameFrameLyt = nullptr;
     QLabel * m_nameLabel = nullptr;

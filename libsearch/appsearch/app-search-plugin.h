@@ -23,6 +23,8 @@ public:
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type);
+    bool isPreviewEnable(QString key, int type);
+    QWidget *previewPage(QString key, int type, QWidget *parent);
 private:
     bool launch(const QString &path);
     bool addPanelShortcut(const QString &path);

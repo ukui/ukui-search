@@ -27,11 +27,11 @@ using namespace Zeeker;
 #define DETAIL_BACKGROUND_COLOR QColor(0, 0, 0, 0)
 #define DETAIL_WIDGET_TRANSPARENT 0.04
 #define DETAIL_WIDGET_BORDER_RADIUS 4
-#define DETAIL_WIDGET_MARGINS 8,40,40,8
-#define DETAIL_FRAME_MARGINS 8,0,8,0
+#define DETAIL_WIDGET_MARGINS 8,0,8,0
+#define DETAIL_FRAME_MARGINS 8,0,0,0
 #define DETAIL_ICON_HEIGHT 120
 #define NAME_LABEL_WIDTH 280
-#define ICON_SIZE QSize(96, 96)
+#define ICON_SIZE QSize(120, 120)
 #define LINE_STYLE "QFrame{background: rgba(0,0,0,0.2);}"
 #define ACTION_NORMAL_COLOR QColor(55, 144, 250, 255)
 #define ACTION_HOVER_COLOR QColor(64, 169, 251, 255)
@@ -139,8 +139,17 @@ QString escapeHtml(const QString & str) {
 void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginIface::ResultInfo &info)
 {
     clearLayout(m_descFrameLyt);
-    m_iconLabel->setPixmap(info.icon.pixmap(info.icon.actualSize(ICON_SIZE)));
-    m_iconLabel->show();
+    clearLayout(m_previewFrameLyt);
+    if(SearchPluginManager::getInstance()->getPlugin(plugin_name)->isPreviewEnable(info.actionKey,info.type)) {
+        m_iconLabel->hide();
+        m_previewFrameLyt->addWidget(SearchPluginManager::getInstance()->getPlugin(plugin_name)->previewPage(info.actionKey,info.type, m_previewFrame), 0 , Qt::AlignHCenter);
+        m_previewFrameLyt->setContentsMargins(0,0,0,0);
+        m_previewFrame->show();
+    } else {
+        m_previewFrame->hide();
+        m_iconLabel->setPixmap(info.icon.pixmap(info.icon.actualSize(ICON_SIZE)));
+        m_iconLabel->show();
+    }
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString name = fontMetrics.elidedText(info.name, Qt::ElideRight, NAME_LABEL_WIDTH - 8);
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
@@ -191,6 +200,8 @@ void DetailWidget::initUi()
     m_iconLabel = new QLabel(this);
     m_iconLabel->setFixedHeight(DETAIL_ICON_HEIGHT);
     m_iconLabel->setAlignment(Qt::AlignCenter);
+    m_previewFrame = new QFrame(this);
+    m_previewFrameLyt = new QHBoxLayout(m_previewFrame);
 
     m_nameFrame = new QFrame(this);
     m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
@@ -224,6 +235,7 @@ void DetailWidget::initUi()
     m_actionFrameLyt->setContentsMargins(DETAIL_FRAME_MARGINS);
 
     m_mainLyt->addWidget(m_iconLabel);
+    m_mainLyt->addWidget(m_previewFrame, 0, Qt::AlignHCenter);
     m_mainLyt->addWidget(m_nameFrame);
     m_mainLyt->addWidget(m_line_1);
     m_mainLyt->addWidget(m_descFrame);

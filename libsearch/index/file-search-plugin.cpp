@@ -1,5 +1,8 @@
 #include "file-search-plugin.h"
 #include "search-manager.h"
+#include <QWidget>
+#include <QLabel>
+#include <QHBoxLayout>
 using namespace Zeeker;
 
 FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
@@ -65,6 +68,25 @@ void FileSearchPlugin::openAction(int actionkey, QString key, int type)
     }
 }
 
+bool FileSearchPlugin::isPreviewEnable(QString key, int type)
+{
+    return true;
+}
+
+QWidget *FileSearchPlugin::previewPage(QString key, int type, QWidget *parent)
+{
+    QWidget *previewPage = new QWidget(parent);
+    QHBoxLayout * previewLyt = new QHBoxLayout(previewPage);
+    previewLyt->setContentsMargins(0, 0, 0, 0);
+    QLabel *label = new QLabel(previewPage);
+    previewLyt->addWidget(label);
+    label->setFixedHeight(120);
+    previewPage->setFixedSize(120,120);
+    previewLyt->setAlignment(Qt::AlignCenter);
+    label->setPixmap(FileUtils::getFileIcon(QUrl::fromLocalFile(key).toString()).pixmap(120,120));
+    return previewPage;
+}
+
 DirSearchPlugin::DirSearchPlugin(QObject *parent) : QObject(parent)
 {
     SearchPluginIface::Actioninfo open { 0, tr("Open")};
@@ -128,6 +150,16 @@ void DirSearchPlugin::openAction(int actionkey, QString key, int type)
     }
 }
 
+bool DirSearchPlugin::isPreviewEnable(QString key, int type)
+{
+    return false;
+}
+
+QWidget *DirSearchPlugin::previewPage(QString key, int type, QWidget *parent)
+{
+    return nullptr;
+}
+
 FileContengSearchPlugin::FileContengSearchPlugin(QObject *parent) : QObject(parent)
 {
     SearchPluginIface::Actioninfo open { 0, tr("Open")};
@@ -187,4 +219,14 @@ void FileContengSearchPlugin::openAction(int actionkey, QString key, int type)
     default:
         break;
     }
+}
+
+bool FileContengSearchPlugin::isPreviewEnable(QString key, int type)
+{
+    return false;
+}
+
+QWidget *FileContengSearchPlugin::previewPage(QString key, int type, QWidget *parent)
+{
+    return nullptr;
 }
