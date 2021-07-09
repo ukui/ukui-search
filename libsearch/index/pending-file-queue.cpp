@@ -18,6 +18,7 @@
  *
  */
 #include "pending-file-queue.h"
+#include "file-utils.h"
 #include <malloc.h>
 using namespace Zeeker;
 static PendingFileQueue *global_instance_pending_file_queue = nullptr;
@@ -88,7 +89,7 @@ void PendingFileQueue::enqueue(const PendingFile &file)
     // Because our datebase need to delete those indexs one by one.
     if(file.shouldRemoveIndex() && file.isDir()) {
         const auto keepFile = [&file](const PendingFile& pending) {
-            return (!pending.path().startsWith(file.path()) || pending.shouldRemoveIndex());
+            return (!FileUtils::isOrUnder(pending.path(), file.path()) || pending.shouldRemoveIndex());
         };
         const auto end = m_cache.end();
         const auto droppedFilesBegin = std::stable_partition(m_cache.begin(), end, keepFile);
