@@ -167,6 +167,121 @@ public:
         }
     }
 
+    void Find_Reverse(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end,
+              vector<struct DatDag>&res, size_t max_word_len) const {
+
+        res.clear();
+        res.resize(end - begin);
+
+        string text_str;
+        EncodeRunesToString(begin, end, text_str);
+
+        static const size_t max_num = 128;
+        JiebaDAT::result_pair_type result_pairs[max_num] = {};
+
+        size_t str_size = end - begin;
+        for (size_t i = 0, begin_pos = text_str.size(); i < str_size; i++) {
+
+            begin_pos -= (end - i - 1)->len;
+            std::size_t num_results = dat_.commonPrefixSearch(&text_str[begin_pos], &result_pairs[0], max_num);
+            res[str_size - i - 1].nexts.push_back(pair<size_t, const DatMemElem *>(str_size - i, nullptr));
+
+            for (std::size_t idx = 0; idx < num_results; ++idx) {
+                auto & match = result_pairs[idx];
+                if ((match.value < 0) || ((size_t)match.value >= elements_num_)) {
+                    continue;
+                }
+
+                auto const char_num = Utf8CharNum(&text_str[begin_pos], match.length);
+
+                if (char_num > max_word_len) {
+                    continue;
+                }
+
+                auto pValue = &elements_ptr_[match.value];
+
+                if (1 == char_num) {
+                    res[str_size - i - 1].nexts[0].second = pValue;
+                    continue;
+                }
+
+                res[str_size - i - 1].nexts.push_back(pair<size_t, const DatMemElem *>(str_size - 1 - i + char_num, pValue));
+            }
+        }
+    }
+    void Find(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end,
+              vector<WordRange>& words, size_t max_word_len) const {
+
+        string text_str;
+        EncodeRunesToString(begin, end, text_str);
+
+        static const size_t max_num = 128;
+        JiebaDAT::result_pair_type result_pairs[max_num] = {};//存放字典查询结果
+        size_t str_size = end - begin;
+        double max_weight[str_size];//存放逆向路径最大weight
+        for (size_t i = 0; i<str_size; i++) {
+            max_weight[i] = -3.14e+100;
+        }
+        int max_next[str_size];//存放动态规划后的分词结果
+        memset(max_next,-1,str_size);
+
+        double val(0);
+        for (size_t i = 0, begin_pos = text_str.size(); i < str_size; i++) {
+            size_t nextPos = str_size - i;//逆向计算
+            begin_pos -= (end - i - 1)->len;
+
+            std::size_t num_results = dat_.commonPrefixSearch(&text_str[begin_pos], &result_pairs[0], max_num);
+            if (0 == num_results) {//字典不存在则单独分词
+                val = min_weight_;
+
+                if (nextPos  < str_size) {
+                    val += max_weight[nextPos];
+                }
+                if ((nextPos <= str_size) && (val > max_weight[nextPos - 1])) {
+                    max_weight[nextPos - 1] = val;
+                    max_next[nextPos - 1] = nextPos;
+                }
+            } else {//字典存在则根据查询结果数量计算最大概率路径
+                for (std::size_t idx = 0; idx < num_results; ++idx) {
+                    auto & match = result_pairs[idx];
+                    if ((match.value < 0) || ((size_t)match.value >= elements_num_)) {
+                        continue;
+                    }
+                    auto const char_num = Utf8CharNum(&text_str[begin_pos], match.length);
+                    if (char_num > max_word_len) {
+                        continue;
+                    }
+                    auto pValue = &elements_ptr_[match.value];
+
+                    val = pValue->weight;
+                    if (1 == char_num) {
+                        if (nextPos  < str_size) {
+                            val += max_weight[nextPos];
+                        }
+                        if ((nextPos <= str_size) && (val > max_weight[nextPos - 1])) {
+                            max_weight[nextPos - 1] = val;
+                            max_next[nextPos - 1] = nextPos;
+                        }
+                    } else {
+                        if (nextPos - 1 + char_num  < str_size) {
+                            val += max_weight[nextPos - 1 + char_num];
+                        }
+                        if ((nextPos - 1 + char_num <= str_size) && (val > max_weight[nextPos - 1])) {
+                            max_weight[nextPos - 1] = val;
+                            max_next[nextPos - 1] = nextPos - 1 + char_num;
+                        }
+                    }
+                }
+            }
+        }
+        for (size_t i = 0; i < str_size;) {//统计动态规划结果
+            assert(max_next[i] > i);
+            assert(max_next[i] <= str_size);
+            WordRange wr(begin + i, begin + max_next[i] - 1);
+            words.push_back(wr);
+            i = max_next[i];
+        }
+    }
     double GetMinWeight() const {
         return min_weight_;
     }
@@ -284,7 +399,7 @@ private:
             //const int fd =::mkstemp(&tmp_filepath[0]);
             //原mkstemp用法有误，已修复--jxx20210519
             const int fd =::mkstemp((char *)tmp_filepath.data());
-            qDebug() << "mkstemp error:" << errno << tmp_filepath.data();
+            qDebug() << "mkstemp :" << errno << tmp_filepath.data();
             assert(fd >= 0);
             ::fchmod(fd, 0644);
 
