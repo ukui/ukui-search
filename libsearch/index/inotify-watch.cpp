@@ -49,7 +49,7 @@ bool InotifyWatch::removeWatch(const QString &path, bool removeFromDatabase)
         for(QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
             //        qDebug() << i.value();
             //            if(i.value().length() > path.length()) {
-            if(i.value().startsWith(path)) {
+            if(FileUtils::isOrUnder(i.value(), path)) {
                 qDebug() << "remove path: " << i.value();
                 inotify_rm_watch(m_inotifyFd, currentPath.key(path));
                 PendingFile f(i.value());
@@ -65,7 +65,8 @@ bool InotifyWatch::removeWatch(const QString &path, bool removeFromDatabase)
         for(QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
             //        qDebug() << i.value();
             if(i.value().length() > path.length()) {
-                if(i.value().startsWith(path)) {
+                if(FileUtils::isOrUnder(i.value(), path)) {
+//                if(i.value().startsWith(path + "/")) {
 //                    qDebug() << "remove path: " << i.value();
                     inotify_rm_watch(m_inotifyFd, currentPath.key(path));
                     currentPath.erase(i++);
