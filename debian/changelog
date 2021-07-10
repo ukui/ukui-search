@@ -1,3 +1,16 @@
+ukui-search (0.4.0+0709) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix: Path inclusive relation judgment incorrectly.
+    -修复了由于目录包含关系判断不当导致的一系列问题(黑名单屏蔽错误等)。
+  * Merge DAG and DP code; Preprocessing text content distinguish Chinese from
+    others.
+    - 优化关键词提取流程，缩短了一些索引所需的时间.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 09 Jul 2021 14:43:14 +0800
+
 ukui-search (0.4.0+0703) v101; urgency=medium
 
   * Bug 无
