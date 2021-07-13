@@ -1,3 +1,13 @@
+ukui-search (0.4.0+0710hw1) v101.hw; urgency=medium
+
+  * BUG号 65337-9A0, 63631
+  * 需求号 无
+  * 其他改动说明：
+  * Remove entry from ukui-menu.     
+    - 移除了开始菜单入口（开始菜单里的搜索应用显示）。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 10 Jul 2021 11:13:39 +0800
+
 ukui-search (0.4.0+0701hw1) v101; urgency=medium
 
   * BUG号 64138-990
