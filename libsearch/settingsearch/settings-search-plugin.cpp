@@ -1,6 +1,7 @@
 #include <QProcess>
 #include <QDomDocument>
 #include <QProcessEnvironment>
+#include <QWidget>
 #include "settings-search-plugin.h"
 #include "file-utils.h"
 using namespace Zeeker;
@@ -120,6 +121,16 @@ void SettingsSearchPlugin::openAction(int actionkey, QString key, int type)
     default:
         break;
     }
+}
+
+bool SettingsSearchPlugin::isPreviewEnable(QString key, int type)
+{
+    return false;
+}
+
+QWidget *SettingsSearchPlugin::previewPage(QString key, int type, QWidget *parent = nullptr)
+{
+    return nullptr;
 }
 
 /**

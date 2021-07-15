@@ -1,5 +1,7 @@
 #include "app-search-plugin.h"
 #include <gio/gdesktopappinfo.h>
+#include <QWidget>
+#include <QLabel>
 using namespace Zeeker;
 size_t AppSearchPlugin::uniqueSymbol = 0;
 QMutex  AppSearchPlugin::m_mutex;
@@ -87,6 +89,16 @@ void AppSearchPlugin::openAction(int actionkey, QString key, int type)
     default:
         break;
     }
+}
+
+bool AppSearchPlugin::isPreviewEnable(QString key, int type)
+{
+    return false;
+}
+
+QWidget *AppSearchPlugin::previewPage(QString key, int type, QWidget *parent = nullptr)
+{
+    return nullptr;
 }
 
 bool AppSearchPlugin::launch(const QString &path)

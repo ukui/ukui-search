@@ -25,6 +25,8 @@ public:
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type = 0);
+    bool isPreviewEnable(QString key, int type);
+    QWidget *previewPage(QString key, int type, QWidget *parent = nullptr);
 
 private:
     bool m_enable = true;
@@ -48,7 +50,8 @@ public:
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type = 0);
-
+    bool isPreviewEnable(QString key, int type);
+    QWidget *previewPage(QString key, int type, QWidget *parent = nullptr);
 private:
     bool m_enable = true;
     QList<SearchPluginIface::Actioninfo> m_actionInfo;
@@ -71,7 +74,8 @@ public:
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type = 0);
-
+    bool isPreviewEnable(QString key, int type);
+    QWidget *previewPage(QString key, int type, QWidget *parent = nullptr);
 private:
     bool m_enable = true;
     QList<SearchPluginIface::Actioninfo> m_actionInfo;
