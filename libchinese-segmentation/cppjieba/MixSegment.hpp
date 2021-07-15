@@ -123,64 +123,76 @@ public:
     virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, unordered_map<string, KeyWord>& res, bool hmm,
                      size_t) const override {
         vector<WordRange> words;
-        assert(end >= begin);
-        words.reserve(end - begin);
-        mpSeg_.CutRuneArray(begin, end, words);
-
         vector<WordRange> hmmRes;
-        hmmRes.reserve(end - begin);
+        assert(end >= begin);
+        if (3 == begin->len or 4 == begin->len) {
+            words.reserve(end - begin);
+            mpSeg_.CutRuneArray(begin, end, words);
+            hmmRes.reserve(words.size());
+        } else {
+            hmmRes.reserve(end - begin);
+        }
 
-        for (size_t i = 0; i < words.size(); i++) {
+        if (words.size() != 0) {//存在中文分词结果
+            for (size_t i = 0; i < words.size(); i++) {
 
-            string str = GetStringFromRunes(s, words[i].left, words[i].right);
+                string str = GetStringFromRunes(s, words[i].left, words[i].right);
 
-            if (stopWords_.find(str) != stopWords_.end()) {
-                continue;
-            }
-
-            if (words[i].left != words[i].right) {
-                res[str].offsets.push_back(words[i].left->offset);
-                res[str].weight += 1.0;
-                continue;
-            }
-            if (mpSeg_.IsUserDictSingleChineseWord(words[i].left->rune)
-                    || i == (words.size() - 1)) {//i++后如果是最后一个字符则直接push_back
                 if (stopWords_.find(str) != stopWords_.end()) {
                     continue;
                 }
-                res[str].offsets.push_back(words[i].left->offset);
-                res[str].weight += 1.0;
-                continue;
-            }
 
-            // if mp Get a single one and it is not in userdict, collect it in sequence
-            size_t j = i + 1; //当前i字符为单独的字符并且不在用户字典里（i字符不是最后一个字符），直接判定j字符
-
-            while (j < (words.size() - 1) && words[j].left == words[j].right &&
-                   !mpSeg_.IsUserDictSingleChineseWord(words[j].left->rune)) {
-                j++;
-            }
-
-            // Cut the sequence with hmm
-            assert(j - 1 >= i);
-            // TODO
-            hmmSeg_.CutRuneArray(words[i].left, words[j - 1].left + 1, hmmRes);
-
-            //put hmm result to result
-            for (size_t k = 0; k < hmmRes.size(); k++) {
-                string hmmStr = GetStringFromRunes(s, hmmRes[k].left, hmmRes[k].right);
-                if (IsSingleWord(hmmStr) || stopWords_.find(hmmStr) != stopWords_.end()) {
+                if (words[i].left != words[i].right) {
+                    res[str].offsets.push_back(words[i].left->offset);
+                    res[str].weight += 1.0;
                     continue;
                 }
-                res[hmmStr].offsets.push_back(hmmRes[k].left->offset);
-                res[hmmStr].weight += 1.0;
+                if (mpSeg_.IsUserDictSingleChineseWord(words[i].left->rune)
+                        || i == (words.size() - 1)) {//i++后如果是最后一个字符则直接push_back
+                    if (stopWords_.find(str) != stopWords_.end()) {
+                        continue;
+                    }
+                    res[str].offsets.push_back(words[i].left->offset);
+                    res[str].weight += 1.0;
+                    continue;
+                }
+
+                // if mp Get a single one and it is not in userdict, collect it in sequence
+                size_t j = i + 1; //当前i字符为单独的字符并且不在用户字典里（i字符不是最后一个字符），直接判定j字符
+
+                while (j < (words.size() - 1)
+                       && words[j].left == words[j].right
+                       && !mpSeg_.IsUserDictSingleChineseWord(words[j].left->rune)) {
+                    j++;
+                }
+
+                // Cut the sequence with hmm
+                assert(j - 1 >= i);
+                // TODO
+                hmmSeg_.CutRuneArray(words[i].left, words[j - 1].left + 1, hmmRes);
+
+                //put hmm result to result
+                for (size_t k = 0; k < hmmRes.size(); k++) {
+                    string hmmStr = GetStringFromRunes(s, hmmRes[k].left, hmmRes[k].right);
+                    if (IsSingleWord(hmmStr) || stopWords_.find(hmmStr) != stopWords_.end()) {
+                        continue;
+                    }
+                    res[hmmStr].offsets.push_back(hmmRes[k].left->offset);
+                    res[hmmStr].weight += 1.0;
+                }
+
+                //clear tmp vars
+                hmmRes.clear();
+
+                //let i jump over this piece
+                i = j - 1;
             }
-
-            //clear tmp vars
-            hmmRes.clear();
-
-            //let i jump over this piece
-            i = j - 1;
+        } else {//不存在中文分词结果
+            for (size_t i = 0; i < (size_t)(end - begin); i++) {
+                string str = s.substr((begin+i)->offset, (begin+i)->len);
+                res[str].offsets.push_back((begin+i)->offset);
+                res[str].weight += 1.0;
+            }
         }
     }
 

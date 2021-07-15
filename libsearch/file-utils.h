@@ -67,6 +67,8 @@ public:
     static QString getFileName(const QString &);
     static QString getAppName(const QString &);
     static QString getSettingName(const QString &);
+    //A is or under B
+    static bool isOrUnder(QString pathA, QString pathB);
 
     //chinese character to pinyin
     static QMap<QString, QStringList> map_chinese2pinyin;

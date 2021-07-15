@@ -19,3 +19,4 @@ src.depends = libsearch
 
 CONFIG += ordered
 
+
