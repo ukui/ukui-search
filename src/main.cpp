@@ -180,6 +180,12 @@ int main(int argc, char *argv[]) {
         syslog(LOG_ERR, "集中管控目录未挂载!!\n");
         ::sleep(1);
     }
+    while(!QFileInfo("/media/用户保险箱").permission(QFileDevice::WriteUser)) {
+        qWarning() << "/media/用户保险箱 无写入权限!!";
+        printf("/media/用户保险箱 无写入权限!!");
+        syslog(LOG_ERR, "/media/用户保险箱 无写入权限!!\n");
+        ::sleep(1);
+    }
 
 
     // Output log to file
