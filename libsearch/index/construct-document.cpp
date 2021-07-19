@@ -108,12 +108,14 @@ void ConstructDocumentForContent::run() {
     FileReader::getTextContent(m_path, content);
     if(content.isEmpty())
         return;
-    QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
-    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
+    //QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
+    //QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
     Document doc;
     doc.setData(content);
-    doc.setUniqueTerm(uniqueterm);
-    doc.addTerm(upTerm);
+    //doc.setUniqueTerm(uniqueterm);
+    doc.setUniqueTerm(FileUtils::makeDocUterm(m_path));
+    //doc.addTerm(upTerm);
+    doc.addTerm(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
     doc.addValue(m_path);
 
     //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.
@@ -131,6 +133,7 @@ void ConstructDocumentForContent::run() {
     IndexGenerator::_mutex_doc_list_content.unlock();
     content.clear();
     content.squeeze();
+
     term.clear();
     term.shrink_to_fit();
     return;

@@ -179,6 +179,22 @@ QString FileUtils::getSettingName(const QString& setting) {
     return setting.right(setting.length() - setting.lastIndexOf("/") - 1);
 }
 
+bool FileUtils::isOrUnder(QString pathA, QString pathB)
+{
+    if(!pathA.startsWith("/"))
+        pathA.prepend("/");
+    if(!pathB.startsWith("/"))
+        pathB.prepend("/");
+
+    if(pathA.length() < pathB.length())
+        return false;
+
+    if(pathA == pathB || pathA.startsWith(pathB + "/"))
+        return true;
+
+    return false;
+}
+
 
 void FileUtils::loadHanziTable(const QString &fileName) {
     QFile file(fileName);
@@ -484,8 +500,10 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
     if(!file.open(QuaZip::mdUnzip))
         return;
 
-    if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
+    if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive)) {
+        file.close();
         return;
+    }
     QuaZipFile fileR(&file);
 
     fileR.open(QIODevice::ReadOnly);        //读取方式打开
@@ -546,8 +564,10 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
         if(i.startsWith(prefix))
             fileList << i;
     }
-    if(fileList.isEmpty())
+    if(fileList.isEmpty()) {
+        file.close();
         return;
+    }
 
     for(int i = 0; i < fileList.size(); ++i){
         QString name = prefix + QString::number(i + 1) + ".xml";
@@ -651,8 +671,10 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
     if(!file.open(QuaZip::mdUnzip))
         return;
 
-    if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
+    if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive)) {
+        file.close();
         return;
+    }
     QuaZipFile fileR(&file);
 
     fileR.open(QIODevice::ReadOnly);
@@ -707,8 +729,10 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
 
 void FileUtils::getPdfTextContent(QString &path, QString &textcontent) {
     Poppler::Document *doc = Poppler::Document::load(path);
-    if(doc->isLocked())
+    if(doc->isLocked()) {
+        delete doc;
         return;
+    }
     const QRectF qf;
     int pageNum = doc->numPages();
     for(int i = 0; i < pageNum; ++i) {

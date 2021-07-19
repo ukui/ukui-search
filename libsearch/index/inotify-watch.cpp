@@ -1,6 +1,7 @@
 #include "inotify-watch.h"
 #include <sys/ioctl.h>
 #include <malloc.h>
+#include <errno.h>
 using namespace Zeeker;
 static InotifyWatch* global_instance_InotifyWatch = nullptr;
 
@@ -48,7 +49,7 @@ bool InotifyWatch::removeWatch(const QString &path, bool removeFromDatabase)
         for(QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
             //        qDebug() << i.value();
             //            if(i.value().length() > path.length()) {
-            if(i.value().startsWith(path)) {
+            if(FileUtils::isOrUnder(i.value(), path)) {
                 qDebug() << "remove path: " << i.value();
                 inotify_rm_watch(m_inotifyFd, currentPath.key(path));
                 PendingFile f(i.value());
@@ -64,8 +65,9 @@ bool InotifyWatch::removeWatch(const QString &path, bool removeFromDatabase)
         for(QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
             //        qDebug() << i.value();
             if(i.value().length() > path.length()) {
-                if(i.value().startsWith(path)) {
-                    qDebug() << "remove path: " << i.value();
+                if(FileUtils::isOrUnder(i.value(), path)) {
+//                if(i.value().startsWith(path + "/")) {
+//                    qDebug() << "remove path: " << i.value();
                     inotify_rm_watch(m_inotifyFd, currentPath.key(path));
                     currentPath.erase(i++);
                 } else {
@@ -135,7 +137,17 @@ void InotifyWatch::run()
     if (m_inotifyFd > 0) {
         qDebug()<<"Inotify init success!";
     } else {
-        Q_ASSERT_X(0, "InotifyWatch", "Failed to initialize inotify");
+        qWarning() << "Inotify init fail! Now try add inotify_user_instances.";
+        UkuiSearchQDBus usQDBus;
+        usQDBus.addInotifyUserInstances(128);
+        m_inotifyFd = inotify_init();
+        if (m_inotifyFd > 0) {
+            qDebug()<<"Inotify init success!";
+        } else {
+            printf("errno=%d\n",errno);
+            printf("Mesg:%s\n",strerror(errno));
+            Q_ASSERT_X(0, "InotifyWatch", "Failed to initialize inotify");
+        }
     }
 
 //    this->addWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
@@ -208,10 +220,12 @@ void InotifyWatch::run()
             assert(false);
         }
     }
+    qDebug() << "Leave watch loop";
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "3");
         removeWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation), false);
     }
+    close(m_inotifyFd);
 //    fcntl(m_inotifyFd, F_SETFD, FD_CLOEXEC);
 //    m_notifier = new QSocketNotifier(m_inotifyFd, QSocketNotifier::Read);
 //    connect(m_notifier, &QSocketNotifier::activated, this, &InotifyWatch::slotEvent, Qt::DirectConnection);

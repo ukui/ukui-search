@@ -21,12 +21,14 @@
 #define UKUISEARCHQDBUS_H
 
 #include <QDBusInterface>
+#include <QDBusReply>
 namespace Zeeker {
 class UkuiSearchQDBus {
 public:
     UkuiSearchQDBus();
     ~UkuiSearchQDBus();
     void setInotifyMaxUserWatches();
+    int addInotifyUserInstances(int addNum);
 private:
     QDBusInterface* tmpSystemQDBusInterface;
 };

@@ -22,10 +22,11 @@ public:
                      RuneStrArray::const_iterator end,
                      vector<WordRange>& words,
                      bool, size_t max_word_len) const override {
-        vector<DatDag> dags;
-        dictTrie_->Find(begin, end, dags, max_word_len);//依据DAG词典生成DAG--jxx
-        CalcDP(dags);//动态规划（Dynamic Programming，DP），根据DAG计算最优动态规划路径--jxx
-        CutByDag(begin, end, dags, words);//依据DAG最优路径分词--jxx
+//        vector<DatDag> dags;
+//        dictTrie_->Find(begin, end, dags, max_word_len);//依据DAG词典生成DAG--jxx
+//        CalcDP(dags);//动态规划（Dynamic Programming，DP），根据DAG计算最优动态规划路径--jxx
+//        CutByDag(begin, end, dags, words);//依据DAG最优路径分词--jxx
+        dictTrie_->Find(begin, end, words, max_word_len);
     }
 
     virtual void CutWithSentence(const string& s, RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, vector<string>& res, bool hmm,
@@ -48,6 +49,7 @@ public:
         return dictTrie_->IsUserDictSingleChineseWord(value);
     }
 private:
+/*
     void CalcDP(vector<DatDag>& dags) const {
         double val(0);
         for (auto rit = dags.rbegin(); rit != dags.rend(); rit++) {
@@ -69,6 +71,35 @@ private:
                 if ((nextPos <= dags.size()) && (val > rit->max_weight)) {
                     rit->max_weight = val;
                     rit->max_next = nextPos;
+                }
+            }
+        }
+    }
+*/
+/*  倒叙方式重写CalcDP函数，初步测试未发现问题*/
+    void CalcDP(vector<DatDag>& dags) const {
+        double val(0);
+        size_t size = dags.size();
+
+        for (size_t i = 0; i < size; i++) {
+            dags[size - 1 - i].max_next = -1;
+            dags[size - 1 - i].max_weight = MIN_DOUBLE;
+
+            for (const auto & it : dags[size - 1 - i].nexts) {
+                const auto nextPos = it.first;
+                val = dictTrie_->GetMinWeight();
+
+                if (nullptr != it.second) {
+                    val = it.second->weight;
+                }
+
+                if (nextPos  < dags.size()) {
+                    val += dags[nextPos].max_weight;
+                }
+
+                if ((nextPos <= dags.size()) && (val > dags[size - 1 - i].max_weight)) {
+                    dags[size - 1 - i].max_weight = val;
+                    dags[size - 1 - i].max_next = nextPos;
                 }
             }
         }
