@@ -5,7 +5,6 @@
         <file>res/icons/close.svg</file>
         <file>res/qt-translations/qt_zh_CN.qm</file>
         <file>res/icons/net-disconnected.svg</file>
-        <file>res/translations/zh_CN.qm</file>
         <file>res/icons/system-search.symbolic.png</file>
     </qresource>
 </RCC>

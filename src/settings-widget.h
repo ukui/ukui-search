@@ -62,7 +62,6 @@ private:
     MotifWmHints m_hints;
 #endif
 
-
     //标题栏
     QVBoxLayout * m_mainLyt = nullptr;
     QFrame * m_contentFrame = nullptr;

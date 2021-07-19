@@ -19,36 +19,31 @@
  */
 #include "traverse_bfs.h"
 using namespace Zeeker;
-Traverse_BFS::Traverse_BFS(const QStringList& pathList) {
-    for(QString path : pathList) {
-        Q_ASSERT('/' == path.at(0));
-    }
-
-    this->m_pathList = pathList;
+Traverse_BFS::Traverse_BFS(const QString& path) {
+    Q_ASSERT('/' == path.at(0));
+    this->path = path;
 }
 
 void Traverse_BFS::Traverse() {
     QQueue<QString> bfs;
-    for(QString path : m_pathList) {
-        bfs.enqueue(path);
-        QFileInfoList list;
-        QDir dir;
-        // QDir::Hidden
-        dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
-        dir.setSorting(QDir::DirsFirst);
-        while(!bfs.empty()) {
-            dir.setPath(bfs.dequeue());
-            list = dir.entryInfoList();
-            for(auto i : list) {
-                if(i.isDir() && (!(i.isSymLink()))) {
-                    bfs.enqueue(i.absoluteFilePath());
-                }
-                DoSomething(i);
+    bfs.enqueue(this->path);
+    QFileInfoList list;
+    QDir dir;
+    // QDir::Hidden
+    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+    dir.setSorting(QDir::DirsFirst);
+    while(!bfs.empty()) {
+        dir.setPath(bfs.dequeue());
+        list = dir.entryInfoList();
+        for(auto i : list) {
+            if(i.isDir() && (!(i.isSymLink()))) {
+                bfs.enqueue(i.absoluteFilePath());
             }
+            DoSomething(i);
         }
     }
 }
 
-void Traverse_BFS::setPath(const QStringList &pathList) {
-    this->m_pathList = pathList;
+void Traverse_BFS::setPath(const QString& path) {
+    this->path = path;
 }

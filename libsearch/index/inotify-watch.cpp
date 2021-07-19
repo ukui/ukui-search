@@ -5,15 +5,15 @@
 using namespace Zeeker;
 static InotifyWatch* global_instance_InotifyWatch = nullptr;
 
-Zeeker::InotifyWatch *Zeeker::InotifyWatch::getInstance(const QStringList &pathList)
+Zeeker::InotifyWatch *Zeeker::InotifyWatch::getInstance(const QString &path)
 {
     if(!global_instance_InotifyWatch) {
-        global_instance_InotifyWatch = new InotifyWatch(pathList);
+        global_instance_InotifyWatch = new InotifyWatch(path);
     }
     return global_instance_InotifyWatch;
 }
 
-Zeeker::InotifyWatch::InotifyWatch(const QStringList &pathList): Traverse_BFS(pathList)
+Zeeker::InotifyWatch::InotifyWatch(const QString &path): Traverse_BFS(path)
 {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;
@@ -98,21 +98,18 @@ void InotifyWatch::DoSomething(const QFileInfo &info)
 void InotifyWatch::firstTraverse()
 {
     QQueue<QString> bfs;
-    for(QString path : this->m_pathList) {
-        this->addWatch(path);
-        bfs.enqueue(path);
-        QFileInfoList list;
-        QDir dir;
-        dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
-        dir.setSorting(QDir::DirsFirst);
-        while(!bfs.empty()) {
-            dir.setPath(bfs.dequeue());
-            list = dir.entryInfoList();
-            for(auto i : list) {
-                if(i.isDir() && (!(i.isSymLink()))) {
-                    this->addWatch(i.absoluteFilePath());
-                    bfs.enqueue(i.absoluteFilePath());
-                }
+    bfs.enqueue(this->path);
+    QFileInfoList list;
+    QDir dir;
+    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+    dir.setSorting(QDir::DirsFirst);
+    while(!bfs.empty()) {
+        dir.setPath(bfs.dequeue());
+        list = dir.entryInfoList();
+        for(auto i : list) {
+            if(i.isDir() && (!(i.isSymLink()))) {
+                this->addWatch(i.absoluteFilePath());
+                bfs.enqueue(i.absoluteFilePath());
             }
         }
     }
@@ -150,8 +147,8 @@ void InotifyWatch::run()
         }
     }
 
-//    this->addWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-//    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    this->addWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     this->firstTraverse();
 
     int fifo_fd;
@@ -399,7 +396,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
                 if(event->mask & IN_ISDIR) {
                     if(!QFileInfo(path).isSymLink()){
                         addWatch(path);
-                        setPath(QStringList(path));
+                        setPath(path);
                         Traverse();
                     }
                 }
@@ -439,7 +436,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
 
                     if(!QFileInfo(path).isSymLink()){
                         addWatch(path);
-                        setPath(QStringList(path));
+                        setPath(path);
                         Traverse();
                     }
                 } else {

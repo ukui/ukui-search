@@ -36,41 +36,23 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QThread>
 #include <QUrl>
-#include <list>
-#include <queue>
 
 #include "file-utils.h"
 #include "global-settings.h"
 #include "chinese-segmentation.h"
 
 
-//#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
-//#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
+#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
+#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
-#define INDEX_PATH "/media/用户保险箱/.ukui-search/index_data"
-#define CONTENT_INDEX_PATH "/media/用户保险箱/.ukui-search/content_index_data"
 namespace Zeeker {
-struct SearchResultInfo{
-    std::string filePath;
-    std::string fileName;
-    std::list<std::string> snippets;
-    std::string time;
-    std::string type;
-    size_t size;
-};
 
 class LIBSEARCH_EXPORT SearchManager : public QObject {
     friend class FileSearch;
     friend class FileContentSearch;
-    friend class FileSearchV4;
-    friend class FileContentSearchV4;
     Q_OBJECT
 public:
     explicit SearchManager(QObject *parent = nullptr);
-    void searchLocalFiles(std::string keyword,
-                          std::queue<SearchResultInfo> *searchResultFile,
-                          std::queue<SearchResultInfo> *searchResultDir,
-                          std::queue<SearchResultInfo> *searchResultContent);
     ~SearchManager();
 
     static int getCurrentIndexCount();
@@ -78,7 +60,6 @@ public:
     static size_t uniqueSymbol1;
     static size_t uniqueSymbol2;
     static size_t uniqueSymbol3;
-
     static QMutex m_mutex1;
     static QMutex m_mutex2;
     static QMutex m_mutex3;
@@ -146,44 +127,6 @@ private:
     int getResult(Xapian::MSet &result, std::string &keyWord);
 
     QQueue<QPair<QString, QStringList>> *m_search_result = nullptr;
-    size_t m_uniqueSymbol;
-    QString m_keyword;
-    int m_begin = 0;
-    int m_num = 20;
-};
-
-class FileSearchV4 : public QRunnable
-{
-public:
-    explicit FileSearchV4(std::queue<SearchResultInfo> *searchResult,size_t uniqueSymbol, QString keyword, QString value,unsigned slot = 1,int begin = 0, int num = 20);
-    ~FileSearchV4();
-protected:
-    void run();
-private:
-    int keywordSearchfile();
-    Xapian::Query creatQueryForFileSearch(Xapian::Database &db);
-    int getResult(Xapian::MSet &result);
-
-    std::queue<SearchResultInfo> *m_search_result = nullptr;
-    QString m_value;
-    unsigned m_slot = 1;
-    size_t m_uniqueSymbol;
-    QString m_keyword;
-    int m_begin = 0;
-    int m_num = 20;
-};
-class FileContentSearchV4 : public QRunnable
-{
-public:
-    explicit FileContentSearchV4(std::queue<SearchResultInfo> *searchResult,size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
-    ~FileContentSearchV4();
-protected:
-    void run();
-private:
-    int keywordSearchContent();
-    int getResult(Xapian::MSet &result,std::string &keyWord);
-
-    std::queue<SearchResultInfo> *m_search_result = nullptr;
     size_t m_uniqueSymbol;
     QString m_keyword;
     int m_begin = 0;

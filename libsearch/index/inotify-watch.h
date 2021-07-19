@@ -20,7 +20,7 @@ class InotifyWatch : public QThread, public Traverse_BFS
 {
     Q_OBJECT
 public:
-    static InotifyWatch* getInstance(const QStringList &pathList);
+    static InotifyWatch* getInstance(const QString& path);
 
     bool addWatch(const QString &path);
     bool removeWatch(const QString &path, bool removeFromDatabase = true);
@@ -34,7 +34,7 @@ protected:
 private Q_SLOTS:
     void slotEvent(char *buf, ssize_t len);
 private:
-    explicit InotifyWatch(const QStringList &pathList);
+    explicit InotifyWatch(const QString& path);
     ~InotifyWatch();
     char * filter();
     void eventProcess(int socket);

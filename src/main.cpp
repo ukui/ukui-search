@@ -174,19 +174,6 @@ int main(int argc, char *argv[]) {
         syslog(LOG_ERR, "Home is not exits!!\n");
         ::sleep(1);
     }
-    while(!QDir("/media/用户保险箱").exists()) {
-        qWarning() << "集中管控目录未挂载!!";
-        printf("集中管控目录未挂载!!");
-        syslog(LOG_ERR, "集中管控目录未挂载!!\n");
-        ::sleep(1);
-    }
-    while(!QFileInfo("/media/用户保险箱").permission(QFileDevice::WriteUser)) {
-        qWarning() << "/media/用户保险箱 无写入权限!!";
-        printf("/media/用户保险箱 无写入权限!!");
-        syslog(LOG_ERR, "/media/用户保险箱 无写入权限!!\n");
-        ::sleep(1);
-    }
-
 
     // Output log to file
     qInstallMessageHandler(messageOutput);
@@ -276,8 +263,7 @@ int main(int argc, char *argv[]) {
     // Load translations
     QTranslator translator;
     try {
-//        if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw -1;
-        if (! translator.load(":/res/translations/zh_CN.qm")) throw -1;
+        if(! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw - 1;
         app.installTranslator(&translator);
     } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
@@ -315,11 +301,9 @@ int main(int argc, char *argv[]) {
     if(QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
 //        w->moveToPanel();
         centerToScreen(w);
-
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         XAtomHelper::getInstance()->setWindowMotifHint(w->winId(), w->m_hints);
 #endif
-
         w->show();
     }
 

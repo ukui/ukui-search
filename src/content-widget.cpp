@@ -62,8 +62,8 @@ void ContentWidget::initUI() {
     QPalette pal = palette();
     QPalette scroll_bar_pal = palette();
 //    pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
-//    pal.setColor(QPalette::Window, QColor(0, 0, 0, 0)); //使用此palette的窗口背景将为透明
-//    scroll_bar_pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
+    pal.setColor(QPalette::Window, QColor(0, 0, 0, 0)); //使用此palette的窗口背景将为透明
+    scroll_bar_pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
     m_homePage = new QWidget(this);
     m_homePageLyt = new QVBoxLayout(m_homePage);
     m_homePageLyt->setSpacing(0);
@@ -108,8 +108,8 @@ void ContentWidget::initUI() {
     m_resultDetailArea->setFrameShape(QFrame::NoFrame);
     m_resultListArea->setPalette(pal);
     m_resultDetailArea->setPalette(pal);
-//    m_resultListArea->verticalScrollBar()->setPalette(scroll_bar_pal);
-//    m_resultDetailArea->verticalScrollBar()->setPalette(scroll_bar_pal);
+    m_resultListArea->verticalScrollBar()->setPalette(scroll_bar_pal);
+    m_resultDetailArea->verticalScrollBar()->setPalette(scroll_bar_pal);
     this->addWidget(m_homePage);
     this->addWidget(m_resultPage);
 
