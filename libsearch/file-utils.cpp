@@ -26,7 +26,8 @@ using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
 size_t FileUtils::_current_index_count = 0;
 unsigned short FileUtils::_index_status = 0;
-FileUtils::SearchMethod FileUtils::searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
+//FileUtils::SearchMethod FileUtils::searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
+FileUtils::SearchMethod FileUtils::searchMethod = FileUtils::SearchMethod::INDEXSEARCH;
 QMap<QString, QStringList> FileUtils::map_chinese2pinyin = QMap<QString, QStringList>();
 
 FileUtils::FileUtils() {
@@ -180,9 +181,9 @@ QString FileUtils::getSettingName(const QString& setting) {
 
 bool FileUtils::isOrUnder(QString pathA, QString pathB)
 {
-    if(pathA[0] != "/")
+    if(!pathA.startsWith("/"))
         pathA.prepend("/");
-    if(pathB[0] != "/")
+    if(!pathB.startsWith("/"))
         pathB.prepend("/");
 
     if(pathA.length() < pathB.length())

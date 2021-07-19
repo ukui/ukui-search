@@ -34,7 +34,7 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 SettingsWidget::SettingsWidget(QWidget *parent) : QWidget(parent) {
 //    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search-settings"));
-//    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 //    this->setAttribute(Qt::WA_TranslucentBackground);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
@@ -226,11 +226,6 @@ void SettingsWidget::initUi() {
 //    m_mainLyt->addWidget(m_bottomBtnFrame);
 
     m_contentLyt->addStretch();
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
-    this->m_titleFrame->hide();
-    setAttribute(Qt::WA_DeleteOnClose);
-#endif
 }
 
 /**

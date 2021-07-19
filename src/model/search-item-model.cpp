@@ -66,6 +66,7 @@ int SearchItemModel::rowCount(const QModelIndex& index) const {
  * @param index 条目的索引
  * @return model显示的列数
  */
+
 int SearchItemModel::columnCount(const QModelIndex& index) const {
     return index.isValid() ? 0 : 1;
 }

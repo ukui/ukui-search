@@ -44,13 +44,16 @@
 #include <QKeyEvent>
 #include <QGSettings/QGSettings>
 #include <QSystemTrayIcon>
+
 #include <QTimer>
+
 
 #include "content-widget.h"
 #include "input-box.h"
 #include "index/index-generator.h"
 #include "libsearch.h"
 #include "search-app-thread.h"
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include "xatom-helper.h"
 #endif
@@ -62,6 +65,7 @@
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
+
 
 namespace Zeeker {
 class SearchResult;
@@ -89,6 +93,7 @@ public:
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     MotifWmHints m_hints;
 #endif
+
 
 private:
 
@@ -119,7 +124,7 @@ private:
     SearchManager* m_searcher = nullptr;
     SettingsMatch *m_settingsMatch = nullptr;
     QSystemTrayIcon *m_sys_tray_icon = nullptr;
-    CreateIndexAskDialog * m_askDialog = nullptr;
+//    CreateIndexAskDialog * m_askDialog = nullptr;
     bool m_isAskDialogVisible = false;
 
     QTimer * m_askTimer = nullptr; //询问是否创建索引弹窗弹出的计时器
@@ -129,9 +134,9 @@ private:
 
     SearchMethodManager m_searchMethodManager;
 
-    void setSearchMethod(const bool&);
+//    void setSearchMethod(const bool&);
     double getTransparentData();
-    void initTimer();
+//    void initTimer();
     bool tryHideMainwindow();
 
 protected:
@@ -141,7 +146,7 @@ protected:
     void initUi();
 
 Q_SIGNALS:
-    void searchMethodChanged(FileUtils::SearchMethod);
+//    void searchMethodChanged(FileUtils::SearchMethod);
     void webEngineChanged();
 
 public Q_SLOTS:

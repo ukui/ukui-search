@@ -94,6 +94,8 @@ void SearchListView::setList(QStringList list) {
         this->blockSignals(false);
     }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+    qDebug()<<"setList rowheight"<< rowheight;
+    qDebug()<<"setList indexRowSizeHint"<<indexRowSizeHint(QModelIndex());
     this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
 }
 
@@ -134,6 +136,7 @@ void SearchListView::refresh()
  * @brief SearchListView::setKeyword 设置关键词
  * @param keyword 关键词
  */
+
 void SearchListView::setKeyword(QString keyword) {
     m_styleDelegate->setSearchKeyword(keyword);
 }

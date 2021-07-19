@@ -16,6 +16,6 @@ HEADERS += \
     $$PWD/SegmentBase.hpp \
     $$PWD/SegmentTagged.hpp \
     $$PWD/TextRankExtractor.hpp \
-    $$PWD/Trie.hpp \
+#    $$PWD/Trie.hpp \
     $$PWD/Unicode.hpp
 include(limonp/limonp.pri)

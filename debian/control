@@ -11,14 +11,12 @@ Build-Depends: debhelper (>=9.0.0),
                qtscript5-dev,
                qttools5-dev-tools,
                libxapian-dev,
-               libquazip5-dev(>=0.7.6-6build1),
+               libquazip5-dev,
                libglib2.0-dev,
-               libkf5windowsystem-dev,
                libgsettings-qt-dev,
                libqt5x11extras5-dev,
                libuchardet-dev,
-               libpoppler-qt5-dev,
-               libukui-log4qt-dev
+               libpoppler-qt5-dev
 Standards-Version: 4.5.0
 Homepage: https://www.ukui.org/
 Vcs-Git:  https://github.com/ukui/ukui-search.git
@@ -43,6 +41,14 @@ Description: Libraries for chinese-segmentation
  .
  This package contains a few runtime libraries needed by 
  libsearch.
+
+Package: libchinese-segmentation-dev
+Section: libdevel
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         libchinese-segmentation0 (= ${binary:Version})
+Description: Libraries for chinese-segmentation(development files).
 
 Package: libukui-search0
 Section: libs

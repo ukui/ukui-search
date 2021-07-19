@@ -29,11 +29,11 @@
 #include <QPalette>
 #include <QScreen>
 #include <QStyleOption>
+
+//#include <KWindowEffects>
 #include <QPixmap>
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-#include <KWindowEffects>
-#include "kwindowsystem.h"
-#endif
+//#include "kwindowsystem.h"
+
 #include "qt-single-application.h"
 
 //#include "inotify-manager.h"
@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
     initUi();
-    initTimer();
+//    initTimer();
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 //    setProperty("useStyleWindowManager", false); //禁止拖动
@@ -92,6 +92,15 @@ MainWindow::MainWindow(QWidget *parent) :
     setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
     KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 #endif
+    connect(qApp, &QApplication::paletteChanged, this, [ = ](const QPalette & pal) {
+        this->setPalette(pal);
+        this->update();
+        Q_FOREACH(QWidget *widget, this->findChildren<QWidget *>()) {
+            if(widget) {
+                widget->update();
+            }
+        }
+    });
 
     m_search_result_file = new QQueue<QString>;
     m_search_result_dir = new QQueue<QString>;
@@ -137,9 +146,10 @@ MainWindow::MainWindow(QWidget *parent) :
             }
         }
     });
-    QObject::connect(this, &MainWindow::searchMethodChanged, this, [ = ](FileUtils::SearchMethod sm) {
-        this->m_searchMethodManager.searchMethod(sm);
-    });
+//    QObject::connect(this, &MainWindow::searchMethodChanged, this, [ = ](FileUtils::SearchMethod sm) {
+//        this->m_searchMethodManager.searchMethod(sm);
+//    });
+    this->m_searchMethodManager.searchMethod(FileUtils::SearchMethod::INDEXSEARCH);
 
 }
 
@@ -158,14 +168,14 @@ MainWindow::~MainWindow() {
         m_settingsWidget = NULL;
     }
 #endif
-    if(m_askDialog) {
-        delete m_askDialog;
-        m_askDialog = NULL;
-    }
-    if(m_askTimer) {
-        delete m_askTimer;
-        m_askTimer = NULL;
-    }
+//    if(m_askDialog) {
+//        delete m_askDialog;
+//        m_askDialog = NULL;
+//    }
+//    if(m_askTimer) {
+//        delete m_askTimer;
+//        m_askTimer = NULL;
+//    }
     if(m_search_gsettings) {
         delete m_search_gsettings;
         m_search_gsettings = NULL;
@@ -273,14 +283,17 @@ void MainWindow::initUi() {
             }
 //            m_seach_app_thread->stop();
             m_contentFrame->setCurrentIndex(0);
-            m_askTimer->stop();
+//            m_askTimer->stop();
         } else {
             m_contentFrame->setCurrentIndex(1);
             QTimer::singleShot(10, this, [ = ]() {
                 startSearch(text);
+//                //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
+//                if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
+//                    m_askTimer->start();
             });
         }
-        m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
+//        m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
     });
 
     //初始化homepage
@@ -288,34 +301,34 @@ void MainWindow::initUi() {
     m_contentFrame->initHomePage();
 
     //创建索引询问弹窗
-    m_askDialog = new CreateIndexAskDialog(this);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-    MotifWmHints ask_dialog_hints;
-    ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-    ask_dialog_hints.functions = MWM_FUNC_ALL;
-    ask_dialog_hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
-#endif
-    connect(m_askDialog, &CreateIndexAskDialog::closed, this, [ = ]() {
-        m_isAskDialogVisible = false;
-    });
-    connect(m_askDialog, &CreateIndexAskDialog::btnClicked, this, [ = ](const bool & create_index, const bool & no_longer_ask) {
-        if(no_longer_ask) {
-            GlobalSettings::getInstance()->setValue(ENABLE_CREATE_INDEX_ASK_DIALOG, "false");
-        } else {
-            GlobalSettings::getInstance()->setValue(ENABLE_CREATE_INDEX_ASK_DIALOG, "true");
-        }
-        if(create_index) {
-            if(m_search_gsettings && m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
-                m_search_gsettings->set(SEARCH_METHOD_KEY, true);
-            } else {
-                //调用创建索引接口
-                Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
-                //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
-                m_researchTimer->start();
-            }
-        }
-    });
+//    m_askDialog = new CreateIndexAskDialog(this);
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+//    MotifWmHints ask_dialog_hints;
+//    ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+//    ask_dialog_hints.functions = MWM_FUNC_ALL;
+//    ask_dialog_hints.decorations = MWM_DECOR_BORDER;
+//    XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
+//#endif
+//    connect(m_askDialog, &CreateIndexAskDialog::closed, this, [ = ]() {
+//        m_isAskDialogVisible = false;
+//    });
+//    connect(m_askDialog, &CreateIndexAskDialog::btnClicked, this, [ = ](const bool & create_index, const bool & no_longer_ask) {
+//        if(no_longer_ask) {
+//            GlobalSettings::getInstance()->setValue(ENABLE_CREATE_INDEX_ASK_DIALOG, "false");
+//        } else {
+//            GlobalSettings::getInstance()->setValue(ENABLE_CREATE_INDEX_ASK_DIALOG, "true");
+//        }
+//        if(create_index) {
+//            if(m_search_gsettings && m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
+//                m_search_gsettings->set(SEARCH_METHOD_KEY, true);
+//            } else {
+//                //调用创建索引接口
+//                Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
+//                //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
+//                m_researchTimer->start();
+//            }
+//        }
+//    });
     installEventFilter(this);
 }
 
@@ -386,9 +399,9 @@ void MainWindow::startSearch(QString keyword) {
     if(! m_search_result_thread->isRunning()) {
         m_search_result_thread->start();
     }
-    //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
-    if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
-        m_askTimer->start();
+//    //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
+//    if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
+//        m_askTimer->start();
 
     m_contentFrame->setKeyword(keyword);
 
@@ -486,28 +499,28 @@ void MainWindow::centerToScreen(QWidget* widget) {
 }
 
 void MainWindow::initGsettings() {
-    const QByteArray id(UKUI_SEARCH_SCHEMAS);
-    if(QGSettings::isSchemaInstalled(id)) {
-        m_search_gsettings = new QGSettings(id);
-        connect(m_search_gsettings, &QGSettings::changed, this, [ = ](const QString & key) {
-            if(key == SEARCH_METHOD_KEY) {
-                bool is_index_search = m_search_gsettings->get(SEARCH_METHOD_KEY).toBool();
-                this->setSearchMethod(is_index_search);
-            } else if(key == WEB_ENGINE_KEY) {
-                QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
-                GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
-                Q_EMIT this->webEngineChanged();
-            }
-        });
-        if(m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
-            bool is_index_search = m_search_gsettings->get(SEARCH_METHOD_KEY).toBool();
-            this->setSearchMethod(is_index_search);
-        }
-        if(m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
-            QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
-            GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
-        }
-    }
+//    const QByteArray id(UKUI_SEARCH_SCHEMAS);
+//    if(QGSettings::isSchemaInstalled(id)) {
+//        m_search_gsettings = new QGSettings(id);
+//        connect(m_search_gsettings, &QGSettings::changed, this, [ = ](const QString & key) {
+//            if(key == SEARCH_METHOD_KEY) {
+//                bool is_index_search = m_search_gsettings->get(SEARCH_METHOD_KEY).toBool();
+//                this->setSearchMethod(is_index_search);
+//            } else if(key == WEB_ENGINE_KEY) {
+//                QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
+//                GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
+//                Q_EMIT this->webEngineChanged();
+//            }
+//        });
+//        if(m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
+//            bool is_index_search = m_search_gsettings->get(SEARCH_METHOD_KEY).toBool();
+//            this->setSearchMethod(is_index_search);
+//        }
+//        if(m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
+//            QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
+//            GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
+//        }
+//    }
 }
 
 //使用GSetting获取当前窗口应该使用的透明度
@@ -515,26 +528,26 @@ double MainWindow::getTransparentData() {
     return GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble();
 }
 
-void MainWindow::initTimer() {
-    m_askTimer = new QTimer;
-    m_askTimer->setInterval(5 * 1000);
-    connect(m_askTimer, &QTimer::timeout, this, [ = ]() {
-        if(this->isVisible()) {
-            m_isAskDialogVisible = true;
-            m_askDialog->show();
-            m_currentSearchAsked = true;
-        }
-        m_askTimer->stop();
-    });
-    m_researchTimer = new QTimer;
-    m_researchTimer->setInterval(10 * 1000);
-    connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
-        if(this->isVisible()) {
-            startSearch(m_searchLayout->text());
-        }
-        m_researchTimer->stop();
-    });
-}
+//void MainWindow::initTimer() {
+//    m_askTimer = new QTimer;
+//    m_askTimer->setInterval(5 * 1000);
+//    connect(m_askTimer, &QTimer::timeout, this, [ = ]() {
+//        if(this->isVisible()) {
+//            m_isAskDialogVisible = true;
+//            m_askDialog->show();
+//            m_currentSearchAsked = true;
+//        }
+//        m_askTimer->stop();
+//    });
+//    m_researchTimer = new QTimer;
+//    m_researchTimer->setInterval(10 * 1000);
+//    connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
+//        if(this->isVisible()) {
+//            searchContent(m_searchLayout->text());
+//        }
+//        m_researchTimer->stop();
+//    });
+//}
 
 /**
  * @brief MainWindow::tryHideMainwindow 尝试隐藏主界面并停止部分未完成的动作，重置部分状态值
@@ -543,13 +556,13 @@ bool MainWindow::tryHideMainwindow()
 {
     if (!m_isAskDialogVisible) {
         qDebug()<<"Mainwindow will be hidden";
-        m_currentSearchAsked = false;
+//        m_currentSearchAsked = false;
         this->hide();
-        m_askTimer->stop();
-        m_researchTimer->stop();
+//        m_askTimer->stop();
+//        m_researchTimer->stop();
         m_contentFrame->closeWebView();
         m_search_result_thread->requestInterruption();
-        m_search_result_thread->quit();
+//        m_search_result_thread->quit();
         return true;
     } else {
         //有上层弹窗未关闭，不允许隐藏主界面
@@ -562,17 +575,17 @@ bool MainWindow::tryHideMainwindow()
  * @brief MainWindow::setSearchMethod 设置搜索模式
  * @param is_index_search true为索引搜索，false为暴力搜索
  */
-void MainWindow::setSearchMethod(const bool &is_index_search) {
-    if(is_index_search) {
-        //调用创建索引接口
-        Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
-        //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
-        m_researchTimer->start();
-    } else {
-        Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::DIRECTSEARCH);
-        m_researchTimer->stop();
-    }
-}
+//void MainWindow::setSearchMethod(const bool &is_index_search) {
+//    if(is_index_search) {
+//        //调用创建索引接口
+//        Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
+//        //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
+//        m_researchTimer->start();
+//    } else {
+//        Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::DIRECTSEARCH);
+//        m_researchTimer->stop();
+//    }
+//}
 
 /**
  * @brief MainWindow::nativeEvent 处理窗口失焦事件
@@ -617,11 +630,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->type() == QEvent::ActivationChange) {
-        if(QApplication::activeWindow() != this) {
-            tryHideMainwindow();
-        }
-    }
+//    if (event->type() == QEvent::ActivationChange) {
+//        if(QApplication::activeWindow() != this) {
+//            tryHideMainwindow();
+//        }
+//    }
     return QMainWindow::eventFilter(watched,event);
 }
 
