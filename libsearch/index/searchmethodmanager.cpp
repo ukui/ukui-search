@@ -2,12 +2,7 @@
 using namespace Zeeker;
 SearchMethodManager::SearchMethodManager()
 {
-    QStringList pathList;
-    pathList.append("/media/用户保险箱");
-    pathList.append("/media/邮件保险箱");
-    pathList.append("/media/公共保险箱");
-    pathList.append("/media/备份保险箱");
-    m_iw = InotifyWatch::getInstance(pathList);
+    m_iw = InotifyWatch::getInstance(HOME_PATH);
 }
 
 void SearchMethodManager::searchMethod(FileUtils::SearchMethod sm) {

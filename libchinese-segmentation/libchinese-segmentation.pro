@@ -40,11 +40,12 @@ unix {
     target.path = $$[QT_INSTALL_LIBS]
 }
 !isEmpty(target.path): INSTALLS += target
-header.path = /usr/include/chinese-seg/
-header.files = *.h
-header_cppjieba.path = /usr/include/chinese-seg/cppjieba/
-header_cppjieba.files = cppjieba/*
-INSTALLS += header header_cppjieba
+
+    header.path = /usr/include/chinese-seg/
+    header.files += *.h
+    headercppjieba.path = /usr/include/chinese-seg/cppjieba/
+    headercppjieba.files = cppjieba/*
+    INSTALLS += header headercppjieba
 
 #DISTFILES += \
 #    jiaba/jieba.pri

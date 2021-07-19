@@ -71,6 +71,7 @@ unix {
     INSTALLS += header
 }
 
+
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
 

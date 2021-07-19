@@ -31,10 +31,8 @@
 #include <QStandardPaths>
 #include <malloc.h>
 
-//#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
-//#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
-#define INDEX_PATH "/media/用户保险箱/.ukui-search/index_data"
-#define CONTENT_INDEX_PATH "/media/用户保险箱/.ukui-search/content_index_data"
+#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
+#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
 using namespace Zeeker;
 

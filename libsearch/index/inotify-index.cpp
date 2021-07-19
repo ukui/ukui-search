@@ -38,7 +38,7 @@
     QFileInfo fi(tmp); \
     if(!fi.isSymLink()){ \
         AddWatch(tmp); \
-        setPath(QStringList(tmp)); \
+        setPath(tmp); \
         Traverse(); \
     }
 
@@ -47,7 +47,7 @@
     CREATE_FILE_NAME_INDEX \
     CREATE_FILE_CONTENT_INDEX
 using namespace Zeeker;
-InotifyIndex::InotifyIndex(const QStringList &pathList) : Traverse_BFS(pathList) {
+InotifyIndex::InotifyIndex(const QString& path) : Traverse_BFS(path) {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
@@ -62,21 +62,18 @@ InotifyIndex::~InotifyIndex() {
 
 void InotifyIndex::firstTraverse() {
     QQueue<QString> bfs;
-    for(QString path : this->m_pathList) {
-        this->AddWatch(path);
-        bfs.enqueue(path);
-        QFileInfoList list;
-        QDir dir;
-        dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
-        dir.setSorting(QDir::DirsFirst);
-        while(!bfs.empty()) {
-            dir.setPath(bfs.dequeue());
-            list = dir.entryInfoList();
-            for(auto i : list) {
-                if(i.isDir() && (!(i.isSymLink()))) {
-                    this->AddWatch(i.absoluteFilePath());
-                    bfs.enqueue(i.absoluteFilePath());
-                }
+    bfs.enqueue(this->path);
+    QFileInfoList list;
+    QDir dir;
+    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+    dir.setSorting(QDir::DirsFirst);
+    while(!bfs.empty()) {
+        dir.setPath(bfs.dequeue());
+        list = dir.entryInfoList();
+        for(auto i : list) {
+            if(i.isDir() && (!(i.isSymLink()))) {
+                this->AddWatch(i.absoluteFilePath());
+                bfs.enqueue(i.absoluteFilePath());
             }
         }
     }
@@ -252,8 +249,8 @@ void InotifyIndex::run() {
     m_fd = inotify_init();
     qDebug() << "m_fd----------->" << m_fd;
 
-//    this->AddWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-//    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    this->AddWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     this->firstTraverse();
 
     int fifo_fd;
