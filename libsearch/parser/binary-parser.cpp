@@ -5205,8 +5205,10 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
     for(iIndex = 0, ulTmp = ulSbdStartblock;
             iIndex < (int)tBBDLen && ulTmp != END_OF_CHAIN;
             iIndex++, ulTmp = aulBBD[ulTmp]) {
-        if(ulTmp >= (ULONG)tBBDLen)
+        if(ulTmp >= (ULONG)tBBDLen) {
             qWarning("The Big Block Depot is damaged");
+            return -1;
+        }
 
         aulSbdList[iIndex] = ulTmp;
     }
@@ -5349,7 +5351,10 @@ bool KBinaryParser::RunParser(QString strFile, QString &content) {
         (void)fclose(pFile);
         return false;
     }
-    InitDocOle(pFile, lFileSize, content);
+    // If InitDocOle failed, -1 will be returned.
+    if(InitDocOle(pFile, lFileSize, content)) {
+        qWarning() << "InitDocOle failed!" << strFile;
+    }
     fclose(pFile);
     return true;
 }
