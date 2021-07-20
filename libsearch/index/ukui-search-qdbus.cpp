@@ -42,5 +42,15 @@ void UkuiSearchQDBus::setInotifyMaxUserWatches() {
     // sysctl
     this->tmpSystemQDBusInterface->call("setInotifyMaxUserWatchesStep2");
     // /etc/sysctl.conf
-//    this->tmpSystemQDBusInterface->call("setInotifyMaxUserWatchesStep3");
+    //    this->tmpSystemQDBusInterface->call("setInotifyMaxUserWatchesStep3");
+}
+
+int UkuiSearchQDBus::addInotifyUserInstances(int addNum)
+{
+    QDBusReply<int> reply = tmpSystemQDBusInterface->call("AddInotifyMaxUserInstance", addNum);
+    if(reply.isValid()) {
+        qDebug() << "Set inotify_max_user_instances to" << reply.value();
+    } else {
+        qWarning() << "Call AddInotifyMaxUserInstance failed!";
+    }
 }

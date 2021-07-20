@@ -4963,7 +4963,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 
                 if(bUsesUnicode) {
                     ushort* usAucData = (ushort*)ptaucBytes;
-                    content.append(QString::fromUtf16(usAucData).replace("\r", ""));
+                    content.append(QString::fromUtf16(usAucData).replace("\n", "").replace("\r", " "));
                     usAucData = (ushort*)xfree((void*)usAucData);
                     ptaucBytes = NULL;
                     if(content.length() >= 682666) //20480000/3
@@ -5066,7 +5066,7 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
         } else {
             ushort* usData = (ushort*)chData;
 
-            content.append(QString::fromUtf16(usData).replace("\r", ""));
+            content.append(QString::fromUtf16(usData).replace("\n", "").replace("\r", " "));
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
             if(content.length() >= 682666) //20480000/3
@@ -5131,7 +5131,7 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
                 return -1;
             ushort* usData = (ushort*)chData;
 
-            content.append(QString::fromUtf16(usData).replace("\r", ""));
+            content.append(QString::fromUtf16(usData).replace("\n", "").replace("\r", " "));
 
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
@@ -5205,8 +5205,10 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
     for(iIndex = 0, ulTmp = ulSbdStartblock;
             iIndex < (int)tBBDLen && ulTmp != END_OF_CHAIN;
             iIndex++, ulTmp = aulBBD[ulTmp]) {
-        if(ulTmp >= (ULONG)tBBDLen)
+        if(ulTmp >= (ULONG)tBBDLen) {
             qWarning("The Big Block Depot is damaged");
+            return -1;
+        }
 
         aulSbdList[iIndex] = ulTmp;
     }
@@ -5349,7 +5351,10 @@ bool KBinaryParser::RunParser(QString strFile, QString &content) {
         (void)fclose(pFile);
         return false;
     }
-    InitDocOle(pFile, lFileSize, content);
+    // If InitDocOle failed, -1 will be returned.
+    if(InitDocOle(pFile, lFileSize, content)) {
+        qWarning() << "InitDocOle failed!" << strFile;
+    }
     fclose(pFile);
     return true;
 }

@@ -28,9 +28,8 @@
 #include "file-utils.h"
 #include "index-generator.h"
 #include "chinese-segmentation.h"
-#include "construct-document.h"
 #include <QStandardPaths>
-
+#include <malloc.h>
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
@@ -39,10 +38,14 @@ using namespace Zeeker;
 
 static IndexGenerator *global_instance = nullptr;
 QMutex  IndexGenerator::m_mutex;
-QList<Document> *Zeeker::_doc_list_path;
-QMutex  Zeeker::_mutex_doc_list_path;
-QList<Document> *Zeeker::_doc_list_content;
-QMutex  Zeeker::_mutex_doc_list_content;
+//QVector<Document> *Zeeker::_doc_list_path;
+//QMutex  Zeeker::_mutex_doc_list_path;
+//QVector<Document> *Zeeker::_doc_list_content;
+//QMutex  Zeeker::_mutex_doc_list_content;
+QMutex  IndexGenerator::_mutex_doc_list_path;
+QMutex  IndexGenerator::_mutex_doc_list_content;
+QVector<Document> IndexGenerator::_doc_list_path = QVector<Document>();
+QVector<Document> IndexGenerator::_doc_list_content = QVector<Document>();
 
 IndexGenerator *IndexGenerator::getInstance(bool rebuild, QObject *parent) {
     QMutexLocker locker(&m_mutex);
@@ -61,45 +64,33 @@ bool IndexGenerator::setIndexdataPath() {
 
 //文件名索引
 bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList) {
-//    FileUtils::_index_status |= 0x1;
-//    qDebug() << messageList->size();
     HandlePathList(messageList);
-    if(_doc_list_path == NULL) {
+//    if(_doc_list_path == NULL) {
+//        return false;
+//    }
+    if(IndexGenerator::_doc_list_path.isEmpty()) {
         return false;
     }
     qDebug() << "begin creatAllIndex";
-//    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "0");
     try {
-//        m_indexer = new Xapian::TermGenerator();
-//        m_indexer.set_database(*m_database_path);
-        //可以实现拼写纠正
-//        m_indexer->set_flags(Xapian::TermGenerator::FLAG_SPELLING);
-//        m_indexer.set_stemming_strategy(Xapian::TermGenerator::STEM_SOME);
-
-//        int count =0;
-
-        for(auto i : *_doc_list_path) {
+        for(auto i : IndexGenerator::_doc_list_path) {
 
             insertIntoDatabase(i);
-//            if(++count > 8999){
-//                count = 0;
-//                m_database_path->commit();
-//            }
         }
         m_database_path->commit();
     } catch(const Xapian::Error &e) {
         qWarning() << "creatAllIndex fail!" << QString::fromStdString(e.get_description());
         //need a record
-       IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "1");
-//        FileUtils::_index_status &= ~0x1;
+        IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "1");
         assert(false);
     }
-//    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
     qDebug() << "finish creatAllIndex";
-//    FileUtils::_index_status &= ~0x1;
-    _doc_list_path->clear();
-    delete _doc_list_path;
-    _doc_list_path = nullptr;
+    IndexGenerator::_doc_list_path.clear();
+    IndexGenerator::_doc_list_path.squeeze();
+    QVector<Document>().swap(IndexGenerator::_doc_list_path);
+
+//    delete _doc_list_path;
+//    _doc_list_path = nullptr;
     return true;
 }
 //文件内容索引
@@ -107,16 +98,19 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
 //    FileUtils::_index_status |= 0x2;
     HandlePathList(messageList);
     qDebug() << "begin creatAllIndex for content";
-    if(_doc_list_content == NULL) {
+//    if(_doc_list_content == NULL) {
+//        return false;
+//    }
+    if(IndexGenerator::_doc_list_content.isEmpty()) {
         return false;
     }
-    int size = _doc_list_content->size();
+    int size = IndexGenerator::_doc_list_content.size();
     qDebug() << "begin creatAllIndex for content" << size;
     if(!size == 0) {
 //        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "0");
         try {
             int count = 0;
-            for(auto i : *_doc_list_content) {
+            for(auto i : IndexGenerator::_doc_list_content) {
                 insertIntoContentDatabase(i);
                 if(++count > 999) {
                     count = 0;
@@ -133,9 +127,11 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
 //        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "2");
 //        FileUtils::_index_status &= ~0x2;
         qDebug() << "finish creatAllIndex for content";
-        _doc_list_content->clear();
-        delete _doc_list_content;
-        _doc_list_content = nullptr;
+
+        IndexGenerator::_doc_list_content.clear();
+        IndexGenerator::_doc_list_content.squeeze();
+        QVector<Document>().swap(IndexGenerator::_doc_list_content);
+        malloc_trim(0);
     }
     Q_EMIT this->transactionFinished();
     return true;
@@ -297,7 +293,7 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList) {
     return;
 
 }
-
+//deprecated
 Document IndexGenerator::GenerateDocument(const QVector<QString> &list) {
     Document doc;
 //    qDebug()<<QString::number(quintptr(QThread::currentThreadId()));
@@ -342,7 +338,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list) {
     return doc;
 
 }
-
+//deprecated
 Document IndexGenerator::GenerateContentDocument(const QString &path) {
 //    构造文本索引的document
     QString content;
@@ -389,7 +385,7 @@ bool IndexGenerator::isIndexdataExist() {
 
 
 }
-
+//deprecated
 QStringList IndexGenerator::IndexSearch(QString indexText) {
     QStringList searchResult;
     try {
@@ -455,96 +451,60 @@ QStringList IndexGenerator::IndexSearch(QString indexText) {
     return searchResult;
 }
 
-//void IndexGenerator::setSynonym()
-//{
-//    try
-//    {
-//        m_database_path->add_synonym("a","A");
-//        m_database_path->add_synonym("b","B");
-//        m_database_path->add_synonym("c","C");
-//        m_database_path->add_synonym("d","D");
-//        m_database_path->add_synonym("e","A");
-//        m_database_path->add_synonym("f","F");
-//        m_database_path->add_synonym("g","G");
-//        m_database_path->add_synonym("h","H");
-//        m_database_path->add_synonym("i","I");
-//        m_database_path->add_synonym("j","J");
-//        m_database_path->add_synonym("k","K");
-//        m_database_path->add_synonym("l","L");
-//        m_database_path->add_synonym("m","M");
-//        m_database_path->add_synonym("n","N");
-//        m_database_path->add_synonym("o","O");
-//        m_database_path->add_synonym("p","P");
-//        m_database_path->add_synonym("q","Q");
-//        m_database_path->add_synonym("r","R");
-//        m_database_path->add_synonym("s","S");
-//        m_database_path->add_synonym("t","T");
-//        m_database_path->add_synonym("u","U");
-//        m_database_path->add_synonym("v","V");
-//        m_database_path->add_synonym("w","W");
-//        m_database_path->add_synonym("x","X");
-//        m_database_path->add_synonym("y","Y");
-//        m_database_path->add_synonym("z","Z");
-
-//        m_database_path->add_synonym("A","a");
-//        m_database_path->add_synonym("B","b");
-//        m_database_path->add_synonym("C","c");
-//        m_database_path->add_synonym("D","d");
-//        m_database_path->add_synonym("E","e");
-//        m_database_path->add_synonym("F","f");
-//        m_database_path->add_synonym("G","g");
-//        m_database_path->add_synonym("H","h");
-//        m_database_path->add_synonym("I","i");
-//        m_database_path->add_synonym("J","j");
-//        m_database_path->add_synonym("K","k");
-//        m_database_path->add_synonym("L","a");
-//        m_database_path->add_synonym("M","m");
-//        m_database_path->add_synonym("N","n");
-//        m_database_path->add_synonym("O","o");
-//        m_database_path->add_synonym("P","p");
-//        m_database_path->add_synonym("Q","q");
-//        m_database_path->add_synonym("R","r");
-//        m_database_path->add_synonym("S","s");
-//        m_database_path->add_synonym("T","t");
-//        m_database_path->add_synonym("U","u");
-//        m_database_path->add_synonym("V","v");
-//        m_database_path->add_synonym("W","w");
-//        m_database_path->add_synonym("X","x");
-//        m_database_path->add_synonym("Y","y");
-//        m_database_path->add_synonym("Z","z");
-//        m_database_path->commit();
-//    }
-//    catch(const Xapian::Error &e)
-//    {
-//        qWarning() <<QString::fromStdString(e.get_description());
-//    }
-//}
-
 bool IndexGenerator::deleteAllIndex(QStringList *pathlist) {
     QStringList *list = pathlist;
     if(list->isEmpty())
         return true;
-    for(int i = 0; i < list->size(); i++) {
-        QString doc = list->at(i);
-        std::string uniqueterm = FileUtils::makeDocUterm(doc);
-        try {
+    try {
+        for(int i = 0; i < list->size(); i++) {
+            QString doc = list->at(i);
+            std::string uniqueterm = FileUtils::makeDocUterm(doc);
             qDebug() << "--delete start--";
             m_database_path->delete_document(uniqueterm);
             m_database_content->delete_document(uniqueterm);
             qDebug() << "delete path" << doc;
             qDebug() << "delete md5" << QString::fromStdString(uniqueterm);
-            m_database_path->commit();
-            m_database_content->commit();
             qDebug() << "--delete finish--";
-//            qDebug()<<"m_database_path->get_lastdocid()!!!"<<m_database_path->get_lastdocid();
-
-//            qDebug()<<"m_database_path->get_doccount()!!!"<<m_database_path->get_doccount();
-        } catch(const Xapian::Error &e) {
-            qWarning() << QString::fromStdString(e.get_description());
-            return false;
+            //            qDebug()<<"m_database_path->get_lastdocid()!!!"<<m_database_path->get_lastdocid();
+            //            qDebug()<<"m_database_path->get_doccount()!!!"<<m_database_path->get_doccount();
         }
+        m_database_path->commit();
+        m_database_content->commit();
+    } catch(const Xapian::Error &e) {
+        qWarning() << QString::fromStdString(e.get_description());
+        return false;
     }
+
     Q_EMIT this->transactionFinished();
+    return true;
+}
+
+bool IndexGenerator::updateIndex(QVector<PendingFile> *pendingFiles)
+{
+    QQueue<QVector<QString>> *fileIndexInfo = new QQueue<QVector<QString>>;
+    QQueue<QString> *fileContentIndexInfo = new QQueue<QString>;
+    QStringList *deleteList = new  QStringList;
+    for(PendingFile file : *pendingFiles) {
+        if(file.shouldRemoveIndex()) {
+
+            deleteList->append(file.path());
+            continue;
+        }
+        fileIndexInfo->append(QVector<QString>() << file.path().section("/" , -1) << file.path() << QString(file.isDir() ? "1" : "0"));
+        if((!file.path().split(".").isEmpty()) && (true == targetFileTypeMap[file.path().section("/" , -1) .split(".").last()]))
+            fileContentIndexInfo->append(file.path());
+    }
+    if(!deleteList->isEmpty()) {
+        deleteAllIndex(deleteList);
+    }
+    if(!fileIndexInfo->isEmpty()) {
+        creatAllIndex(fileIndexInfo);
+    }
+    if(!fileContentIndexInfo->isEmpty()) {
+        creatAllIndex(fileContentIndexInfo);
+    }
+    delete fileIndexInfo;
+    delete fileContentIndexInfo;
     return true;
 }
 

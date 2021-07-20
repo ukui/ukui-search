@@ -1,23 +1,4 @@
-/*
- * Copyright (C) 2020, KylinSoft Co., Ltd.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- *
- */
-#ifndef CPPJIEBA_UNICODE_H
-#define CPPJIEBA_UNICODE_H
+#pragma once
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -25,6 +6,7 @@
 #include <vector>
 #include <ostream>
 #include "limonp/LocalVector.hpp"
+#include "limonp/StringUtil.hpp"
 
 namespace cppjieba {
 
@@ -32,6 +14,12 @@ using std::string;
 using std::vector;
 
 typedef uint32_t Rune;
+
+struct KeyWord {
+    string word;
+    vector<size_t> offsets;
+    double weight;
+}; // struct Word
 
 struct Word {
     string word;
@@ -50,28 +38,28 @@ inline std::ostream& operator << (std::ostream& os, const Word& w) {
     return os << "{\"word\": \"" << w.word << "\", \"offset\": " << w.offset << "}";
 }
 
-struct RuneStr {
+struct RuneInfo {
     Rune rune;
     uint32_t offset;
     uint32_t len;
-    uint32_t unicode_offset;
-    uint32_t unicode_length;
-    RuneStr(): rune(0), offset(0), len(0), unicode_offset(0), unicode_length(0) {
+    uint32_t unicode_offset = 0;
+    uint32_t unicode_length = 0;
+    RuneInfo(): rune(0), offset(0), len(0) {
     }
-    RuneStr(Rune r, uint32_t o, uint32_t l)
-        : rune(r), offset(o), len(l), unicode_offset(0), unicode_length(0) {
+    RuneInfo(Rune r, uint32_t o, uint32_t l)
+        : rune(r), offset(o), len(l) {
     }
-    RuneStr(Rune r, uint32_t o, uint32_t l, uint32_t unicode_offset, uint32_t unicode_length)
+    RuneInfo(Rune r, uint32_t o, uint32_t l, uint32_t unicode_offset, uint32_t unicode_length)
         : rune(r), offset(o), len(l), unicode_offset(unicode_offset), unicode_length(unicode_length) {
     }
-}; // struct RuneStr
+}; // struct RuneInfo
 
-inline std::ostream& operator << (std::ostream& os, const RuneStr& r) {
+inline std::ostream& operator << (std::ostream& os, const RuneInfo& r) {
     return os << "{\"rune\": \"" << r.rune << "\", \"offset\": " << r.offset << ", \"len\": " << r.len << "}";
 }
 
-typedef limonp::LocalVector<Rune> Unicode;
-typedef limonp::LocalVector<struct RuneStr> RuneStrArray;
+typedef limonp::LocalVector<Rune> RuneArray;
+typedef limonp::LocalVector<struct RuneInfo> RuneStrArray;
 
 // [left, right]
 struct WordRange {
@@ -81,129 +69,157 @@ struct WordRange {
         : left(l), right(r) {
     }
     size_t Length() const {
-        return right - left + 1;
+        return right - left;
     }
+
     bool IsAllAscii() const {
-        for(RuneStrArray::const_iterator iter = left; iter <= right; ++iter) {
-            if(iter->rune >= 0x80) {
+        for (RuneStrArray::const_iterator iter = left; iter <= right; ++iter) {
+            if (iter->rune >= 0x80) {
                 return false;
             }
         }
+
         return true;
     }
 }; // struct WordRange
 
-struct RuneStrLite {
-    uint32_t rune;
-    uint32_t len;
-    RuneStrLite(): rune(0), len(0) {
-    }
-    RuneStrLite(uint32_t r, uint32_t l): rune(r), len(l) {
-    }
-}; // struct RuneStrLite
 
-inline RuneStrLite DecodeRuneInString(const char* str, size_t len) {
-    RuneStrLite rp(0, 0);
-    if(str == NULL || len == 0) {
-        return rp;
-    }
-    if(!(str[0] & 0x80)) {  // 0xxxxxxx
+inline bool DecodeRunesInString(const string& s, RuneArray& arr) {
+    arr.clear();
+    return limonp::Utf8ToUnicode32(s, arr);
+}
+
+inline RuneArray DecodeRunesInString(const string& s) {
+    RuneArray result;
+    DecodeRunesInString(s, result);
+    return result;
+}
+
+//重写DecodeRunesInString函数，将实现放入函数中降低内存占用加快处理流程--jxx20210518
+inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
+
+    uint32_t tmp;
+    uint32_t offset = 0;
+    runes.clear();
+    uint32_t len(0);
+    for (size_t i = 0; i < s.size();) {
+      if (!(s.data()[i] & 0x80)) { // 0xxxxxxx
         // 7bit, total 7bit
-        rp.rune = (uint8_t)(str[0]) & 0x7f;
-        rp.len = 1;
-    } else if((uint8_t)str[0] <= 0xdf &&  1 < len) {
-        // 110xxxxxx
+        tmp = (uint8_t)(s.data()[i]) & 0x7f;
+        i++;
+        len = 1;
+      } else if ((uint8_t)s.data()[i] <= 0xdf && i + 1 < s.size()) { // 110xxxxxx
         // 5bit, total 5bit
-        rp.rune = (uint8_t)(str[0]) & 0x1f;
+        tmp = (uint8_t)(s.data()[i]) & 0x1f;
 
         // 6bit, total 11bit
-        rp.rune <<= 6;
-        rp.rune |= (uint8_t)(str[1]) & 0x3f;
-        rp.len = 2;
-    } else if((uint8_t)str[0] <= 0xef && 2 < len) { // 1110xxxxxx
+        tmp <<= 6;
+        tmp |= (uint8_t)(s.data()[i+1]) & 0x3f;
+        i += 2;
+        len = 2;
+      } else if((uint8_t)s.data()[i] <= 0xef && i + 2 < s.size()) { // 1110xxxxxx
         // 4bit, total 4bit
-        rp.rune = (uint8_t)(str[0]) & 0x0f;
+        tmp = (uint8_t)(s.data()[i]) & 0x0f;
 
         // 6bit, total 10bit
-        rp.rune <<= 6;
-        rp.rune |= (uint8_t)(str[1]) & 0x3f;
+        tmp <<= 6;
+        tmp |= (uint8_t)(s.data()[i+1]) & 0x3f;
 
         // 6bit, total 16bit
-        rp.rune <<= 6;
-        rp.rune |= (uint8_t)(str[2]) & 0x3f;
+        tmp <<= 6;
+        tmp |= (uint8_t)(s.data()[i+2]) & 0x3f;
 
-        rp.len = 3;
-    } else if((uint8_t)str[0] <= 0xf7 && 3 < len) { // 11110xxxx
+        i += 3;
+        len = 3;
+      } else if((uint8_t)s.data()[i] <= 0xf7 && i + 3 < s.size()) { // 11110xxxx
         // 3bit, total 3bit
-        rp.rune = (uint8_t)(str[0]) & 0x07;
+        tmp = (uint8_t)(s.data()[i]) & 0x07;
 
         // 6bit, total 9bit
-        rp.rune <<= 6;
-        rp.rune |= (uint8_t)(str[1]) & 0x3f;
+        tmp <<= 6;
+        tmp |= (uint8_t)(s.data()[i+1]) & 0x3f;
 
         // 6bit, total 15bit
-        rp.rune <<= 6;
-        rp.rune |= (uint8_t)(str[2]) & 0x3f;
+        tmp <<= 6;
+        tmp |= (uint8_t)(s.data()[i+2]) & 0x3f;
 
         // 6bit, total 21bit
-        rp.rune <<= 6;
-        rp.rune |= (uint8_t)(str[3]) & 0x3f;
+        tmp <<= 6;
+        tmp |= (uint8_t)(s.data()[i+3]) & 0x3f;
 
-        rp.len = 4;
-    } else {
-        rp.rune = 0;
-        rp.len = 0;
-    }
-    return rp;
-}
-
-inline bool DecodeRunesInString(const char* s, size_t len, RuneStrArray& runes) {
-    runes.clear();
-    runes.reserve(len / 2);
-    for(uint32_t i = 0, j = 0; i < len;) {
-        RuneStrLite rp = DecodeRuneInString(s + i, len - i);
-        if(rp.len == 0) {
-            runes.clear();
-            return false;
-        }
-        RuneStr x(rp.rune, i, rp.len, j, 1);
-        runes.push_back(x);
-        i += rp.len;
-        ++j;
-    }
-    return true;
-}
-
-inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
-    return DecodeRunesInString(s.c_str(), s.size(), runes);
-}
-
-inline bool DecodeRunesInString(const char* s, size_t len, Unicode& unicode) {
-    unicode.clear();
-    RuneStrArray runes;
-    if(!DecodeRunesInString(s, len, runes)) {
+        i += 4;
+        len = 4;
+      } else {
         return false;
-    }
-    unicode.reserve(runes.size());
-    for(size_t i = 0; i < runes.size(); i++) {
-        unicode.push_back(runes[i].rune);
+      }
+      RuneInfo x(tmp, offset, len, i, 1);
+      runes.push_back(x);
+      offset += len;
     }
     return true;
+}
+
+class RunePtrWrapper {
+public:
+    const RuneInfo * m_ptr = nullptr;
+
+public:
+    explicit RunePtrWrapper(const RuneInfo * p) : m_ptr(p) {}
+
+    uint32_t operator *() {
+        return m_ptr->rune;
+    }
+
+    RunePtrWrapper operator ++(int) {
+        m_ptr ++;
+        return RunePtrWrapper(m_ptr);
+    }
+
+    bool operator !=(const RunePtrWrapper & b) const {
+        return this->m_ptr != b.m_ptr;
+    }
+};
+
+inline string EncodeRunesToString(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end) {
+    string str;
+    RunePtrWrapper it_begin(begin), it_end(end);
+    limonp::Unicode32ToUtf8(it_begin, it_end, str);
+    return str;
+}
+
+inline void EncodeRunesToString(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end, string& str) {
+    RunePtrWrapper it_begin(begin), it_end(end);
+    limonp::Unicode32ToUtf8(it_begin, it_end, str);
+    return;
+}
+
+class Unicode32Counter {
+public :
+    size_t length = 0;
+    void clear() {
+        length = 0;
+    }
+    void push_back(uint32_t) {
+        ++length;
+    }
+};
+
+inline size_t Utf8CharNum(const char * str, size_t length) {
+    Unicode32Counter c;
+
+    if (limonp::Utf8ToUnicode32(str, length, c)) {
+        return c.length;
+    }
+
+    return 0;
+}
+
+inline size_t Utf8CharNum(const string & str) {
+    return Utf8CharNum(str.data(), str.size());
 }
 
 inline bool IsSingleWord(const string& str) {
-    RuneStrLite rp = DecodeRuneInString(str.c_str(), str.size());
-    return rp.len == str.size();
-}
-
-inline bool DecodeRunesInString(const string& s, Unicode& unicode) {
-    return DecodeRunesInString(s.c_str(), s.size(), unicode);
-}
-
-inline Unicode DecodeRunesInString(const string& s) {
-    Unicode result;
-    DecodeRunesInString(s, result);
-    return result;
+    return Utf8CharNum(str) == 1;
 }
 
 
@@ -217,29 +233,31 @@ inline Word GetWordFromRunes(const string& s, RuneStrArray::const_iterator left,
 
 inline string GetStringFromRunes(const string& s, RuneStrArray::const_iterator left, RuneStrArray::const_iterator right) {
     assert(right->offset >= left->offset);
-    uint32_t len = right->offset - left->offset + right->len;
-    return s.substr(left->offset, len);
+    //uint32_t len = right->offset - left->offset + right->len;
+    return s.substr(left->offset, right->offset - left->offset + right->len);
 }
 
 inline void GetWordsFromWordRanges(const string& s, const vector<WordRange>& wrs, vector<Word>& words) {
-    for(size_t i = 0; i < wrs.size(); i++) {
+    for (size_t i = 0; i < wrs.size(); i++) {
         words.push_back(GetWordFromRunes(s, wrs[i].left, wrs[i].right));
     }
 }
 
-inline vector<Word> GetWordsFromWordRanges(const string& s, const vector<WordRange>& wrs) {
-    vector<Word> result;
-    GetWordsFromWordRanges(s, wrs, result);
-    return result;
+inline void GetWordsFromWordRanges(const string& s, const vector<WordRange>& wrs, vector<string>& words) {
+    for (size_t i = 0; i < wrs.size(); i++) {
+        words.push_back(GetStringFromRunes(s, wrs[i].left, wrs[i].right));
+    }
 }
 
 inline void GetStringsFromWords(const vector<Word>& words, vector<string>& strs) {
     strs.resize(words.size());
-    for(size_t i = 0; i < words.size(); ++i) {
+
+    for (size_t i = 0; i < words.size(); ++i) {
         strs[i] = words[i].word;
     }
 }
 
+const size_t MAX_WORD_LENGTH = 512;
+
 } // namespace cppjieba
 
-#endif // CPPJIEBA_UNICODE_H

@@ -35,6 +35,9 @@
 #include <QMap>
 #include <QDomDocument>
 #include <QQueue>
+#include <QDesktopServices>
+#include <QApplication>
+#include <QClipboard>
 
 #include <quazip/quazipfile.h>
 #include <stdio.h>
@@ -67,6 +70,8 @@ public:
     static QString getFileName(const QString &);
     static QString getAppName(const QString &);
     static QString getSettingName(const QString &);
+    //A is or under B
+    static bool isOrUnder(QString pathA, QString pathB);
 
     //chinese character to pinyin
     static QMap<QString, QStringList> map_chinese2pinyin;
@@ -81,6 +86,9 @@ public:
     static void getXlsxTextContent(QString &path, QString &textcontent);
     static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
+
+    static bool openFile(QString &path, bool openInDir = false);
+    static bool copyPath(QString &path);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;

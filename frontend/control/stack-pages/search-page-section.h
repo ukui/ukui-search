@@ -25,7 +25,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include "result-view.h"
-#include "plugininterface/search-plugin-iface.h"
+#include "search-plugin-iface.h"
 
 namespace Zeeker {
 class ResultArea : public QScrollArea
@@ -70,6 +70,8 @@ private:
     void clearLayout(QLayout *);
     QVBoxLayout * m_mainLyt = nullptr;
     QLabel * m_iconLabel = nullptr;
+    QFrame *m_previewFrame = nullptr;
+    QHBoxLayout *m_previewFrameLyt = nullptr;
     QFrame * m_nameFrame = nullptr;
     QHBoxLayout * m_nameFrameLyt = nullptr;
     QLabel * m_nameLabel = nullptr;
@@ -100,13 +102,15 @@ class ActionLabel : public QLabel
 {
     Q_OBJECT
 public:
-    ActionLabel(const QString &action, const QString &key, const QString &plugin, QWidget *parent = nullptr);
+    ActionLabel(const QString &action, const QString &key, const int &ActionKey, const QString &pluginId, const int type = 0, QWidget *parent = nullptr);
     ~ActionLabel() = default;
 private:
     void initUi();
     QString m_action;
     QString m_key;
-    QString m_plugin;
+    int m_actionKey;
+    int m_type = 0;
+    QString m_pluginId;
 
 protected:
     bool eventFilter(QObject *, QEvent *);

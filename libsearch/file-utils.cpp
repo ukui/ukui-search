@@ -20,6 +20,7 @@
  *
  */
 #include "file-utils.h"
+#include <QXmlStreamReader>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -175,6 +176,22 @@ QString FileUtils::getAppName(const QString& path) {
  */
 QString FileUtils::getSettingName(const QString& setting) {
     return setting.right(setting.length() - setting.lastIndexOf("/") - 1);
+}
+
+bool FileUtils::isOrUnder(QString pathA, QString pathB)
+{
+    if(pathA[0] != "/")
+        pathA.prepend("/");
+    if(pathB[0] != "/")
+        pathB.prepend("/");
+
+    if(pathA.length() < pathB.length())
+        return false;
+
+    if(pathA == pathB || pathA.startsWith(pathB + "/"))
+        return true;
+
+    return false;
 }
 
 
@@ -482,12 +499,30 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
     if(!file.open(QuaZip::mdUnzip))
         return;
 
-    if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
+    if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive)) {
+        file.close();
         return;
+    }
     QuaZipFile fileR(&file);
 
     fileR.open(QIODevice::ReadOnly);        //读取方式打开
 
+    QXmlStreamReader reader(&fileR);
+
+    while (!reader.atEnd()){
+       if(reader.readNextStartElement() and reader.name().toString() == "t"){
+           textcontent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+           if(textcontent.length() >= MAX_CONTENT_LENGTH/3){
+               break;
+           }
+       }
+    }
+
+    fileR.close();
+    file.close();
+    return;
+
+/*    //原加载DOM文档方式；
     QDomDocument doc;
     doc.setContent(fileR.readAll());
     fileR.close();
@@ -499,7 +534,7 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
             QDomElement wr = wp.firstChildElement("w:r");
             while(!wr.isNull()) {
                 QDomElement wt = wr.firstChildElement("w:t");
-                textcontent.append(wt.text().replace("\n", ""));
+                textcontent.append(wt.text().replace("\n", "")).replace("\r", " ");
                 if(textcontent.length() >= MAX_CONTENT_LENGTH / 3) {
                     file.close();
                     return;
@@ -512,6 +547,7 @@ void FileUtils::getDocxTextContent(QString &path, QString &textcontent) {
     }
     file.close();
     return;
+*/
 }
 
 void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
@@ -527,8 +563,35 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
         if(i.startsWith(prefix))
             fileList << i;
     }
-    if(fileList.isEmpty())
+    if(fileList.isEmpty()) {
+        file.close();
         return;
+    }
+
+    for(int i = 0; i < fileList.size(); ++i){
+        QString name = prefix + QString::number(i + 1) + ".xml";
+        if(!file.setCurrentFile(name)) {
+            continue;
+        }
+        QuaZipFile fileR(&file);
+        fileR.open(QIODevice::ReadOnly);
+
+        QXmlStreamReader reader(&fileR);
+
+        while (!reader.atEnd()){
+           if(reader.readNextStartElement() and reader.name().toString() == "t"){
+               textcontent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+               if(textcontent.length() >= MAX_CONTENT_LENGTH/3){
+                   break;
+               }
+           }
+        }
+        fileR.close();
+    }
+    file.close();
+    return;
+
+/*
     QDomElement sptree;
     QDomElement sp;
     QDomElement txbody;
@@ -596,6 +659,7 @@ void FileUtils::getPptxTextContent(QString &path, QString &textcontent) {
     }
     file.close();
     return;
+*/
 }
 
 void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
@@ -606,12 +670,30 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
     if(!file.open(QuaZip::mdUnzip))
         return;
 
-    if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
+    if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive)) {
+        file.close();
         return;
+    }
     QuaZipFile fileR(&file);
 
-    fileR.open(QIODevice::ReadOnly);        //读取方式打开
+    fileR.open(QIODevice::ReadOnly);
 
+    QXmlStreamReader reader(&fileR);
+
+    while (!reader.atEnd()){
+       if(reader.readNextStartElement() and reader.name().toString() == "t"){
+           textcontent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+           if(textcontent.length() >= MAX_CONTENT_LENGTH/3){
+               break;
+           }
+       }
+    }
+
+    fileR.close();
+    file.close();
+    return;
+
+/*
     QDomDocument doc;
     doc.setContent(fileR.readAll());
     fileR.close();
@@ -641,16 +723,19 @@ void FileUtils::getXlsxTextContent(QString &path, QString &textcontent) {
     }
     file.close();
     return;
+*/
 }
 
 void FileUtils::getPdfTextContent(QString &path, QString &textcontent) {
     Poppler::Document *doc = Poppler::Document::load(path);
-    if(doc->isLocked())
+    if(doc->isLocked()) {
+        delete doc;
         return;
+    }
     const QRectF qf;
     int pageNum = doc->numPages();
     for(int i = 0; i < pageNum; ++i) {
-        textcontent.append(doc->page(i)->text(qf).replace("\n", ""));
+        textcontent.append(doc->page(i)->text(qf).replace("\n", "").replace("\r", " "));
         if(textcontent.length() >= MAX_CONTENT_LENGTH / 3)
             break;
     }
@@ -679,7 +764,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     stream.setCodec(codec);
     uchardet_delete(chardet);
 
-    textcontent = stream.readAll().replace("\n", "");
+    textcontent = stream.readAll().replace("\n", "").replace("\r", " ");
 
     file.close();
     encodedString.clear();
@@ -687,4 +772,19 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     stream.flush();
 
     return;
+}
+
+bool FileUtils::openFile(QString &path, bool openInDir)
+{
+    if(openInDir) {
+        return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+    } else {
+        return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    }
+}
+
+bool FileUtils::copyPath(QString &path)
+{
+    QApplication::clipboard()->setText(path);
+    return true;
 }

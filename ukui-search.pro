@@ -17,9 +17,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 libsearch.depends += libchinese-segmentation
 src.depends = libsearch
+frontend.depends = libsearch
 
 CONFIG += ordered \
-    qt
 
 QT += widgets
+
 

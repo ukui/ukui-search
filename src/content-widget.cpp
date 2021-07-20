@@ -32,9 +32,15 @@ ContentWidget::ContentWidget(QWidget * parent): QStackedWidget(parent) {
 //    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
     m_quicklyOpenList << "/usr/share/applications/ksc-defender.desktop"
                       << "/usr/share/applications/ukui-notebook.desktop"
-                      << "/usr/share/applications/eom.desktop"
+                      << "/usr/share/applications/kylin-photo-viewer.desktop"
                       << "/usr/share/applications/pluma.desktop"
                       << "/usr/share/applications/claws-mail.desktop" ;
+    if (QString::compare(FileUtils::getAppName(m_quicklyOpenList.at(2)), "Unknown App") == 0) {
+        m_quicklyOpenList.replace(2, "/usr/share/applications/eom.desktop");
+    }
+    if (QString::compare(FileUtils::getAppName(m_quicklyOpenList.at(4)), "Unknown App") == 0) {
+        m_quicklyOpenList.replace(4, "/usr/share/applications/org.gnome.Evolution.desktop");
+    }
 }
 
 ContentWidget::~ContentWidget() {
@@ -52,9 +58,12 @@ ContentWidget::~ContentWidget() {
  * @brief initUI 初始化homepage和resultpage
  */
 void ContentWidget::initUI() {
+    this->setFixedHeight(486);
     QPalette pal = palette();
-    pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
+    QPalette scroll_bar_pal = palette();
+//    pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
     pal.setColor(QPalette::Window, QColor(0, 0, 0, 0)); //使用此palette的窗口背景将为透明
+    scroll_bar_pal.setColor(QPalette::Base, QColor(0, 0, 0, 0));
     m_homePage = new QWidget(this);
     m_homePageLyt = new QVBoxLayout(m_homePage);
     m_homePageLyt->setSpacing(0);
@@ -71,7 +80,7 @@ void ContentWidget::initUI() {
     m_resultDetailArea = new QScrollArea(m_resultPage);
     m_resultDetailArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultDetailArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    m_resultListArea->setFixedWidth(244);
+    m_resultListArea->setFixedWidth(280);
     m_resultPageLyt->addWidget(m_resultListArea);
     m_resultPageLyt->addWidget(m_resultDetailArea);
     m_resultPage->setLayout(m_resultPageLyt);
@@ -80,9 +89,10 @@ void ContentWidget::initUI() {
     m_resultDetail = new QWidget(m_resultDetailArea);
     m_listLyt = new QVBoxLayout(m_resultList);
     m_detailLyt = new QVBoxLayout(m_resultDetail);
-    m_resultList->setFixedWidth(236);
+    //需要给滚动条留出16个像素点的宽度
+    m_resultList->setFixedWidth(280 - 16);
     m_resultList->setFixedHeight(0);
-    m_listLyt->setContentsMargins(0, 0, 12, 0);
+    m_listLyt->setContentsMargins(0, 0, 0, 0);
     m_listLyt->setSpacing(0);
     m_resultListArea->setWidget(m_resultList);
     m_resultListArea->setWidgetResizable(true);
@@ -98,6 +108,8 @@ void ContentWidget::initUI() {
     m_resultDetailArea->setFrameShape(QFrame::NoFrame);
     m_resultListArea->setPalette(pal);
     m_resultDetailArea->setPalette(pal);
+    m_resultListArea->verticalScrollBar()->setPalette(scroll_bar_pal);
+    m_resultDetailArea->verticalScrollBar()->setPalette(scroll_bar_pal);
     this->addWidget(m_homePage);
     this->addWidget(m_resultPage);
 
@@ -379,7 +391,7 @@ void ContentWidget::initHomePage() {
             itemWidget->setLayout(layout);
             for(int j = 0; j < lists.at(i).count(); j++) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, lists.at(i).at(j));
-                item->setFixedSize(300, 48);
+                item->setFixedSize(312, 48);
                 layout->addWidget(item, j / 2, j % 2);
             }
             if(lists.at(i).length() == 1) {
@@ -413,6 +425,7 @@ void ContentWidget::initHomePage() {
         }
         itemWidgetLyt->setSpacing(6);
         titleLabel->setFixedHeight(24);
+        titleLabel->setContentsMargins(6,0,0,0);
         itemWidgetLyt->addWidget(titleLabel);
         itemWidgetLyt->addWidget(itemWidget);
         m_homePageLyt->addWidget(listWidget);
@@ -717,7 +730,7 @@ void ContentWidget::onListViewRowChanged(SearchListView * listview, const int &t
     if(type == SearchItem::SearchType::Contents && !m_contentDetailList.isEmpty()) {
         m_detailView->isContent = true;
         m_detailView->setContent(m_contentDetailList.at(listview->currentIndex().row()), m_keyword);
-    } else if(type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && listview->currentIndex().row() == listview->getLength() - 1) {
+    } else if(type == SearchItem::SearchType::Best && !m_bestContent.isEmpty() && SearchItem::SearchType::Contents == m_bestList.at(listview->currentIndex().row()).first) {
         m_detailView->setContent(m_bestContent, m_keyword);
         m_detailView->isContent = true;
         m_detailView->setupWidget(SearchItem::SearchType::Contents, path);

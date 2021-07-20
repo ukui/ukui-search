@@ -37,17 +37,17 @@
 #include "qt-single-application.h"
 #include "global-settings.h"
 
-#define MAIN_MARGINS 16,8,16,16
+#define MAIN_MARGINS 16,16,16,16
 #define TITLE_MARGINS 0,0,0,0
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 590
+#define WINDOW_WIDTH 680
+#define WINDOW_HEIGHT 600
 #define TITLE_HEIGHT 40
 #define WINDOW_ICON_SIZE 24
 #define SETTING_BTN_SIZE 30
-#define SEARCH_BAR_SIZE 44
+#define SEARCH_BAR_SIZE 48
 #define ASK_INDEX_TIME 5*1000
 #define RESEARCH_TIME 10*1000
 
@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
-    m_stackedWidget->setPlugins(QStringList()<<"File"<<"Folder");
+    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
 }
 
 MainWindow::~MainWindow() {
@@ -140,25 +140,25 @@ void MainWindow::initUi() {
     mainlayout->setContentsMargins(MAIN_MARGINS);
     m_frame->setLayout(mainlayout);
 
-    m_titleFrame = new QFrame(m_frame);//标题栏
-    m_titleFrame->setFixedHeight(TITLE_HEIGHT);
-    m_titleLyt = new QHBoxLayout(m_titleFrame);
-    m_titleLyt->setContentsMargins(TITLE_MARGINS);
-    m_iconLabel = new QLabel(m_titleFrame);
-    m_iconLabel->setFixedSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE);
-    m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
-    m_titleLabel = new QLabel(m_titleFrame);
-    m_titleLabel->setText(tr("Search"));
-    m_settingsBtn = new QPushButton(m_titleFrame);
-    m_settingsBtn->setFixedSize(SETTING_BTN_SIZE, SETTING_BTN_SIZE);
-    m_settingsBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
-    m_settingsBtn->setProperty("useIconHighlightEffect", 0x2);
-    m_settingsBtn->setProperty("isWindowButton", 0x01);
-    m_settingsBtn->setFlat(true);
-    m_titleLyt->addWidget(m_iconLabel);
-    m_titleLyt->addWidget(m_titleLabel);
-    m_titleLyt->addStretch();
-    m_titleLyt->addWidget(m_settingsBtn);
+//    m_titleFrame = new QFrame(m_frame);//标题栏
+//    m_titleFrame->setFixedHeight(TITLE_HEIGHT);
+//    m_titleLyt = new QHBoxLayout(m_titleFrame);
+//    m_titleLyt->setContentsMargins(TITLE_MARGINS);
+//    m_iconLabel = new QLabel(m_titleFrame);
+//    m_iconLabel->setFixedSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE);
+//    m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
+//    m_titleLabel = new QLabel(m_titleFrame);
+//    m_titleLabel->setText(tr("Search"));
+//    m_settingsBtn = new QPushButton(m_titleFrame);
+//    m_settingsBtn->setFixedSize(SETTING_BTN_SIZE, SETTING_BTN_SIZE);
+//    m_settingsBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
+//    m_settingsBtn->setProperty("useIconHighlightEffect", 0x2);
+//    m_settingsBtn->setProperty("isWindowButton", 0x01);
+//    m_settingsBtn->setFlat(true);
+//    m_titleLyt->addWidget(m_iconLabel);
+//    m_titleLyt->addWidget(m_titleLabel);
+//    m_titleLyt->addStretch();
+//    m_titleLyt->addWidget(m_settingsBtn);
     m_stackedWidget = new StackedWidget(m_frame);//内容栏
 
     m_searchWidget = new SeachBarWidget(this);
@@ -166,9 +166,9 @@ void MainWindow::initUi() {
     m_searchWidget->setLayout(m_searchLayout);
     m_searchWidget->setFixedHeight(SEARCH_BAR_SIZE);
 
-    mainlayout->addWidget(m_titleFrame);
-    mainlayout->addWidget(m_stackedWidget);
+//    mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_searchWidget);
+    mainlayout->addWidget(m_stackedWidget);
 
     //创建索引询问弹窗
     m_askDialog = new CreateIndexAskDialog(this);
@@ -197,9 +197,9 @@ void MainWindow::initConnections()
     });
     connect(m_settingsBtn, &QPushButton::clicked, this, &MainWindow::settingsBtnClickedSlot);
     //主题改变时，更新自定义标题栏的图标
-    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
-        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
-    });
+//    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
+//        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
+//    });
     connect(m_searchLayout, &SearchBarHLayout::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
     connect(m_stackedWidget, &StackedWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
 }

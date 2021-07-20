@@ -21,8 +21,8 @@
 #include "search-page.h"
 using namespace Zeeker;
 
-#define RESULT_WIDTH 240
-#define DETAIL_WIDTH 400
+#define RESULT_WIDTH 266
+#define DETAIL_WIDTH 374
 
 SearchPage::SearchPage(QWidget *parent) : QWidget(parent)
 {
@@ -54,6 +54,7 @@ void SearchPage::appendPlugin(const QString &plugin_id)
 void SearchPage::initUi()
 {
     m_splitter = new QSplitter(this);
+    m_splitter->setContentsMargins(0, 0, 0, 0);
     m_resultArea = new ResultArea(m_splitter);
     m_detailArea = new DetailArea(m_splitter);
     m_splitter->addWidget(m_resultArea);

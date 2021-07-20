@@ -46,6 +46,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
     if(!m_interFace->isValid()) {
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
+    m_interFace->setTimeout(200);
     qDebug() << "AppMatch is new";
 }
 
@@ -227,10 +228,11 @@ void AppMatch::getDesktopFilePath() {
 }
 
 void AppMatch::getAppName(QMap<NameString, QStringList> &installed) {
-    QMap<NameString, QStringList>::const_iterator i;
-    for(i = m_installAppMap.constBegin(); i != m_installAppMap.constEnd(); ++i) {
-        appNameMatch(i.key().app_name, installed);
-    }
+//    QMap<NameString, QStringList>::const_iterator i;
+//    for(i = m_installAppMap.constBegin(); i != m_installAppMap.constEnd(); ++i) {
+//        appNameMatch(i.key().app_name, installed);
+//    }
+    appNameMatch(installed);
     qDebug() << "installed app match is successful!";
 }
 
@@ -275,12 +277,44 @@ void AppMatch::appNameMatch(QString appname, QMap<NameString, QStringList> &inst
         }
     }
 }
+void AppMatch::appNameMatch(QMap<NameString, QStringList> &installed) {
+    QStringList list;
+    NameString name;
+    QMapIterator<NameString, QStringList> iter(m_installAppMap);
+    while(iter.hasNext()) {
+        iter.next();
+        list = iter.value();
+        name.app_name = iter.key().app_name;
+        if(iter.key().app_name.contains(m_sourceText, Qt::CaseInsensitive)) {
+            installed.insert(name, list);
+            continue;
+        }
+
+        QStringList pinyinlist;
+        pinyinlist = FileUtils::findMultiToneWords(iter.key().app_name);
+
+        for(int i = 0; i < pinyinlist.size() / 2; i++) {
+            QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
+            if(shouzimu.contains(m_sourceText, Qt::CaseInsensitive)) {
+                installed.insert(name, list);
+                break;
+            }
+            if(m_sourceText.size() < 2)
+                break;
+            QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
+            if(pinyin.contains(m_sourceText, Qt::CaseInsensitive)) {
+                installed.insert(name, list);
+                break;
+            }
+        }
+    }
+}
 
 void AppMatch::softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn) {
-    if(m_interFace->timeout() != -1) {
-        qWarning() << "softWareCente Dbus is timeout !";
-        return;
-    }
+//    if(m_interFace->timeout() != -1) {
+//        qWarning() << "softWareCente Dbus is timeout !";
+//        return;
+//    }
     slotDBusCallFinished(softwarereturn);
     qDebug() << "softWareCenter match app is successful!";
 }
@@ -349,7 +383,7 @@ void AppMatch::run() {
     QDir androidPath(QDir::homePath() + "/.local/share/applications/");
     if(androidPath.exists())
         this->getAllDesktopFilePath(QDir::homePath() + "/.local/share/applications/");
-    connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
+        connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
         this->getDesktopFilePath();
         if(path == "/usr/share/applications/") {
             this->getAllDesktopFilePath("/usr/share/applications/");

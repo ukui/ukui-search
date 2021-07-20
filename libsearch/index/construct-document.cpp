@@ -34,8 +34,8 @@ ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
 
 void ConstructDocumentForPath::run() {
 //    qDebug()<<"ConstructDocumentForPath";
-    if(!Zeeker::_doc_list_path)
-        Zeeker::_doc_list_path = new QList<Document>;
+//    if(!Zeeker::_doc_list_path)
+//        Zeeker::_doc_list_path = new QVector<Document>;
 //    qDebug()<<_doc_list_path->size();
     QString index_text = m_list.at(0).toLower();
     QString sourcePath = m_list.at(1);
@@ -87,9 +87,9 @@ void ConstructDocumentForPath::run() {
     }
 
 //    QMetaObject::invokeMethod(m_indexGenerator,"appendDocListPath",Q_ARG(Document,doc));
-    Zeeker::_mutex_doc_list_path.lock();
-    Zeeker::_doc_list_path->append(doc);
-    Zeeker::_mutex_doc_list_path.unlock();
+    IndexGenerator::_mutex_doc_list_path.lock();
+    IndexGenerator::_doc_list_path.append(doc);
+    IndexGenerator::_mutex_doc_list_path.unlock();
 //    qDebug()<<"ConstructDocumentForPath finish";
     return;
 }
@@ -102,32 +102,39 @@ ConstructDocumentForContent::ConstructDocumentForContent(QString path) {
 void ConstructDocumentForContent::run() {
 //    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
     //      构造文本索引的document
-    if(!Zeeker::_doc_list_content)
-        Zeeker::_doc_list_content = new QList<Document>;
+//    if(!Zeeker::_doc_list_content)
+//        Zeeker::_doc_list_content = new QVector<Document>;
     QString content;
     FileReader::getTextContent(m_path, content);
     if(content.isEmpty())
         return;
-    QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
-    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
-
-    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000).toStdString());
-
+    //QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
+    //QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
     Document doc;
     doc.setData(content);
-    doc.setUniqueTerm(uniqueterm);
-    doc.addTerm(upTerm);
+    //doc.setUniqueTerm(uniqueterm);
+    doc.setUniqueTerm(FileUtils::makeDocUterm(m_path));
+    //doc.addTerm(upTerm);
+    doc.addTerm(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
     doc.addValue(m_path);
-    for(int i = 0; i < term.size(); ++i) {
-        doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
 
+    //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.
+    content = content.replace("\t", " ").replace("\xEF\xBC\x8C", "   ").replace("\xE3\x80\x82", "   ");
+
+//    QVector<SKeyWord> term = ChineseSegmentation::getInstance()->callSegement(content.left(20480000));
+    std::vector<cppjieba::KeyWord> term = ChineseSegmentation::getInstance()->callSegementStd(content.left(20480000).toStdString());
+
+    for(size_t i = 0; i < term.size(); ++i) {
+        doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
     }
 
-    Zeeker::_mutex_doc_list_content.lock();
-    Zeeker::_doc_list_content->append(doc);
-    Zeeker::_mutex_doc_list_content.unlock();
+    IndexGenerator::_mutex_doc_list_content.lock();
+    IndexGenerator::_doc_list_content.append(doc);
+    IndexGenerator::_mutex_doc_list_content.unlock();
     content.clear();
     content.squeeze();
+
     term.clear();
+    term.shrink_to_fit();
     return;
 }
