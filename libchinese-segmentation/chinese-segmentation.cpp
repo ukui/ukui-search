@@ -66,8 +66,6 @@ QVector<SKeyWord> ChineseSegmentation::callSegement(std::string s) {
 
     keywordres.clear();
 //    keywordres.shrink_to_fit();
-
-
     return vecNeeds;
 
 }

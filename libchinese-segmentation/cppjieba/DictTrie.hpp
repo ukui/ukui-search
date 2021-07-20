@@ -49,6 +49,13 @@ public:
         dat_.Find(begin, end, res, max_word_len);
     }
 
+    void Find(RuneStrArray::const_iterator begin,
+              RuneStrArray::const_iterator end,
+              vector<WordRange>& words,
+              size_t max_word_len = MAX_WORD_LENGTH) const {
+        dat_.Find(begin, end, words, max_word_len);
+    }
+
     bool IsUserDictSingleChineseWord(const Rune& word) const {
         return IsIn(user_dict_single_chinese_word_, word);
     }
