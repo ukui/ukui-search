@@ -77,48 +77,6 @@ public:
     void centerToScreen(QWidget* widget);
     void initGsettings();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-    MotifWmHints m_hints;
-#endif
-
-private:
-
-    QFrame * m_frame = nullptr;                  // Main frame
-    QFrame * m_titleFrame = nullptr;             // Title bar frame
-    QHBoxLayout * m_titleLyt = nullptr;          // Title layout
-    QLabel * m_iconLabel = nullptr;              // Icon lable
-    QLabel * m_titleLabel = nullptr;             // Title lable
-    QPushButton * m_settingsBtn = nullptr;           // Menu button
-    StackedWidget * m_stackedWidget = nullptr;   // Stacked widget
-    SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
-    SeachBarWidget * m_searchWidget = nullptr;   // Search bar
-#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
-    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
-#endif
-
-    QStringList m_dirList;
-
-    QQueue<QString> *m_search_result_file = nullptr;
-    QQueue<QString> *m_search_result_dir = nullptr;
-    QQueue<QPair<QString, QStringList>> *m_search_result_content = nullptr;
-
-    QSystemTrayIcon *m_sys_tray_icon = nullptr;
-    CreateIndexAskDialog * m_askDialog = nullptr;
-    bool m_isAskDialogVisible = false;
-
-    QTimer * m_askTimer = nullptr; //询问是否创建索引弹窗弹出的计时器
-    QTimer * m_researchTimer = nullptr; //创建索引后重新执行一次搜索的计时器
-    bool m_currentSearchAsked = false; //本次搜索是否已经询问过是否创建索引了
-    QGSettings * m_search_gsettings = nullptr;
-
-    SearchMethodManager m_searchMethodManager;
-
-    void setSearchMethod(const bool&);
-    double getTransparentData();
-    void initTimer();
-    bool tryHideMainwindow();
-    void setSearchMethodConfig(const bool&, const bool&);
-
 protected:
     void paintEvent(QPaintEvent *);
     void keyPressEvent(QKeyEvent *event);
@@ -147,6 +105,45 @@ public Q_SLOTS:
     void trayIconActivatedSlot(QSystemTrayIcon::ActivationReason reason);
     void settingsBtnClickedSlot();
     void searchKeywordSlot(const QString&);
+
+private:
+
+    QFrame * m_frame = nullptr;                  // Main frame
+    QFrame * m_titleFrame = nullptr;             // Title bar frame
+    QHBoxLayout * m_titleLyt = nullptr;          // Title layout
+    QLabel * m_iconLabel = nullptr;              // Icon lable
+    QLabel * m_titleLabel = nullptr;             // Title lable
+    QPushButton * m_settingsBtn = nullptr;           // Menu button
+    StackedWidget * m_stackedWidget = nullptr;   // Stacked widget
+//    SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
+//    SeachBarWidget * m_searchWidget = nullptr;   // Search bar
+    SeachBarWidget *m_seachBarWidget;
+#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
+    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
+#endif
+
+    QStringList m_dirList;
+
+    QQueue<QString> *m_search_result_file = nullptr;
+    QQueue<QString> *m_search_result_dir = nullptr;
+    QQueue<QPair<QString, QStringList>> *m_search_result_content = nullptr;
+
+    QSystemTrayIcon *m_sys_tray_icon = nullptr;
+    CreateIndexAskDialog * m_askDialog = nullptr;
+    bool m_isAskDialogVisible = false;
+
+    QTimer * m_askTimer = nullptr; //询问是否创建索引弹窗弹出的计时器
+    QTimer * m_researchTimer = nullptr; //创建索引后重新执行一次搜索的计时器
+    bool m_currentSearchAsked = false; //本次搜索是否已经询问过是否创建索引了
+    QGSettings * m_search_gsettings = nullptr;
+
+    SearchMethodManager m_searchMethodManager;
+
+    void setSearchMethod(const bool&);
+    double getTransparentData();
+    void initTimer();
+    bool tryHideMainwindow();
+    void setSearchMethodConfig(const bool&, const bool&);
 };
 }
 

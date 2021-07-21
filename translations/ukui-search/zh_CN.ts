@@ -102,35 +102,34 @@
     <message>
         <location filename="../../frontend/control/stack-pages/home-page.cpp" line="118"/>
         <source>Open Quickly</source>
-        <translation type="unfinished">快速入口</translation>
+        <translation>快速入口</translation>
     </message>
     <message>
         <location filename="../../frontend/control/stack-pages/home-page.cpp" line="120"/>
         <source>Recently Opened</source>
-        <translation type="unfinished">最近</translation>
+        <translation>最近</translation>
     </message>
     <message>
         <location filename="../../frontend/control/stack-pages/home-page.cpp" line="122"/>
         <source>Commonly Used</source>
-        <translation type="unfinished">常用</translation>
+        <translation>常用</translation>
     </message>
 </context>
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="69"/>
+        <location filename="../../frontend/mainwindow.cpp" line="70"/>
         <source>ukui-search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="90"/>
+        <location filename="../../frontend/mainwindow.cpp" line="76"/>
         <source>Global Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="151"/>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation type="vanished">搜索</translation>
     </message>
 </context>
 <context>
@@ -163,9 +162,8 @@
 <context>
     <name>Zeeker::SearchBarHLayout</name>
     <message>
-        <location filename="../../frontend/control/input-box.cpp" line="115"/>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation type="vanished">搜索</translation>
     </message>
 </context>
 <context>
@@ -193,6 +191,14 @@
     <message>
         <source>Last time modified</source>
         <translation type="vanished">上次修改时间</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::SearchLineEdit</name>
+    <message>
+        <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
+        <source>Search</source>
+        <translation>搜索</translation>
     </message>
 </context>
 <context>

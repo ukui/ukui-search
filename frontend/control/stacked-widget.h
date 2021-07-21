@@ -23,7 +23,7 @@
 
 #include <QObject>
 #include <QStackedWidget>
-#include "input-box.h"
+#include "search-line-edit.h"
 #include "home-page.h"
 #include "search-page.h"
 

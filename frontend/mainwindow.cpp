@@ -37,13 +37,13 @@
 #include "qt-single-application.h"
 #include "global-settings.h"
 
-#define MAIN_MARGINS 16,16,16,16
+#define MAIN_MARGINS 0, 0, 0, 0
 #define TITLE_MARGINS 0,0,0,0
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
-#define WINDOW_WIDTH 680
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 700
+#define WINDOW_HEIGHT 610
 #define TITLE_HEIGHT 40
 #define WINDOW_ICON_SIZE 24
 #define SETTING_BTN_SIZE 30
@@ -63,27 +63,13 @@ extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int tran
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
     this->setAttribute(Qt::WA_TranslucentBackground, true);
+    this->setWindowFlag(Qt::FramelessWindowHint);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
     initUi();
     initTimer();
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-//    setProperty("useStyleWindowManager", false); //禁止拖动
-    m_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-    m_hints.functions = MWM_FUNC_ALL;
-    m_hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
-
-    QPainterPath path;
-    auto rect = this->rect();
-    rect.adjust(1, 1, -1, -1);
-    path.addRect(rect);
-    setProperty("blurRegion", QRegion(path.toFillPolygon().toPolygon()));
-    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-#endif
 
     m_sys_tray_icon = new QSystemTrayIcon(this);
     m_sys_tray_icon->setIcon(QIcon::fromTheme("system-search-symbolic"));
@@ -117,14 +103,6 @@ MainWindow::~MainWindow() {
         delete m_search_gsettings;
         m_search_gsettings = NULL;
     }
-    if(m_searchWidget) {
-        delete m_searchWidget;
-        m_searchWidget = NULL;
-    }
-    if(m_searchLayout) {
-        delete m_searchLayout;
-        m_searchLayout = NULL;
-    }
 }
 
 /**
@@ -140,34 +118,15 @@ void MainWindow::initUi() {
     mainlayout->setContentsMargins(MAIN_MARGINS);
     m_frame->setLayout(mainlayout);
 
-//    m_titleFrame = new QFrame(m_frame);//标题栏
-//    m_titleFrame->setFixedHeight(TITLE_HEIGHT);
-//    m_titleLyt = new QHBoxLayout(m_titleFrame);
-//    m_titleLyt->setContentsMargins(TITLE_MARGINS);
-//    m_iconLabel = new QLabel(m_titleFrame);
-//    m_iconLabel->setFixedSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE);
-//    m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
-//    m_titleLabel = new QLabel(m_titleFrame);
-//    m_titleLabel->setText(tr("Search"));
-//    m_settingsBtn = new QPushButton(m_titleFrame);
-//    m_settingsBtn->setFixedSize(SETTING_BTN_SIZE, SETTING_BTN_SIZE);
-//    m_settingsBtn->setIcon(QIcon::fromTheme("document-properties-symbolic"));
-//    m_settingsBtn->setProperty("useIconHighlightEffect", 0x2);
-//    m_settingsBtn->setProperty("isWindowButton", 0x01);
-//    m_settingsBtn->setFlat(true);
-//    m_titleLyt->addWidget(m_iconLabel);
-//    m_titleLyt->addWidget(m_titleLabel);
-//    m_titleLyt->addStretch();
-//    m_titleLyt->addWidget(m_settingsBtn);
     m_stackedWidget = new StackedWidget(m_frame);//内容栏
-
-    m_searchWidget = new SeachBarWidget(this);
-    m_searchLayout = new SearchBarHLayout(this);
-    m_searchWidget->setLayout(m_searchLayout);
-    m_searchWidget->setFixedHeight(SEARCH_BAR_SIZE);
+    m_seachBarWidget = new SeachBarWidget(this);
+//    m_searchWidget = new SeachBarWidget(this);
+//    m_searchLayout = new SearchBarHLayout(this);
+//    m_searchWidget->setLayout(m_searchLayout);
+//    m_searchWidget->setFixedHeight(SEARCH_BAR_SIZE);
 
 //    mainlayout->addWidget(m_titleFrame);
-    mainlayout->addWidget(m_searchWidget);
+    mainlayout->addWidget(m_seachBarWidget);
     mainlayout->addWidget(m_stackedWidget);
 
     //创建索引询问弹窗
@@ -200,8 +159,8 @@ void MainWindow::initConnections()
 //    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
 //        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
 //    });
-    connect(m_searchLayout, &SearchBarHLayout::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
-    connect(m_stackedWidget, &StackedWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
+    connect(m_seachBarWidget, &SeachBarWidget::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
+//    connect(m_stackedWidget, &StackedWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
 }
 
 /**
@@ -212,11 +171,8 @@ void MainWindow::bootOptionsFilter(QString opt) {
     if(opt == "-s" || opt == "--show") {
         clearSearchResult();
         centerToScreen(this);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-        XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
-#endif
         this->show();
-        this->m_searchLayout->focusIn();
+//        this->m_searchLineEdit->focusIn();
         this->raise();
         this->activateWindow();
     }
@@ -226,8 +182,8 @@ void MainWindow::bootOptionsFilter(QString opt) {
  * @brief clearSearchResult 清空搜索结果
  */
 void MainWindow::clearSearchResult() {
-    m_searchLayout->clearText();
-    m_searchLayout->focusOut();
+    m_seachBarWidget->clear();
+//    m_searchLineEdit->clearFocus();
 }
 
 /**
@@ -240,11 +196,8 @@ void MainWindow::trayIconActivatedSlot(QSystemTrayIcon::ActivationReason reason)
         if(!this->isVisible()) {
             clearSearchResult();
             centerToScreen(this);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-            XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
-#endif
             this->show();
-            this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
+//            this->m_searchLineEdit->focusIn(); //打开主界面时输入框夺焦，可直接输入
             this->raise();
             this->activateWindow();
         } else {
@@ -482,21 +435,21 @@ void MainWindow::initTimer() {
     });
     m_researchTimer = new QTimer;
     m_researchTimer->setInterval(RESEARCH_TIME);
-    connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
-        if(this->isVisible()) {
-            m_searchLayout->reSearch();
-        }
-        m_researchTimer->stop();
-    });
-    connect(m_searchLayout, &SearchBarHLayout::requestSearchKeyword, this, [ = ](QString text) {
-        if(text == "" || text.isEmpty()) {
-            m_askTimer->stop();
-        } else {
-            //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
-            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
-                m_askTimer->start();
-        }
-    });
+//    connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
+//        if(this->isVisible()) {
+//            m_searchLayout->reSearch();
+//        }
+//        m_researchTimer->stop();
+//    });
+//    connect(m_searchLayout, &SearchBarHLayout::requestSearchKeyword, this, [ = ](QString text) {
+//        if(text == "" || text.isEmpty()) {
+//            m_askTimer->stop();
+//        } else {
+//            //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
+//            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
+//                m_askTimer->start();
+//        }
+//    });
 }
 
 /**
@@ -558,21 +511,10 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {
-    Q_UNUSED(event)
 
-    double trans = getTransparentData();
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+    QPainterPath path;
 
-    QRect rect = this->rect();
-    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    p.setBrush(opt.palette.color(QPalette::Base));
-    p.setOpacity(trans);
-    p.setPen(Qt::NoPen);
-//    p.drawRoundedRect(rect, 6, 6);
-    p.drawRect(rect);
-    return QWidget::paintEvent(event);
+    path.addRoundedRect(m_seachBarWidget->x()+10, m_seachBarWidget->y()+10, m_seachBarWidget->width()-20, m_seachBarWidget->height()-20, 6, 6);
+    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
 }

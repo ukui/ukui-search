@@ -25,7 +25,7 @@ SearchResultManager::SearchResultManager(const QString& plugin_id, QObject *pare
 {
     m_plugin_id = plugin_id;
     m_result_queue = new DataQueue<SearchPluginIface::ResultInfo>;
-    m_get_result_thread = new ReceiveResultThread(m_result_queue);
+    m_get_result_thread = new ReceiveResultThread(m_result_queue, this);
     initConnections();
 }
 
