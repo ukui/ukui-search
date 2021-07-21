@@ -349,19 +349,18 @@
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="69"/>
+        <location filename="../../frontend/mainwindow.cpp" line="70"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="90"/>
+        <location filename="../../frontend/mainwindow.cpp" line="76"/>
         <source>Global Search</source>
         <translation type="unfinished">Genel Arama</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="151"/>
         <source>Search</source>
-        <translation type="unfinished">Ara</translation>
+        <translation type="obsolete">Ara</translation>
     </message>
 </context>
 <context>
@@ -390,9 +389,8 @@
 <context>
     <name>Zeeker::SearchBarHLayout</name>
     <message>
-        <location filename="../../frontend/control/input-box.cpp" line="115"/>
         <source>Search</source>
-        <translation type="unfinished">Ara</translation>
+        <translation type="obsolete">Ara</translation>
     </message>
 </context>
 <context>
@@ -412,6 +410,14 @@
     <message>
         <source>Last time modified</source>
         <translation type="obsolete">Son değiştirilme zamanı</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::SearchLineEdit</name>
+    <message>
+        <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
+        <source>Search</source>
+        <translation type="unfinished">Ara</translation>
     </message>
 </context>
 <context>

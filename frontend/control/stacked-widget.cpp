@@ -75,9 +75,9 @@ void StackedWidget::appendPlugin(const QString &plugin)
 void StackedWidget::initWidgets()
 {
     //NEW_TODO
-    m_homePage = new HomePage;
-    this->insertWidget(int(StackedPage::HomePage), m_homePage);
-    this->setPage(int(StackedPage::HomePage));
+//    m_homePage = new HomePage;
+//    this->insertWidget(int(StackedPage::HomePage), m_homePage);
+//    this->setPage(int(StackedPage::HomePage));
 
     m_searchPage = new SearchPage;
     m_searchPage->setSize(this->width(), this->height());

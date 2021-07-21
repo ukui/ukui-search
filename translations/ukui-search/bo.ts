@@ -71,25 +71,20 @@
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="69"/>
+        <location filename="../../frontend/mainwindow.cpp" line="70"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="90"/>
+        <location filename="../../frontend/mainwindow.cpp" line="76"/>
         <source>Global Search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../frontend/mainwindow.cpp" line="151"/>
-        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>Zeeker::SearchBarHLayout</name>
+    <name>Zeeker::SearchLineEdit</name>
     <message>
-        <location filename="../../frontend/control/input-box.cpp" line="115"/>
+        <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
