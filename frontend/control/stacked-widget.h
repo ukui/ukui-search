@@ -25,7 +25,7 @@
 #include <QStackedWidget>
 #include "search-line-edit.h"
 #include "home-page.h"
-#include "search-page.h"
+#include "search-result-page.h"
 
 namespace Zeeker {
 
@@ -50,12 +50,12 @@ Q_SIGNALS:
     void stopSearch();
     void effectiveSearch();
 
-private:
-    void initWidgets();
+private:    void initWidgets();
     void initConnections();
+
     QString m_keyword;
     HomePage * m_homePage = nullptr;
-    SearchPage * m_searchPage = nullptr;
+//    SearchPage * m_searchPage = nullptr;
 //    StackedPage m_current_page;
 };
 }
