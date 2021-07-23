@@ -99,6 +99,9 @@ void ResultArea::initUi()
 void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(this, &ResultArea::startSearch, widget, &ResultWidget::startSearch);
+    connect(this, &ResultArea::startSearch, [=](){
+    });
+
     connect(this, &ResultArea::stopSearch, widget, &ResultWidget::stopSearch);
     connect(widget, &ResultWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
 }
@@ -121,6 +124,7 @@ void DetailArea::initUi()
     this->setWidgetResizable(true);
     m_detailWidget = new DetailWidget(this);
     this->setWidget(m_detailWidget);
+    this->hide();
 }
 
 DetailWidget::DetailWidget(QWidget *parent) : QWidget(parent)
@@ -192,6 +196,7 @@ void DetailWidget::clear()
 
 void DetailWidget::initUi()
 {
+    this->setFixedSize(368, 516);
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
     m_mainLyt->setContentsMargins(DETAIL_WIDGET_MARGINS);

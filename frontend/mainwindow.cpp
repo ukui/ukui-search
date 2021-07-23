@@ -81,7 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
-    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
+//    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
 }
 
 MainWindow::~MainWindow() {
@@ -111,23 +111,29 @@ MainWindow::~MainWindow() {
 void MainWindow::initUi() {
     this->setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    m_frame = new QFrame(this);
+    m_widget = new QWidget(this);
 
-    this->setCentralWidget(m_frame);
-    QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
-    mainlayout->setContentsMargins(MAIN_MARGINS);
-    m_frame->setLayout(mainlayout);
+    this->setCentralWidget(m_widget);
+    m_widget->setFixedSize(this->size());
+//    QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
+//    mainlayout->setContentsMargins(MAIN_MARGINS);
+//    m_frame->setLayout(mainlayout);
 
-    m_stackedWidget = new StackedWidget(m_frame);//内容栏
-    m_seachBarWidget = new SeachBarWidget(this);
+//    m_stackedWidget = new StackedWidget(m_frame);//内容栏
+    m_searchBarWidget = new SeachBarWidget(m_widget);
+    m_searchBarWidget->move(m_widget->rect().topLeft());
+    m_searchBarWidget->show();
+    m_searchResultPage = new SearchResultPage(m_widget);
+    m_searchResultPage->move(0, 58);
 //    m_searchWidget = new SeachBarWidget(this);
 //    m_searchLayout = new SearchBarHLayout(this);
 //    m_searchWidget->setLayout(m_searchLayout);
 //    m_searchWidget->setFixedHeight(SEARCH_BAR_SIZE);
 
 //    mainlayout->addWidget(m_titleFrame);
-    mainlayout->addWidget(m_seachBarWidget);
-    mainlayout->addWidget(m_stackedWidget);
+//    mainlayout->addWidget(m_seachBarWidget);
+//    mainlayout->addSpacing(8);
+//    mainlayout->addWidget(m_searchResultPage);
 
     //创建索引询问弹窗
     m_askDialog = new CreateIndexAskDialog(this);
@@ -159,7 +165,7 @@ void MainWindow::initConnections()
 //    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
 //        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
 //    });
-    connect(m_seachBarWidget, &SeachBarWidget::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
+    connect(m_searchBarWidget, &SeachBarWidget::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
 //    connect(m_stackedWidget, &StackedWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
 }
 
@@ -182,7 +188,7 @@ void MainWindow::bootOptionsFilter(QString opt) {
  * @brief clearSearchResult 清空搜索结果
  */
 void MainWindow::clearSearchResult() {
-    m_seachBarWidget->clear();
+    m_searchBarWidget->clear();
 //    m_searchLineEdit->clearFocus();
 }
 
@@ -281,16 +287,16 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
 {
     //NEW_TODO
     if(keyword == "") {
-        m_stackedWidget->setPage(int(StackedPage::HomePage));
+//        m_stackedWidget->setPage(int(StackedPage::HomePage));
         m_askTimer->stop();
-        Q_EMIT m_stackedWidget->stopSearch();
+        Q_EMIT m_searchResultPage->stopSearch();
     } else {
-        m_stackedWidget->setPage(int(StackedPage::SearchPage));
+//        m_stackedWidget->setPage(int(StackedPage::SearchPage));
         QTimer::singleShot(10, this, [ = ]() {
             //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
             if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
                 m_askTimer->start();
-            Q_EMIT m_stackedWidget->startSearch(keyword);
+            Q_EMIT m_searchResultPage->startSearch(keyword);
         });
     }
     m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
@@ -463,7 +469,7 @@ bool MainWindow::tryHideMainwindow()
         this->hide();
         m_askTimer->stop();
         m_researchTimer->stop();
-        Q_EMIT m_stackedWidget->stopSearch();
+        Q_EMIT m_searchResultPage->stopSearch();
         return true;
     } else {
         //有上层弹窗未关闭，不允许隐藏主界面
@@ -514,7 +520,9 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 
     QPainterPath path;
 
-    path.addRoundedRect(m_seachBarWidget->x()+10, m_seachBarWidget->y()+10, m_seachBarWidget->width()-20, m_seachBarWidget->height()-20, 6, 6);
+    path.addRoundedRect(m_searchBarWidget->x()+10, m_searchBarWidget->y()+10, m_searchBarWidget->width()-20, m_searchBarWidget->height()-20, 6, 6);
+    path.addRoundedRect(m_searchResultPage->x()+10, m_searchResultPage->y()+10, m_searchResultPage->width()-20, m_searchResultPage->height()-20, 6, 6);
+
     KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
 }

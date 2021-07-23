@@ -18,28 +18,31 @@
  * Authors: zhangjiaping <zhangjiaping@kylinos.cn>
  *
  */
-#ifndef SEARCHPAGE_H
-#define SEARCHPAGE_H
+#ifndef SEARCHRESULTPAGE_H
+#define SEARCHRESULTPAGE_H
 
 #include <QSplitter>
 #include "search-page-section.h"
 
 namespace Zeeker {
-class SearchPage : public QWidget
+class SearchResultPage : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SearchPage(QWidget *parent = nullptr);
-    ~SearchPage() = default;
+    explicit SearchResultPage(QWidget *parent = nullptr);
+    ~SearchResultPage() = default;
     void setSize(const int&, const int&);
-    void setPlugins(const QStringList &plugins_id);
+    void setInternalPlugins();
     void appendPlugin(const QString &plugin_id);
 
+protected:
+    void paintEvent(QPaintEvent *event);
 private:
     void initUi();
     void initConnections();
     void setupConnectionsForWidget(ResultWidget *);
     QSplitter * m_splitter = nullptr;
+    QHBoxLayout *m_hlayout = nullptr;
     ResultArea * m_resultArea = nullptr;
     DetailArea * m_detailArea = nullptr;
 
@@ -51,4 +54,4 @@ Q_SIGNALS:
 };
 }
 
-#endif // SEARCHPAGE_H
+#endif // SEARCHRESULTPAGE_H

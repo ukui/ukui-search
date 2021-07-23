@@ -91,9 +91,10 @@ void SearchLineEdit::paintEvent(QPaintEvent *e)
 }
 
 SeachBarWidget::SeachBarWidget(QWidget *parent): QWidget(parent) {
-    this->setFixedSize(700, 70);
     m_ly = new QHBoxLayout(this);
     m_searchLineEdit = new SearchLineEdit(this);
+    this->setFixedSize(m_searchLineEdit->width()+20, m_searchLineEdit->height()+20);
+    m_ly->setContentsMargins(0,0,0,0);
     m_ly->addWidget(m_searchLineEdit);
     connect(m_searchLineEdit, &SearchLineEdit::requestSearchKeyword, this, &SeachBarWidget::requestSearchKeyword);
 }
@@ -110,42 +111,42 @@ void SeachBarWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
 
-      QPainter p(this);
-      p.setRenderHint(QPainter::Antialiasing);
-      QPainterPath rectPath;
-      rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+    QPainterPath rectPath;
+    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
 
 
-      // 画一个黑底
-      QPixmap pixmap(this->rect().size());
-      pixmap.fill(Qt::transparent);
-      QPainter pixmapPainter(&pixmap);
-      pixmapPainter.setRenderHint(QPainter::Antialiasing);
-//      pixmapPainter.setCompositionMode(QPainter::CompositionMode_Difference);
-      pixmapPainter.setPen(Qt::transparent);
-      pixmapPainter.setBrush(Qt::black);
-      pixmapPainter.setOpacity(0.65);
-      pixmapPainter.drawPath(rectPath);
-      pixmapPainter.end();
+    // 画一个黑底
+    QPixmap pixmap(this->rect().size());
+    pixmap.fill(Qt::transparent);
+    QPainter pixmapPainter(&pixmap);
+    pixmapPainter.setRenderHint(QPainter::Antialiasing);
+    //      pixmapPainter.setCompositionMode(QPainter::CompositionMode_Difference);
+    pixmapPainter.setPen(Qt::transparent);
+    pixmapPainter.setBrush(Qt::black);
+    pixmapPainter.setOpacity(0.65);
+    pixmapPainter.drawPath(rectPath);
+    pixmapPainter.end();
 
 
-      // 模糊这个黑底
-      QImage img = pixmap.toImage();
-      qt_blurImage(img, 10, false, false);
+    // 模糊这个黑底
+    QImage img = pixmap.toImage();
+    qt_blurImage(img, 10, false, false);
 
 
-      // 挖掉中心
-      pixmap = QPixmap::fromImage(img);
-      QPainter pixmapPainter2(&pixmap);
-      pixmapPainter2.setRenderHint(QPainter::Antialiasing);
-      pixmapPainter2.setCompositionMode(QPainter::CompositionMode_Clear);
-      pixmapPainter2.setPen(Qt::transparent);
-      pixmapPainter2.setBrush(Qt::transparent);
-      pixmapPainter2.drawPath(rectPath);
+    // 挖掉中心
+    pixmap = QPixmap::fromImage(img);
+    QPainter pixmapPainter2(&pixmap);
+    pixmapPainter2.setRenderHint(QPainter::Antialiasing);
+    pixmapPainter2.setCompositionMode(QPainter::CompositionMode_Clear);
+    pixmapPainter2.setPen(Qt::transparent);
+    pixmapPainter2.setBrush(Qt::transparent);
+    pixmapPainter2.drawPath(rectPath);
 
 
-      // 绘制阴影
-      p.drawPixmap(this->rect(), pixmap, pixmap.rect());
+    // 绘制阴影
+    p.drawPixmap(this->rect(), pixmap, pixmap.rect());
 }
 
 void LineEditStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const

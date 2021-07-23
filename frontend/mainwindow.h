@@ -108,16 +108,17 @@ public Q_SLOTS:
 
 private:
 
-    QFrame * m_frame = nullptr;                  // Main frame
+    QWidget *m_widget = nullptr;                  // central widget
     QFrame * m_titleFrame = nullptr;             // Title bar frame
     QHBoxLayout * m_titleLyt = nullptr;          // Title layout
     QLabel * m_iconLabel = nullptr;              // Icon lable
     QLabel * m_titleLabel = nullptr;             // Title lable
     QPushButton * m_settingsBtn = nullptr;           // Menu button
-    StackedWidget * m_stackedWidget = nullptr;   // Stacked widget
+//    StackedWidget * m_stackedWidget = nullptr;   // Stacked widget
 //    SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
 //    SeachBarWidget * m_searchWidget = nullptr;   // Search bar
-    SeachBarWidget *m_seachBarWidget;
+    SeachBarWidget *m_searchBarWidget;
+    SearchResultPage *m_searchResultPage;
 #if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
     SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
 #endif

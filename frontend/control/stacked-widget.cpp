@@ -33,10 +33,10 @@ Zeeker::StackedWidget::~StackedWidget()
         delete m_homePage;
         m_homePage = NULL;
     }
-    if (m_searchPage) {
-        delete m_searchPage;
-        m_searchPage = NULL;
-    }
+//    if (m_searchPage) {
+//        delete m_searchPage;
+//        m_searchPage = NULL;
+//    }
 }
 
 /**
@@ -58,7 +58,7 @@ int StackedWidget::currentPage()
  */
 void StackedWidget::setPlugins(const QStringList &plugins)
 {
-    m_searchPage->setPlugins(plugins);
+//    m_searchPage->setPlugins(plugins);
 }
 
 /**
@@ -66,7 +66,7 @@ void StackedWidget::setPlugins(const QStringList &plugins)
  */
 void StackedWidget::appendPlugin(const QString &plugin)
 {
-    m_searchPage->appendPlugin(plugin);
+//    m_searchPage->appendPlugin(plugin);
 }
 
 /**
@@ -79,14 +79,14 @@ void StackedWidget::initWidgets()
 //    this->insertWidget(int(StackedPage::HomePage), m_homePage);
 //    this->setPage(int(StackedPage::HomePage));
 
-    m_searchPage = new SearchPage;
-    m_searchPage->setSize(this->width(), this->height());
-    this->insertWidget(int(StackedPage::SearchPage), m_searchPage);
+//    m_searchPage = new SearchPage;
+//    m_searchPage->setSize(this->width(), this->height());
+//    this->insertWidget(int(StackedPage::SearchPage), m_searchPage);
 }
 
 void StackedWidget::initConnections()
 {
-    connect(this, &StackedWidget::startSearch, m_searchPage, &SearchPage::startSearch);
-    connect(this, &StackedWidget::stopSearch, m_searchPage, &SearchPage::stopSearch);
-    connect(m_searchPage, &SearchPage::effectiveSearch, this, &StackedWidget::effectiveSearch);
+//    connect(this, &StackedWidget::startSearch, m_searchPage, &SearchPage::startSearch);
+//    connect(this, &StackedWidget::stopSearch, m_searchPage, &SearchPage::stopSearch);
+//    connect(m_searchPage, &SearchPage::effectiveSearch, this, &StackedWidget::effectiveSearch);
 }

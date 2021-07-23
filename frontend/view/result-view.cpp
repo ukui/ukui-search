@@ -80,6 +80,7 @@ void ResultWidget::initConnections()
 {
     connect(this, &ResultWidget::startSearch, m_resultView, &ResultView::startSearch);
     connect(this, &ResultWidget::startSearch, this, [ = ]() {
+        qDebug() << "==========start search!";
         m_showMoreLabel->resetLabel();
     });
     connect(this, &ResultWidget::stopSearch, m_resultView, &ResultView::stopSearch);
@@ -240,6 +241,7 @@ void ResultView::initConnections()
 {
 //    connect(this, &ResultView::startSearch, m_model, &SearchResultModel::startSearch);
     connect(this, &ResultView::startSearch, [ = ](const QString &keyword) {
+        qDebug() << "==========start search!";
         m_style_delegate->setSearchKeyword(keyword);
         m_model->startSearch(keyword);
     });
