@@ -80,7 +80,6 @@ void ResultWidget::initConnections()
 {
     connect(this, &ResultWidget::startSearch, m_resultView, &ResultView::startSearch);
     connect(this, &ResultWidget::startSearch, this, [ = ]() {
-        qDebug() << "==========start search!";
         m_showMoreLabel->resetLabel();
     });
     connect(this, &ResultWidget::stopSearch, m_resultView, &ResultView::stopSearch);
