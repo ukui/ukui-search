@@ -68,6 +68,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
             if(text == "") {
                 m_isEmpty = true;
                 m_timer->stop();
+                Q_EMIT this->requestSearchKeyword(text);
                 return;
             }
             m_timer->start(0.1 * 1000);

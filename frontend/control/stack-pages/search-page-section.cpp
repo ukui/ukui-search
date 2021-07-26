@@ -99,8 +99,6 @@ void ResultArea::initUi()
 void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(this, &ResultArea::startSearch, widget, &ResultWidget::startSearch);
-    connect(this, &ResultArea::startSearch, [=](){
-    });
 
     connect(this, &ResultArea::stopSearch, widget, &ResultWidget::stopSearch);
     connect(widget, &ResultWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);

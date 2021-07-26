@@ -89,7 +89,7 @@ MainWindow::~MainWindow() {
     if(m_settingsWidget) {
         delete m_settingsWidget;
         m_settingsWidget = NULL;
-    }
+
 #endif
     if(m_askDialog) {
         delete m_askDialog;
@@ -109,22 +109,25 @@ MainWindow::~MainWindow() {
  * @brief initUi 初始化主界面主要ui控件
  */
 void MainWindow::initUi() {
-    this->setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+    this->setFixedSize(WINDOW_WIDTH, 68);
+//    this->setStyleSheet("QMainWindow{border:2px solid red;}");
 
-    m_widget = new QWidget(this);
+//    m_widget = new QWidget(this);
 
-    this->setCentralWidget(m_widget);
-    m_widget->setFixedSize(this->size());
+//    this->setCentralWidget(m_widget);
+//    m_widget->setFixedSize(this->size());
 //    QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
 //    mainlayout->setContentsMargins(MAIN_MARGINS);
 //    m_frame->setLayout(mainlayout);
 
 //    m_stackedWidget = new StackedWidget(m_frame);//内容栏
-    m_searchBarWidget = new SeachBarWidget(m_widget);
-    m_searchBarWidget->move(m_widget->rect().topLeft());
+    m_searchBarWidget = new SeachBarWidget(this);
+    m_searchBarWidget->move(this->rect().topLeft());
     m_searchBarWidget->show();
-    m_searchResultPage = new SearchResultPage(m_widget);
+    m_searchResultPage = new SearchResultPage(this);
+    m_searchResultPage->hide();
     m_searchResultPage->move(0, 58);
+//    m_searchResultPage->show();
 //    m_searchWidget = new SeachBarWidget(this);
 //    m_searchLayout = new SearchBarHLayout(this);
 //    m_searchWidget->setLayout(m_searchLayout);
@@ -290,6 +293,9 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
 //        m_stackedWidget->setPage(int(StackedPage::HomePage));
         m_askTimer->stop();
         Q_EMIT m_searchResultPage->stopSearch();
+        m_searchResultPage->hide();
+        this->resizeHeight(68);
+
     } else {
 //        m_stackedWidget->setPage(int(StackedPage::SearchPage));
         QTimer::singleShot(10, this, [ = ]() {
@@ -297,9 +303,18 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
             if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
                 m_askTimer->start();
             Q_EMIT m_searchResultPage->startSearch(keyword);
+            this->resizeHeight(610);
+
+            m_searchResultPage->move(0, 58);
+            m_searchResultPage->show();
         });
     }
     m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
+}
+
+void MainWindow::resizeHeight(int height)
+{
+    this->setFixedHeight(height);
 }
 
 /**

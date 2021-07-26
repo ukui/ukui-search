@@ -105,6 +105,7 @@ public Q_SLOTS:
     void trayIconActivatedSlot(QSystemTrayIcon::ActivationReason reason);
     void settingsBtnClickedSlot();
     void searchKeywordSlot(const QString&);
+    void resizeHeight(int height);
 
 private:
 
