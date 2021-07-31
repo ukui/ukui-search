@@ -1,3 +1,13 @@
+ukui-search (0.4.0+0720) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  *Fix: A potential index crash issue.
+   - 修复了一个潜在的索引崩溃问题(由某些特定的格式损坏的文本文件引起)。 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 20 Jul 2021 10:42:32 +0800
+
 ukui-search (0.4.0+0709) v101; urgency=medium
 
   * Bug 无
