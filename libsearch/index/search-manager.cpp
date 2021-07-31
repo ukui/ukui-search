@@ -347,21 +347,35 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
         std::string wordTobeFound = QString::fromStdString(keyWord).section(" ", 0, 0).toStdString();
         int size = wordTobeFound.length();
         term.skip_to(wordTobeFound);
-        int count = 0;
-        for(auto pos = term.positionlist_begin(); pos != term.positionlist_end() && count < 6; ++pos) {
-            std::string s = data.substr((*pos < 60) ? 0 : (*pos  - 60), size + 120);
-            QString snippet = QString::fromStdString(s);
-            if(snippet.size() > 6 + QString::fromStdString(keyWord).size()) {
-                snippet.replace(0, 3, "...").replace(snippet.size() - 3, 3, "...");
-            } else {
-                snippet.append("...").prepend("...");
-            }
-            ri.description.prepend(SearchPluginIface::DescriptionInfo{"",snippet});
-//            snippets.append(snippet);
-            QString().swap(snippet);
-            std::string().swap(s);
-            ++count;
+//        int count = 0;
+//        for(auto pos = term.positionlist_begin(); pos != term.positionlist_end() && count < 6; ++pos) {
+//            std::string s = data.substr((*pos < 60) ? 0 : (*pos  - 60), size + 120);
+//            QString snippet = QString::fromStdString(s);
+//            if(snippet.size() > 6 + QString::fromStdString(keyWord).size()) {
+//                snippet.replace(0, 3, "...").replace(snippet.size() - 3, 3, "...");
+//            } else {
+//                snippet.append("...").prepend("...");
+//            }
+//            ri.description.prepend(SearchPluginIface::DescriptionInfo{"",snippet});
+////            snippets.append(snippet);
+//            QString().swap(snippet);
+//            std::string().swap(s);
+//            ++count;
+//        }
+        //fix me: make a snippet without cut cjk char.
+        auto pos = term.positionlist_begin();
+        QString snippet;
+        if(data.length() - *pos < 120) {
+            std::string s = data.substr((data.length() < 120) ? 0 : (data.length() - 120), 120);
+            snippet = QString::fromStdString(s);
+        } else {
+            std::string s = data.substr(*pos, 120);
+            snippet = QString::fromStdString(s);
         }
+
+        ri.description.prepend(SearchPluginIface::DescriptionInfo{"",snippet});
+        QString().swap(snippet);
+//        std::string().swap(s);
         std::string().swap(data);
 
 

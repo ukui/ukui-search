@@ -89,6 +89,7 @@ public:
 
     static bool openFile(QString &path, bool openInDir = false);
     static bool copyPath(QString &path);
+    static QString escapeHtml(const QString & str);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;

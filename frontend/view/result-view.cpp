@@ -142,6 +142,8 @@ void ResultView::clearSelectedRow()
         this->blockSignals(true);
         this->clearSelection();
         this->blockSignals(false);
+    } else {
+        m_is_selected = false;
     }
 }
 
@@ -178,7 +180,7 @@ void ResultView::onRowSelectedSlot(const QItemSelection &selected, const QItemSe
     //NEW_TODO
     m_is_selected = true;
     Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(this->currentIndex()));
-    m_is_selected = false;
+
     if(!selected.isEmpty()) {
         QRegion region = visualRegionForSelection(selected);
         QRect rect = region.boundingRect();
@@ -240,7 +242,6 @@ void ResultView::initConnections()
 {
 //    connect(this, &ResultView::startSearch, m_model, &SearchResultModel::startSearch);
     connect(this, &ResultView::startSearch, [ = ](const QString &keyword) {
-        qDebug() << "==========start search!";
         m_style_delegate->setSearchKeyword(keyword);
         m_model->startSearch(keyword);
     });

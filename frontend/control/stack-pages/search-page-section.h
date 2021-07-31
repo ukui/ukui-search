@@ -62,26 +62,29 @@ public:
     void clear();
 
 public Q_SLOTS:
-    void setWidgetInfo(const QString&, const SearchPluginIface::ResultInfo&);
-
+    void setWidgetInfo(const QString &plugin_name, const SearchPluginIface::ResultInfo &info);
+    void updateDetailPage(const QString &plugin_name, const SearchPluginIface::ResultInfo &info);
+protected:
+     void paintEvent(QPaintEvent *event);
 private:
     void initUi();
-    void paintEvent(QPaintEvent *);
     void clearLayout(QLayout *);
     QVBoxLayout * m_mainLyt = nullptr;
-    QLabel * m_iconLabel = nullptr;
-    QFrame *m_previewFrame = nullptr;
-    QHBoxLayout *m_previewFrameLyt = nullptr;
-    QFrame * m_nameFrame = nullptr;
-    QHBoxLayout * m_nameFrameLyt = nullptr;
-    QLabel * m_nameLabel = nullptr;
-    QLabel * m_pluginLabel = nullptr;
-    QFrame * m_line_1 = nullptr;
-    QFrame * m_descFrame = nullptr;
-    QVBoxLayout * m_descFrameLyt = nullptr;
-    QFrame * m_line_2 = nullptr;
-    QFrame * m_actionFrame = nullptr;
-    QVBoxLayout * m_actionFrameLyt = nullptr;
+    QString m_currentPluginId;
+    QWidget *m_detailPage = nullptr;
+//    QLabel * m_iconLabel = nullptr;
+//    QFrame *m_previewFrame = nullptr;
+//    QHBoxLayout *m_previewFrameLyt = nullptr;
+//    QFrame * m_nameFrame = nullptr;
+//    QHBoxLayout * m_nameFrameLyt = nullptr;
+//    QLabel * m_nameLabel = nullptr;
+//    QLabel * m_pluginLabel = nullptr;
+//    QFrame * m_line_1 = nullptr;
+//    QFrame * m_descFrame = nullptr;
+//    QVBoxLayout * m_descFrameLyt = nullptr;
+//    QFrame * m_line_2 = nullptr;
+//    QFrame * m_actionFrame = nullptr;
+//    QVBoxLayout * m_actionFrameLyt = nullptr;
 };
 
 class DetailArea : public QScrollArea
@@ -98,23 +101,23 @@ Q_SIGNALS:
     void setWidgetInfo(const QString&, const SearchPluginIface::ResultInfo&);
 };
 
-class ActionLabel : public QLabel
-{
-    Q_OBJECT
-public:
-    ActionLabel(const QString &action, const QString &key, const int &ActionKey, const QString &pluginId, const int type = 0, QWidget *parent = nullptr);
-    ~ActionLabel() = default;
-private:
-    void initUi();
-    QString m_action;
-    QString m_key;
-    int m_actionKey;
-    int m_type = 0;
-    QString m_pluginId;
+//class ActionLabel : public QLabel
+//{
+//    Q_OBJECT
+//public:
+//    ActionLabel(const QString &action, const QString &key, const int &ActionKey, const QString &pluginId, const int type = 0, QWidget *parent = nullptr);
+//    ~ActionLabel() = default;
+//private:
+//    void initUi();
+//    QString m_action;
+//    QString m_key;
+//    int m_actionKey;
+//    int m_type = 0;
+//    QString m_pluginId;
 
-protected:
-    bool eventFilter(QObject *, QEvent *);
-};
+//protected:
+//    bool eventFilter(QObject *, QEvent *);
+//};
 
 }
 

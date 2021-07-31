@@ -3,6 +3,13 @@
 
 #include <QObject>
 #include <QThreadPool>
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QFrame>
+#include <QLabel>
+#include <QAction>
+#include "action-label.h"
 #include "search-plugin-iface.h"
 
 namespace Zeeker {
@@ -22,11 +29,28 @@ public:
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type);
-    bool isPreviewEnable(QString key, int type);
-    QWidget *previewPage(QString key, int type, QWidget *parent);
+//    bool isPreviewEnable(QString key, int type);
+//    QWidget *previewPage(QString key, int type, QWidget *parent);
+    QWidget *detailPage(const ResultInfo &ri);
 
 private:
     void xmlElement();
+    void initDetailPage();
+    QString m_currentActionKey;
+    QWidget *m_detailPage = nullptr;
+    QVBoxLayout *m_detailLyt = nullptr;
+    QLabel *m_iconLabel = nullptr;
+    QFrame *m_nameFrame = nullptr;
+    QHBoxLayout *m_nameFrameLyt = nullptr;
+    QLabel *m_nameLabel = nullptr;
+    QLabel *m_pluginLabel = nullptr;
+    QFrame *m_line_1 = nullptr;
+    QFrame *m_actionFrame = nullptr;
+    QVBoxLayout *m_actionFrameLyt = nullptr;
+    ActionLabel *m_actionLabel1 = nullptr;
+
+    QVBoxLayout * m_actionLyt = nullptr;
+
 
     QMap<QString, QStringList> m_chineseSearchList;
     QMap<QString, QStringList> m_englishSearchList;

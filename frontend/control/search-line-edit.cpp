@@ -189,5 +189,8 @@ void LineEditStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyle
         }
         break;
     }
+    default:
+        return;
+//        return QProxyStyle::drawPrimitive(element, option, painter, widget);
     }
 }

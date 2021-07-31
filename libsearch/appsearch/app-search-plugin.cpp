@@ -2,6 +2,7 @@
 #include <gio/gdesktopappinfo.h>
 #include <QWidget>
 #include <QLabel>
+#include "file-utils.h"
 using namespace Zeeker;
 size_t AppSearchPlugin::uniqueSymbol = 0;
 QMutex  AppSearchPlugin::m_mutex;
@@ -16,6 +17,7 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent)
     AppMatch::getAppMatch()->start();
     m_pool.setMaxThreadCount(2);
     m_pool.setExpiryTimeout(1000);
+    initDetailPage();
 }
 
 const QString AppSearchPlugin::name()
@@ -91,15 +93,125 @@ void AppSearchPlugin::openAction(int actionkey, QString key, int type)
     }
 }
 
-bool AppSearchPlugin::isPreviewEnable(QString key, int type)
+QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
 {
-    return false;
+    m_currentActionKey = ri.actionKey;
+    m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
+    QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
+    QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
+    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
+    if(QString::compare(showname, ri.name)) {
+        m_nameLabel->setToolTip(ri.name);
+    }
+    m_pluginLabel->setText(tr("Application"));
+    if(ri.type == 1) {
+        m_actionLabel1->hide();
+        m_actionLabel2->hide();
+        m_actionLabel3->hide();
+        m_actionLabel4->show();
+        QString showDesc = fontMetrics.elidedText(ri.description.at(0).key + " " + ri.description.at(0).value, Qt::ElideRight, 3114); //当字体长度超过215时显示为省略号
+        m_descLabel->setText(FileUtils::escapeHtml(showDesc));
+        m_descFrame->show();
+        m_line_2->show();
+
+    } else {
+        m_descFrame->hide();
+        m_line_2->hide();
+        m_actionLabel1->show();
+        m_actionLabel2->show();
+        m_actionLabel3->show();
+        m_actionLabel4->hide();
+    }
+    return m_detailPage;
 }
 
-QWidget *AppSearchPlugin::previewPage(QString key, int type, QWidget *parent = nullptr)
+void AppSearchPlugin::initDetailPage()
 {
-    return nullptr;
+    m_detailPage = new QWidget();
+    m_detailPage->setFixedWidth(360);
+    m_detailPage->setAttribute(Qt::WA_TranslucentBackground);
+    m_detailLyt = new QVBoxLayout(m_detailPage);
+    m_detailLyt->setContentsMargins(8, 0, 16, 0);
+    m_iconLabel = new QLabel(m_detailPage);
+    m_iconLabel->setAlignment(Qt::AlignCenter);
+    m_iconLabel->setFixedHeight(128);
+
+    m_nameFrame = new QFrame(m_detailPage);
+    m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
+    m_nameFrame->setLayout(m_nameFrameLyt);
+    m_nameFrameLyt->setContentsMargins(8, 0, 0, 0);
+    m_nameLabel = new QLabel(m_nameFrame);
+    m_nameLabel->setMaximumWidth(280);
+    m_pluginLabel = new QLabel(m_nameFrame);
+    m_pluginLabel->setEnabled(false);
+    m_nameFrameLyt->addWidget(m_nameLabel);
+    m_nameFrameLyt->addStretch();
+    m_nameFrameLyt->addWidget(m_pluginLabel);
+
+    m_line_1 = new QFrame(m_detailPage);
+    m_line_1->setLineWidth(0);
+    m_line_1->setFixedHeight(1);
+    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_descFrame = new QFrame(m_detailPage);
+    m_descFrameLyt = new QVBoxLayout(m_descFrame);
+    m_descLabel = new QLabel(m_descFrame);
+    m_descLabel->setTextFormat(Qt::PlainText);
+    m_descLabel->setWordWrap(true);
+    m_descFrameLyt->addWidget(m_descLabel);
+    m_descFrame->setLayout(m_descFrameLyt);
+    m_descFrameLyt->setContentsMargins(8, 0, 0, 0);
+    m_line_2 = new QFrame(m_detailPage);
+    m_line_2->setLineWidth(0);
+    m_line_2->setFixedHeight(1);
+    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+
+    m_actionFrame = new QFrame(m_detailPage);
+    m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
+    m_actionFrameLyt->setContentsMargins(8, 0, 0, 0);
+    m_actionLabel1 = new ActionLabel(tr("Open"), m_currentActionKey, m_actionFrame);
+    m_actionLabel2 = new ActionLabel(tr("Add Shortcut to Desktop"), m_currentActionKey, m_actionFrame);
+    m_actionLabel3 = new ActionLabel(tr("Add Shortcut to Panel"), m_currentActionKey, m_actionFrame);
+    m_actionLabel4 = new ActionLabel(tr("Install"), m_currentActionKey, m_actionFrame);
+
+    m_actionFrameLyt->addWidget(m_actionLabel1);
+    m_actionFrameLyt->addWidget(m_actionLabel2);
+    m_actionFrameLyt->addWidget(m_actionLabel3);
+    m_actionFrameLyt->addWidget(m_actionLabel4);
+    m_actionFrame->setLayout(m_actionFrameLyt);
+
+    m_detailLyt->addSpacing(50);
+    m_detailLyt->addWidget(m_iconLabel);
+    m_detailLyt->addWidget(m_nameFrame);
+    m_detailLyt->addWidget(m_line_1);
+    m_detailLyt->addWidget(m_descFrame);
+    m_detailLyt->addWidget(m_line_2);
+    m_detailLyt->addWidget(m_actionFrame);
+    m_detailPage->setLayout(m_detailLyt);
+    m_detailLyt->addStretch();
+
+    connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
+        launch(m_currentActionKey);
+    });
+    connect(m_actionLabel2, &ActionLabel::actionTriggered, [ & ](){
+        addDesktopShortcut(m_currentActionKey);
+    });
+    connect(m_actionLabel3, &ActionLabel::actionTriggered, [ & ](){
+        addPanelShortcut(m_currentActionKey);
+    });
+    connect(m_actionLabel4, &ActionLabel::actionTriggered, [ & ](){
+        installAppAction(m_currentActionKey);
+    });
 }
+
+//bool AppSearchPlugin::isPreviewEnable(QString key, int type)
+//{
+//    return false;
+//}
+
+//QWidget *AppSearchPlugin::previewPage(QString key, int type, QWidget *parent = nullptr)
+//{
+//    return nullptr;
+//}
 
 bool AppSearchPlugin::launch(const QString &path)
 {

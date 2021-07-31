@@ -129,6 +129,8 @@ void SearchResultPage::initConnections()
 {
     connect(this, &SearchResultPage::startSearch, m_resultArea, &ResultArea::startSearch);
     connect(this, &SearchResultPage::stopSearch, m_resultArea, &ResultArea::stopSearch);
+    connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
+    connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
 }
 
 void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
