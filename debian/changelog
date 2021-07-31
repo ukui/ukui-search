@@ -1,3 +1,148 @@
+ukui-search (1.0.0+0731) v101; urgency=medium
+
+  * test.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 31 Jul 2021 14:43:21 +0800
+
+ukui-search (0.4.0+0720) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  *Fix: A potential index crash issue.
+   - 修复了一个潜在的索引崩溃问题(由某些特定的格式损坏的文本文件引起)。 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 20 Jul 2021 10:42:32 +0800
+
+ukui-search (0.4.0+0709) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix: Path inclusive relation judgment incorrectly.
+    -修复了由于目录包含关系判断不当导致的一系列问题(黑名单屏蔽错误等)。
+  * Merge DAG and DP code; Preprocessing text content distinguish Chinese from
+    others.
+    - 优化关键词提取流程，缩短了一些索引所需的时间.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 09 Jul 2021 14:43:14 +0800
+
+ukui-search (0.4.0+0703) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix:Creat fifo error sometimes.
+    - 修复了在开关索引时偶现的由于创建管道失败导致的崩溃问题。
+  * Remove entry from ukui-menu.
+    - 移除了开始菜单入口（开始菜单里的搜索应用显示）。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 03 Jul 2021 10:13:23 +0800
+
+ukui-search (0.4.0+0630) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Add a systembus iface for add inotify_max_user_instance, avoid inotify_init fail.
+    - 增加修改inotify_max_user_instance配置的dbus接口，避免由于超出最大数量导致的inotify_init失败问题。
+  * Fix: Detail page display incorrectly occasionally.
+    - 修复了偶现的点击最佳列表，右侧详情显示错误的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 30 Jun 2021 11:38:31 +0800
+
+ukui-search (0.4.0+0629) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix:App search error when display applications of the same name.
+    - 修复了当存在重名应用时应用搜索显示错误的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 29 Jun 2021 11:19:25 +0800
+
+ukui-search (0.4.0+0628) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:41543
+  * 其他改动：
+  * Fix: Tray icon click won't work after Win+D.
+    -修复了在弹出建立索引提示弹窗后按WIN+D之后，点击任务栏托盘无法呼出页面的问题。 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 28 Jun 2021 09:35:15 +0800
+
+ukui-search (0.4.0+0619) v101; urgency=medium
+
+  * Bug 无
+  * 需求6732,6733,6734,6938
+  * 其他改动：
+  * Add inotify events queue for merging events，reduce disk io operations.
+    - 增加inotify信号合并缓冲队列，减少90%以上磁盘io操作。 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 19 Jun 2021 09:12:10 +0800
+
+ukui-search (0.4.0+0612) v101; urgency=medium
+
+  * Bug 无
+  * 任务 无
+  * 其他改动：
+  * Startup time optimization.
+    - 更改托盘图标注册时间，优化开机启动速度。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 12 Jun 2021 08:53:45 +0800
+
+ukui-search (0.4.0+0611) v101; urgency=medium
+
+  * Bug 61034
+  * 需求6448
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 11 Jun 2021 14:05:18 +0800
+
+ukui-search (0.4.0+0610) focal; urgency=medium
+
+  * Bugs Fixed and performance optimized.
+    - 解决bug，优化性能。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 10 Jun 2021 20:58:32 +0800
+
+ukui-search (0.4.0+0608) v101; urgency=medium
+
+  * Bug 无 
+  * 任务 无
+  * 其他改动：
+  * Fix: Show more label is blocked by scrollbar.
+    - 微调UI，解决收起按钮被遮挡的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 08 Jun 2021 20:57:00 +0800
+
+ukui-search (0.4.0+0605) v101; urgency=medium
+
+  * Bug 58229,58171,57963
+  * 任务 33340
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 05 Jun 2021 14:28:08 +0800
+
+ukui-search (0.4.0+0604) v101; urgency=medium
+
+  * Bug 无
+  * 任务 33347, 33346, 33337
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 04 Jun 2021 11:23:51 +0800
+
+ukui-search (0.4.0+0602) v101; urgency=medium
+
+  * Bug 58540,58539,58581
+  * 任务 无
+  * 其他改动：
+  * Reduced the memory footprint of file indexing,and reduced the time it
+    takes.
+    - 减少了文件索引的内存占用并且缩短了文件索引的时间。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 02 Jun 2021 15:32:04 +0800
+
 ukui-search (0.4.0+0530) v101; urgency=medium
 
   * Bug 57129

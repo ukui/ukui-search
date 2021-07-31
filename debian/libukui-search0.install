@@ -1,1 +1,2 @@
 usr/lib/*/libukui-search.so.*
+libsearch/.qm/*.qm usr/share/ukui-search/translations

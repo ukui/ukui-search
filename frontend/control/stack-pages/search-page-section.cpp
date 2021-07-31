@@ -20,6 +20,7 @@
  */
 #include "search-page-section.h"
 #include <QDebug>
+#include <QScrollBar>
 using namespace Zeeker;
 
 #define RESULT_LAYOUT_MARGINS 0,0,0,0
@@ -80,6 +81,7 @@ void ResultArea::onWidgetSizeChanged()
 
 void ResultArea::initUi()
 {
+//    this->verticalScrollBar()->setProperty("drawScrollBarGroove", false);
     QPalette pal = palette();
     pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
     pal.setColor(QPalette::Window, RESULT_BACKGROUND_COLOR);
@@ -107,7 +109,8 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
 DetailArea::DetailArea(QWidget *parent) : QScrollArea(parent)
 {
     initUi();
-    connect(this, &DetailArea::setWidgetInfo, m_detailWidget, &DetailWidget::setWidgetInfo);
+    connect(this, &DetailArea::setWidgetInfo, m_detailWidget, &DetailWidget::updateDetailPage);
+    connect(this, &DetailArea::setWidgetInfo, this, &DetailArea::show);
 }
 
 void DetailArea::initUi()
@@ -120,6 +123,7 @@ void DetailArea::initUi()
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setWidgetResizable(true);
+    this->setFixedSize(368, 516);
     m_detailWidget = new DetailWidget(this);
     this->setWidget(m_detailWidget);
     this->hide();
@@ -127,8 +131,14 @@ void DetailArea::initUi()
 
 DetailWidget::DetailWidget(QWidget *parent) : QWidget(parent)
 {
-    initUi();
-    clear();
+//    initUi();
+//    clear();
+    this->setFixedWidth(368);
+    m_mainLyt = new QVBoxLayout(this);
+    this->setLayout(m_mainLyt);
+    m_mainLyt->setContentsMargins(DETAIL_WIDGET_MARGINS);
+    m_mainLyt->setAlignment(Qt::AlignHCenter);
+//    m_mainLyt->addStretch();
 }
 
 QString escapeHtml(const QString & str) {
@@ -140,121 +150,143 @@ QString escapeHtml(const QString & str) {
 
 void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginIface::ResultInfo &info)
 {
-    clearLayout(m_descFrameLyt);
-    clearLayout(m_previewFrameLyt);
-    if(SearchPluginManager::getInstance()->getPlugin(plugin_name)->isPreviewEnable(info.actionKey,info.type)) {
-        m_iconLabel->hide();
-        m_previewFrameLyt->addWidget(SearchPluginManager::getInstance()->getPlugin(plugin_name)->previewPage(info.actionKey,info.type, m_previewFrame), 0 , Qt::AlignHCenter);
-        m_previewFrameLyt->setContentsMargins(0,0,0,0);
-        m_previewFrame->show();
-    } else {
-        m_previewFrame->hide();
-        m_iconLabel->setPixmap(info.icon.pixmap(info.icon.actualSize(ICON_SIZE)));
-        m_iconLabel->show();
-    }
-    QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-    QString name = fontMetrics.elidedText(info.name, Qt::ElideRight, NAME_LABEL_WIDTH - 8);
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
-    m_nameLabel->setToolTip(info.name);
-    m_pluginLabel->setText(plugin_name);
-    m_nameFrame->show();
-    m_line_1->show();
+//    clearLayout(m_descFrameLyt);
+//    clearLayout(m_previewFrameLyt);
+//    if(SearchPluginManager::getInstance()->getPlugin(plugin_name)->isPreviewEnable(info.actionKey,info.type)) {
+//        m_iconLabel->hide();
+//        m_previewFrameLyt->addWidget(SearchPluginManager::getInstance()->getPlugin(plugin_name)->previewPage(info.actionKey,info.type, m_previewFrame), 0 , Qt::AlignHCenter);
+//        m_previewFrameLyt->setContentsMargins(0,0,0,0);
+//        m_previewFrame->show();
+//    } else {
+//        m_previewFrame->hide();
+//        m_iconLabel->setPixmap(info.icon.pixmap(info.icon.actualSize(ICON_SIZE)));
+//        m_iconLabel->show();
+//    }
+//    QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
+//    QString name = fontMetrics.elidedText(info.name, Qt::ElideRight, NAME_LABEL_WIDTH - 8);
+//    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
+//    m_nameLabel->setToolTip(info.name);
+//    m_pluginLabel->setText(plugin_name);
+//    m_nameFrame->show();
+//    m_line_1->show();
 
-    if (info.description.length() > 0) {
-        //NEW_TODO 样式待优化
-        clearLayout(m_descFrameLyt);
-        Q_FOREACH (SearchPluginIface::DescriptionInfo desc, info.description) {
-            QLabel * descLabel = new QLabel(m_descFrame);
-            descLabel->setTextFormat(Qt::PlainText);
-            descLabel->setWordWrap(true);
-            QString show_desc = desc.key + "    " + desc.value;
-            descLabel->setText(show_desc);
-            m_descFrameLyt->addWidget(descLabel);
+//    if (info.description.length() > 0) {
+//        //NEW_TODO 样式待优化
+//        clearLayout(m_descFrameLyt);
+//        Q_FOREACH (SearchPluginIface::DescriptionInfo desc, info.description) {
+//            QLabel * descLabel = new QLabel(m_descFrame);
+//            descLabel->setTextFormat(Qt::PlainText);
+//            descLabel->setWordWrap(true);
+//            QString show_desc = desc.key + "    " + desc.value;
+//            descLabel->setText(show_desc);
+//            m_descFrameLyt->addWidget(descLabel);
+//        }
+//        m_descFrame->show();
+//        m_line_2->show();
+//    }
+//    clearLayout(m_actionFrameLyt);
+//    Q_FOREACH (SearchPluginIface::Actioninfo actioninfo, SearchPluginManager::getInstance()->getPlugin(plugin_name)->getActioninfo(info.type)) {
+//        ActionLabel * actionLabel = new ActionLabel(actioninfo.displayName, info.actionKey, actioninfo.actionkey, plugin_name, info.type, m_actionFrame);
+//        m_actionFrameLyt->addWidget(actionLabel);
+//    }
+//    m_actionFrame->show();
+}
+
+void DetailWidget::updateDetailPage(const QString &plugin_name, const SearchPluginIface::ResultInfo &info)
+{
+    if(m_detailPage) {
+        if(m_currentPluginId == plugin_name) {
+            SearchPluginManager::getInstance()->getPlugin(plugin_name)->detailPage(info);
+        } else {
+            m_mainLyt->removeWidget(m_detailPage);
+            m_detailPage->hide();
+            m_detailPage = SearchPluginManager::getInstance()->getPlugin(plugin_name)->detailPage(info);
+            m_detailPage->setParent(this);
+            m_mainLyt->addWidget(m_detailPage);
+            m_detailPage->show();
+//            m_mainLyt->insertWidget(0, m_detailPage, 0);
         }
-        m_descFrame->show();
-        m_line_2->show();
+    } else {
+        m_detailPage = SearchPluginManager::getInstance()->getPlugin(plugin_name)->detailPage(info);
+        m_detailPage->setParent(this);
+        m_mainLyt->addWidget(m_detailPage);
+//        m_mainLyt->insertWidget(0, m_detailPage, 0);
     }
-    clearLayout(m_actionFrameLyt);
-    Q_FOREACH (SearchPluginIface::Actioninfo actioninfo, SearchPluginManager::getInstance()->getPlugin(plugin_name)->getActioninfo(info.type)) {
-        ActionLabel * actionLabel = new ActionLabel(actioninfo.displayName, info.actionKey, actioninfo.actionkey, plugin_name, info.type, m_actionFrame);
-        m_actionFrameLyt->addWidget(actionLabel);
-    }
-    m_actionFrame->show();
 }
 
 void DetailWidget::clear()
 {
-    m_iconLabel->hide();
-    m_nameFrame->hide();
-    m_line_1->hide();
-    m_descFrame->hide();
-    m_line_2->hide();
-    m_actionFrame->hide();
+//    m_iconLabel->hide();
+//    m_nameFrame->hide();
+//    m_line_1->hide();
+//    m_descFrame->hide();
+//    m_line_2->hide();
+//    m_actionFrame->hide();
 }
 
 void DetailWidget::initUi()
 {
-    this->setFixedSize(368, 516);
-    m_mainLyt = new QVBoxLayout(this);
-    this->setLayout(m_mainLyt);
-    m_mainLyt->setContentsMargins(DETAIL_WIDGET_MARGINS);
-    m_mainLyt->setAlignment(Qt::AlignHCenter);
+//    this->setFixedSize(368, 516);
+//    m_mainLyt = new QVBoxLayout(this);
+//    this->setLayout(m_mainLyt);
+//    m_mainLyt->setContentsMargins(DETAIL_WIDGET_MARGINS);
+//    m_mainLyt->setAlignment(Qt::AlignHCenter);
 
-    m_iconLabel = new QLabel(this);
-    m_iconLabel->setFixedHeight(DETAIL_ICON_HEIGHT);
-    m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_previewFrame = new QFrame(this);
-    m_previewFrameLyt = new QHBoxLayout(m_previewFrame);
+//    m_iconLabel = new QLabel(this);
+//    m_iconLabel->setFixedHeight(DETAIL_ICON_HEIGHT);
+//    m_iconLabel->setAlignment(Qt::AlignCenter);
+//    m_previewFrame = new QFrame(this);
+//    m_previewFrameLyt = new QHBoxLayout(m_previewFrame);
 
-    m_nameFrame = new QFrame(this);
-    m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
-    m_nameFrame->setLayout(m_nameFrameLyt);
-    m_nameFrameLyt->setContentsMargins(DETAIL_FRAME_MARGINS);
-    m_nameLabel = new QLabel(m_nameFrame);
-    m_nameLabel->setMaximumWidth(NAME_LABEL_WIDTH);
-    m_pluginLabel = new QLabel(m_nameFrame);
-    m_pluginLabel->setEnabled(false);
-    m_nameFrameLyt->addWidget(m_nameLabel);
-    m_nameFrameLyt->addStretch();
-    m_nameFrameLyt->addWidget(m_pluginLabel);
+//    m_nameFrame = new QFrame(this);
+//    m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
+//    m_nameFrame->setLayout(m_nameFrameLyt);
+//    m_nameFrameLyt->setContentsMargins(DETAIL_FRAME_MARGINS);
+//    m_nameLabel = new QLabel(m_nameFrame);
+//    m_nameLabel->setMaximumWidth(NAME_LABEL_WIDTH);
+//    m_pluginLabel = new QLabel(m_nameFrame);
+//    m_pluginLabel->setEnabled(false);
+//    m_nameFrameLyt->addWidget(m_nameLabel);
+//    m_nameFrameLyt->addStretch();
+//    m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(this);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setLineWidth(0);
-    m_line_1->setStyleSheet(LINE_STYLE);
-    m_line_2 = new QFrame(this);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setLineWidth(0);
-    m_line_2->setStyleSheet(LINE_STYLE);
+//    m_line_1 = new QFrame(this);
+//    m_line_1->setFixedHeight(1);
+//    m_line_1->setLineWidth(0);
+//    m_line_1->setStyleSheet(LINE_STYLE);
+//    m_line_2 = new QFrame(this);
+//    m_line_2->setFixedHeight(1);
+//    m_line_2->setLineWidth(0);
+//    m_line_2->setStyleSheet(LINE_STYLE);
 
-    m_descFrame = new QFrame(this);
-    m_descFrameLyt = new QVBoxLayout(m_descFrame);
-    m_descFrame->setLayout(m_descFrameLyt);
-    m_descFrameLyt->setContentsMargins(DETAIL_FRAME_MARGINS);
+//    m_descFrame = new QFrame(this);
+//    m_descFrameLyt = new QVBoxLayout(m_descFrame);
+//    m_descFrame->setLayout(m_descFrameLyt);
+//    m_descFrameLyt->setContentsMargins(DETAIL_FRAME_MARGINS);
 
-    m_actionFrame = new QFrame(this);
-    m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
-    m_actionFrame->setLayout(m_actionFrameLyt);
-    m_actionFrameLyt->setContentsMargins(DETAIL_FRAME_MARGINS);
+//    m_actionFrame = new QFrame(this);
+//    m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
+//    m_actionFrame->setLayout(m_actionFrameLyt);
+//    m_actionFrameLyt->setContentsMargins(DETAIL_FRAME_MARGINS);
 
-    m_mainLyt->addWidget(m_iconLabel);
-    m_mainLyt->addWidget(m_previewFrame, 0, Qt::AlignHCenter);
-    m_mainLyt->addWidget(m_nameFrame);
-    m_mainLyt->addWidget(m_line_1);
-    m_mainLyt->addWidget(m_descFrame);
-    m_mainLyt->addWidget(m_line_2);
-    m_mainLyt->addWidget(m_actionFrame);
-    m_mainLyt->addStretch();
+//    m_mainLyt->addWidget(m_iconLabel);
+//    m_mainLyt->addWidget(m_previewFrame, 0, Qt::AlignHCenter);
+//    m_mainLyt->addWidget(m_nameFrame);
+//    m_mainLyt->addWidget(m_line_1);
+//    m_mainLyt->addWidget(m_descFrame);
+//    m_mainLyt->addWidget(m_line_2);
+//    m_mainLyt->addWidget(m_actionFrame);
+//    m_mainLyt->addStretch();
 }
 
-void DetailWidget::paintEvent(QPaintEvent * event)
+void DetailWidget::paintEvent(QPaintEvent *event)
 {
     QStyleOption opt;
     opt.init(this);
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
-    QRect rect = this->rect();
+    QRect rect = this->rect().adjusted(0, 0, -8, 0);
     p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
     p.setBrush(opt.palette.color(QPalette::Text));
     p.setOpacity(DETAIL_WIDGET_TRANSPARENT);
@@ -276,49 +308,49 @@ void DetailWidget::clearLayout(QLayout *layout)
     child = NULL;
 }
 
-ActionLabel::ActionLabel(const QString &action, const QString &key, const int &ActionKey, const QString &pluginId, const int type, QWidget *parent) : QLabel(parent)
-{
-    m_action = action;
-    m_key = key;
-    m_actionKey = ActionKey;
-    m_type = type;
-    m_pluginId = pluginId;
-    this->initUi();
-    this->installEventFilter(this);
-}
+//ActionLabel::ActionLabel(const QString &action, const QString &key, const int &ActionKey, const QString &pluginId, const int type, QWidget *parent) : QLabel(parent)
+//{
+//    m_action = action;
+//    m_key = key;
+//    m_actionKey = ActionKey;
+//    m_type = type;
+//    m_pluginId = pluginId;
+//    this->initUi();
+//    this->installEventFilter(this);
+//}
 
-void ActionLabel::initUi()
-{
-    this->setText(m_action);
-    QPalette pal = palette();
-    pal.setColor(QPalette::WindowText, ACTION_NORMAL_COLOR);
-    pal.setColor(QPalette::Light, ACTION_HOVER_COLOR);
-    pal.setColor(QPalette::Dark, ACTION_PRESS_COLOR);
-    this->setPalette(pal);
-    this->setForegroundRole(QPalette::WindowText);
-    this->setCursor(QCursor(Qt::PointingHandCursor));
-}
+//void ActionLabel::initUi()
+//{
+//    this->setText(m_action);
+//    QPalette pal = palette();
+//    pal.setColor(QPalette::WindowText, ACTION_NORMAL_COLOR);
+//    pal.setColor(QPalette::Light, ACTION_HOVER_COLOR);
+//    pal.setColor(QPalette::Dark, ACTION_PRESS_COLOR);
+//    this->setPalette(pal);
+//    this->setForegroundRole(QPalette::WindowText);
+//    this->setCursor(QCursor(Qt::PointingHandCursor));
+//}
 
-bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched == this) {
-        if(event->type() == QEvent::MouseButtonPress) {
-            this->setForegroundRole(QPalette::Dark);
-            return true;
-        } else if(event->type() == QEvent::MouseButtonRelease) {
-            SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_pluginId);
-            if (plugin)
-                plugin->openAction(m_actionKey, m_key, m_type);
-            else
-                qWarning()<<"Get plugin failed!";
-            this->setForegroundRole(QPalette::Light);
-            return true;
-        } else if(event->type() == QEvent::Enter) {
-            this->setForegroundRole(QPalette::Light);
-            return true;
-        } else if(event->type() == QEvent::Leave) {
-            this->setForegroundRole(QPalette::WindowText);
-            return true;
-        }
-    }
-}
+//bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
+//{
+//    if (watched == this) {
+//        if(event->type() == QEvent::MouseButtonPress) {
+//            this->setForegroundRole(QPalette::Dark);
+//            return true;
+//        } else if(event->type() == QEvent::MouseButtonRelease) {
+//            SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_pluginId);
+//            if (plugin)
+//                plugin->openAction(m_actionKey, m_key, m_type);
+//            else
+//                qWarning()<<"Get plugin failed!";
+//            this->setForegroundRole(QPalette::Light);
+//            return true;
+//        } else if(event->type() == QEvent::Enter) {
+//            this->setForegroundRole(QPalette::Light);
+//            return true;
+//        } else if(event->type() == QEvent::Leave) {
+//            this->setForegroundRole(QPalette::WindowText);
+//            return true;
+//        }
+//    }
+//}

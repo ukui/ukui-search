@@ -788,3 +788,11 @@ bool FileUtils::copyPath(QString &path)
     QApplication::clipboard()->setText(path);
     return true;
 }
+
+QString FileUtils::escapeHtml(const QString &str)
+{
+    QString temp = str;
+    temp.replace("<", "&lt;");
+    temp.replace(">", "&gt;");
+    return temp;
+}

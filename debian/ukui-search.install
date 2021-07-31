@@ -1,5 +1,5 @@
 usr/bin/ukui-search
 etc/xdg/autostart/*.desktop
 usr/share/applications/*.desktop
-src/.qm/*.qm usr/share/ukui-search/translations
+frontend/.qm/*.qm usr/share/ukui-search/translations
 usr/share/glib-2.0/schemas/*.xml

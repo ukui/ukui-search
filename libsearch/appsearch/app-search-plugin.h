@@ -2,8 +2,15 @@
 #define APPSEARCHPLUGIN_H
 
 #include <QObject>
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QFrame>
+#include <QLabel>
+#include <QAction>
 #include "search-plugin-iface.h"
 #include "app-match.h"
+#include "action-label.h"
 #include "libsearch_global.h"
 namespace Zeeker {
 class LIBSEARCH_EXPORT AppSearchPlugin : public QObject, public SearchPluginIface
@@ -23,9 +30,11 @@ public:
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type);
-    bool isPreviewEnable(QString key, int type);
-    QWidget *previewPage(QString key, int type, QWidget *parent);
+//    bool isPreviewEnable(QString key, int type);
+//    QWidget *previewPage(QString key, int type, QWidget *parent);
+    QWidget *detailPage(const ResultInfo &ri);
 private:
+    void initDetailPage();
     bool launch(const QString &path);
     bool addPanelShortcut(const QString &path);
     bool addDesktopShortcut(const QString &path);
@@ -36,6 +45,28 @@ private:
     QThreadPool m_pool;
     static size_t uniqueSymbol;
     static QMutex m_mutex;
+
+    QString m_currentActionKey;
+    QWidget *m_detailPage;
+    QVBoxLayout *m_detailLyt = nullptr;
+    QLabel *m_iconLabel = nullptr;
+    QFrame *m_nameFrame = nullptr;
+    QHBoxLayout *m_nameFrameLyt = nullptr;
+    QLabel *m_nameLabel = nullptr;
+    QLabel *m_pluginLabel = nullptr;
+    QFrame *m_line_1 = nullptr;
+    QFrame *m_descFrame = nullptr;
+    QLabel *m_descLabel = nullptr;
+    QVBoxLayout *m_descFrameLyt = nullptr;
+    QFrame *m_line_2 = nullptr;
+    QFrame *m_actionFrame = nullptr;
+    QVBoxLayout *m_actionFrameLyt = nullptr;
+    ActionLabel *m_actionLabel1 = nullptr;
+    ActionLabel *m_actionLabel2 = nullptr;
+    ActionLabel *m_actionLabel3 = nullptr;
+    ActionLabel *m_actionLabel4 = nullptr;
+
+    QVBoxLayout * m_actionLyt = nullptr;
 };
 
 class AppSearch : public QObject, public QRunnable {
