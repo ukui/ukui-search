@@ -245,6 +245,14 @@
     </message>
 </context>
 <context>
+    <name>Zeeker::BestListWidget</name>
+    <message>
+        <location filename="../../frontend/view/best-list-view.cpp" line="205"/>
+        <source>Best Matches</source>
+        <translation type="unfinished">En İyi Eşleşen</translation>
+    </message>
+</context>
+<context>
     <name>Zeeker::ContentWidget</name>
     <message>
         <source>Recently Opened</source>

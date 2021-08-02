@@ -42,7 +42,7 @@ private:
     void initConnections();
     void setupConnectionsForWidget(ResultWidget *);
     QSplitter * m_splitter = nullptr;
-    QHBoxLayout *m_hlayout = nullptr;
+    QHBoxLayout * m_hlayout = nullptr;
     ResultArea * m_resultArea = nullptr;
     DetailArea * m_detailArea = nullptr;
 
@@ -51,6 +51,7 @@ Q_SIGNALS:
     void stopSearch();
     void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
     void effectiveSearch();
+    void resizeHeight(int height);
 };
 }
 

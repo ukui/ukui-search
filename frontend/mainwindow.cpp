@@ -170,6 +170,7 @@ void MainWindow::initConnections()
 //    });
     connect(m_searchBarWidget, &SeachBarWidget::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
 //    connect(m_stackedWidget, &StackedWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
+    //connect(m_searchResultPage, &SearchResultPage::resizeHeight, this, &MainWindow::resizeHeight);
 }
 
 /**
@@ -303,7 +304,7 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
             if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
                 m_askTimer->start();
             Q_EMIT m_searchResultPage->startSearch(keyword);
-            this->resizeHeight(610);
+            this->resizeHeight(WINDOW_HEIGHT);
 
             m_searchResultPage->move(0, 58);
             m_searchResultPage->show();

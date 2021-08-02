@@ -5,6 +5,14 @@
 #include "search-plugin-iface.h"
 
 namespace Zeeker {
+
+struct cmpPluginId
+{
+    bool operator ()(const QString& k1, const QString& k2){
+        return k1 > k2;
+    }
+};
+
 class SearchPluginManager : public QObject
 {
     Q_OBJECT
@@ -18,8 +26,7 @@ public:
     void close();
 
 private:
-    QHash<QString, SearchPluginIface*> m_hash;
-
+    std::map<QString, SearchPluginIface*, cmpPluginId> m_map;
     explicit SearchPluginManager(QObject *parent = nullptr);
     ~SearchPluginManager();
 

@@ -1,23 +1,23 @@
-#ifndef RESULTVIEW_H
-#define RESULTVIEW_H
+#ifndef BESTLISTVIEW_H
+#define BESTLISTVIEW_H
 #include <QTreeView>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QMenu>
 #include <QApplication>
-#include "search-result-model.h"
+#include "best-list-model.h"
 #include "show-more-label.h"
 #include "title-label.h"
 #include "result-view-delegate.h"
 
 namespace Zeeker {
 
-class ResultView : public QTreeView
+class BestListView : public QTreeView
 {
     Q_OBJECT
 public:
-    ResultView(const QString &plugin_id, QWidget *parent = nullptr);
-    ~ResultView() = default;
+    BestListView(QWidget *parent = nullptr);
+    ~BestListView() = default;
     bool isSelected();
     int showHeight();
 
@@ -35,28 +35,27 @@ protected:
 
 private:
     void initConnections();
-    SearchResultModel * m_model = nullptr;
-    QString m_plugin_id;
+    BestListModel * m_model = nullptr;
     bool m_is_selected = false;
     ResultViewDelegate * m_style_delegate = nullptr;
     int m_count = 0;
 
 Q_SIGNALS:
     void startSearch(const QString &);
-    void stopSearch();
     void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
     void sendBestListData(const QString &, const SearchPluginIface::ResultInfo&);
     void listLengthChanged(const int &);
     void rowClicked();
+
 };
 
-class ResultWidget : public QWidget
+
+class BestListWidget : public QWidget
 {
     Q_OBJECT
 public:
-    ResultWidget(const QString &plugin_id, QWidget *parent = nullptr);
-    ~ResultWidget() = default;
-    QString pluginId();
+    BestListWidget(QWidget *parent = nullptr);
+    ~BestListWidget() = default;
     void setEnabled(const bool&);
 
 public Q_SLOTS:
@@ -65,14 +64,13 @@ public Q_SLOTS:
     void onListLengthChanged(const int &);
 
 private:
-    QString m_plugin_id;
     bool m_enabled = true;
 
     void initUi();
     void initConnections();
     QVBoxLayout * m_mainLyt = nullptr;
     TitleLabel * m_titleLabel = nullptr;
-    ResultView * m_resultView = nullptr;
+    BestListView * m_bestListView = nullptr;
     ShowMoreLabel * m_showMoreLabel = nullptr;
 
 Q_SIGNALS:
@@ -84,6 +82,7 @@ Q_SIGNALS:
     void sizeChanged();
     void rowClicked();
 };
+
 }
 
-#endif // RESULTVIEW_H
+#endif // BESTLISTVIEW_H

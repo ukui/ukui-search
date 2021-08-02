@@ -10,6 +10,14 @@
     </message>
 </context>
 <context>
+    <name>Zeeker::BestListWidget</name>
+    <message>
+        <location filename="../../frontend/view/best-list-view.cpp" line="205"/>
+        <source>Best Matches</source>
+        <translation>最佳匹配</translation>
+    </message>
+</context>
+<context>
     <name>Zeeker::ContentWidget</name>
     <message>
         <source>Recently Opened</source>
@@ -274,7 +282,7 @@
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="299"/>
         <source>Whether to delete this directory?</source>
-        <translation>是否要删除此目录</translation>
+        <translation>是否要删除此目录?</translation>
     </message>
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="300"/>
@@ -289,7 +297,7 @@
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="359"/>
         <source>Creating ...</source>
-        <translation>正在索引</translation>
+        <translation>正在索引...</translation>
     </message>
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="362"/>
