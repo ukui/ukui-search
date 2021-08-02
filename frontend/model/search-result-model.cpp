@@ -79,8 +79,9 @@ void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)
     this->beginResetModel();
     qDebug()<<"Got a result. name ="<<info.name;
     m_item->m_result_info_list.append(info);
-    Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
     this->endResetModel();
+    Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
+    Q_EMIT this->sendBestListData(m_plugin_id, m_item->m_result_info_list.at(0));
 }
 
 void SearchResultModel::startSearch(const QString &keyword)
@@ -88,8 +89,8 @@ void SearchResultModel::startSearch(const QString &keyword)
     if (!m_item->m_result_info_list.isEmpty()) {
         this->beginResetModel();
         m_item->m_result_info_list.clear();
-        Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
         this->endResetModel();
+        Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
     }
     m_search_manager->startSearch(keyword);
 }

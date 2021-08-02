@@ -29,6 +29,7 @@ namespace Zeeker {
 
 class SearchResultItem : public QObject {
     friend class SearchResultModel;
+    friend class BestListModel;
     Q_OBJECT
 public:
     explicit SearchResultItem(QObject *parent = nullptr);
@@ -62,6 +63,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void stopSearch();
     void itemListChanged(const int&);
+    void sendBestListData(const QString &, const SearchPluginIface::ResultInfo&);
 
 private:
     void initConnections();

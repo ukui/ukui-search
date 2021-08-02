@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2020, KylinSoft Co., Ltd.
+ * Copyright (C) 2021, KylinSoft Co., Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Authors: zhangjiaping <zhangjiaping@kylinos.cn>
+ * Authors: jixiaoxu <jixiaoxu@kylinos.cn>
  *
  */
 #include "search-result-page.h"
@@ -131,6 +131,11 @@ void SearchResultPage::initConnections()
     connect(this, &SearchResultPage::stopSearch, m_resultArea, &ResultArea::stopSearch);
     connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
+
+    connect(m_resultArea, &ResultArea::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
+    connect(m_resultArea, &ResultArea::currentRowChanged, this, &SearchResultPage::currentRowChanged);
+    connect(this, &SearchResultPage::currentRowChanged, m_resultArea, &ResultArea::clearSelectedRow);
+    connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::resizeHeight);
 }
 
 void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)

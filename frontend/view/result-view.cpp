@@ -99,6 +99,7 @@ void ResultWidget::initConnections()
         this->setFixedHeight(whole_height);
         Q_EMIT this->sizeChanged();
     });
+    connect(m_resultView, &ResultView::sendBestListData, this, &ResultWidget::sendBestListData);
 }
 
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
@@ -249,4 +250,5 @@ void ResultView::initConnections()
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ResultView::onRowSelectedSlot);
     connect(this, &ResultView::activated, this, &ResultView::onRowDoubleClickedSlot);
     connect(m_model, &SearchResultModel::itemListChanged, this, &ResultView::onItemListChanged);
+    connect(m_model, &SearchResultModel::sendBestListData, this, &ResultView::sendBestListData);
 }

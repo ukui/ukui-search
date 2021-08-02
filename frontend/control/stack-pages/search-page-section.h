@@ -26,6 +26,7 @@
 #include <QStyleOption>
 #include "result-view.h"
 #include "search-plugin-iface.h"
+#include "best-list-view.h"
 
 namespace Zeeker {
 class ResultArea : public QScrollArea
@@ -42,15 +43,19 @@ public Q_SLOTS:
 
 private:
     void initUi();
+    void initConnections();
     void setupConnectionsForWidget(ResultWidget *);
     QWidget * m_widget = nullptr;
     QVBoxLayout * m_mainLyt = nullptr;
+    BestListWidget * m_bestListWidget;
     QList<ResultWidget *> m_widget_list;
 
 Q_SIGNALS:
     void startSearch(const QString &);
     void stopSearch();
-
+    void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
+    void clearSelectedRow();
+    void resizeHeight(int height);
 };
 
 class DetailWidget : public QWidget

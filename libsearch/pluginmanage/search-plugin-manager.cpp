@@ -9,19 +9,20 @@ using namespace Zeeker;
 static SearchPluginManager *global_instance = nullptr;
 SearchPluginManager::SearchPluginManager(QObject *parent)
 {
-    registerPlugin(new FileSearchPlugin(this));
-    registerPlugin(new DirSearchPlugin(this));
-    registerPlugin(new FileContengSearchPlugin(this));
     registerPlugin(new AppSearchPlugin(this));
     registerPlugin(new SettingsSearchPlugin(this));
+    registerPlugin(new DirSearchPlugin(this));
+    registerPlugin(new FileSearchPlugin(this));
+    registerPlugin(new FileContengSearchPlugin(this));
+
 }
 
 bool SearchPluginManager::registerPlugin(Zeeker::SearchPluginIface *plugin)
 {
-    if (m_hash.value(plugin->name())) {
+    if (m_map.end() != m_map.find(plugin->name())){
         return false;
     }
-    m_hash.insert(plugin->name(), plugin);
+    m_map[plugin->name()] = plugin;
     return true;
 }
 
@@ -35,12 +36,16 @@ SearchPluginManager *SearchPluginManager::getInstance()
 
 const QStringList SearchPluginManager::getPluginIds()
 {
-    return m_hash.keys();
+    QStringList list;
+    for (auto i = m_map.begin(); i != m_map.end(); i++) {
+        list.append((*i).first);
+    }
+    return list;
 }
 
 SearchPluginIface *SearchPluginManager::getPlugin(const QString &pluginId)
 {
-    return m_hash.value(pluginId);
+    return m_map[pluginId];
 }
 
 void SearchPluginManager::close()
@@ -50,5 +55,5 @@ void SearchPluginManager::close()
 
 SearchPluginManager::~SearchPluginManager()
 {
-    m_hash.clear();
+    m_map.clear();
 }

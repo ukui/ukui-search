@@ -10,6 +10,14 @@
     </message>
 </context>
 <context>
+    <name>Zeeker::BestListWidget</name>
+    <message>
+        <location filename="../../frontend/view/best-list-view.cpp" line="205"/>
+        <source>Best Matches</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Zeeker::CreateIndexAskDialog</name>
     <message>
         <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="40"/>

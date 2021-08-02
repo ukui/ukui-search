@@ -42,6 +42,7 @@ ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 {
     qRegisterMetaType<SearchPluginIface::ResultInfo>("SearchPluginIface::ResultInfo");
     initUi();
+    initConnections();
 }
 
 void ResultArea::appendWidet(ResultWidget *widget)
@@ -75,8 +76,11 @@ void ResultArea::onWidgetSizeChanged()
     Q_FOREACH (ResultWidget *widget, m_widget_list) {
         whole_height += widget->height();
     }
+    whole_height += m_bestListWidget->height();
+    //TODO 网页高度
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
+    Q_EMIT this->resizeHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
 }
 
 void ResultArea::initUi()
@@ -95,15 +99,25 @@ void ResultArea::initUi()
     this->setWidget(m_widget);
     m_mainLyt = new QVBoxLayout(m_widget);
     m_widget->setLayout(m_mainLyt);
+    m_bestListWidget = new BestListWidget(this);
+    m_mainLyt->addWidget(m_bestListWidget);
     m_mainLyt->setContentsMargins(RESULT_LAYOUT_MARGINS);
+}
+
+void ResultArea::initConnections()
+{
+    connect(this, &ResultArea::startSearch, m_bestListWidget, &BestListWidget::startSearch);
+    connect(m_bestListWidget, &BestListWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
+    connect(m_bestListWidget, &BestListWidget::currentRowChanged, this, &ResultArea::currentRowChanged);
+    connect(this, &ResultArea::clearSelectedRow, m_bestListWidget, &BestListWidget::clearSelectedRow);
 }
 
 void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(this, &ResultArea::startSearch, widget, &ResultWidget::startSearch);
-
     connect(this, &ResultArea::stopSearch, widget, &ResultWidget::stopSearch);
     connect(widget, &ResultWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
+    connect(widget, &ResultWidget::sendBestListData, m_bestListWidget, &BestListWidget::sendBestListData);
 }
 
 DetailArea::DetailArea(QWidget *parent) : QScrollArea(parent)
