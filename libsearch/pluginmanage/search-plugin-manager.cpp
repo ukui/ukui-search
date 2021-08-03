@@ -23,6 +23,7 @@ bool SearchPluginManager::registerPlugin(Zeeker::SearchPluginIface *plugin)
         return false;
     }
     m_map[plugin->name()] = plugin;
+    m_plugin_order[m_plugin_order.size()] = plugin->name();//按注册顺序绑定优先级
     return true;
 }
 
@@ -37,8 +38,8 @@ SearchPluginManager *SearchPluginManager::getInstance()
 const QStringList SearchPluginManager::getPluginIds()
 {
     QStringList list;
-    for (auto i = m_map.begin(); i != m_map.end(); i++) {
-        list.append((*i).first);
+    for (auto i = m_plugin_order.begin(); i != m_plugin_order.end(); i++) {
+        list.append(m_plugin_order[(*i).first]);//根据优先级返回plugin ID
     }
     return list;
 }

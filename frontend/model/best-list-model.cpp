@@ -19,6 +19,7 @@
  *
  */
 #include "best-list-model.h"
+#include "search-plugin-manager.h"
 using namespace Zeeker;
 
 BestListModel::BestListModel(QObject *parent)
@@ -109,13 +110,28 @@ void BestListModel::appendInfo(const QString &pluginId, const SearchPluginIface:
             return;
         }
         qDebug()<<"plugin ID:"<<pluginId<<"Repalce result. name ="<<info.name;
+        this->beginResetModel();
         m_item->m_result_info_list.replace(m_plugin_id_list.lastIndexOf(pluginId), info);
+        this->endResetModel();
         return;
     }
     this->beginResetModel();
     qDebug()<<"plugin ID:"<<pluginId<<"Got a result. name ="<<info.name;
     m_plugin_id_list.append(pluginId);
     m_item->m_result_info_list.append(info);
+    QVector<SearchPluginIface::ResultInfo> result_info_list_tmp;
+    QVector<QString> plugin_id_list_tmp;
+    QStringList plugin_order = SearchPluginManager::getInstance()->getPluginIds();
+    Q_FOREACH (QString plugin, plugin_order) {
+        if (m_plugin_id_list.contains(plugin)) {
+            result_info_list_tmp.append(m_item->m_result_info_list.at(m_plugin_id_list.lastIndexOf(plugin)));
+            plugin_id_list_tmp.append(plugin);
+        }
+    }
+    m_item->m_result_info_list.clear();
+    m_item->m_result_info_list.swap(result_info_list_tmp);
+    m_plugin_id_list.clear();
+    m_plugin_id_list.swap(plugin_id_list_tmp);
     this->endResetModel();
     Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
 
@@ -127,8 +143,8 @@ void BestListModel::startSearch(const QString &keyword)
         this->beginResetModel();
         m_plugin_id_list.clear();
         m_item->m_result_info_list.clear();
-        //Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
         this->endResetModel();
+        Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
     }
 }
 
