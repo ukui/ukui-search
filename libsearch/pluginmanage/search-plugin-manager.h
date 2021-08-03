@@ -6,13 +6,6 @@
 
 namespace Zeeker {
 
-struct cmpPluginId
-{
-    bool operator ()(const QString& k1, const QString& k2){
-        return k1 > k2;
-    }
-};
-
 class SearchPluginManager : public QObject
 {
     Q_OBJECT
@@ -26,7 +19,8 @@ public:
     void close();
 
 private:
-    std::map<QString, SearchPluginIface*, cmpPluginId> m_map;
+    std::map<QString, SearchPluginIface*> m_map;
+    std::map<int, QString> m_plugin_order;//绑定plugin ID和优先级
     explicit SearchPluginManager(QObject *parent = nullptr);
     ~SearchPluginManager();
 

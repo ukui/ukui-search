@@ -222,7 +222,7 @@ int FileSearch::getResult(Xapian::MSet &result) {
             }
         }
             //            searchResult.append(path);
-        qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
+        //qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
@@ -406,7 +406,7 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
             return -1;
         }
         //        searchResult.insert(path,snippets);
-        qDebug() << "path=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
+        //qDebug() << "path=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
     }
 //    //        if(!pathTobeDelete->isEmpty())
 //    //            deleteAllIndex(pathTobeDelete)

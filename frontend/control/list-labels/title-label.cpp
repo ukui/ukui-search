@@ -45,6 +45,6 @@ void TitleLabel::paintEvent(QPaintEvent * event) {
     p.setBrush(opt.palette.color(QPalette::Text));
     p.setOpacity(0.04);
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect, 0, 0);
+    p.drawRoundedRect(rect, 6, 6);
     return QLabel::paintEvent(event);
 }

@@ -77,7 +77,7 @@ QVariant SearchResultModel::data(const QModelIndex &index, int role) const
 void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)
 {
     this->beginResetModel();
-    qDebug()<<"Got a result. name ="<<info.name;
+    //qDebug()<<"Got a result. name ="<<info.name;
     m_item->m_result_info_list.append(info);
     this->endResetModel();
     Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
