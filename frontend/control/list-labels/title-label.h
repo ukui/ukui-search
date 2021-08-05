@@ -22,15 +22,34 @@
 #define TITLELABEL_H
 
 #include <QLabel>
+#include "show-more-label.h"
+#include <QHBoxLayout>
 
 namespace Zeeker {
 class TitleLabel : public QLabel {
+    Q_OBJECT
 public:
     TitleLabel(QWidget * parent = nullptr);
-    ~TitleLabel();
+    ~TitleLabel() = default;
 
 protected:
     void paintEvent(QPaintEvent *);
+
+private:
+    void initUi();
+    void initConnections();
+
+    QHBoxLayout * m_titleLyt = nullptr;
+    ShowMoreLabel * m_showMoreLabel = nullptr;
+
+public Q_SLOTS:
+    void onListLengthChanged(const int &);
+
+Q_SIGNALS:
+    void startSearch(const QString &);
+    void stopSearch();
+    void showMoreClicked();
+    void retractClicked();
 };
 }
 

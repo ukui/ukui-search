@@ -21,14 +21,29 @@
 #include "title-label.h"
 #include <QPainter>
 #include <QStyleOption>
-
+#define UNFOLD_LABEL_HEIGHT 30
+#define NUM_LIMIT_SHOWN_DEFAULT 5
 using namespace Zeeker;
 TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
-    this->setContentsMargins(8, 0, 0, 0);
-    this->setFixedHeight(24);
+    initUi();
+    initConnections();
 }
 
-TitleLabel::~TitleLabel() {
+void TitleLabel::initUi() {
+    this->setContentsMargins(8, 0, 0, 0);
+    this->setFixedHeight(24);
+    m_titleLyt = new QHBoxLayout(this);
+    this->setLayout(m_titleLyt);
+    m_showMoreLabel = new ShowMoreLabel(this);
+    m_showMoreLabel->setFixedHeight(UNFOLD_LABEL_HEIGHT);
+    m_showMoreLabel->hide();
+    m_titleLyt->addStretch();
+    m_titleLyt->addWidget(m_showMoreLabel);
+}
+
+void TitleLabel::initConnections() {
+    connect(m_showMoreLabel, &ShowMoreLabel::showMoreClicked, this, &TitleLabel::showMoreClicked);
+    connect(m_showMoreLabel, &ShowMoreLabel::retractClicked, this, &TitleLabel::retractClicked);
 
 }
 
@@ -47,4 +62,9 @@ void TitleLabel::paintEvent(QPaintEvent * event) {
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(rect, 6, 6);
     return QLabel::paintEvent(event);
+}
+
+void TitleLabel::onListLengthChanged(const int &length)
+{
+    m_showMoreLabel->setVisible(length >= NUM_LIMIT_SHOWN_DEFAULT);
 }

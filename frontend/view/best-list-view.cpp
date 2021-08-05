@@ -20,6 +20,7 @@ BestListView::BestListView(QWidget *parent) : QTreeView(parent)
     m_style_delegate = new ResultViewDelegate(this);
     this->setItemDelegate(m_style_delegate);
 }
+
 bool BestListView::isSelected()
 {
     return m_is_selected;
@@ -187,9 +188,7 @@ void BestListWidget::reduceListSlot()
 void BestListWidget::onListLengthChanged(const int &length)
 {
     this->setVisible(length > 0);
-    m_showMoreLabel->setVisible(length > NUM_LIMIT_SHOWN_DEFAULT);
-    int show_more_height = m_showMoreLabel->isVisible() ? UNFOLD_LABEL_HEIGHT : 0;
-    int whole_height = this->isVisible() ? (m_bestListView->showHeight() + TITLE_HEIGHT + show_more_height) : 0;
+    int whole_height = this->isVisible() ? (m_bestListView->showHeight() + TITLE_HEIGHT) : 0;
     this->setFixedHeight(whole_height);
     Q_EMIT this->sizeChanged();
 }
@@ -207,37 +206,25 @@ void BestListWidget::initUi()
 
     m_bestListView = new BestListView(this);
 
-    m_showMoreLabel = new ShowMoreLabel(this);
-    m_showMoreLabel->setFixedHeight(UNFOLD_LABEL_HEIGHT);
-    m_showMoreLabel->hide();
-
     m_mainLyt->addWidget(m_titleLabel);
     m_mainLyt->addWidget(m_bestListView);
-    m_mainLyt->addWidget(m_showMoreLabel);
     this->setFixedHeight(m_bestListView->height() + TITLE_HEIGHT);
 }
 
 void BestListWidget::initConnections()
 {
     connect(this, &BestListWidget::startSearch, m_bestListView, &BestListView::startSearch);
-    connect(this, &BestListWidget::startSearch, this, [ = ]() {
-        m_showMoreLabel->resetLabel();
-    });
-    //connect(this, &BestListWidget::stopSearch, m_bestListView, &BestListView::stopSearch);
-    connect(this, &BestListWidget::stopSearch, this, [ = ]() {
-        m_showMoreLabel->resetLabel();
-        m_bestListView->setExpanded(false);
-    });
+    connect(this, &BestListWidget::startSearch, m_titleLabel, &TitleLabel::startSearch);
+    connect(this, &BestListWidget::stopSearch, m_titleLabel, &TitleLabel::stopSearch);
     connect(this, &BestListWidget::sendBestListData, m_bestListView, &BestListView::sendBestListData);
     connect(m_bestListView, &BestListView::currentRowChanged, this, &BestListWidget::currentRowChanged);
     connect(this, &BestListWidget::clearSelectedRow, m_bestListView, &BestListView::clearSelectedRow);
-    connect(m_showMoreLabel, &ShowMoreLabel::showMoreClicked, this, &BestListWidget::expandListSlot);
-    connect(m_showMoreLabel, &ShowMoreLabel::retractClicked, this, &BestListWidget::reduceListSlot);
+    connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &BestListWidget::expandListSlot);
+    connect(m_titleLabel, &TitleLabel::retractClicked, this, &BestListWidget::reduceListSlot);
     connect(m_bestListView, &BestListView::listLengthChanged, this, &BestListWidget::onListLengthChanged);
     connect(m_bestListView, &BestListView::rowClicked, this, &BestListWidget::rowClicked);
     connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
-        int show_more_height = m_showMoreLabel->isVisible() ? UNFOLD_LABEL_HEIGHT : 0;
-        int whole_height = this->isVisible() ? m_bestListView->showHeight() + TITLE_HEIGHT + show_more_height : 0;
+        int whole_height = this->isVisible() ? m_bestListView->showHeight() + TITLE_HEIGHT : 0;
         this->setFixedHeight(whole_height);
         Q_EMIT this->sizeChanged();
     });

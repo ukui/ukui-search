@@ -21,7 +21,7 @@
 #include "show-more-label.h"
 #include <QEvent>
 #include <QDebug>
-
+#include <QIcon>
 using namespace Zeeker;
 ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
     initUi();
@@ -30,7 +30,7 @@ ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
 
 void ShowMoreLabel::resetLabel() {
     m_isOpen = false;
-    m_textLabel->setText(tr("Show More..."));
+    m_textLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
 }
 
 /**
@@ -47,13 +47,13 @@ void ShowMoreLabel::initUi() {
     m_layout = new QHBoxLayout(this);
     m_layout->setContentsMargins(0, 0, 0, 6);
     m_textLabel = new QLabel(this);
-    m_textLabel->setText(tr("Show More..."));
+    m_textLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
     m_textLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_textLabel->installEventFilter(this);
 //    m_loadingIconLabel = new QLabel(this); //使用图片显示加载状态时，取消此label的注释
 //    m_loadingIconLabel->setFixedSize(18, 18);
 //    m_loadingIconLabel->hide();
-    m_layout->setAlignment(Qt::AlignRight);
+    m_layout->setAlignment(Qt::AlignRight | Qt::AlignTop);
     m_layout->addWidget(m_textLabel);
     m_textLabel->setPalette(pal);
     m_textLabel->setCursor(QCursor(Qt::PointingHandCursor));
@@ -65,11 +65,11 @@ bool ShowMoreLabel::eventFilter(QObject *watched, QEvent *event) {
         if(event->type() == QEvent::MouseButtonPress) {
             if(! m_timer->isActive()) {
                 if(!m_isOpen) {
-                    m_textLabel->setText(tr("Retract"));
+                    m_textLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
                     m_isOpen = true;
                     Q_EMIT this->showMoreClicked();
                 } else {
-                    m_textLabel->setText(tr("Show More..."));
+                    m_textLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
                     m_isOpen = false;
                     Q_EMIT this->retractClicked();
                 }
