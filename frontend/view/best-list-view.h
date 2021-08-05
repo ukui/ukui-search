@@ -71,7 +71,6 @@ private:
     QVBoxLayout * m_mainLyt = nullptr;
     TitleLabel * m_titleLabel = nullptr;
     BestListView * m_bestListView = nullptr;
-    ShowMoreLabel * m_showMoreLabel = nullptr;
 
 Q_SIGNALS:
     void startSearch(const QString &);

@@ -46,9 +46,7 @@ void ResultWidget::reduceListSlot()
 void ResultWidget::onListLengthChanged(const int &length)
 {
     this->setVisible(length > 0);
-    m_showMoreLabel->setVisible(length >= NUM_LIMIT_SHOWN_DEFAULT);
-    int show_more_height = m_showMoreLabel->isVisible() ? UNFOLD_LABEL_HEIGHT : 0;
-    int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT + show_more_height : 0;
+    int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT : 0;
     this->setFixedHeight(whole_height);
     Q_EMIT this->sizeChanged();
 }
@@ -66,36 +64,26 @@ void ResultWidget::initUi()
 
     m_resultView = new ResultView(m_plugin_id, this);
 
-    m_showMoreLabel = new ShowMoreLabel(this);
-    m_showMoreLabel->setFixedHeight(UNFOLD_LABEL_HEIGHT);
-    m_showMoreLabel->hide();
-
     m_mainLyt->addWidget(m_titleLabel);
     m_mainLyt->addWidget(m_resultView);
-    m_mainLyt->addWidget(m_showMoreLabel);
     this->setFixedHeight(m_resultView->height() + TITLE_HEIGHT);
 }
 
 void ResultWidget::initConnections()
 {
     connect(this, &ResultWidget::startSearch, m_resultView, &ResultView::startSearch);
-    connect(this, &ResultWidget::startSearch, this, [ = ]() {
-        m_showMoreLabel->resetLabel();
-    });
+    connect(this, &ResultWidget::startSearch, m_titleLabel, &TitleLabel::startSearch);
     connect(this, &ResultWidget::stopSearch, m_resultView, &ResultView::stopSearch);
-    connect(this, &ResultWidget::stopSearch, this, [ = ]() {
-        m_showMoreLabel->resetLabel();
-        m_resultView->setExpanded(false);
-    });
+    connect(this, &ResultWidget::stopSearch, m_titleLabel, &TitleLabel::stopSearch);
     connect(m_resultView, &ResultView::currentRowChanged, this, &ResultWidget::currentRowChanged);
     connect(this, &ResultWidget::clearSelectedRow, m_resultView, &ResultView::clearSelectedRow);
-    connect(m_showMoreLabel, &ShowMoreLabel::showMoreClicked, this, &ResultWidget::expandListSlot);
-    connect(m_showMoreLabel, &ShowMoreLabel::retractClicked, this, &ResultWidget::reduceListSlot);
+    connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &ResultWidget::expandListSlot);
+    connect(m_titleLabel, &TitleLabel::retractClicked, this, &ResultWidget::reduceListSlot);
     connect(m_resultView, &ResultView::listLengthChanged, this, &ResultWidget::onListLengthChanged);
+    connect(m_resultView, &ResultView::listLengthChanged, m_titleLabel, &TitleLabel::onListLengthChanged);
     connect(m_resultView, &ResultView::rowClicked, this, &ResultWidget::rowClicked);
     connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
-        int show_more_height = m_showMoreLabel->isVisible() ? UNFOLD_LABEL_HEIGHT : 0;
-        int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT + show_more_height : 0;
+        int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT : 0;
         this->setFixedHeight(whole_height);
         Q_EMIT this->sizeChanged();
     });
@@ -241,7 +229,6 @@ void ResultView::mousePressEvent(QMouseEvent *event)
 
 void ResultView::initConnections()
 {
-//    connect(this, &ResultView::startSearch, m_model, &SearchResultModel::startSearch);
     connect(this, &ResultView::startSearch, [ = ](const QString &keyword) {
         m_style_delegate->setSearchKeyword(keyword);
         m_model->startSearch(keyword);
