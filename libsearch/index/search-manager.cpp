@@ -94,7 +94,7 @@ bool SearchManager::creatResultInfo(SearchPluginIface::ResultInfo &ri, QString p
     if(!info.exists()) {
         return false;
     }
-    ri.icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString());
+    ri.icon = FileUtils::getFileIcon(QUrl::fromLocalFile(path).toString(), false);
     ri.name = info.fileName();
     ri.description = QVector<SearchPluginIface::DescriptionInfo>() \
                     << SearchPluginIface::DescriptionInfo{tr("Path:"), path} \

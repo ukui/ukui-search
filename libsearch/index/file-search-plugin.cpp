@@ -11,7 +11,7 @@ FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
     SearchPluginIface::Actioninfo Openpath { 1, tr("Open path")};
     SearchPluginIface::Actioninfo CopyPath { 2, tr("Copy Path")};
     m_actionInfo << open << Openpath << CopyPath;
-    m_pool.setMaxThreadCount(2);
+    m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
     initDetailPage();
 }
@@ -200,7 +200,7 @@ DirSearchPlugin::DirSearchPlugin(QObject *parent) : QObject(parent)
     SearchPluginIface::Actioninfo Openpath { 1, tr("Open path")};
     SearchPluginIface::Actioninfo CopyPath { 2, tr("Copy Path")};
     m_actionInfo << open << Openpath << CopyPath;
-    m_pool.setMaxThreadCount(2);
+    m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
     initDetailPage();
 }
@@ -380,7 +380,7 @@ FileContengSearchPlugin::FileContengSearchPlugin(QObject *parent) : QObject(pare
     SearchPluginIface::Actioninfo Openpath { 1, tr("Open path")};
     SearchPluginIface::Actioninfo CopyPath { 2, tr("Copy Path")};
     m_actionInfo << open << Openpath << CopyPath;
-    m_pool.setMaxThreadCount(2);
+    m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
     initDetailPage();
 }
