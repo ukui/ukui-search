@@ -146,11 +146,11 @@ void ResultView::onRowDoubleClickedSlot(const QModelIndex &index)
     SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
     try {
         if (plugin) {
-//            if (!info.actionList.isEmpty()) {
-//                plugin->openAction(info.actionList.at(0), info.key);
-//            } else {
-//                throw -2;
-//            }
+            if (!info.actionKey.isEmpty()) {
+                plugin->openAction(0, info.actionKey, info.type);
+            } else {
+                throw -2;
+            }
         } else {
             throw -1;
         }
