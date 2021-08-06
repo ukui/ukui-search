@@ -796,3 +796,41 @@ QString FileUtils::escapeHtml(const QString &str)
     temp.replace(">", "&gt;");
     return temp;
 }
+
+QString FileUtils::chineseSubString(const std::string &myStr, int start, int length)
+{
+    std::string afterSub = "";
+    //越界保护
+    if(start < 0 || length < 0){
+        return " ";
+    }
+    if (length >= myStr.length()) {
+        return QString::fromStdString(myStr);
+    }
+
+    QString sub = "";
+    QFont ft(QApplication::font().family(),QApplication::font().pointSize());
+    QFontMetrics fm (ft);
+
+    if (start + length <= myStr.length()) {
+        afterSub = myStr.substr(start,length);    //截取
+        sub = QString::fromStdString(afterSub);    //转QString
+
+        if(start + length < myStr.length()){
+           sub.replace(sub.length()-3,3,"...");    //替换后三位
+        }
+        else{
+           sub.append("...");   //直接加
+        }
+        sub = fm.elidedText(sub, Qt::ElideRight, 2*LABEL_MAX_WIDTH);    //超过两行则省略
+    }
+    else {
+        int newStart = myStr.length()-length;    //更新截取位置
+        afterSub = myStr.substr(newStart, length);
+        sub=QString::fromStdString(afterSub);
+
+        sub.replace(0,3,"...").append("...");
+        sub = fm.elidedText(sub, Qt::ElideLeft, 2*LABEL_MAX_WIDTH);
+    }
+    return sub;
+}

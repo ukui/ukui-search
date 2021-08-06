@@ -38,6 +38,7 @@
 #include <QDesktopServices>
 #include <QApplication>
 #include <QClipboard>
+#include <QFontMetrics>
 
 #include <quazip/quazipfile.h>
 #include <stdio.h>
@@ -53,12 +54,11 @@
 
 #include "libsearch_global.h"
 #include "gobject-template.h"
-
+#include "common.h"
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
 //#define FINISH_CREATING_INDEX 2
 #define MAX_CONTENT_LENGTH 20480000
-
 namespace Zeeker {
 class  LIBSEARCH_EXPORT FileUtils {
 public:
@@ -90,6 +90,7 @@ public:
     static bool openFile(QString &path, bool openInDir = false);
     static bool copyPath(QString &path);
     static QString escapeHtml(const QString & str);
+    static QString chineseSubString(const std::string &myStr,int start,int length);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;

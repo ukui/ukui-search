@@ -450,7 +450,7 @@ QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
         m_nameLabel->setToolTip(ri.name);
     }
 
-    m_snippetLabel->setText(getHtmlText(ri.description.at(0).value, m_keyWord));
+    m_snippetLabel->setText(getHtmlText(wrapData(m_snippetLabel,ri.description.at(0).value), m_keyWord));
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
     m_pathLabel2->setToolTip(m_currentActionKey);
     m_timeLabel2->setText(ri.description.at(2).value);
@@ -478,6 +478,40 @@ QString FileContengSearchPlugin::getHtmlText(const QString &text, const QString 
     }
     htmlString.replace("\n", "<br />");//替换换行符
     return htmlString;
+}
+
+QString FileContengSearchPlugin::wrapData(QLabel *p_label, const QString &text)
+{
+    QString wrapText = text;
+
+    QFontMetrics fontMetrics = p_label->fontMetrics();
+    int textSize = fontMetrics.width(wrapText);
+
+    if(textSize > LABEL_MAX_WIDTH){
+        int lastIndex = 0;
+        int count = 0;
+
+        for(int i = lastIndex; i < wrapText.length(); i++) {
+
+            if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i, '\n');
+                count++;
+            } else if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i - 1, '\n');
+                count++;
+            } else {
+                continue;
+            }
+
+            if(count == 2){
+                break;
+            }
+        }
+    }
+    p_label->setText(wrapText);
+    return wrapText;
 }
 
 void FileContengSearchPlugin::initDetailPage()
@@ -509,7 +543,7 @@ void FileContengSearchPlugin::initDetailPage()
     m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
 
     m_snippetLabel = new QLabel(m_detailPage);
-    m_snippetLabel->setWordWrap(true);
+//    m_snippetLabel->setWordWrap(true);
     m_snippetLabel->setContentsMargins(8, 0, 8, 0);
 
     m_pathFrame = new QFrame(m_detailPage);

@@ -357,21 +357,22 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
 //                snippet.append("...").prepend("...");
 //            }
 //            ri.description.prepend(SearchPluginIface::DescriptionInfo{"",snippet});
-////            snippets.append(snippet);
+////           snippets.append(snippet);
 //            QString().swap(snippet);
 //            std::string().swap(s);
 //            ++count;
 //        }
         //fix me: make a snippet without cut cjk char.
         auto pos = term.positionlist_begin();
-        QString snippet;
-        if(data.length() - *pos < 120) {
-            std::string s = data.substr((data.length() < 120) ? 0 : (data.length() - 120), 120);
-            snippet = QString::fromStdString(s);
-        } else {
-            std::string s = data.substr(*pos, 120);
-            snippet = QString::fromStdString(s);
-        }
+        QString snippet = FileUtils::chineseSubString(data,*pos,120);
+
+//        if(data.length() - *pos < 120) {
+//            std::string s = data.substr((data.length() < 120) ? 0 : (data.length() - 120), 120);
+//            snippet = QString::fromStdString(s);
+//        } else {
+//            std::string s = data.substr(*pos, 120);
+//            snippet = QString::fromStdString(s);
+//        }
 
         ri.description.prepend(SearchPluginIface::DescriptionInfo{"",snippet});
         QString().swap(snippet);

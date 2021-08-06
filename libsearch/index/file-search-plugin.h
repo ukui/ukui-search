@@ -143,6 +143,7 @@ public:
 //    QWidget *previewPage(QString key, int type, QWidget *parent = nullptr);
     QWidget *detailPage(const ResultInfo &ri);
     QString getHtmlText(const QString & text, const QString & keyword);
+    QString wrapData(QLabel *p_label, const QString &text);
 private:
     void initDetailPage();
     QWidget *m_detailPage = nullptr;
