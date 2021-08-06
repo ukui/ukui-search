@@ -15,7 +15,7 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent)
     m_actionInfo_installed << open << addtoDesktop << addtoPanel;
     m_actionInfo_not_installed << install;
     AppMatch::getAppMatch()->start();
-    m_pool.setMaxThreadCount(2);
+    m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
     initDetailPage();
 }
@@ -292,11 +292,7 @@ void AppSearch::run()
     while (i.hasNext()) {
         i.next();
         SearchPluginIface::ResultInfo ri;
-        if(!QIcon::fromTheme(i.value().at(1)).isNull()) {
-            ri.icon = QIcon::fromTheme(i.value().at(1));
-        }else {
-            ri.icon = QIcon(":/res/icons/desktop.png");
-        }
+        ri.icon = QIcon::fromTheme(i.value().at(1), QIcon(":/res/icons/desktop.png"));
         ri.name = i.key().app_name;
         ri.actionKey = i.value().at(0);
         ri.type = 0; //0 means installed apps.
@@ -310,11 +306,7 @@ void AppSearch::run()
     while (in.hasNext()) {
         in.next();
         SearchPluginIface::ResultInfo ri;
-        if(!QIcon(in.value().at(1)).isNull()) {
-            ri.icon = QIcon(in.value().at(1));
-        }else {
-            ri.icon = QIcon(":/res/icons/desktop.png");
-        }
+        ri.icon = QIcon::fromTheme(in.value().at(1), QIcon(":/res/icons/desktop.png"));
         ri.name = in.key().app_name;
         SearchPluginIface::DescriptionInfo di;
         di.key = QString(tr("Application Description:"));

@@ -18,6 +18,15 @@ public:
         QMutexLocker locker(&m_mutex);
         return QList<T>::takeFirst();
     }
+    inline void clear() {
+        QMutexLocker locker(&m_mutex);
+        QList<T>::clear();
+        return;
+    }
+    inline bool isEmpty() {
+        QMutexLocker locker(&m_mutex);
+        return QList<T>::isEmpty();
+    }
 private:
     QMutex m_mutex;
 };

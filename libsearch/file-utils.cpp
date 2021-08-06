@@ -73,7 +73,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
             }
         }
     }
-    if(QIcon::fromTheme(icon_name).isNull()) {
+    if(!QIcon::hasThemeIcon(icon_name)) {
         return QIcon::fromTheme("unknown");
     }
     return QIcon::fromTheme(icon_name);

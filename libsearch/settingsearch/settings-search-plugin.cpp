@@ -50,7 +50,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                     str = key + "/" + str;
                     resultInfo.icon = FileUtils::getSettingIcon(str, true);
                     resultInfo.actionKey = str;
-                    searchResult->append(resultInfo);
+                    searchResult->enqueue(resultInfo);
                     continue;
                 }
 
@@ -63,7 +63,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                         str = key + "/" + str;
                         resultInfo.icon = FileUtils::getSettingIcon(str, true);
                         resultInfo.actionKey = str;
-                        searchResult->append(resultInfo);
+                        searchResult->enqueue(resultInfo);
                         break;
                     }
                     if (keyword.size() < 2)
@@ -74,7 +74,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                         str = key + "/" + str;
                         resultInfo.icon = FileUtils::getSettingIcon(str, true);
                         resultInfo.actionKey = str;
-                        searchResult->append(resultInfo);
+                        searchResult->enqueue(resultInfo);
                         break;
                     }
                 }
@@ -94,7 +94,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                     str = key + "/" + str;
                     resultInfo.icon = FileUtils::getSettingIcon(str, true);
                     resultInfo.actionKey = str;
-                    searchResult->append(resultInfo);
+                    searchResult->enqueue(resultInfo);
                 }
             }
         }

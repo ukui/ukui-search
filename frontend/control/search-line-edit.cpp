@@ -108,6 +108,11 @@ void SeachBarWidget::clear()
     m_searchLineEdit->clear();
 }
 
+void SeachBarWidget::reSearch()
+{
+    Q_EMIT this->m_searchLineEdit->requestSearchKeyword(m_searchLineEdit->text());
+}
+
 void SeachBarWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)

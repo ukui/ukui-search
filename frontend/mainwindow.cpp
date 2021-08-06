@@ -411,7 +411,7 @@ void MainWindow::centerToScreen(QWidget* widget) {
         desk_x = width;
         desk_y = height;
     }
-    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
+    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 3 + desk_rect.top());
 }
 
 void MainWindow::initGsettings() {
@@ -457,21 +457,21 @@ void MainWindow::initTimer() {
     });
     m_researchTimer = new QTimer;
     m_researchTimer->setInterval(RESEARCH_TIME);
-//    connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
-//        if(this->isVisible()) {
-//            m_searchLayout->reSearch();
-//        }
-//        m_researchTimer->stop();
-//    });
-//    connect(m_searchLayout, &SearchBarHLayout::requestSearchKeyword, this, [ = ](QString text) {
-//        if(text == "" || text.isEmpty()) {
-//            m_askTimer->stop();
-//        } else {
-//            //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
-//            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
-//                m_askTimer->start();
-//        }
-//    });
+    connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
+        if(this->isVisible()) {
+            m_searchBarWidget->reSearch();
+        }
+        m_researchTimer->stop();
+    });
+    connect(m_searchBarWidget, &SeachBarWidget::requestSearchKeyword, this, [ = ](QString text) {
+        if(text == "" || text.isEmpty()) {
+            m_askTimer->stop();
+        } else {
+            //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
+            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
+                m_askTimer->start();
+        }
+    });
 }
 
 /**

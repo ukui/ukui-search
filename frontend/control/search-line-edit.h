@@ -62,6 +62,7 @@ public:
     ~SeachBarWidget();
 
     void clear();
+    void reSearch();
 protected:
     void paintEvent(QPaintEvent *e);
 
