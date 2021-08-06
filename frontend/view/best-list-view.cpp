@@ -55,20 +55,21 @@ void BestListView::clearSelectedRow()
 void BestListView::onRowDoubleClickedSlot(const QModelIndex &index)
 {
     const SearchPluginIface::ResultInfo &info = m_model->getInfo(index);
-//    SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
-//    try {
-//        if (plugin) {
-////            if (!info.actionList.isEmpty()) {
-////                plugin->openAction(info.actionList.at(0), info.key);
-////            } else {
-////                throw -2;
-////            }
-//        } else {
-//            throw -1;
-//        }
-//    } catch(int e) {
-//        qWarning()<<"Open failed, reason="<<e;
-//    }
+    QString plugin_id = m_model->getPluginInfo(index);;
+    SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(plugin_id);
+    try {
+        if (plugin) {
+            if (!info.actionKey.isEmpty()) {
+                plugin->openAction(0, info.actionKey, info.type);
+            } else {
+                throw -2;
+            }
+        } else {
+            throw -1;
+        }
+    } catch(int e) {
+        qWarning()<<"Open failed, reason="<<e;
+    }
 }
 
 /**
