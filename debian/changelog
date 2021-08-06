@@ -1,8 +1,14 @@
-ukui-search (1.0.0+0731) v101; urgency=medium
+ukui-search (1.0.0+0806) v101; urgency=medium
 
-  * test.
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * ReFactor the front-end code for ukui3.1.
+    - 基于ukui3.1设计稿重构前端代码。
+  * Reconstruct the search interface based on Qt plugin framework.
+    - 基于Qt插件框架重构所有搜索接口。
 
- -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 31 Jul 2021 14:43:21 +0800
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 06 Aug 2021 16:25:33 +0800
 
 ukui-search (0.4.0+0720) v101; urgency=medium
 
