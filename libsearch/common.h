@@ -4,6 +4,7 @@
 #define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
 #define FILE_SEARCH_VALUE "0"
 #define DIR_SEARCH_VALUE "1"
+#define LABEL_MAX_WIDTH 300
 
 #define HOME_PATH QDir::homePath()
 static const QMap<QString, bool> targetFileTypeMap = {
