@@ -38,6 +38,7 @@
 #include "qt-local-peer.h"
 #include "libsearch.h"
 #include "global-settings.h"
+#include "ukui-search-dbus-service.h"
 
 using namespace Zeeker;
 
@@ -263,6 +264,7 @@ int main(int argc, char *argv[]) {
 
     //set main window to the center of screen
     MainWindow *w = new MainWindow;
+    UkuiSearchDbusServices dbusService(w);
     qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
     centerToScreen(w);
 
