@@ -20,6 +20,7 @@
 #include "app-match.h"
 #include <glib.h>
 #include "file-utils.h"
+#include "app-search-plugin.h"
 using namespace Zeeker;
 static AppMatch *app_match_Class = nullptr;
 
@@ -47,7 +48,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
     m_interFace->setTimeout(200);
-    qDebug() << "AppMatch is new";
+    qDebug() << "AppMatch init finished.";
 }
 
 AppMatch::~AppMatch() {
@@ -61,11 +62,10 @@ AppMatch::~AppMatch() {
     m_watchAppDir = NULL;
 }
 
-void AppMatch::startMatchApp(QString input, QMap<NameString, QStringList> &installed, QMap<NameString, QStringList> &softwarereturn) {
-    m_sourceText = input;
-    getAppName(installed);
-    softWareCenterSearch(softwarereturn);
-    qDebug() << "match app is successful!";
+void AppMatch::startMatchApp(QString input, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
+    appNameMatch(input, uniqueSymbol, searchResult);
+    slotDBusCallFinished(input, uniqueSymbol, searchResult);
+    qDebug() << "App match finished!";
 }
 
 /**
@@ -232,8 +232,8 @@ void AppMatch::getAppName(QMap<NameString, QStringList> &installed) {
 //    for(i = m_installAppMap.constBegin(); i != m_installAppMap.constEnd(); ++i) {
 //        appNameMatch(i.key().app_name, installed);
 //    }
-    appNameMatch(installed);
-    qDebug() << "installed app match is successful!";
+//    appNameMatch(installed);
+//    qDebug() << "installed app match is successful!";
 }
 
 /**
@@ -242,51 +242,21 @@ void AppMatch::getAppName(QMap<NameString, QStringList> &installed) {
  * @param appname
  * 应用名字
  */
-void AppMatch::appNameMatch(QString appname, QMap<NameString, QStringList> &installed) {
-    NameString name{appname};
-    QStringList list;
-    QStringList pinyinlist;
-    pinyinlist = FileUtils::findMultiToneWords(appname);
+void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
     QMapIterator<NameString, QStringList> iter(m_installAppMap);
     while(iter.hasNext()) {
         iter.next();
-        if(iter.key().app_name == appname) {
-            list = iter.value();
-            break;
-        }
-    }
-    if(appname.contains(m_sourceText, Qt::CaseInsensitive)) {
-//        installed.insert(name,m_installAppMap.value(name));
-        installed.insert(name, list);
-        return;
-    }
-    for(int i = 0; i < pinyinlist.size() / 2; i++) {
-        QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
-        if(shouzimu.contains(m_sourceText, Qt::CaseInsensitive)) {
-            //        installed.insert(name,m_installAppMap.value(name));
-            installed.insert(name, list);
-            return;
-        }
-        if(m_sourceText.size() < 2)
-            return;
-        QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
-        if(pinyin.contains(m_sourceText, Qt::CaseInsensitive)) {
-            //        installed.insert(name,m_installAppMap.value(name));
-            installed.insert(name, list);
-            return;
-        }
-    }
-}
-void AppMatch::appNameMatch(QMap<NameString, QStringList> &installed) {
-    QStringList list;
-    NameString name;
-    QMapIterator<NameString, QStringList> iter(m_installAppMap);
-    while(iter.hasNext()) {
-        iter.next();
-        list = iter.value();
-        name.app_name = iter.key().app_name;
-        if(iter.key().app_name.contains(m_sourceText, Qt::CaseInsensitive)) {
-            installed.insert(name, list);
+//        list = iter.value();
+//        name.app_name = iter.key().app_name;
+        if(iter.key().app_name.contains(keyWord, Qt::CaseInsensitive)) {
+            SearchPluginIface::ResultInfo ri;
+            creatResultInfo(ri, iter, true);
+            if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
+                searchResult->enqueue(ri);
+            } else {
+                break;
+            }
+//            installed.insert(name, list);
             continue;
         }
 
@@ -295,15 +265,29 @@ void AppMatch::appNameMatch(QMap<NameString, QStringList> &installed) {
 
         for(int i = 0; i < pinyinlist.size() / 2; i++) {
             QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
-            if(shouzimu.contains(m_sourceText, Qt::CaseInsensitive)) {
-                installed.insert(name, list);
+            if(shouzimu.contains(keyWord, Qt::CaseInsensitive)) {
+                SearchPluginIface::ResultInfo ri;
+                creatResultInfo(ri, iter, true);
+                if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
+                    searchResult->enqueue(ri);
+                } else {
+                    break;
+                }
+//                installed.insert(name, list);
                 break;
             }
-            if(m_sourceText.size() < 2)
+            if(keyWord.size() < 2)
                 break;
             QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
-            if(pinyin.contains(m_sourceText, Qt::CaseInsensitive)) {
-                installed.insert(name, list);
+            if(pinyin.contains(keyWord, Qt::CaseInsensitive)) {
+                SearchPluginIface::ResultInfo ri;
+                creatResultInfo(ri, iter, true);
+                if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
+                    searchResult->enqueue(ri);
+                } else {
+                    break;
+                }
+//                installed.insert(name, list);
                 break;
             }
         }
@@ -315,44 +299,43 @@ void AppMatch::softWareCenterSearch(QMap<NameString, QStringList> &softwareretur
 //        qWarning() << "softWareCente Dbus is timeout !";
 //        return;
 //    }
-    slotDBusCallFinished(softwarereturn);
+//    slotDBusCallFinished(softwarereturn);
     qDebug() << "softWareCenter match app is successful!";
 }
 
-void AppMatch::slotDBusCallFinished(QMap<NameString, QStringList> &softwarereturn) {
-    QDBusReply<QList<QMap<QString, QString>>> reply = m_interFace->call("get_search_result", m_sourceText); //阻塞，直到远程方法调用完成。
+void AppMatch::slotDBusCallFinished(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
+    QDBusReply<QList<QMap<QString, QString>>> reply = m_interFace->call("get_search_result", keyWord); //阻塞，直到远程方法调用完成。
 //    QDBusPendingReply<QList<QMap<QString,QString>>> reply = *call;
     if(reply.isValid()) {
-        parseSoftWareCenterReturn(reply.value(), softwarereturn);
+        parseSoftWareCenterReturn(reply.value(), uniqueSymbol, searchResult);
     } else {
-        qWarning() << "value method called failed!";
+        qWarning() << "SoftWareCenter dbus called failed!";
     }
 //     call->deleteLater();
 }
 
-void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, QMap<NameString, QStringList> &softwarereturn) {
-//    qWarning()<<list;
-    QString appname;
-    NameString name;
-    QString appicon;
-    QString appdiscription;
-    QStringList applist;
+void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
+    qDebug() << "Begin parseSoftWareCenterReturn";
     QLocale locale;
-    QString pkgname;
     for(int i = 0; i < list.size(); i++) {
-//        qWarning()<<list.at(i).keys();
+        SearchPluginIface::ResultInfo ri;
         if(locale.language() == QLocale::Chinese) {
-            appname = list.at(i).value("displayname_cn");
-            pkgname = list.at(i).value("appname");
+            ri.name = list.at(i).value("displayname_cn");
+        } else {
+            ri.name = list.at(i).value("appname");
         }
-        if(locale.language() == QLocale::English) {
-            appname = list.at(i).value("appname");
+        ri.icon = !(QIcon(list.at(i).value("icon")).isNull()) ? QIcon(list.at(i).value("icon")) : QIcon(":/res/icons/desktop.png");
+        SearchPluginIface::DescriptionInfo di;
+        di.key = QString(tr("Application Description:"));
+        di.value = list.at(i).value("discription");
+        ri.description.append(di);
+        ri.actionKey = list.at(i).value("appname");
+        ri.type = 1; //1 means not installed apps.
+        if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
+            searchResult->enqueue(ri);
+        } else {
+            break;
         }
-        appdiscription = list.at(i).value("discription");
-        appicon = list.at(i).value("icon");
-        name.app_name = appname;
-        pkgname.isEmpty() ? softwarereturn.insert(name, applist << "" << appicon << "" << appdiscription) : softwarereturn.insert(name, applist << "" << appicon << pkgname << appdiscription);
-        applist.clear();
     }
 }
 
@@ -373,7 +356,15 @@ void AppMatch::getInstalledAppsVersion(QString appname) {
 //            qWarning()<<"-----------------------------------------------";
 //        }
 //    });
-//    m_versionCommand->close();
+    //    m_versionCommand->close();
+}
+
+void AppMatch::creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<NameString, QStringList> &iter, bool isInstalled)
+{
+    ri.icon = QIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
+    ri.name = iter.key().app_name;
+    ri.actionKey = iter.value().at(0);
+    ri.type = 0; //0 means installed apps.
 }
 
 void AppMatch::run() {

@@ -16,6 +16,7 @@ namespace Zeeker {
 class LIBSEARCH_EXPORT AppSearchPlugin : public QObject, public SearchPluginIface
 {
     friend class AppSearch;
+    friend class AppMatch;
     Q_OBJECT
 public:
     AppSearchPlugin(QObject *parent = nullptr);

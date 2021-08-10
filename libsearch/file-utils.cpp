@@ -21,6 +21,7 @@
  */
 #include "file-utils.h"
 #include <QXmlStreamReader>
+#include <QMutexLocker>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -28,6 +29,7 @@ size_t FileUtils::_current_index_count = 0;
 unsigned short FileUtils::_index_status = 0;
 FileUtils::SearchMethod FileUtils::searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
 QMap<QString, QStringList> FileUtils::map_chinese2pinyin = QMap<QString, QStringList>();
+static QMutex iconMutex;
 
 FileUtils::FileUtils() {
 }
@@ -43,6 +45,7 @@ std::string FileUtils::makeDocUterm(QString path) {
  * @return
  */
 QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
+    QMutexLocker locker(&iconMutex);
     auto file = wrapGFile(g_file_new_for_uri(uri.toUtf8().constData()));
     auto info = wrapGFileInfo(g_file_query_info(file.get()->get(),
                               G_FILE_ATTRIBUTE_STANDARD_ICON,
