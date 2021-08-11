@@ -113,6 +113,11 @@ void SeachBarWidget::reSearch()
     Q_EMIT this->m_searchLineEdit->requestSearchKeyword(m_searchLineEdit->text());
 }
 
+void SeachBarWidget::setText(QString keyword)
+{
+    m_searchLineEdit->setText(keyword);
+}
+
 void SeachBarWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)

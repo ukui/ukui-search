@@ -1,7 +1,14 @@
 #include "ukui-search-dbus-service.h"
+
 using namespace Zeeker;
 void UkuiSearchDbusServices::showWindow(){
     m_mainWindow->bootOptionsFilter("-s");
+}
+
+void UkuiSearchDbusServices::searchKeyword(QString keyword)
+{
+    showWindow();
+    m_mainWindow->setText(keyword);
 }
 
 UkuiSearchDbusServices::UkuiSearchDbusServices(MainWindow *m)
@@ -10,13 +17,11 @@ UkuiSearchDbusServices::UkuiSearchDbusServices(MainWindow *m)
     //注册服务
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if(!sessionBus.registerService("org.ukui.search.service")){
-        qCritical() << "QDbus register service failed reason:" << sessionBus.lastError();
-        exit(1);
+        qWarning() << "ukui-search dbus register service failed reason:" << sessionBus.lastError();
     }
 
     if(!sessionBus.registerObject("/", this, QDBusConnection::ExportAllSlots)){
-        qCritical() << "QDbus register object failed reason:" << sessionBus.lastError();
-        exit(2);
+        qWarning() << "ukui-search dbus register object failed reason:" << sessionBus.lastError();
     }
 }
 

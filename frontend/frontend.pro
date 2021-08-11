@@ -31,7 +31,7 @@ include(view/view.pri)
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    ukui-search-dubs-service.cpp
+    ukui-search-dbus-service.cpp
 
 
 HEADERS += \
