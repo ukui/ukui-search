@@ -27,8 +27,8 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QtDBus>
-#include <QElapsedTimer>
 #include <QThread>
+#include "search-plugin-iface.h"
 namespace Zeeker {
 class NameString {
 public:
@@ -55,7 +55,10 @@ class AppMatch : public QThread {
     Q_OBJECT
 public:
     static AppMatch *getAppMatch();
-    void startMatchApp(QString input, QMap<NameString, QStringList> &installed, QMap<NameString, QStringList> &softwarereturn);
+    void startMatchApp(QString input, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
+
+protected:
+    void run() override;
 
 private:
     explicit AppMatch(QObject *parent = nullptr);
@@ -64,17 +67,16 @@ private:
     void getDesktopFilePath();
     void getAppName(QMap<NameString, QStringList> &installed);
 //    void appNameMatch(QString appname,QString desktoppath,QString appicon);
-    void appNameMatch(QString appname, QMap<NameString, QStringList> &installed);
-    void appNameMatch(QMap<NameString, QStringList> &installed);
-
+//    void appNameMatch(QString keyWord, QString appname, QMap<NameString, QStringList> &installed);
+    void appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
     void softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn);
-
-    void parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, QMap<NameString, QStringList> &softwarereturn);
-
+    void parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
     void getInstalledAppsVersion(QString appname);
+    void creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<NameString, QStringList> &iter, bool isInstalled = true);
 
-private:
     QString m_sourceText;
+    size_t m_uniqueSymbol;
+    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
     QStringList m_filePathList;
 
     QDBusInterface *m_interFace = nullptr;
@@ -82,12 +84,11 @@ private:
     QMap<NameString, QStringList> m_installAppMap;
 
 private Q_SLOTS:
-    void slotDBusCallFinished(QMap<NameString, QStringList> &softwarereturn);
+    void slotDBusCallFinished(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
 
 //Q_SIGNALS:
 
-protected:
-    void run() override;
+
 
 };
 }

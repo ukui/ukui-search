@@ -98,7 +98,7 @@ QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
     m_currentActionKey = ri.actionKey;
     m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-    QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
+    QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
     if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
@@ -286,38 +286,5 @@ AppSearch::~AppSearch()
 
 void AppSearch::run()
 {
-    //These weird code is mean to be compatible with the old version UI.
-    AppMatch::getAppMatch()->startMatchApp(m_keyword, m_installed_apps, m_not_installed_apps);
-    QMapIterator<NameString, QStringList> i(m_installed_apps);
-    while (i.hasNext()) {
-        i.next();
-        SearchPluginIface::ResultInfo ri;
-        ri.icon = QIcon::fromTheme(i.value().at(1), QIcon(":/res/icons/desktop.png"));
-        ri.name = i.key().app_name;
-        ri.actionKey = i.value().at(0);
-        ri.type = 0; //0 means installed apps.
-        if (m_uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
-            m_search_result->enqueue(ri);
-        } else {
-            break;
-        }
-    }
-    QMapIterator<NameString, QStringList> in(m_not_installed_apps);
-    while (in.hasNext()) {
-        in.next();
-        SearchPluginIface::ResultInfo ri;
-        ri.icon = QIcon::fromTheme(in.value().at(1), QIcon(":/res/icons/desktop.png"));
-        ri.name = in.key().app_name;
-        SearchPluginIface::DescriptionInfo di;
-        di.key = QString(tr("Application Description:"));
-        di.value = in.value().at(3);
-        ri.description.append(di);
-        ri.actionKey = in.value().at(2);
-        ri.type = 1; //1 means not installed apps.
-        if (m_uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
-            m_search_result->enqueue(ri);
-        } else {
-            break;
-        }
-    }
+    AppMatch::getAppMatch()->startMatchApp(m_keyword, m_uniqueSymbol, m_search_result);
 }
