@@ -210,11 +210,13 @@ void BestListWidget::initUi()
     m_mainLyt->addWidget(m_titleLabel);
     m_mainLyt->addWidget(m_bestListView);
     this->setFixedHeight(m_bestListView->height() + TITLE_HEIGHT);
+    this->setFixedWidth(656);
 }
 
 void BestListWidget::initConnections()
 {
     connect(this, &BestListWidget::startSearch, m_bestListView, &BestListView::startSearch);
+    connect(this, &BestListWidget::startSearch, m_titleLabel, &TitleLabel::startSearch);
     connect(this, &BestListWidget::startSearch, m_titleLabel, &TitleLabel::startSearch);
     connect(this, &BestListWidget::stopSearch, m_titleLabel, &TitleLabel::stopSearch);
     connect(this, &BestListWidget::sendBestListData, m_bestListView, &BestListView::sendBestListData);

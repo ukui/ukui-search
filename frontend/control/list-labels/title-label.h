@@ -44,6 +44,7 @@ private:
 
 public Q_SLOTS:
     void onListLengthChanged(const int &);
+    void lableReset();
 
 Q_SIGNALS:
     void startSearch(const QString &);

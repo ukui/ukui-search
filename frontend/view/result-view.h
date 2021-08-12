@@ -48,6 +48,7 @@ Q_SIGNALS:
     void sendBestListData(const QString &, const SearchPluginIface::ResultInfo&);
     void listLengthChanged(const int &);
     void rowClicked();
+    void lableReset();
 };
 
 class ResultWidget : public QWidget
@@ -58,6 +59,7 @@ public:
     ~ResultWidget() = default;
     QString pluginId();
     void setEnabled(const bool&);
+    void clearResult();
 
 public Q_SLOTS:
     void expandListSlot();
@@ -82,6 +84,7 @@ Q_SIGNALS:
     void clearSelectedRow();
     void sizeChanged();
     void rowClicked();
+    void resizeWidth(const int &);
 };
 }
 
