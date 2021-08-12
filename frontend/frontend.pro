@@ -35,7 +35,7 @@ SOURCES += \
 
 
 HEADERS += \
-    mainwindow.h \ \
+    mainwindow.h \
     ukui-search-dbus-service.h
 
 # Default rules for deployment.
