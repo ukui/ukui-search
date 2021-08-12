@@ -87,6 +87,7 @@ protected:
 Q_SIGNALS:
     void searchMethodChanged(FileUtils::SearchMethod);
     void webEngineChanged();
+    void setText(QString keyword);
 
 public Q_SLOTS:
     /**

@@ -30,11 +30,13 @@ include(view/view.pri)
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    ukui-search-dbus-service.cpp
 
 
 HEADERS += \
     mainwindow.h \
+    ukui-search-dbus-service.h
 
 # Default rules for deployment.
 

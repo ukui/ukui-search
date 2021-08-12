@@ -69,6 +69,9 @@ protected:
 Q_SIGNALS:
     void requestSearchKeyword(QString text);
 
+public Q_SLOTS:
+    void setText(QString keyword);
+
 private:
     SearchLineEdit *m_searchLineEdit;
     QHBoxLayout *m_ly;
