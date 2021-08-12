@@ -48,11 +48,16 @@ ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 void ResultArea::appendWidet(ResultWidget *widget)
 {
     //NEW_TODO
+    m_mainLyt->removeWidget(m_WebTitleLabel);
+    m_mainLyt->removeWidget(m_webSearchLable);
     m_mainLyt->addWidget(widget);
     setupConnectionsForWidget(widget);
+    widget->clearResult();
     m_widget_list.append(widget);
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(m_widget->height() + widget->height() + spacing_height);
+    m_mainLyt->addWidget(m_WebTitleLabel);
+    m_mainLyt->addWidget(m_webSearchLable);
 }
 
 /**
@@ -78,6 +83,9 @@ void ResultArea::onWidgetSizeChanged()
     }
     whole_height += m_bestListWidget->height();
     //TODO 网页高度
+    whole_height += m_WebTitleLabel->height();
+    whole_height += m_webSearchLable->height();
+
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
     Q_EMIT this->resizeHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
@@ -101,15 +109,34 @@ void ResultArea::initUi()
     m_widget->setLayout(m_mainLyt);
     m_bestListWidget = new BestListWidget(this);
     m_mainLyt->addWidget(m_bestListWidget);
+
+    m_WebTitleLabel = new TitleLabel(this);
+    m_WebTitleLabel->setFixedWidth(656);
+    m_WebTitleLabel->setText(tr("Web Page"));
+    m_WebTitleLabel->setFixedHeight(30);
+    m_mainLyt->addWidget(m_WebTitleLabel);
+    m_webSearchLable = new WebSearchLabel(this);
+    m_webSearchLable->setFixedHeight(30);
+    m_mainLyt->addWidget(m_webSearchLable);
     m_mainLyt->setContentsMargins(RESULT_LAYOUT_MARGINS);
+    this->widget()->setContentsMargins(0,0,0,0);
+    m_mainLyt->setSpacing(0);
+
 }
 
 void ResultArea::initConnections()
 {
     connect(this, &ResultArea::startSearch, m_bestListWidget, &BestListWidget::startSearch);
+    connect(this, &ResultArea::startSearch, m_webSearchLable, &WebSearchLabel::webSearch);
     connect(m_bestListWidget, &BestListWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
     connect(m_bestListWidget, &BestListWidget::currentRowChanged, this, &ResultArea::currentRowChanged);
     connect(this, &ResultArea::clearSelectedRow, m_bestListWidget, &BestListWidget::clearSelectedRow);
+    connect(this, &ResultArea::resizeWidth, this, [=] (const int &size) {
+        m_bestListWidget->setFixedWidth(size);
+        m_WebTitleLabel->setFixedWidth(size);
+        m_webSearchLable->setFixedWidth(size);
+    });
+    connect(m_bestListWidget, &BestListWidget::rowClicked, this, &ResultArea::rowClicked);
 }
 
 void ResultArea::setupConnectionsForWidget(ResultWidget *widget)

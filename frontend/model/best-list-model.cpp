@@ -105,6 +105,12 @@ QString BestListModel::getKey(const QModelIndex &index)
 
 void BestListModel::appendInfo(const QString &pluginId, const SearchPluginIface::ResultInfo &info)
 {
+    if (pluginId == "File Search" && m_fileActionKey_tmp != info.actionKey) {//临时保存文件搜索结果的actionKey
+        m_fileActionKey_tmp = info.actionKey;
+    }
+    if (pluginId == "File Content Search" && info.actionKey == m_fileActionKey_tmp) {//文本搜索判断是否和保存的actionKey相同
+        return;
+    }
     if (m_plugin_id_list.contains(pluginId)) {
         if (info.name == m_item->m_result_info_list.at(m_plugin_id_list.lastIndexOf(pluginId)).name) {
             return;

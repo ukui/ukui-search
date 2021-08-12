@@ -68,3 +68,8 @@ void TitleLabel::onListLengthChanged(const int &length)
 {
     m_showMoreLabel->setVisible(length >= NUM_LIMIT_SHOWN_DEFAULT);
 }
+
+void TitleLabel::lableReset()
+{
+    m_showMoreLabel->resetLabel();
+}

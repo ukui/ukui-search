@@ -131,11 +131,18 @@ void SearchResultPage::initConnections()
     connect(this, &SearchResultPage::stopSearch, m_resultArea, &ResultArea::stopSearch);
     connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
+    connect(this, &SearchResultPage::startSearch, this, [=] () {
+        Q_EMIT this->resizeWidth(656);
+    });
 
     connect(m_resultArea, &ResultArea::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(m_resultArea, &ResultArea::currentRowChanged, this, &SearchResultPage::currentRowChanged);
     connect(this, &SearchResultPage::currentRowChanged, m_resultArea, &ResultArea::clearSelectedRow);
     connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::resizeHeight);
+    connect(this, &SearchResultPage::resizeWidth, m_resultArea, &ResultArea::resizeWidth);
+    connect(m_resultArea, &ResultArea::rowClicked, this, [=] () {
+        Q_EMIT this->resizeWidth(280);
+    });
 }
 
 void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
@@ -143,5 +150,8 @@ void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
     connect(widget, &ResultWidget::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(widget, &ResultWidget::currentRowChanged, this, &SearchResultPage::currentRowChanged);
     connect(this, &SearchResultPage::currentRowChanged, widget, &ResultWidget::clearSelectedRow);
-//    connect(widget, &ResultWidget::rowClicked, this, &SearchResultPage::effectiveSearch);
+    connect(widget, &ResultWidget::rowClicked, this, [=] () {
+        Q_EMIT this->resizeWidth(280);
+    });
+    connect(this, &SearchResultPage::resizeWidth, widget, &ResultWidget::resizeWidth);
 }

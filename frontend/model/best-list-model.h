@@ -45,6 +45,7 @@ private:
     SearchResultItem * m_item = nullptr;
     QVector<QString> m_plugin_id_list;
     bool m_isExpanded = false;
+    QString m_fileActionKey_tmp;
 };
 }
 #endif // BESTLISTMODEL_H

@@ -22,6 +22,12 @@ void ResultWidget::setEnabled(const bool &enabled)
     m_enabled = enabled;
 }
 
+void ResultWidget::clearResult()
+{
+    this->setVisible(false);
+    this->setFixedHeight(0);
+}
+
 /**
  * @brief ResultWidget::expandListSlot 展开列表的槽函数
  */
@@ -67,6 +73,7 @@ void ResultWidget::initUi()
     m_mainLyt->addWidget(m_titleLabel);
     m_mainLyt->addWidget(m_resultView);
     this->setFixedHeight(m_resultView->height() + TITLE_HEIGHT);
+    this->setFixedWidth(656);
 }
 
 void ResultWidget::initConnections()
@@ -88,6 +95,10 @@ void ResultWidget::initConnections()
         Q_EMIT this->sizeChanged();
     });
     connect(m_resultView, &ResultView::sendBestListData, this, &ResultWidget::sendBestListData);
+    connect(m_resultView, &ResultView::lableReset, m_titleLabel, &TitleLabel::lableReset);
+    connect(this, &ResultWidget::resizeWidth, this, [=] (const int &size) {
+        this->setFixedWidth(size);
+    });
 }
 
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
@@ -230,6 +241,8 @@ void ResultView::mousePressEvent(QMouseEvent *event)
 void ResultView::initConnections()
 {
     connect(this, &ResultView::startSearch, [ = ](const QString &keyword) {
+        setExpanded(false);
+        Q_EMIT this->lableReset();
         m_style_delegate->setSearchKeyword(keyword);
         m_model->startSearch(keyword);
     });
