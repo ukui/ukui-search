@@ -1,3 +1,13 @@
+ukui-search (0.4.0+0813) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Update dbus interface.
+    - 增加了一个用于唤起页面的dbus接口
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 13 Aug 2021 16:41:31 +0800
+
 ukui-search (0.4.0+0804) v101; urgency=medium
 
   * Bug 无
