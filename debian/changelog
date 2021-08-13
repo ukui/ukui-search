@@ -1,10 +1,10 @@
-ukui-search (0.4.0+0811hw1) v101.hw; urgency=medium
+ukui-search (0.4.0+0813hw1) v101.hw; urgency=medium
 
-  * BUG号 66564-990, 63631-990
+  * BUG号 73279-9A0
   * 需求号 无
   * 其他改动说明：无
 
- -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 11 Aug 2021 09:49:21 +0800
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 13 Aug 2021 11:23:31 +0800
 
 ukui-search (0.4.0+0710hw1) v101.hw; urgency=medium
 
