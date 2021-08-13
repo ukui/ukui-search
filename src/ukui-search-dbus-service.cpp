@@ -10,7 +10,8 @@ UkuiSearchDbusServices::UkuiSearchDbusServices(MainWindow *m)
     m_mainWindow = m;
     //注册服务
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
-    if(!sessionBus.registerService("org.ukui.search.service")){
+    QDBusConnection::sessionBus().unregisterService("com.ukui.search.service");
+    if(!sessionBus.registerService("com.ukui.search.service")){
         qWarning() << "ukui-search dbus register service failed reason:" << sessionBus.lastError();
     }
 
