@@ -94,11 +94,11 @@ private:
 class SearchLineEdit : public QLineEdit {
     Q_OBJECT
 
-    /*
-     * 负责与ukui桌面环境应用通信的dbus
-     * 搜索框文本改变的时候发送信号
-    　　　*/
-    Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
+//    /*
+//     * 负责与ukui桌面环境应用通信的dbus
+//     * 搜索框文本改变的时候发送信号
+//    　　　*/
+//    Q_CLASSINFO("D-Bus Interface", "org.ukui.search.inputbox")
 public:
     SearchLineEdit(QWidget *parent = nullptr);
     void record();
