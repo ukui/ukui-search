@@ -95,8 +95,11 @@ void ResultArea::initUi()
 {
 //    this->verticalScrollBar()->setProperty("drawScrollBarGroove", false);
     QPalette pal = palette();
-    pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
+    QPalette scroll_bar_pal = this->verticalScrollBar()->palette();
+//    pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
     pal.setColor(QPalette::Window, RESULT_BACKGROUND_COLOR);
+    scroll_bar_pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
+    this->verticalScrollBar()->setPalette(scroll_bar_pal);
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -157,7 +160,7 @@ DetailArea::DetailArea(QWidget *parent) : QScrollArea(parent)
 void DetailArea::initUi()
 {
     QPalette pal = palette();
-    pal.setColor(QPalette::Base, DETAIL_BACKGROUND_COLOR);
+//    pal.setColor(QPalette::Base, DETAIL_BACKGROUND_COLOR);
     pal.setColor(QPalette::Window, DETAIL_BACKGROUND_COLOR);
     this->setPalette(pal);
     this->setFrameShape(QFrame::Shape::NoFrame);
