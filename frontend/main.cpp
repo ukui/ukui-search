@@ -39,6 +39,7 @@
 #include "libsearch.h"
 #include "global-settings.h"
 #include "ukui-search-dbus-service.h"
+#include "plugin-manager.h"
 
 using namespace Zeeker;
 
@@ -262,6 +263,7 @@ int main(int argc, char *argv[]) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
+    PluginManager::getInstance();
     //set main window to the center of screen
     MainWindow *w = new MainWindow;
     UkuiSearchDbusServices dbusService(w);

@@ -167,7 +167,9 @@ void DetailArea::initUi()
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setWidgetResizable(true);
-    this->setFixedSize(368, 516);
+    this->setFixedSize(376, 516);
+//    this->setStyleSheet("QScrollArea{border:2px solid red;}");
+    this->setContentsMargins(0,0,0,0);
     m_detailWidget = new DetailWidget(this);
     this->setWidget(m_detailWidget);
     this->hide();
@@ -330,7 +332,7 @@ void DetailWidget::paintEvent(QPaintEvent *event)
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
-    QRect rect = this->rect().adjusted(0, 0, -8, 0);
+    QRect rect = this->rect().adjusted(0, 0, 0, 0);
     p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
     p.setBrush(opt.palette.color(QPalette::Text));
     p.setOpacity(DETAIL_WIDGET_TRANSPARENT);

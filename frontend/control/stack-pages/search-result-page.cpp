@@ -115,6 +115,7 @@ void SearchResultPage::initUi()
 
     m_hlayout->addWidget(m_resultArea);
     m_hlayout->addWidget(m_detailArea);
+    m_hlayout->setSpacing(0);
     this->setLayout(m_hlayout);
 //    m_splitter->addWidget(m_resultArea);
 //    m_splitter->addWidget(m_detailArea);
