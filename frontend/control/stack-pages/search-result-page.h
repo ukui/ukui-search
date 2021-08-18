@@ -34,6 +34,11 @@ public:
     void setSize(const int&, const int&);
     void setInternalPlugins();
     void appendPlugin(const QString &plugin_id);
+    void pressEnter();
+    void pressUp();
+    void pressDown();
+    bool getSelectedState();
+    void sendResizeWidthSignal(int size);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -53,6 +58,7 @@ Q_SIGNALS:
     void effectiveSearch();
     void resizeHeight(int height);
     void resizeWidth(const int &);
+    void setSelectionInfo(QString &);
 };
 }
 

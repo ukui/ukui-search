@@ -28,7 +28,7 @@ void WebSearchLabel::initUi()
     m_webSearchLyt->addWidget(m_WebSearchLabel);
     m_webSearchLyt->addStretch();
     this->setLayout(m_webSearchLyt);
-
+    m_defultStyleSheet = this->styleSheet();
 }
 
 void WebSearchLabel::startSearch()
@@ -52,6 +52,11 @@ void WebSearchLabel::startSearch()
 
 }
 
+QString WebSearchLabel::getDefultStyleSheet()
+{
+    return m_defultStyleSheet;
+}
+
 bool WebSearchLabel::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == this) {
@@ -65,7 +70,7 @@ bool WebSearchLabel::eventFilter(QObject *watched, QEvent *event)
             this->setStyleSheet("background-color: #87CEFA");//TODO鼠标悬浮颜色待定
             return true;
         } else if(event->type() == QEvent::Leave) {
-            this->setStyleSheet("background-color: #DCDCDC");//默认颜色
+            this->setStyleSheet(m_defultStyleSheet);//默认颜色
             return true;
         }
     }

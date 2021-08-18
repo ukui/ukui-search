@@ -38,14 +38,24 @@ public:
     ~ResultArea() = default;
     void appendWidet(ResultWidget *);
     void setVisibleList(const QStringList &);
+    void pressEnter();
+    void pressDown();
+    void pressUp();
+
+    void setResultSelection();
+    bool getSelectedState();
+
+    void sendKeyPressSignal(QString &pluginID);
 
 public Q_SLOTS:
     void onWidgetSizeChanged();
+    void setSelectionInfo(QString &pluginID);
 
 private:
     void initUi();
     void initConnections();
     void setupConnectionsForWidget(ResultWidget *);
+
     QWidget * m_widget = nullptr;
     QVBoxLayout * m_mainLyt = nullptr;
     BestListWidget * m_bestListWidget = nullptr;
@@ -53,10 +63,15 @@ private:
     TitleLabel * m_WebTitleLabel = nullptr;
     WebSearchLabel * m_webSearchLable = nullptr;
 
+    bool m_detail_open_state = false;
+    bool m_is_selected = false;
+    QString m_selectedPluginID;
+
 Q_SIGNALS:
     void startSearch(const QString &);
     void stopSearch();
     void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
+    void keyPressChanged(const QString &, const SearchPluginIface::ResultInfo&);
     void clearSelectedRow();
     void resizeHeight(int height);
     void resizeWidth(const int &);

@@ -27,7 +27,6 @@
 #include <QScreen>
 #include <QTranslator>
 #include <QLocale>
-#include <X11/Xlib.h>
 #include <syslog.h>
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include <ukui-log4qt.h>
@@ -40,6 +39,7 @@
 #include "global-settings.h"
 #include "ukui-search-dbus-service.h"
 #include "plugin-manager.h"
+#include <X11/Xlib.h>
 
 using namespace Zeeker;
 

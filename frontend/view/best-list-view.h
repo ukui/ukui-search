@@ -18,13 +18,18 @@ class BestListView : public QTreeView
 public:
     BestListView(QWidget *parent = nullptr);
     ~BestListView() = default;
+
     bool isSelected();
     int showHeight();
+    int getResultNum();
+    QModelIndex getModlIndex(int row, int column);
+    SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
+    const QString getPluginInfo(const QModelIndex&index);
 
 public Q_SLOTS:
     void clearSelectedRow();
     void onRowDoubleClickedSlot(const QModelIndex &);
-    void onRowSelectedSlot(const QItemSelection &, const QItemSelection &);
+    void onRowSelectedSlot(const QModelIndex &index);
     void onItemListChanged(const int &);
     void setExpanded(const bool &);
     const bool &isExpanded();
@@ -35,6 +40,7 @@ protected:
 
 private:
     void initConnections();
+
     BestListModel * m_model = nullptr;
     bool m_is_selected = false;
     ResultViewDelegate * m_style_delegate = nullptr;
@@ -56,21 +62,33 @@ class BestListWidget : public QWidget
 public:
     BestListWidget(QWidget *parent = nullptr);
     ~BestListWidget() = default;
+
+    QString getWidgetName();
     void setEnabled(const bool&);
+    void clearResult();
+    int getResultNum();
+    void setResultSelection(const QModelIndex &index);
+    void clearResultSelection();
+    QModelIndex getModlIndex(int row, int column);
+    void activateIndex();
+    QModelIndex getCurrentSelection();
+    bool getExpandState();
+    SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
+    const QString getPluginInfo(const QModelIndex&index);
+
+private:
+    void initUi();
+    void initConnections();
+
+    bool m_enabled = true;
+    QVBoxLayout * m_mainLyt = nullptr;
+    TitleLabel * m_titleLabel = nullptr;
+    BestListView * m_bestListView = nullptr;
 
 public Q_SLOTS:
     void expandListSlot();
     void reduceListSlot();
     void onListLengthChanged(const int &);
-
-private:
-    bool m_enabled = true;
-
-    void initUi();
-    void initConnections();
-    QVBoxLayout * m_mainLyt = nullptr;
-    TitleLabel * m_titleLabel = nullptr;
-    BestListView * m_bestListView = nullptr;
 
 Q_SIGNALS:
     void startSearch(const QString &);
@@ -80,6 +98,7 @@ Q_SIGNALS:
     void clearSelectedRow();
     void sizeChanged();
     void rowClicked();
+
 };
 
 }

@@ -24,7 +24,6 @@
 #include <QHBoxLayout>
 #include <QDebug>
 #include <QDesktopWidget>
-#include <QtX11Extras/QX11Info>
 #include <syslog.h>
 #include <QPalette>
 #include <QScreen>
@@ -36,6 +35,7 @@
 #endif
 #include "qt-single-application.h"
 #include "global-settings.h"
+#include <QtX11Extras/QX11Info>
 
 #define MAIN_MARGINS 0, 0, 0, 0
 #define TITLE_MARGINS 0,0,0,0
@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
+    this->setFocusProxy(this);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
     initUi();
@@ -77,7 +78,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_sys_tray_icon->show();
     installEventFilter(this);
     initConnections();
-
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
@@ -127,6 +127,7 @@ void MainWindow::initUi() {
     m_searchResultPage = new SearchResultPage(this);
     m_searchResultPage->hide();
     m_searchResultPage->move(0, 58);
+
 //    m_searchResultPage->show();
 //    m_searchWidget = new SeachBarWidget(this);
 //    m_searchLayout = new SearchBarHLayout(this);
@@ -517,8 +518,23 @@ void MainWindow::setSearchMethod(const bool &is_index_search) {
  */
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "press:" << event->key();
     if (event->key() == Qt::Key_Escape) {
         tryHideMainwindow();
+    } else if (event->key() == Qt::Key_Return or event->key() == Qt::Key_Enter) {
+        //显示最佳匹配中第一项的详情页，无搜索结果则调取网页搜索
+        qDebug() << "Press Enter";
+        m_searchResultPage->pressEnter();
+    } else if (event->key() == Qt::Key_Up) {
+        qDebug() << "Press ↑";
+        m_searchResultPage->pressUp();
+    } else if (event->key() == Qt::Key_Down) {
+        qDebug() << "Press ↓";
+        if (!m_searchResultPage->getSelectedState()) {
+            m_searchResultPage->pressEnter();
+        } else {
+            m_searchResultPage->pressDown();
+        }
     }
     return QWidget::keyPressEvent(event);
 }
