@@ -46,6 +46,8 @@ public:
     ~SearchLineEdit();
 protected:
     void paintEvent(QPaintEvent *);
+    void focusOutEvent(QFocusEvent *);
+
 Q_SIGNALS:
     void requestSearchKeyword(QString text);
 private:
@@ -63,6 +65,7 @@ public:
 
     void clear();
     void reSearch();
+
 protected:
     void paintEvent(QPaintEvent *e);
 

@@ -20,11 +20,14 @@ public:
     ~ResultView() = default;
     bool isSelected();
     int showHeight();
+    int getResultNum();
+    QModelIndex getModlIndex(int row, int column);
+    SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
 
 public Q_SLOTS:
     void clearSelectedRow();
     void onRowDoubleClickedSlot(const QModelIndex &);
-    void onRowSelectedSlot(const QItemSelection &, const QItemSelection &);
+    void onRowSelectedSlot(const QModelIndex &index);
     void onItemListChanged(const int &);
     void setExpanded(const bool &);
     const bool &isExpanded();
@@ -60,6 +63,14 @@ public:
     QString pluginId();
     void setEnabled(const bool&);
     void clearResult();
+    int getResultNum();
+    void setResultSelection(const QModelIndex &index);
+    void clearResultSelection();
+    QModelIndex getModlIndex(int row, int column);
+    void activateIndex();
+    QModelIndex getCurrentSelection();
+    bool getExpandState();
+    SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
 
 public Q_SLOTS:
     void expandListSlot();

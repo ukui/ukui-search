@@ -13,16 +13,19 @@ public:
     WebSearchLabel(QWidget * parent = nullptr);
     ~WebSearchLabel() = default;
 
+    void startSearch();
+    QString getDefultStyleSheet();
+
 protected:
     bool eventFilter(QObject *watched, QEvent *event);
 private:
     void initUi();
     void initConnections();
-    void startSearch();
 
     QHBoxLayout * m_webSearchLyt = nullptr;
     QLabel * m_WebSearchIconlabel = nullptr;
     QLabel * m_WebSearchLabel = nullptr;
+    QString m_defultStyleSheet;
 
 public Q_SLOTS:
     void webSearch(const QString &key);

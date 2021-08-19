@@ -32,7 +32,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     setStyle(new LineEditStyle());
     this->setFocusPolicy(Qt::StrongFocus);
     this->setFixedSize(680, 50);
-    this->setTextMargins(25, 0, 0, 0);
+    this->setTextMargins(35, 0, 0, 0);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setDragEnabled(true);
 
@@ -89,6 +89,11 @@ void SearchLineEdit::paintEvent(QPaintEvent *e)
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(this->rect(), 6, 6);
     return QLineEdit::paintEvent(e);
+}
+
+void SearchLineEdit::focusOutEvent(QFocusEvent *e)
+{
+    this->setFocus();
 }
 
 SeachBarWidget::SeachBarWidget(QWidget *parent): QWidget(parent) {

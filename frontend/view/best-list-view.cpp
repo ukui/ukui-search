@@ -39,6 +39,26 @@ int BestListView::showHeight()
     return height;
 }
 
+int BestListView::getResultNum()
+{
+    return m_count;
+}
+
+QModelIndex BestListView::getModlIndex(int row, int column)
+{
+    return this->m_model->index(row, column);
+}
+
+SearchPluginIface::ResultInfo BestListView::getIndexResultInfo(QModelIndex &index)
+{
+    return this->m_model->getInfo(index);
+}
+
+const QString BestListView::getPluginInfo(const QModelIndex& index)
+{
+    return this->m_model->getPluginInfo(index);
+}
+
 void BestListView::clearSelectedRow()
 {
     if (!m_is_selected) {
@@ -77,17 +97,10 @@ void BestListView::onRowDoubleClickedSlot(const QModelIndex &index)
  * @param selected
  * @param deselected
  */
-void BestListView::onRowSelectedSlot(const QItemSelection &selected, const QItemSelection &deselected)
+void BestListView::onRowSelectedSlot(const QModelIndex &index)
 {
-    //NEW_TODO
     m_is_selected = true;
-    Q_EMIT this->currentRowChanged(m_model->getPluginInfo(this->currentIndex()), m_model->getInfo(this->currentIndex()));
-    m_is_selected = false;
-    if(!selected.isEmpty()) {
-        QRegion region = visualRegionForSelection(selected);
-        QRect rect = region.boundingRect();
-//            Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
-    }
+    Q_EMIT this->currentRowChanged(m_model->getPluginInfo(index), m_model->getInfo(index));
 }
 
 void BestListView::onItemListChanged(const int &count)
@@ -123,20 +136,20 @@ void BestListView::onMenuTriggered(QAction *action)
 
 void BestListView::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::RightButton) {
-        //加一点点延时，等待列表先被选中
-        QTimer::singleShot(10, this, [ = ] {
-            QMenu * menu = new QMenu(this);
-            QStringList actions = m_model->getActions(this->currentIndex());
-            Q_FOREACH (QString action, actions) {
-                menu->addAction(new QAction(action, this));
-            }
-            menu->move(cursor().pos());
-            menu->show();
-            connect(menu, &QMenu::triggered, this, &BestListView::onMenuTriggered);
-        });
-    }
-    Q_EMIT this->rowClicked();
+//    if (event->button() == Qt::RightButton) {
+//        //加一点点延时，等待列表先被选中
+//        QTimer::singleShot(10, this, [ = ] {
+//            QMenu * menu = new QMenu(this);
+//            QStringList actions = m_model->getActions(this->currentIndex());
+//            Q_FOREACH (QString action, actions) {
+//                menu->addAction(new QAction(action, this));
+//            }
+//            menu->move(cursor().pos());
+//            menu->show();
+//            connect(menu, &QMenu::triggered, this, &BestListView::onMenuTriggered);
+//        });
+//    }
+//    Q_EMIT this->rowClicked();
     return QTreeView::mousePressEvent(event);
 }
 
@@ -148,7 +161,7 @@ void BestListView::initConnections()
         m_model->startSearch(keyword);
     });
     connect(this, &BestListView::startSearch, m_model, &BestListModel::startSearch);
-    connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, &BestListView::onRowSelectedSlot);
+    connect(this, &BestListView::clicked, this, &BestListView::onRowSelectedSlot);
     connect(this, &BestListView::activated, this, &BestListView::onRowDoubleClickedSlot);
     connect(m_model, &BestListModel::itemListChanged, this, &BestListView::onItemListChanged);
     connect(this, &BestListView::sendBestListData, m_model, &BestListModel::appendInfo);
@@ -160,9 +173,66 @@ BestListWidget::BestListWidget(QWidget *parent) : QWidget(parent)
     initConnections();
 }
 
+QString BestListWidget::getWidgetName()
+{
+    return m_titleLabel->text();
+}
+
 void BestListWidget::setEnabled(const bool &enabled)
 {
     m_enabled = enabled;
+}
+
+void BestListWidget::clearResult()
+{
+    this->setVisible(false);
+    this->setFixedHeight(0);
+}
+
+int BestListWidget::getResultNum()
+{
+    return m_bestListView->getResultNum();
+}
+
+void BestListWidget::setResultSelection(const QModelIndex &index)
+{
+    this->m_bestListView->selectionModel()->clearSelection();
+    this->m_bestListView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+}
+
+void BestListWidget::clearResultSelection()
+{
+    this->m_bestListView->selectionModel()->clearSelection();
+}
+
+QModelIndex BestListWidget::getModlIndex(int row, int column)
+{
+    return this->m_bestListView->getModlIndex(row, column);
+}
+
+void BestListWidget::activateIndex()
+{
+    this->m_bestListView->onRowDoubleClickedSlot(this->m_bestListView->currentIndex());
+}
+
+QModelIndex BestListWidget::getCurrentSelection()
+{
+    return this->m_bestListView->currentIndex();
+}
+
+bool BestListWidget::getExpandState()
+{
+    return m_bestListView->isExpanded();
+}
+
+SearchPluginIface::ResultInfo BestListWidget::getIndexResultInfo(QModelIndex &index)
+{
+    return m_bestListView->getIndexResultInfo(index);
+}
+
+const QString BestListWidget::getPluginInfo(const QModelIndex&index)
+{
+    return this->m_bestListView->getPluginInfo(index);
 }
 
 /**
@@ -225,7 +295,7 @@ void BestListWidget::initConnections()
     connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &BestListWidget::expandListSlot);
     connect(m_titleLabel, &TitleLabel::retractClicked, this, &BestListWidget::reduceListSlot);
     connect(m_bestListView, &BestListView::listLengthChanged, this, &BestListWidget::onListLengthChanged);
-    connect(m_bestListView, &BestListView::rowClicked, this, &BestListWidget::rowClicked);
+    connect(m_bestListView, &BestListView::clicked, this, &BestListWidget::rowClicked);
     connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
         int whole_height = this->isVisible() ? m_bestListView->showHeight() + TITLE_HEIGHT : 0;
         this->setFixedHeight(whole_height);

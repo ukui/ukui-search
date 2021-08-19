@@ -28,6 +28,47 @@ void ResultWidget::clearResult()
     this->setFixedHeight(0);
 }
 
+int ResultWidget::getResultNum()
+{
+    return m_resultView->getResultNum();
+}
+
+void ResultWidget::setResultSelection(const QModelIndex &index)
+{
+    this->m_resultView->selectionModel()->clearSelection();
+    this->m_resultView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+}
+
+void ResultWidget::clearResultSelection()
+{
+    this->m_resultView->selectionModel()->clearSelection();
+}
+
+QModelIndex ResultWidget::getModlIndex(int row, int column)
+{
+    return this->m_resultView->getModlIndex(row, column);
+}
+
+void ResultWidget::activateIndex()
+{
+    this->m_resultView->onRowDoubleClickedSlot(this->m_resultView->currentIndex());
+}
+
+QModelIndex ResultWidget::getCurrentSelection()
+{
+    return this->m_resultView->currentIndex();
+}
+
+bool ResultWidget::getExpandState()
+{
+    return m_resultView->isExpanded();
+}
+
+SearchPluginIface::ResultInfo ResultWidget::getIndexResultInfo(QModelIndex &index)
+{
+    return m_resultView->getIndexResultInfo(index);
+}
+
 /**
  * @brief ResultWidget::expandListSlot 展开列表的槽函数
  */
@@ -88,7 +129,7 @@ void ResultWidget::initConnections()
     connect(m_titleLabel, &TitleLabel::retractClicked, this, &ResultWidget::reduceListSlot);
     connect(m_resultView, &ResultView::listLengthChanged, this, &ResultWidget::onListLengthChanged);
     connect(m_resultView, &ResultView::listLengthChanged, m_titleLabel, &TitleLabel::onListLengthChanged);
-    connect(m_resultView, &ResultView::rowClicked, this, &ResultWidget::rowClicked);
+    connect(m_resultView, &ResultView::clicked, this, &ResultWidget::rowClicked);
     connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
         int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT : 0;
         this->setFixedHeight(whole_height);
@@ -136,6 +177,21 @@ int ResultView::showHeight()
     return height;
 }
 
+int ResultView::getResultNum()
+{
+    return m_count;
+}
+
+QModelIndex ResultView::getModlIndex(int row, int column)
+{
+    return this->m_model->index(row, column);
+}
+
+SearchPluginIface::ResultInfo ResultView::getIndexResultInfo(QModelIndex &index)
+{
+    return this->m_model->getInfo(index);
+}
+
 void ResultView::clearSelectedRow()
 {
     if (!m_is_selected) {
@@ -175,17 +231,16 @@ void ResultView::onRowDoubleClickedSlot(const QModelIndex &index)
  * @param selected
  * @param deselected
  */
-void ResultView::onRowSelectedSlot(const QItemSelection &selected, const QItemSelection &deselected)
+void ResultView::onRowSelectedSlot(const QModelIndex &index)
 {
     //NEW_TODO
     m_is_selected = true;
-    Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(this->currentIndex()));
-
-    if(!selected.isEmpty()) {
-        QRegion region = visualRegionForSelection(selected);
-        QRect rect = region.boundingRect();
-//            Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
-    }
+    Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(index));
+//    if(!selected.isEmpty()) {
+//        QRegion region = visualRegionForSelection(selected);
+//        QRect rect = region.boundingRect();
+////            Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
+//    }
 }
 
 void ResultView::onItemListChanged(const int &count)
@@ -221,20 +276,20 @@ void ResultView::onMenuTriggered(QAction *action)
 
 void ResultView::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::RightButton) {
-        //加一点点延时，等待列表先被选中
-        QTimer::singleShot(10, this, [ = ] {
-            QMenu * menu = new QMenu(this);
-            QStringList actions = m_model->getActions(this->currentIndex());
-            Q_FOREACH (QString action, actions) {
-                menu->addAction(new QAction(action, this));
-            }
-            menu->move(cursor().pos());
-            menu->show();
-            connect(menu, &QMenu::triggered, this, &ResultView::onMenuTriggered);
-        });
-    }
-    Q_EMIT this->rowClicked();
+//    if (event->button() == Qt::RightButton) {
+//        //加一点点延时，等待列表先被选中
+//        QTimer::singleShot(10, this, [ = ] {
+//            QMenu * menu = new QMenu(this);
+//            QStringList actions = m_model->getActions(this->currentIndex());
+//            Q_FOREACH (QString action, actions) {
+//                menu->addAction(new QAction(action, this));
+//            }
+//            menu->move(cursor().pos());
+//            menu->show();
+//            connect(menu, &QMenu::triggered, this, &ResultView::onMenuTriggered);
+//        });
+//    }
+//    Q_EMIT this->rowClicked();
     return QTreeView::mousePressEvent(event);
 }
 
@@ -247,7 +302,8 @@ void ResultView::initConnections()
         m_model->startSearch(keyword);
     });
     connect(this, &ResultView::stopSearch, m_model, &SearchResultModel::stopSearch);
-    connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ResultView::onRowSelectedSlot);
+    //connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ResultView::onRowSelectedSlot);
+    connect(this, &ResultView::clicked, this, &ResultView::onRowSelectedSlot);
     connect(this, &ResultView::activated, this, &ResultView::onRowDoubleClickedSlot);
     connect(m_model, &SearchResultModel::itemListChanged, this, &ResultView::onItemListChanged);
     connect(m_model, &SearchResultModel::sendBestListData, this, &ResultView::sendBestListData);

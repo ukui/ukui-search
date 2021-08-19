@@ -55,6 +55,31 @@ void SearchResultPage::appendPlugin(const QString &plugin_id)
     setupConnectionsForWidget(widget);
 }
 
+void SearchResultPage::pressEnter()
+{
+    this->m_resultArea->pressEnter();
+}
+
+void SearchResultPage::pressUp()
+{
+    this->m_resultArea->pressUp();
+}
+
+void SearchResultPage::pressDown()
+{
+    this->m_resultArea->pressDown();
+}
+
+bool SearchResultPage::getSelectedState()
+{
+    return m_resultArea->getSelectedState();
+}
+
+void SearchResultPage::sendResizeWidthSignal(int size)
+{
+    Q_EMIT this->resizeWidth(size);
+}
+
 void SearchResultPage::paintEvent(QPaintEvent *event)
 {
     QPainter p(this);
@@ -66,7 +91,6 @@ void SearchResultPage::paintEvent(QPaintEvent *event)
 
     QPainterPath rectPath;
     rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
-
 
     // 画一个黑底
     QPixmap pixmap(this->rect().size());
@@ -133,26 +157,34 @@ void SearchResultPage::initConnections()
     connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::startSearch, this, [=] () {
-        Q_EMIT this->resizeWidth(656);
+        sendResizeWidthSignal(656);
     });
-
+    connect(m_resultArea, &ResultArea::keyPressChanged, m_detailArea, &DetailArea::setWidgetInfo);
+    connect(m_resultArea, &ResultArea::keyPressChanged, this, [=] () {
+        sendResizeWidthSignal(280);
+    });
     connect(m_resultArea, &ResultArea::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(m_resultArea, &ResultArea::currentRowChanged, this, &SearchResultPage::currentRowChanged);
     connect(this, &SearchResultPage::currentRowChanged, m_resultArea, &ResultArea::clearSelectedRow);
     connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::resizeHeight);
     connect(this, &SearchResultPage::resizeWidth, m_resultArea, &ResultArea::resizeWidth);
     connect(m_resultArea, &ResultArea::rowClicked, this, [=] () {
-        Q_EMIT this->resizeWidth(280);
+        sendResizeWidthSignal(280);
     });
+    connect(this, &SearchResultPage::setSelectionInfo, m_resultArea, &ResultArea::setSelectionInfo);
 }
 
 void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(widget, &ResultWidget::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(widget, &ResultWidget::currentRowChanged, this, &SearchResultPage::currentRowChanged);
+    connect(widget, &ResultWidget::currentRowChanged, this, [=] {
+        QString pluginID = widget->pluginId();
+        Q_EMIT this->setSelectionInfo(pluginID);
+    });
     connect(this, &SearchResultPage::currentRowChanged, widget, &ResultWidget::clearSelectedRow);
     connect(widget, &ResultWidget::rowClicked, this, [=] () {
-        Q_EMIT this->resizeWidth(280);
+        sendResizeWidthSignal(280);
     });
     connect(this, &SearchResultPage::resizeWidth, widget, &ResultWidget::resizeWidth);
 }

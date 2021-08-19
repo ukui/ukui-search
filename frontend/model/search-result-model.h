@@ -44,7 +44,7 @@ class SearchResultModel : public QAbstractItemModel
 public:
     SearchResultModel(const QString &plugin_id);
     ~SearchResultModel() = default;
-    QModelIndex index(int row, int column, const QModelIndex &parent) const override;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex &child) const override;
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
