@@ -33,9 +33,6 @@ public Q_SLOTS:
     const bool &isExpanded();
     void onMenuTriggered(QAction *);
 
-protected:
-    void mousePressEvent(QMouseEvent *event) override;
-
 private:
     void initConnections();
     SearchResultModel * m_model = nullptr;
@@ -78,11 +75,11 @@ public Q_SLOTS:
     void onListLengthChanged(const int &);
 
 private:
-    QString m_plugin_id;
-    bool m_enabled = true;
-
     void initUi();
     void initConnections();
+
+    QString m_plugin_id;
+    bool m_enabled = true;
     QVBoxLayout * m_mainLyt = nullptr;
     TitleLabel * m_titleLabel = nullptr;
     ResultView * m_resultView = nullptr;

@@ -251,7 +251,9 @@ void ResultView::onItemListChanged(const int &count)
 
 void ResultView::setExpanded(const bool &is_expanded)
 {
+    QModelIndex index = this->currentIndex();
     m_model->setExpanded(is_expanded);
+    this->setCurrentIndex(index);
 }
 
 const bool &ResultView::isExpanded()
@@ -272,25 +274,6 @@ void ResultView::onMenuTriggered(QAction *action)
     } else {
         qWarning()<<"Get plugin failed!";
     }
-}
-
-void ResultView::mousePressEvent(QMouseEvent *event)
-{
-//    if (event->button() == Qt::RightButton) {
-//        //加一点点延时，等待列表先被选中
-//        QTimer::singleShot(10, this, [ = ] {
-//            QMenu * menu = new QMenu(this);
-//            QStringList actions = m_model->getActions(this->currentIndex());
-//            Q_FOREACH (QString action, actions) {
-//                menu->addAction(new QAction(action, this));
-//            }
-//            menu->move(cursor().pos());
-//            menu->show();
-//            connect(menu, &QMenu::triggered, this, &ResultView::onMenuTriggered);
-//        });
-//    }
-//    Q_EMIT this->rowClicked();
-    return QTreeView::mousePressEvent(event);
 }
 
 void ResultView::initConnections()

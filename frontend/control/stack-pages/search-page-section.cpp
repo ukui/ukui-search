@@ -172,6 +172,7 @@ void ResultArea::pressDown()
                         m_webSearchLable->setStyleSheet("background-color: #3790FA");//#3790FA选中颜色;
                         m_selectedPluginID = m_WebTitleLabel->text();
                         m_is_selected = true;
+                        this->ensureWidgetVisible(m_webSearchLable);
                     }
                     if (findNextWidget){
                         break;
@@ -286,16 +287,31 @@ bool ResultArea::getSelectedState()
 
 void ResultArea::sendKeyPressSignal(QString &pluginID)
 {
-    if (m_detail_open_state) {
-        if (pluginID == m_bestListWidget->getWidgetName()) {
-            QModelIndex index = m_bestListWidget->getCurrentSelection();
+    int height(0);
+    if (pluginID == m_bestListWidget->getWidgetName()) {
+        QModelIndex index = m_bestListWidget->getCurrentSelection();
+        height = index.row() == 0 ? 0 : index.row() * 35 + 30;//35为modol单个结果高度,30为title高度
+        height = (height - 35) < 0 ? 0 : height - 35;
+        this->ensureVisible(0, height, 0, 0);
+        if (m_detail_open_state) {
             Q_EMIT this->keyPressChanged(m_bestListWidget->getPluginInfo(index), m_bestListWidget->getIndexResultInfo(index));
-        } else {
-            for (ResultWidget *plugin : m_widget_list) {
-                if (pluginID == plugin->pluginId()) {
-                    QModelIndex index = plugin->getCurrentSelection();
+        }
+    } else {
+        height += m_bestListWidget->height();
+        for (ResultWidget *plugin : m_widget_list) {
+            if (pluginID == plugin->pluginId()) {
+                QModelIndex index = plugin->getCurrentSelection();
+                height += index.row() == 0 ? 0 : index.row() * 35 + 30;//35为modol单个结果高度,30为title高度
+                int moreHeight = index.row() == 0 ? (30 + 35 * 2) : (35 * 2);
+                this->ensureVisible(0, height + moreHeight, 0, 0);
+                height = (height - 35) < 0 ? 0 : height - 35;
+                this->ensureVisible(0, height, 0, 0);
+                if (m_detail_open_state) {
                     Q_EMIT this->keyPressChanged(m_selectedPluginID, plugin->getIndexResultInfo(index));
                 }
+                break;
+            } else {
+                height += plugin->height();
             }
         }
     }
@@ -364,7 +380,6 @@ void ResultArea::initUi()
     m_mainLyt->setContentsMargins(RESULT_LAYOUT_MARGINS);
     this->widget()->setContentsMargins(0,0,0,0);
     m_mainLyt->setSpacing(0);
-
 }
 
 void ResultArea::initConnections()
