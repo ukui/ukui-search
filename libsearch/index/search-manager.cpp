@@ -338,22 +338,26 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
 //        qWarning()<<QString::fromStdString(s);
         auto term = doc.termlist_begin();
         std::string wordTobeFound = QString::fromStdString(keyWord).section(" ", 0, 0).toStdString();
-        int size = wordTobeFound.length();
+//        int size = wordTobeFound.length();
         term.skip_to(wordTobeFound);
-        int count = 0;
-        for(auto pos = term.positionlist_begin(); pos != term.positionlist_end() && count < 6; ++pos) {
-            std::string s = data.substr((*pos < 60) ? 0 : (*pos  - 60), size + 120);
-            QString snippet = QString::fromStdString(s);
-            if(snippet.size() > 6 + QString::fromStdString(keyWord).size()) {
-                snippet.replace(0, 3, "...").replace(snippet.size() - 3, 3, "...");
-            } else {
-                snippet.append("...").prepend("...");
-            }
-            snippets.append(snippet);
-            QString().swap(snippet);
-            std::string().swap(s);
-            ++count;
-        }
+        auto pos = term.positionlist_begin();
+        int length = 120;
+        QString snippet = FileUtils::chineseSubString(data,*pos,length);
+//        int count = 0;
+//        for(auto pos = term.positionlist_begin(); pos != term.positionlist_end() && count < 6; ++pos) {
+//            std::string s = data.substr((*pos < 60) ? 0 : (*pos  - 60), size + 120);
+//            QString snippet = QString::fromStdString(s);
+//            if(snippet.size() > 6 + QString::fromStdString(keyWord).size()) {
+//                    snippet.replace(0, 3, "...").replace(snippet.size() - 3, 3, "...");
+//            } else {
+//                snippet.append("...").prepend("...");
+//            }
+//            snippets.append(snippet);
+//            QString().swap(snippet);
+//            std::string().swap(s);
+//            ++count;
+//        }
+        snippets.append(snippet);
         std::string().swap(data);
 
 //        for(QString i : QString::fromStdString(keyWord).split(" ",QString::SkipEmptyParts))
