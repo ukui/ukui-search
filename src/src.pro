@@ -35,6 +35,7 @@ SOURCES += \
     search-app-thread.cpp \
     search-result.cpp \
     settings-widget.cpp \
+    ukui-search-dbus-service.cpp \
     xatom-helper.cpp
 
 
@@ -46,6 +47,7 @@ HEADERS += \
     search-app-thread.h \
     search-result.h \
     settings-widget.h \
+    ukui-search-dbus-service.h \
     xatom-helper.h
 
 # Default rules for deployment.

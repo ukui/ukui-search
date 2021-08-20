@@ -235,9 +235,9 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
 //    this->addAction(searchAction,QLineEdit::LeadingPosition);
 
     /*发送输入框文字改变的dbus*/
-    QDBusConnection::sessionBus().unregisterService("org.ukui.search.service");
-    QDBusConnection::sessionBus().registerService("org.ukui.search.service");
-    QDBusConnection::sessionBus().registerObject("/lineEdit/textChanged", this, QDBusConnection :: ExportAllSlots | QDBusConnection :: ExportAllSignals);
+//    QDBusConnection::sessionBus().unregisterService("org.ukui.search.service");
+//    QDBusConnection::sessionBus().registerService("org.ukui.search.service");
+//    QDBusConnection::sessionBus().registerObject("/lineEdit/textChanged", this, QDBusConnection :: ExportAllSlots | QDBusConnection :: ExportAllSignals);
 
     connect(this, &QLineEdit::textChanged, this, &SearchLineEdit::lineEditTextChanged);
     connect(this, &QLineEdit::textChanged, this, [ = ]() {

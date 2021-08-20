@@ -345,7 +345,7 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
 //        qWarning()<<QString::fromStdString(s);
         auto term = doc.termlist_begin();
         std::string wordTobeFound = QString::fromStdString(keyWord).section(" ", 0, 0).toStdString();
-        int size = wordTobeFound.length();
+//        int size = wordTobeFound.length();
         term.skip_to(wordTobeFound);
 //        int count = 0;
 //        for(auto pos = term.positionlist_begin(); pos != term.positionlist_end() && count < 6; ++pos) {
