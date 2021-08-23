@@ -33,10 +33,14 @@ QString SettingsSearchPlugin::getPluginName()
 
 void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
+    if (keyword == "/")
+        return;
     QStringList pinyinlist;
+    QStringList resultName;
     ResultInfo resultInfo;
     resultInfo.type = 0;
     QLocale ql;
+    /*
     if (ql.language() == QLocale::Chinese) {
         for (auto i = m_chineseSearchList.constBegin(); i != m_chineseSearchList.constEnd(); ++i) {
             QStringList regmatch = *i;
@@ -96,6 +100,108 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                     resultInfo.actionKey = str;
                     searchResult->enqueue(resultInfo);
                 }
+            }
+        }
+    }
+    */
+    for (auto i = m_chineseSearchList.constBegin(); i != m_chineseSearchList.constEnd(); ++i) {
+        QStringList regmatch = *i;
+        QString key = i.key();
+        for (int t = 0; t < regmatch.size(); t++) {
+            QString str = regmatch.at(t);
+            if (str.contains(keyword)) {
+                resultInfo.name = ql.language() == QLocale::Chinese ? str : m_englishSearchList[key].at(t);
+                if (resultName.contains(resultInfo.name)) {
+                    continue;
+                }
+                resultName.append(resultInfo.name);
+                str = key + "/" + str;
+                resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                resultInfo.actionKey = str;
+                searchResult->enqueue(resultInfo);
+                continue;
+            }
+            if (ql.language() == QLocale::Chinese) {
+                pinyinlist = FileUtils::findMultiToneWords(str);
+                for (int i = 0; i < pinyinlist.size() / 2; i++) {
+                    str = regmatch.at(t);
+                    QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
+                    if (shouzimu.contains(keyword, Qt::CaseInsensitive)) {
+                        resultInfo.name = str;
+                        if (resultName.contains(resultInfo.name)) {
+                            continue;
+                        }
+                        resultName.append(resultInfo.name);
+                        str = key + "/" + str;
+                        resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                        resultInfo.actionKey = str;
+                        searchResult->enqueue(resultInfo);
+                        break;
+                    }
+                    if (keyword.size() < 2)
+                        break;
+                    QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
+                    if (pinyin.contains(keyword, Qt::CaseInsensitive)) {
+                        resultInfo.name = str;
+                        if (resultName.contains(resultInfo.name)) {
+                            continue;
+                        }
+                        resultName.append(resultInfo.name);
+                        str = key + "/" + str;
+                        resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                        resultInfo.actionKey = str;
+                        searchResult->enqueue(resultInfo);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    for (auto i = m_englishSearchList.constBegin(); i != m_englishSearchList.constEnd(); ++i) {
+        QStringList regmatch = *i;
+        QString key = i.key();
+        for (int t = 0; t < regmatch.size(); t++) {
+            QString str = regmatch.at(t);
+            if (str.contains(keyword, Qt::CaseInsensitive)) {
+                resultInfo.name = ql.language() == QLocale::Chinese ? m_chineseSearchList[key].at(t) : str;
+                if (resultName.contains(resultInfo.name)) {
+                    continue;
+                }
+                resultName.append(resultInfo.name);
+                str = key + "/" + str;
+                resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                resultInfo.actionKey = str;
+                searchResult->enqueue(resultInfo);
+            }
+        }
+    }
+    for (auto i = m_mixSearchList.constBegin(); i != m_mixSearchList.constEnd(); ++i) {
+        QMap<QString, QString> regmatch = *i;
+        QString key = i.key();
+        for (auto t = regmatch.begin(); t != regmatch.end(); ++t) {
+            QString englishStr = t.value();
+            QString chineseStr = t.key();
+            if (chineseStr.contains(keyword, Qt::CaseInsensitive)) {
+                resultInfo.name = ql.language() == QLocale::Chinese ? chineseStr : englishStr;
+                if (resultName.contains(resultInfo.name)) {
+                    continue;
+                }
+                resultName.append(resultInfo.name);
+                chineseStr = key + "/" + chineseStr;
+                resultInfo.icon = FileUtils::getSettingIcon(chineseStr, true);
+                resultInfo.actionKey = chineseStr;
+                searchResult->enqueue(resultInfo);
+            }
+            if (englishStr.contains(keyword, Qt::CaseInsensitive)) {
+                resultInfo.name = ql.language() == QLocale::Chinese ? chineseStr : englishStr;
+                if (resultName.contains(resultInfo.name)) {
+                    continue;
+                }
+                resultName.append(resultInfo.name);
+                englishStr = key + "/" + englishStr;
+                resultInfo.icon = FileUtils::getSettingIcon(englishStr, true);
+                resultInfo.actionKey = englishStr;
+                searchResult->enqueue(resultInfo);
             }
         }
     }
@@ -186,9 +292,16 @@ void SettingsSearchPlugin::xmlElement() {
                 }
                 continue;
             }
-
-            if (n.nodeName() == QString::fromLocal8Bit("ChinesePlugin")
-                    or n.nodeName() == QString::fromLocal8Bit("ChineseFunc")) {
+            if (n.nodeName() == QString::fromLocal8Bit("ChinesePlugin")) {
+                chineseIndex = n.toElement().text();
+                if (chineseIndex.isEmpty()) {
+                    continue;
+                }
+                if (0 == m_mixSearchList[key].count(chineseIndex)) {
+                    m_mixSearchList[key].insert(chineseIndex, key);
+                }
+            }
+            if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc")) {
                 chineseIndex = n.toElement().text();
                 if (chineseIndex.isEmpty()) {
                     continue;
@@ -201,7 +314,7 @@ void SettingsSearchPlugin::xmlElement() {
             }
 
             if (n.nodeName() == QString::fromLocal8Bit("EnglishFunc")) {
-                englishIndex = QString::fromLocal8Bit("/") + n.toElement().text();
+                englishIndex = /*QString::fromLocal8Bit("/") + */n.toElement().text();
                 if (englishIndex.isEmpty()) {
                     continue;
                 }
