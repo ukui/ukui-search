@@ -7280,7 +7280,7 @@ jiao 叫
 shao,zhao 召
 ba,pa 叭
 ding 叮
-ke,ge 可
+ke 可
 tai,yi,si 台
 chi,hua,e 叱
 shi 史
@@ -8647,7 +8647,7 @@ di,ti 奃
 yan 奄
 pao 奅
 juan 奆
-ji,ai,yi,qi 奇
+ji,qi 奇
 nai 奈
 feng 奉
 pi,xi,lie,xie 奊

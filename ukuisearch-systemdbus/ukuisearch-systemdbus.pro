@@ -22,7 +22,7 @@ target.path = /usr/bin
 INSTALLS += \
     target \
     inst1 \
-    inst2 \
+    inst2
 
 HEADERS += \
     sysdbusregister.h
