@@ -17,6 +17,7 @@ class LIBSEARCH_EXPORT SettingsSearchPlugin : public QObject, public SearchPlugi
 {
     Q_OBJECT
 public:
+
     SettingsSearchPlugin(QObject *parent = nullptr);
     PluginType pluginType() {return PluginType::SearchPlugin;}
     const QString name();
@@ -51,9 +52,9 @@ private:
 
     QVBoxLayout * m_actionLyt = nullptr;
 
-
     QMap<QString, QStringList> m_chineseSearchList;
     QMap<QString, QStringList> m_englishSearchList;
+    QMap<QString, QMap<QString, QString>> m_mixSearchList;//map数据对应Chinese Name和English Name
 
     bool m_enable = true;
     QList<SettingsSearchPlugin::Actioninfo> m_actionInfo;

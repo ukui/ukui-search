@@ -295,6 +295,7 @@ void BestListWidget::initConnections()
     connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &BestListWidget::expandListSlot);
     connect(m_titleLabel, &TitleLabel::retractClicked, this, &BestListWidget::reduceListSlot);
     connect(m_bestListView, &BestListView::listLengthChanged, this, &BestListWidget::onListLengthChanged);
+    connect(m_bestListView, &BestListView::listLengthChanged, m_titleLabel, &TitleLabel::onListLengthChanged);
     connect(m_bestListView, &BestListView::clicked, this, &BestListWidget::rowClicked);
     connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
         int whole_height = this->isVisible() ? m_bestListView->showHeight() + TITLE_HEIGHT : 0;
