@@ -35,6 +35,8 @@
 #include <QMap>
 #include <QDomDocument>
 #include <QQueue>
+#include <QApplication>
+#include <QFontMetrics>
 
 #include <quazip/quazipfile.h>
 #include <stdio.h>
@@ -83,6 +85,7 @@ public:
     static void getXlsxTextContent(QString &path, QString &textcontent);
     static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
+    static QString chineseSubString(const std::string &data, int start, int length);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;

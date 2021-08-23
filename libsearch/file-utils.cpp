@@ -773,3 +773,69 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
 
     return;
 }
+
+QString FileUtils::chineseSubString(const std::string &data, int start, int length)
+{
+    std::string afterSub = "";
+    //越界保护
+    if(start < 0 || length < 0){
+        return " ";
+    }
+    if (length >= data.length()) {
+        return QString::fromStdString(data);
+    }
+
+    QString snippet = "";
+    QFont ft(QApplication::font().family(),QApplication::font().pointSize());
+    QFontMetrics fm (ft);
+
+    if (start + length <= data.length()) {
+        afterSub = data.substr(start,length);    //截取
+        snippet = QString::fromStdString(afterSub);    //转QString
+
+        if(start + length < data.length()){
+           snippet.replace(snippet.length()-3,3,"...");    //替换后三位
+        }
+        snippet = fm.elidedText(snippet, Qt::ElideRight, 2*366);    //超过两行则省略
+    } else {
+        int newStart = data.length()-length;    //更新截取位置
+        int bodyByteCount = 0;
+        int letterCount = 0;
+
+        for(int i = newStart;i > 0;i--){
+            if(data[i] & 0x80) {
+                char tmp = data[i] << 1;
+                if(tmp & 0x80){
+                    break;
+                } else {
+                    bodyByteCount++;
+                }
+
+            } else {
+                letterCount++;
+                if(letterCount == 3) {
+                    break;
+                }
+
+            }
+        }
+        int correctionValue = letterCount + (bodyByteCount);
+        afterSub = data.substr(newStart - correctionValue, length + correctionValue);
+        snippet=QString::fromStdString(afterSub);
+
+        switch(letterCount)
+        {
+        case 0:
+            snippet.replace(0,1,".").prepend("..");
+            break;
+        case 1:
+            snippet.replace(0,2,"..").prepend(".");
+            break;
+        default:
+            snippet.replace(0,3,"...");
+        }
+
+        snippet = fm.elidedText(snippet, Qt::ElideLeft, 2*500);
+    }
+    return snippet;
+}
