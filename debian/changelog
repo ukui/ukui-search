@@ -1,3 +1,13 @@
+ukui-search (0.4.0+0820) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix: File content detail page display gibberish occasionally.
+    - 修复了文本内容详情页偶现乱码的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 20 Aug 2021 14:50:19 +0800
+
 ukui-search (0.4.0+0813) v101; urgency=medium
 
   * Bug 无
