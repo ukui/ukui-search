@@ -95,9 +95,7 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 
 void FirstIndex::run() {
     QTime t1 = QTime::currentTime();
-
     // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
-
     QString indexDataBaseStatus =  IndexStatusRecorder::getInstance()->getStatus(INDEX_DATABASE_STATE).toString();
     QString contentIndexDataBaseStatus = IndexStatusRecorder::getInstance()->getStatus(CONTENT_INDEX_DATABASE_STATE).toString();
     QString inotifyIndexStatus = IndexStatusRecorder::getInstance()->getStatus(INOTIFY_NORMAL_EXIT).toString();
@@ -106,7 +104,6 @@ void FirstIndex::run() {
     qDebug() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
     qDebug() << "inotifyIndexStatus: " << inotifyIndexStatus;
 
-    /* || contentIndexDataBaseStatus == ""*/
     if(indexDataBaseStatus == "") {
         this->bool_dataBaseExist = false;
     } else {
@@ -119,9 +116,6 @@ void FirstIndex::run() {
     }
 
     this->q_index = new QQueue<QVector<QString>>();
-    //this->q_content_index = new QQueue<QString>();
-    //NEW_QUEUE(this->q_content_index);
-//    this->mlm = new MessageListManager();
     this->q_content_index = new QQueue<QPair<QString,qint64>>();
 
     int fifo_fd;
@@ -134,11 +128,6 @@ void FirstIndex::run() {
         perror("open fifo error\n");
         assert(false);
     }
-
-//    this->q_content_index->enqueue(QString("/home/zhangzihao/Desktop/qwerty/四库全书.txt"));
-
-//    this->p_indexGenerator->creatAllIndex(this->q_content_index);
-
 
     ++FileUtils::_index_status;
     pid_t pid;
@@ -157,7 +146,6 @@ void FirstIndex::run() {
         } else {
 //            p_indexGenerator = IndexGenerator::getInstance(false,this);
             p_indexGenerator = IndexGenerator::getInstance(true, this);
-
         }
         //TODO Fix these weird code.
         QSemaphore sem(5);
@@ -166,7 +154,6 @@ void FirstIndex::run() {
         mutex2.lock();
         mutex3.lock();
         sem.acquire(4);
-//        QtConcurrent::run([&](){
         sem.acquire(1);
         mutex1.unlock();
         QStringList pathList;
@@ -179,7 +166,6 @@ void FirstIndex::run() {
         FileUtils::_max_index_count = this->q_index->length();
         qDebug() << "max_index_count:" << FileUtils::_max_index_count;
         sem.release(5);
-//        });
         QtConcurrent::run(&m_pool, [&]() {
             sem.acquire(2);
             mutex2.unlock();
@@ -202,7 +188,6 @@ void FirstIndex::run() {
             QQueue<QString>* tmp2 = new QQueue<QString>();
             qDebug() << "q_content_index:" << q_content_index->size();
             while(!this->q_content_index->empty()) {
-                //                for (size_t i = 0; (i < this->u_send_length) && (!this->q_content_index->empty()); ++i){
                 qint64 fileSize = 0;
                 //修改一次处理的数据量，从30个文件改为文件总大小为50M以下，50M为暂定值--jxx20210519
                 for(size_t i = 0;/* (i < 30) && (fileSize < 52428800) && */(!this->q_content_index->empty()); ++i) {
@@ -234,6 +219,8 @@ void FirstIndex::run() {
         mutex1.unlock();
         mutex2.unlock();
         mutex3.unlock();
+
+
 
         if(this->q_index)
             delete this->q_index;

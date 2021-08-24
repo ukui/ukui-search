@@ -36,11 +36,9 @@
 #include "assert.h"
 #include <sys/prctl.h>
 #include <syslog.h>
-//#include <QtConcurrent>
 #include "traverse_bfs.h"
 #include "index-status-recorder.h"
 #include "index-generator.h"
-#include "inotify-index.h"
 #include "file-utils.h"
 #include "common.h"
 namespace Zeeker {
@@ -59,30 +57,10 @@ private:
     IndexGenerator* p_indexGenerator = nullptr;
     QThreadPool m_pool;
 
-    //here should be refact
-//    MessageListManager* mlm;
-
-    //test
     QQueue<QVector<QString>>* q_index;
 //    QQueue<QString>* q_content_index;
     //修改QQueue存储数据为QPair<QString,qint64>，增加存储文件大小数据便于处理时统计--jxx20210519
     QQueue<QPair<QString,qint64>>* q_content_index;
-
-    const QMap<QString, bool> targetFileTypeMap = {
-        std::map<QString, bool>::value_type("doc", true),
-        std::map<QString, bool>::value_type("docx", true),
-        std::map<QString, bool>::value_type("ppt", true),
-        std::map<QString, bool>::value_type("pptx", true),
-        std::map<QString, bool>::value_type("xls", true),
-        std::map<QString, bool>::value_type("xlsx", true),
-        std::map<QString, bool>::value_type("txt", true),
-        std::map<QString, bool>::value_type("dot", true),
-        std::map<QString, bool>::value_type("wps", true),
-        std::map<QString, bool>::value_type("pps", true),
-        std::map<QString, bool>::value_type("dps", true),
-        std::map<QString, bool>::value_type("et", true),
-        std::map<QString, bool>::value_type("pdf", true)
-    };
 
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;
