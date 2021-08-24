@@ -34,6 +34,7 @@
 #endif
 #include <QObject>
 #include <QApplication>
+#include <QStandardPaths>
 #include "qt-single-application.h"
 #include "qt-local-peer.h"
 //#include "inotify-manager.h"
@@ -175,16 +176,22 @@ int main(int argc, char *argv[]) {
         syslog(LOG_ERR, "Home is not exits!!\n");
         ::sleep(1);
     }
-    while(!QDir("/media/用户保险箱").exists()) {
-        qWarning() << "集中管控目录未挂载!!";
-        printf("集中管控目录未挂载!!");
-        syslog(LOG_ERR, "集中管控目录未挂载!!\n");
+    while(!QDir(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)).exists()) {
+        qWarning() << QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) << "未找到!!";
+        printf("未找到桌面目录!!");
+        syslog(LOG_ERR, "未找到桌面目录!!\n");
         ::sleep(1);
     }
-    while(!QFileInfo("/media/用户保险箱").permission(QFileDevice::WriteUser)) {
-        qWarning() << "/media/用户保险箱 无写入权限!!";
-        printf("/media/用户保险箱 无写入权限!!");
-        syslog(LOG_ERR, "/media/用户保险箱 无写入权限!!\n");
+    while(!FileUtils::isDirRemote(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation))) {
+        qWarning() << "未检测到管控目录挂载!!";
+        printf("未检测到管控目录挂载!!");
+        syslog(LOG_ERR, "未检测到管控目录挂载!!\n");
+        ::sleep(1);
+    }
+    while(!QFileInfo(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)).permission(QFileDevice::WriteUser)) {
+        qWarning() << QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) << "无写入权限!!";
+        printf("桌面目录无写入权限!!");
+        syslog(LOG_ERR, "桌面目录无写入权限!!\n");
         ::sleep(1);
     }
 

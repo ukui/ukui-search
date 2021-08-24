@@ -92,6 +92,7 @@ public:
 
     enum class SearchMethod { DIRECTSEARCH = 0, INDEXSEARCH = 1};
     static SearchMethod searchMethod;
+    static bool isDirRemote(QString path);
 
 private:
     FileUtils();

@@ -1,3 +1,12 @@
+ukui-search (0.4.0+0824) v100; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * 管控路径改为桌面，增加管控挂载检测。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 25 Aug 2021 05:56:51 +0800
+
 ukui-search (0.4.0+0709) v101; urgency=medium
 
   * Bug 无
