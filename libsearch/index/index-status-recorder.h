@@ -5,10 +5,11 @@
 #include <QSettings>
 #include <QDir>
 #include <QMutex>
+#include <QStandardPaths>
 #define CONTENT_INDEX_DATABASE_STATE "content_index_database_state"
 #define INDEX_DATABASE_STATE "index_database_state"
 #define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
-#define INDEX_STATUS "/media/用户保险箱/.ukui-search/ukui-search-index-status.conf"
+#define INDEX_STATUS QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) +"/.ukui-search/ukui-search-index-status.conf"
 #define PENDING_FILE_QUEUE_FINISH "pending_file_queue_finish"
 namespace Zeeker {
 //fixme: we need a better way to record index status.

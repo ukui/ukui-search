@@ -55,9 +55,9 @@
 //#define BLOCK_DIRS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-block-dirs.conf"
 //#define SEARCH_HISTORY QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-history.conf"
 
-#define MAIN_SETTINGS "/media/用户保险箱/.ukui-search/ukui-search.conf"
-#define BLOCK_DIRS "/media/用户保险箱/.ukui-search/ukui-search-block-dirs.conf"
-#define SEARCH_HISTORY "/media/用户保险箱/.ukui-search/ukui-search-history.conf"
+#define MAIN_SETTINGS QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/.ukui-search/ukui-search.conf"
+#define BLOCK_DIRS QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) +"/.ukui-search/ukui-search-block-dirs.conf"
+#define SEARCH_HISTORY QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) +"/.ukui-search/ukui-search-history.conf"
 //#define CLOUD_HISTORY "history"
 //#define CLOUD_APPLICATIONS "applications"
 

@@ -25,7 +25,8 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
-#define HOMEPAGE_SETTINGS  "media/用户保险箱/.ukui-search/ukui-search-homepage.conf"
+#include <QStandardPaths>
+#define HOMEPAGE_SETTINGS  QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) +"/.ukui-search/ukui-search-homepage.conf"
 namespace Zeeker {
 class ConfigFile : public QObject {
     Q_OBJECT
