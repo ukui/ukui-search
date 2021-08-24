@@ -344,8 +344,7 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, QMa
         if(locale.language() == QLocale::Chinese) {
             appname = list.at(i).value("displayname_cn");
             pkgname = list.at(i).value("appname");
-        }
-        if(locale.language() == QLocale::English) {
+        }else {
             appname = list.at(i).value("appname");
         }
         appdiscription = list.at(i).value("discription");
