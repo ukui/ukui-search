@@ -37,6 +37,7 @@ using namespace Zeeker;
 #define ACTION_NORMAL_COLOR QColor(55, 144, 250, 255)
 #define ACTION_HOVER_COLOR QColor(64, 169, 251, 255)
 #define ACTION_PRESS_COLOR QColor(41, 108, 217, 255)
+#define TITLE_HEIGHT 30
 
 ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 {
@@ -127,7 +128,7 @@ void ResultArea::pressDown()
             QModelIndex setIndex = m_bestListWidget->getModlIndex(++row, 0);
             m_bestListWidget->setResultSelection(setIndex);
             sendKeyPressSignal(m_selectedPluginID);
-        } else if (index.row() == maxNum - 1 or index.row() < 0) {//跳转下一个widget
+        } else if (index.row() >= maxNum - 1 or index.row() < 0) {//跳转下一个widget
             m_bestListWidget->clearResultSelection();
             for (ResultWidget * plugin : m_widget_list) {
                 if (plugin->getResultNum() != 0) {
@@ -153,7 +154,7 @@ void ResultArea::pressDown()
                     QModelIndex setIndex = plugin->getModlIndex(++row, 0);
                     plugin->setResultSelection(setIndex);
                     sendKeyPressSignal(m_selectedPluginID);
-                } else if (index.row() == maxNum - 1 or index.row() < 0) {//跳转下一个widget
+                } else if (index.row() >= maxNum - 1 or index.row() < 0) {//跳转下一个widget
                     plugin->clearResultSelection();
                     int indexNum = m_widget_list.indexOf(plugin);
                     bool findNextWidget = false;
@@ -217,7 +218,7 @@ void ResultArea::pressUp()
         int maxNum = m_bestListWidget->getExpandState() ?
                     m_bestListWidget->getResultNum() : (m_bestListWidget->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
                                                             m_bestListWidget->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-        if (index.row() > 0) {
+        if (index.row() > 0 and index.row() < maxNum) {
             int row = index.row();
             QModelIndex setIndex = m_bestListWidget->getModlIndex(--row, 0);
             m_bestListWidget->setResultSelection(setIndex);
@@ -225,13 +226,18 @@ void ResultArea::pressUp()
         } else if (index.row() == 0) {
             //已到最上层，暂不处理
         } else {
-            qWarning() << "QModelIndex error ! row:" << index.row() << "maxNum:" << maxNum;
+            QModelIndex setIndex = m_bestListWidget->getModlIndex(--maxNum, 0);
+            m_bestListWidget->setResultSelection(setIndex);
+            sendKeyPressSignal(m_selectedPluginID);
         }
     } else {
         for (ResultWidget * plugin : m_widget_list) {
             if (m_selectedPluginID == plugin->pluginId()) {
+                int indexMaxNum = plugin->getExpandState() ?
+                            plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
+                                                                    plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
                 QModelIndex index = plugin->getCurrentSelection();
-                if (index.row() > 0) {
+                if (index.row() > 0 and index.row() < indexMaxNum) {
                     int row = index.row();
                     QModelIndex setIndex = plugin->getModlIndex(--row, 0);
                     plugin->setResultSelection(setIndex);
@@ -268,10 +274,7 @@ void ResultArea::pressUp()
                         break;
                     }
                 } else {
-                    int maxNum = plugin->getExpandState() ?
-                                plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                                        plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-                    QModelIndex setIndex = plugin->getModlIndex(maxNum - 1, 0);
+                    QModelIndex setIndex = plugin->getModlIndex(indexMaxNum - 1, 0);
                     plugin->setResultSelection(setIndex);
                     sendKeyPressSignal(m_selectedPluginID);
                 }
@@ -288,10 +291,11 @@ bool ResultArea::getSelectedState()
 void ResultArea::sendKeyPressSignal(QString &pluginID)
 {
     int height(0);
+    int resultHeight = m_bestListWidget->getResultHeight();
     if (pluginID == m_bestListWidget->getWidgetName()) {
         QModelIndex index = m_bestListWidget->getCurrentSelection();
-        height = index.row() == 0 ? 0 : index.row() * 35 + 30;//35为modol单个结果高度,30为title高度
-        height = (height - 35) < 0 ? 0 : height - 35;
+        height = index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
+        height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
         this->ensureVisible(0, height, 0, 0);
         if (m_detail_open_state) {
             Q_EMIT this->keyPressChanged(m_bestListWidget->getPluginInfo(index), m_bestListWidget->getIndexResultInfo(index));
@@ -301,10 +305,10 @@ void ResultArea::sendKeyPressSignal(QString &pluginID)
         for (ResultWidget *plugin : m_widget_list) {
             if (pluginID == plugin->pluginId()) {
                 QModelIndex index = plugin->getCurrentSelection();
-                height += index.row() == 0 ? 0 : index.row() * 35 + 30;//35为modol单个结果高度,30为title高度
-                int moreHeight = index.row() == 0 ? (30 + 35 * 2) : (35 * 2);
+                height += index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
+                int moreHeight = index.row() == 0 ? (TITLE_HEIGHT + resultHeight * 2) : (resultHeight * 2);
                 this->ensureVisible(0, height + moreHeight, 0, 0);
-                height = (height - 35) < 0 ? 0 : height - 35;
+                height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
                 this->ensureVisible(0, height, 0, 0);
                 if (m_detail_open_state) {
                     Q_EMIT this->keyPressChanged(m_selectedPluginID, plugin->getIndexResultInfo(index));

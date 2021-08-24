@@ -518,7 +518,6 @@ void MainWindow::setSearchMethod(const bool &is_index_search) {
  */
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    qDebug() << "press:" << event->key();
     if (event->key() == Qt::Key_Escape) {
         tryHideMainwindow();
     } else if (event->key() == Qt::Key_Return or event->key() == Qt::Key_Enter) {

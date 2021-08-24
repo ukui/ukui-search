@@ -25,6 +25,7 @@ public:
     QModelIndex getModlIndex(int row, int column);
     SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
     const QString getPluginInfo(const QModelIndex&index);
+    int getResultHeight();
 
 public Q_SLOTS:
     void clearSelectedRow();
@@ -75,6 +76,7 @@ public:
     bool getExpandState();
     SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
     const QString getPluginInfo(const QModelIndex&index);
+    int getResultHeight();
 
 private:
     void initUi();
