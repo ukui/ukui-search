@@ -59,6 +59,11 @@ const QString BestListView::getPluginInfo(const QModelIndex& index)
     return this->m_model->getPluginInfo(index);
 }
 
+int BestListView::getResultHeight()
+{
+    return this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+}
+
 void BestListView::clearSelectedRow()
 {
     if (!m_is_selected) {
@@ -111,7 +116,9 @@ void BestListView::onItemListChanged(const int &count)
 
 void BestListView::setExpanded(const bool &is_expanded)
 {
+    QModelIndex index = this->currentIndex();
     m_model->setExpanded(is_expanded);
+    this->setCurrentIndex(index);
 }
 
 const bool &BestListView::isExpanded()
@@ -164,7 +171,13 @@ void BestListView::initConnections()
     connect(this, &BestListView::clicked, this, &BestListView::onRowSelectedSlot);
     connect(this, &BestListView::activated, this, &BestListView::onRowDoubleClickedSlot);
     connect(m_model, &BestListModel::itemListChanged, this, &BestListView::onItemListChanged);
-    connect(this, &BestListView::sendBestListData, m_model, &BestListModel::appendInfo);
+    connect(this, &BestListView::sendBestListData, this, [=] (const QString &plugin, const SearchPluginIface::ResultInfo&info) {
+        QModelIndex index = this->currentIndex();
+        this->m_model->appendInfo(plugin, info);
+        if (index.isValid()) {
+            this->setCurrentIndex(index);
+        }
+    });
 }
 
 BestListWidget::BestListWidget(QWidget *parent) : QWidget(parent)
@@ -196,13 +209,14 @@ int BestListWidget::getResultNum()
 
 void BestListWidget::setResultSelection(const QModelIndex &index)
 {
-    this->m_bestListView->selectionModel()->clearSelection();
-    this->m_bestListView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+    //this->m_bestListView->selectionModel()->clearSelection();
+    this->m_bestListView->setCurrentIndex(index);
 }
 
 void BestListWidget::clearResultSelection()
 {
-    this->m_bestListView->selectionModel()->clearSelection();
+    //this->m_bestListView->selectionModel()->clearSelection();
+    this->m_bestListView->setCurrentIndex(QModelIndex());
 }
 
 QModelIndex BestListWidget::getModlIndex(int row, int column)
@@ -235,6 +249,10 @@ const QString BestListWidget::getPluginInfo(const QModelIndex&index)
     return this->m_bestListView->getPluginInfo(index);
 }
 
+int BestListWidget::getResultHeight()
+{
+    return this->m_bestListView->getResultHeight();
+}
 /**
  * @brief BestListWidget::expandListSlot 展开列表的槽函数
  */

@@ -35,13 +35,15 @@ int ResultWidget::getResultNum()
 
 void ResultWidget::setResultSelection(const QModelIndex &index)
 {
-    this->m_resultView->selectionModel()->clearSelection();
-    this->m_resultView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
+    //this->m_resultView->selectionModel()->clearSelection();
+    //this->m_resultView->setCurrentIndex(QModelIndex());
+    this->m_resultView->setCurrentIndex(index);
 }
 
 void ResultWidget::clearResultSelection()
 {
-    this->m_resultView->selectionModel()->clearSelection();
+    //this->m_resultView->selectionModel()->clearSelection();
+    this->m_resultView->setCurrentIndex(QModelIndex());
 }
 
 QModelIndex ResultWidget::getModlIndex(int row, int column)

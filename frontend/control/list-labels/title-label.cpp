@@ -66,7 +66,7 @@ void TitleLabel::paintEvent(QPaintEvent * event) {
 
 void TitleLabel::onListLengthChanged(const int &length)
 {
-    m_showMoreLabel->setVisible(length >= NUM_LIMIT_SHOWN_DEFAULT);
+    m_showMoreLabel->setVisible(length > NUM_LIMIT_SHOWN_DEFAULT);
 }
 
 void TitleLabel::lableReset()
