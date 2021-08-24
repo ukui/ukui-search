@@ -1,3 +1,11 @@
+ukui-search (0.4.0+0823hw1) v101.hw; urgency=medium
+
+  * BUG号 73232-9A0 73285-9A0
+  * 需求号 无
+  * 其他改动说明：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 23 Aug 2021 09:09:45 +0800
+
 ukui-search (0.4.0+0813hw1) v101.hw; urgency=medium
 
   * BUG号 73279-9A0
