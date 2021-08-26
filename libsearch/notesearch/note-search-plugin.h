@@ -66,6 +66,7 @@ private:
     QVBoxLayout * m_actionLyt = nullptr;
 
     bool m_enable = true;
+    QString m_keyword;
     QList<NoteSearchPlugin::Actioninfo> m_actionInfo;
     QThreadPool m_pool;
 };
@@ -78,9 +79,9 @@ public:
 protected:
     void run() override;
 private:
+    QString m_keyword;
     DataQueue<SearchPluginIface::ResultInfo> *m_searchResult = nullptr;
     size_t m_uniqueSymbol;
-    QString m_keyword;
 };
 }
 

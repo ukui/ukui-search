@@ -39,6 +39,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QFontMetrics>
+#include <QLabel>
 
 #include <quazip/quazipfile.h>
 #include <stdio.h>
@@ -62,6 +63,8 @@
 namespace Zeeker {
 class  LIBSEARCH_EXPORT FileUtils {
 public:
+    static QString getHtmlText(const QString & text, const QString & keyword);
+    static QString wrapData(QLabel *p_label, const QString &text);
     static std::string makeDocUterm(QString);
     static QIcon getFileIcon(const QString &, bool checkValid = true);
     static QIcon getAppIcon(const QString &);

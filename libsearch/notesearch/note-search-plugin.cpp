@@ -35,6 +35,7 @@ void NoteSearchPlugin::KeywordSearch(QString keyword, DataQueue<SearchPluginIfac
     g_mutex.lock();
     ++g_uniqueSymbol;
     g_mutex.unlock();
+    m_keyword = keyword;
     NoteSearch *ns = new NoteSearch(searchResult, keyword, g_uniqueSymbol);
     m_pool.start(ns);
 }
@@ -67,8 +68,8 @@ QWidget *NoteSearchPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
         m_nameLabel->setToolTip(ri.name);
     }
     m_pluginLabel->setText(tr("Application"));
-    QString showDesc = fontMetrics.elidedText(ri.description.at(0).key + " " + ri.description.at(0).value, Qt::ElideRight, 3114); //当字体长度超过215时显示为省略号
-    m_descLabel->setText(FileUtils::escapeHtml(showDesc));
+    QString showDesc = fontMetrics.elidedText(/*ri.description.at(0).key + " " + */ri.description.at(0).value, Qt::ElideRight, m_descLabel->width() * 2); //当字体长度超过215时显示为省略号
+    m_descLabel->setText(FileUtils::getHtmlText(FileUtils::wrapData(m_descLabel, showDesc), m_keyword));
     m_descFrame->show();
     m_line_2->show();
     return m_detailPage;
@@ -105,7 +106,7 @@ void NoteSearchPlugin::initDetailPage()
     m_descFrame = new QFrame(m_detailPage);
     m_descFrameLyt = new QVBoxLayout(m_descFrame);
     m_descLabel = new QLabel(m_descFrame);
-    m_descLabel->setTextFormat(Qt::PlainText);
+    m_descLabel->setTextFormat(Qt::AutoText);
     m_descLabel->setWordWrap(true);
     m_descFrameLyt->addWidget(m_descLabel);
     m_descFrame->setLayout(m_descFrameLyt);
@@ -190,7 +191,12 @@ void NoteSearch::run() {
                     },
                     actionKey : it.first
                 };
-                m_searchResult->enqueue(ri);
+                if (m_uniqueSymbol ^ g_uniqueSymbol) {
+                    qDebug() << m_uniqueSymbol << g_uniqueSymbol;
+                    return;
+                } else {
+                    m_searchResult->enqueue(ri);
+                }
             }
         }
     } else {
