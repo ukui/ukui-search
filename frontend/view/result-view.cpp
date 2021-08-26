@@ -169,7 +169,7 @@ bool ResultView::isSelected()
 int ResultView::showHeight()
 {
     int height;
-    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
     if (this->isExpanded()) {
         height = m_count * rowheight;
     } else {

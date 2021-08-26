@@ -81,7 +81,7 @@ void ResultArea::pressEnter()
     if (false == m_is_selected) {//未选中时默认选取bestlist第一项
         int resultNum = m_bestListWidget->getResultNum();
         if (0 == resultNum) {//搜索结果为空则选中网页搜索项
-            m_webSearchLable->setStyleSheet("background-color: #3790FA");//#3790FA选中颜色;
+            m_webSearchLable->setStyleSheet("color: white; background-color: #3790FA");//#3790FA选中颜色;
             m_selectedPluginID = m_WebTitleLabel->text();
             m_is_selected = true;
         } else {//选取bestlist第一项
@@ -170,7 +170,7 @@ void ResultArea::pressDown()
                         }
                     }
                     if (indexNum >= m_widget_list.size()) {//下一项是web search
-                        m_webSearchLable->setStyleSheet("background-color: #3790FA");//#3790FA选中颜色;
+                        m_webSearchLable->setStyleSheet("color: white; background-color: #3790FA");//#3790FA选中颜色;
                         m_selectedPluginID = m_WebTitleLabel->text();
                         m_is_selected = true;
                         this->ensureWidgetVisible(m_webSearchLable);
