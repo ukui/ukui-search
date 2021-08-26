@@ -60,16 +60,16 @@ QString WebSearchLabel::getDefultStyleSheet()
 bool WebSearchLabel::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == this) {
-        if(event->type() == QEvent::MouseButtonPress) {
-            this->setStyleSheet("background-color: #3790FA");//#3790FA选中颜色，
+        if (event->type() == QEvent::MouseButtonPress) {
+            this->setStyleSheet("color: white; background-color: #3790FA");//#3790FA选中颜色，
             return true;
-        } else if(event->type() == QEvent::MouseButtonRelease) {
+        } else if (event->type() == QEvent::MouseButtonRelease) {
             startSearch();
             return true;
-        } else if(event->type() == QEvent::Enter) {
-            this->setStyleSheet("background-color: #87CEFA");//TODO鼠标悬浮颜色待定
+        } else if (event->type() == QEvent::Enter) {
+            this->setStyleSheet("background-color: #97bbe7");//TODO鼠标悬浮颜色
             return true;
-        } else if(event->type() == QEvent::Leave) {
+        } else if (event->type() == QEvent::Leave) {
             this->setStyleSheet(m_defultStyleSheet);//默认颜色
             return true;
         }
