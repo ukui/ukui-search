@@ -21,6 +21,7 @@
 #include <glib.h>
 #include "file-utils.h"
 #include "app-search-plugin.h"
+#define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
 using namespace Zeeker;
 static AppMatch *app_match_Class = nullptr;
 
@@ -35,10 +36,11 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
 {
     m_watchAppDir = new QFileSystemWatcher(this);
     m_watchAppDir->addPath("/usr/share/applications/");
-    QDir androidPath(QDir::homePath() + "/.local/share/applications/");
-    if(androidPath.exists()) {
-        m_watchAppDir->addPath(QDir::homePath() + "/.local/share/applications/");
+    QDir androidPath(ANDROID_APP_DESKTOP_PATH);
+    if(!androidPath.exists()) {
+        androidPath.mkpath(ANDROID_APP_DESKTOP_PATH);
     }
+    m_watchAppDir->addPath(ANDROID_APP_DESKTOP_PATH);
     qDBusRegisterMetaType<QMap<QString, QString>>();
     qDBusRegisterMetaType<QList<QMap<QString, QString>>>();
     m_interFace = new QDBusInterface("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
@@ -76,7 +78,6 @@ void AppMatch::getAllDesktopFilePath(QString path) {
 
     char* name;
     char* icon;
-    QStringList applist;
 
     GKeyFileFlags flags = G_KEY_FILE_NONE;
     GKeyFile* keyfile = g_key_file_new();
@@ -154,9 +155,14 @@ void AppMatch::getAllDesktopFilePath(QString path) {
             icon = g_key_file_get_locale_string(keyfile, "Desktop Entry", "Icon", nullptr, nullptr);
             if(!m_filePathList.contains(filePathStr)) {
                 NameString appname;
+                QStringList appInfolist;
+
                 appname.app_name = QString::fromLocal8Bit(name);
-                m_installAppMap.insert(appname, applist << filePathStr << QString::fromLocal8Bit(icon) << "" << "");
-                applist.clear();
+                appInfolist << filePathStr << QString::fromLocal8Bit(icon);
+                appInfolist.append(QString::fromLocal8Bit(g_key_file_get_string(keyfile, "Desktop Entry", "Name", nullptr)));
+                appInfolist.append(QString::fromLocal8Bit(g_key_file_get_string(keyfile, "Desktop Entry", "Name[zh_CN]", nullptr)));
+
+                m_installAppMap.insert(appname, appInfolist);
             }
 //            m_filePathList.append(filePathStr);
         }
@@ -251,9 +257,12 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
         if(iter.key().app_name.contains(keyWord, Qt::CaseInsensitive)) {
             SearchPluginIface::ResultInfo ri;
             creatResultInfo(ri, iter, true);
+            AppSearchPlugin::m_mutex.lock();
             if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
                 searchResult->enqueue(ri);
+                AppSearchPlugin::m_mutex.unlock();
             } else {
+                AppSearchPlugin::m_mutex.unlock();
                 break;
             }
 //            installed.insert(name, list);
@@ -268,9 +277,12 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
             if(shouzimu.contains(keyWord, Qt::CaseInsensitive)) {
                 SearchPluginIface::ResultInfo ri;
                 creatResultInfo(ri, iter, true);
+                AppSearchPlugin::m_mutex.lock();
                 if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
                     searchResult->enqueue(ri);
+                    AppSearchPlugin::m_mutex.unlock();
                 } else {
+                    AppSearchPlugin::m_mutex.unlock();
                     break;
                 }
 //                installed.insert(name, list);
@@ -281,14 +293,35 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
             QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
             if(pinyin.contains(keyWord, Qt::CaseInsensitive)) {
                 SearchPluginIface::ResultInfo ri;
+                AppSearchPlugin::m_mutex.lock();
                 creatResultInfo(ri, iter, true);
                 if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
                     searchResult->enqueue(ri);
+                    AppSearchPlugin::m_mutex.unlock();
                 } else {
+                    AppSearchPlugin::m_mutex.lock();
                     break;
                 }
 //                installed.insert(name, list);
                 break;
+            }
+        }
+        QStringList tmpList;
+        tmpList << iter.value().at(2) << iter.value().at(3);
+        for(QString s : tmpList) {
+            if(s.contains(keyWord, Qt::CaseInsensitive)) {
+                SearchPluginIface::ResultInfo ri;
+                AppSearchPlugin::m_mutex.lock();
+                creatResultInfo(ri, iter, true);
+                if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
+                    searchResult->enqueue(ri);
+                    AppSearchPlugin::m_mutex.unlock();
+                } else {
+                    AppSearchPlugin::m_mutex.unlock();
+                    break;
+                }
+                //            installed.insert(name, list);
+                continue;
             }
         }
     }
@@ -331,9 +364,12 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, siz
         ri.description.append(di);
         ri.actionKey = list.at(i).value("appname");
         ri.type = 1; //1 means not installed apps.
+        AppSearchPlugin::m_mutex.lock();
         if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
             searchResult->enqueue(ri);
+            AppSearchPlugin::m_mutex.unlock();
         } else {
+            AppSearchPlugin::m_mutex.unlock();
             break;
         }
     }
@@ -371,18 +407,12 @@ void AppMatch::run() {
     qDebug() << "AppMatch is run";
     this->getDesktopFilePath();
     this->getAllDesktopFilePath("/usr/share/applications/");
-    QDir androidPath(QDir::homePath() + "/.local/share/applications/");
-    if(androidPath.exists())
-        this->getAllDesktopFilePath(QDir::homePath() + "/.local/share/applications/");
-        connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
-        this->getDesktopFilePath();
+    this->getAllDesktopFilePath(ANDROID_APP_DESKTOP_PATH);
+    connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
         if(path == "/usr/share/applications/") {
             this->getAllDesktopFilePath("/usr/share/applications/");
-        }
-        if(androidPath.exists()) {
-            if(path == QDir::homePath() + "/.local/share/applications/") {
-                this->getAllDesktopFilePath(QDir::homePath() + "/.local/share/applications/");
-            }
+        } else if(path == ANDROID_APP_DESKTOP_PATH) {
+            this->getAllDesktopFilePath(ANDROID_APP_DESKTOP_PATH);
         }
     });
 }
