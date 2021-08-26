@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../frontend/main.cpp" line="182"/>
+        <location filename="../../frontend/main.cpp" line="184"/>
         <source>ukui-search is already running!</source>
         <translation></translation>
     </message>
@@ -12,7 +12,7 @@
 <context>
     <name>Zeeker::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="205"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="293"/>
         <source>Best Matches</source>
         <translation>最佳匹配</translation>
     </message>
@@ -126,12 +126,12 @@
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="70"/>
+        <location filename="../../frontend/mainwindow.cpp" line="71"/>
         <source>ukui-search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="76"/>
+        <location filename="../../frontend/mainwindow.cpp" line="77"/>
         <source>Global Search</source>
         <translation>搜索</translation>
     </message>
@@ -165,6 +165,14 @@
     <message>
         <source>Install</source>
         <translation type="vanished">安装</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::ResultArea</name>
+    <message>
+        <location filename="../../frontend/control/stack-pages/search-page-section.cpp" line="378"/>
+        <source>Web Page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -373,16 +381,12 @@
 <context>
     <name>Zeeker::ShowMoreLabel</name>
     <message>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="33"/>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="50"/>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="72"/>
         <source>Show More...</source>
-        <translation>显示更多...</translation>
+        <translation type="vanished">显示更多...</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="68"/>
         <source>Retract</source>
-        <translation>收起</translation>
+        <translation type="vanished">收起</translation>
     </message>
     <message>
         <source>Loading</source>

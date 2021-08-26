@@ -2,11 +2,18 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>Zeeker::AppSearch</name>
+    <name>Zeeker::AppMatch</name>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="320"/>
+        <location filename="../../libsearch/appsearch/app-match.cpp" line="329"/>
         <source>Application Description:</source>
         <translation>应用描述：</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::AppSearch</name>
+    <message>
+        <source>Application Description:</source>
+        <translation type="vanished">应用描述：</translation>
     </message>
 </context>
 <context>
@@ -107,13 +114,13 @@
     <name>Zeeker::FileContengSearchPlugin</name>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="379"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="544"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="578"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="380"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="545"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="579"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
@@ -143,17 +150,17 @@
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="519"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="553"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="531"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="565"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="546"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="580"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -210,6 +217,45 @@
     </message>
 </context>
 <context>
+    <name>Zeeker::NoteSearch</name>
+    <message>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="188"/>
+        <source>Note Description:</source>
+        <translatorcomment>便签内容：</translatorcomment>
+        <translation>便签内容：</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::NoteSearchPlugin</name>
+    <message>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="11"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="126"/>
+        <source>Open</source>
+        <translatorcomment>打开</translatorcomment>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="20"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="30"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="95"/>
+        <source>Note Search</source>
+        <translatorcomment>便签</translatorcomment>
+        <translation>便签</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="25"/>
+        <source>Note Search.</source>
+        <translatorcomment>便签.</translatorcomment>
+        <translation>便签.</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="69"/>
+        <source>Application</source>
+        <translatorcomment>应用</translatorcomment>
+        <translation>应用</translation>
+    </message>
+</context>
+<context>
     <name>Zeeker::SearchManager</name>
     <message>
         <location filename="../../libsearch/index/search-manager.cpp" line="100"/>
@@ -226,7 +272,7 @@
     <name>Zeeker::SettingsSearchPlugin</name>
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="251"/>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="364"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
@@ -242,7 +288,7 @@
         <translation>设置。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="237"/>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="350"/>
         <source>Settings</source>
         <translation>设置项</translation>
     </message>
