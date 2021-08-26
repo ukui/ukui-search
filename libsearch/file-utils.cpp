@@ -837,3 +837,60 @@ QString FileUtils::chineseSubString(const std::string &myStr, int start, int len
     }
     return sub;
 }
+
+QString FileUtils::getHtmlText(const QString &text, const QString &keyword)
+{
+    QString htmlString;
+    bool boldOpenned = false;
+    for(int i = 0; i < text.length(); i++) {
+        if((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
+            if(! boldOpenned) {
+                boldOpenned = true;
+                htmlString.append(QString("<b><font size=\"4\">"));
+            }
+            htmlString.append(FileUtils::escapeHtml(QString(text.at(i))));
+        } else {
+            if(boldOpenned) {
+                boldOpenned = false;
+                htmlString.append(QString("</font></b>"));
+            }
+            htmlString.append(FileUtils::escapeHtml(QString(text.at(i))));
+        }
+    }
+    htmlString.replace("\n", "<br />");//替换换行符
+    return htmlString;
+}
+
+QString FileUtils::wrapData(QLabel *p_label, const QString &text)
+{
+    QString wrapText = text;
+
+    QFontMetrics fontMetrics = p_label->fontMetrics();
+    int textSize = fontMetrics.width(wrapText);
+
+    if(textSize > LABEL_MAX_WIDTH){
+        int lastIndex = 0;
+        int count = 0;
+
+        for(int i = lastIndex; i < wrapText.length(); i++) {
+
+            if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i, '\n');
+                count++;
+            } else if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i - 1, '\n');
+                count++;
+            } else {
+                continue;
+            }
+
+            if(count == 2){
+                break;
+            }
+        }
+    }
+//    p_label->setText(wrapText);
+    return wrapText;
+}

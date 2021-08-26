@@ -22,7 +22,6 @@
 
 #include "libsearch_global.h"
 #include "appsearch/app-match.h"
-#include "settingsearch/setting-match.h"
 #include "file-utils.h"
 #include "global-settings.h"
 

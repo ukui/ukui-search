@@ -99,7 +99,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../frontend/main.cpp" line="182"/>
+        <location filename="../../frontend/main.cpp" line="184"/>
         <source>ukui-search is already running!</source>
         <translation>ukui-bul zaten çalışıyor!</translation>
     </message>
@@ -247,7 +247,7 @@
 <context>
     <name>Zeeker::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="205"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="293"/>
         <source>Best Matches</source>
         <translation type="unfinished">En İyi Eşleşen</translation>
     </message>
@@ -357,12 +357,12 @@
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="70"/>
+        <location filename="../../frontend/mainwindow.cpp" line="71"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="76"/>
+        <location filename="../../frontend/mainwindow.cpp" line="77"/>
         <source>Global Search</source>
         <translation type="unfinished">Genel Arama</translation>
     </message>
@@ -392,6 +392,14 @@
     <message>
         <source>Copy path</source>
         <translation type="obsolete">Yolu kopyala</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::ResultArea</name>
+    <message>
+        <location filename="../../frontend/control/stack-pages/search-page-section.cpp" line="378"/>
+        <source>Web Page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -592,16 +600,12 @@
 <context>
     <name>Zeeker::ShowMoreLabel</name>
     <message>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="33"/>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="50"/>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="72"/>
         <source>Show More...</source>
-        <translation type="unfinished">Daha Fazla Göster...</translation>
+        <translation type="obsolete">Daha Fazla Göster...</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/list-labels/show-more-label.cpp" line="68"/>
         <source>Retract</source>
-        <translation type="unfinished">Geri çek</translation>
+        <translation type="obsolete">Geri çek</translation>
     </message>
     <message>
         <source>Loading</source>

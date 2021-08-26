@@ -27,11 +27,10 @@ DEFINES += PLUGIN_INSTALL_DIRS='\\"$${PLUGIN_INSTALL_DIRS}\\"'
 include(pluginmanage/plugin-manager.pri)
 include(plugininterface/plugin-interface.pri)
 include(index/index.pri)
-include(parser/parser.pri))
+include(parser/parser.pri)
 include(appsearch/appsearch.pri)
-include(settingsearch/settingsearch.pri))
-
-
+include(notesearch/notesearch.pri)
+include(settingsearch/settingsearch.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5 -luchardet #-L/usr/local/lib/libjemalloc -ljemalloc
