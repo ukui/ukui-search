@@ -1,8 +1,9 @@
 #include <QDebug>
 #include "search-plugin-manager.h"
 #include "file-search-plugin.h"
-#include "app-search-plugin.h"-
+#include "app-search-plugin.h"
 #include "settings-search-plugin.h"
+#include "note-search-plugin.h"
 
 using namespace Zeeker;
 
@@ -10,6 +11,7 @@ static SearchPluginManager *global_instance = nullptr;
 SearchPluginManager::SearchPluginManager(QObject *parent)
 {
     registerPlugin(new AppSearchPlugin(this));
+    registerPlugin(new NoteSearchPlugin(this));
     registerPlugin(new SettingsSearchPlugin(this));
     registerPlugin(new DirSearchPlugin(this));
     registerPlugin(new FileSearchPlugin(this));
