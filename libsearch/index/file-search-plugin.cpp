@@ -33,17 +33,17 @@ QString FileSearchPlugin::getPluginName()
 
 void Zeeker::FileSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
-    SearchManager::m_mutex1.lock();
-    ++SearchManager::uniqueSymbol1;
-    SearchManager::m_mutex1.unlock();
+    SearchManager::m_mutexFile.lock();
+    ++SearchManager::uniqueSymbolFile;
+    SearchManager::m_mutexFile.unlock();
 
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         DirectSearch *directSearch;
-        directSearch = new DirectSearch(keyword, searchResult, FILE_SEARCH_VALUE, SearchManager::uniqueSymbol1);
+        directSearch = new DirectSearch(keyword, searchResult, FILE_SEARCH_VALUE, SearchManager::uniqueSymbolFile);
         m_pool.start(directSearch);
     } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         FileSearch *filesearch;
-        filesearch = new FileSearch(searchResult, SearchManager::uniqueSymbol1, keyword, FILE_SEARCH_VALUE, 1, 0, 5);
+        filesearch = new FileSearch(searchResult, SearchManager::uniqueSymbolFile, keyword, FILE_SEARCH_VALUE, 1, 0, 5);
         m_pool.start(filesearch);
     }
 }
@@ -222,17 +222,17 @@ QString DirSearchPlugin::getPluginName()
 
 void Zeeker::DirSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
-    SearchManager::m_mutex2.lock();
-    ++SearchManager::uniqueSymbol2;
-    SearchManager::m_mutex2.unlock();
+    SearchManager::m_mutexDir.lock();
+    ++SearchManager::uniqueSymbolDir;
+    SearchManager::m_mutexDir.unlock();
 
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         DirectSearch *directSearch;
-        directSearch = new DirectSearch(keyword, searchResult, DIR_SEARCH_VALUE, SearchManager::uniqueSymbol2);
+        directSearch = new DirectSearch(keyword, searchResult, DIR_SEARCH_VALUE, SearchManager::uniqueSymbolDir);
         m_pool.start(directSearch);
     } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         FileSearch *filesearch;
-        filesearch = new FileSearch(searchResult, SearchManager::uniqueSymbol2, keyword, DIR_SEARCH_VALUE, 1, 0, 5);
+        filesearch = new FileSearch(searchResult, SearchManager::uniqueSymbolDir, keyword, DIR_SEARCH_VALUE, 1, 0, 5);
         m_pool.start(filesearch);
     }
 }
@@ -402,16 +402,16 @@ QString FileContengSearchPlugin::getPluginName()
 
 void Zeeker::FileContengSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
-    SearchManager::m_mutex3.lock();
-    ++SearchManager::uniqueSymbol3;
-    SearchManager::m_mutex3.unlock();
+    SearchManager::m_mutexContent.lock();
+    ++SearchManager::uniqueSymbolContent;
+    SearchManager::m_mutexContent.unlock();
 
     m_keyWord = keyword;
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         return;
     } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         FileContentSearch *fileContentSearch;
-        fileContentSearch = new FileContentSearch(searchResult, SearchManager::uniqueSymbol3, keyword, 0, 5);
+        fileContentSearch = new FileContentSearch(searchResult, SearchManager::uniqueSymbolContent, keyword, 0, 5);
         m_pool.start(fileContentSearch);
     }
 }
