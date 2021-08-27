@@ -75,13 +75,12 @@ public:
 
     static int getCurrentIndexCount();
 
-    static size_t uniqueSymbol1;
-    static size_t uniqueSymbol2;
-    static size_t uniqueSymbol3;
-
-    static QMutex m_mutex1;
-    static QMutex m_mutex2;
-    static QMutex m_mutex3;
+    static size_t uniqueSymbolFile;
+    static size_t uniqueSymbolDir;
+    static size_t uniqueSymbolContent;
+    static QMutex m_mutexFile;
+    static QMutex m_mutexDir;
+    static QMutex m_mutexContent;
 
 public Q_SLOTS:
     void onKeywordSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, QQueue<QPair<QString, QStringList>> *searchResultContent);
