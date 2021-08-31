@@ -21,6 +21,9 @@
  */
 #include "file-utils.h"
 #include <QXmlStreamReader>
+#include <mntent.h>
+#include <QStandardPaths>
+#include <syslog.h>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -839,4 +842,25 @@ QString FileUtils::chineseSubString(const std::string &data, int start, int leng
         snippet = fm.elidedText(snippet, Qt::ElideLeft, 2*500);
     }
     return snippet;
+}
+
+bool FileUtils::isDirRemote(QString path)
+{
+    struct mntent* ent;
+    FILE* f;
+    f = setmntent("/proc/mounts", "r");
+    if (f == NULL) {
+        qWarning() << "setmntent failed!!!.";
+        syslog(LOG_ERR, "setmntent failed!!\n");
+        return false;
+    }
+    while(NULL != (ent = getmntent(f))) {
+        if(QString(ent->mnt_dir) == QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)) {
+            qDebug() << "mnt_type:" << QString(ent->mnt_type);
+            endmntent(f);
+            return true;
+        }
+    }
+    endmntent(f);
+    return false;
 }
