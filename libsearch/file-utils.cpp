@@ -855,8 +855,8 @@ bool FileUtils::isDirRemote(QString path)
         return false;
     }
     while(NULL != (ent = getmntent(f))) {
-        if(QString(ent->mnt_dir) == QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)) {
-            qDebug() << "mnt_type:" << QString(ent->mnt_type);
+        if(QString(ent->mnt_dir) == path && QString(ent->mnt_type).contains("cifs")) {
+            qDebug() << path << " mnt_type:" << QString(ent->mnt_type);
             endmntent(f);
             return true;
         }
