@@ -175,7 +175,14 @@ int main(int argc, char *argv[]) {
         syslog(LOG_ERR, "Home is not exits!!\n");
         ::sleep(1);
     }
-    while(!QDir("/media/用户保险箱").exists()) {
+    while(!(QDir("/media/用户保险箱").exists()
+          && QDir("/media/备份保险箱").exists()
+          && QDir("/media/邮件保险箱").exists()
+          && QDir("/media/公共保险箱").exists()
+          && FileUtils::isDirRemote("/media/用户保险箱")
+          && FileUtils::isDirRemote("/media/备份保险箱")
+          && FileUtils::isDirRemote("/media/邮件保险箱")
+          && FileUtils::isDirRemote("/media/公共保险箱"))) {
         qWarning() << "集中管控目录未挂载!!";
         printf("集中管控目录未挂载!!");
         syslog(LOG_ERR, "集中管控目录未挂载!!\n");
