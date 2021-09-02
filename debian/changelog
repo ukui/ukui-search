@@ -1,3 +1,23 @@
+ukui-search (3.1-1.1.0+0827) v101; urgency=medium
+
+  * Bug 73081,73545,73306,73303
+  * 任务号:45261,44613,44614
+  * 其他改动：
+  * Add kylin-note content search function.
+    - 增加了便签本搜索功能。
+  * Add shortcut key up,down,left,right,enter and return.
+    - 增加了上下左右和回车快捷键。
+  * Add cross-language search function for settings and app search.
+    - 设置项和应用搜索支持了中英文互通搜索。
+  * Add a dbus interface for openning main window.
+    - 增加了一个用于呼出主页面的dbus接口。
+  * Add a web search button.
+    - 增加了网页搜索快捷按钮。
+  * Optimized some UI details.
+    - 优化了一些UI细节，提升用户体验。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 26 Aug 2021 20:53:46 +0800
+
 ukui-search (1.0.0+0806) v101; urgency=medium
 
   * Bug 无
