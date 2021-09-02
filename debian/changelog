@@ -1,3 +1,13 @@
+ukui-search (0.5.0+0901) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * Fix:Index crash when meet some encrypt doc files.
+  * 修复了解析加密doc文件时索引崩溃的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 01 Sep 2021 15:59:44 +0800
+
 ukui-search (0.4.0+0820) v101; urgency=medium
 
   * Bug 无
