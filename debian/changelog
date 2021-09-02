@@ -1,11 +1,13 @@
-ukui-search (0.4.0+0827) v100; urgency=medium
+ukui-search (0.4.1+0901) v100; urgency=medium
 
   * Bug 无
   * 任务号:无
   * 其他改动：
-  * 修复解析加密文件时崩溃的问题。
+  * 文件搜索线程改为1个。
+  * 修复解析加密文件时崩溃的问题
 
- -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 27 Aug 2021 18:50:07 +0800
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 01 Sep 2021 17:30:04 +0800
+。
 
 ukui-search (0.4.0+0824) v100; urgency=medium
 
