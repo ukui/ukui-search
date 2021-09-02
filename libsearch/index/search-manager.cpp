@@ -26,7 +26,7 @@ QMutex  SearchManager::m_mutexFile;
 QMutex  SearchManager::m_mutexDir;
 QMutex  SearchManager::m_mutexContent;
 SearchManager::SearchManager(QObject *parent) : QObject(parent) {
-    m_pool.setMaxThreadCount(3);
+    m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
 }
 
