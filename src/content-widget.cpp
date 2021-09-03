@@ -39,7 +39,7 @@ ContentWidget::ContentWidget(QWidget * parent): QStackedWidget(parent) {
         m_quicklyOpenList.replace(2, "/usr/share/applications/eom.desktop");
     }
     if (QString::compare(FileUtils::getAppName(m_quicklyOpenList.at(4)), "Unknown App") == 0) {
-        m_quicklyOpenList.replace(4, "/usr/share/applications/org.gnome.Evolution.desktop");
+        m_quicklyOpenList.replace(4, "/usr/share/applications/evolution.desktop");
     }
 }
 
