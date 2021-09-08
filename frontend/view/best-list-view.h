@@ -37,7 +37,8 @@ public Q_SLOTS:
     void onMenuTriggered(QAction *);
 
 protected:
-    void mousePressEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent * event);
 
 private:
     void initConnections();
@@ -46,6 +47,8 @@ private:
     bool m_is_selected = false;
     ResultViewDelegate * m_style_delegate = nullptr;
     int m_count = 0;
+    QModelIndex m_tmpCurrentIndex;
+    QModelIndex m_tmpMousePressIndex;
 
 Q_SIGNALS:
     void startSearch(const QString &);

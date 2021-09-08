@@ -143,21 +143,18 @@ void BestListView::onMenuTriggered(QAction *action)
 
 void BestListView::mousePressEvent(QMouseEvent *event)
 {
-//    if (event->button() == Qt::RightButton) {
-//        //加一点点延时，等待列表先被选中
-//        QTimer::singleShot(10, this, [ = ] {
-//            QMenu * menu = new QMenu(this);
-//            QStringList actions = m_model->getActions(this->currentIndex());
-//            Q_FOREACH (QString action, actions) {
-//                menu->addAction(new QAction(action, this));
-//            }
-//            menu->move(cursor().pos());
-//            menu->show();
-//            connect(menu, &QMenu::triggered, this, &BestListView::onMenuTriggered);
-//        });
-//    }
-//    Q_EMIT this->rowClicked();
+    m_tmpCurrentIndex = this->currentIndex();
+    m_tmpMousePressIndex = indexAt(event->pos());
     return QTreeView::mousePressEvent(event);
+}
+
+void BestListView::mouseReleaseEvent(QMouseEvent *event)
+{
+    QModelIndex index = indexAt(event->pos());
+    if (!index.isValid() or index != m_tmpMousePressIndex) {
+        this->setCurrentIndex(m_tmpCurrentIndex);
+    }
+    return QTreeView::mouseReleaseEvent(event);
 }
 
 void BestListView::initConnections()

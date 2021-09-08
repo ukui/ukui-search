@@ -23,8 +23,9 @@ public:
 public Q_SLOTS:
     void clearSelectedRow();
     void startSearch(const QString &);
+
 protected:
-    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
     void initConnections();

@@ -70,9 +70,13 @@ void WebSearchView::startSearch(const QString & keyword)
     m_keyWord = keyword;
 }
 
-void WebSearchView::mousePressEvent(QMouseEvent *event)
+void WebSearchView::mouseReleaseEvent(QMouseEvent *event)
 {
-    return QTreeView::mousePressEvent(event);
+    QModelIndex index = indexAt(event->pos());
+    if (!index.isValid()) {
+        this->clearSelection();
+    }
+    return QTreeView::mouseReleaseEvent(event);
 }
 
 void WebSearchView::LaunchBrowser()
