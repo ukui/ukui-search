@@ -278,6 +278,21 @@ void ResultView::onMenuTriggered(QAction *action)
     }
 }
 
+void ResultView::mousePressEvent(QMouseEvent *event)
+{
+    m_mousePressIndex = indexAt(event->pos());
+    return QTreeView::mousePressEvent(event);
+}
+
+void ResultView::mouseReleaseEvent(QMouseEvent *event)
+{
+    QModelIndex index = indexAt(event->pos());
+    if (!index.isValid() or index != m_mousePressIndex) {
+        this->clearSelection();
+    }
+    return QTreeView::mouseReleaseEvent(event);
+}
+
 void ResultView::initConnections()
 {
     connect(this, &ResultView::startSearch, [ = ](const QString &keyword) {
