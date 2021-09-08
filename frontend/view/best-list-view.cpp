@@ -29,7 +29,7 @@ bool BestListView::isSelected()
 int BestListView::showHeight()
 {
     int height;
-    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
     if (this->isExpanded()) {
         height = m_count * rowheight;
     } else {
@@ -209,7 +209,6 @@ int BestListWidget::getResultNum()
 
 void BestListWidget::setResultSelection(const QModelIndex &index)
 {
-    //this->m_bestListView->selectionModel()->clearSelection();
     this->m_bestListView->setCurrentIndex(index);
 }
 

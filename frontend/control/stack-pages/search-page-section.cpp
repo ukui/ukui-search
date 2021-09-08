@@ -49,16 +49,14 @@ ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 void ResultArea::appendWidet(ResultWidget *widget)
 {
     //NEW_TODO
-    m_mainLyt->removeWidget(m_WebTitleLabel);
-    m_mainLyt->removeWidget(m_webSearchLable);
+    m_mainLyt->removeWidget(m_webSearchWidget);
     m_mainLyt->addWidget(widget);
     setupConnectionsForWidget(widget);
     widget->clearResult();
     m_widget_list.append(widget);
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(m_widget->height() + widget->height() + spacing_height);
-    m_mainLyt->addWidget(m_WebTitleLabel);
-    m_mainLyt->addWidget(m_webSearchLable);
+    m_mainLyt->addWidget(m_webSearchWidget);
 }
 
 /**
@@ -81,8 +79,9 @@ void ResultArea::pressEnter()
     if (false == m_is_selected) {//未选中时默认选取bestlist第一项
         int resultNum = m_bestListWidget->getResultNum();
         if (0 == resultNum) {//搜索结果为空则选中网页搜索项
-            m_webSearchLable->setStyleSheet("color: white; background-color: #3790FA");//#3790FA选中颜色;
-            m_selectedPluginID = m_WebTitleLabel->text();
+            QModelIndex index = m_webSearchWidget->getModlIndex(0, 0);
+            m_webSearchWidget->setResultSelection(index);
+            m_selectedPluginID = m_webSearchWidget->getWidgetName();
             m_is_selected = true;
         } else {//选取bestlist第一项
             QModelIndex index = m_bestListWidget->getModlIndex(0, 0);
@@ -91,8 +90,8 @@ void ResultArea::pressEnter()
             m_is_selected = true;
         }
     } else {//选中状态时默认启动action首项
-        if (m_selectedPluginID == m_WebTitleLabel->text()) {//选中网页搜索则启动搜索
-            m_webSearchLable->startSearch();
+        if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {//选中网页搜索则启动搜索
+            m_webSearchWidget->LaunchBrowser();
         } else {
             //先判断详情页是否打开
             if (m_detail_open_state) {
@@ -116,7 +115,7 @@ void ResultArea::pressEnter()
 
 void ResultArea::pressDown()
 {
-    if (m_selectedPluginID == m_WebTitleLabel->text()) {//当前为web search，暂不处理
+    if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {//当前为web search，暂不处理
         return;
     } else if (m_selectedPluginID == m_bestListWidget->getWidgetName()) {
         QModelIndex index = m_bestListWidget->getCurrentSelection();
@@ -170,10 +169,11 @@ void ResultArea::pressDown()
                         }
                     }
                     if (indexNum >= m_widget_list.size()) {//下一项是web search
-                        m_webSearchLable->setStyleSheet("color: white; background-color: #3790FA");//#3790FA选中颜色;
-                        m_selectedPluginID = m_WebTitleLabel->text();
+                        QModelIndex index = m_webSearchWidget->getModlIndex(0, 0);
+                        m_webSearchWidget->setResultSelection(index);
+                        m_selectedPluginID = m_webSearchWidget->getWidgetName();
                         m_is_selected = true;
-                        this->ensureWidgetVisible(m_webSearchLable);
+                        this->ensureWidgetVisible(m_webSearchWidget);
                     }
                     if (findNextWidget){
                         break;
@@ -191,11 +191,11 @@ void ResultArea::pressUp()
     if (!m_is_selected) {
         return;
     }
-    if (m_selectedPluginID == m_WebTitleLabel->text()) {//当前为web search
+    if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {//当前为web search
         if (m_bestListWidget->getResultNum() == 0) {
             return;
         }
-        m_webSearchLable->setStyleSheet(m_webSearchLable->getDefultStyleSheet());
+        m_webSearchWidget->clearResultSelection();
         for (int i = 0; i < m_widget_list.size(); i++) {
             ResultWidget * plugin = m_widget_list[m_widget_list.size() - (i + 1)];
             bool findNextWidget = false;
@@ -329,8 +329,7 @@ void ResultArea::onWidgetSizeChanged()
     }
     whole_height += m_bestListWidget->height();
     //TODO 网页高度
-    whole_height += m_WebTitleLabel->height();
-    whole_height += m_webSearchLable->height();
+    whole_height += m_webSearchWidget->height();
 
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
@@ -345,8 +344,8 @@ void ResultArea::setSelectionInfo(QString &pluginID)
     if (m_selectedPluginID != m_bestListWidget->getWidgetName()) {
         m_bestListWidget->clearResultSelection();
     }
-    if (m_selectedPluginID != m_WebTitleLabel->text()) {
-        m_webSearchLable->setStyleSheet(m_webSearchLable->getDefultStyleSheet());
+    if (m_selectedPluginID != m_webSearchWidget->getWidgetName()) {
+        m_webSearchWidget->clearResultSelection();
     }
 }
 
@@ -373,14 +372,8 @@ void ResultArea::initUi()
     m_bestListWidget->clearResult();
     m_mainLyt->addWidget(m_bestListWidget);
 
-    m_WebTitleLabel = new TitleLabel(this);
-    m_WebTitleLabel->setFixedWidth(656);
-    m_WebTitleLabel->setText(tr("Web Page"));
-    m_WebTitleLabel->setFixedHeight(30);
-    m_mainLyt->addWidget(m_WebTitleLabel);
-    m_webSearchLable = new WebSearchLabel(this);
-    m_webSearchLable->setFixedHeight(30);
-    m_mainLyt->addWidget(m_webSearchLable);
+    m_webSearchWidget = new WebSearchWidget(this);
+    m_mainLyt->addWidget(m_webSearchWidget);
     m_mainLyt->setContentsMargins(RESULT_LAYOUT_MARGINS);
     this->widget()->setContentsMargins(0,0,0,0);
     m_mainLyt->setSpacing(0);
@@ -389,29 +382,35 @@ void ResultArea::initUi()
 void ResultArea::initConnections()
 {
     connect(this, &ResultArea::startSearch, m_bestListWidget, &BestListWidget::startSearch);
-    connect(this, &ResultArea::startSearch, m_webSearchLable, &WebSearchLabel::webSearch);
+    connect(this, &ResultArea::startSearch, m_webSearchWidget, &WebSearchWidget::startSearch);
     connect(this, &ResultArea::startSearch, this, [=] () {
         m_detail_open_state = false;
         m_is_selected = false;
-        if (m_selectedPluginID == m_WebTitleLabel->text()) {
-            m_webSearchLable->setStyleSheet(m_webSearchLable->getDefultStyleSheet());
+        if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {
+            m_webSearchWidget->clearResultSelection();
         }
     });
     connect(m_bestListWidget, &BestListWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
+    connect(m_bestListWidget, &BestListWidget::sizeChanged, this, [=] () {
+        if (!m_is_selected) {
+            QModelIndex index = m_bestListWidget->getModlIndex(0, 0);
+            m_bestListWidget->setResultSelection(index);
+            m_selectedPluginID = m_bestListWidget->getWidgetName();
+            m_is_selected = true;
+        }
+    });
+
     connect(m_bestListWidget, &BestListWidget::currentRowChanged, this, &ResultArea::currentRowChanged);
     connect(m_bestListWidget, &BestListWidget::currentRowChanged, this, [=] () {
         m_detail_open_state = true;
         m_is_selected = true;
         m_selectedPluginID = m_bestListWidget->getWidgetName();
-        if (m_selectedPluginID != m_WebTitleLabel->text()) {
-            m_webSearchLable->setStyleSheet(m_webSearchLable->getDefultStyleSheet());
-        }
+        m_webSearchWidget->clearResultSelection();
     });
     connect(this, &ResultArea::clearSelectedRow, m_bestListWidget, &BestListWidget::clearSelectedRow);
     connect(this, &ResultArea::resizeWidth, this, [=] (const int &size) {
         m_bestListWidget->setFixedWidth(size);
-        m_WebTitleLabel->setFixedWidth(size);
-        m_webSearchLable->setFixedWidth(size);
+        m_webSearchWidget->setFixedWidth(size);
     });
     connect(m_bestListWidget, &BestListWidget::rowClicked, this, &ResultArea::rowClicked);
 }
