@@ -19,6 +19,7 @@
  */
 #include "app-match.h"
 #include <glib.h>
+#include <qt5xdg/XdgIcon>
 #include "file-utils.h"
 #include "app-search-plugin.h"
 #define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
@@ -252,8 +253,6 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
     QMapIterator<NameString, QStringList> iter(m_installAppMap);
     while(iter.hasNext()) {
         iter.next();
-//        list = iter.value();
-//        name.app_name = iter.key().app_name;
         if(iter.key().app_name.contains(keyWord, Qt::CaseInsensitive)) {
             SearchPluginIface::ResultInfo ri;
             creatResultInfo(ri, iter, true);
@@ -261,17 +260,17 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
             if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
                 searchResult->enqueue(ri);
                 AppSearchPlugin::m_mutex.unlock();
+                continue;
             } else {
                 AppSearchPlugin::m_mutex.unlock();
-                break;
+                return;
             }
-//            installed.insert(name, list);
-            continue;
         }
 
         QStringList pinyinlist;
         pinyinlist = FileUtils::findMultiToneWords(iter.key().app_name);
 
+        bool matched = false;
         for(int i = 0; i < pinyinlist.size() / 2; i++) {
             QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
             if(shouzimu.contains(keyWord, Qt::CaseInsensitive)) {
@@ -281,12 +280,12 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
                 if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
                     searchResult->enqueue(ri);
                     AppSearchPlugin::m_mutex.unlock();
+                    matched = true;
+                    break;
                 } else {
                     AppSearchPlugin::m_mutex.unlock();
-                    break;
+                    return;
                 }
-//                installed.insert(name, list);
-                break;
             }
             if(keyWord.size() < 2)
                 break;
@@ -298,13 +297,16 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
                 if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
                     searchResult->enqueue(ri);
                     AppSearchPlugin::m_mutex.unlock();
-                } else {
-                    AppSearchPlugin::m_mutex.lock();
+                    matched = true;
                     break;
+                } else {
+                    AppSearchPlugin::m_mutex.unlock();
+                    return;
                 }
-//                installed.insert(name, list);
-                break;
             }
+        }
+        if(matched) {
+            continue;
         }
         QStringList tmpList;
         tmpList << iter.value().at(2) << iter.value().at(3);
@@ -316,12 +318,11 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
                 if (uniqueSymbol == AppSearchPlugin::uniqueSymbol) {
                     searchResult->enqueue(ri);
                     AppSearchPlugin::m_mutex.unlock();
+                    break;
                 } else {
                     AppSearchPlugin::m_mutex.unlock();
-                    break;
+                    return;
                 }
-                //            installed.insert(name, list);
-                continue;
             }
         }
     }
@@ -397,7 +398,8 @@ void AppMatch::getInstalledAppsVersion(QString appname) {
 
 void AppMatch::creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<NameString, QStringList> &iter, bool isInstalled)
 {
-    ri.icon = QIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
+//    ri.icon = QIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
+    ri.icon = XdgIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
     ri.name = iter.key().app_name;
     ri.actionKey = iter.value().at(0);
     ri.type = 0; //0 means installed apps.

@@ -1,6 +1,7 @@
 #include "note-search-plugin.h"
 #include <QWidget>
 #include <QLabel>
+#include <qt5xdg/xdgicon.h>
 #include "file-utils.h"
 #include "chinese-segmentation.h"
 using namespace Zeeker;
@@ -183,7 +184,7 @@ void NoteSearch::run() {
                 dbusArgs.endArray();
                 qDebug() << str;
                 SearchPluginIface::ResultInfo ri = {
-                    icon : QIcon::fromTheme("kylin-notebook"),
+                    icon : XdgIcon::fromTheme("kylin-notebook", QIcon(":/res/icons/desktop.png")),
                     name : str.at(1),
                     description : QVector<SearchPluginIface::DescriptionInfo>() << SearchPluginIface::DescriptionInfo {
                         key : QString(tr("Note Description:")),
