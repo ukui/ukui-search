@@ -838,6 +838,12 @@ QString FileUtils::chineseSubString(const std::string &myStr, int start, int len
     return sub;
 }
 
+QIcon FileUtils::iconFromTheme(const QString &name, const QIcon &iconDefault)
+{
+    QMutexLocker locker(&iconMutex);
+    return QIcon::fromTheme(name, iconDefault);
+}
+
 QString FileUtils::getHtmlText(const QString &text, const QString &keyword)
 {
     QString htmlString;
