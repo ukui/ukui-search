@@ -27,7 +27,7 @@
 #include "result-view.h"
 #include "search-plugin-iface.h"
 #include "best-list-view.h"
-#include "web-search-label.h"
+#include "web-search-view.h"
 
 namespace Zeeker {
 class ResultArea : public QScrollArea
@@ -60,8 +60,7 @@ private:
     QVBoxLayout * m_mainLyt = nullptr;
     BestListWidget * m_bestListWidget = nullptr;
     QList<ResultWidget *> m_widget_list;
-    TitleLabel * m_WebTitleLabel = nullptr;
-    WebSearchLabel * m_webSearchLable = nullptr;
+    WebSearchWidget * m_webSearchWidget = nullptr;
 
     bool m_detail_open_state = false;
     bool m_is_selected = false;

@@ -33,6 +33,11 @@ public Q_SLOTS:
     const bool &isExpanded();
     void onMenuTriggered(QAction *);
 
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+
 private:
     void initConnections();
     SearchResultModel * m_model = nullptr;
@@ -40,6 +45,8 @@ private:
     bool m_is_selected = false;
     ResultViewDelegate * m_style_delegate = nullptr;
     int m_count = 0;
+    QModelIndex m_tmpCurrentIndex;
+    QModelIndex m_tmpMousePressIndex;
 
 Q_SIGNALS:
     void startSearch(const QString &);
@@ -49,6 +56,7 @@ Q_SIGNALS:
     void listLengthChanged(const int &);
     void rowClicked();
     void lableReset();
+    void mouseSelect(QModelIndex &index);
 };
 
 class ResultWidget : public QWidget

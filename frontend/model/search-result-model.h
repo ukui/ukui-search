@@ -30,6 +30,7 @@ namespace Zeeker {
 class SearchResultItem : public QObject {
     friend class SearchResultModel;
     friend class BestListModel;
+    friend class WebSearchModel;
     Q_OBJECT
 public:
     explicit SearchResultItem(QObject *parent = nullptr);

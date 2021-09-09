@@ -29,7 +29,7 @@ bool BestListView::isSelected()
 int BestListView::showHeight()
 {
     int height;
-    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
+    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
     if (this->isExpanded()) {
         height = m_count * rowheight;
     } else {
@@ -143,21 +143,34 @@ void BestListView::onMenuTriggered(QAction *action)
 
 void BestListView::mousePressEvent(QMouseEvent *event)
 {
-//    if (event->button() == Qt::RightButton) {
-//        //加一点点延时，等待列表先被选中
-//        QTimer::singleShot(10, this, [ = ] {
-//            QMenu * menu = new QMenu(this);
-//            QStringList actions = m_model->getActions(this->currentIndex());
-//            Q_FOREACH (QString action, actions) {
-//                menu->addAction(new QAction(action, this));
-//            }
-//            menu->move(cursor().pos());
-//            menu->show();
-//            connect(menu, &QMenu::triggered, this, &BestListView::onMenuTriggered);
-//        });
-//    }
-//    Q_EMIT this->rowClicked();
+    m_tmpCurrentIndex = this->currentIndex();
+    m_tmpMousePressIndex = indexAt(event->pos());
+    if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
+        Q_EMIT this->clicked(m_tmpMousePressIndex);
+    }
+
     return QTreeView::mousePressEvent(event);
+}
+
+void BestListView::mouseReleaseEvent(QMouseEvent *event)
+{
+    QModelIndex index = indexAt(event->pos());
+    if (index.isValid()) {
+        Q_EMIT this->clicked(index);
+    } else {
+        Q_EMIT this->clicked(this->currentIndex());
+    }
+    return QTreeView::mouseReleaseEvent(event);
+}
+
+void BestListView::mouseMoveEvent(QMouseEvent *event)
+{
+   m_tmpCurrentIndex = this->currentIndex();
+   m_tmpMousePressIndex = indexAt(event->pos());
+   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
+       Q_EMIT this->clicked(m_tmpMousePressIndex);
+   }
+    return QTreeView::mouseMoveEvent(event);
 }
 
 void BestListView::initConnections()
@@ -209,7 +222,6 @@ int BestListWidget::getResultNum()
 
 void BestListWidget::setResultSelection(const QModelIndex &index)
 {
-    //this->m_bestListView->selectionModel()->clearSelection();
     this->m_bestListView->setCurrentIndex(index);
 }
 
