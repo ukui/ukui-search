@@ -237,8 +237,10 @@ void ResultView::onRowSelectedSlot(const QModelIndex &index)
 {
     //NEW_TODO
     m_is_selected = true;
-    Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(index));
-//    if(!selected.isEmpty()) {
+    if(index.isValid()) {
+        Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(index));
+    }
+    //    if(!selected.isEmpty()) {
 //        QRegion region = visualRegionForSelection(selected);
 //        QRect rect = region.boundingRect();
 ////            Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
@@ -282,16 +284,32 @@ void ResultView::mousePressEvent(QMouseEvent *event)
 {
     m_tmpCurrentIndex = this->currentIndex();
     m_tmpMousePressIndex = indexAt(event->pos());
+    if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
+        Q_EMIT this->clicked(m_tmpMousePressIndex);
+    }
+
     return QTreeView::mousePressEvent(event);
 }
 
 void ResultView::mouseReleaseEvent(QMouseEvent *event)
 {
     QModelIndex index = indexAt(event->pos());
-    if (!index.isValid() or index != m_tmpMousePressIndex) {
-        this->setCurrentIndex(m_tmpCurrentIndex);
+    if (index.isValid()) {
+        Q_EMIT this->clicked(index);
+    } else {
+        Q_EMIT this->clicked(this->currentIndex());
     }
     return QTreeView::mouseReleaseEvent(event);
+}
+
+void ResultView::mouseMoveEvent(QMouseEvent *event)
+{
+   m_tmpCurrentIndex = this->currentIndex();
+   m_tmpMousePressIndex = indexAt(event->pos());
+   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
+       Q_EMIT this->clicked(m_tmpMousePressIndex);
+   }
+    return QTreeView::mouseMoveEvent(event);
 }
 
 void ResultView::initConnections()

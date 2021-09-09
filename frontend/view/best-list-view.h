@@ -39,6 +39,7 @@ public Q_SLOTS:
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent * event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 private:
     void initConnections();

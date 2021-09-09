@@ -145,16 +145,32 @@ void BestListView::mousePressEvent(QMouseEvent *event)
 {
     m_tmpCurrentIndex = this->currentIndex();
     m_tmpMousePressIndex = indexAt(event->pos());
+    if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
+        Q_EMIT this->clicked(m_tmpMousePressIndex);
+    }
+
     return QTreeView::mousePressEvent(event);
 }
 
 void BestListView::mouseReleaseEvent(QMouseEvent *event)
 {
     QModelIndex index = indexAt(event->pos());
-    if (!index.isValid() or index != m_tmpMousePressIndex) {
-        this->setCurrentIndex(m_tmpCurrentIndex);
+    if (index.isValid()) {
+        Q_EMIT this->clicked(index);
+    } else {
+        Q_EMIT this->clicked(this->currentIndex());
     }
     return QTreeView::mouseReleaseEvent(event);
+}
+
+void BestListView::mouseMoveEvent(QMouseEvent *event)
+{
+   m_tmpCurrentIndex = this->currentIndex();
+   m_tmpMousePressIndex = indexAt(event->pos());
+   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
+       Q_EMIT this->clicked(m_tmpMousePressIndex);
+   }
+    return QTreeView::mouseMoveEvent(event);
 }
 
 void BestListView::initConnections()

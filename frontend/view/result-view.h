@@ -36,6 +36,7 @@ public Q_SLOTS:
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 private:
     void initConnections();
@@ -55,6 +56,7 @@ Q_SIGNALS:
     void listLengthChanged(const int &);
     void rowClicked();
     void lableReset();
+    void mouseSelect(QModelIndex &index);
 };
 
 class ResultWidget : public QWidget
