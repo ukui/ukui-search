@@ -20,6 +20,7 @@
 #include "app-match.h"
 #include <glib.h>
 #include <qt5xdg/XdgIcon>
+#include <qt5xdg/XdgDesktopFile>
 #include "file-utils.h"
 #include "app-search-plugin.h"
 #define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
@@ -77,12 +78,6 @@ void AppMatch::startMatchApp(QString input, size_t uniqueSymbol, DataQueue<Searc
  */
 void AppMatch::getAllDesktopFilePath(QString path) {
 
-    char* name;
-    char* icon;
-
-    GKeyFileFlags flags = G_KEY_FILE_NONE;
-    GKeyFile* keyfile = g_key_file_new();
-
     QDir dir(path);
     if(!dir.exists()) {
         return;
@@ -94,83 +89,54 @@ void AppMatch::getAllDesktopFilePath(QString path) {
     if(list.size() < 1) {
         return;
     }
+    XdgDesktopFile desktopfile;
     int i = 0;
-    //递归算法的核心部分
-    do {
+    while(i < list.size()) {
         QFileInfo fileInfo = list.at(i);
         //如果是文件夹，递归
         bool isDir = fileInfo.isDir();
         if(isDir) {
             getAllDesktopFilePath(fileInfo.filePath());
+            qDebug() << fileInfo.filePath();
         } else {
-            //过滤LXQt、KDE
             QString filePathStr = fileInfo.filePath();
-//            if(filePathStr.contains("KDE", Qt::CaseInsensitive) ||
-//               filePathStr.contains("mate",Qt::CaseInsensitive)||
-//                    filePathStr.contains("LX", Qt::CaseInsensitive)) {
-//                i++;
-//                continue;
-//            }
-            //过滤后缀不是.desktop的文件
-            if(!filePathStr.endsWith(".desktop")) {
-                i++;
+            if(m_filePathList.contains(filePathStr)) {
+                ++i;
                 continue;
             }
-            QByteArray fpbyte = filePathStr.toLocal8Bit();
-            char* filepath = fpbyte.data();
-            g_key_file_load_from_file(keyfile, filepath, flags, nullptr);
-            char* ret_1 = g_key_file_get_locale_string(keyfile, "Desktop Entry", "NoDisplay", nullptr, nullptr);
-            if(ret_1 != nullptr) {
-                QString str = QString::fromLocal8Bit(ret_1);
-                if(str.contains("true")) {
-                    i++;
-                    continue;
-                }
-            }
-            char* ret_2 = g_key_file_get_locale_string(keyfile, "Desktop Entry", "NotShowIn", nullptr, nullptr);
-            if(ret_2 != nullptr) {
-                QString str = QString::fromLocal8Bit(ret_2);
-                if(str.contains("UKUI")) {
-                    i++;
-                    continue;
-                }
-            }
-            //过滤中英文名为空的情况
-            QLocale cn;
-            QString language = cn.languageToString(cn.language());
-            if(QString::compare(language, "Chinese") == 0) {
-                char* nameCh = g_key_file_get_string(keyfile, "Desktop Entry", "Name[zh_CN]", nullptr);
-                char* nameEn = g_key_file_get_string(keyfile, "Desktop Entry", "Name", nullptr);
-                if(QString::fromLocal8Bit(nameCh).isEmpty() && QString::fromLocal8Bit(nameEn).isEmpty()) {
-                    i++;
-                    continue;
-                }
-            } else {
-                char* name = g_key_file_get_string(keyfile, "Desktop Entry", "Name", nullptr);
-                if(QString::fromLocal8Bit(name).isEmpty()) {
-                    i++;
-                    continue;
-                }
-            }
-            name = g_key_file_get_locale_string(keyfile, "Desktop Entry", "Name", nullptr, nullptr);
-            icon = g_key_file_get_locale_string(keyfile, "Desktop Entry", "Icon", nullptr, nullptr);
-            if(!m_filePathList.contains(filePathStr)) {
-                NameString appname;
-                QStringList appInfolist;
 
-                appname.app_name = QString::fromLocal8Bit(name);
-                appInfolist << filePathStr << QString::fromLocal8Bit(icon);
-                appInfolist.append(QString::fromLocal8Bit(g_key_file_get_string(keyfile, "Desktop Entry", "Name", nullptr)));
-                appInfolist.append(QString::fromLocal8Bit(g_key_file_get_string(keyfile, "Desktop Entry", "Name[zh_CN]", nullptr)));
-
-                m_installAppMap.insert(appname, appInfolist);
+            //过滤后缀不是.desktop的文件
+            if(!filePathStr.endsWith(".desktop")) {
+                ++i;
+                continue;
             }
-//            m_filePathList.append(filePathStr);
+
+            desktopfile.load(filePathStr);
+            if(desktopfile.value("NoDisplay").toString().contains("true") || desktopfile.value("NotShowIn").toString().contains("UKUI")) {
+                ++i;
+                continue;
+            }
+
+            QString name = desktopfile.localizedValue("Name").toString();
+            if(name.isEmpty()) {
+                ++i;
+                qDebug() << filePathStr << "name!!";
+                continue;
+            }
+
+            QString icon = desktopfile.iconName();
+            NameString appname;
+            QStringList appInfolist;
+
+            appname.app_name = name;
+            appInfolist << filePathStr << icon;
+            appInfolist.append(desktopfile.value("Name").toString());
+            appInfolist.append(desktopfile.value("Name[zh_CN]").toString());
+            m_installAppMap.insert(appname, appInfolist);
+            ++i;
         }
-        i++;
 
-    } while(i < list.size());
-    g_key_file_free(keyfile);
+    }
 }
 
 /**
@@ -406,7 +372,7 @@ void AppMatch::creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<N
 }
 
 void AppMatch::run() {
-    qDebug() << "AppMatch is run";
+    qDebug() << "AppMatch running..";
     this->getDesktopFilePath();
     this->getAllDesktopFilePath("/usr/share/applications/");
     this->getAllDesktopFilePath(ANDROID_APP_DESKTOP_PATH);
@@ -417,4 +383,5 @@ void AppMatch::run() {
             this->getAllDesktopFilePath(ANDROID_APP_DESKTOP_PATH);
         }
     });
+    qDebug() << "AppMatch finish..";
 }
