@@ -56,7 +56,6 @@ Q_SIGNALS:
     void listLengthChanged(const int &);
     void rowClicked();
     void lableReset();
-    void mouseSelect(QModelIndex &index);
 };
 
 class ResultWidget : public QWidget

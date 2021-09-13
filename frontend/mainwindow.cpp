@@ -521,9 +521,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         tryHideMainwindow();
     } else if (event->key() == Qt::Key_Return or event->key() == Qt::Key_Enter) {
-        //显示最佳匹配中第一项的详情页，无搜索结果则调取网页搜索
-        qDebug() << "Press Enter";
-        m_searchResultPage->pressEnter();
+        if (!m_searchResultPage->isHidden()) {
+            //显示最佳匹配中第一项的详情页，无搜索结果则调取网页搜索
+            qDebug() << "Press Enter";
+            m_searchResultPage->pressEnter();
+        }
     } else if (event->key() == Qt::Key_Up) {
         qDebug() << "Press ↑";
         m_searchResultPage->pressUp();
