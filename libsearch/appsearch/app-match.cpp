@@ -46,7 +46,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
     if(!m_interFace->isValid()) {
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
-    m_interFace->setTimeout(200);
+    m_interFace->setTimeout(1500);
     qDebug() << "AppMatch is new";
 }
 
