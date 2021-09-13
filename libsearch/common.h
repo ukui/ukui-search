@@ -2,6 +2,7 @@
 #define COMMON_H
 #include <QMap>
 #define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
+#define LABEL_MAX_WIDTH 320
 #define HOME_PATH QDir::homePath()
 static const QMap<QString, bool> targetFileTypeMap = {
     std::map<QString, bool>::value_type("doc", true),

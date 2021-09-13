@@ -839,3 +839,32 @@ QString FileUtils::chineseSubString(const std::string &data, int start, int leng
     }
     return snippet;
 }
+
+QString FileUtils::wrapData(QLabel *p_label, const QString &text)
+{
+    QString wrapText = text;
+
+    QFontMetrics fontMetrics = p_label->fontMetrics();
+    int textSize = fontMetrics.width(wrapText);
+
+    if(textSize > LABEL_MAX_WIDTH){
+        int lastIndex = 0;
+        int count = 0;
+
+        for(int i = lastIndex; i < wrapText.length(); i++) {
+
+            if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i, '\n');
+                count++;
+            } else if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i - 1, '\n');
+                count++;
+            } else {
+                continue;
+            }
+        }
+    }
+    return wrapText;
+}
