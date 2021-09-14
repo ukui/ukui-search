@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
     initUi();
-    initTimer();
+//    initTimer();
 
     m_sys_tray_icon = new QSystemTrayIcon(this);
     m_sys_tray_icon->setIcon(QIcon::fromTheme("system-search-symbolic"));
@@ -91,14 +91,14 @@ MainWindow::~MainWindow() {
         m_settingsWidget = NULL;
 
 #endif
-    if(m_askDialog) {
-        delete m_askDialog;
-        m_askDialog = NULL;
-    }
-    if(m_askTimer) {
-        delete m_askTimer;
-        m_askTimer = NULL;
-    }
+//    if(m_askDialog) {
+//        delete m_askDialog;
+//        m_askDialog = NULL;
+//    }
+//    if(m_askTimer) {
+//        delete m_askTimer;
+//        m_askTimer = NULL;
+//    }
     if(m_search_gsettings) {
         delete m_search_gsettings;
         m_search_gsettings = NULL;
@@ -109,24 +109,31 @@ MainWindow::~MainWindow() {
  * @brief initUi 初始化主界面主要ui控件
  */
 void MainWindow::initUi() {
-    this->setFixedSize(WINDOW_WIDTH, 68);
+    this->setFixedSize(720, 50);
 //    this->setStyleSheet("QMainWindow{border:2px solid red;}");
 
-//    m_widget = new QWidget(this);
+    m_widget = new QWidget(this);
 
-//    this->setCentralWidget(m_widget);
+
+    this->setCentralWidget(m_widget);
 //    m_widget->setFixedSize(this->size());
-//    QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
-//    mainlayout->setContentsMargins(MAIN_MARGINS);
+    m_mainLayout = new QVBoxLayout(m_widget);
+    m_mainLayout->setContentsMargins(MAIN_MARGINS);
+    m_mainLayout->setSpacing(8);
 //    m_frame->setLayout(mainlayout);
 
 //    m_stackedWidget = new StackedWidget(m_frame);//内容栏
     m_searchBarWidget = new SeachBarWidget(this);
-    m_searchBarWidget->move(this->rect().topLeft());
+    m_mainLayout->addWidget(m_searchBarWidget);
     m_searchBarWidget->show();
     m_searchResultPage = new SearchResultPage(this);
+    m_mainLayout->addWidget(m_searchResultPage);
     m_searchResultPage->hide();
-    m_searchResultPage->move(0, 58);
+//    m_searchResultPage->move(0, 58);
+    m_webSearchPage = new WebSearchPage(this);
+    m_mainLayout->addWidget(m_webSearchPage);
+    m_webSearchPage->hide();
+//    m_webSearchPage->move(0,754);
 
 //    m_searchResultPage->show();
 //    m_searchWidget = new SeachBarWidget(this);
@@ -140,14 +147,14 @@ void MainWindow::initUi() {
 //    mainlayout->addWidget(m_searchResultPage);
 
     //创建索引询问弹窗
-    m_askDialog = new CreateIndexAskDialog(this);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-    MotifWmHints ask_dialog_hints;
-    ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-    ask_dialog_hints.functions = MWM_FUNC_ALL;
-    ask_dialog_hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
-#endif
+//    m_askDialog = new CreateIndexAskDialog(this);
+//#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+//    MotifWmHints ask_dialog_hints;
+//    ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+//    ask_dialog_hints.functions = MWM_FUNC_ALL;
+//    ask_dialog_hints.decorations = MWM_DECOR_BORDER;
+//    XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
+//#endif
 }
 
 void MainWindow::initConnections()
@@ -158,12 +165,12 @@ void MainWindow::initConnections()
     });
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::monitorResolutionChange);
     connect(qApp, &QApplication::primaryScreenChanged, this, &MainWindow::primaryScreenChangedSlot);
-    connect(m_askDialog, &CreateIndexAskDialog::closed, this, [ = ]() {
-        m_isAskDialogVisible = false;
-    });
-    connect(m_askDialog, &CreateIndexAskDialog::btnClicked, this, [ = ](const bool &is_create_index, const bool &is_ask_again) {
-        setSearchMethodConfig(is_create_index, is_ask_again);
-    });
+//    connect(m_askDialog, &CreateIndexAskDialog::closed, this, [ = ]() {
+//        m_isAskDialogVisible = false;
+//    });
+//    connect(m_askDialog, &CreateIndexAskDialog::btnClicked, this, [ = ](const bool &is_create_index, const bool &is_ask_again) {
+//        setSearchMethodConfig(is_create_index, is_ask_again);
+//    });
     connect(m_settingsBtn, &QPushButton::clicked, this, &MainWindow::settingsBtnClickedSlot);
     //主题改变时，更新自定义标题栏的图标
 //    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
@@ -294,25 +301,25 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
     //NEW_TODO
     if(keyword == "") {
 //        m_stackedWidget->setPage(int(StackedPage::HomePage));
-        m_askTimer->stop();
+//        m_askTimer->stop();
         Q_EMIT m_searchResultPage->stopSearch();
         m_searchResultPage->hide();
-        this->resizeHeight(68);
+        m_webSearchPage->hide();
+        this->resizeHeight(50);
 
     } else {
 //        m_stackedWidget->setPage(int(StackedPage::SearchPage));
         QTimer::singleShot(10, this, [ = ]() {
             //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
-            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
-                m_askTimer->start();
+//            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
+//                m_askTimer->start();
             Q_EMIT m_searchResultPage->startSearch(keyword);
-            this->resizeHeight(WINDOW_HEIGHT);
-
-            m_searchResultPage->move(0, 58);
+            this->resizeHeight(810);
             m_searchResultPage->show();
+            m_webSearchPage->show();
         });
     }
-    m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
+//    m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
 }
 
 void MainWindow::resizeHeight(int height)
@@ -481,19 +488,19 @@ void MainWindow::initTimer() {
  */
 bool MainWindow::tryHideMainwindow()
 {
-    if (!m_isAskDialogVisible) {
+//    if (!m_isAskDialogVisible) {
         qDebug()<<"Mainwindow will be hidden";
-        m_currentSearchAsked = false;
+//        m_currentSearchAsked = false;
         this->hide();
-        m_askTimer->stop();
-        m_researchTimer->stop();
+//        m_askTimer->stop();
+//        m_researchTimer->stop();
         Q_EMIT m_searchResultPage->stopSearch();
         return true;
-    } else {
+//    } else {
         //有上层弹窗未关闭，不允许隐藏主界面
-        qWarning()<<"There is a dialog onside, so that mainwindow can not be hidden.";
-        return false;
-    }
+//        qWarning()<<"There is a dialog onside, so that mainwindow can not be hidden.";
+//        return false;
+//    }
 }
 
 /**
@@ -505,10 +512,10 @@ void MainWindow::setSearchMethod(const bool &is_index_search) {
         //调用创建索引接口
         Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
         //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
-        m_researchTimer->start();
+//        m_researchTimer->start();
     } else {
         Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::DIRECTSEARCH);
-        m_researchTimer->stop();
+//        m_researchTimer->stop();
     }
 }
 
@@ -548,13 +555,12 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     return QMainWindow::eventFilter(watched,event);
 }
 
-void MainWindow::paintEvent(QPaintEvent *event) {
+//void MainWindow::paintEvent(QPaintEvent *event) {
 
-    QPainterPath path;
+//    QPainterPath path;
 
-    path.addRoundedRect(m_searchBarWidget->x()+10, m_searchBarWidget->y()+10, m_searchBarWidget->width()-20, m_searchBarWidget->height()-20, 6, 6);
-    path.addRoundedRect(m_searchResultPage->x()+10, m_searchResultPage->y()+10, m_searchResultPage->width()-20, m_searchResultPage->height()-20, 6, 6);
+//    path.addRoundedRect(m_searchBarWidget->x()+10, m_searchBarWidget->y()+10, m_searchBarWidget->width()-20, m_searchBarWidget->height()-20, 6, 6);
+//    path.addRoundedRect(m_searchResultPage->x()+10, m_searchResultPage->y()+10, m_searchResultPage->width()-20, m_searchResultPage->height()-20, 6, 6);
+//    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
-    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-
-}
+//}
