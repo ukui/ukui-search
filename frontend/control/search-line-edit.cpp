@@ -31,7 +31,7 @@ using namespace Zeeker;
 SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     setStyle(new LineEditStyle());
     this->setFocusPolicy(Qt::StrongFocus);
-    this->setFixedSize(680, 50);
+    this->setFixedSize(720, 50);
     this->setTextMargins(35, 0, 0, 0);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setDragEnabled(true);
@@ -39,9 +39,9 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     m_queryIcon = new QLabel;
     QPixmap pixmap;
     if (!QIcon::fromTheme("system-search-symbolic").isNull()) {
-        pixmap =  QPixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(18, 18)));
+        pixmap =  QPixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(21, 21)));
     } else {
-        pixmap =  QPixmap(QIcon(":/res/icons/system-search.symbolic.png").pixmap(QSize(18, 18)));
+        pixmap =  QPixmap(QIcon(":/res/icons/system-search.symbolic.png").pixmap(QSize(21, 21)));
     }
     m_queryIcon->setProperty("useIconHighlightEffect", 0x10);
     m_queryIcon->setFixedSize(pixmap.size());
@@ -82,12 +82,12 @@ SearchLineEdit::~SearchLineEdit() {
 
 void SearchLineEdit::paintEvent(QPaintEvent *e)
 {
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    p.setBrush(palette().base());
-    p.setOpacity(GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble());
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(this->rect(), 6, 6);
+//    QPainter p(this);
+//    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+//    p.setBrush(palette().base());
+//    p.setOpacity(GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble());
+//    p.setPen(Qt::NoPen);
+//    p.drawRoundedRect(this->rect(), this->height(), this->height());
     return QLineEdit::paintEvent(e);
 }
 
@@ -99,7 +99,7 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *e)
 SeachBarWidget::SeachBarWidget(QWidget *parent): QWidget(parent) {
     m_ly = new QHBoxLayout(this);
     m_searchLineEdit = new SearchLineEdit(this);
-    this->setFixedSize(m_searchLineEdit->width()+20, m_searchLineEdit->height()+20);
+    this->setFixedSize(m_searchLineEdit->width(), m_searchLineEdit->height());
     m_ly->setContentsMargins(0,0,0,0);
     m_ly->addWidget(m_searchLineEdit);
     connect(m_searchLineEdit, &SearchLineEdit::requestSearchKeyword, this, &SeachBarWidget::requestSearchKeyword);
@@ -127,42 +127,42 @@ void SeachBarWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e)
 
-    QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing);
-    QPainterPath rectPath;
-    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
+//    QPainter p(this);
+//    p.setRenderHint(QPainter::Antialiasing);
+//    QPainterPath rectPath;
+//    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
 
 
-    // 画一个黑底
-    QPixmap pixmap(this->rect().size());
-    pixmap.fill(Qt::transparent);
-    QPainter pixmapPainter(&pixmap);
-    pixmapPainter.setRenderHint(QPainter::Antialiasing);
-    //      pixmapPainter.setCompositionMode(QPainter::CompositionMode_Difference);
-    pixmapPainter.setPen(Qt::transparent);
-    pixmapPainter.setBrush(Qt::black);
-    pixmapPainter.setOpacity(0.65);
-    pixmapPainter.drawPath(rectPath);
-    pixmapPainter.end();
+//    // 画一个黑底
+//    QPixmap pixmap(this->rect().size());
+//    pixmap.fill(Qt::transparent);
+//    QPainter pixmapPainter(&pixmap);
+//    pixmapPainter.setRenderHint(QPainter::Antialiasing);
+//    //      pixmapPainter.setCompositionMode(QPainter::CompositionMode_Difference);
+//    pixmapPainter.setPen(Qt::transparent);
+//    pixmapPainter.setBrush(Qt::black);
+//    pixmapPainter.setOpacity(0.65);
+//    pixmapPainter.drawPath(rectPath);
+//    pixmapPainter.end();
 
 
-    // 模糊这个黑底
-    QImage img = pixmap.toImage();
-    qt_blurImage(img, 10, false, false);
+//    // 模糊这个黑底
+//    QImage img = pixmap.toImage();
+//    qt_blurImage(img, 10, false, false);
 
 
-    // 挖掉中心
-    pixmap = QPixmap::fromImage(img);
-    QPainter pixmapPainter2(&pixmap);
-    pixmapPainter2.setRenderHint(QPainter::Antialiasing);
-    pixmapPainter2.setCompositionMode(QPainter::CompositionMode_Clear);
-    pixmapPainter2.setPen(Qt::transparent);
-    pixmapPainter2.setBrush(Qt::transparent);
-    pixmapPainter2.drawPath(rectPath);
+//    // 挖掉中心
+//    pixmap = QPixmap::fromImage(img);
+//    QPainter pixmapPainter2(&pixmap);
+//    pixmapPainter2.setRenderHint(QPainter::Antialiasing);
+//    pixmapPainter2.setCompositionMode(QPainter::CompositionMode_Clear);
+//    pixmapPainter2.setPen(Qt::transparent);
+//    pixmapPainter2.setBrush(Qt::transparent);
+//    pixmapPainter2.drawPath(rectPath);
 
 
-    // 绘制阴影
-    p.drawPixmap(this->rect(), pixmap, pixmap.rect());
+//    // 绘制阴影
+//    p.drawPixmap(this->rect(), pixmap, pixmap.rect());
 }
 
 void LineEditStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
@@ -189,12 +189,20 @@ void LineEditStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyle
                 painter->setPen(Qt::NoPen);
                 painter->setBrush(f->palette.brush(QPalette::Active, QPalette::Button));
                 painter->setRenderHint(QPainter::Antialiasing, true);
-                painter->drawRoundedRect(option->rect, 4, 4);
+                painter->drawRoundedRect(option->rect, 24, 24);
                 painter->restore();
                 return;
             }
 
-            if (!focus) {
+            if (focus) {
+                painter->save();
+                painter->setPen(QPen(f->palette.brush(QPalette::Active, QPalette::Highlight),
+                                     2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+                painter->setBrush(option->palette.brush(QPalette::Active, QPalette::Base));
+                painter->setRenderHint(QPainter::Antialiasing, true);
+                painter->drawRoundedRect(option->rect.adjusted(1, 1, -1, -1), 24, 24);
+                painter->restore();
+            } else {
                 QStyleOptionButton button;
                 button.state = option->state & ~(State_Sunken | State_On);
                 button.rect = option->rect;

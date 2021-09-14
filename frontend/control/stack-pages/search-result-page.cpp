@@ -19,9 +19,9 @@
  *
  */
 #include "search-result-page.h"
-QT_BEGIN_NAMESPACE
-extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
-QT_END_NAMESPACE
+//QT_BEGIN_NAMESPACE
+//extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
+//QT_END_NAMESPACE
 using namespace Zeeker;
 
 #define RESULT_WIDTH 266
@@ -87,46 +87,12 @@ void SearchResultPage::paintEvent(QPaintEvent *event)
     p.setBrush(palette().base());
     p.setOpacity(GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble());
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(this->rect().adjusted(10,10,-10,-10), 6, 6);
-
-    QPainterPath rectPath;
-    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
-
-    // 画一个黑底
-    QPixmap pixmap(this->rect().size());
-    pixmap.fill(Qt::transparent);
-    QPainter pixmapPainter(&pixmap);
-    pixmapPainter.setRenderHint(QPainter::Antialiasing);
-//      pixmapPainter.setCompositionMode(QPainter::CompositionMode_Difference);
-    pixmapPainter.setPen(Qt::transparent);
-    pixmapPainter.setBrush(Qt::black);
-    pixmapPainter.setOpacity(0.65);
-    pixmapPainter.drawPath(rectPath);
-    pixmapPainter.end();
-
-
-    // 模糊这个黑底
-    QImage img = pixmap.toImage();
-    qt_blurImage(img, 10, false, false);
-
-
-    // 挖掉中心
-    pixmap = QPixmap::fromImage(img);
-    QPainter pixmapPainter2(&pixmap);
-    pixmapPainter2.setRenderHint(QPainter::Antialiasing);
-    pixmapPainter2.setCompositionMode(QPainter::CompositionMode_Clear);
-    pixmapPainter2.setPen(Qt::transparent);
-    pixmapPainter2.setBrush(Qt::transparent);
-    pixmapPainter2.drawPath(rectPath);
-
-
-    // 绘制阴影
-    p.drawPixmap(this->rect(), pixmap, pixmap.rect());
+    p.drawRoundedRect(this->rect(), 16, 16);
 }
 
 void SearchResultPage::initUi()
 {
-    this->setFixedSize(700,552);
+    this->setFixedSize(720,688);
     m_hlayout = new QHBoxLayout(this);
     m_hlayout->setContentsMargins(18 ,18, 10, 18);
 

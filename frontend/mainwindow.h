@@ -46,10 +46,12 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 
-#include "index/index-generator.h"
+#include "index-generator.h"
 #include "libsearch.h"
 #include "create-index-ask-dialog.h"
-#include "stacked-widget.h"
+#include "search-result-page.h"
+#include "search-line-edit.h"
+#include "web-search-page.h"
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include "xatom-helper.h"
 #endif
@@ -78,7 +80,7 @@ public:
     void initGsettings();
 
 protected:
-    void paintEvent(QPaintEvent *);
+//    void paintEvent(QPaintEvent *);
     void keyPressEvent(QKeyEvent *event);
     bool eventFilter(QObject *watched, QEvent *event) override;
     void initUi();
@@ -109,6 +111,11 @@ public Q_SLOTS:
     void resizeHeight(int height);
 
 private:
+    void setSearchMethod(const bool&);
+    double getTransparentData();
+    void initTimer();
+    bool tryHideMainwindow();
+    void setSearchMethodConfig(const bool&, const bool&);
 
     QWidget *m_widget = nullptr;                  // central widget
     QFrame * m_titleFrame = nullptr;             // Title bar frame
@@ -121,6 +128,8 @@ private:
 //    SeachBarWidget * m_searchWidget = nullptr;   // Search bar
     SeachBarWidget *m_searchBarWidget;
     SearchResultPage *m_searchResultPage;
+    WebSearchPage *m_webSearchPage;
+    QVBoxLayout *m_mainLayout;
 #if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
     SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
 #endif
@@ -142,11 +151,7 @@ private:
 
     SearchMethodManager m_searchMethodManager;
 
-    void setSearchMethod(const bool&);
-    double getTransparentData();
-    void initTimer();
-    bool tryHideMainwindow();
-    void setSearchMethodConfig(const bool&, const bool&);
+
 };
 }
 

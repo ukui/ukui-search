@@ -361,7 +361,7 @@ void ResultArea::initUi()
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    this->setPalette(pal);
+//    this->setPalette(pal);
     this->setWidgetResizable(true);
     this->setFrameShape(QFrame::Shape::NoFrame);
     m_widget = new QWidget(this);
