@@ -55,31 +55,24 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
     if(!G_IS_FILE_INFO(info.get()->get()))
         return QIcon::fromTheme("unknown");
     GIcon *g_icon = g_file_info_get_icon(info.get()->get());
-    QString icon_name;
+
     //do not unref the GIcon from info.
     if(G_IS_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON(g_icon));
         if(icon_names) {
             auto p = icon_names;
-            if(*p)
-                icon_name = QString(*p);
-            if(checkValid) {
-                while(*p) {
-                    QIcon icon = QIcon::fromTheme(*p);
-                    if(!icon.isNull()) {
-                        icon_name = QString(*p);
-                        break;
-                    } else {
-                        p++;
-                    }
+            while(*p) {
+                QIcon icon = QIcon::fromTheme(*p);
+                if(!icon.isNull()) {
+                    return icon;
+                } else {
+                    p++;
                 }
             }
         }
     }
-    if(!QIcon::hasThemeIcon(icon_name)) {
-        return QIcon::fromTheme("unknown");
-    }
-    return QIcon::fromTheme(icon_name);
+    return QIcon::fromTheme("unknown");
+
 }
 
 /**
