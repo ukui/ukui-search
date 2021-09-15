@@ -206,6 +206,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
         if(description != "" && !description.isEmpty()) {
             m_detailFrame->show();
             m_contentLabel->show();
+            m_contentLabel->setWordWrap(true);
             m_contentLabel->setText(QString(tr("Introduction: %1")).arg(description));
         }
         setIcon(iconpath, false);
@@ -216,7 +217,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     m_optionView->show();
 
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
+    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
 //    m_nameLabel->setText(showname);
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(showname)));
     if(QString::compare(showname, m_name)) {
@@ -257,7 +258,7 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
         if((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
             if(! boldOpenned) {
                 boldOpenned = true;
-                htmlString.append(QString("<b><font size=\"4\">"));
+                htmlString.append(QString("<b><font size=\"3\">"));
             }
             htmlString.append(escapeHtml(QString(text.at(i))));
         } else {
@@ -306,7 +307,8 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         m_detailFrame->show();
         if(isContent) {  //文件内容区域
             m_contentLabel->show();
-            m_contentLabel->setText(QApplication::translate("", getHtmlText(m_contentText, m_keyword).toLocal8Bit(), nullptr));
+            m_contentLabel->setWordWrap(false);
+            m_contentLabel->setText(QApplication::translate("", getHtmlText(FileUtils::wrapData(m_contentLabel,m_contentText), m_keyword).toLocal8Bit(),nullptr));
         }
         m_pathFrame->show();
         m_timeFrame->show();
@@ -351,7 +353,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         setIcon(path);
         QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
         QString wholeName = FileUtils::getFileName(path);
-        QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
+        QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 215);
 //        m_nameLabel->setText(name);
         m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
         if(QString::compare(name, wholeName)) {
@@ -514,8 +516,7 @@ void SearchDetailView::initUI() {
 
     //文件内容区域
     m_contentLabel = new QLabel(m_detailFrame);
-    m_contentLabel->setWordWrap(true);
-    m_contentLabel->setContentsMargins(9, 0, 9, 0);
+    m_contentLabel->setContentsMargins(0, 0, 0, 0);
     m_detailLyt->addWidget(m_contentLabel);
 
     //路径与修改时间区域
