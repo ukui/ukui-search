@@ -102,6 +102,7 @@ SeachBarWidget::SeachBarWidget(QWidget *parent): QWidget(parent) {
     this->setFixedSize(m_searchLineEdit->width()+20, m_searchLineEdit->height()+20);
     m_ly->setContentsMargins(0,0,0,0);
     m_ly->addWidget(m_searchLineEdit);
+    this->setFocusProxy(m_searchLineEdit);
     connect(m_searchLineEdit, &SearchLineEdit::requestSearchKeyword, this, &SeachBarWidget::requestSearchKeyword);
 }
 

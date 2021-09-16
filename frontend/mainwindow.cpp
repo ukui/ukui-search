@@ -66,7 +66,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
-    this->setFocusProxy(this);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
     initUi();
@@ -127,6 +126,7 @@ void MainWindow::initUi() {
     m_searchResultPage = new SearchResultPage(this);
     m_searchResultPage->hide();
     m_searchResultPage->move(0, 58);
+    this->setFocusProxy(m_searchBarWidget);
 
 //    m_searchResultPage->show();
 //    m_searchWidget = new SeachBarWidget(this);
@@ -183,9 +183,10 @@ void MainWindow::bootOptionsFilter(QString opt) {
     if(opt == "-s" || opt == "--show") {
         clearSearchResult();
         centerToScreen(this);
-        this->show();
-//        this->m_searchLineEdit->focusIn();
-        this->raise();
+        if(this->isHidden()) {
+            this->show();
+        }
+        this->m_searchBarWidget->setFocus();
         this->activateWindow();
     }
 }
@@ -543,6 +544,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::ActivationChange) {
+        qDebug() << "QEvent::ActivationChange!!!!" << "active" << (QApplication::activeWindow() == this) << "isVisble" << (this->isVisible());
         if(QApplication::activeWindow() != this) {
             tryHideMainwindow();
         }
