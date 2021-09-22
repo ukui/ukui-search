@@ -58,7 +58,8 @@ void WebSearchView::clearSelectedRow()
 {
     if (!m_is_selected) {
         this->blockSignals(true);
-        this->clearSelection();
+        //this->clearSelection();
+        this->setCurrentIndex(QModelIndex());
         this->blockSignals(false);
     }
 }
