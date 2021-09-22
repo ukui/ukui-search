@@ -147,7 +147,7 @@ void ResultWidget::initConnections()
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
 {
     this->setFrameShape(QFrame::NoFrame);
-    this->viewport()->setAutoFillBackground(false);
+//    this->viewport()->setAutoFillBackground(false);
     this->setRootIsDecorated(false);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setSelectionBehavior(QAbstractItemView::SelectRows);

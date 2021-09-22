@@ -352,12 +352,12 @@ void ResultArea::setSelectionInfo(QString &pluginID)
 void ResultArea::initUi()
 {
 //    this->verticalScrollBar()->setProperty("drawScrollBarGroove", false);
-    QPalette pal = palette();
-    QPalette scroll_bar_pal = this->verticalScrollBar()->palette();
+//    QPalette pal = palette();
+//    QPalette scroll_bar_pal = this->verticalScrollBar()->palette();
 //    pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
-    pal.setColor(QPalette::Window, RESULT_BACKGROUND_COLOR);
-    scroll_bar_pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
-    this->verticalScrollBar()->setPalette(scroll_bar_pal);
+//    pal.setColor(QPalette::Window, RESULT_BACKGROUND_COLOR);
+//    scroll_bar_pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
+//    this->verticalScrollBar()->setPalette(scroll_bar_pal);
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -440,7 +440,7 @@ void DetailArea::initUi()
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setWidgetResizable(true);
-    this->setFixedSize(376, 516);
+    this->setFixedSize(421, 688);
 //    this->setStyleSheet("QScrollArea{border:2px solid red;}");
     this->setContentsMargins(0,0,0,0);
     m_detailWidget = new DetailWidget(this);
@@ -452,7 +452,7 @@ DetailWidget::DetailWidget(QWidget *parent) : QWidget(parent)
 {
 //    initUi();
 //    clear();
-    this->setFixedWidth(368);
+    this->setFixedWidth(421);
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
     m_mainLyt->setContentsMargins(DETAIL_WIDGET_MARGINS);
@@ -600,17 +600,17 @@ void DetailWidget::initUi()
 
 void DetailWidget::paintEvent(QPaintEvent *event)
 {
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+//    QStyleOption opt;
+//    opt.init(this);
+//    QPainter p(this);
+//    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
-    QRect rect = this->rect().adjusted(0, 0, 0, 0);
-    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
-    p.setBrush(opt.palette.color(QPalette::Text));
-    p.setOpacity(DETAIL_WIDGET_TRANSPARENT);
-    p.setPen(Qt::NoPen);
-    p.drawRoundedRect(rect, DETAIL_WIDGET_BORDER_RADIUS, DETAIL_WIDGET_BORDER_RADIUS);
+//    QRect rect = this->rect().adjusted(0, 0, 0, 0);
+//    p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
+//    p.setBrush(opt.palette.color(QPalette::Text));
+//    p.setOpacity(DETAIL_WIDGET_TRANSPARENT);
+//    p.setPen(Qt::NoPen);
+//    p.drawRoundedRect(rect, DETAIL_WIDGET_BORDER_RADIUS, DETAIL_WIDGET_BORDER_RADIUS);
     return QWidget::paintEvent(event);
 }
 

@@ -32,6 +32,7 @@ ActionLabel::ActionLabel(const QString &action, const QString &key, QWidget *par
 
 void ActionLabel::initUi()
 {
+    this->setFixedSize(390, 48);
     this->setText(m_action);
     QPalette pal = palette();
     pal.setColor(QPalette::WindowText, ACTION_NORMAL_COLOR);
