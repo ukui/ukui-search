@@ -72,7 +72,7 @@ void FileSearchPlugin::openAction(int actionkey, QString key, int type)
 QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
 {
     m_currentActionKey = ri.actionKey;
-    m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
+    m_iconLabel->setPixmap(ri.icon.pixmap(240, 240));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
@@ -90,13 +90,13 @@ QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
 void FileSearchPlugin::initDetailPage()
 {
     m_detailPage = new QWidget();
-    m_detailPage->setFixedWidth(360);
+    m_detailPage->setFixedWidth(421);
     m_detailPage->setAttribute(Qt::WA_TranslucentBackground);
     m_detailLyt = new QVBoxLayout(m_detailPage);
     m_detailLyt->setContentsMargins(8, 0, 16, 0);
     m_iconLabel = new QLabel(m_detailPage);
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_iconLabel->setFixedHeight(128);
+    m_iconLabel->setFixedHeight(240);
 
     m_nameFrame = new QFrame(m_detailPage);
     m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
@@ -261,7 +261,7 @@ void DirSearchPlugin::openAction(int actionkey, QString key, int type)
 QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
 {
     m_currentActionKey = ri.actionKey;
-    m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
+    m_iconLabel->setPixmap(ri.icon.pixmap(240, 240));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
@@ -279,13 +279,13 @@ QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
 void DirSearchPlugin::initDetailPage()
 {
     m_detailPage = new QWidget();
-    m_detailPage->setFixedWidth(360);
+    m_detailPage->setFixedWidth(421);
     m_detailPage->setAttribute(Qt::WA_TranslucentBackground);
     m_detailLyt = new QVBoxLayout(m_detailPage);
     m_detailLyt->setContentsMargins(8, 0, 16, 0);
     m_iconLabel = new QLabel(m_detailPage);
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_iconLabel->setFixedHeight(128);
+    m_iconLabel->setFixedHeight(240);
 
     m_nameFrame = new QFrame(m_detailPage);
     m_nameFrameLyt = new QHBoxLayout(m_nameFrame);

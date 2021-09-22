@@ -123,11 +123,11 @@ void SearchResultPage::initConnections()
     connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::startSearch, this, [=] () {
-        sendResizeWidthSignal(656);
+        sendResizeWidthSignal(720);
     });
     connect(m_resultArea, &ResultArea::keyPressChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(m_resultArea, &ResultArea::keyPressChanged, this, [=] () {
-        sendResizeWidthSignal(280);
+        sendResizeWidthSignal(266);
     });
     connect(m_resultArea, &ResultArea::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(m_resultArea, &ResultArea::currentRowChanged, this, &SearchResultPage::currentRowChanged);
@@ -135,7 +135,7 @@ void SearchResultPage::initConnections()
     connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::resizeHeight);
     connect(this, &SearchResultPage::resizeWidth, m_resultArea, &ResultArea::resizeWidth);
     connect(m_resultArea, &ResultArea::rowClicked, this, [=] () {
-        sendResizeWidthSignal(280);
+        sendResizeWidthSignal(266);
     });
     connect(this, &SearchResultPage::setSelectionInfo, m_resultArea, &ResultArea::setSelectionInfo);
 }
@@ -150,7 +150,7 @@ void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
     });
     connect(this, &SearchResultPage::currentRowChanged, widget, &ResultWidget::clearSelectedRow);
     connect(widget, &ResultWidget::rowClicked, this, [=] () {
-        sendResizeWidthSignal(280);
+        sendResizeWidthSignal(266);
     });
     connect(this, &SearchResultPage::resizeWidth, widget, &ResultWidget::resizeWidth);
 }
