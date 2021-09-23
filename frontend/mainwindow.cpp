@@ -133,28 +133,7 @@ void MainWindow::initUi() {
     m_webSearchPage = new WebSearchPage(this);
     m_mainLayout->addWidget(m_webSearchPage);
     m_webSearchPage->hide();
-//    m_webSearchPage->move(0,754);
 
-//    m_searchResultPage->show();
-//    m_searchWidget = new SeachBarWidget(this);
-//    m_searchLayout = new SearchBarHLayout(this);
-//    m_searchWidget->setLayout(m_searchLayout);
-//    m_searchWidget->setFixedHeight(SEARCH_BAR_SIZE);
-
-//    mainlayout->addWidget(m_titleFrame);
-//    mainlayout->addWidget(m_seachBarWidget);
-//    mainlayout->addSpacing(8);
-//    mainlayout->addWidget(m_searchResultPage);
-
-    //创建索引询问弹窗
-//    m_askDialog = new CreateIndexAskDialog(this);
-//#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-//    MotifWmHints ask_dialog_hints;
-//    ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-//    ask_dialog_hints.functions = MWM_FUNC_ALL;
-//    ask_dialog_hints.decorations = MWM_DECOR_BORDER;
-//    XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
-//#endif
 }
 
 void MainWindow::initConnections()
@@ -165,20 +144,12 @@ void MainWindow::initConnections()
     });
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::monitorResolutionChange);
     connect(qApp, &QApplication::primaryScreenChanged, this, &MainWindow::primaryScreenChangedSlot);
-//    connect(m_askDialog, &CreateIndexAskDialog::closed, this, [ = ]() {
-//        m_isAskDialogVisible = false;
-//    });
-//    connect(m_askDialog, &CreateIndexAskDialog::btnClicked, this, [ = ](const bool &is_create_index, const bool &is_ask_again) {
-//        setSearchMethodConfig(is_create_index, is_ask_again);
-//    });
     connect(m_settingsBtn, &QPushButton::clicked, this, &MainWindow::settingsBtnClickedSlot);
     //主题改变时，更新自定义标题栏的图标
 //    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
 //        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));
 //    });
     connect(m_searchBarWidget, &SeachBarWidget::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
-//    connect(m_stackedWidget, &StackedWidget::effectiveSearch, m_searchLayout, &SearchBarHLayout::effectiveSearchRecord);
-    //connect(m_searchResultPage, &SearchResultPage::resizeHeight, this, &MainWindow::resizeHeight);
     connect(this,&MainWindow::setText,m_searchBarWidget,&SeachBarWidget::setText);
 }
 
@@ -458,8 +429,8 @@ void MainWindow::initTimer() {
     m_askTimer->setInterval(ASK_INDEX_TIME);
     connect(m_askTimer, &QTimer::timeout, this, [ = ]() {
         if(this->isVisible()) {
-            m_isAskDialogVisible = true;
-            m_askDialog->show();
+//            m_isAskDialogVisible = true;
+//            m_askDialog->show();
             m_currentSearchAsked = true;
         }
         m_askTimer->stop();
