@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QMessageBox>
 using namespace Zeeker;
 
 FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
@@ -56,12 +57,22 @@ QList<SearchPluginIface::Actioninfo> FileSearchPlugin::getActioninfo(int type)
 void FileSearchPlugin::openAction(int actionkey, QString key, int type)
 {
     //TODO add some return message here.
+    qDebug() << "openAction!!!!!!!!";
     switch (actionkey) {
     case 0:
-        FileUtils::openFile(key);
+        if(FileUtils::openFile(key) == -1) {
+            QMessageBox msgBox(m_detailPage);
+            msgBox.setWindowModality(Qt::WindowModal);
+            msgBox.setStandardButtons(QMessageBox::Yes);
+            msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setText(tr("Can not get a default application for opening %1.").arg(key));
+            msgBox.exec();
+        }
         break;
     case 1:
         FileUtils::openFile(key, true);
+        break;
     case 2:
         FileUtils::copyPath(key);
     default:
@@ -165,7 +176,15 @@ void FileSearchPlugin::initDetailPage()
     m_detailLyt->addStretch();
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
-        FileUtils::openFile(m_currentActionKey);
+        if(FileUtils::openFile(m_currentActionKey) == -1) {
+            QMessageBox msgBox(m_detailPage);
+            msgBox.setWindowModality(Qt::WindowModal);
+            msgBox.setStandardButtons(QMessageBox::Yes);
+            msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setText(tr("Can not get a default application for opening %1.").arg(m_currentActionKey));
+            msgBox.exec();
+        }
     });
     connect(m_actionLabel2, &ActionLabel::actionTriggered, [ & ](){
         FileUtils::openFile(m_currentActionKey, true);

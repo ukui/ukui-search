@@ -22,6 +22,7 @@
 #include "file-utils.h"
 #include <QXmlStreamReader>
 #include <QMutexLocker>
+#include <gio/gdesktopappinfo.h>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -770,12 +771,53 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     return;
 }
 
-bool FileUtils::openFile(QString &path, bool openInDir)
+int FileUtils::openFile(QString &path, bool openInDir)
 {
     if(openInDir) {
-        return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+        return 0;
     } else {
-        return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        auto file = wrapGFile(g_file_new_for_uri(QUrl::fromLocalFile(path).toString().toUtf8().constData()));
+        auto fileInfo = wrapGFileInfo(g_file_query_info(file.get()->get(),
+                                  "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                  G_FILE_QUERY_INFO_NONE,
+                                  nullptr,
+                                  nullptr));
+        QString mimeType = g_file_info_get_content_type (fileInfo.get()->get());
+        if (mimeType == nullptr) {
+            if (g_file_info_has_attribute(fileInfo.get()->get(), "standard::fast-content-type")) {
+                mimeType = g_file_info_get_attribute_string(fileInfo.get()->get(), "standard::fast-content-type");
+            }
+        }
+        GError *error = NULL;
+        GAppInfo *info  = NULL;
+        /*
+        * g_app_info_get_default_for_type function get wrong default app, so we get the
+        * default app info from mimeapps.list, and chose the right default app for mimeType file
+        */
+        QString mimeAppsListPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
+           + "/.config/mimeapps.list";
+        GKeyFile *keyfile = g_key_file_new();
+        gboolean ret = g_key_file_load_from_file(keyfile, mimeAppsListPath.toUtf8(), G_KEY_FILE_NONE, &error);
+        if (false == ret) {
+            qWarning()<<"load mimeapps list error msg"<<error->message;
+            info = g_app_info_get_default_for_type(mimeType.toUtf8().constData(), false);
+            g_error_free(error);
+        } else {
+            gchar *desktopApp = g_key_file_get_string(keyfile, "Default Applications", mimeType.toUtf8(), &error);
+            if (NULL != desktopApp) {
+                info = (GAppInfo*)g_desktop_app_info_new(desktopApp);
+                g_free (desktopApp);
+            } else {
+                info = g_app_info_get_default_for_type(mimeType.toUtf8().constData(), false);
+            }
+        }
+        g_key_file_free (keyfile);
+        if(!G_IS_APP_INFO(info)) {
+            return -1;
+        }
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        return 0;
     }
 }
 
