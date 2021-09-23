@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QDesktopServices>
 #include <QUrl>
+#include <config-file.h>
 
 using namespace Zeeker;
 HomePageItem::HomePageItem(QWidget *parent, const int& type, const QString& path) : QWidget(parent) {
@@ -152,6 +153,7 @@ void HomePageItem::onItemClicked() {
     default:
         break;
     }
+    ConfigFile::getInstance()->writeConfig(m_path);
 }
 
 bool HomePageItem::eventFilter(QObject *watched, QEvent *event) {

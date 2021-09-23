@@ -54,7 +54,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
                               nullptr,
                               nullptr));
     if(!G_IS_FILE_INFO(info.get()->get()))
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
     GIcon *g_icon = g_file_info_get_icon(info.get()->get());
     QString icon_name;
     //do not unref the GIcon from info.
@@ -78,7 +78,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
         }
     }
     if(QIcon::fromTheme(icon_name).isNull()) {
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
     }
     return QIcon::fromTheme(icon_name);
 }
@@ -95,7 +95,7 @@ QIcon FileUtils::getAppIcon(const QString &path) {
     keyfile = g_key_file_new();
     if(!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)) {
         g_key_file_free(keyfile);
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
     }
     QString icon = QString(g_key_file_get_locale_string(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, NULL, NULL));
     g_key_file_free(keyfile);

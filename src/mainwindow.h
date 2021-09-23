@@ -88,6 +88,7 @@ public:
 
     // The position which mainwindow shows in the center of screen where the cursor in.
     void centerToScreen(QWidget* widget);
+    void reInitHomePage();
     void initGsettings();
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
