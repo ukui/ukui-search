@@ -10,13 +10,12 @@ using namespace Zeeker;
 static SearchPluginManager *global_instance = nullptr;
 SearchPluginManager::SearchPluginManager(QObject *parent)
 {
+    registerPlugin(new FileSearchPlugin(this));
+    registerPlugin(new DirSearchPlugin(this));
+//    registerPlugin(new FileContengSearchPlugin(this));
     registerPlugin(new AppSearchPlugin(this));
 //    registerPlugin(new NoteSearchPlugin(this));
     registerPlugin(new SettingsSearchPlugin(this));
-    registerPlugin(new DirSearchPlugin(this));
-    registerPlugin(new FileSearchPlugin(this));
-//    registerPlugin(new FileContengSearchPlugin(this));
-
 }
 
 bool SearchPluginManager::registerPlugin(Zeeker::SearchPluginIface *plugin)

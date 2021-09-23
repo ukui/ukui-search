@@ -49,14 +49,12 @@ ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 void ResultArea::appendWidet(ResultWidget *widget)
 {
     //NEW_TODO
-    m_mainLyt->removeWidget(m_webSearchWidget);
     m_mainLyt->addWidget(widget);
     setupConnectionsForWidget(widget);
     widget->clearResult();
     m_widget_list.append(widget);
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(m_widget->height() + widget->height() + spacing_height);
-    m_mainLyt->addWidget(m_webSearchWidget);
 }
 
 /**
@@ -76,211 +74,17 @@ void ResultArea::setVisibleList(const QStringList &list)
 
 void ResultArea::pressEnter()
 {
-    if (false == m_is_selected) {//未选中时默认选取bestlist第一项
-        int resultNum = m_bestListWidget->getResultNum();
-        if (0 == resultNum) {//搜索结果为空则选中网页搜索项
-            QModelIndex index = m_webSearchWidget->getModlIndex(0, 0);
-            m_webSearchWidget->setResultSelection(index);
-            m_selectedPluginID = m_webSearchWidget->getWidgetName();
-            m_is_selected = true;
-        } else {//选取bestlist第一项
-            QModelIndex index = m_bestListWidget->getModlIndex(0, 0);
-            m_bestListWidget->setResultSelection(index);
-            m_selectedPluginID = m_bestListWidget->getWidgetName();
-            m_is_selected = true;
-        }
-    } else {//选中状态时默认启动action首项
-        if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {//选中网页搜索则启动搜索
-            m_webSearchWidget->LaunchBrowser();
-        } else {
-            //先判断详情页是否打开
-            if (m_detail_open_state) {
-                if (m_selectedPluginID == m_bestListWidget->getWidgetName()) {//最佳匹配
-                    m_bestListWidget->activateIndex();
-                } else {
-                    for (ResultWidget * i : m_widget_list) {
-                        if (m_selectedPluginID == i->pluginId()) {
-                            i->activateIndex();
-                            break;
-                        }
-                    }
-                }
-            } else {//打开详情页
-                m_detail_open_state = true;
-                sendKeyPressSignal(m_selectedPluginID);
-            }
-        }
-    }
+
 }
 
 void ResultArea::pressDown()
 {
-    if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {//当前为web search，暂不处理
-        return;
-    } else if (m_selectedPluginID == m_bestListWidget->getWidgetName()) {
-        QModelIndex index = m_bestListWidget->getCurrentSelection();
-        int maxNum = m_bestListWidget->getExpandState() ?
-                    m_bestListWidget->getResultNum() : (m_bestListWidget->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                            m_bestListWidget->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-        if (index.row() < maxNum - 1 and index.row() >= 0) {
-            int row = index.row();
-            QModelIndex setIndex = m_bestListWidget->getModlIndex(++row, 0);
-            m_bestListWidget->setResultSelection(setIndex);
-            sendKeyPressSignal(m_selectedPluginID);
-        } else if (index.row() >= maxNum - 1 or index.row() < 0) {//跳转下一个widget
-            m_bestListWidget->clearResultSelection();
-            for (ResultWidget * plugin : m_widget_list) {
-                if (plugin->getResultNum() != 0) {
-                    QModelIndex resultIndex = plugin->getModlIndex(0, 0);
-                    plugin->setResultSelection(resultIndex);
-                    m_selectedPluginID = plugin->pluginId();
-                    sendKeyPressSignal(m_selectedPluginID);
-                    break;
-                }
-            }
-        } else {
-            qWarning() << "QModelIndex error ! row:" << index.row() << "maxNum:" << maxNum;
-        }
-    } else {
-        for (ResultWidget * plugin : m_widget_list) {
-            if (m_selectedPluginID == plugin->pluginId()) {
-                QModelIndex index = plugin->getCurrentSelection();
-                int maxNum = plugin->getExpandState() ?
-                            plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                                    plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-                if (index.row() < maxNum - 1 and index.row() >= 0) {
-                    int row = index.row();
-                    QModelIndex setIndex = plugin->getModlIndex(++row, 0);
-                    plugin->setResultSelection(setIndex);
-                    sendKeyPressSignal(m_selectedPluginID);
-                } else if (index.row() >= maxNum - 1 or index.row() < 0) {//跳转下一个widget
-                    plugin->clearResultSelection();
-                    int indexNum = m_widget_list.indexOf(plugin);
-                    bool findNextWidget = false;
-                    while (++indexNum < m_widget_list.size()) {
-                        plugin = m_widget_list[indexNum];
-                        if (plugin->getResultNum() != 0) {
-                            QModelIndex resultIndex = plugin->getModlIndex(0, 0);
-                            plugin->setResultSelection(resultIndex);
-                            m_selectedPluginID = plugin->pluginId();
-                            findNextWidget = true;
-                            sendKeyPressSignal(m_selectedPluginID);
-                            break;
-                        }
-                    }
-                    if (indexNum >= m_widget_list.size()) {//下一项是web search
-                        QModelIndex index = m_webSearchWidget->getModlIndex(0, 0);
-                        m_webSearchWidget->setResultSelection(index);
-                        m_selectedPluginID = m_webSearchWidget->getWidgetName();
-                        m_is_selected = true;
-                        this->ensureWidgetVisible(m_webSearchWidget);
-                    }
-                    if (findNextWidget){
-                        break;
-                    }
-                } else {
-                    qWarning() << "QModelIndex error ! row:" << index.row() << "maxNum:" << maxNum;
-                }
-            }
-        }
-    }
+
 }
 
 void ResultArea::pressUp()
 {
-    if (!m_is_selected) {
-        return;
-    }
-    if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {//当前为web search
-        if (m_bestListWidget->getResultNum() == 0) {
-            return;
-        }
-        m_webSearchWidget->clearResultSelection();
-        for (int i = 0; i < m_widget_list.size(); i++) {
-            ResultWidget * plugin = m_widget_list[m_widget_list.size() - (i + 1)];
-            bool findNextWidget = false;
-            if (0 != plugin->getResultNum()) {
-                int maxNum = plugin->getExpandState() ?
-                            plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                                    plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-                QModelIndex resultIndex = plugin->getModlIndex(maxNum - 1, 0);
-                plugin->setResultSelection(resultIndex);
-                m_selectedPluginID = plugin->pluginId();
-                findNextWidget = true;
-                sendKeyPressSignal(m_selectedPluginID);
-            }
-            if (findNextWidget) {
-                break;
-            }
-        }
-    } else if (m_selectedPluginID == m_bestListWidget->getWidgetName()) {
-        QModelIndex index = m_bestListWidget->getCurrentSelection();
-        int maxNum = m_bestListWidget->getExpandState() ?
-                    m_bestListWidget->getResultNum() : (m_bestListWidget->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                            m_bestListWidget->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-        if (index.row() > 0 and index.row() < maxNum) {
-            int row = index.row();
-            QModelIndex setIndex = m_bestListWidget->getModlIndex(--row, 0);
-            m_bestListWidget->setResultSelection(setIndex);
-            sendKeyPressSignal(m_selectedPluginID);
-        } else if (index.row() == 0) {
-            //已到最上层，暂不处理
-        } else {
-            QModelIndex setIndex = m_bestListWidget->getModlIndex(--maxNum, 0);
-            m_bestListWidget->setResultSelection(setIndex);
-            sendKeyPressSignal(m_selectedPluginID);
-        }
-    } else {
-        for (ResultWidget * plugin : m_widget_list) {
-            if (m_selectedPluginID == plugin->pluginId()) {
-                int indexMaxNum = plugin->getExpandState() ?
-                            plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                                    plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-                QModelIndex index = plugin->getCurrentSelection();
-                if (index.row() > 0 and index.row() < indexMaxNum) {
-                    int row = index.row();
-                    QModelIndex setIndex = plugin->getModlIndex(--row, 0);
-                    plugin->setResultSelection(setIndex);
-                    sendKeyPressSignal(m_selectedPluginID);
-                } else if (index.row() == 0) {//跳转下一个widget
-                    plugin->clearResultSelection();
-                    int indexNum = m_widget_list.indexOf(plugin);
-                    bool findNextWidget = false;
-                    while (--indexNum >= 0) {
-                        plugin = m_widget_list[indexNum];
-                        if (plugin->getResultNum() != 0) {
-                            int maxNum = plugin->getExpandState() ?
-                                        plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                                                plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-                            QModelIndex resultIndex = plugin->getModlIndex(maxNum - 1, 0);
-                            plugin->setResultSelection(resultIndex);
-                            m_selectedPluginID = plugin->pluginId();
-                            findNextWidget = true;
-                            sendKeyPressSignal(m_selectedPluginID);
-                            break;
-                        }
-                    }
-                    if (indexNum < 0) {//下一项是best list
-                        int bestListNum = m_bestListWidget->getExpandState() ?
-                                    m_bestListWidget->getResultNum() : (m_bestListWidget->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
-                                                                            m_bestListWidget->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
-                        QModelIndex setIndex = m_bestListWidget->getModlIndex(--bestListNum, 0);
-                        m_bestListWidget->setResultSelection(setIndex);
-                        m_selectedPluginID = m_bestListWidget->getWidgetName();
-                        m_is_selected = true;
-                        sendKeyPressSignal(m_selectedPluginID);
-                    }
-                    if (findNextWidget){
-                        break;
-                    }
-                } else {
-                    QModelIndex setIndex = plugin->getModlIndex(indexMaxNum - 1, 0);
-                    plugin->setResultSelection(setIndex);
-                    sendKeyPressSignal(m_selectedPluginID);
-                }
-            }
-        }
-    }
+
 }
 
 bool ResultArea::getSelectedState()
@@ -290,35 +94,35 @@ bool ResultArea::getSelectedState()
 
 void ResultArea::sendKeyPressSignal(QString &pluginID)
 {
-    int height(0);
-    int resultHeight = m_bestListWidget->getResultHeight();
-    if (pluginID == m_bestListWidget->getWidgetName()) {
-        QModelIndex index = m_bestListWidget->getCurrentSelection();
-        height = index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
-        height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
-        this->ensureVisible(0, height, 0, 0);
-        if (m_detail_open_state) {
-            Q_EMIT this->keyPressChanged(m_bestListWidget->getPluginInfo(index), m_bestListWidget->getIndexResultInfo(index));
-        }
-    } else {
-        height += m_bestListWidget->height();
-        for (ResultWidget *plugin : m_widget_list) {
-            if (pluginID == plugin->pluginId()) {
-                QModelIndex index = plugin->getCurrentSelection();
-                height += index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
-                int moreHeight = index.row() == 0 ? (TITLE_HEIGHT + resultHeight * 2) : (resultHeight * 2);
-                this->ensureVisible(0, height + moreHeight, 0, 0);
-                height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
-                this->ensureVisible(0, height, 0, 0);
-                if (m_detail_open_state) {
-                    Q_EMIT this->keyPressChanged(m_selectedPluginID, plugin->getIndexResultInfo(index));
-                }
-                break;
-            } else {
-                height += plugin->height();
-            }
-        }
-    }
+//    int height(0);
+//    int resultHeight = m_bestListWidget->getResultHeight();
+//    if (pluginID == m_bestListWidget->getWidgetName()) {
+//        QModelIndex index = m_bestListWidget->getCurrentSelection();
+//        height = index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
+//        height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
+//        this->ensureVisible(0, height, 0, 0);
+//        if (m_detail_open_state) {
+//            Q_EMIT this->keyPressChanged(m_bestListWidget->getPluginInfo(index), m_bestListWidget->getIndexResultInfo(index));
+//        }
+//    } else {
+//        height += m_bestListWidget->height();
+//        for (ResultWidget *plugin : m_widget_list) {
+//            if (pluginID == plugin->pluginId()) {
+//                QModelIndex index = plugin->getCurrentSelection();
+//                height += index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
+//                int moreHeight = index.row() == 0 ? (TITLE_HEIGHT + resultHeight * 2) : (resultHeight * 2);
+//                this->ensureVisible(0, height + moreHeight, 0, 0);
+//                height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
+//                this->ensureVisible(0, height, 0, 0);
+//                if (m_detail_open_state) {
+//                    Q_EMIT this->keyPressChanged(m_selectedPluginID, plugin->getIndexResultInfo(index));
+//                }
+//                break;
+//            } else {
+//                height += plugin->height();
+//            }
+//        }
+//    }
 }
 
 void ResultArea::onWidgetSizeChanged()
@@ -327,9 +131,6 @@ void ResultArea::onWidgetSizeChanged()
     Q_FOREACH (ResultWidget *widget, m_widget_list) {
         whole_height += widget->height();
     }
-    whole_height += m_bestListWidget->height();
-    //TODO 网页高度
-    whole_height += m_webSearchWidget->height();
 
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
@@ -341,12 +142,6 @@ void ResultArea::setSelectionInfo(QString &pluginID)
     m_detail_open_state = true;
     m_is_selected = true;
     m_selectedPluginID = pluginID;
-    if (m_selectedPluginID != m_bestListWidget->getWidgetName()) {
-        m_bestListWidget->clearResultSelection();
-    }
-    if (m_selectedPluginID != m_webSearchWidget->getWidgetName()) {
-        m_webSearchWidget->clearResultSelection();
-    }
 }
 
 void ResultArea::initUi()
@@ -368,12 +163,7 @@ void ResultArea::initUi()
     this->setWidget(m_widget);
     m_mainLyt = new QVBoxLayout(m_widget);
     m_widget->setLayout(m_mainLyt);
-    m_bestListWidget = new BestListWidget(this);
-    m_bestListWidget->clearResult();
-    m_mainLyt->addWidget(m_bestListWidget);
 
-    m_webSearchWidget = new WebSearchWidget(this);
-    m_mainLyt->addWidget(m_webSearchWidget);
     m_mainLyt->setContentsMargins(RESULT_LAYOUT_MARGINS);
     this->widget()->setContentsMargins(0,0,0,0);
     m_mainLyt->setSpacing(0);
@@ -381,38 +171,7 @@ void ResultArea::initUi()
 
 void ResultArea::initConnections()
 {
-    connect(this, &ResultArea::startSearch, m_bestListWidget, &BestListWidget::startSearch);
-    connect(this, &ResultArea::startSearch, m_webSearchWidget, &WebSearchWidget::startSearch);
-    connect(this, &ResultArea::startSearch, this, [=] () {
-        m_detail_open_state = false;
-        m_is_selected = false;
-        if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {
-            m_webSearchWidget->clearResultSelection();
-        }
-    });
-    connect(m_bestListWidget, &BestListWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
-    connect(m_bestListWidget, &BestListWidget::sizeChanged, this, [=] () {
-        if (!m_is_selected) {
-            QModelIndex index = m_bestListWidget->getModlIndex(0, 0);
-            m_bestListWidget->setResultSelection(index);
-            m_selectedPluginID = m_bestListWidget->getWidgetName();
-            m_is_selected = true;
-        }
-    });
 
-    connect(m_bestListWidget, &BestListWidget::currentRowChanged, this, &ResultArea::currentRowChanged);
-    connect(m_bestListWidget, &BestListWidget::currentRowChanged, this, [=] () {
-        m_detail_open_state = true;
-        m_is_selected = true;
-        m_selectedPluginID = m_bestListWidget->getWidgetName();
-        m_webSearchWidget->clearResultSelection();
-    });
-    connect(this, &ResultArea::clearSelectedRow, m_bestListWidget, &BestListWidget::clearSelectedRow);
-    connect(this, &ResultArea::resizeWidth, this, [=] (const int &size) {
-        m_bestListWidget->setFixedWidth(size);
-        m_webSearchWidget->setFixedWidth(size);
-    });
-    connect(m_bestListWidget, &BestListWidget::rowClicked, this, &ResultArea::rowClicked);
 }
 
 void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
@@ -420,7 +179,6 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
     connect(this, &ResultArea::startSearch, widget, &ResultWidget::startSearch);
     connect(this, &ResultArea::stopSearch, widget, &ResultWidget::stopSearch);
     connect(widget, &ResultWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
-    connect(widget, &ResultWidget::sendBestListData, m_bestListWidget, &BestListWidget::sendBestListData);
 }
 
 DetailArea::DetailArea(QWidget *parent) : QScrollArea(parent)
