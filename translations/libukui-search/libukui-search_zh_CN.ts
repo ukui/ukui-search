@@ -4,7 +4,7 @@
 <context>
     <name>Zeeker::AppMatch</name>
     <message>
-        <location filename="../../libsearch/appsearch/app-match.cpp" line="329"/>
+        <location filename="../../libsearch/appsearch/app-match.cpp" line="258"/>
         <source>Application Description:</source>
         <translation>应用描述：</translation>
     </message>
@@ -62,50 +62,50 @@
 <context>
     <name>Zeeker::DirSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="199"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="336"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="218"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="355"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="200"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="337"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="219"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="356"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="201"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="220"/>
         <source>Copy Path</source>
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="210"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="220"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="229"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="239"/>
         <source>Dir Search</source>
         <translation>目录搜索</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="215"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="234"/>
         <source>Dir search.</source>
         <translation>目录搜索。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="271"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="290"/>
         <source>directory</source>
         <translation>目录</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="311"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="330"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="323"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="342"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="338"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="357"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -113,54 +113,54 @@
 <context>
     <name>Zeeker::FileContengSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="379"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="578"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="398"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="597"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="380"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="579"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="399"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="598"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="381"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="400"/>
         <source>Copy Path</source>
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="390"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="409"/>
         <source>File Content Search</source>
         <translation>文本内容搜索</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="395"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="414"/>
         <source>File content search.</source>
         <translation>文本内容搜索。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="400"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="419"/>
         <source>File content search</source>
         <translation>文本内容搜索</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="445"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="464"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="553"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="572"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="565"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="584"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="580"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="599"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -168,50 +168,62 @@
 <context>
     <name>Zeeker::FileSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="10"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="147"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="11"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="158"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="148"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="12"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="159"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="12"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="13"/>
         <source>Copy Path</source>
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="21"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="31"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="22"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="32"/>
         <source>File Search</source>
         <translation>文件搜索</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="26"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="27"/>
         <source>File search.</source>
         <translation>文件搜索。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="82"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="67"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="183"/>
+        <source>Yes</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="69"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="185"/>
+        <source>Can not get a default application for opening %1.</source>
+        <translation type="unfinished">没有找到默认打开%1的应用。</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="93"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="122"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="133"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="134"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="145"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="149"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="160"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -219,7 +231,7 @@
 <context>
     <name>Zeeker::NoteSearch</name>
     <message>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="188"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="190"/>
         <source>Note Description:</source>
         <translatorcomment>便签内容：</translatorcomment>
         <translation>便签内容：</translation>
@@ -228,28 +240,28 @@
 <context>
     <name>Zeeker::NoteSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="126"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="12"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="128"/>
         <source>Open</source>
         <translatorcomment>打开</translatorcomment>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="20"/>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="30"/>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="95"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="21"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="31"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="97"/>
         <source>Note Search</source>
         <translatorcomment>便签</translatorcomment>
         <translation>便签</translation>
     </message>
     <message>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="25"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="26"/>
         <source>Note Search.</source>
         <translatorcomment>便签.</translatorcomment>
         <translation>便签.</translation>
     </message>
     <message>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="69"/>
+        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="71"/>
         <source>Application</source>
         <translatorcomment>应用</translatorcomment>
         <translation>应用</translation>
@@ -258,12 +270,12 @@
 <context>
     <name>Zeeker::SearchManager</name>
     <message>
-        <location filename="../../libsearch/index/search-manager.cpp" line="100"/>
+        <location filename="../../libsearch/index/search-manager.cpp" line="98"/>
         <source>Path:</source>
         <translation>路径：</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/search-manager.cpp" line="101"/>
+        <location filename="../../libsearch/index/search-manager.cpp" line="99"/>
         <source>Modified time:</source>
         <translation>修改时间：</translation>
     </message>

@@ -46,10 +46,11 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 
-#include "index/index-generator.h"
+#include "index-generator.h"
 #include "libsearch.h"
 #include "create-index-ask-dialog.h"
-#include "stacked-widget.h"
+#include "search-line-edit.h"
+#include "search-result-page.h"
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include "xatom-helper.h"
 #endif

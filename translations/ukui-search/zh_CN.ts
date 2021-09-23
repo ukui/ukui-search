@@ -12,7 +12,7 @@
 <context>
     <name>Zeeker::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="293"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="305"/>
         <source>Best Matches</source>
         <translation>最佳匹配</translation>
     </message>
@@ -108,30 +108,27 @@
 <context>
     <name>Zeeker::HomePage</name>
     <message>
-        <location filename="../../frontend/control/stack-pages/home-page.cpp" line="118"/>
         <source>Open Quickly</source>
-        <translation>快速入口</translation>
+        <translation type="vanished">快速入口</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/stack-pages/home-page.cpp" line="120"/>
         <source>Recently Opened</source>
-        <translation>最近</translation>
+        <translation type="vanished">最近</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/stack-pages/home-page.cpp" line="122"/>
         <source>Commonly Used</source>
-        <translation>常用</translation>
+        <translation type="vanished">常用</translation>
     </message>
 </context>
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="71"/>
+        <location filename="../../frontend/mainwindow.cpp" line="70"/>
         <source>ukui-search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="77"/>
+        <location filename="../../frontend/mainwindow.cpp" line="76"/>
         <source>Global Search</source>
         <translation>搜索</translation>
     </message>
@@ -165,14 +162,6 @@
     <message>
         <source>Install</source>
         <translation type="vanished">安装</translation>
-    </message>
-</context>
-<context>
-    <name>Zeeker::ResultArea</name>
-    <message>
-        <location filename="../../frontend/control/stack-pages/search-page-section.cpp" line="378"/>
-        <source>Web Page</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -403,6 +392,14 @@
     <message>
         <source>Loading...</source>
         <translation type="vanished">加载中...</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::WebSearchWidget</name>
+    <message>
+        <location filename="../../frontend/view/web-search-view.cpp" line="149"/>
+        <source>Web Page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

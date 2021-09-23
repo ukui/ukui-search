@@ -482,7 +482,7 @@ void MainWindow::initTimer() {
  */
 bool MainWindow::tryHideMainwindow()
 {
-    if (!m_isAskDialogVisible) {
+    if (!m_isAskDialogVisible && QApplication::activeModalWidget() == nullptr) {
         qDebug()<<"Mainwindow will be hidden";
         m_currentSearchAsked = false;
         this->hide();
