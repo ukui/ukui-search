@@ -18,37 +18,55 @@
  *
  */
 #include "config-file.h"
+#include "common.h"
 
 using namespace Zeeker;
-bool ConfigFile::writeCommonly(QString message) {
-    QSettings *m_qSettings = new QSettings(HOMEPAGE_SETTINGS, QSettings::IniFormat);
-    QStringList messagelist = message.split("/");
-    QString appname = messagelist.last();
-    if(!appname.contains("desktop"))
-        return false;
-    m_qSettings->beginGroup("Commonly");
-    QStringList quickly = m_qSettings->allKeys();
-    if(quickly.contains(message.mid(1, message.length() - 1))) {
-        m_qSettings->setValue(message, m_qSettings->value(message).toInt() + 1);
-    } else {
-        m_qSettings->setValue(message, 1);
+static ConfigFile *config_file_Class = nullptr;
+
+ConfigFile *ConfigFile::getInstance() {
+    if(!config_file_Class) {
+        config_file_Class = new ConfigFile;
     }
-    m_qSettings->endGroup();
-    if(m_qSettings)
-        delete m_qSettings;
-    return true;
+    return config_file_Class;
+}
+ConfigFile::ConfigFile() {
+    m_settings = new QSettings(HOMEPAGE_SETTINGS, QSettings::IniFormat);
+}
+
+ConfigFile::~ConfigFile() {
+    if(m_settings){
+        delete m_settings;
+    }
+}
+
+bool ConfigFile::writeCommonly(QString message) {
+    for(QString appPath: allAppPath) {
+        if(message.startsWith(appPath)) {
+            m_settings->beginGroup("Commonly");
+            QStringList quickly = m_settings->allKeys();
+            if(quickly.contains(message.mid(1, message.length() - 1))) {
+                m_settings->setValue(message, m_settings->value(message).toInt() + 1);
+            } else {
+                m_settings->setValue(message, 1);
+            }
+            m_settings->endGroup();
+            return true;
+        }
+    }
+    return false;
 }
 
 QStringList ConfigFile::readCommonly() {
-    QSettings *m_qSettings = new QSettings(HOMEPAGE_SETTINGS, QSettings::IniFormat);
     QStringList returnlist;
     QMap<QString, int> quicklycount;
-    m_qSettings->beginGroup("Commonly");
-    QStringList Commonly = m_qSettings->allKeys();
+
+    m_settings->beginGroup("Commonly");
+    QStringList Commonly = m_settings->allKeys();
     for(int i = 0; i < Commonly.size(); i++) {
-        quicklycount.insert(Commonly.at(i), m_qSettings->value(Commonly.at(i)).toInt());
+        quicklycount.insert(Commonly.at(i), m_settings->value(Commonly.at(i)).toInt());
     }
-    m_qSettings->endGroup();
+    m_settings->endGroup();
+
     QMap<QString, int>::iterator iter = quicklycount.begin();
     QVector<QPair<QString, int>> vec;
     while(iter != quicklycount.end()) {
@@ -61,43 +79,47 @@ QStringList ConfigFile::readCommonly() {
     for(int j = 0; j < vec.size(); j++) {
         returnlist.append("/" + vec.at(j).first);
     }
-    if(m_qSettings)
-        delete m_qSettings;
     return returnlist.mid(0, 5);
+}
+void ConfigFile::removeCommonly(QString path)
+{
+    m_settings->beginGroup("Commonly");
+    m_settings->remove(path);
+    m_settings->endGroup();
 }
 
 bool ConfigFile::writeRecently(QString message) {
-    QSettings *m_qSettings = new QSettings(HOMEPAGE_SETTINGS, QSettings::IniFormat);
+    m_settings->beginGroup("Recently");
+    QStringList recently = m_settings->value("Recently").toStringList();
 
-    m_qSettings->beginGroup("Recently");
-    QStringList recently = m_qSettings->value("Recently").toStringList();
-    m_qSettings->endGroup();
     if(recently.contains(message)) {
         recently.removeOne(message);
     }
     recently.insert(0, message);
 
-    m_qSettings->beginGroup("Recently");
-    if(m_qSettings->value("Recently").toStringList().length() >= 20) {
-        m_qSettings->setValue("Recently", QStringList(recently.mid(0, 20)));
+    if(m_settings->value("Recently").toStringList().length() >= 10) {
+        m_settings->setValue("Recently", QStringList(recently.mid(0, 10)));
     } else {
-        m_qSettings->setValue("Recently", recently);
+        m_settings->setValue("Recently", recently);
     }
-    m_qSettings->endGroup();
-    if(m_qSettings)
-        delete m_qSettings;
+    m_settings->endGroup();
     return true;
 }
 
 QStringList ConfigFile::readRecently() {
-    QSettings *m_qSettings = new QSettings(HOMEPAGE_SETTINGS, QSettings::IniFormat);
-
-    m_qSettings->beginGroup("Recently");
-    QStringList recently = m_qSettings->value("Recently").toStringList();
-    m_qSettings->endGroup();
-    if(m_qSettings)
-        delete m_qSettings;
+    m_settings->beginGroup("Recently");
+    QStringList recently = m_settings->value("Recently").toStringList();
+    m_settings->endGroup();
     return recently.mid(0, 4);
+}
+
+void ConfigFile::removeRecently(QString path)
+{
+    m_settings->beginGroup("Recently");
+    QStringList recentlyList = m_settings->value("Recently").toStringList();
+    recentlyList.removeAll(path);
+    m_settings->setValue("Recently",recentlyList);
+    m_settings->endGroup();
 }
 
 bool ConfigFile::writeConfig(QString message) {
@@ -107,10 +129,31 @@ bool ConfigFile::writeConfig(QString message) {
 }
 
 QMap<QString, QStringList> ConfigFile::readConfig() {
+    QStringList templist = readRecently();
+    for(QString path: templist) {
+        if(!itemExist(path)) {
+            removeConfig(path);
+        }
+    }
     QMap<QString, QStringList> returnresult;
     returnresult.insert("Commonly", readCommonly());
     returnresult.insert("Recently", readRecently());
     return returnresult;
+}
+
+void ConfigFile::removeConfig(QString path)
+{
+    removeCommonly(path);
+    removeRecently(path);
+}
+
+bool ConfigFile::itemExist(QString path)
+{
+    QFileInfo file(path);
+    if(file.exists() || path.left(1) != "/") {    //路径存在或为设置项
+        return true;
+    }
+    return false;
 }
 
 void ConfigFile::receiveMessage(QString message) {
