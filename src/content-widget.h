@@ -45,6 +45,7 @@ public:
     void setAppList(const QVector<QStringList>&);
     void appendSearchItem(const int& type, const QString& path, QStringList contents = QStringList());
     void initHomePage();
+    void reInitHomePage();
     void setContentList(const QStringList&);
     void setKeyword(QString);
     void setQuicklyOpenList(const QStringList &);

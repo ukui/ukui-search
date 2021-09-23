@@ -60,7 +60,7 @@ private:
     QStringList m_app_iconlist;
     QList<QPair<int, QString>> m_bestList;
 
-    QIcon m_bestAppIcon = QIcon::fromTheme("unknown"); //由于未安装应用与已安装应用获取图标方式不一致，故引入此变量直接存储最佳匹配应用图标
+    QIcon m_bestAppIcon = QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png")); //由于未安装应用与已安装应用获取图标方式不一致，故引入此变量直接存储最佳匹配应用图标
 
     QIcon getIcon(int);
     QString getName(int);

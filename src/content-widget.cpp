@@ -364,7 +364,7 @@ void ContentWidget::appendBestItem(const int &type, const QString &path) {
  */
 void ContentWidget::initHomePage() {
     QVector<QStringList> lists;
-    QMap<QString, QStringList> map = ConfigFile::readConfig();
+    QMap<QString, QStringList> map = ConfigFile::getInstance()->readConfig();
     QStringList commonlyList;
     commonlyList = map.value("Commonly");
     QStringList recentlyList;
@@ -406,7 +406,7 @@ void ContentWidget::initHomePage() {
             layout->setContentsMargins(0, 0, 0, 0);
             itemWidget->setLayout(layout);
             int shownItem = lists.at(i).length();
-            Q_FOREACH(QString path, lists.at(i)) {
+            for(QString path: lists.at(i)) {
                 if(i == 0 && QString::compare(FileUtils::getAppName(path), "Unknown App") == 0) {
                     shownItem --;
                     continue;
@@ -431,6 +431,12 @@ void ContentWidget::initHomePage() {
         m_homePageLyt->addWidget(listWidget);
     }
     m_homePageLyt->addStretch();
+}
+
+void ContentWidget::reInitHomePage()
+{
+    this->clearLayout(m_homePageLyt);
+    this->initHomePage();
 }
 
 /**

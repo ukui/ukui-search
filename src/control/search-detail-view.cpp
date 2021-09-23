@@ -454,7 +454,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
  * @return
  */
 bool SearchDetailView::writeConfigFile(const QString& path) {
-    if(ConfigFile::writeConfig(path)) {
+    if(ConfigFile::getInstance()->writeConfig(path)) {
         Q_EMIT this->configFileChanged();
         return true;
     }
