@@ -842,33 +842,47 @@ QString FileUtils::chineseSubString(const std::string &myStr, int start, int len
     if(start < 0 || length < 0){
         return " ";
     }
-    if (length >= myStr.length()) {
-        return QString::fromStdString(myStr);
-    }
 
-    QString sub = "";
+    QString sub = QString::fromStdString(myStr);
     QFont ft(QApplication::font().family(),QApplication::font().pointSize());
     QFontMetrics fm (ft);
 
+    if (length >= myStr.length()) {
+        afterSub = myStr.substr(start,length);    //截取;
+        if (fm.width(QString::fromStdString(afterSub)) >= 2*LABEL_MAX_WIDTH) {
+            sub = fm.elidedText(sub, Qt::ElideRight, 2*LABEL_MAX_WIDTH);    //超过两行则省略
+        } else {
+            sub = fm.elidedText(sub, Qt::ElideLeft, 2*LABEL_MAX_WIDTH);    //超过两行则省略
+        }
+        return sub;
+    }
     if (start + length <= myStr.length()) {
         afterSub = myStr.substr(start,length);    //截取
         sub = QString::fromStdString(afterSub);    //转QString
 
         if(start + length < myStr.length()){
-           sub.replace(sub.length()-3,3,"...");    //替换后三位
-        }
-        else{
-           sub.append("...");   //直接加
+           sub.replace(sub.length()-3,3,"…");    //替换后三位
+        } else{
+           sub.append("…");   //直接加
         }
         sub = fm.elidedText(sub, Qt::ElideRight, 2*LABEL_MAX_WIDTH);    //超过两行则省略
-    }
-    else {
+    } else {
         int newStart = myStr.length()-length;    //更新截取位置
+
         afterSub = myStr.substr(newStart, length);
         sub=QString::fromStdString(afterSub);
-
-        sub.replace(0,3,"...").append("...");
-        sub = fm.elidedText(sub, Qt::ElideLeft, 2*LABEL_MAX_WIDTH);
+        if (fm.width(QString::fromStdString(myStr.substr(newStart, start))) >= 2*LABEL_MAX_WIDTH) {
+            sub = fm.elidedText(sub, Qt::ElideLeft, 2*LABEL_MAX_WIDTH);
+        } else {
+            if (newStart + 3 < start) {
+                sub.replace(0,3,"…").append("…");
+            } else {
+                afterSub = myStr.substr(start, length);
+                sub = "…" + QString::fromStdString(afterSub);
+                sub.append("…");
+            }
+            sub = fm.elidedText(sub, Qt::ElideRight, 2*LABEL_MAX_WIDTH);
+        }
     }
     return sub;
 }
