@@ -435,6 +435,9 @@ void DetailArea::initUi()
     QPalette pal = palette();
 //    pal.setColor(QPalette::Base, DETAIL_BACKGROUND_COLOR);
     pal.setColor(QPalette::Window, DETAIL_BACKGROUND_COLOR);
+    QPalette scroll_bar_pal = this->verticalScrollBar()->palette();
+    scroll_bar_pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
+    this->verticalScrollBar()->setPalette(scroll_bar_pal);
     this->setPalette(pal);
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
