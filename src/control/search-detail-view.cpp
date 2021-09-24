@@ -216,7 +216,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     m_optionView->show();
 
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
-    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 274); //当字体长度超过215时显示为省略号
+    QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 200); //当字体长度超过200时显示为省略号
 //    m_nameLabel->setText(showname);
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(showname)));
     if(QString::compare(showname, m_name)) {
@@ -351,7 +351,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         setIcon(path);
         QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
         QString wholeName = FileUtils::getFileName(path);
-        QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 274);
+        QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 200);
 //        m_nameLabel->setText(name);
         m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
         if(QString::compare(name, wholeName)) {
