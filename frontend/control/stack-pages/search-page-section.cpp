@@ -78,10 +78,8 @@ void ResultArea::pressEnter()
 {
     if (false == m_is_selected) {//未选中时默认选取bestlist第一项
         int resultNum = m_bestListWidget->getResultNum();
-        if (0 == resultNum) {//搜索结果为空则选中网页搜索项
-            QModelIndex index = m_webSearchWidget->getModlIndex(0, 0);
-            m_webSearchWidget->setResultSelection(index);
-            m_selectedPluginID = m_webSearchWidget->getWidgetName();
+        if (0 == resultNum) {//无搜索结果时默认选中websearch
+            m_webSearchWidget->LaunchBrowser();//默认已选中websearch
             m_is_selected = true;
         } else {//选取bestlist第一项
             QModelIndex index = m_bestListWidget->getModlIndex(0, 0);
@@ -386,13 +384,13 @@ void ResultArea::initConnections()
     connect(this, &ResultArea::startSearch, this, [=] () {
         m_detail_open_state = false;
         m_is_selected = false;
-        if (m_selectedPluginID == m_webSearchWidget->getWidgetName()) {
-            m_webSearchWidget->clearResultSelection();
-        }
+        QModelIndex index = m_webSearchWidget->getModlIndex(0, 0);//每次启动搜索则选中web搜索，待bestlist收到结果后清空选中
+        m_webSearchWidget->setResultSelection(index);
     });
     connect(m_bestListWidget, &BestListWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
     connect(m_bestListWidget, &BestListWidget::sizeChanged, this, [=] () {
         if (!m_is_selected) {
+            m_webSearchWidget->clearResultSelection();//每次启动搜索则选中web搜索，待bestlist收到结果后清空选中
             QModelIndex index = m_bestListWidget->getModlIndex(0, 0);
             m_bestListWidget->setResultSelection(index);
             m_selectedPluginID = m_bestListWidget->getWidgetName();
