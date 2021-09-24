@@ -66,7 +66,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
-    this->setFocusProxy(this);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
     initUi();
@@ -133,6 +132,7 @@ void MainWindow::initUi() {
     m_webSearchPage = new WebSearchPage(this);
     m_mainLayout->addWidget(m_webSearchPage);
     m_webSearchPage->hide();
+    this->setFocusProxy(m_searchBarWidget);
 
 }
 
@@ -161,9 +161,10 @@ void MainWindow::bootOptionsFilter(QString opt) {
     if(opt == "-s" || opt == "--show") {
         clearSearchResult();
         centerToScreen(this);
-        this->show();
-//        this->m_searchLineEdit->focusIn();
-        this->raise();
+        if(this->isHidden()) {
+            this->show();
+        }
+        this->m_searchBarWidget->setFocus();
         this->activateWindow();
     }
 }
@@ -459,7 +460,7 @@ void MainWindow::initTimer() {
  */
 bool MainWindow::tryHideMainwindow()
 {
-//    if (!m_isAskDialogVisible) {
+    if (QApplication::activeModalWidget() == nullptr) {
         qDebug()<<"Mainwindow will be hidden";
 //        m_currentSearchAsked = false;
         this->hide();
@@ -467,11 +468,11 @@ bool MainWindow::tryHideMainwindow()
 //        m_researchTimer->stop();
         Q_EMIT m_searchResultPage->stopSearch();
         return true;
-//    } else {
+    } else {
         //有上层弹窗未关闭，不允许隐藏主界面
-//        qWarning()<<"There is a dialog onside, so that mainwindow can not be hidden.";
-//        return false;
-//    }
+        qWarning()<<"There is a dialog onside, so that mainwindow can not be hidden.";
+        return false;
+    }
 }
 
 /**
@@ -499,9 +500,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         tryHideMainwindow();
     } else if (event->key() == Qt::Key_Return or event->key() == Qt::Key_Enter) {
-        //显示最佳匹配中第一项的详情页，无搜索结果则调取网页搜索
-        qDebug() << "Press Enter";
-        m_searchResultPage->pressEnter();
+        if (!m_searchResultPage->isHidden()) {
+            //显示最佳匹配中第一项的详情页，无搜索结果则调取网页搜索
+            qDebug() << "Press Enter";
+            m_searchResultPage->pressEnter();
+        }
     } else if (event->key() == Qt::Key_Up) {
         qDebug() << "Press ↑";
         m_searchResultPage->pressUp();
@@ -519,6 +522,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::ActivationChange) {
+        qDebug() << "QEvent::ActivationChange!!!!" << "active" << (QApplication::activeWindow() == this) << "isVisble" << (this->isVisible());
         if(QApplication::activeWindow() != this) {
             tryHideMainwindow();
         }

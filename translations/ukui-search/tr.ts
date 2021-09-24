@@ -247,7 +247,7 @@
 <context>
     <name>Zeeker::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="293"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="305"/>
         <source>Best Matches</source>
         <translation type="unfinished">En İyi Eşleşen</translation>
     </message>
@@ -339,30 +339,27 @@
 <context>
     <name>Zeeker::HomePage</name>
     <message>
-        <location filename="../../frontend/control/stack-pages/home-page.cpp" line="118"/>
         <source>Open Quickly</source>
-        <translation type="unfinished">Hızlı Aç</translation>
+        <translation type="obsolete">Hızlı Aç</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/stack-pages/home-page.cpp" line="120"/>
         <source>Recently Opened</source>
-        <translation type="unfinished">Yeni Açılan</translation>
+        <translation type="obsolete">Yeni Açılan</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/stack-pages/home-page.cpp" line="122"/>
         <source>Commonly Used</source>
-        <translation type="unfinished">Genel olarak kullanılan</translation>
+        <translation type="obsolete">Genel olarak kullanılan</translation>
     </message>
 </context>
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="71"/>
+        <location filename="../../frontend/mainwindow.cpp" line="70"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="77"/>
+        <location filename="../../frontend/mainwindow.cpp" line="76"/>
         <source>Global Search</source>
         <translation type="unfinished">Genel Arama</translation>
     </message>
@@ -392,14 +389,6 @@
     <message>
         <source>Copy path</source>
         <translation type="obsolete">Yolu kopyala</translation>
-    </message>
-</context>
-<context>
-    <name>Zeeker::ResultArea</name>
-    <message>
-        <location filename="../../frontend/control/stack-pages/search-page-section.cpp" line="378"/>
-        <source>Web Page</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -622,6 +611,14 @@
     <message>
         <source>Loading...</source>
         <translation type="obsolete">Yükleniyor...</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::WebSearchWidget</name>
+    <message>
+        <location filename="../../frontend/view/web-search-view.cpp" line="149"/>
+        <source>Web Page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

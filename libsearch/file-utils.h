@@ -90,7 +90,7 @@ public:
     static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
 
-    static bool openFile(QString &path, bool openInDir = false);
+    static int openFile(QString &path, bool openInDir = false);
     static bool copyPath(QString &path);
     static QString escapeHtml(const QString & str);
     static QString chineseSubString(const std::string &myStr,int start,int length);

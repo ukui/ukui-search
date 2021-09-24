@@ -38,6 +38,9 @@ public:
     bool operator<(const NameString& name) const {
         return this->app_name.length() <= name.app_name.length();
     }
+    bool operator==(const NameString& name) const {
+        return this->app_name == name.app_name;
+    }
 };
 
 //struct NameString
@@ -64,32 +67,65 @@ private:
     explicit AppMatch(QObject *parent = nullptr);
     ~AppMatch();
     void getAllDesktopFilePath(QString path);
-    void getDesktopFilePath();
-    void getAppName(QMap<NameString, QStringList> &installed);
-//    void appNameMatch(QString appname,QString desktoppath,QString appicon);
-//    void appNameMatch(QString keyWord, QString appname, QMap<NameString, QStringList> &installed);
     void appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
     void softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn);
     void parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
-    void getInstalledAppsVersion(QString appname);
     void creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<NameString, QStringList> &iter, bool isInstalled = true);
 
     QString m_sourceText;
     size_t m_uniqueSymbol;
     DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
-    QStringList m_filePathList;
-
     QDBusInterface *m_interFace = nullptr;
     QFileSystemWatcher *m_watchAppDir = nullptr;
     QMap<NameString, QStringList> m_installAppMap;
 
+    QStringList m_ExcludedDesktopfiles = {
+        "/usr/share/applications/software-properties-livepatch.desktop",
+        "/usr/share/applications/mate-color-select.desktop",
+        "/usr/share/applications/blueman-adapters.desktop",
+        "/usr/share/applications/blueman-manager.desktop",
+        "/usr/share/applications/mate-user-guide.desktop",
+        "/usr/share/applications/nm-connection-editor.desktop",
+        "/usr/share/applications/debian-uxterm.desktop",
+        "/usr/share/applications/debian-xterm.desktop",
+        "/usr/share/applications/im-config.desktop",
+        "/usr/share/applications/fcitx.desktop",
+        "/usr/share/applications/fcitx-configtool.desktop",
+        "/usr/share/applications/onboard-settings.desktop",
+        "/usr/share/applications/info.desktop",
+        "/usr/share/applications/ukui-power-preferences.desktop",
+        "/usr/share/applications/ukui-power-statistics.desktop",
+        "/usr/share/applications/software-properties-drivers.desktop",
+        "/usr/share/applications/software-properties-gtk.desktop",
+        "/usr/share/applications/gnome-session-properties.desktop",
+        "/usr/share/applications/org.gnome.font-viewer.desktop",
+        "/usr/share/applications/xdiagnose.desktop",
+        "/usr/share/applications/gnome-language-selector.desktop",
+        "/usr/share/applications/mate-notification-properties.desktop",
+        "/usr/share/applications/transmission-gtk.desktop",
+        "/usr/share/applications/mpv.desktop",
+        "/usr/share/applications/system-config-printer.desktop",
+        "/usr/share/applications/org.gnome.DejaDup.desktop",
+        "/usr/share/applications/yelp.desktop",
+        "/usr/share/applications/peony-computer.desktop",
+        "/usr/share/applications/peony-home.desktop",
+        "/usr/share/applications/peony-trash.desktop",
+
+        //v10
+        "/usr/share/applications/mate-about.desktop",
+        "/usr/share/applications/time.desktop",
+        "/usr/share/applications/network.desktop",
+        "/usr/share/applications/shares.desktop",
+        "/usr/share/applications/mate-power-statistics.desktop",
+        "/usr/share/applications/display-im6.desktop",
+        "/usr/share/applications/display-im6.q16.desktop",
+        "/usr/share/applications/openjdk-8-policytool.desktop",
+        "/usr/share/applications/kylin-io-monitor.desktop",
+        "/usr/share/applications/wps-office-uninstall.desktop",
+    };
+
 private Q_SLOTS:
     void slotDBusCallFinished(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
-
-//Q_SIGNALS:
-
-
-
 };
 }
 
