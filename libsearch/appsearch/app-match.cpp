@@ -98,6 +98,7 @@ void AppMatch::getAllDesktopFilePath(QString path) {
         if(isDir) {
             getAllDesktopFilePath(fileInfo.filePath());
             qDebug() << fileInfo.filePath();
+            ++i;
         } else {
             QString filePathStr = fileInfo.filePath();
             if(m_ExcludedDesktopfiles.contains(filePathStr)) {
