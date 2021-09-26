@@ -2,6 +2,7 @@
 
 using namespace Zeeker;
 void UkuiSearchDbusServices::showWindow(){
+    qDebug() << "showWindow called";
     m_mainWindow->bootOptionsFilter("-s");
 }
 

@@ -22,6 +22,7 @@
 #include "file-utils.h"
 #include <QXmlStreamReader>
 #include <QMutexLocker>
+#include <gio/gdesktopappinfo.h>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -55,31 +56,24 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
     if(!G_IS_FILE_INFO(info.get()->get()))
         return QIcon::fromTheme("unknown");
     GIcon *g_icon = g_file_info_get_icon(info.get()->get());
-    QString icon_name;
+
     //do not unref the GIcon from info.
     if(G_IS_ICON(g_icon)) {
         const gchar* const* icon_names = g_themed_icon_get_names(G_THEMED_ICON(g_icon));
         if(icon_names) {
             auto p = icon_names;
-            if(*p)
-                icon_name = QString(*p);
-            if(checkValid) {
-                while(*p) {
-                    QIcon icon = QIcon::fromTheme(*p);
-                    if(!icon.isNull()) {
-                        icon_name = QString(*p);
-                        break;
-                    } else {
-                        p++;
-                    }
+            while(*p) {
+                QIcon icon = QIcon::fromTheme(*p);
+                if(!icon.isNull()) {
+                    return icon;
+                } else {
+                    p++;
                 }
             }
         }
     }
-    if(!QIcon::hasThemeIcon(icon_name)) {
-        return QIcon::fromTheme("unknown");
-    }
-    return QIcon::fromTheme(icon_name);
+    return QIcon::fromTheme("unknown");
+
 }
 
 /**
@@ -777,12 +771,53 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     return;
 }
 
-bool FileUtils::openFile(QString &path, bool openInDir)
+int FileUtils::openFile(QString &path, bool openInDir)
 {
     if(openInDir) {
-        return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+        return 0;
     } else {
-        return QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        auto file = wrapGFile(g_file_new_for_uri(QUrl::fromLocalFile(path).toString().toUtf8().constData()));
+        auto fileInfo = wrapGFileInfo(g_file_query_info(file.get()->get(),
+                                  "standard::*," "time::*," "access::*," "mountable::*," "metadata::*," "trash::*," G_FILE_ATTRIBUTE_ID_FILE,
+                                  G_FILE_QUERY_INFO_NONE,
+                                  nullptr,
+                                  nullptr));
+        QString mimeType = g_file_info_get_content_type (fileInfo.get()->get());
+        if (mimeType == nullptr) {
+            if (g_file_info_has_attribute(fileInfo.get()->get(), "standard::fast-content-type")) {
+                mimeType = g_file_info_get_attribute_string(fileInfo.get()->get(), "standard::fast-content-type");
+            }
+        }
+        GError *error = NULL;
+        GAppInfo *info  = NULL;
+        /*
+        * g_app_info_get_default_for_type function get wrong default app, so we get the
+        * default app info from mimeapps.list, and chose the right default app for mimeType file
+        */
+        QString mimeAppsListPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
+           + "/.config/mimeapps.list";
+        GKeyFile *keyfile = g_key_file_new();
+        gboolean ret = g_key_file_load_from_file(keyfile, mimeAppsListPath.toUtf8(), G_KEY_FILE_NONE, &error);
+        if (false == ret) {
+            qWarning()<<"load mimeapps list error msg"<<error->message;
+            info = g_app_info_get_default_for_type(mimeType.toUtf8().constData(), false);
+            g_error_free(error);
+        } else {
+            gchar *desktopApp = g_key_file_get_string(keyfile, "Default Applications", mimeType.toUtf8(), &error);
+            if (NULL != desktopApp) {
+                info = (GAppInfo*)g_desktop_app_info_new(desktopApp);
+                g_free (desktopApp);
+            } else {
+                info = g_app_info_get_default_for_type(mimeType.toUtf8().constData(), false);
+            }
+        }
+        g_key_file_free (keyfile);
+        if(!G_IS_APP_INFO(info)) {
+            return -1;
+        }
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        return 0;
     }
 }
 
@@ -807,33 +842,47 @@ QString FileUtils::chineseSubString(const std::string &myStr, int start, int len
     if(start < 0 || length < 0){
         return " ";
     }
-    if (length >= myStr.length()) {
-        return QString::fromStdString(myStr);
-    }
 
-    QString sub = "";
+    QString sub = QString::fromStdString(myStr);
     QFont ft(QApplication::font().family(),QApplication::font().pointSize());
     QFontMetrics fm (ft);
 
+    if (length >= myStr.length()) {
+        afterSub = myStr.substr(start,length);    //截取;
+        if (fm.width(QString::fromStdString(afterSub)) >= 2*LABEL_MAX_WIDTH) {
+            sub = fm.elidedText(sub, Qt::ElideRight, 2*LABEL_MAX_WIDTH);    //超过两行则省略
+        } else {
+            sub = fm.elidedText(sub, Qt::ElideLeft, 2*LABEL_MAX_WIDTH);    //超过两行则省略
+        }
+        return sub;
+    }
     if (start + length <= myStr.length()) {
         afterSub = myStr.substr(start,length);    //截取
         sub = QString::fromStdString(afterSub);    //转QString
 
         if(start + length < myStr.length()){
-           sub.replace(sub.length()-3,3,"...");    //替换后三位
-        }
-        else{
-           sub.append("...");   //直接加
+           sub.replace(sub.length()-3,3,"…");    //替换后三位
+        } else{
+           sub.append("…");   //直接加
         }
         sub = fm.elidedText(sub, Qt::ElideRight, 2*LABEL_MAX_WIDTH);    //超过两行则省略
-    }
-    else {
+    } else {
         int newStart = myStr.length()-length;    //更新截取位置
+
         afterSub = myStr.substr(newStart, length);
         sub=QString::fromStdString(afterSub);
-
-        sub.replace(0,3,"...").append("...");
-        sub = fm.elidedText(sub, Qt::ElideLeft, 2*LABEL_MAX_WIDTH);
+        if (fm.width(QString::fromStdString(myStr.substr(newStart, start))) >= 2*LABEL_MAX_WIDTH) {
+            sub = fm.elidedText(sub, Qt::ElideLeft, 2*LABEL_MAX_WIDTH);
+        } else {
+            if (newStart + 3 < start) {
+                sub.replace(0,3,"…").append("…");
+            } else {
+                afterSub = myStr.substr(start, length);
+                sub = "…" + QString::fromStdString(afterSub);
+                sub.append("…");
+            }
+            sub = fm.elidedText(sub, Qt::ElideRight, 2*LABEL_MAX_WIDTH);
+        }
     }
     return sub;
 }

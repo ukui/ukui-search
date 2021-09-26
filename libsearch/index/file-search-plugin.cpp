@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QMessageBox>
 using namespace Zeeker;
 
 FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
@@ -56,12 +57,22 @@ QList<SearchPluginIface::Actioninfo> FileSearchPlugin::getActioninfo(int type)
 void FileSearchPlugin::openAction(int actionkey, QString key, int type)
 {
     //TODO add some return message here.
+    qDebug() << "openAction!!!!!!!!";
     switch (actionkey) {
     case 0:
-        FileUtils::openFile(key);
+        if(FileUtils::openFile(key) == -1) {
+            QMessageBox msgBox(m_detailPage);
+            msgBox.setWindowModality(Qt::WindowModal);
+            msgBox.setStandardButtons(QMessageBox::Yes);
+            msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setText(tr("Can not get a default application for opening %1.").arg(key));
+            msgBox.exec();
+        }
         break;
     case 1:
         FileUtils::openFile(key, true);
+        break;
     case 2:
         FileUtils::copyPath(key);
     default:
@@ -76,9 +87,9 @@ QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    if(QString::compare(showname, ri.name)) {
+    //if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    }
+    //}
     m_pluginLabel->setText(tr("File"));
 
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -165,7 +176,15 @@ void FileSearchPlugin::initDetailPage()
     m_detailLyt->addStretch();
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
-        FileUtils::openFile(m_currentActionKey);
+        if(FileUtils::openFile(m_currentActionKey) == -1) {
+            QMessageBox msgBox(m_detailPage);
+            msgBox.setWindowModality(Qt::WindowModal);
+            msgBox.setStandardButtons(QMessageBox::Yes);
+            msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
+            msgBox.setIcon(QMessageBox::Information);
+            msgBox.setText(tr("Can not get a default application for opening %1.").arg(m_currentActionKey));
+            msgBox.exec();
+        }
     });
     connect(m_actionLabel2, &ActionLabel::actionTriggered, [ & ](){
         FileUtils::openFile(m_currentActionKey, true);
@@ -265,9 +284,9 @@ QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    if(QString::compare(showname, ri.name)) {
+    //if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    }
+    //}
     m_pluginLabel->setText(tr("directory"));
 
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -446,9 +465,9 @@ QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    if(QString::compare(showname, ri.name)) {
+    //if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    }
+    //}
 
     m_snippetLabel->setText(getHtmlText(wrapData(m_snippetLabel,ri.description.at(0).value), m_keyWord));
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -486,7 +505,6 @@ QString FileContengSearchPlugin::wrapData(QLabel *p_label, const QString &text)
 
     QFontMetrics fontMetrics = p_label->fontMetrics();
     int textSize = fontMetrics.width(wrapText);
-
     if(textSize > LABEL_MAX_WIDTH){
         int lastIndex = 0;
         int count = 0;
