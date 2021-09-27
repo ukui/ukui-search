@@ -151,6 +151,13 @@ void MainWindow::initConnections()
 //    });
     connect(m_searchBarWidget, &SeachBarWidget::requestSearchKeyword, this, &MainWindow::searchKeywordSlot);
     connect(this,&MainWindow::setText,m_searchBarWidget,&SeachBarWidget::setText);
+    //connect(m_searchResultPage, &SearchResultPage::setWebSearchSelection, m_webSearchPage, &WebSearchPage::setWebSearchSelection);
+    connect(this, &MainWindow::startWebSearch, m_webSearchPage, &WebSearchPage::startSearch);
+    connect(m_searchResultPage, &SearchResultPage::getResult, this, [=] () {
+        this->resizeHeight(810);
+        m_searchResultPage->show();
+        m_webSearchPage->clearResultSelection();
+    });
 }
 
 /**
@@ -282,12 +289,11 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
     } else {
 //        m_stackedWidget->setPage(int(StackedPage::SearchPage));
         QTimer::singleShot(10, this, [ = ]() {
-            //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
-//            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
-//                m_askTimer->start();
             Q_EMIT m_searchResultPage->startSearch(keyword);
-            this->resizeHeight(810);
-            m_searchResultPage->show();
+            Q_EMIT this->startWebSearch(keyword);
+            //this->resizeHeight(810);
+            this->resizeHeight(50 + 8 + m_webSearchPage->height());
+            m_searchResultPage->hide();
             m_webSearchPage->show();
         });
     }
@@ -500,19 +506,24 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         tryHideMainwindow();
     } else if (event->key() == Qt::Key_Return or event->key() == Qt::Key_Enter) {
-        if (!m_searchResultPage->isHidden()) {
+        if (!m_webSearchPage->isHidden()) {//屏蔽特殊情况
             //显示最佳匹配中第一项的详情页，无搜索结果则调取网页搜索
             qDebug() << "Press Enter";
-            m_searchResultPage->pressEnter();
+            if (m_webSearchPage->isSelected()) {
+                m_webSearchPage->LaunchBrowser();
+            } else {
+                m_searchResultPage->pressEnter();
+            }
         }
     } else if (event->key() == Qt::Key_Up) {
         qDebug() << "Press ↑";
-        m_searchResultPage->pressUp();
+        //web选中状态暂无操作
+        if (!m_webSearchPage->isSelected()) {
+            m_searchResultPage->pressUp();
+        }
     } else if (event->key() == Qt::Key_Down) {
         qDebug() << "Press ↓";
-        if (!m_searchResultPage->getSelectedState()) {
-            m_searchResultPage->pressEnter();
-        } else {
+        if (!m_webSearchPage->isSelected()) {
             m_searchResultPage->pressDown();
         }
     }

@@ -42,10 +42,12 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event);
+
 private:
     void initUi();
     void initConnections();
     void setupConnectionsForWidget(ResultWidget *);
+
     QSplitter * m_splitter = nullptr;
     QHBoxLayout * m_hlayout = nullptr;
     ResultArea * m_resultArea = nullptr;
@@ -59,6 +61,7 @@ Q_SIGNALS:
     void resizeHeight(int height);
     void resizeWidth(const int &);
     void setSelectionInfo(QString &);
+    void getResult();
 };
 }
 

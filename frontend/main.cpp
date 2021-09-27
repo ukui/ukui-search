@@ -263,7 +263,7 @@ int main(int argc, char *argv[]) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
     }
 
-    PluginManager::getInstance();
+    //PluginManager::getInstance();
     //set main window to the center of screen
     MainWindow *w = new MainWindow;
     UkuiSearchDbusServices dbusService(w);

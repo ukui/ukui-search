@@ -75,7 +75,7 @@ void WebSearchModel::startSearch(const QString &keyword)
     m_item->m_result_info_list.clear();
     SearchPluginIface::ResultInfo info;
     info.icon =  QIcon(":/res/icons/edit-find-symbolic.svg");
-    info.name = keyword;
+    info.name = "使用百度搜索“" + keyword + "”";
     m_item->m_result_info_list.append(info);
     this->endResetModel();
 }

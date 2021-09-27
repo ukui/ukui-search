@@ -49,6 +49,7 @@ public:
     QModelIndex getModlIndex(int row, int column);
     void setResultSelection(const QModelIndex &index);
     void LaunchBrowser();
+    bool isSelected();
 
 private:
     void initUi();
@@ -57,7 +58,7 @@ private:
     bool m_enabled = true;
     QVBoxLayout * m_mainLyt = nullptr;
     QHBoxLayout * m_resultLyt = nullptr;
-    TitleLabel * m_titleLabel = nullptr;
+    //TitleLabel * m_titleLabel = nullptr;
     WebSearchView * m_webSearchView = nullptr;
     QLabel * m_queryIcon = nullptr;
 

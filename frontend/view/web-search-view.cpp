@@ -41,7 +41,8 @@ WebSearchView::WebSearchView(QWidget *parent) : QTreeView(parent)
 
 bool WebSearchView::isSelected()
 {
-    return m_is_selected;
+    //return m_is_selected;
+    return this->currentIndex().isValid();
 }
 
 int WebSearchView::showHeight()
@@ -61,6 +62,8 @@ void WebSearchView::clearSelectedRow()
         //this->clearSelection();
         this->setCurrentIndex(QModelIndex());
         this->blockSignals(false);
+    } else {
+        m_is_selected = false;
     }
 }
 
@@ -82,19 +85,19 @@ void WebSearchView::mouseReleaseEvent(QMouseEvent *event)
 
 void WebSearchView::LaunchBrowser()
 {
-    QString address;
-    QString engine = GlobalSettings::getInstance()->getValue("web_engine").toString();
-    if(!engine.isEmpty()) {
-        if(engine == "360") {
-            address = "https://so.com/s?q=" + m_keyWord; //360
-        } else if(engine == "sougou") {
-            address = "https://www.sogou.com/web?query=" + m_keyWord; //搜狗
-        } else {
-            address = "http://baidu.com/s?word=" + m_keyWord; //百度
-        }
-    } else { //默认值
-        address = "http://baidu.com/s?word=" + m_keyWord ; //百度
-    }
+    QString address = "http://baidu.com/s?word=" + m_keyWord; //百度;
+//    QString engine = GlobalSettings::getInstance()->getValue("web_engine").toString();
+//    if(!engine.isEmpty()) {
+//        if(engine == "360") {
+//            address = "https://so.com/s?q=" + m_keyWord; //360
+//        } else if(engine == "sougou") {
+//            address = "https://www.sogou.com/web?query=" + m_keyWord; //搜狗
+//        } else {
+//            address = "http://baidu.com/s?word=" + m_keyWord; //百度
+//        }
+//    } else { //默认值
+//        address = "http://baidu.com/s?word=" + m_keyWord ; //百度
+//    }
     QDesktopServices::openUrl(address);
 }
 
@@ -111,7 +114,7 @@ WebSearchWidget::WebSearchWidget(QWidget *parent) : QWidget(parent)
 
 QString WebSearchWidget::getWidgetName()
 {
-    return m_titleLabel->text();
+    return "Web Page";//m_titleLabel->text();
 }
 
 void WebSearchWidget::setEnabled(const bool &enabled)
@@ -139,6 +142,11 @@ void WebSearchWidget::LaunchBrowser()
     this->m_webSearchView->LaunchBrowser();
 }
 
+bool WebSearchWidget::isSelected()
+{
+    this->m_webSearchView->isSelected();
+}
+
 void WebSearchWidget::initUi()
 {
     m_mainLyt = new QVBoxLayout(this);
@@ -146,13 +154,13 @@ void WebSearchWidget::initUi()
     m_mainLyt->setContentsMargins(MAIN_MARGINS);
     m_mainLyt->setSpacing(MAIN_SPACING);
 
-    m_titleLabel = new TitleLabel(this);
-    m_titleLabel->setText(tr("Web Page"));
-    m_titleLabel->setFixedHeight(TITLE_HEIGHT);
+//    m_titleLabel = new TitleLabel(this);
+//    m_titleLabel->setText(tr("Web Page"));
+//    m_titleLabel->setFixedHeight(TITLE_HEIGHT);
 
     m_webSearchView = new WebSearchView(this);
 
-    m_mainLyt->addWidget(m_titleLabel);
+//    m_mainLyt->addWidget(m_titleLabel);
     m_mainLyt->addWidget(m_webSearchView);
     this->setFixedHeight(m_webSearchView->height() + TITLE_HEIGHT);
     this->setFixedWidth(656);
