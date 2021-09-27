@@ -132,7 +132,8 @@ void SearchResultPage::initConnections()
     connect(m_resultArea, &ResultArea::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(m_resultArea, &ResultArea::currentRowChanged, this, &SearchResultPage::currentRowChanged);
     connect(this, &SearchResultPage::currentRowChanged, m_resultArea, &ResultArea::clearSelectedRow);
-    connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::resizeHeight);
+    //connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::resizeHeight);
+    connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::getResult);
     connect(this, &SearchResultPage::resizeWidth, m_resultArea, &ResultArea::resizeWidth);
     connect(m_resultArea, &ResultArea::rowClicked, this, [=] () {
         sendResizeWidthSignal(266);

@@ -74,17 +74,136 @@ void ResultArea::setVisibleList(const QStringList &list)
 
 void ResultArea::pressEnter()
 {
+    //默认选中首项，因此直接open action即可
+    //先判断详情页是否打开
+    if (m_detail_open_state) {
+        for (ResultWidget * i : m_widget_list) {
+            if (m_selectedPluginID == i->pluginId()) {
+                i->activateIndex();
+                break;
+            }
+        }
+    } else {//打开详情页
+        m_detail_open_state = true;
+        sendKeyPressSignal(m_selectedPluginID);
+    }
 
 }
 
 void ResultArea::pressDown()
 {
+    for (ResultWidget * plugin : m_widget_list) {
+       if (m_selectedPluginID == plugin->pluginId()) {
+           QModelIndex index = plugin->getCurrentSelection();
+           int maxNum = plugin->getExpandState() ?
+                       plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
+                                                               plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
+           if (index.row() < maxNum - 1 and index.row() >= 0) {
+               int row = index.row();
+               QModelIndex setIndex = plugin->getModlIndex(++row, 0);
+               plugin->setResultSelection(setIndex);
+               sendKeyPressSignal(m_selectedPluginID);
+           } else if (index.row() >= maxNum - 1 or index.row() < 0) {//跳转下一个widget
+               ResultWidget * pluginTmp = plugin;
+               int indexNum = m_widget_list.indexOf(plugin);
+               if (indexNum == (m_widget_list.size() - 1)) {
+                   return;//最后一项暂不处理
+               }
+               bool findNextWidget = false;
+               plugin->clearResultSelection();
+
+               while (++indexNum < m_widget_list.size()) {
+                   plugin = m_widget_list[indexNum];
+                   if (plugin->getResultNum() != 0) {
+                       QModelIndex resultIndex = plugin->getModlIndex(0, 0);
+                       plugin->setResultSelection(resultIndex);
+                       m_selectedPluginID = plugin->pluginId();
+                       findNextWidget = true;
+                       sendKeyPressSignal(m_selectedPluginID);
+                       break;
+                   }
+               }
+               if (findNextWidget){
+                   break;
+               } else {
+                   pluginTmp->setResultSelection(index);
+               }
+           } else {
+               qWarning() << "QModelIndex error ! row:" << index.row() << "maxNum:" << maxNum;
+           }
+       }
+    }
 
 }
 
 void ResultArea::pressUp()
 {
+    if (!m_is_selected) {//无选中状态下选中最后一项结果
+        for (int i = 0; i < m_widget_list.size(); i++) {
+            ResultWidget * plugin = m_widget_list[m_widget_list.size() - (i + 1)];
+            bool findNextWidget = false;
+            if (0 != plugin->getResultNum()) {
+                int maxNum = plugin->getExpandState() ?
+                            plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
+                                                                    plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
+                QModelIndex resultIndex = plugin->getModlIndex(maxNum - 1, 0);
+                plugin->setResultSelection(resultIndex);
+                m_selectedPluginID = plugin->pluginId();
+                findNextWidget = true;
+                sendKeyPressSignal(m_selectedPluginID);
+            }
+            if (findNextWidget) {
+                break;
+            }
+        }
+    } else {
+        for (ResultWidget * plugin : m_widget_list) {
+            if (m_selectedPluginID == plugin->pluginId()) {
+                int indexMaxNum = plugin->getExpandState() ?
+                            plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
+                                                                    plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
+                QModelIndex index = plugin->getCurrentSelection();
+                if (index.row() > 0 and index.row() < indexMaxNum) {
+                    int row = index.row();
+                    QModelIndex setIndex = plugin->getModlIndex(--row, 0);
+                    plugin->setResultSelection(setIndex);
+                    sendKeyPressSignal(m_selectedPluginID);
+                } else if (index.row() == 0) {//跳转下一个widget
+                    ResultWidget * pluginTmp = plugin;
+                    int indexNum = m_widget_list.indexOf(plugin);
+                    if (indexNum == 0) {
+                        return;
+                    }
+                    bool findNextWidget = false;
+                    plugin->clearResultSelection();
 
+                    while (--indexNum >= 0) {
+                        plugin = m_widget_list[indexNum];
+                        if (plugin->getResultNum() != 0) {
+                            int maxNum = plugin->getExpandState() ?
+                                        plugin->getResultNum() : (plugin->getResultNum() < NUM_LIMIT_SHOWN_DEFAULT ?
+                                                                                plugin->getResultNum() : NUM_LIMIT_SHOWN_DEFAULT);
+                            QModelIndex resultIndex = plugin->getModlIndex(maxNum - 1, 0);
+                            plugin->setResultSelection(resultIndex);
+                            m_selectedPluginID = plugin->pluginId();
+                            findNextWidget = true;
+                            sendKeyPressSignal(m_selectedPluginID);
+                            break;
+                        }
+                    }
+                    if (findNextWidget){
+                        break;
+                    } else {
+                        pluginTmp->setResultSelection(index);
+                    }
+                } else {//选中展开后的结果并收回后再按↑则选中收回后的最后一项
+                    QModelIndex setIndex = plugin->getModlIndex(indexMaxNum - 1, 0);
+                    plugin->setResultSelection(setIndex);
+                    sendKeyPressSignal(m_selectedPluginID);
+                }
+            }
+        }
+    }
 }
 
 bool ResultArea::getSelectedState()
@@ -94,41 +213,41 @@ bool ResultArea::getSelectedState()
 
 void ResultArea::sendKeyPressSignal(QString &pluginID)
 {
-//    int height(0);
-//    int resultHeight = m_bestListWidget->getResultHeight();
-//    if (pluginID == m_bestListWidget->getWidgetName()) {
-//        QModelIndex index = m_bestListWidget->getCurrentSelection();
-//        height = index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
-//        height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
-//        this->ensureVisible(0, height, 0, 0);
-//        if (m_detail_open_state) {
-//            Q_EMIT this->keyPressChanged(m_bestListWidget->getPluginInfo(index), m_bestListWidget->getIndexResultInfo(index));
-//        }
-//    } else {
-//        height += m_bestListWidget->height();
-//        for (ResultWidget *plugin : m_widget_list) {
-//            if (pluginID == plugin->pluginId()) {
-//                QModelIndex index = plugin->getCurrentSelection();
-//                height += index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
-//                int moreHeight = index.row() == 0 ? (TITLE_HEIGHT + resultHeight * 2) : (resultHeight * 2);
-//                this->ensureVisible(0, height + moreHeight, 0, 0);
-//                height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
-//                this->ensureVisible(0, height, 0, 0);
-//                if (m_detail_open_state) {
-//                    Q_EMIT this->keyPressChanged(m_selectedPluginID, plugin->getIndexResultInfo(index));
-//                }
-//                break;
-//            } else {
-//                height += plugin->height();
-//            }
-//        }
-//    }
+    int height(0);
+    for (ResultWidget *plugin : m_widget_list) {
+        if (pluginID == plugin->pluginId()) {
+            QModelIndex index = plugin->getCurrentSelection();
+            int resultHeight = plugin->getResultHeight();
+            height += index.row() == 0 ? 0 : index.row() * resultHeight + TITLE_HEIGHT;
+            int moreHeight = index.row() == 0 ? (TITLE_HEIGHT + resultHeight * 2) : (resultHeight * 2);
+            this->ensureVisible(0, height + moreHeight, 0, 0);
+            height = (height - resultHeight) < 0 ? 0 : height - resultHeight;
+            this->ensureVisible(0, height, 0, 0);
+            if (m_detail_open_state) {
+                Q_EMIT this->keyPressChanged(m_selectedPluginID, plugin->getIndexResultInfo(index));
+            }
+            break;
+        } else {
+            height += plugin->height();
+        }
+    }
+
 }
 
 void ResultArea::onWidgetSizeChanged()
 {
     int whole_height = 0;
+    bool tmp = false;
     Q_FOREACH (ResultWidget *widget, m_widget_list) {
+        if (tmp == true) {
+            widget->clearResultSelection();
+        }
+        if (!tmp and widget->height() != 0) {
+            tmp = true;
+            widget->setResultSelection(widget->getModlIndex(0, 0));
+            m_is_selected = true;
+            m_selectedPluginID = widget->pluginId();
+        }
         whole_height += widget->height();
     }
 
@@ -171,7 +290,10 @@ void ResultArea::initUi()
 
 void ResultArea::initConnections()
 {
-
+    connect(this, &ResultArea::startSearch, this, [=] () {
+        m_detail_open_state = false;
+        m_is_selected = false;
+    });
 }
 
 void ResultArea::setupConnectionsForWidget(ResultWidget *widget)

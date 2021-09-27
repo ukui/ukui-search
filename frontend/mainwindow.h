@@ -90,6 +90,7 @@ Q_SIGNALS:
     void searchMethodChanged(FileUtils::SearchMethod);
     void webEngineChanged();
     void setText(QString keyword);
+    void startWebSearch(const QString &);
 
 public Q_SLOTS:
     /**

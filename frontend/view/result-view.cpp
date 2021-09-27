@@ -71,6 +71,11 @@ SearchPluginIface::ResultInfo ResultWidget::getIndexResultInfo(QModelIndex &inde
     return m_resultView->getIndexResultInfo(index);
 }
 
+int ResultWidget::getResultHeight()
+{
+    return this->m_resultView->getResultHeight();
+}
+
 /**
  * @brief ResultWidget::expandListSlot 展开列表的槽函数
  */
@@ -192,6 +197,11 @@ QModelIndex ResultView::getModlIndex(int row, int column)
 SearchPluginIface::ResultInfo ResultView::getIndexResultInfo(QModelIndex &index)
 {
     return this->m_model->getInfo(index);
+}
+
+int ResultView::getResultHeight()
+{
+    return this->rowHeight(this->model()->index(0, 0, QModelIndex()));
 }
 
 void ResultView::clearSelectedRow()
