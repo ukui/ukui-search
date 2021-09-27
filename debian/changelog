@@ -1,3 +1,11 @@
+ukui-search (0.5.1+0926) v101; urgency=medium
+
+  * Bug 78787
+  * 任务号:无
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sun, 26 Sep 2021 13:37:10 +0800
+
 ukui-search (0.5.0+0913) v101; urgency=medium
 
   * Bug 68857

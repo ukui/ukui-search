@@ -126,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
                 XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
 #endif
+                this->reInitHomePage();
                 this->show();
                 this->m_searchLayout->focusIn(); //打开主界面时输入框夺焦，可直接输入
                 this->raise();
@@ -331,6 +332,7 @@ void MainWindow::bootOptionsFilter(QString opt) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         XAtomHelper::getInstance()->setWindowMotifHint(winId(), m_hints);
 #endif
+        this->reInitHomePage();
         this->show();
         this->m_searchLayout->focusIn();
         this->raise();
@@ -483,6 +485,11 @@ void MainWindow::centerToScreen(QWidget* widget) {
 //        desk_y = height;
 //    }
     widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
+}
+
+void MainWindow::reInitHomePage()
+{
+    m_contentFrame->reInitHomePage();
 }
 
 void MainWindow::initGsettings() {
