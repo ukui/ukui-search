@@ -42,6 +42,7 @@ using namespace Zeeker;
 ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 {
     qRegisterMetaType<SearchPluginIface::ResultInfo>("SearchPluginIface::ResultInfo");
+    this->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     initUi();
     initConnections();
 }
@@ -345,6 +346,55 @@ void ResultArea::setSelectionInfo(QString &pluginID)
     if (m_selectedPluginID != m_webSearchWidget->getWidgetName()) {
         m_webSearchWidget->clearResultSelection();
     }
+}
+
+void ResultArea::mousePressEvent(QMouseEvent *event)
+{
+//    qDebug() << "mouse pressed"  << event->source() << event->button();
+//    m_pressPoint = event->pos();
+    return QScrollArea::mousePressEvent(event);
+}
+
+void ResultArea::mouseMoveEvent(QMouseEvent *event)
+{
+//    if(m_pressPoint.isNull()) {
+//        return QScrollArea::mouseMoveEvent(event);
+//    }
+//    int delta = ((event->pos().y() - m_pressPoint.y()) / this->widget()->height()) * verticalScrollBar()->maximum();
+//    this->verticalScrollBar()->setValue(verticalScrollBar()->value() + delta);
+//    event->accept();
+    return QScrollArea::mouseMoveEvent(event);
+}
+
+void ResultArea::mouseReleaseEvent(QMouseEvent *event)
+{
+    return QScrollArea::mouseReleaseEvent(event);
+}
+
+bool ResultArea::viewportEvent(QEvent *event)
+{
+    if(event->type() == QEvent::TouchBegin) {
+        QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+        if(e->touchPoints().size() == 1) {
+            m_pressPoint = m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint());
+            event->accept();
+            return true;
+        }
+    } else if (event->type() == QEvent::TouchUpdate) {
+        QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+//        qDebug() << "touchpoint===========" << e->touchPoints().size();
+        if(e->touchPoints().size() == 1) {
+            int delta = m_pressPoint.y() - m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint()).y();
+//            qDebug() << "last pos:" << m_pressPoint.y();
+//            qDebug() << "new pos:" << m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint()).y();
+//            qDebug() << "delta" << delta;
+//            qDebug() << "height" << m_widget->height() << "--" << verticalScrollBar()->maximum();
+            this->verticalScrollBar()->setValue(verticalScrollBar()->value() + delta);
+            m_pressPoint = m_widget->mapFrom(this,e->touchPoints().at(0).pos().toPoint());
+            return true;
+        }
+    }
+    return QScrollArea::viewportEvent(event);
 }
 
 void ResultArea::initUi()

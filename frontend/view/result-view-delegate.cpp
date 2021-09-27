@@ -29,6 +29,7 @@ void ResultViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
     style->drawControl(QStyle::CE_ItemViewItem, &optionV4, painter); //绘制非文本区域内容
     if(index.model()->data(index, Qt::DisplayRole).toString().isEmpty()) return;
 
+    //fix me: for files which name begin with some ' ' , space will be hide...
     QTextDocument doc;
     doc.setHtml(getHtmlText(painter, option, index)); //提取富文本
     QAbstractTextDocumentLayout::PaintContext ctx;
