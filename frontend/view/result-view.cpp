@@ -283,6 +283,7 @@ void ResultView::onMenuTriggered(QAction *action)
 
 void ResultView::mousePressEvent(QMouseEvent *event)
 {
+//    qDebug() << "source" << event->source();
     m_tmpCurrentIndex = this->currentIndex();
     m_tmpMousePressIndex = indexAt(event->pos());
     if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
@@ -294,22 +295,22 @@ void ResultView::mousePressEvent(QMouseEvent *event)
 
 void ResultView::mouseReleaseEvent(QMouseEvent *event)
 {
-    QModelIndex index = indexAt(event->pos());
-    if (index.isValid()) {
-        Q_EMIT this->clicked(index);
-    } else {
-        Q_EMIT this->clicked(this->currentIndex());
-    }
+//    QModelIndex index = indexAt(event->pos());
+//    if (index.isValid()) {
+//        Q_EMIT this->clicked(index);
+//    } else {
+//        Q_EMIT this->clicked(this->currentIndex());
+//    }
     return QTreeView::mouseReleaseEvent(event);
 }
 
 void ResultView::mouseMoveEvent(QMouseEvent *event)
 {
-   m_tmpCurrentIndex = this->currentIndex();
-   m_tmpMousePressIndex = indexAt(event->pos());
-   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
-       Q_EMIT this->clicked(m_tmpMousePressIndex);
-   }
+//   m_tmpCurrentIndex = this->currentIndex();
+//   m_tmpMousePressIndex = indexAt(event->pos());
+//   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex and event->source() != Qt::MouseEventSynthesizedByQt) {
+//       Q_EMIT this->clicked(m_tmpMousePressIndex);
+//   }
     return QTreeView::mouseMoveEvent(event);
 }
 

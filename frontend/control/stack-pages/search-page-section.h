@@ -50,6 +50,12 @@ public:
 public Q_SLOTS:
     void onWidgetSizeChanged();
     void setSelectionInfo(QString &pluginID);
+protected:
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    bool viewportEvent(QEvent *event);
+
 
 private:
     void initUi();
@@ -65,6 +71,7 @@ private:
     bool m_detail_open_state = false;
     bool m_is_selected = false;
     QString m_selectedPluginID;
+    QPoint m_pressPoint;
 
 Q_SIGNALS:
     void startSearch(const QString &);
