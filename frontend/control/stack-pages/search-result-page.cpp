@@ -123,7 +123,7 @@ void SearchResultPage::initConnections()
     connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::startSearch, this, [=] () {
-        sendResizeWidthSignal(720);
+        sendResizeWidthSignal(684);
     });
     connect(m_resultArea, &ResultArea::keyPressChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(m_resultArea, &ResultArea::keyPressChanged, this, [=] () {

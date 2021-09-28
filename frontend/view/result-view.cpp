@@ -35,14 +35,11 @@ int ResultWidget::getResultNum()
 
 void ResultWidget::setResultSelection(const QModelIndex &index)
 {
-    //this->m_resultView->selectionModel()->clearSelection();
-    //this->m_resultView->setCurrentIndex(QModelIndex());
     this->m_resultView->setCurrentIndex(index);
 }
 
 void ResultWidget::clearResultSelection()
 {
-    //this->m_resultView->selectionModel()->clearSelection();
     this->m_resultView->setCurrentIndex(QModelIndex());
 }
 
@@ -208,7 +205,7 @@ void ResultView::clearSelectedRow()
 {
     if (!m_is_selected) {
         this->blockSignals(true);
-        //this->clearSelection();
+        //this->();
         this->setCurrentIndex(QModelIndex());
         this->blockSignals(false);
     } else {
