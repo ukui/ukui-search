@@ -121,38 +121,36 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                 searchResult->enqueue(resultInfo);
                 continue;
             }
-            if (ql.language() == QLocale::Chinese) {
-                pinyinlist = FileUtils::findMultiToneWords(str);
-                for (int i = 0; i < pinyinlist.size() / 2; i++) {
-                    str = regmatch.at(t);
-                    QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
-                    if (shouzimu.contains(keyword, Qt::CaseInsensitive)) {
-                        resultInfo.name = str;
-                        if (resultName.contains(resultInfo.name)) {
-                            continue;
-                        }
-                        resultName.append(resultInfo.name);
-                        str = key + "/" + str;
-                        resultInfo.icon = FileUtils::getSettingIcon(str, true);
-                        resultInfo.actionKey = str;
-                        searchResult->enqueue(resultInfo);
-                        break;
+            pinyinlist = FileUtils::findMultiToneWords(str);
+            for (int i = 0; i < pinyinlist.size() / 2; i++) {
+                str = regmatch.at(t);
+                QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
+                if (shouzimu.contains(keyword, Qt::CaseInsensitive)) {
+                    resultInfo.name = ql.language() == QLocale::Chinese ? str : m_englishSearchList[key].at(t);
+                    if (resultName.contains(resultInfo.name)) {
+                        continue;
                     }
-                    if (keyword.size() < 2)
-                        break;
-                    QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
-                    if (pinyin.contains(keyword, Qt::CaseInsensitive)) {
-                        resultInfo.name = str;
-                        if (resultName.contains(resultInfo.name)) {
-                            continue;
-                        }
-                        resultName.append(resultInfo.name);
-                        str = key + "/" + str;
-                        resultInfo.icon = FileUtils::getSettingIcon(str, true);
-                        resultInfo.actionKey = str;
-                        searchResult->enqueue(resultInfo);
-                        break;
+                    resultName.append(resultInfo.name);
+                    str = key + "/" + str;
+                    resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                    resultInfo.actionKey = str;
+                    searchResult->enqueue(resultInfo);
+                    break;
+                }
+                if (keyword.size() < 2)
+                    break;
+                QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
+                if (pinyin.contains(keyword, Qt::CaseInsensitive)) {
+                    resultInfo.name = ql.language() == QLocale::Chinese ? str : m_englishSearchList[key].at(t);
+                    if (resultName.contains(resultInfo.name)) {
+                        continue;
                     }
+                    resultName.append(resultInfo.name);
+                    str = key + "/" + str;
+                    resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                    resultInfo.actionKey = str;
+                    searchResult->enqueue(resultInfo);
+                    break;
                 }
             }
         }
@@ -181,6 +179,49 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
         for (auto t = regmatch.begin(); t != regmatch.end(); ++t) {
             QString englishStr = t.value();
             QString chineseStr = t.key();
+            QStringList pinyinlist = FileUtils::findMultiToneWords(chineseStr);
+            for (int i = 0; i < pinyinlist.size() / 2; i++) {
+                QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
+                if (shouzimu.contains(keyword, Qt::CaseInsensitive)) {
+                    resultInfo.name = ql.language() == QLocale::Chinese ? chineseStr : englishStr;
+                    if (resultName.contains(resultInfo.name)) {
+                        continue;
+                    }
+                    resultName.append(resultInfo.name);
+                    if(ql.language() == QLocale::English) {
+                        englishStr = key + "/" + englishStr;
+                        resultInfo.icon = FileUtils::getSettingIcon(englishStr, true);
+                        resultInfo.actionKey = englishStr;
+                    } else if (ql.language() == QLocale::Chinese) {
+                        chineseStr = key + "/" + chineseStr;
+                        resultInfo.icon = FileUtils::getSettingIcon(chineseStr, true);
+                        resultInfo.actionKey = chineseStr;
+                    }
+                    searchResult->enqueue(resultInfo);
+                    break;
+                }
+                if (keyword.size() < 2)
+                    break;
+                QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
+                if (pinyin.contains(keyword, Qt::CaseInsensitive)) {
+                    resultInfo.name = ql.language() == QLocale::Chinese ? chineseStr : englishStr;
+                    if (resultName.contains(resultInfo.name)) {
+                        continue;
+                    }
+                    resultName.append(resultInfo.name);
+                    if(ql.language() == QLocale::English) {
+                        englishStr = key + "/" + englishStr;
+                        resultInfo.icon = FileUtils::getSettingIcon(englishStr, true);
+                        resultInfo.actionKey = englishStr;
+                    } else if (ql.language() == QLocale::Chinese) {
+                        chineseStr = key + "/" + chineseStr;
+                        resultInfo.icon = FileUtils::getSettingIcon(chineseStr, true);
+                        resultInfo.actionKey = chineseStr;
+                    }
+                    searchResult->enqueue(resultInfo);
+                    break;
+                }
+            }
             if (chineseStr.contains(keyword, Qt::CaseInsensitive)) {
                 resultInfo.name = ql.language() == QLocale::Chinese ? chineseStr : englishStr;
                 if (resultName.contains(resultInfo.name)) {
