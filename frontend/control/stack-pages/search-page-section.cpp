@@ -42,6 +42,7 @@ using namespace Zeeker;
 ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 {
     qRegisterMetaType<SearchPluginIface::ResultInfo>("SearchPluginIface::ResultInfo");
+    this->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     initUi();
     initConnections();
 }
@@ -263,19 +264,70 @@ void ResultArea::setSelectionInfo(QString &pluginID)
     m_selectedPluginID = pluginID;
 }
 
+void ResultArea::mousePressEvent(QMouseEvent *event)
+{
+//    qDebug() << "mouse pressed"  << event->source() << event->button();
+//    m_pressPoint = event->pos();
+    return QScrollArea::mousePressEvent(event);
+}
+
+void ResultArea::mouseMoveEvent(QMouseEvent *event)
+{
+//    if(m_pressPoint.isNull()) {
+//        return QScrollArea::mouseMoveEvent(event);
+//    }
+//    int delta = ((event->pos().y() - m_pressPoint.y()) / this->widget()->height()) * verticalScrollBar()->maximum();
+//    this->verticalScrollBar()->setValue(verticalScrollBar()->value() + delta);
+//    event->accept();
+    return QScrollArea::mouseMoveEvent(event);
+}
+
+void ResultArea::mouseReleaseEvent(QMouseEvent *event)
+{
+    return QScrollArea::mouseReleaseEvent(event);
+}
+
+bool ResultArea::viewportEvent(QEvent *event)
+{
+    if(event->type() == QEvent::TouchBegin) {
+        QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+//        qDebug() << "TouchBegin==" << e->touchPoints().size();
+        if(e->touchPoints().size() == 1) {
+            m_pressPoint = m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint());
+            event->accept();
+            return true;
+        }
+    } else if (event->type() == QEvent::TouchUpdate) {
+        QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+//        qDebug() << "touchupdate==touchpoint===========" << e->touchPoints().size();
+        if(e->touchPoints().size() == 1) {
+            int delta = m_pressPoint.y() - m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint()).y();
+//            qDebug() << "last pos:" << m_pressPoint.y();
+//            qDebug() << "new pos:" << m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint()).y();
+//            qDebug() << "delta" << delta;
+//            qDebug() << "value" << verticalScrollBar()->value() << "--" << verticalScrollBar()->value() + delta;
+            this->verticalScrollBar()->setValue(verticalScrollBar()->value() + delta);
+            m_pressPoint = m_widget->mapFrom(this,e->touchPoints().at(0).pos().toPoint());
+            return true;
+        }
+    }
+    return QScrollArea::viewportEvent(event);
+}
+
 void ResultArea::initUi()
 {
 //    this->verticalScrollBar()->setProperty("drawScrollBarGroove", false);
-//    QPalette pal = palette();
+    QPalette pal = palette();
 //    QPalette scroll_bar_pal = this->verticalScrollBar()->palette();
-//    pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
-//    pal.setColor(QPalette::Window, RESULT_BACKGROUND_COLOR);
+    pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
+    pal.setColor(QPalette::Window, RESULT_BACKGROUND_COLOR);
 //    scroll_bar_pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
 //    this->verticalScrollBar()->setPalette(scroll_bar_pal);
+//    this->setAttribute(Qt::WA_TranslucentBackground);
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-//    this->setPalette(pal);
+    this->setPalette(pal);
     this->setWidgetResizable(true);
     this->setFrameShape(QFrame::Shape::NoFrame);
     m_widget = new QWidget(this);

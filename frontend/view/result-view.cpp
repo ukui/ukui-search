@@ -152,6 +152,7 @@ void ResultWidget::initConnections()
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
 {
     this->setFrameShape(QFrame::NoFrame);
+    this->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
 //    this->viewport()->setAutoFillBackground(false);
     this->setRootIsDecorated(false);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -164,6 +165,9 @@ ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(pa
     m_plugin_id = plugin_id;
     m_style_delegate = new ResultViewDelegate(this);
     this->setItemDelegate(m_style_delegate);
+//    m_touchTimer = new QTimer(this);
+//    m_touchTimer->setSingleShot(true);
+//    m_touchTimer->setInterval(100);
 }
 
 bool ResultView::isSelected()
@@ -293,6 +297,7 @@ void ResultView::onMenuTriggered(QAction *action)
 
 void ResultView::mousePressEvent(QMouseEvent *event)
 {
+    qDebug() << "result view press event source" << event->source();
     m_tmpCurrentIndex = this->currentIndex();
     m_tmpMousePressIndex = indexAt(event->pos());
     if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
@@ -304,23 +309,66 @@ void ResultView::mousePressEvent(QMouseEvent *event)
 
 void ResultView::mouseReleaseEvent(QMouseEvent *event)
 {
-    QModelIndex index = indexAt(event->pos());
-    if (index.isValid()) {
-        Q_EMIT this->clicked(index);
-    } else {
-        Q_EMIT this->clicked(this->currentIndex());
-    }
+//    QModelIndex index = indexAt(event->pos());
+//    if (index.isValid()) {
+//        Q_EMIT this->clicked(index);
+//    } else {
+//        Q_EMIT this->clicked(this->currentIndex());
+//    }
     return QTreeView::mouseReleaseEvent(event);
 }
 
 void ResultView::mouseMoveEvent(QMouseEvent *event)
 {
-   m_tmpCurrentIndex = this->currentIndex();
-   m_tmpMousePressIndex = indexAt(event->pos());
-   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
-       Q_EMIT this->clicked(m_tmpMousePressIndex);
-   }
+//   m_tmpCurrentIndex = this->currentIndex();
+//   m_tmpMousePressIndex = indexAt(event->pos());
+//   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex and event->source() != Qt::MouseEventSynthesizedByQt) {
+//       Q_EMIT this->clicked(m_tmpMousePressIndex);
+//   }
     return QTreeView::mouseMoveEvent(event);
+}
+
+bool ResultView::viewportEvent(QEvent *event)
+{
+    //fix me: sometimes I can revice touchbegin and touchupdate events, but no touchend event.Why?
+     if(event->type() == QEvent::TouchBegin) {
+         qDebug() << "TouchBegin==============1";
+         //fix me:I want to tell the difference between clicking and swiping to excute 'select' or 'scroll';
+         QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+         QMouseEvent *me = new QMouseEvent(QEvent::MouseButtonPress,
+                                           e->touchPoints().at(0).pos(),
+                                           this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                                           this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                                           Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+         QApplication::sendEvent(this->viewport(),me);
+//         QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+//         QTouchEvent *newTe = new QTouchEvent(QEvent::TouchBegin, e->device(), Qt::NoModifier, e->touchPointStates(), e->touchPoints());
+//         QApplication::sendEvent(parent(), newTe);
+//         m_touchTimer->start();
+//         event->accept();
+         return false;
+     } /*else if (event->type() == QEvent::TouchEnd) {
+         qDebug() << "touchend==============" << m_touchTimer->remainingTime();
+         if(m_touchTimer->remainingTime() > 0.001) {
+             QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+             QMouseEvent *me = new QMouseEvent(QEvent::MouseButtonPress,
+                                               e->touchPoints().at(0).pos(),
+                                               this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                                               this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                                               Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+             QApplication::sendEvent(this->viewport(),me);
+             QTouchEvent *newTe = new QTouchEvent(QEvent::TouchBegin, e->device(), Qt::NoModifier, e->touchPointStates(), e->touchPoints());
+             QApplication::sendEvent(parent(), newTe);
+         }
+         return true;
+     } else if (event->type() == QEvent::TouchUpdate) {
+         qDebug() << "touchupdate==============";
+         QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+         QTouchEvent *newTe = new QTouchEvent(QEvent::TouchBegin, e->device(), Qt::NoModifier, e->touchPointStates(), e->touchPoints());
+         QApplication::sendEvent(parent(), newTe);
+         return true;
+     }*/
+    return QTreeView::viewportEvent(event);
 }
 
 void ResultView::initConnections()
