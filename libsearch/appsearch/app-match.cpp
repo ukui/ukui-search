@@ -163,8 +163,11 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
             }
         }
 
+        if(iter.value().at(3) == ""){
+            continue;
+        }
         QStringList pinyinlist;
-        pinyinlist = FileUtils::findMultiToneWords(iter.key().app_name);
+        pinyinlist = FileUtils::findMultiToneWords(iter.value().at(3));
 
         bool matched = false;
         for(int i = 0; i < pinyinlist.size() / 2; i++) {
