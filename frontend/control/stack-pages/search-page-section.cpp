@@ -88,7 +88,6 @@ void ResultArea::pressEnter()
         m_detail_open_state = true;
         sendKeyPressSignal(m_selectedPluginID);
     }
-
 }
 
 void ResultArea::pressDown()
@@ -134,11 +133,11 @@ void ResultArea::pressDown()
            }
        }
     }
-
 }
 
 void ResultArea::pressUp()
 {
+
     if (!m_is_selected) {//无选中状态下选中最后一项结果
         for (int i = 0; i < m_widget_list.size(); i++) {
             ResultWidget * plugin = m_widget_list[m_widget_list.size() - (i + 1)];
@@ -232,24 +231,29 @@ void ResultArea::sendKeyPressSignal(QString &pluginID)
             height += plugin->height();
         }
     }
-
 }
 
 void ResultArea::onWidgetSizeChanged()
 {
     int whole_height = 0;
-    bool tmp = false;
-    Q_FOREACH (ResultWidget *widget, m_widget_list) {
-        if (tmp == true) {
-            widget->clearResultSelection();
+    if (!m_is_selected) {
+        bool tmp = false;
+        Q_FOREACH (ResultWidget *widget, m_widget_list) {
+            if (tmp == true) {
+                widget->clearResultSelection();
+            }
+            if (!tmp and widget->height() != 0) {
+                tmp = true;
+                widget->setResultSelection(widget->getModlIndex(0, 0));
+                m_is_selected = true;
+                m_selectedPluginID = widget->pluginId();
+            }
+            whole_height += widget->height();
         }
-        if (!tmp and widget->height() != 0) {
-            tmp = true;
-            widget->setResultSelection(widget->getModlIndex(0, 0));
-            m_is_selected = true;
-            m_selectedPluginID = widget->pluginId();
+    } else {
+        Q_FOREACH (ResultWidget *widget, m_widget_list) {
+            whole_height += widget->height();
         }
-        whole_height += widget->height();
     }
 
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;

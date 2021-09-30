@@ -509,7 +509,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         if (!m_webSearchPage->isHidden()) {//屏蔽特殊情况
             //显示最佳匹配中第一项的详情页，无搜索结果则调取网页搜索
             qDebug() << "Press Enter";
-            if (m_webSearchPage->isSelected()) {
+            if (m_searchResultPage->isHidden()) {
                 m_webSearchPage->LaunchBrowser();
             } else {
                 m_searchResultPage->pressEnter();
@@ -518,12 +518,12 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     } else if (event->key() == Qt::Key_Up) {
         qDebug() << "Press ↑";
         //web选中状态暂无操作
-        if (!m_webSearchPage->isSelected()) {
+        if (!m_searchResultPage->isHidden()) {
             m_searchResultPage->pressUp();
         }
     } else if (event->key() == Qt::Key_Down) {
         qDebug() << "Press ↓";
-        if (!m_webSearchPage->isSelected()) {
+        if (!m_searchResultPage->isHidden()) {
             m_searchResultPage->pressDown();
         }
     }

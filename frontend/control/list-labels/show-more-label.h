@@ -40,8 +40,7 @@ protected:
 
 private:
     QHBoxLayout * m_layout = nullptr;
-    QLabel * m_textLabel = nullptr;
-    QLabel * m_loadingIconLabel = nullptr;
+    QLabel * m_iconLabel = nullptr;
     QTimer * m_timer = nullptr;
     bool m_isOpen = false;
     int m_currentState = 0;
