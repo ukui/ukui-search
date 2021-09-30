@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QApplication>
+//#include <QTimer>
 #include "search-result-model.h"
 #include "show-more-label.h"
 #include "title-label.h"
@@ -38,6 +39,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    bool viewportEvent(QEvent *event);
 
 private:
     void initConnections();
@@ -48,6 +50,7 @@ private:
     int m_count = 0;
     QModelIndex m_tmpCurrentIndex;
     QModelIndex m_tmpMousePressIndex;
+//    QTimer *m_touchTimer;
 
 Q_SIGNALS:
     void startSearch(const QString &);

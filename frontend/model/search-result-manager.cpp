@@ -80,6 +80,7 @@ void ReceiveResultThread::run()
         is_empty = false;
         if(!m_result_queue->isEmpty()) {
             Q_EMIT this->gotResultInfo(m_result_queue->dequeue());
+
         } else {
             is_empty = true;
         }

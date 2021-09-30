@@ -36,7 +36,7 @@ public:
     bool getExpanded();
 
 protected:
-    bool eventFilter(QObject *, QEvent *);
+    bool event(QEvent *event);
 
 private:
     QHBoxLayout * m_layout = nullptr;
