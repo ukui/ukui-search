@@ -9,10 +9,10 @@ WebSearchPage::WebSearchPage(QWidget *parent) : QWidget(parent)
     initConnections();
 }
 
-bool WebSearchPage::isSelected()
-{
-    return m_webSearchWidget->isSelected();
-}
+//bool WebSearchPage::isSelected()
+//{
+//    return m_webSearchWidget->isSelected();
+//}
 
 void WebSearchPage::LaunchBrowser()
 {

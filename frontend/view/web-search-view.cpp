@@ -78,7 +78,8 @@ void WebSearchView::mouseReleaseEvent(QMouseEvent *event)
 {
     QModelIndex index = indexAt(event->pos());
     if (!index.isValid()) {
-        this->clearSelection();
+        //this->clearSelection();
+        this->setCurrentIndex(QModelIndex());
     }
     return QTreeView::mouseReleaseEvent(event);
 }

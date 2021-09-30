@@ -12,7 +12,7 @@ class WebSearchPage : public QWidget
 public:
     explicit WebSearchPage(QWidget *parent = nullptr);
 
-    bool isSelected();
+    //bool isSelected();
     void LaunchBrowser();
     void clearResultSelection();
 
