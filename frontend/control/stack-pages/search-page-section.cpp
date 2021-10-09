@@ -38,6 +38,8 @@ using namespace Zeeker;
 #define ACTION_HOVER_COLOR QColor(64, 169, 251, 255)
 #define ACTION_PRESS_COLOR QColor(41, 108, 217, 255)
 #define TITLE_HEIGHT 30
+#define FRAME_HEIGHT 688
+#define DETAIL_FRAME_WIDTH 421
 
 ResultArea::ResultArea(QWidget *parent) : QScrollArea(parent)
 {
@@ -342,6 +344,9 @@ void ResultArea::initUi()
     m_mainLyt->setContentsMargins(RESULT_LAYOUT_MARGINS);
     this->widget()->setContentsMargins(0,0,0,0);
     m_mainLyt->setSpacing(0);
+
+    m_titleLable = new TitleLabel(this);
+    m_titleLable->hide();
 }
 
 void ResultArea::initConnections()
@@ -350,13 +355,57 @@ void ResultArea::initConnections()
         m_detail_open_state = false;
         m_is_selected = false;
     });
+    connect(this->verticalScrollBar(), &QScrollBar::valueChanged, this, [=] (int value) {//判断显示和隐藏逻辑
+        Q_FOREACH(auto widget, m_widget_list) {
+            if (!widget->getExpandState()) {
+                continue;
+            }
+            if (value < (widget->pos().ry() - TITLE_HEIGHT)
+                    or value > (widget->pos().ry() + widget->height() - FRAME_HEIGHT + 2*TITLE_HEIGHT)) {//暂定下一项标题显示完全后悬浮标题隐藏
+                m_titleLable->hide();
+            } else {
+                m_titleLable->setText(widget->pluginId());
+                m_titleLable->setShowMoreLableVisible();//防止多项展开后无法收回其他项
+                m_titleLable->show();
+                break;
+            }
+        }
+    });
+    connect(this->m_titleLable, &TitleLabel::retractClicked, this, [=] () {
+        Q_FOREACH(auto widget, m_widget_list) {
+            if (widget->pluginId() == m_titleLable->text()) {
+                widget->reduceListSlot();
+                widget->resetTitleLabel();
+                m_titleLable->hide();
+            }
+        }
+    });
+    connect(this, &ResultArea::resizeWidth, this, [=] (int size) {
+        m_titleLable->setFixedWidth(size);
+    });
 }
 
 void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(this, &ResultArea::startSearch, widget, &ResultWidget::startSearch);
+    connect(this, &ResultArea::startSearch, this, [=] () {
+        m_titleLable->hide();
+    });
     connect(this, &ResultArea::stopSearch, widget, &ResultWidget::stopSearch);
     connect(widget, &ResultWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
+    connect(widget, &ResultWidget::showMoreClicked, this, [=] () {//点击展开搜索结果后   显示悬浮窗
+        this->verticalScrollBar()->setValue(widget->pos().ry()); //置顶当前类型搜索结果
+        if (widget->height() > FRAME_HEIGHT) {//当前widget高度大于搜索结果界面高度则显示悬浮窗
+            viewport()->stackUnder(m_titleLable);
+            m_titleLable->setText(widget->pluginId());
+            m_titleLable->setFixedSize(widget->width(), TITLE_HEIGHT);
+            m_titleLable->setShowMoreLableVisible();
+            m_titleLable->show();
+        }
+    });
+    connect(widget, &ResultWidget::retractClicked, this, [=] () {//点击收起搜索结果后
+        m_titleLable->hide();
+    });
 }
 
 DetailArea::DetailArea(QWidget *parent) : QScrollArea(parent)
@@ -379,7 +428,7 @@ void DetailArea::initUi()
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->setWidgetResizable(true);
-    this->setFixedSize(421, 688);
+    this->setFixedSize(DETAIL_FRAME_WIDTH, FRAME_HEIGHT);
 //    this->setStyleSheet("QScrollArea{border:2px solid red;}");
     this->setContentsMargins(0,0,0,0);
     m_detailWidget = new DetailWidget(this);
@@ -391,7 +440,7 @@ DetailWidget::DetailWidget(QWidget *parent) : QWidget(parent)
 {
 //    initUi();
 //    clear();
-    this->setFixedWidth(421);
+    this->setFixedWidth(DETAIL_FRAME_WIDTH);
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
     m_mainLyt->setContentsMargins(DETAIL_WIDGET_MARGINS);

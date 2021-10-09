@@ -73,6 +73,11 @@ int ResultWidget::getResultHeight()
     return this->m_resultView->getResultHeight();
 }
 
+void ResultWidget::resetTitleLabel()
+{
+    Q_EMIT this->m_titleLabel->lableReset();
+}
+
 /**
  * @brief ResultWidget::expandListSlot 展开列表的槽函数
  */
@@ -130,7 +135,9 @@ void ResultWidget::initConnections()
     connect(m_resultView, &ResultView::currentRowChanged, this, &ResultWidget::currentRowChanged);
     connect(this, &ResultWidget::clearSelectedRow, m_resultView, &ResultView::clearSelectedRow);
     connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &ResultWidget::expandListSlot);
+    connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &ResultWidget::showMoreClicked);
     connect(m_titleLabel, &TitleLabel::retractClicked, this, &ResultWidget::reduceListSlot);
+    connect(m_titleLabel, &TitleLabel::retractClicked, this, &ResultWidget::retractClicked);
     connect(m_resultView, &ResultView::listLengthChanged, this, &ResultWidget::onListLengthChanged);
     connect(m_resultView, &ResultView::listLengthChanged, m_titleLabel, &TitleLabel::onListLengthChanged);
     connect(m_resultView, &ResultView::clicked, this, &ResultWidget::rowClicked);

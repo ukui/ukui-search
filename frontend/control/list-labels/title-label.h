@@ -32,6 +32,8 @@ public:
     TitleLabel(QWidget * parent = nullptr);
     ~TitleLabel() = default;
 
+    void setShowMoreLableVisible();
+
 protected:
     void paintEvent(QPaintEvent *);
 
