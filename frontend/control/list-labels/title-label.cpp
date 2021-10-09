@@ -36,8 +36,6 @@ void TitleLabel::setShowMoreLableVisible()
     m_showMoreLabel->setLabel();
 }
 
-
-
 void TitleLabel::initUi() {
     this->setContentsMargins(8, 0, 0, 0);
     this->setFixedHeight(24);
