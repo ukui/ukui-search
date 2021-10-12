@@ -34,6 +34,12 @@ void ShowMoreLabel::resetLabel() {
     m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
 }
 
+void ShowMoreLabel::setLabel()
+{
+    m_isOpen = true;
+    m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
+}
+
 /**
  * @brief ShowMoreLabel::getExpanded 获取当前是否是展开状态
  * @return true已展开，false已收起
@@ -61,11 +67,11 @@ bool ShowMoreLabel::event(QEvent *event)
     if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::TouchBegin) {
         if(! m_timer->isActive()) {
             if(!m_isOpen) {
-                m_textLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
+                m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
                 m_isOpen = true;
                 Q_EMIT this->showMoreClicked();
             } else {
-                m_textLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
+                m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
                 m_isOpen = false;
                 Q_EMIT this->retractClicked();
             }

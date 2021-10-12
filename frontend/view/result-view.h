@@ -80,6 +80,7 @@ public:
     bool getExpandState();
     SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
     int getResultHeight();
+    void resetTitleLabel();
 
 public Q_SLOTS:
     void expandListSlot();
@@ -105,6 +106,8 @@ Q_SIGNALS:
     void sizeChanged();
     void rowClicked();
     void resizeWidth(const int &);
+    void showMoreClicked();
+    void retractClicked();
 };
 }
 

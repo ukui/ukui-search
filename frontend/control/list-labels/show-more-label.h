@@ -33,6 +33,7 @@ public:
     explicit ShowMoreLabel(QWidget *parent = nullptr);
     ~ShowMoreLabel() = default;
     void resetLabel();
+    void setLabel();
     bool getExpanded();
 
 protected:

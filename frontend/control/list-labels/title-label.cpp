@@ -21,12 +21,19 @@
 #include "title-label.h"
 #include <QPainter>
 #include <QStyleOption>
+#include <QApplication>
 #define UNFOLD_LABEL_HEIGHT 30
 #define NUM_LIMIT_SHOWN_DEFAULT 5
 using namespace Zeeker;
 TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
     initUi();
     initConnections();
+}
+
+void TitleLabel::setShowMoreLableVisible()
+{
+    m_showMoreLabel->setVisible(true);
+    m_showMoreLabel->setLabel();
 }
 
 void TitleLabel::initUi() {
@@ -59,7 +66,7 @@ void TitleLabel::paintEvent(QPaintEvent * event) {
     p.setRenderHint(QPainter::Antialiasing);  // 反锯齿;
 //    p.setBrush(opt.palette.color(QPalette::Text));
 //    p.setOpacity(0.04);
-    p.setBrush(palette().base());
+    p.setBrush(qApp->palette().base());
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(this->rect(), 6, 6);
     return QLabel::paintEvent(event);
