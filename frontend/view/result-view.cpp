@@ -1,5 +1,5 @@
 #include "result-view.h"
-#define MAIN_MARGINS 0,0,0,0
+#define MAIN_MARGINS 0,0,8,0
 #define MAIN_SPACING 0
 #define TITLE_HEIGHT 30
 #define UNFOLD_LABEL_HEIGHT 30
