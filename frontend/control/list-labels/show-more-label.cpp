@@ -25,7 +25,7 @@
 using namespace Zeeker;
 ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
     initUi();
-    this->setAttribute(Qt::WA_AcceptTouchEvents);
+//    this->setAttribute(Qt::WA_AcceptTouchEvents);
     m_timer = new QTimer;
 }
 

@@ -50,7 +50,7 @@ private:
     int m_count = 0;
     QModelIndex m_tmpCurrentIndex;
     QModelIndex m_tmpMousePressIndex;
-//    QTimer *m_touchTimer;
+    QTimer *m_touchTimer;
 
 Q_SIGNALS:
     void startSearch(const QString &);
