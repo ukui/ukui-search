@@ -89,7 +89,7 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
 }
 
 void centerToScreen(QWidget* widget) {
-    if(!widget)
+    if (!widget)
         return;
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
         ::sleep(1);
         ++i;
         p_home = getenv("HOME");
-        if(i % 5 == 0) {
+        if (i % 5 == 0) {
             qWarning() << "I can't find home! I'm done here!!";
             printf("I can't find home! I'm done here!!");
             syslog(LOG_ERR, "I can't find home! I'm done here!!\n");
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
     QtSingleApplication app("ukui-search", argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    if(app.isRunning()) {
+    if (app.isRunning()) {
         app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
         qDebug() << QObject::tr("ukui-search is already running!");
         return EXIT_SUCCESS;
@@ -193,12 +193,12 @@ int main(int argc, char *argv[]) {
     /*
         // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
         QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
-        if(!fifoDir.exists())
+        if (!fifoDir.exists())
             qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
 
         unlink(UKUI_SEARCH_PIPE_PATH);
         int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
-        if(retval == -1)
+        if (retval == -1)
         {
             qCritical()<<"creat fifo error!!";
             syslog(LOG_ERR,"creat fifo error!!\n");
@@ -241,7 +241,7 @@ int main(int argc, char *argv[]) {
     // Load translations
     QTranslator translator;
     try {
-        if(! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw - 1;
+        if (! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw - 1;
         app.installTranslator(&translator);
     } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
@@ -249,7 +249,7 @@ int main(int argc, char *argv[]) {
 
     QTranslator qt_translator;
     try {
-        if(! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
+        if (! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
         app.installTranslator(&qt_translator);
     } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
@@ -257,7 +257,7 @@ int main(int argc, char *argv[]) {
 
     QTranslator lib_translator;
     try {
-        if(! lib_translator.load("/usr/share/ukui-search/translations/libukui-search_" + QLocale::system().name())) throw - 1;
+        if (! lib_translator.load("/usr/share/ukui-search/translations/libukui-search_" + QLocale::system().name())) throw - 1;
         app.installTranslator(&lib_translator);
     } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
     app.setActivationWindow(w);
 
     // Processing startup parameters
-    if(QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
+    if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
         centerToScreen(w);
         w->show();
     }

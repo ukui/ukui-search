@@ -27,14 +27,14 @@ void ResultViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
     optionV4.text = QString();
     style->drawControl(QStyle::CE_ItemViewItem, &optionV4, painter); //绘制非文本区域内容
-    if(index.model()->data(index, Qt::DisplayRole).toString().isEmpty()) return;
+    if (index.model()->data(index, Qt::DisplayRole).toString().isEmpty()) return;
 
     //fix me: for files which name begin with some ' ' , space will be hide...
     QTextDocument doc;
     doc.setHtml(getHtmlText(painter, option, index)); //提取富文本
     QAbstractTextDocumentLayout::PaintContext ctx;
 
-    if(optionV4.state & QStyle::State_Selected)
+    if (optionV4.state & QStyle::State_Selected)
         ctx.palette.setColor(QPalette::Text, optionV4.palette.color(QPalette::Active, QPalette::HighlightedText));
 
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &optionV4);
@@ -55,20 +55,20 @@ QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionVie
     QFontMetrics fm(ft);
     QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30); //当字体超过Item的长度时显示为省略号
     QString htmlString;
-    if((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
+    if ((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
         indexFindLeft = indexColString.toUpper().indexOf(m_regFindKeyWords.toUpper()); //得到查找字体在当前整个Item字体中的位置
         htmlString = escapeHtml(indexColString.left(indexFindLeft)) + "<b>" + escapeHtml(indexColString.mid(indexFindLeft, m_regFindKeyWords.length())) + "</b>" + escapeHtml(indexColString.right(indexColString.length() - indexFindLeft - m_regFindKeyWords.length()));
     } else {
         bool boldOpenned = false;
         for(int i = 0; i < indexColString.length(); i++) {
-            if((m_regFindKeyWords.toUpper()).contains(QString(indexColString.at(i)).toUpper())) {
-                if(! boldOpenned) {
+            if ((m_regFindKeyWords.toUpper()).contains(QString(indexColString.at(i)).toUpper())) {
+                if (! boldOpenned) {
                     boldOpenned = true;
                     htmlString.append(QString("<b>"));
                 }
                 htmlString.append(escapeHtml(QString(indexColString.at(i))));
             } else {
-                if(boldOpenned) {
+                if (boldOpenned) {
                     boldOpenned = false;
                     htmlString.append(QString("</b>"));
                 }

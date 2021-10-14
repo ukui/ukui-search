@@ -31,7 +31,7 @@ BestListModel::BestListModel(QObject *parent)
 
 QModelIndex BestListModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(row < 0 || row > m_item->m_result_info_list.length() - 1)
+    if (row < 0 || row > m_item->m_result_info_list.length() - 1)
         return QModelIndex();
     return createIndex(row, column, m_item);
 }

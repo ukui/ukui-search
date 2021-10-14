@@ -46,17 +46,17 @@ void ActionLabel::initUi()
 bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == this) {
-        if(event->type() == QEvent::MouseButtonPress) {
+        if (event->type() == QEvent::MouseButtonPress) {
             this->setForegroundRole(QPalette::Dark);
             return true;
-        } else if(event->type() == QEvent::MouseButtonRelease) {
+        } else if (event->type() == QEvent::MouseButtonRelease) {
             Q_EMIT this->actionTriggered(m_action);
             this->setForegroundRole(QPalette::Light);
             return true;
-        } else if(event->type() == QEvent::Enter) {
+        } else if (event->type() == QEvent::Enter) {
             this->setForegroundRole(QPalette::Light);
             return true;
-        } else if(event->type() == QEvent::Leave) {
+        } else if (event->type() == QEvent::Leave) {
             this->setForegroundRole(QPalette::WindowText);
             return true;
         }

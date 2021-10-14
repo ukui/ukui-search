@@ -31,7 +31,7 @@ SearchResultModel::SearchResultModel(const QString &plugin_id)
 
 QModelIndex SearchResultModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(row < 0 || row > m_item->m_result_info_list.length() - 1)
+    if (row < 0 || row > m_item->m_result_info_list.length() - 1)
         return QModelIndex();
 //    QVector<SearchPluginIface::ResultInfo> * m_info = &m_result_info_list;
     return createIndex(row, column, m_item);

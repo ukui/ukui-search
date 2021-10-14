@@ -27,24 +27,24 @@ class Config {
 
   string Get(const string& key, const string& defaultvalue) const {
     map<string, string>::const_iterator it = map_.find(key);
-    if(map_.end() != it) {
+    if (map_.end() != it) {
       return it->second;
     }
     return defaultvalue;
   }
   int Get(const string& key, int defaultvalue) const {
     string str = Get(key, "");
-    if("" == str) {
+    if ("" == str) {
       return defaultvalue;
     }
     return atoi(str.c_str());
   }
   const char* operator [] (const char* key) const {
-    if(NULL == key) {
+    if (NULL == key) {
       return NULL;
     }
     map<string, string>::const_iterator it = map_.find(key);
-    if(map_.end() != it) {
+    if (map_.end() != it) {
       return it->second.c_str();
     }
     return NULL;
@@ -66,12 +66,12 @@ class Config {
     while(getline(ifs, line)) {
       lineno ++;
       Trim(line);
-      if(line.empty() || StartsWith(line, "#")) {
+      if (line.empty() || StartsWith(line, "#")) {
         continue;
       }
       vecBuf.clear();
       Split(line, vecBuf, "=");
-      if(2 != vecBuf.size()) {
+      if (2 != vecBuf.size()) {
         fprintf(stderr, "line[%s] illegal.\n", line.c_str());
         assert(false);
         continue;
@@ -80,7 +80,7 @@ class Config {
       string& value = vecBuf[1];
       Trim(key);
       Trim(value);
-      if(!map_.insert(make_pair(key, value)).second) {
+      if (!map_.insert(make_pair(key, value)).second) {
         fprintf(stderr, "key[%s] already exits.\n", key.c_str());
         assert(false);
         continue;

@@ -34,7 +34,7 @@ ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
 
 void ConstructDocumentForPath::run() {
 //    qDebug()<<"ConstructDocumentForPath";
-//    if(!Zeeker::_doc_list_path)
+//    if (!Zeeker::_doc_list_path)
 //        Zeeker::_doc_list_path = new QVector<Document>;
 //    qDebug()<<_doc_list_path->size();
     QString index_text = m_list.at(0).toLower();
@@ -44,7 +44,7 @@ void ConstructDocumentForPath::run() {
     //多音字版
     //现加入首字母
     QStringList pinyin_text_list = FileUtils::findMultiToneWords(QString(m_list.at(0)).replace(".", ""));
-//    if(!pinyin_text_list.isEmpty())
+//    if (!pinyin_text_list.isEmpty())
 //    {
 //        for (QString& i : pinyin_text_list){
 //            i.replace("", " ");
@@ -102,11 +102,11 @@ ConstructDocumentForContent::ConstructDocumentForContent(QString path) {
 void ConstructDocumentForContent::run() {
 //    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
     //      构造文本索引的document
-//    if(!Zeeker::_doc_list_content)
+//    if (!Zeeker::_doc_list_content)
 //        Zeeker::_doc_list_content = new QVector<Document>;
     QString content;
     FileReader::getTextContent(m_path, content);
-    if(content.isEmpty())
+    if (content.isEmpty())
         return;
     //QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(m_path));
     //QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));

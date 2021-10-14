@@ -64,9 +64,9 @@ void ShowMoreLabel::initUi() {
 
 bool ShowMoreLabel::event(QEvent *event)
 {
-    if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::TouchBegin) {
-        if(! m_timer->isActive()) {
-            if(!m_isOpen) {
+    if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::TouchBegin) {
+        if (! m_timer->isActive()) {
+            if (!m_isOpen) {
                 m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
                 m_isOpen = true;
                 Q_EMIT this->showMoreClicked();

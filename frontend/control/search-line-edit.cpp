@@ -61,11 +61,11 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
         Q_EMIT this->requestSearchKeyword(this->text());
     });
     connect(this, &SearchLineEdit::textChanged, this, [ = ](QString text) {
-        if(m_isEmpty) {
+        if (m_isEmpty) {
             m_isEmpty = false;
             Q_EMIT this->requestSearchKeyword(text);
         } else {
-            if(text == "") {
+            if (text == "") {
                 m_isEmpty = true;
                 m_timer->stop();
                 Q_EMIT this->requestSearchKeyword(text);

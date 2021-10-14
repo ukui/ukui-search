@@ -183,7 +183,7 @@ private:
         XCHECK(!static_node_infos_.empty());
         vector<DatElement> x = static_node_infos_;
         sort(x.begin(), x.end(), WeightCompare);
-        if(x.empty()){
+        if (x.empty()){
             return;
         }
         min_weight = x[0].weight;

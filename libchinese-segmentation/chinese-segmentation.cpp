@@ -39,14 +39,14 @@ ChineseSegmentation::ChineseSegmentation() {
 }
 
 ChineseSegmentation::~ChineseSegmentation() {
-    if(m_jieba)
+    if (m_jieba)
         delete m_jieba;
     m_jieba = nullptr;
 }
 
 ChineseSegmentation *ChineseSegmentation::getInstance() {
     QMutexLocker locker(&m_mutex);
-    if(!global_instance_chinese_segmentation) {
+    if (!global_instance_chinese_segmentation) {
         global_instance_chinese_segmentation = new ChineseSegmentation;
     }
     return global_instance_chinese_segmentation;

@@ -18,11 +18,11 @@ UkuiSearchDbusServices::UkuiSearchDbusServices(MainWindow *m)
     //注册服务
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     QDBusConnection::sessionBus().unregisterService("com.ukui.search.service");
-    if(!sessionBus.registerService("com.ukui.search.service")){
+    if (!sessionBus.registerService("com.ukui.search.service")){
         qWarning() << "ukui-search dbus register service failed reason:" << sessionBus.lastError();
     }
 
-    if(!sessionBus.registerObject("/", this, QDBusConnection::ExportAllSlots)){
+    if (!sessionBus.registerObject("/", this, QDBusConnection::ExportAllSlots)){
         qWarning() << "ukui-search dbus register object failed reason:" << sessionBus.lastError();
     }
 }

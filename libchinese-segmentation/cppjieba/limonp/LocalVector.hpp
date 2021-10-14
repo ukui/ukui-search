@@ -45,19 +45,19 @@ class LocalVector {
     }
   }
   ~LocalVector() {
-    if(ptr_ != buffer_) {
+    if (ptr_ != buffer_) {
       free(ptr_);
     }
   };
  public:
   LocalVector<T>& operator = (const LocalVector<T>& vec) {
-      if(this == &vec){
+      if (this == &vec){
           return *this;
       }
     clear();
     size_ = vec.size();
     capacity_ = vec.capacity();
-    if(vec.buffer_ == vec.ptr_) {
+    if (vec.buffer_ == vec.ptr_) {
       memcpy(buffer_, vec.buffer_, sizeof(T) * size_);
       ptr_ = buffer_;
     } else {
@@ -81,14 +81,14 @@ class LocalVector {
     return ptr_[i];
   }
   void push_back(const T& t) {
-    if(size_ == capacity_) {
+    if (size_ == capacity_) {
       assert(capacity_);
       reserve(capacity_ * 2);
     }
     ptr_[size_ ++ ] = t;
   }
   void reserve(size_t size) {
-    if(size <= capacity_) {
+    if (size <= capacity_) {
       return;
     }
     T * next =  (T*)malloc(sizeof(T) * size);
@@ -97,7 +97,7 @@ class LocalVector {
     ptr_ = next;
     memcpy(ptr_, old, sizeof(T) * capacity_);
     capacity_ = size;
-    if(old != buffer_) {
+    if (old != buffer_) {
       free(old);
     }
   }
@@ -117,7 +117,7 @@ class LocalVector {
     return ptr_ + size_;
   }
   void clear() {
-    if(ptr_ != buffer_) {
+    if (ptr_ != buffer_) {
       free(ptr_);
     }
     init_();
@@ -126,7 +126,7 @@ class LocalVector {
 
 template <class T>
 ostream & operator << (ostream& os, const LocalVector<T>& vec) {
-  if(vec.empty()) {
+  if (vec.empty()) {
     return os << "[]";
   }
   os<<"[\""<<vec[0];

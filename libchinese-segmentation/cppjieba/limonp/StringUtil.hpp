@@ -48,7 +48,7 @@ inline string StringFormat(const char* fmt, ...) {
 
 template<class T>
 void Join(T begin, T end, string& res, const string& connector) {
-  if(begin == end) {
+  if (begin == end) {
     return;
   }
   stringstream ss;
@@ -84,12 +84,12 @@ inline bool IsSpace(unsigned c) {
 }
 
 inline std::string& LTrim(std::string &s) {
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<unsigned, bool>(IsSpace))));
+  s.erase(s.begin(), std::find_if (s.begin(), s.end(), std::not1(std::ptr_fun<unsigned, bool>(IsSpace))));
   return s;
 }
 
 inline std::string& RTrim(std::string &s) {
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<unsigned, bool>(IsSpace))).base(), s.end());
+  s.erase(std::find_if (s.rbegin(), s.rend(), std::not1(std::ptr_fun<unsigned, bool>(IsSpace))).base(), s.end());
   return s;
 }
 
@@ -98,12 +98,12 @@ inline std::string& Trim(std::string &s) {
 }
 
 inline std::string& LTrim(std::string & s, char x) {
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::bind2nd(std::equal_to<char>(), x))));
+  s.erase(s.begin(), std::find_if (s.begin(), s.end(), std::not1(std::bind2nd(std::equal_to<char>(), x))));
   return s;
 }
 
 inline std::string& RTrim(std::string & s, char x) {
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::bind2nd(std::equal_to<char>(), x))).base(), s.end());
+  s.erase(std::find_if (s.rbegin(), s.rend(), std::not1(std::bind2nd(std::equal_to<char>(), x))).base(), s.end());
   return s;
 }
 
@@ -118,7 +118,7 @@ inline void Split(const string& src, vector<string>& res, const string& pattern,
   string sub;
   while(Start < src.size()) {
     end = src.find_first_of(pattern, Start);
-    if(string::npos == end || res.size() >= maxsplit) {
+    if (string::npos == end || res.size() >= maxsplit) {
       sub = src.substr(Start);
       res.push_back(sub);
       return;
@@ -137,14 +137,14 @@ inline vector<string> Split(const string& src, const string& pattern, size_t max
 }
 
 inline bool StartsWith(const string& str, const string& prefix) {
-  if(prefix.length() > str.length()) {
+  if (prefix.length() > str.length()) {
     return false;
   }
   return 0 == str.compare(0, prefix.length(), prefix);
 }
 
 inline bool EndsWith(const string& str, const string& suffix) {
-  if(suffix.length() > str.length()) {
+  if (suffix.length() > str.length()) {
     return false;
   }
   return 0 == str.compare(str.length() -  suffix.length(), suffix.length(), suffix);
@@ -160,14 +160,14 @@ inline uint16_t TwocharToUint16(char high, char low) {
 
 template <class Uint16Container>
 bool Utf8ToUnicode(const char * const str, size_t len, Uint16Container& vec) {
-  if(!str) {
+  if (!str) {
     return false;
   }
   char ch1, ch2;
   uint16_t tmp;
   vec.clear();
   for(size_t i = 0; i < len;) {
-    if(!(str[i] & 0x80)) { // 0xxxxxxx
+    if (!(str[i] & 0x80)) { // 0xxxxxxx
       vec.push_back(str[i]);
       i++;
     } else if ((uint8_t)str[i] <= 0xdf && i + 1 < len) { // 110xxxxxx
@@ -176,7 +176,7 @@ bool Utf8ToUnicode(const char * const str, size_t len, Uint16Container& vec) {
       tmp = (((uint16_t(ch1) & 0x00ff ) << 8) | (uint16_t(ch2) & 0x00ff));
       vec.push_back(tmp);
       i += 2;
-    } else if((uint8_t)str[i] <= 0xef && i + 2 < len) {
+    } else if ((uint8_t)str[i] <= 0xef && i + 2 < len) {
       ch1 = ((uint8_t)str[i] << 4) | ((str[i+1] >> 2) & 0x0f );
       ch2 = (((uint8_t)str[i+1]<<6) & 0xc0) | (str[i+2] & 0x3f);
       tmp = (((uint16_t(ch1) & 0x00ff ) << 8) | (uint16_t(ch2) & 0x00ff));
@@ -199,7 +199,7 @@ bool Utf8ToUnicode32(const char * str, size_t size, Uint32Container& vec) {
   uint32_t tmp;
   vec.clear();
   for(size_t i = 0; i < size;) {
-    if(!(str[i] & 0x80)) { // 0xxxxxxx
+    if (!(str[i] & 0x80)) { // 0xxxxxxx
       // 7bit, total 7bit
       tmp = (uint8_t)(str[i]) & 0x7f;
       i++;
@@ -211,7 +211,7 @@ bool Utf8ToUnicode32(const char * str, size_t size, Uint32Container& vec) {
       tmp <<= 6;
       tmp |= (uint8_t)(str[i+1]) & 0x3f;
       i += 2;
-    } else if((uint8_t)str[i] <= 0xef && i + 2 < size) { // 1110xxxxxx
+    } else if ((uint8_t)str[i] <= 0xef && i + 2 < size) { // 1110xxxxxx
       // 4bit, total 4bit
       tmp = (uint8_t)(str[i]) & 0x0f;
 
@@ -224,7 +224,7 @@ bool Utf8ToUnicode32(const char * str, size_t size, Uint32Container& vec) {
       tmp |= (uint8_t)(str[i+2]) & 0x3f;
 
       i += 3;
-    } else if((uint8_t)str[i] <= 0xf7 && i + 3 < size) { // 11110xxxx
+    } else if ((uint8_t)str[i] <= 0xf7 && i + 3 < size) { // 11110xxxx
       // 3bit, total 3bit
       tmp = (uint8_t)(str[i]) & 0x07;
 
@@ -255,11 +255,11 @@ bool Utf8ToUnicode32(const string& str, Uint32Container& vec) {
 }
 
 inline int UnicodeToUtf8Bytes(uint32_t ui){
-    if(ui <= 0x7f) {
+    if (ui <= 0x7f) {
         return 1;
-    } else if(ui <= 0x7ff) {
+    } else if (ui <= 0x7ff) {
         return 2;
-    } else if(ui <= 0xffff) {
+    } else if (ui <= 0xffff) {
         return 3;
     } else {
         return 4;
@@ -272,12 +272,12 @@ void Unicode32ToUtf8(Uint32ContainerConIter begin, Uint32ContainerConIter end, s
   uint32_t ui;
   while(begin != end) {
     ui = *begin;
-    if(ui <= 0x7f) {
+    if (ui <= 0x7f) {
       res += char(ui);
-    } else if(ui <= 0x7ff) {
+    } else if (ui <= 0x7ff) {
       res += char(((ui >> 6) & 0x1f) | 0xc0);
       res += char((ui & 0x3f) | 0x80);
-    } else if(ui <= 0xffff) {
+    } else if (ui <= 0xffff) {
       res += char(((ui >> 12) & 0x0f) | 0xe0);
       res += char(((ui >> 6) & 0x3f) | 0x80);
       res += char((ui & 0x3f) | 0x80);
@@ -297,9 +297,9 @@ void UnicodeToUtf8(Uint16ContainerConIter begin, Uint16ContainerConIter end, str
   uint16_t ui;
   while(begin != end) {
     ui = *begin;
-    if(ui <= 0x7f) {
+    if (ui <= 0x7f) {
       res += char(ui);
-    } else if(ui <= 0x7ff) {
+    } else if (ui <= 0x7ff) {
       res += char(((ui>>6) & 0x1f) | 0xc0);
       res += char((ui & 0x3f) | 0x80);
     } else {
@@ -315,16 +315,16 @@ void UnicodeToUtf8(Uint16ContainerConIter begin, Uint16ContainerConIter end, str
 template <class Uint16Container>
 bool GBKTrans(const char* const str, size_t len, Uint16Container& vec) {
   vec.clear();
-  if(!str) {
+  if (!str) {
     return true;
   }
   size_t i = 0;
   while(i < len) {
-    if(0 == (str[i] & 0x80)) {
+    if (0 == (str[i] & 0x80)) {
       vec.push_back(uint16_t(str[i]));
       i++;
     } else {
-      if(i + 1 < len) { //&& (str[i+1] & 0x80))
+      if (i + 1 < len) { //&& (str[i+1] & 0x80))
         uint16_t tmp = (((uint16_t(str[i]) & 0x00ff ) << 8) | (uint16_t(str[i+1]) & 0x00ff));
         vec.push_back(tmp);
         i += 2;
@@ -350,7 +350,7 @@ void GBKTrans(Uint16ContainerConIter begin, Uint16ContainerConIter end, string& 
     //pa = uint16ToChar2(*begin);
     first = ((*begin)>>8) & 0x00ff;
     second = (*begin) & 0x00ff;
-    if(first & 0x80) {
+    if (first & 0x80) {
       res += first;
       res += second;
     } else {
@@ -372,7 +372,7 @@ void GBKTrans(Uint16ContainerConIter begin, Uint16ContainerConIter end, string& 
 // }
 
 inline string PathJoin(const string& path1, const string& path2) {
-  if(EndsWith(path1, "/")) {
+  if (EndsWith(path1, "/")) {
     return path1 + path2;
   }
   return path1 + "/" + path2;

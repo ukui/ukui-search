@@ -58,11 +58,11 @@ PendingFileQueue *PendingFileQueue::getInstance(QObject *parent)
 
 PendingFileQueue::~PendingFileQueue()
 {
-    if(m_cacheTimer) {
+    if (m_cacheTimer) {
         delete m_cacheTimer;
         m_cacheTimer = nullptr;
     }
-    if(m_minProcessTimer) {
+    if (m_minProcessTimer) {
         delete m_minProcessTimer;
         m_minProcessTimer = nullptr;
     }
@@ -82,12 +82,12 @@ void PendingFileQueue::enqueue(const PendingFile &file)
 //    qDebug() << "enqueuq file: " << file.path();
     m_mutex.lock();
     m_enqueuetimes++;
-    if(m_cache.isEmpty()) {
+    if (m_cache.isEmpty()) {
         IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "0");
     }
     // Remove all indexs of files under a dir which is to about be deleted,but keep delete signals.
     // Because our datebase need to delete those indexs one by one.
-    if(file.shouldRemoveIndex() && file.isDir()) {
+    if (file.shouldRemoveIndex() && file.isDir()) {
         const auto keepFile = [&file](const PendingFile& pending) {
             return (!FileUtils::isOrUnder(pending.path(), file.path()) || pending.shouldRemoveIndex());
         };
@@ -96,7 +96,7 @@ void PendingFileQueue::enqueue(const PendingFile &file)
         m_cache.erase(droppedFilesBegin, end);
     }
 
-    if(file.shouldRemoveIndex()) {
+    if (file.shouldRemoveIndex()) {
         m_cache.removeOne(file);
     }
     int i = m_cache.indexOf(file);
@@ -108,7 +108,7 @@ void PendingFileQueue::enqueue(const PendingFile &file)
         m_cache[i].merge(file);
     }
 
-    if(!m_cacheTimer->isActive()) {
+    if (!m_cacheTimer->isActive()) {
 //        qDebug()<<"m_cacheTimer-----start!!";
 //        m_cacheTimer->start();
         Q_EMIT cacheTimerStart();
@@ -148,13 +148,13 @@ void PendingFileQueue::processCache()
         qDebug() << "|" <<i.shouldRemoveIndex();
     }
     qDebug() << "Current process-------------";
-    if(m_pendingFiles.isEmpty()) {
+    if (m_pendingFiles.isEmpty()) {
         qDebug()<< "Empty, finish processCache!";
         return;
     }
     IndexGenerator::getInstance()->updateIndex(&m_pendingFiles);
     m_mutex.lock();
-    if(m_cache.isEmpty()) {
+    if (m_cache.isEmpty()) {
         IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
     }
     m_mutex.unlock();

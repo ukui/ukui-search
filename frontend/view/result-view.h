@@ -25,9 +25,10 @@ public:
     QModelIndex getModlIndex(int row, int column);
     SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
     int getResultHeight();
+    bool getSelectedState();
+    void setSelectedState(bool state);
 
 public Q_SLOTS:
-    void clearSelectedRow();
     void onRowDoubleClickedSlot(const QModelIndex &);
     void onRowSelectedSlot(const QModelIndex &index);
     void onItemListChanged(const int &);
@@ -81,6 +82,7 @@ public:
     SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
     int getResultHeight();
     void resetTitleLabel();
+    bool getSelectedState();
 
 public Q_SLOTS:
     void expandListSlot();
@@ -102,7 +104,6 @@ Q_SIGNALS:
     void stopSearch();
     void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
     void sendBestListData(const QString &, const SearchPluginIface::ResultInfo&);
-    void clearSelectedRow();
     void sizeChanged();
     void rowClicked();
     void resizeWidth(const int &);

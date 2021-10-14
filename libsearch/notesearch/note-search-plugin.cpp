@@ -65,7 +65,7 @@ QWidget *NoteSearchPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    if(QString::compare(showname, ri.name)) {
+    if (QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     }
     m_pluginLabel->setText(tr("Application"));
@@ -162,7 +162,7 @@ void NoteSearch::run() {
     QDBusInterface qi("org.ukui.note", "/org/ukui/note", "org.ukui.note.interface", QDBusConnection::sessionBus());
     QDBusReply<QVariantMap> reply = qi.call("keywordMatch", keywordList);
 
-    if(reply.isValid()) {
+    if (reply.isValid()) {
         if (m_uniqueSymbol ^ g_uniqueSymbol) {
             qDebug() << m_uniqueSymbol << g_uniqueSymbol;
             return;

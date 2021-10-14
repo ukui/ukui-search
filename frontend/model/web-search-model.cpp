@@ -30,7 +30,7 @@ WebSearchModel::WebSearchModel(QObject *parent)
 
 QModelIndex WebSearchModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(row < 0 || row > m_item->m_result_info_list.length() - 1)
+    if (row < 0 || row > m_item->m_result_info_list.length() - 1)
         return QModelIndex();
     return createIndex(row, column, m_item);
 }
@@ -57,9 +57,9 @@ int WebSearchModel::columnCount(const QModelIndex &parent) const
 QVariant WebSearchModel::data(const QModelIndex &index, int role) const
 {
     switch(role) {
-    case Qt::DecorationRole: {
-        return m_item->m_result_info_list.at(index.row()).icon;
-    }
+//    case Qt::DecorationRole: {
+//        return m_item->m_result_info_list.at(index.row()).icon;
+//    }
     case Qt::DisplayRole: {
         return m_item->m_result_info_list.at(index.row()).name;
     }

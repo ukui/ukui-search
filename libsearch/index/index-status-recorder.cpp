@@ -5,7 +5,7 @@ static IndexStatusRecorder *global_instance_indexStatusRecorder = nullptr;
 
 IndexStatusRecorder *IndexStatusRecorder::getInstance()
 {
-    if(!global_instance_indexStatusRecorder) {
+    if (!global_instance_indexStatusRecorder) {
         global_instance_indexStatusRecorder = new IndexStatusRecorder;
     }
     return global_instance_indexStatusRecorder;

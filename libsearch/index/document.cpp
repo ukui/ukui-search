@@ -21,15 +21,15 @@
 #include <QDebug>
 using namespace Zeeker;
 void Document::setData(QString &data) {
-    if(data.isEmpty())
+    if (data.isEmpty())
         return;
     m_document.set_data(data.toStdString());
 }
 
 void Document::addPosting(std::string term, QVector<size_t> offset, int weight) {
-    if(term == "")
+    if (term == "")
         return;
-    if(term.length() > 240)
+    if (term.length() > 240)
         term = QString::fromStdString(term).left(30).toStdString();
 
     for(size_t i : offset) {
@@ -38,9 +38,9 @@ void Document::addPosting(std::string term, QVector<size_t> offset, int weight) 
 }
 
 void Document::addPosting(std::string &term, std::vector<size_t> &offset, int weight) {
-    if(term == "")
+    if (term == "")
         return;
-    if(term.length() > 240)
+    if (term.length() > 240)
         term = QString::fromStdString(term).left(30).toStdString();
 
     for(size_t i : offset) {
@@ -49,22 +49,22 @@ void Document::addPosting(std::string &term, std::vector<size_t> &offset, int we
 }
 
 void Document::addPosting(std::string term, unsigned int offset, int weight) {
-    if(term == "")
+    if (term == "")
         return;
-    if(term.length() > 240)
+    if (term.length() > 240)
         term = QString::fromStdString(term).left(30).toStdString();
 
     m_document.add_posting(term, offset, weight);
 }
 
 void Document::addTerm(QString term) {
-    if(term.isEmpty())
+    if (term.isEmpty())
         return;
     m_document.add_term(term.toStdString());
 }
 
 void Document::addTerm(std::string term) {
-    if(term.empty())
+    if (term.empty())
         return;
     m_document.add_term(term);
 }
@@ -74,7 +74,7 @@ void Document::addValue(QString value) {
 }
 
 void Document::setUniqueTerm(QString term) {
-    if(term.isEmpty())
+    if (term.isEmpty())
         return;
     m_document.add_term(term.toStdString());
 
@@ -83,7 +83,7 @@ void Document::setUniqueTerm(QString term) {
 }
 
 void Document::setUniqueTerm(std::string term) {
-    if(term.empty())
+    if (term.empty())
         return;
     m_document.add_term(term);
     m_unique_term = term;

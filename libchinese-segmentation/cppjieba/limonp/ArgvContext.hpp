@@ -18,8 +18,8 @@ class ArgvContext {
  public :
   ArgvContext(int argc, const char* const * argv) {
     for(int i = 0; i < argc; i++) {
-      if(StartsWith(argv[i], "-")) {
-        if(i + 1 < argc && !StartsWith(argv[i + 1], "-")) {
+      if (StartsWith(argv[i], "-")) {
+        if (i + 1 < argc && !StartsWith(argv[i + 1], "-")) {
           mpss_[argv[i]] = argv[i+1];
           i++;
         } else {
@@ -35,21 +35,21 @@ class ArgvContext {
 
   friend ostream& operator << (ostream& os, const ArgvContext& args);
   string operator [](size_t i) const {
-    if(i < args_.size()) {
+    if (i < args_.size()) {
       return args_[i];
     }
     return "";
   }
   string operator [](const string& key) const {
     map<string, string>::const_iterator it = mpss_.find(key);
-    if(it != mpss_.end()) {
+    if (it != mpss_.end()) {
       return it->second;
     }
     return "";
   }
 
   bool HasKey(const string& key) const {
-    if(mpss_.find(key) != mpss_.end() || sset_.find(key) != sset_.end()) {
+    if (mpss_.find(key) != mpss_.end() || sset_.find(key) != sset_.end()) {
       return true;
     }
     return false;

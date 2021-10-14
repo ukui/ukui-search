@@ -488,7 +488,7 @@ inline string CalcFileListMD5(const string & files_list, size_t & file_size_sum)
 
     for (auto const & local_path : files) {
         const int fd = ::open(local_path.c_str(), O_RDONLY);
-        if( fd < 0){
+        if ( fd < 0){
             continue;
         }
         auto const len = ::lseek(fd, 0, SEEK_END);

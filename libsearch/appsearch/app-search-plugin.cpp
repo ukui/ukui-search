@@ -65,17 +65,17 @@ void AppSearchPlugin::openAction(int actionkey, QString key, int type)
     case 0:
         switch (actionkey) {
         case 0:
-            if(!launch(key)) {
+            if (!launch(key)) {
                 qWarning() << "Fail to launch:" << key;
             }
             break;
         case 1:
-            if(!addDesktopShortcut(key)) {
+            if (!addDesktopShortcut(key)) {
                 qWarning() << "Fail to add Desktop Shortcut:" << key;
             }
             break;
         case 2:
-            if(!addPanelShortcut(key)) {
+            if (!addPanelShortcut(key)) {
                 qWarning() << "Fail to add Panel Shortcut:" << key;
             }
             break;
@@ -84,7 +84,7 @@ void AppSearchPlugin::openAction(int actionkey, QString key, int type)
         }
         break;
     case 1:
-        if(!installAppAction(key)) {
+        if (!installAppAction(key)) {
             qWarning() << "Fail to install:" << key;
         }
         break;
@@ -100,11 +100,11 @@ QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    if(QString::compare(showname, ri.name)) {
+    if (QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     }
     m_pluginLabel->setText(tr("Application"));
-    if(ri.type == 1) {
+    if (ri.type == 1) {
         m_actionLabel1->hide();
         m_actionLabel2->hide();
         m_actionLabel3->hide();
@@ -225,9 +225,9 @@ bool AppSearchPlugin::addPanelShortcut(const QString& path) {
                          "/",
                          "com.ukui.panel.desktop",
                          QDBusConnection::sessionBus());
-    if(iface.isValid()) {
+    if (iface.isValid()) {
         QDBusReply<bool> isExist = iface.call("CheckIfExist", path);
-        if(isExist) {
+        if (isExist) {
             qWarning() << "Add shortcut to panel failed, because it is already existed!";
             return false;
         }
@@ -245,7 +245,7 @@ bool AppSearchPlugin::addDesktopShortcut(const QString& path) {
     QFile file(path);
     QString newName = QString(dirpath + "/" + desktopfn);
     bool ret = file.copy(QString(dirpath + "/" + desktopfn));
-    if(ret) {
+    if (ret) {
         QProcess process;
         process.startDetached(QString("chmod a+x %1").arg(newName));
         return true;
@@ -259,7 +259,7 @@ bool AppSearchPlugin::installAppAction(const QString & name) {
                 "com.kylin.utiliface",
                 QDBusConnection::sessionBus());
 
-    if(interface->isValid()) {
+    if (interface->isValid()) {
         //软件商店已打开，直接跳转
         interface->call("show_search_result", name);
         bool reply = QDBusReply<bool>(interface->call(QString("show_search_result"), name));
