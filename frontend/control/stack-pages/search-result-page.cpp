@@ -140,9 +140,6 @@ void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(widget, &ResultWidget::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(widget, &ResultWidget::currentRowChanged, m_resultArea, &ResultArea::setSelectionInfo);
-    connect(widget, &ResultWidget::currentRowChanged, this, [=] {
-        QString pluginID = widget->pluginId();
-    });
     connect(widget, &ResultWidget::rowClicked, this, [=] () {
         sendResizeWidthSignal(266);
     });

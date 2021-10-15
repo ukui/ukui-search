@@ -64,7 +64,6 @@ public Q_SLOTS:
 Q_SIGNALS:
     void stopSearch();
     void itemListChanged(const int&);
-    void sendBestListData(const QString &, const SearchPluginIface::ResultInfo&);
 
 private:
     void initConnections();

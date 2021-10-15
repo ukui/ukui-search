@@ -70,6 +70,7 @@ private:
 
     bool m_detail_open_state = false;
     bool m_is_selected = false;
+    bool m_is_first_selected = true;
     QString m_selectedPluginID;
     QPoint m_pressPoint;
 

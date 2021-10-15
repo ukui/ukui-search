@@ -94,6 +94,7 @@ void ResultArea::pressEnter()
 
 void ResultArea::pressDown()
 {
+    m_is_first_selected = false;
     for (ResultWidget * plugin : m_widget_list) {
        if (m_selectedPluginID == plugin->pluginId()) {
            QModelIndex index = plugin->getCurrentSelection();
@@ -139,7 +140,7 @@ void ResultArea::pressDown()
 
 void ResultArea::pressUp()
 {
-
+    m_is_first_selected = false;
     if (!m_is_selected) {//无选中状态下选中最后一项结果
         for (int i = 0; i < m_widget_list.size(); i++) {
             ResultWidget * plugin = m_widget_list[m_widget_list.size() - (i + 1)];
@@ -239,18 +240,11 @@ void ResultArea::onWidgetSizeChanged()
 {
     int whole_height = 0;
 
-    bool select_state = false;
-    Q_FOREACH (ResultWidget *widget, m_widget_list) {
-        if (widget->getSelectedState()) {
-            select_state = true;
-        }
-        whole_height += widget->height();
-    }
 
-    if (!select_state) {
-        bool tmp = false;
-        whole_height = 0;
-        Q_FOREACH (ResultWidget *widget, m_widget_list) {
+    bool tmp = false;
+    whole_height = 0;
+    Q_FOREACH (ResultWidget *widget, m_widget_list) {
+        if (m_is_first_selected) {
             if (tmp == true) {
                 widget->clearResultSelection();
             }
@@ -258,11 +252,13 @@ void ResultArea::onWidgetSizeChanged()
                 tmp = true;
                 widget->setResultSelection(widget->getModlIndex(0, 0));
                 m_is_selected = true;
+                m_is_first_selected = true;
                 m_selectedPluginID = widget->pluginId();
             }
-            whole_height += widget->height();
         }
+        whole_height += widget->height();
     }
+
 
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
@@ -271,6 +267,7 @@ void ResultArea::onWidgetSizeChanged()
 
 void ResultArea::setSelectionInfo(const QString &pluginID, const SearchPluginIface::ResultInfo &info)
 {
+    m_is_first_selected = false;
     m_detail_open_state = true;
     m_is_selected = true;
     m_selectedPluginID = pluginID;
@@ -365,6 +362,7 @@ void ResultArea::initConnections()
     connect(this, &ResultArea::startSearch, this, [=] () {
         m_detail_open_state = false;
         m_is_selected = false;
+        m_is_first_selected = true;
         m_selectedPluginID = "";
         for (auto plugin:m_widget_list) {
             if (plugin->pluginId() != m_selectedPluginID) {

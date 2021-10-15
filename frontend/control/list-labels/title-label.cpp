@@ -51,7 +51,6 @@ void TitleLabel::initUi() {
 void TitleLabel::initConnections() {
     connect(m_showMoreLabel, &ShowMoreLabel::showMoreClicked, this, &TitleLabel::showMoreClicked);
     connect(m_showMoreLabel, &ShowMoreLabel::retractClicked, this, &TitleLabel::retractClicked);
-
 }
 
 void TitleLabel::paintEvent(QPaintEvent * event) {

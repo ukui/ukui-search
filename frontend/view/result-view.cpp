@@ -36,6 +36,7 @@ int ResultWidget::getResultNum()
 void ResultWidget::setResultSelection(const QModelIndex &index)
 {
     this->m_resultView->setCurrentIndex(index);
+    this->m_resultView->setSelectedState(true);
 }
 
 void ResultWidget::clearResultSelection()
@@ -258,10 +259,10 @@ void ResultView::onRowDoubleClickedSlot(const QModelIndex &index)
 void ResultView::onRowSelectedSlot(const QModelIndex &index)
 {
     //NEW_TODO
-    m_is_selected = true;
     if (index.isValid()) {
-        Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(index));
+        m_is_selected = true;
         this->setCurrentIndex(index);
+        Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(index));
     }
 }
 
@@ -391,5 +392,4 @@ void ResultView::initConnections()
     connect(this, &ResultView::clicked, this, &ResultView::onRowSelectedSlot);
     connect(this, &ResultView::activated, this, &ResultView::onRowDoubleClickedSlot);
     connect(m_model, &SearchResultModel::itemListChanged, this, &ResultView::onItemListChanged);
-    connect(m_model, &SearchResultModel::sendBestListData, this, &ResultView::sendBestListData);
 }
