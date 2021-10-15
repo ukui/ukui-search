@@ -12,7 +12,7 @@
 <context>
     <name>Zeeker::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="305"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="306"/>
         <source>Best Matches</source>
         <translation>最佳匹配</translation>
     </message>
@@ -395,11 +395,11 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::WebSearchWidget</name>
+    <name>Zeeker::WebSearchViewDelegate</name>
     <message>
-        <location filename="../../frontend/view/web-search-view.cpp" line="149"/>
-        <source>Web Page</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../frontend/view/web-search-view-delegate.cpp" line="34"/>
+        <source>Search &apos;&lt;b&gt;%1&lt;/b&gt;&apos; with Baidu.</source>
+        <translation>使用百度搜索“&lt;b&gt;%1&lt;/b&gt;”</translation>
     </message>
 </context>
 </TS>

@@ -19,6 +19,8 @@
  *
  */
 #include "web-search-view.h"
+#include "web-search-view-style.h"
+#include <QDesktopServices>
 #define MAIN_MARGINS 0,0,0,0
 #define MAIN_SPACING 0
 #define TITLE_HEIGHT 30
@@ -27,6 +29,8 @@ using namespace Zeeker;
 WebSearchView::WebSearchView(QWidget *parent) : QTreeView(parent)
 {
     this->setFrameShape(QFrame::NoFrame);
+    this->setIconSize(QSize(24, 24));
+    this->setStyle(WebSearchViewStyle::getStyle());
     this->viewport()->setAutoFillBackground(false);
     this->setRootIsDecorated(false);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -35,7 +39,7 @@ WebSearchView::WebSearchView(QWidget *parent) : QTreeView(parent)
     this->setHeaderHidden(true);
     m_model = new WebSearchModel(this);
     this->setModel(m_model);
-    m_style_delegate = new ResultViewDelegate(this);
+    m_style_delegate = new WebSearchViewDelegate(this);
     this->setItemDelegate(m_style_delegate);
 }
 
@@ -150,6 +154,7 @@ bool WebSearchWidget::isSelected()
 
 void WebSearchWidget::initUi()
 {
+    this->setFixedSize(720,56);
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
     m_mainLyt->setContentsMargins(MAIN_MARGINS);
@@ -162,9 +167,8 @@ void WebSearchWidget::initUi()
     m_webSearchView = new WebSearchView(this);
 
 //    m_mainLyt->addWidget(m_titleLabel);
-    m_mainLyt->addWidget(m_webSearchView);
-    this->setFixedHeight(m_webSearchView->height() + TITLE_HEIGHT);
-    this->setFixedWidth(656);
+    m_mainLyt->addWidget(m_webSearchView, Qt::AlignCenter);
+//    this->setFixedHeight(m_webSearchView->viewport().height() + TITLE_HEIGHT);
 }
 
 void WebSearchWidget::initConnections()

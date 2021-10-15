@@ -36,9 +36,10 @@ void WebSearchPage::paintEvent(QPaintEvent *event)
 
 void WebSearchPage::initUI()
 {
-    m_mainLyt = new QVBoxLayout(this);
+//    m_mainLyt = new QVBoxLayout(this);
     m_webSearchWidget = new WebSearchWidget(this);
-    m_mainLyt->addWidget(m_webSearchWidget);
+//    m_mainLyt->addWidget(m_webSearchWidget, Qt::AlignCenter);
+    m_webSearchWidget->move(0, 0);
 }
 
 void WebSearchPage::initConnections()

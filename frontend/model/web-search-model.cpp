@@ -57,9 +57,9 @@ int WebSearchModel::columnCount(const QModelIndex &parent) const
 QVariant WebSearchModel::data(const QModelIndex &index, int role) const
 {
     switch(role) {
-    case Qt::DecorationRole: {
-        return m_item->m_result_info_list.at(index.row()).icon;
-    }
+//    case Qt::DecorationRole: {
+//        return m_item->m_result_info_list.at(index.row()).icon;
+//    }
     case Qt::DisplayRole: {
         return m_item->m_result_info_list.at(index.row()).name;
     }
