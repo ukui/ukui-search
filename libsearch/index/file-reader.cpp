@@ -30,24 +30,24 @@ void FileReader::getTextContent(QString path, QString &textContent) {
     QString name = type.name();
     QFileInfo file(path);
     QString strsfx =  file.suffix();
-    if(name == "application/zip") {
-        if(strsfx.endsWith("docx"))
+    if (name == "application/zip") {
+        if (strsfx.endsWith("docx"))
             FileUtils::getDocxTextContent(path, textContent);
-        if(strsfx.endsWith("pptx"))
+        if (strsfx.endsWith("pptx"))
             FileUtils::getPptxTextContent(path, textContent);
-        if(strsfx.endsWith("xlsx"))
+        if (strsfx.endsWith("xlsx"))
             FileUtils::getXlsxTextContent(path, textContent);
-    } else if(name == "text/plain") {
-        if(strsfx.endsWith("txt"))
+    } else if (name == "text/plain") {
+        if (strsfx.endsWith("txt"))
             FileUtils::getTxtContent(path, textContent);
-    } else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
-        if(strsfx.endsWith("doc") || strsfx.endsWith("dot") || strsfx.endsWith("wps") || strsfx.endsWith("ppt") ||
+    } else if (type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
+        if (strsfx.endsWith("doc") || strsfx.endsWith("dot") || strsfx.endsWith("wps") || strsfx.endsWith("ppt") ||
                 strsfx.endsWith("pps") || strsfx.endsWith("dps") || strsfx.endsWith("et") || strsfx.endsWith("xls")) {
             KBinaryParser searchdata;
             searchdata.RunParser(path, textContent);
         }
-    } else if(name == "application/pdf") {
-        if(strsfx.endsWith("pdf"))
+    } else if (name == "application/pdf") {
+        if (strsfx.endsWith("pdf"))
             FileUtils::getPdfTextContent(path, textContent);
     } else {
         qWarning() << "Unsupport format:[" << path << "][" << type.name() << "]";

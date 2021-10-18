@@ -32,13 +32,13 @@ FirstIndex::FirstIndex() {
 
 FirstIndex::~FirstIndex() {
     qDebug() << "~FirstIndex";
-    if(this->q_index)
+    if (this->q_index)
         delete this->q_index;
     this->q_index = nullptr;
-    if(this->q_content_index)
+    if (this->q_content_index)
         delete this->q_content_index;
     this->q_content_index = nullptr;
-    if(this->p_indexGenerator)
+    if (this->p_indexGenerator)
         delete this->p_indexGenerator;
     this->p_indexGenerator = nullptr;
     qDebug() << "~FirstIndex end";
@@ -47,29 +47,29 @@ FirstIndex::~FirstIndex() {
 void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
-    if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
+    if ((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
         //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
         if (fileInfo.fileName().split(".").last() == "docx") {
             QuaZip file(fileInfo.absoluteFilePath());
-            if(!file.open(QuaZip::mdUnzip))
+            if (!file.open(QuaZip::mdUnzip))
                 return;
-            if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
+            if (!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
                 return;
             QuaZipFile fileR(&file);
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//docx解压缩后的xml文件为实际需要解析文件大小
             file.close();
         } else if (fileInfo.fileName().split(".").last() == "pptx") {
             QuaZip file(fileInfo.absoluteFilePath());
-            if(!file.open(QuaZip::mdUnzip))
+            if (!file.open(QuaZip::mdUnzip))
                 return;
             QString prefix("ppt/slides/slide");
             qint64 fileSize(0);
             qint64 fileIndex(0);
             for(QString i : file.getFileNameList()) {
-                if(i.startsWith(prefix)){
+                if (i.startsWith(prefix)){
                     QString name = prefix + QString::number(fileIndex + 1) + ".xml";
                     fileIndex++;
-                    if(!file.setCurrentFile(name)) {
+                    if (!file.setCurrentFile(name)) {
                         continue;
                     }
                     QuaZipFile fileR(&file);
@@ -80,9 +80,9 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileSize));//pptx解压缩后的xml文件为实际需要解析文件大小
         } else if (fileInfo.fileName().split(".").last() == "xlsx") {
             QuaZip file(fileInfo.absoluteFilePath());
-            if(!file.open(QuaZip::mdUnzip))
+            if (!file.open(QuaZip::mdUnzip))
                 return;
-            if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
+            if (!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
                 return;
             QuaZipFile fileR(&file);
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//xlsx解压缩后的xml文件为实际解析文件大小
@@ -104,12 +104,12 @@ void FirstIndex::run() {
     qDebug() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
     qDebug() << "inotifyIndexStatus: " << inotifyIndexStatus;
 
-    if(indexDataBaseStatus == "") {
+    if (indexDataBaseStatus == "") {
         this->bool_dataBaseExist = false;
     } else {
         this->bool_dataBaseExist = true;
     }
-    if(indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2") {
+    if (indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2") {
         this->bool_dataBaseStatusOK = false;
     } else {
         this->bool_dataBaseStatusOK = true;
@@ -124,7 +124,7 @@ void FirstIndex::run() {
     buffer[0] = 0x1;
     buffer[1] = '\0';
     fifo_fd = open(UKUI_SEARCH_PIPE_PATH, O_RDWR);
-    if(fifo_fd == -1) {
+    if (fifo_fd == -1) {
         perror("open fifo error\n");
         assert(false);
     }
@@ -132,11 +132,11 @@ void FirstIndex::run() {
     ++FileUtils::_index_status;
     pid_t pid;
     pid = fork();
-    if(pid  == 0) {
+    if (pid  == 0) {
         prctl(PR_SET_PDEATHSIG, SIGTERM);
         prctl(PR_SET_NAME, "first-index");
-        if(this->bool_dataBaseExist) {
-            if(this->bool_dataBaseStatusOK) {
+        if (this->bool_dataBaseExist) {
+            if (this->bool_dataBaseStatusOK) {
                 ::_exit(0);
             } else {
                 //if the parameter is false, index won't be rebuild
@@ -217,20 +217,20 @@ void FirstIndex::run() {
 
 
 
-        if(this->q_index)
+        if (this->q_index)
             delete this->q_index;
         this->q_index = nullptr;
-        if(this->q_content_index)
+        if (this->q_content_index)
             delete this->q_content_index;
         this->q_content_index = nullptr;
-        if(p_indexGenerator)
+        if (p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;
 //        GlobalSettings::getInstance()->forceSync();
         IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "2");
         IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "2");
         ::_exit(0);
-    } else if(pid < 0) {
+    } else if (pid < 0) {
         qWarning() << "First Index fork error!!";
     } else {
         waitpid(pid, NULL, 0);
@@ -239,7 +239,7 @@ void FirstIndex::run() {
 
     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
     int retval1 = write(fifo_fd, buffer, strlen(buffer));
-    if(retval1 == -1) {
+    if (retval1 == -1) {
         qWarning("write error\n");
     }
     qDebug("write data ok!\n");

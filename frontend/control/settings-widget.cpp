@@ -193,13 +193,13 @@ void SettingsWidget::initUi() {
 //        setWebEngine(id);
 //    });
     connect(m_baiduBtn, &QRadioButton::clicked, [ = ](bool checked) {
-        if(checked) setWebEngine("baidu");
+        if (checked) setWebEngine("baidu");
     });
     connect(m_sougouBtn, &QRadioButton::clicked, [ = ](bool checked) {
-        if(checked) setWebEngine("sougou");
+        if (checked) setWebEngine("sougou");
     });
     connect(m_360Btn, &QRadioButton::clicked, [ = ](bool checked) {
-        if(checked) setWebEngine("360");
+        if (checked) setWebEngine("360");
     });
 
     m_contentLyt->addWidget(m_searchEngineLabel);
@@ -256,10 +256,10 @@ void SettingsWidget::setupBlackList(const QStringList& list) {
  * @param layout 需要清空的布局
  */
 void SettingsWidget::clearLayout(QLayout * layout) {
-    if(! layout) return;
+    if (! layout) return;
     QLayoutItem * child;
     while((child = layout->takeAt(0)) != 0) {
-        if(child->widget()) {
+        if (child->widget()) {
             child->widget()->setParent(NULL);
         }
         delete child;
@@ -272,7 +272,7 @@ void SettingsWidget::clearLayout(QLayout * layout) {
  */
 void SettingsWidget::refreshIndexState() {
 //    qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
-    if(FileUtils::_index_status != 0) {
+    if (FileUtils::_index_status != 0) {
         this->setIndexState(true);
     } else {
         this->setIndexState(false);
@@ -281,7 +281,7 @@ void SettingsWidget::refreshIndexState() {
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
         qDebug() << "FileUtils::_index_status: " << FileUtils::_index_status;
-        if(FileUtils::_index_status != 0) {
+        if (FileUtils::_index_status != 0) {
             this->setIndexState(true);
         } else {
             this->setIndexState(false);
@@ -300,15 +300,15 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
     QPushButton * buttonYes = message.addButton(tr("Yes"), QMessageBox::YesRole);
     message.addButton(tr("No"), QMessageBox::NoRole);
     message.exec();
-    if(message.clickedButton() != buttonYes) {
+    if (message.clickedButton() != buttonYes) {
         return;
     }
 
     int returnCode = 0;
-    if(GlobalSettings::getInstance()->setBlockDirs(path, returnCode, true)) {
+    if (GlobalSettings::getInstance()->setBlockDirs(path, returnCode, true)) {
         qDebug() << "Remove block dir in onBtnDelClicked() successed.";
         Q_FOREACH(FolderListItem * item, m_dirListWidget->findChildren<FolderListItem*>()) {
-            if(item->getPath() == path) {
+            if (item->getPath() == path) {
                 item->deleteLater();
                 item = NULL;
                 m_blockdirs --;
@@ -327,10 +327,10 @@ void SettingsWidget::onBtnDelClicked(const QString& path) {
 void SettingsWidget::resetWebEngine() {
     QString engine = GlobalSettings::getInstance()->getValue(WEB_ENGINE).toString();
     m_engineBtnGroup->blockSignals(true);
-    if(!engine.isEmpty()) {
-        if(engine == "360") {
+    if (!engine.isEmpty()) {
+        if (engine == "360") {
             m_360Btn->setChecked(true);
-        } else if(engine == "sougou") {
+        } else if (engine == "sougou") {
             m_sougouBtn->setChecked(true);
         } else {
             m_baiduBtn->setChecked(true);
@@ -355,7 +355,7 @@ void SettingsWidget::setWebEngine(const QString& engine) {
  * @param isCreatingIndex 是否正在创建索引
  */
 void SettingsWidget::setIndexState(bool isCreatingIndex) {
-    if(isCreatingIndex) {
+    if (isCreatingIndex) {
         m_indexStateLabel->setText(tr("Creating ..."));
         return;
     }
@@ -420,7 +420,7 @@ void SettingsWidget::onBtnAddClicked() {
     fileDialog->setLabelText(QFileDialog::FileName, tr("FileName: "));
     fileDialog->setLabelText(QFileDialog::FileType, tr("FileType: "));
     fileDialog->setLabelText(QFileDialog::Reject, tr("Cancel"));
-    if(fileDialog->exec() != QDialog::Accepted) {
+    if (fileDialog->exec() != QDialog::Accepted) {
         fileDialog->deleteLater();
         return;
     }
@@ -428,7 +428,7 @@ void SettingsWidget::onBtnAddClicked() {
     int returnCode;
     selectedDir = fileDialog->selectedFiles().first();
     qDebug() << "Selected a folder in onBtnAddClicked(): " << selectedDir << ". ->settings-widget.cpp #238";
-    if(GlobalSettings::getInstance()->setBlockDirs(selectedDir, returnCode)) {
+    if (GlobalSettings::getInstance()->setBlockDirs(selectedDir, returnCode)) {
         setupBlackList(GlobalSettings::getInstance()->getBlockDirs());
         qDebug() << "Add block dir in onBtnAddClicked() successed. ->settings-widget.cpp #238";
     } else {
@@ -465,7 +465,7 @@ void SettingsWidget::resize() {
 //    } else {
 //        this->setFixedSize(528, 515);
 //    }
-    if(m_blockdirs <= 4) {
+    if (m_blockdirs <= 4) {
         m_dirListArea->setFixedHeight(32 * m_blockdirs + 4);
         m_dirListWidget->setFixedHeight(32 * m_blockdirs);
     } else {
@@ -584,8 +584,8 @@ void FolderListItem::leaveEvent(QEvent *event) {
  * @return
  */
 bool FolderListItem::eventFilter(QObject *watched, QEvent *event) {
-    if(watched == m_delLabel) {
-        if(event->type() == QEvent::MouseButtonPress) {
+    if (watched == m_delLabel) {
+        if (event->type() == QEvent::MouseButtonPress) {
 //            qDebug()<<"pressed!";
             Q_EMIT this->onDelBtnClicked(m_path);
         }

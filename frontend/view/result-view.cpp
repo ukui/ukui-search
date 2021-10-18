@@ -36,11 +36,13 @@ int ResultWidget::getResultNum()
 void ResultWidget::setResultSelection(const QModelIndex &index)
 {
     this->m_resultView->setCurrentIndex(index);
+    this->m_resultView->setSelectedState(true);
 }
 
 void ResultWidget::clearResultSelection()
 {
     this->m_resultView->setCurrentIndex(QModelIndex());
+    this->m_resultView->setSelectedState(false);
 }
 
 QModelIndex ResultWidget::getModlIndex(int row, int column)
@@ -76,6 +78,11 @@ int ResultWidget::getResultHeight()
 void ResultWidget::resetTitleLabel()
 {
     Q_EMIT this->m_titleLabel->lableReset();
+}
+
+bool ResultWidget::getSelectedState()
+{
+    return m_resultView->getSelectedState();
 }
 
 /**
@@ -133,7 +140,6 @@ void ResultWidget::initConnections()
     connect(this, &ResultWidget::stopSearch, m_resultView, &ResultView::stopSearch);
     connect(this, &ResultWidget::stopSearch, m_titleLabel, &TitleLabel::stopSearch);
     connect(m_resultView, &ResultView::currentRowChanged, this, &ResultWidget::currentRowChanged);
-    connect(this, &ResultWidget::clearSelectedRow, m_resultView, &ResultView::clearSelectedRow);
     connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &ResultWidget::expandListSlot);
     connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &ResultWidget::showMoreClicked);
     connect(m_titleLabel, &TitleLabel::retractClicked, this, &ResultWidget::reduceListSlot);
@@ -212,16 +218,14 @@ int ResultView::getResultHeight()
     return this->rowHeight(this->model()->index(0, 0, QModelIndex()));
 }
 
-void ResultView::clearSelectedRow()
+bool ResultView::getSelectedState()
 {
-    if (!m_is_selected) {
-        this->blockSignals(true);
-        //this->();
-        this->setCurrentIndex(QModelIndex());
-        this->blockSignals(false);
-    } else {
-        m_is_selected = false;
-    }
+    return m_is_selected;
+}
+
+void ResultView::setSelectedState(bool state)
+{
+    m_is_selected = state;
 }
 
 /**
@@ -255,15 +259,11 @@ void ResultView::onRowDoubleClickedSlot(const QModelIndex &index)
 void ResultView::onRowSelectedSlot(const QModelIndex &index)
 {
     //NEW_TODO
-    m_is_selected = true;
-    if(index.isValid()) {
+    if (index.isValid()) {
+        m_is_selected = true;
+        this->setCurrentIndex(index);
         Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(index));
     }
-    //    if(!selected.isEmpty()) {
-//        QRegion region = visualRegionForSelection(selected);
-//        QRect rect = region.boundingRect();
-////            Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
-//    }
 }
 
 void ResultView::onItemListChanged(const int &count)
@@ -313,60 +313,67 @@ void ResultView::mousePressEvent(QMouseEvent *event)
 
 void ResultView::mouseReleaseEvent(QMouseEvent *event)
 {
-//    QModelIndex index = indexAt(event->pos());
-//    if (index.isValid()) {
-//        Q_EMIT this->clicked(index);
-//    } else {
-//        Q_EMIT this->clicked(this->currentIndex());
-//    }
+    QModelIndex index = indexAt(event->pos());
+    if (index.isValid()) {
+        Q_EMIT this->clicked(index);
+    } else {
+        Q_EMIT this->clicked(this->currentIndex());
+    }
     return QTreeView::mouseReleaseEvent(event);
 }
 
 void ResultView::mouseMoveEvent(QMouseEvent *event)
 {
-//   m_tmpCurrentIndex = this->currentIndex();
-//   m_tmpMousePressIndex = indexAt(event->pos());
-//   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex and event->source() != Qt::MouseEventSynthesizedByQt) {
-//       Q_EMIT this->clicked(m_tmpMousePressIndex);
-//   }
+   m_tmpCurrentIndex = this->currentIndex();
+   m_tmpMousePressIndex = indexAt(event->pos());
+   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex and event->source() != Qt::MouseEventSynthesizedByQt) {
+       Q_EMIT this->clicked(m_tmpMousePressIndex);
+   }
     return QTreeView::mouseMoveEvent(event);
 }
 
 bool ResultView::viewportEvent(QEvent *event)
 {
-     if(event->type() == QEvent::TouchBegin) {
+     if (event->type() == QEvent::TouchBegin) {
          qDebug() << "TouchBegin==============";
          QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
-         QMouseEvent *me = new QMouseEvent(QEvent::MouseButtonPress,
-                                                        e->touchPoints().at(0).pos(),
-                                                        this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
-                                                        this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
-                                                        Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
-         QApplication::sendEvent(parent(), me);
+         QMouseEvent me(QEvent::MouseButtonPress,
+                        e->touchPoints().at(0).pos(),
+                        this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                        this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                        Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+         QApplication::sendEvent(parent(), &me);
          m_touchTimer->start();
          event->accept();
          return true;
      } else if (event->type() == QEvent::TouchEnd) {
          qDebug() << "touchend==============" << m_touchTimer->remainingTime();
-         if(m_touchTimer->remainingTime() > 0.001) {
+         if (m_touchTimer->remainingTime() > 0.001) {
              QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
-             QMouseEvent *me = new QMouseEvent(QEvent::MouseButtonPress,
-                                               e->touchPoints().at(0).pos(),
-                                               this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
-                                               this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
-                                               Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
-             QApplication::sendEvent(this->viewport(),me);
+             QMouseEvent me(QEvent::MouseButtonPress,
+                            e->touchPoints().at(0).pos(),
+                            this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                            this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                            Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+             QApplication::sendEvent(this->viewport(),&me);
+
+             QMouseEvent mer(QEvent::MouseButtonRelease,
+                             e->touchPoints().at(0).pos(),
+                             this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                             this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                             Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+             QApplication::sendEvent(this->viewport(),&mer);
          }
          return true;
      } else if (event->type() == QEvent::TouchUpdate) {
          qDebug() << "touchupdate==============";
          QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
-         QMouseEvent *me = new QMouseEvent(QEvent::MouseMove,
-                                           e->touchPoints().at(0).pos(),
-                                           this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
-                                           this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
-                                           Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
-         QApplication::sendEvent(parent(), me);
+         QMouseEvent me(QEvent::MouseMove,
+                        e->touchPoints().at(0).pos(),
+                        this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                        this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                        Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+         QApplication::sendEvent(parent(), &me);
          return true;
      }
     return QTreeView::viewportEvent(event);
@@ -385,5 +392,4 @@ void ResultView::initConnections()
     connect(this, &ResultView::clicked, this, &ResultView::onRowSelectedSlot);
     connect(this, &ResultView::activated, this, &ResultView::onRowDoubleClickedSlot);
     connect(m_model, &SearchResultModel::itemListChanged, this, &ResultView::onItemListChanged);
-    connect(m_model, &SearchResultModel::sendBestListData, this, &ResultView::sendBestListData);
 }

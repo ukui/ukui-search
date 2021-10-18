@@ -36,7 +36,7 @@ void Traverse_BFS::Traverse() {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
         for(auto i : list) {
-            if(i.isDir() && (!(i.isSymLink()))) {
+            if (i.isDir() && (!(i.isSymLink()))) {
                 bfs.enqueue(i.absoluteFilePath());
             }
             DoSomething(i);

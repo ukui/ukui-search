@@ -34,7 +34,7 @@ void SearchResultManager::startSearch(const QString &keyword)
     //NEW_TODO 加锁？停止线程？重新搜索？
 //    stopSearch();
     qDebug()<<m_plugin_id<<"------------------>start by others";
-    if(! m_get_result_thread->isRunning()) {
+    if (! m_get_result_thread->isRunning()) {
         m_get_result_thread->start();
     }
     m_result_queue->clear();
@@ -47,7 +47,7 @@ void SearchResultManager::startSearch(const QString &keyword)
  */
 void SearchResultManager::stopSearch()
 {
-    if(m_get_result_thread->isRunning()) {
+    if (m_get_result_thread->isRunning()) {
         qDebug()<<m_plugin_id<<"-------------->stopped by others";
         m_get_result_thread->stop();
 //        m_get_result_thread->quit();
@@ -78,19 +78,19 @@ void ReceiveResultThread::run()
     bool is_empty;
     while(!isInterruptionRequested()) {
         is_empty = false;
-        if(!m_result_queue->isEmpty()) {
+        if (!m_result_queue->isEmpty()) {
             Q_EMIT this->gotResultInfo(m_result_queue->dequeue());
 
         } else {
             is_empty = true;
         }
-        if(m_timer->isActive() && m_timer->remainingTime() < 0.01) {
+        if (m_timer->isActive() && m_timer->remainingTime() < 0.01) {
             this->requestInterruption();
             qWarning()<<"-------------->stopped by self";
         }
-        if(is_empty && !m_timer->isActive()) {
+        if (is_empty && !m_timer->isActive()) {
             m_timer->start();
-        } else if(!is_empty) {
+        } else if (!is_empty) {
             m_timer->stop();
         } else {
             msleep(100);

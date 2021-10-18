@@ -117,7 +117,7 @@ inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
         tmp |= (uint8_t)(s.data()[i+1]) & 0x3f;
         i += 2;
         len = 2;
-      } else if((uint8_t)s.data()[i] <= 0xef && i + 2 < s.size()) { // 1110xxxxxx
+      } else if ((uint8_t)s.data()[i] <= 0xef && i + 2 < s.size()) { // 1110xxxxxx
         // 4bit, total 4bit
         tmp = (uint8_t)(s.data()[i]) & 0x0f;
 
@@ -131,7 +131,7 @@ inline bool DecodeRunesInString(const string& s, RuneStrArray& runes) {
 
         i += 3;
         len = 3;
-      } else if((uint8_t)s.data()[i] <= 0xf7 && i + 3 < s.size()) { // 11110xxxx
+      } else if ((uint8_t)s.data()[i] <= 0xf7 && i + 3 < s.size()) { // 11110xxxx
         // 3bit, total 3bit
         tmp = (uint8_t)(s.data()[i]) & 0x07;
 

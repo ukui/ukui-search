@@ -120,7 +120,7 @@ QtLockedFile::QtLockedFile(const QString &name)
   \sa QFile::open(), QFile::resize()
 */
 bool QtLockedFile::open(OpenMode mode) {
-    if(mode & QIODevice::Truncate) {
+    if (mode & QIODevice::Truncate) {
         qWarning("QtLockedFile::open(): Truncate mode not allowed.");
         return false;
     }

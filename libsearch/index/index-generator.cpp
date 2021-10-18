@@ -49,7 +49,7 @@ QVector<Document> IndexGenerator::_doc_list_content = QVector<Document>();
 
 IndexGenerator *IndexGenerator::getInstance(bool rebuild, QObject *parent) {
     QMutexLocker locker(&m_mutex);
-    if(!global_instance) {
+    if (!global_instance) {
         qDebug() << "IndexGenerator=================";
         global_instance = new IndexGenerator(rebuild, parent);
     }
@@ -65,10 +65,10 @@ bool IndexGenerator::setIndexdataPath() {
 //文件名索引
 bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList) {
     HandlePathList(messageList);
-//    if(_doc_list_path == NULL) {
+//    if (_doc_list_path == NULL) {
 //        return false;
 //    }
-    if(IndexGenerator::_doc_list_path.isEmpty()) {
+    if (IndexGenerator::_doc_list_path.isEmpty()) {
         return false;
     }
     qDebug() << "begin creatAllIndex";
@@ -98,21 +98,21 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
 //    FileUtils::_index_status |= 0x2;
     HandlePathList(messageList);
     qDebug() << "begin creatAllIndex for content";
-//    if(_doc_list_content == NULL) {
+//    if (_doc_list_content == NULL) {
 //        return false;
 //    }
-    if(IndexGenerator::_doc_list_content.isEmpty()) {
+    if (IndexGenerator::_doc_list_content.isEmpty()) {
         return false;
     }
     int size = IndexGenerator::_doc_list_content.size();
     qDebug() << "begin creatAllIndex for content" << size;
-    if(!size == 0) {
+    if (!size == 0) {
 //        GlobalSettings::getInstance()->setValue(CONTENT_INDEX_DATABASE_STATE, "0");
         try {
             int count = 0;
             for(auto i : IndexGenerator::_doc_list_content) {
                 insertIntoContentDatabase(i);
-                if(++count > 999) {
+                if (++count > 999) {
                     count = 0;
                     m_database_content->commit();
                 }
@@ -141,15 +141,15 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
 IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent) {
     QDir database(QString::fromStdString(INDEX_PATH));
 
-    if(database.exists()) {
-        if(rebuild)
+    if (database.exists()) {
+        if (rebuild)
             qDebug() << "remove" << database.removeRecursively();
     } else {
         qDebug() << "create index path" << database.mkpath(QString::fromStdString(INDEX_PATH));
     }
     database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
-    if(database.exists()) {
-        if(rebuild)
+    if (database.exists()) {
+        if (rebuild)
             qDebug() << "remove" << database.removeRecursively();
     } else {
         qDebug() << "create content index path" << database.mkpath(QString::fromStdString(CONTENT_INDEX_PATH));
@@ -162,29 +162,29 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent) 
 IndexGenerator::~IndexGenerator() {
     QMutexLocker locker(&m_mutex);
     qDebug() << "~IndexGenerator";
-    if(m_database_path)
+    if (m_database_path)
         m_database_path->~WritableDatabase();
 //        delete m_database_path;
     m_database_path = nullptr;
-    if(m_database_content)
+    if (m_database_content)
         m_database_content->~WritableDatabase();
 //        delete m_database_content;
     m_database_path = nullptr;
     m_database_content = nullptr;
     global_instance = nullptr;
-//    if(m_index_map)
+//    if (m_index_map)
 //        delete m_index_map;
 //    m_index_map = nullptr;
-//    if(m_doc_list_path)
+//    if (m_doc_list_path)
 //        delete m_doc_list_path;
 //    m_doc_list_path = nullptr;
-//    if(m_doc_list_content)
+//    if (m_doc_list_content)
 //        delete m_doc_list_content;
 //    m_doc_list_content = nullptr;
-//    if(m_index_data_path)
+//    if (m_index_data_path)
 //        delete m_index_data_path;
 //    m_index_data_path = nullptr;
-//    if(m_indexer)
+//    if (m_indexer)
 //        delete m_indexer;
 //    m_indexer = nullptr;
 //    GlobalSettings::getInstance()->setValue(INDEX_DATABASE_STATE, "2");
@@ -240,7 +240,7 @@ void IndexGenerator::HandlePathList(QQueue<QVector<QString>> *messageList) {
         pool.start(constructer);
     }
     qDebug() << "pool finish" << pool.waitForDone(-1);
-//    if(constructer)
+//    if (constructer)
 //        delete constructer;
 //    constructer = nullptr;
 
@@ -270,7 +270,7 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList) {
         pool.start(constructer);
     }
     qDebug() << "pool finish" << pool.waitForDone(-1);
-//    if(constructer)
+//    if (constructer)
 //        delete constructer;
 //    constructer = nullptr;
 
@@ -319,7 +319,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list) {
 //    QString uniqueterm1 = QString::fromStdString(QCryptographicHash::hash(sourcePath.toUtf8(),QCryptographicHash::Md5).toStdString());
     /*--------------------------------------------------------------------*/
     //QByteArray 和  QString 之间会进行隐式转换，造成字符串被截断等意想不到的后果！！！！！！！ zpf
-    //    if(uniqueterm1!=uniqueterm){
+    //    if (uniqueterm1!=uniqueterm){
 //        qDebug()<<"-----------------------------------------start";
 //        qDebug()<<uniqueterm1;
 //        qDebug()<<uniqueterm;
@@ -431,7 +431,7 @@ QStringList IndexGenerator::IndexSearch(QString indexText) {
 //            QFileInfo *info = new QFileInfo(QString::fromStdString(data));
             QFileInfo info(QString::fromStdString(data));
 
-            if(!info.exists()) {
+            if (!info.exists()) {
 //                pathTobeDelete->append(QString::fromStdString(data));
                 qDebug() << QString::fromStdString(data) << "is not exist!!";
             } else {
@@ -441,7 +441,7 @@ QStringList IndexGenerator::IndexSearch(QString indexText) {
             qDebug() << "doc=" << QString::fromStdString(data) << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
         }
 //        //Delete those path doc which is not already exist.
-//        if(!pathTobeDelete->isEmpty())
+//        if (!pathTobeDelete->isEmpty())
 //            deleteAllIndex(pathTobeDelete);
 
         qDebug() << "--search finish--";
@@ -453,7 +453,7 @@ QStringList IndexGenerator::IndexSearch(QString indexText) {
 
 bool IndexGenerator::deleteAllIndex(QStringList *pathlist) {
     QStringList *list = pathlist;
-    if(list->isEmpty())
+    if (list->isEmpty())
         return true;
     try {
         qDebug() << "--delete start--";
@@ -492,22 +492,22 @@ bool IndexGenerator::updateIndex(QVector<PendingFile> *pendingFiles)
     QQueue<QString> *fileContentIndexInfo = new QQueue<QString>;
     QStringList *deleteList = new  QStringList;
     for(PendingFile file : *pendingFiles) {
-        if(file.shouldRemoveIndex()) {
+        if (file.shouldRemoveIndex()) {
 
             deleteList->append(file.path());
             continue;
         }
         fileIndexInfo->append(QVector<QString>() << file.path().section("/" , -1) << file.path() << QString(file.isDir() ? "1" : "0"));
-        if((!file.path().split(".").isEmpty()) && (true == targetFileTypeMap[file.path().section("/" , -1) .split(".").last()]))
+        if ((!file.path().split(".").isEmpty()) && (true == targetFileTypeMap[file.path().section("/" , -1) .split(".").last()]))
             fileContentIndexInfo->append(file.path());
     }
-    if(!deleteList->isEmpty()) {
+    if (!deleteList->isEmpty()) {
         deleteAllIndex(deleteList);
     }
-    if(!fileIndexInfo->isEmpty()) {
+    if (!fileIndexInfo->isEmpty()) {
         creatAllIndex(fileIndexInfo);
     }
-    if(!fileContentIndexInfo->isEmpty()) {
+    if (!fileContentIndexInfo->isEmpty()) {
         creatAllIndex(fileContentIndexInfo);
     }
     delete fileIndexInfo;

@@ -15,7 +15,7 @@
 #endif // XCHECK
 
 #define XLOG(level) limonp::Logger(limonp::LL_##level, __FILE__, __LINE__).Stream()
-#define XCHECK(exp) if(!(exp)) XLOG(FATAL) << "exp: ["#exp << "] false. "
+#define XCHECK(exp) if (!(exp)) XLOG(FATAL) << "exp: ["#exp << "] false. "
 
 namespace limonp {
 

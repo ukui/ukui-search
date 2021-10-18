@@ -28,7 +28,7 @@ using namespace Zeeker;
 static AppMatch *app_match_Class = nullptr;
 
 AppMatch *AppMatch::getAppMatch() {
-    if(!app_match_Class) {
+    if (!app_match_Class) {
         app_match_Class = new AppMatch;
     }
     return app_match_Class;
@@ -39,7 +39,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
     m_watchAppDir = new QFileSystemWatcher(this);
     m_watchAppDir->addPath("/usr/share/applications/");
     QDir androidPath(ANDROID_APP_DESKTOP_PATH);
-    if(!androidPath.exists()) {
+    if (!androidPath.exists()) {
         androidPath.mkpath(ANDROID_APP_DESKTOP_PATH);
     }
     m_watchAppDir->addPath(ANDROID_APP_DESKTOP_PATH);
@@ -48,7 +48,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
     m_interFace = new QDBusInterface("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
                                      "com.kylin.getsearchresults",
                                      QDBusConnection::sessionBus());
-    if(!m_interFace->isValid()) {
+    if (!m_interFace->isValid()) {
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
     m_interFace->setTimeout(200);
@@ -56,11 +56,11 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
 }
 
 AppMatch::~AppMatch() {
-    if(m_interFace) {
+    if (m_interFace) {
         delete m_interFace;
     }
     m_interFace = NULL;
-    if(m_watchAppDir) {
+    if (m_watchAppDir) {
         delete m_watchAppDir;
     }
     m_watchAppDir = NULL;
@@ -79,14 +79,14 @@ void AppMatch::startMatchApp(QString input, size_t uniqueSymbol, DataQueue<Searc
 void AppMatch::getAllDesktopFilePath(QString path) {
 
     QDir dir(path);
-    if(!dir.exists()) {
+    if (!dir.exists()) {
         return;
     }
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
     QFileInfoList list = dir.entryInfoList();
     list.removeAll(QFileInfo("/usr/share/applications/screensavers"));
-    if(list.size() < 1) {
+    if (list.size() < 1) {
         return;
     }
     XdgDesktopFile desktopfile;
@@ -95,31 +95,31 @@ void AppMatch::getAllDesktopFilePath(QString path) {
         QFileInfo fileInfo = list.at(i);
         //如果是文件夹，递归
         bool isDir = fileInfo.isDir();
-        if(isDir) {
+        if (isDir) {
             getAllDesktopFilePath(fileInfo.filePath());
             qDebug() << fileInfo.filePath();
             ++i;
         } else {
             QString filePathStr = fileInfo.filePath();
-            if(m_ExcludedDesktopfiles.contains(filePathStr)) {
+            if (m_ExcludedDesktopfiles.contains(filePathStr)) {
                 ++i;
                 continue;
             }
 
             //过滤后缀不是.desktop的文件
-            if(!filePathStr.endsWith(".desktop")) {
+            if (!filePathStr.endsWith(".desktop")) {
                 ++i;
                 continue;
             }
 
             desktopfile.load(filePathStr);
-            if(desktopfile.value("NoDisplay").toString().contains("true") || desktopfile.value("NotShowIn").toString().contains("UKUI")) {
+            if (desktopfile.value("NoDisplay").toString().contains("true") || desktopfile.value("NotShowIn").toString().contains("UKUI")) {
                 ++i;
                 continue;
             }
 
             QString name = desktopfile.localizedValue("Name").toString();
-            if(name.isEmpty()) {
+            if (name.isEmpty()) {
                 ++i;
                 qDebug() << filePathStr << "name!!";
                 continue;
@@ -149,7 +149,7 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
     QMapIterator<NameString, QStringList> iter(m_installAppMap);
     while(iter.hasNext()) {
         iter.next();
-        if(iter.key().app_name.contains(keyWord, Qt::CaseInsensitive)) {
+        if (iter.key().app_name.contains(keyWord, Qt::CaseInsensitive)) {
             SearchPluginIface::ResultInfo ri;
             creatResultInfo(ri, iter, true);
             AppSearchPlugin::m_mutex.lock();
@@ -169,7 +169,7 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
         bool matched = false;
         for(int i = 0; i < pinyinlist.size() / 2; i++) {
             QString shouzimu = pinyinlist.at(2 * i + 1); // 中文转首字母
-            if(shouzimu.contains(keyWord, Qt::CaseInsensitive)) {
+            if (shouzimu.contains(keyWord, Qt::CaseInsensitive)) {
                 SearchPluginIface::ResultInfo ri;
                 creatResultInfo(ri, iter, true);
                 AppSearchPlugin::m_mutex.lock();
@@ -183,10 +183,10 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
                     return;
                 }
             }
-            if(keyWord.size() < 2)
+            if (keyWord.size() < 2)
                 break;
             QString pinyin = pinyinlist.at(2 * i); // 中文转拼音
-            if(pinyin.contains(keyWord, Qt::CaseInsensitive)) {
+            if (pinyin.contains(keyWord, Qt::CaseInsensitive)) {
                 SearchPluginIface::ResultInfo ri;
                 AppSearchPlugin::m_mutex.lock();
                 creatResultInfo(ri, iter, true);
@@ -201,13 +201,13 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
                 }
             }
         }
-        if(matched) {
+        if (matched) {
             continue;
         }
         QStringList tmpList;
         tmpList << iter.value().at(2) << iter.value().at(3);
         for(QString s : tmpList) {
-            if(s.contains(keyWord, Qt::CaseInsensitive)) {
+            if (s.contains(keyWord, Qt::CaseInsensitive)) {
                 SearchPluginIface::ResultInfo ri;
                 AppSearchPlugin::m_mutex.lock();
                 creatResultInfo(ri, iter, true);
@@ -225,7 +225,7 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
 }
 
 void AppMatch::softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn) {
-//    if(m_interFace->timeout() != -1) {
+//    if (m_interFace->timeout() != -1) {
 //        qWarning() << "softWareCente Dbus is timeout !";
 //        return;
 //    }
@@ -236,7 +236,7 @@ void AppMatch::softWareCenterSearch(QMap<NameString, QStringList> &softwareretur
 void AppMatch::slotDBusCallFinished(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
     QDBusReply<QList<QMap<QString, QString>>> reply = m_interFace->call("get_search_result", keyWord); //阻塞，直到远程方法调用完成。
 //    QDBusPendingReply<QList<QMap<QString,QString>>> reply = *call;
-    if(reply.isValid()) {
+    if (reply.isValid()) {
         parseSoftWareCenterReturn(reply.value(), uniqueSymbol, searchResult);
     } else {
         qWarning() << "SoftWareCenter dbus called failed!";
@@ -249,7 +249,7 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, siz
     QLocale locale;
     for(int i = 0; i < list.size(); i++) {
         SearchPluginIface::ResultInfo ri;
-        if(locale.language() == QLocale::Chinese) {
+        if (locale.language() == QLocale::Chinese) {
             ri.name = list.at(i).value("displayname_cn");
         } else {
             ri.name = list.at(i).value("appname");

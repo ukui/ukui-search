@@ -94,6 +94,7 @@ void ResultArea::pressEnter()
 
 void ResultArea::pressDown()
 {
+    m_is_first_selected = false;
     for (ResultWidget * plugin : m_widget_list) {
        if (m_selectedPluginID == plugin->pluginId()) {
            QModelIndex index = plugin->getCurrentSelection();
@@ -139,7 +140,7 @@ void ResultArea::pressDown()
 
 void ResultArea::pressUp()
 {
-
+    m_is_first_selected = false;
     if (!m_is_selected) {//无选中状态下选中最后一项结果
         for (int i = 0; i < m_widget_list.size(); i++) {
             ResultWidget * plugin = m_widget_list[m_widget_list.size() - (i + 1)];
@@ -238,9 +239,12 @@ void ResultArea::sendKeyPressSignal(QString &pluginID)
 void ResultArea::onWidgetSizeChanged()
 {
     int whole_height = 0;
-    if (!m_is_selected) {
-        bool tmp = false;
-        Q_FOREACH (ResultWidget *widget, m_widget_list) {
+
+
+    bool tmp = false;
+    whole_height = 0;
+    Q_FOREACH (ResultWidget *widget, m_widget_list) {
+        if (m_is_first_selected) {
             if (tmp == true) {
                 widget->clearResultSelection();
             }
@@ -248,26 +252,30 @@ void ResultArea::onWidgetSizeChanged()
                 tmp = true;
                 widget->setResultSelection(widget->getModlIndex(0, 0));
                 m_is_selected = true;
+                m_is_first_selected = true;
                 m_selectedPluginID = widget->pluginId();
             }
-            whole_height += widget->height();
         }
-    } else {
-        Q_FOREACH (ResultWidget *widget, m_widget_list) {
-            whole_height += widget->height();
-        }
+        whole_height += widget->height();
     }
+
 
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
     Q_EMIT this->resizeHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
 }
 
-void ResultArea::setSelectionInfo(QString &pluginID)
+void ResultArea::setSelectionInfo(const QString &pluginID, const SearchPluginIface::ResultInfo &info)
 {
+    m_is_first_selected = false;
     m_detail_open_state = true;
     m_is_selected = true;
     m_selectedPluginID = pluginID;
+    for (auto plugin:m_widget_list) {
+        if (plugin->pluginId() != m_selectedPluginID) {
+            plugin->clearResultSelection();
+        }
+    }
 }
 
 void ResultArea::mousePressEvent(QMouseEvent *event)
@@ -279,7 +287,7 @@ void ResultArea::mousePressEvent(QMouseEvent *event)
 
 void ResultArea::mouseMoveEvent(QMouseEvent *event)
 {
-//    if(m_pressPoint.isNull()) {
+//    if (m_pressPoint.isNull()) {
 //        return QScrollArea::mouseMoveEvent(event);
 //    }
 //    int delta = ((event->pos().y() - m_pressPoint.y()) / this->widget()->height()) * verticalScrollBar()->maximum();
@@ -295,9 +303,9 @@ void ResultArea::mouseReleaseEvent(QMouseEvent *event)
 
 bool ResultArea::viewportEvent(QEvent *event)
 {
-    if(event->type() == QEvent::MouseButtonPress) {
+    if (event->type() == QEvent::MouseButtonPress) {
         QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
-        if(e->source() == Qt::MouseEventSynthesizedByApplication) {
+        if (e->source() == Qt::MouseEventSynthesizedByApplication) {
             qDebug() << "MouseButtonPress MouseEventSynthesizedByApplication";
             m_pressPoint = m_widget->mapFrom(this, e->pos());
             event->accept();
@@ -305,7 +313,7 @@ bool ResultArea::viewportEvent(QEvent *event)
         }
     } else if (event->type() == QEvent::MouseMove) {
         QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
-        if(e->source() == Qt::MouseEventSynthesizedByApplication) {
+        if (e->source() == Qt::MouseEventSynthesizedByApplication) {
             qDebug() << "MouseMove MouseEventSynthesizedByApplication";
             int delta = m_pressPoint.y() - m_widget->mapFrom(this, e->pos()).y();
             //            qDebug() << "last pos:" << m_pressPoint.y();
@@ -354,6 +362,13 @@ void ResultArea::initConnections()
     connect(this, &ResultArea::startSearch, this, [=] () {
         m_detail_open_state = false;
         m_is_selected = false;
+        m_is_first_selected = true;
+        m_selectedPluginID = "";
+        for (auto plugin:m_widget_list) {
+            if (plugin->pluginId() != m_selectedPluginID) {
+                plugin->clearResultSelection();
+            }
+        }
     });
     connect(this->verticalScrollBar(), &QScrollBar::valueChanged, this, [=] (int value) {//判断显示和隐藏逻辑
         Q_FOREACH(auto widget, m_widget_list) {
@@ -459,7 +474,7 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
 {
 //    clearLayout(m_descFrameLyt);
 //    clearLayout(m_previewFrameLyt);
-//    if(SearchPluginManager::getInstance()->getPlugin(plugin_name)->isPreviewEnable(info.actionKey,info.type)) {
+//    if (SearchPluginManager::getInstance()->getPlugin(plugin_name)->isPreviewEnable(info.actionKey,info.type)) {
 //        m_iconLabel->hide();
 //        m_previewFrameLyt->addWidget(SearchPluginManager::getInstance()->getPlugin(plugin_name)->previewPage(info.actionKey,info.type, m_previewFrame), 0 , Qt::AlignHCenter);
 //        m_previewFrameLyt->setContentsMargins(0,0,0,0);
@@ -501,8 +516,8 @@ void DetailWidget::setWidgetInfo(const QString &plugin_name, const SearchPluginI
 
 void DetailWidget::updateDetailPage(const QString &plugin_name, const SearchPluginIface::ResultInfo &info)
 {
-    if(m_detailPage) {
-        if(m_currentPluginId == plugin_name) {
+    if (m_detailPage) {
+        if (m_currentPluginId == plugin_name) {
             SearchPluginManager::getInstance()->getPlugin(plugin_name)->detailPage(info);
         } else {
             m_mainLyt->removeWidget(m_detailPage);
@@ -604,10 +619,10 @@ void DetailWidget::paintEvent(QPaintEvent *event)
 
 void DetailWidget::clearLayout(QLayout *layout)
 {
-    if(!layout) return;
+    if (!layout) return;
     QLayoutItem * child;
     while((child = layout->takeAt(0)) != 0) {
-        if(child->widget()) {
+        if (child->widget()) {
             child->widget()->setParent(NULL);
         }
         delete child;
@@ -641,10 +656,10 @@ void DetailWidget::clearLayout(QLayout *layout)
 //bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
 //{
 //    if (watched == this) {
-//        if(event->type() == QEvent::MouseButtonPress) {
+//        if (event->type() == QEvent::MouseButtonPress) {
 //            this->setForegroundRole(QPalette::Dark);
 //            return true;
-//        } else if(event->type() == QEvent::MouseButtonRelease) {
+//        } else if (event->type() == QEvent::MouseButtonRelease) {
 //            SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_pluginId);
 //            if (plugin)
 //                plugin->openAction(m_actionKey, m_key, m_type);
@@ -652,10 +667,10 @@ void DetailWidget::clearLayout(QLayout *layout)
 //                qWarning()<<"Get plugin failed!";
 //            this->setForegroundRole(QPalette::Light);
 //            return true;
-//        } else if(event->type() == QEvent::Enter) {
+//        } else if (event->type() == QEvent::Enter) {
 //            this->setForegroundRole(QPalette::Light);
 //            return true;
-//        } else if(event->type() == QEvent::Leave) {
+//        } else if (event->type() == QEvent::Leave) {
 //            this->setForegroundRole(QPalette::WindowText);
 //            return true;
 //        }

@@ -56,11 +56,9 @@ private:
 Q_SIGNALS:
     void startSearch(const QString &);
     void stopSearch();
-    void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
     void effectiveSearch();
     void resizeHeight(int height);
     void resizeWidth(const int &);
-    void setSelectionInfo(QString &);
     void getResult();
 };
 }

@@ -31,7 +31,7 @@ SearchResultModel::SearchResultModel(const QString &plugin_id)
 
 QModelIndex SearchResultModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(row < 0 || row > m_item->m_result_info_list.length() - 1)
+    if (row < 0 || row > m_item->m_result_info_list.length() - 1)
         return QModelIndex();
 //    QVector<SearchPluginIface::ResultInfo> * m_info = &m_result_info_list;
     return createIndex(row, column, m_item);
@@ -81,7 +81,6 @@ void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)
     m_item->m_result_info_list.append(info);
     this->endResetModel();
     Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
-    Q_EMIT this->sendBestListData(m_plugin_id, m_item->m_result_info_list.at(0));
 }
 
 void SearchResultModel::startSearch(const QString &keyword)

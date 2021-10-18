@@ -25,7 +25,7 @@ UkuiSearchQDBus::UkuiSearchQDBus() {
             "/",
             "com.ukui.search.interface",
             QDBusConnection::systemBus());
-    if(!tmpSystemQDBusInterface->isValid()) {
+    if (!tmpSystemQDBusInterface->isValid()) {
         qCritical() << "Create Client Interface Failed When execute chage: " << QDBusConnection::systemBus().lastError();
         return;
     }
@@ -48,7 +48,7 @@ void UkuiSearchQDBus::setInotifyMaxUserWatches() {
 int UkuiSearchQDBus::addInotifyUserInstances(int addNum)
 {
     QDBusReply<int> reply = tmpSystemQDBusInterface->call("AddInotifyMaxUserInstance", addNum);
-    if(reply.isValid()) {
+    if (reply.isValid()) {
         qDebug() << "Set inotify_max_user_instances to" << reply.value();
     } else {
         qWarning() << "Call AddInotifyMaxUserInstance failed!";

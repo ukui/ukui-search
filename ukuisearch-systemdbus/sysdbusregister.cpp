@@ -48,7 +48,7 @@ QString SysdbusRegister::setInotifyMaxUserWatchesStep1() {
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "echo 9999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches");
-    if((fp = popen(cmd, "r")) != NULL) {
+    if ((fp = popen(cmd, "r")) != NULL) {
         rewind(fp);
         while(!feof(fp)) {
             fgets(buf, sizeof(buf), fp);
@@ -68,7 +68,7 @@ QString SysdbusRegister::setInotifyMaxUserWatchesStep2() {
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "sysctl -w fs.inotify.max_user_watches=\"9999999\"");
-    if((fp = popen(cmd, "r")) != NULL) {
+    if ((fp = popen(cmd, "r")) != NULL) {
         rewind(fp);
         while(!feof(fp)) {
             fgets(buf, sizeof(buf), fp);
@@ -88,7 +88,7 @@ QString SysdbusRegister::setInotifyMaxUserWatchesStep3() {
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "echo fs.inotify.max_user_watches=9999999 | sudo tee -a /etc/sysctl.conf");
-    if((fp = popen(cmd, "r")) != NULL) {
+    if ((fp = popen(cmd, "r")) != NULL) {
         rewind(fp);
         while(!feof(fp)) {
             fgets(buf, sizeof(buf), fp);
@@ -105,7 +105,7 @@ QString SysdbusRegister::setInotifyMaxUserWatchesStep3() {
 int SysdbusRegister::AddInotifyMaxUserInstance(int addNum)
 {
     QFile file("/proc/sys/fs/inotify/max_user_instances");
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return -1;
     QTextStream ts(&file);
     QString s = ts.read(512);
@@ -116,7 +116,7 @@ int SysdbusRegister::AddInotifyMaxUserInstance(int addNum)
     char cmd[128];
     char buf[1024];
     sprintf(cmd, "sysctl -w fs.inotify.max_user_instances=\"%d\"", instances);
-    if((fp = popen(cmd, "r")) != NULL) {
+    if ((fp = popen(cmd, "r")) != NULL) {
         rewind(fp);
         while(!feof(fp)) {
             fgets(buf, sizeof(buf), fp);

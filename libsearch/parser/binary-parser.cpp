@@ -4377,11 +4377,11 @@ static size_t	tMaxElements = 0;
 void* xmalloc(size_t tSize) {
     void	*pvTmp;
 
-    if(tSize == 0) {
+    if (tSize == 0) {
         tSize = 1;
     }
     pvTmp = malloc(tSize);
-    if(pvTmp == NULL) {
+    if (pvTmp == NULL) {
         return NULL;
     }
     return pvTmp;
@@ -4390,12 +4390,12 @@ void* xmalloc(size_t tSize) {
 void* xcalloc(size_t tNmemb, size_t tSize) {
     void	*pvTmp;
 
-    if(tNmemb == 0 || tSize == 0) {
+    if (tNmemb == 0 || tSize == 0) {
         tNmemb = 1;
         tSize = 1;
     }
     pvTmp = calloc(tNmemb, tSize);
-    if(pvTmp == NULL) {
+    if (pvTmp == NULL) {
         return NULL;
     }
     return pvTmp;
@@ -4410,7 +4410,7 @@ void* xrealloc(void *pvArg, size_t tSize) {
 
 
 void* xfree(void *pvArg) {
-    if(pvArg != NULL) {
+    if (pvArg != NULL) {
         free(pvArg);
     }
     return NULL;
@@ -4419,10 +4419,10 @@ void* xfree(void *pvArg) {
 bool bReadBytes(unsigned char *aucBytes, size_t tMemb, long lOffset, FILE *pFile) {
 //    printf("[%s]-[%d] wana read [%d] offset[%d]\n",__FUNCTION__,__LINE__,tMemb, lOffset);
 
-    if(fseek(pFile, lOffset, SEEK_SET) != 0) {
+    if (fseek(pFile, lOffset, SEEK_SET) != 0) {
         return false;
     }
-    if(fread(aucBytes, sizeof(unsigned char), tMemb, pFile) != tMemb) {
+    if (fread(aucBytes, sizeof(unsigned char), tMemb, pFile) != tMemb) {
         return false;
     }
     return true;
@@ -4440,7 +4440,7 @@ ULONG ulDepotOffset(ULONG ulIndex, size_t tBlockSize) {
     case SMALL_BLOCK_SIZE:
         tTmp = (size_t)(ulIndex / SIZE_RATIO);
         ulTmp = ulIndex % SIZE_RATIO;
-        if(aulSmallBlockList == NULL ||
+        if (aulSmallBlockList == NULL ||
                 tTmp >= tSmallBlockListLen) {
             return 0;
         }
@@ -4458,22 +4458,22 @@ bool bReadBuffer(FILE *pFile, ULONG ulStartBlock,
     size_t	tLen;
 
     for(ulIndex = ulStartBlock;ulIndex != END_OF_CHAIN && tToRead != 0;ulIndex = aulBlockDepot[ulIndex]) {
-        if(ulIndex >= (ULONG)tBlockDepotLen) {
-            if(tBlockSize >= BIG_BLOCK_SIZE) {
+        if (ulIndex >= (ULONG)tBlockDepotLen) {
+            if (tBlockSize >= BIG_BLOCK_SIZE) {
                 qWarning() << "The Big Block Depot is damaged";
             } else {
                 qWarning() << "The Small Block Depot is damaged";
             }
             return (tToRead == 0);
         }
-        if(ulOffset >= (ULONG)tBlockSize) {
+        if (ulOffset >= (ULONG)tBlockSize) {
             ulOffset -= tBlockSize;
             continue;
         }
         ulBegin = ulDepotOffset(ulIndex, tBlockSize) + ulOffset;
         tLen = min(tBlockSize - (size_t)ulOffset, tToRead);
         ulOffset = 0;
-        if(!bReadBytes(aucBuffer, tLen, ulBegin, pFile)) {
+        if (!bReadBytes(aucBuffer, tLen, ulBegin, pFile)) {
             return false;
         }
         aucBuffer += tLen;
@@ -4485,7 +4485,7 @@ bool bReadBuffer(FILE *pFile, ULONG ulStartBlock,
 static ULONG ulReadLong(FILE *pFile, ULONG ulOffset) {
     UCHAR	aucBytes[4];
 
-    if(!bReadBytes(aucBytes, 4, ulOffset, pFile)) {
+    if (!bReadBytes(aucBytes, 4, ulOffset, pFile)) {
         return -1;
     }
     return ulGetLong(0, aucBytes);
@@ -4498,7 +4498,7 @@ static size_t tReadBlockIndices(FILE *pFile, ULONG *aulBlockDepot,
     UCHAR	aucBytes[BIG_BLOCK_SIZE];
 
     /* Read a big block with BBD or SBD indices */
-    if(!bReadBytes(aucBytes, BIG_BLOCK_SIZE, ulOffset, pFile)) {
+    if (!bReadBytes(aucBytes, BIG_BLOCK_SIZE, ulOffset, pFile)) {
         return 0;
     }
     /* Split the big block into indices, an index is four bytes */
@@ -4519,7 +4519,7 @@ static bool bGetSBD(FILE *pFile, const ULONG *aulDepot, size_t tDepotLen,
     for(iIndex = 0; iIndex < (int)tDepotLen && tToGo != 0; iIndex++) {
         ulBegin = (aulDepot[iIndex] + 1) * BIG_BLOCK_SIZE;
         tDone = tReadBlockIndices(pFile, aulSBD, tToGo, ulBegin);
-        if(tDone == 0) {
+        if (tDone == 0) {
             return false;
         }
         aulSBD += tDone;
@@ -4532,7 +4532,7 @@ static void vName2String(char *szName, const UCHAR *aucBytes, size_t tNameSize) 
     char	*pcChar;
     size_t	tIndex;
 
-    if(tNameSize < 2) {
+    if (tNameSize < 2) {
         szName[0] = '\0';
         return;
     }
@@ -4546,7 +4546,7 @@ static void vName2String(char *szName, const UCHAR *aucBytes, size_t tNameSize) 
 void vAdd2PropModList(const UCHAR *aucPropMod) {
     size_t	tSize, tLen;
 
-    if(tNextFree >= tMaxElements) {
+    if (tNextFree >= tMaxElements) {
         tMaxElements += ELEMENTS_TO_ADD;
         tSize = tMaxElements * sizeof(UCHAR **);
         ppAnchor = (UCHAR**)xrealloc(ppAnchor, tSize);
@@ -4560,30 +4560,30 @@ void vAdd2PropModList(const UCHAR *aucPropMod) {
 
 static void vComputePPSlevels(ppsEntryType *atPPSlist, ppsEntryType *pNode,
                               int iLevel, int iRecursionLevel) {
-    if(iRecursionLevel > 25) {
+    if (iRecursionLevel > 25) {
         /* This removes the possibility of an infinite recursion */
         return;
     }
-    if(pNode->iLevel <= iLevel) {
+    if (pNode->iLevel <= iLevel) {
         /* Avoid entering a loop */
         return;
     }
 
     pNode->iLevel = iLevel;
 
-    if(pNode->ulDir != PPS_NUMBER_INVALID) {
+    if (pNode->ulDir != PPS_NUMBER_INVALID) {
         vComputePPSlevels(atPPSlist,
                           &atPPSlist[pNode->ulDir],
                           iLevel + 1,
                           iRecursionLevel + 1);
     }
-    if(pNode->ulNext != PPS_NUMBER_INVALID) {
+    if (pNode->ulNext != PPS_NUMBER_INVALID) {
         vComputePPSlevels(atPPSlist,
                           &atPPSlist[pNode->ulNext],
                           iLevel,
                           iRecursionLevel + 1);
     }
-    if(pNode->ulPrevious != PPS_NUMBER_INVALID) {
+    if (pNode->ulPrevious != PPS_NUMBER_INVALID) {
         vComputePPSlevels(atPPSlist,
                           &atPPSlist[pNode->ulPrevious],
                           iLevel,
@@ -4615,7 +4615,7 @@ bool KBinaryParser::bGetPPS(FILE *pFile,
         ulOffset = ulTmp % BIG_BLOCK_SIZE;
         ulBegin = (aulRootList[iStartBlock] + 1) * BIG_BLOCK_SIZE +
                   ulOffset;
-        if(!bReadBytes(aucBytes, PROPERTY_SET_STORAGE_SIZE,
+        if (!bReadBytes(aucBytes, PROPERTY_SET_STORAGE_SIZE,
                        ulBegin, pFile)) {
             atPPSlist = (ppsEntryType*)xfree(atPPSlist);
             return false;
@@ -4624,7 +4624,7 @@ bool KBinaryParser::bGetPPS(FILE *pFile,
         tNameSize = (tNameSize + 1) / 2;
         vName2String(atPPSlist[iIndex].szName, aucBytes, tNameSize);
         atPPSlist[iIndex].ucType = ucGetByte(0x42, aucBytes);
-        if(atPPSlist[iIndex].ucType == 5) {
+        if (atPPSlist[iIndex].ucType == 5) {
             iRootIndex = iIndex;
         }
 
@@ -4639,7 +4639,7 @@ bool KBinaryParser::bGetPPS(FILE *pFile,
         atPPSlist[iIndex].ulSB = ulsb;
         atPPSlist[iIndex].ulSize = ulsize;
         atPPSlist[iIndex].iLevel = INT_MAX;
-        if((atPPSlist[iIndex].ulPrevious >= (ULONG)tNbrOfPPS &&
+        if ((atPPSlist[iIndex].ulPrevious >= (ULONG)tNbrOfPPS &&
                 atPPSlist[iIndex].ulPrevious != PPS_NUMBER_INVALID) ||
                 (atPPSlist[iIndex].ulNext >= (ULONG)tNbrOfPPS &&
                  atPPSlist[iIndex].ulNext != PPS_NUMBER_INVALID) ||
@@ -4654,7 +4654,7 @@ bool KBinaryParser::bGetPPS(FILE *pFile,
     vComputePPSlevels(atPPSlist, &atPPSlist[iRootIndex], 0, 0);
 
     for(iIndex = 0; iIndex < (int)tNbrOfPPS; iIndex++) {
-        if(atPPSlist[iIndex].szName[0] == '\0' ||
+        if (atPPSlist[iIndex].szName[0] == '\0' ||
                 atPPSlist[iIndex].ulSize == 0) {
             /* This entry can be ignored */
             continue;
@@ -4667,47 +4667,47 @@ bool KBinaryParser::bGetPPS(FILE *pFile,
         	pPPS->type = Word;
         	bTypeFind = true;
         }
-        else */if(pPPS->tWordDocument.ulSize == 0 &&
+        else */if (pPPS->tWordDocument.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName, "WordDocument")) {
             pPPS->tWordDocument.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->tWordDocument.ulSize = atPPSlist[iIndex].ulSize;
             pPPS->type = Word;
             bTypeFind = true;
-        } else if(pPPS->tData.ulSize == 0 &&
+        } else if (pPPS->tData.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName, "Data")) {
             pPPS->tData.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->tData.ulSize = atPPSlist[iIndex].ulSize;
-        } else if(pPPS->t0Table.ulSize == 0 &&
+        } else if (pPPS->t0Table.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName, "0Table")) {
             pPPS->t0Table.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->t0Table.ulSize = atPPSlist[iIndex].ulSize;
-        } else if(pPPS->t1Table.ulSize == 0 &&
+        } else if (pPPS->t1Table.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName, "1Table")) {
             pPPS->t1Table.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->t1Table.ulSize = atPPSlist[iIndex].ulSize;
-        } else if(pPPS->tSummaryInfo.ulSize == 0 &&
+        } else if (pPPS->tSummaryInfo.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName,
                         "\005SummaryInformation")) {
             pPPS->tSummaryInfo.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->tSummaryInfo.ulSize = atPPSlist[iIndex].ulSize;
-        } else if(pPPS->tDocSummaryInfo.ulSize == 0 &&
+        } else if (pPPS->tDocSummaryInfo.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName,
                         "\005DocumentSummaryInformation")) {
             pPPS->tDocSummaryInfo.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->tDocSummaryInfo.ulSize = atPPSlist[iIndex].ulSize;
-        } else if(pPPS->tWorkBook.ulSize == 0 &&
+        } else if (pPPS->tWorkBook.ulSize == 0 &&
                   (STREQ(atPPSlist[iIndex].szName, "Book") || STREQ(atPPSlist[iIndex].szName, "Workbook"))) {
             pPPS->tWorkBook.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->tWorkBook.ulSize = atPPSlist[iIndex].ulSize;
             pPPS->type = Excel;
             bTypeFind = true;
-        } else if(pPPS->tPPTDocument.ulSize == 0 &&
+        } else if (pPPS->tPPTDocument.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName, "PowerPoint Document")) {
             pPPS->tPPTDocument.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->tPPTDocument.ulSize = atPPSlist[iIndex].ulSize;
             pPPS->type = Ppt;
             bTypeFind = true;
-        } else if(pPPS->tCurrentUser.ulSize == 0 &&
+        } else if (pPPS->tCurrentUser.ulSize == 0 &&
                   STREQ(atPPSlist[iIndex].szName, "Current User")) {
             pPPS->tCurrentUser.ulSB = atPPSlist[iIndex].ulSB;
             pPPS->tCurrentUser.ulSize = atPPSlist[iIndex].ulSize;
@@ -4722,7 +4722,7 @@ bool KBinaryParser::bGetPPS(FILE *pFile,
 
 int KBinaryParser::readData(rdPara &readParam, uchar *aucBuffer, ulong ulOffset, size_t tToRead) {
     /* Read the headerblock */
-    if(!bReadBuffer(readParam.pFile, readParam.ulStBlk,
+    if (!bReadBuffer(readParam.pFile, readParam.ulStBlk,
                     readParam.ulBBd, readParam.tBBdLen, readParam.usBlkSize,
                     aucBuffer, ulOffset, tToRead))
         return -1;
@@ -4739,11 +4739,11 @@ bool bCreateSmallBlockList(ULONG ulStartblock, const ULONG *aulBBD, size_t tBBDL
     for(tSmallBlockListLen = 0, ulTmp = ulStartblock;
             tSmallBlockListLen < tBBDLen && ulTmp != END_OF_CHAIN;
             tSmallBlockListLen++, ulTmp = aulBBD[ulTmp]) {
-        if(ulTmp >= (ULONG)tBBDLen) {
+        if (ulTmp >= (ULONG)tBBDLen) {
         }
     }
 
-    if(tSmallBlockListLen == 0) {
+    if (tSmallBlockListLen == 0) {
         /* There is no small block list */
         aulSmallBlockList = NULL;
         return true;
@@ -4755,7 +4755,7 @@ bool bCreateSmallBlockList(ULONG ulStartblock, const ULONG *aulBBD, size_t tBBDL
     for(iIndex = 0, ulTmp = ulStartblock;
             iIndex < (int)tBBDLen && ulTmp != END_OF_CHAIN;
             iIndex++, ulTmp = aulBBD[ulTmp]) {
-        if(ulTmp >= (ULONG)tBBDLen) {
+        if (ulTmp >= (ULONG)tBBDLen) {
             return false;
         }
         aulSmallBlockList[iIndex] = ulTmp;
@@ -4783,7 +4783,7 @@ static bool bGetBBD(FILE *pFile, const ULONG *aulDepot, size_t tDepotLen,
     for(iIndex = 0; iIndex < (int)tDepotLen && tToGo != 0; iIndex++) {
         ulBegin = (aulDepot[iIndex] + 1) * BIG_BLOCK_SIZE;
         tDone = tReadBlockIndices(pFile, aulBBD, tToGo, ulBegin);
-        if(tDone == 0) {
+        if (tDone == 0) {
             return false;
         }
         aulBBD += tDone;
@@ -4799,14 +4799,14 @@ static bool bGetBBD(FILE *pFile, const ULONG *aulDepot, size_t tDepotLen,
 
 static inline uint foldCase(const ushort *ch, const ushort *start) {
     uint c = *ch;
-    if(QChar(c).isLowSurrogate() && ch > start && QChar(*(ch - 1)).isHighSurrogate())
+    if (QChar(c).isLowSurrogate() && ch > start && QChar(*(ch - 1)).isHighSurrogate())
         c = QChar::surrogateToUcs4(*(ch - 1), c);
     return *ch + qGetProp(c)->caseFoldDiff;
 }
 
 static inline uint foldCase(uint ch, uint &last) {
     uint c = ch;
-    if(QChar(c).isLowSurrogate() && QChar(last).isHighSurrogate())
+    if (QChar(c).isLowSurrogate() && QChar(last).isHighSurrogate())
         c = QChar::surrogateToUcs4(last, c);
     last = ch;
     return ch + qGetProp(c)->caseFoldDiff;
@@ -4818,15 +4818,15 @@ static inline ushort foldCase(ushort ch) {
 
 
 static int ucstricmp(const ushort *a, const ushort *ae, const ushort *b, const ushort *be) {
-    if(a == b)
+    if (a == b)
         return (ae - be);
-    if(a == 0)
+    if (a == 0)
         return 1;
-    if(b == 0)
+    if (b == 0)
         return -1;
 
     const ushort *e = ae;
-    if(be - b < ae - a)
+    if (be - b < ae - a)
         e = a + (be - b);
 
     uint alast = 0;
@@ -4836,13 +4836,13 @@ static int ucstricmp(const ushort *a, const ushort *ae, const ushort *b, const u
         qDebug() << hex << "*a=" << *a << "alast=" << alast << "folded=" << foldCase(*a, alast);
         qDebug() << hex << "*b=" << *b << "blast=" << blast << "folded=" << foldCase(*b, blast);
         int diff = foldCase(*a, alast) - foldCase(*b, blast);
-        if((diff))
+        if ((diff))
             return diff;
         ++a;
         ++b;
     }
-    if(a == ae) {
-        if(b == be)
+    if (a == ae) {
+        if (b == be)
             return 0;
         return -1;
     }
@@ -4856,7 +4856,7 @@ static int ucstrnicmp(const ushort *a, const ushort *b, int l) {
 static int ucstrncmp(const QChar *a, const QChar *b, int l) {
     while(l-- && *a == *b)
         a++, b++;
-    if(l == -1)
+    if (l == -1)
         return 0;
     return a->unicode() - b->unicode();
 }
@@ -4884,15 +4884,15 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
     ulBeginTextInfo = ulGetLong(0x1a2, aucHeader);	/* fcClx */
     tTextInfoLen = (size_t)ulGetLong(0x1a6, aucHeader);	/* lcbClx */
     ulEncryptInfo = ulGetLong(0x0a, aucHeader);
-    if(ulEncryptInfo & 0x0100) {
+    if (ulEncryptInfo & 0x0100) {
         qDebug() << "Encrypt file:" << m_strFileName << (size_t)ulEncryptInfo;
         return false;
     }
 
-    if(pPPS->tTable.ulSize == 0)
+    if (pPPS->tTable.ulSize == 0)
         return false;
 
-    if(pPPS->tTable.ulSize < MIN_SIZE_FOR_BBD_USE) {
+    if (pPPS->tTable.ulSize < MIN_SIZE_FOR_BBD_USE) {
         /* Use the Small Block Depot */
         aulBlockDepot = aulSBD;
         tBlockDepotLen = tSBDLen;
@@ -4905,7 +4905,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
     }
 
     UCHAR aucBuffer[tTextInfoLen];
-    if(!bReadBuffer(pFile, pPPS->tTable.ulSB,
+    if (!bReadBuffer(pFile, pPPS->tTable.ulSB,
                     aulBlockDepot, tBlockDepotLen, tBlockSize,
                     aucBuffer, ulBeginTextInfo, tTextInfoLen))
         return false;
@@ -4914,23 +4914,23 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
     while(lOff < (long)tTextInfoLen) {
         iType = (int)ucGetByte(lOff, aucBuffer);
         lOff++;
-        if(iType == 0) {
+        if (iType == 0) {
             lOff++;
             continue;
         }
-        if(iType == 1) {
+        if (iType == 1) {
             iLen = (int)usGetWord(lOff, aucBuffer);
             vAdd2PropModList(aucBuffer + lOff);
             lOff += (long)iLen + 2;
             continue;
         }
 
-        if(iType != 2)
+        if (iType != 2)
             return false;
 
         /* Type 2 */
         ulLen = ulGetLong(lOff, aucBuffer);
-        if(ulLen < 4)
+        if (ulLen < 4)
             return false;
 
         lOff += 4;
@@ -4939,7 +4939,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
             ulTextOffset = ulGetLong(lOff + (lPieces + 1) * 4 + lIndex * 8 + 2, aucBuffer);
             usPropMod = usGetWord(lOff + (lPieces + 1) * 4 + lIndex * 8 + 6, aucBuffer);
             ulTotLength = ulGetLong(lOff + (lIndex + 1) * 4, aucBuffer) - ulGetLong(lOff + lIndex * 4, aucBuffer);
-            if((ulTextOffset & BIT(30)) == 0) {
+            if ((ulTextOffset & BIT(30)) == 0) {
                 bUsesUnicode = true;
                 ulTotLength *= 2;
             } else {
@@ -4951,28 +4951,28 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
             ulong uOff = 0;
             UCHAR* ptaucBytes;
             ULONG ulFileOffset = (pPPS->tWordDocument.ulSB + 1) * BIG_BLOCK_SIZE + ulTextOffset;
-            if(pPPS->tWordDocument.ulSize < MIN_SIZE_FOR_BBD_USE)
+            if (pPPS->tWordDocument.ulSize < MIN_SIZE_FOR_BBD_USE)
                 ulFileOffset = ulDepotOffset(pPPS->tWordDocument.ulSB, SMALL_BLOCK_SIZE) + ulTextOffset;
             while(uOff < ulTotLength) {
                 ULONG iAllocSize = MAX_BUFF_SIZE;
-                if((ulTotLength - uOff) < MAX_BUFF_SIZE)
+                if ((ulTotLength - uOff) < MAX_BUFF_SIZE)
                     iAllocSize = ulTotLength - uOff;
 
                 ptaucBytes = (UCHAR*)xmalloc(iAllocSize);
-                if(!ptaucBytes)
+                if (!ptaucBytes)
                     return false;
-                if(!bReadBytes(ptaucBytes, iAllocSize, ulFileOffset, pFile))
+                if (!bReadBytes(ptaucBytes, iAllocSize, ulFileOffset, pFile))
                     return -1;
 
                 ulFileOffset += iAllocSize;
                 uOff += iAllocSize;
 
-                if(bUsesUnicode) {
+                if (bUsesUnicode) {
                     ushort* usAucData = (ushort*)ptaucBytes;
                     content.append(QString::fromUtf16(usAucData).replace("\n", "").replace("\r", " "));
                     usAucData = (ushort*)xfree((void*)usAucData);
                     ptaucBytes = NULL;
-                    if(content.length() >= 682666) //20480000/3
+                    if (content.length() >= 682666) //20480000/3
                         break;
                 } else {
                     //need more format document
@@ -4991,7 +4991,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 
 int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, ulong &ulOff, ushort usPartLen, QString &content) {
     UCHAR chSizeData[8];
-    if(readData(rdParam, chSizeData, ulOff, 8) != 0)
+    if (readData(rdParam, chSizeData, ulOff, 8) != 0)
         return -1;
 
     ulOff += 8;
@@ -5001,7 +5001,7 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
     ulong ulNextOff = 0;
     while((ulCount < ulSize) && (ulOff < PPS_info.tWorkBook.ulSize)) {
         UCHAR chHeader[3];
-        if(readData(rdParam, chHeader, ulOff + ulNextOff, 3) != 0)
+        if (readData(rdParam, chHeader, ulOff + ulNextOff, 3) != 0)
             break;
 
         ushort uscharlen = usGetWord(0x00, chHeader);
@@ -5009,18 +5009,18 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
         UCHAR ucFlag = ucGetByte(0x02, chHeader);
         ulNextOff += 3;
         excelRecord eRrd;
-        if(read8BiffRecord(ucFlag, ulOff, ulNextOff, rdParam, eRrd) != 0)
+        if (read8BiffRecord(ucFlag, ulOff, ulNextOff, rdParam, eRrd) != 0)
             break;
 
         ushort ustotalLen = uscharlen + eRrd.usRichLen * 4 + eRrd.ulWLen;
-        if(!eRrd.bUni)
+        if (!eRrd.bUni)
             ustotalLen += uscharlen;
         UCHAR* chData = (UCHAR*)xmalloc(ustotalLen);
-        if(ulNextOff < usPartLen && (ulNextOff + ustotalLen) >= usPartLen) {
+        if (ulNextOff < usPartLen && (ulNextOff + ustotalLen) >= usPartLen) {
             ushort usIdf = usPartLen - ulNextOff;
             uchar chTemp[MAX_BUFF_SIZE];
             memset(chTemp, 0, MAX_BUFF_SIZE);
-            if(readData(rdParam, chTemp, ulOff + ulNextOff, usIdf + 5) != 0)
+            if (readData(rdParam, chTemp, ulOff + ulNextOff, usIdf + 5) != 0)
                 break;
 
             bool bTemp = false;
@@ -5031,17 +5031,17 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
             bool bAnotherCompare = (usOthTxtLen == 0 || (usCharByteLen - usIdf) == 0) || usCharByteLen < usIdf;
             ulong ulNoUse = 0;
             bool bUniFlg = false;
-            if(!bAnotherCompare) {
+            if (!bAnotherCompare) {
                 uchar chFlag;
 
                 memcpy(&chFlag, chTemp + usIdf + 4, 1);
-                if(chFlag == 0x00 || chFlag == 0x01 || chFlag == 0x05 || chFlag == 0x09 || chFlag == 0x08 || chFlag == 0x04 || chFlag == 0x0c) {
+                if (chFlag == 0x00 || chFlag == 0x01 || chFlag == 0x05 || chFlag == 0x09 || chFlag == 0x08 || chFlag == 0x04 || chFlag == 0x0c) {
                     bTemp = true;
                     ulOff ++;
 
                     ulong ulNextTep = 0;
                     excelRecord eRTmp;
-                    if(read8BiffRecord(chFlag, ulOff, ulNextTep, rdParam, eRTmp) != 0)
+                    if (read8BiffRecord(chFlag, ulOff, ulNextTep, rdParam, eRTmp) != 0)
                         break;
                     ulOff += ulNextTep;
                     bUniFlg = eRTmp.bUni;
@@ -5052,20 +5052,20 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
             ulNextOff = 0;
             ustotalLen = usOthTxtLen + ulNoUse;
 
-            if(usOthTxtLen > 0) {
+            if (usOthTxtLen > 0) {
                 memset(chTemp, 0, MAX_BUFF_SIZE);
-                if(readData(rdParam, chTemp, ulOff, usOthTxtLen) != 0)
+                if (readData(rdParam, chTemp, ulOff, usOthTxtLen) != 0)
                     return -1;
                 memcpy(chData + usIdf, chTemp, usOthTxtLen);
             }
-            if(bTemp)
+            if (bTemp)
                 usPartLen --;
         } else {
-            if(readData(rdParam, chData, ulOff + ulNextOff, ustotalLen) != 0)
+            if (readData(rdParam, chData, ulOff + ulNextOff, ustotalLen) != 0)
                 break;
         }
 
-        if(eRrd.bUni) {
+        if (eRrd.bUni) {
             qDebug() << QString((const char*)chData);
             chData = (UCHAR*)xfree((void*)chData);
             qWarning() << "Unsupport excel type:" << m_strFileName;
@@ -5075,34 +5075,34 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
             content.append(QString::fromUtf16(usData).replace("\n", "").replace("\r", " "));
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
-            if(content.length() >= 682666) //20480000/3
+            if (content.length() >= 682666) //20480000/3
                 break;
         }
         ulNextOff += ustotalLen;
         ulCount += 1;
     }
 
-    if(ulCount >= ulSize)
+    if (ulCount >= ulSize)
         return -1;
 }
 
 int KBinaryParser::read8BiffRecord(uchar ucFlag, ulong ulOff, ulong &ulNext, readDataParam &rdParam, excelRecord &eR) {
     bool butf8 = true;
-    if(ucFlag & 0x08) {
+    if (ucFlag & 0x08) {
         uchar chiRich[2];
-        if(readData(rdParam, chiRich, ulOff + ulNext, 2) != 0)
+        if (readData(rdParam, chiRich, ulOff + ulNext, 2) != 0)
             return -1;
         eR.usRichLen = usGetWord(0x00, chiRich);
         ulNext += 2;
     }
-    if(ucFlag & 0x04) {
+    if (ucFlag & 0x04) {
         uchar chExt[4];
-        if(readData(rdParam, chExt, ulOff + ulNext, 4) != 0)
+        if (readData(rdParam, chExt, ulOff + ulNext, 4) != 0)
             return -1;
         eR.ulWLen = ulGetLong(0x00, chExt);
         ulNext += 4;
     }
-    if((ucFlag & 0x01)) {
+    if ((ucFlag & 0x01)) {
         butf8 = false;
     }
     eR.bUni = butf8;
@@ -5113,7 +5113,7 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
     UCHAR	aucHeader[PPT_RECORD_HEADER];
     ULONG	ulOff = ulPos;
     /* Read the headerblock */
-    if(!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
+    if (!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
                     aulBBD, tBBDLen, BIG_BLOCK_SIZE,
                     aucHeader, ulOff, PPT_RECORD_HEADER))
         return -1;
@@ -5123,15 +5123,15 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
     USHORT usType = usGetWord(0x02, aucHeader);
     ULONG ulLen = ulGetLong(0x04, aucHeader);
     USHORT usVer = usVersion & 0xF;
-    if(usVer == 0xF) {
+    if (usVer == 0xF) {
         while(ulOff < ulLen) {
             ulOff = readPPtRecord(pFile, PPS_info, aulBBD, tBBDLen, ulOff, content);
         }
     } else {
-        if(usType == PPT_TEXTBYTEATOM || usType == PPT_TEXTCHARATOM) {
+        if (usType == PPT_TEXTBYTEATOM || usType == PPT_TEXTCHARATOM) {
             long llen = (long)ulLen;
             UCHAR* chData = (UCHAR*)xmalloc(llen);
-            if(!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
+            if (!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
                             aulBBD, tBBDLen, BIG_BLOCK_SIZE,
                             chData, ulOff, llen))
                 return -1;
@@ -5143,7 +5143,7 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
             chData = NULL;
         }
         ulOff += ulLen;
-        if(content.length() >= 682666) //20480000/3
+        if (content.length() >= 682666) //20480000/3
             return ulOff;
     }
     return ulOff;
@@ -5163,7 +5163,7 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
     USHORT	usIdent, usDocStatus;
 
     lMaxBlock = lFilesize / BIG_BLOCK_SIZE - 2;
-    if(lMaxBlock < 1)
+    if (lMaxBlock < 1)
         return -1;
 
     tBBDLen = (size_t)(lMaxBlock + 1);
@@ -5200,7 +5200,7 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
         iToGo -= 127;
     }
 
-    if(!bGetBBD(pFile, aulBbdList, tNumBbdBlocks, aulBBD, tBBDLen))
+    if (!bGetBBD(pFile, aulBbdList, tNumBbdBlocks, aulBBD, tBBDLen))
         return -1;
 
     aulBbdList = (ULONG*)xfree(aulBbdList);
@@ -5211,7 +5211,7 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
     for(iIndex = 0, ulTmp = ulSbdStartblock;
             iIndex < (int)tBBDLen && ulTmp != END_OF_CHAIN;
             iIndex++, ulTmp = aulBBD[ulTmp]) {
-        if(ulTmp >= (ULONG)tBBDLen) {
+        if (ulTmp >= (ULONG)tBBDLen) {
             qWarning("The Big Block Depot is damaged");
             return -1;
         }
@@ -5219,7 +5219,7 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
         aulSbdList[iIndex] = ulTmp;
     }
 
-    if(!bGetSBD(pFile, aulSbdList, tBBDLen, aulSBD, tSBDLen))
+    if (!bGetSBD(pFile, aulSbdList, tBBDLen, aulSBD, tSBDLen))
         return -1;
 
 
@@ -5228,25 +5228,25 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
     for(tRootListLen = 0, ulTmp = ulRootStartblock;
             tRootListLen < tBBDLen && ulTmp != END_OF_CHAIN;
             tRootListLen++, ulTmp = aulBBD[ulTmp]) {
-        if(ulTmp >= (ULONG)tBBDLen)
+        if (ulTmp >= (ULONG)tBBDLen)
             return -1;
 
     }
-    if(tRootListLen == 0)
+    if (tRootListLen == 0)
         return -1;
 
     aulRootList = (ULONG*)xcalloc(tRootListLen, sizeof(ULONG));
     for(iIndex = 0, ulTmp = ulRootStartblock;
             iIndex < (int)tBBDLen && ulTmp != END_OF_CHAIN;
             iIndex++, ulTmp = aulBBD[ulTmp]) {
-        if(ulTmp >= (ULONG)tBBDLen)
+        if (ulTmp >= (ULONG)tBBDLen)
             return -1;
 
         aulRootList[iIndex] = ulTmp;
     }
     bSuccess = bGetPPS(pFile, aulRootList, tRootListLen, &PPS_info);
     aulRootList = (ULONG*)xfree(aulRootList);
-    if(!bSuccess)
+    if (!bSuccess)
         return -1;
 
     rdPara readParam;
@@ -5254,25 +5254,25 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
     readParam.tBBdLen = tBBDLen;
     readParam.ulBBd = aulBBD;
     readParam.usBlkSize = BIG_BLOCK_SIZE;
-    if(PPS_info.type == Word) {
+    if (PPS_info.type == Word) {
         readParam.ulStBlk = PPS_info.tWordDocument.ulSB;
         UCHAR	aucHeader[HEADER_SIZE];
         /* Small block list */
-        if(!bCreateSmallBlockList(ulSBLstartblock, aulBBD, tBBDLen))
+        if (!bCreateSmallBlockList(ulSBLstartblock, aulBBD, tBBDLen))
             return -1;
 
-        if(PPS_info.tWordDocument.ulSize < MIN_SIZE_FOR_BBD_USE) {
+        if (PPS_info.tWordDocument.ulSize < MIN_SIZE_FOR_BBD_USE) {
             readParam.ulBBd = aulSBD;
             readParam.tBBdLen = tSBDLen;
             readParam.usBlkSize = SMALL_BLOCK_SIZE;
         }
 
-        if(readData(readParam, aucHeader, 0, HEADER_SIZE) != 0)
+        if (readData(readParam, aucHeader, 0, HEADER_SIZE) != 0)
             return -1;
 
         usIdent = usGetWord(0x00, aucHeader);
 
-        if(usIdent != 0x8098 &&	/* Word 7 for oriental languages */
+        if (usIdent != 0x8098 &&	/* Word 7 for oriental languages */
                 usIdent != 0x8099 &&	/* Word 7 for oriental languages */
                 usIdent != 0xa5dc &&	/* Word 6 & 7 */
                 usIdent != 0xa5ec &&	/* Word 7 & 97 & 98 */
@@ -5282,7 +5282,7 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
 
         /* Get the status flags from the header */
         usDocStatus = usGetWord(0x0a, aucHeader);
-        if(usDocStatus & BIT(9))
+        if (usDocStatus & BIT(9))
             PPS_info.tTable = PPS_info.t1Table;
         else
             PPS_info.tTable = PPS_info.t0Table;
@@ -5291,11 +5291,11 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
                      &PPS_info,
                      aulBBD, tBBDLen, aulSBD, tSBDLen,
                      aucHeader, content);
-    } else if(PPS_info.type == Excel) {
+    } else if (PPS_info.type == Excel) {
         readParam.ulStBlk = PPS_info.tWorkBook.ulSB;
         UCHAR aucHeader[4];
         ulong ulOff = 0;
-        if(readData(readParam, aucHeader, 0, 8) != 0)
+        if (readData(readParam, aucHeader, 0, 8) != 0)
             return -1;
         ulOff += 4;
         USHORT usType = usGetWord(0x00, aucHeader);
@@ -5303,17 +5303,17 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
         while(ulOff < PPS_info.tWorkBook.ulSize) {
             USHORT usLen = usGetWord(0x02, aucHeader);
             ulOff += usLen;
-            if(readData(readParam, aucHeader, ulOff, 4) != 0)
+            if (readData(readParam, aucHeader, ulOff, 4) != 0)
                 break;
             ulOff += 4;
             usType = usGetWord(0x00, aucHeader);
             ushort usPartLen = usGetWord(0x02, aucHeader);
-            if(usType == 0x00FC) {
-                if(readSSTRecord(readParam, PPS_info, ulOff, usPartLen, content) != 0)
+            if (usType == 0x00FC) {
+                if (readSSTRecord(readParam, PPS_info, ulOff, usPartLen, content) != 0)
                     break;
             }
         }
-    } else if(PPS_info.type == Ppt) {
+    } else if (PPS_info.type == Ppt) {
         ULONG ulOff = 0;
         while(ulOff < PPS_info.tPPTDocument.ulSize) {
             ulOff = readPPtRecord(pFile, &PPS_info, aulBBD, tBBDLen, ulOff, content);
@@ -5326,11 +5326,11 @@ int KBinaryParser::InitDocOle(FILE* pFile, long lFilesize, QString &content) {
 
 long lGetFilesize(const char *szFilename) {
     struct stat	tBuffer;
-    if(stat(szFilename, &tBuffer) != 0) {
+    if (stat(szFilename, &tBuffer) != 0) {
         //qWarning() << "Get Filesize error";
         return -1;
     }
-    if(!S_ISREG(tBuffer.st_mode)) {
+    if (!S_ISREG(tBuffer.st_mode)) {
         //qWarning() << "It's not a regular file";
         return -1;
     }
@@ -5347,18 +5347,18 @@ KBinaryParser::~KBinaryParser()
 
 bool KBinaryParser::RunParser(QString strFile, QString &content) {
     FILE* pFile = fopen(strFile.toLocal8Bit().data(), "rb");
-    if(!pFile) {
+    if (!pFile) {
         return false;
     }
     m_strFileName = strFile;
     long lFileSize = lGetFilesize(strFile.toLocal8Bit().data());
-    if(lFileSize < 0) {
+    if (lFileSize < 0) {
         qWarning() << "ERROR SIZE";
         (void)fclose(pFile);
         return false;
     }
     // If InitDocOle failed, -1 will be returned.
-    if(InitDocOle(pFile, lFileSize, content)) {
+    if (InitDocOle(pFile, lFileSize, content)) {
         qWarning() << "InitDocOle failed!" << strFile;
     }
     fclose(pFile);

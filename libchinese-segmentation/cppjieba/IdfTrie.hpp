@@ -91,7 +91,7 @@ private:
 
     void LoadDefaultIdf(const string& filePath) {
         ifstream ifs(filePath.c_str());
-        if(not ifs.is_open()){
+        if (not ifs.is_open()){
             return ;
         }
         XCHECK(ifs.is_open()) << "open " << filePath << " failed.";

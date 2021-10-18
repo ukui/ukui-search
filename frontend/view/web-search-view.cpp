@@ -88,10 +88,10 @@ void WebSearchView::LaunchBrowser()
 {
     QString address = "http://baidu.com/s?word=" + m_keyWord; //百度;
 //    QString engine = GlobalSettings::getInstance()->getValue("web_engine").toString();
-//    if(!engine.isEmpty()) {
-//        if(engine == "360") {
+//    if (!engine.isEmpty()) {
+//        if (engine == "360") {
 //            address = "https://so.com/s?q=" + m_keyWord; //360
-//        } else if(engine == "sougou") {
+//        } else if (engine == "sougou") {
 //            address = "https://www.sogou.com/web?query=" + m_keyWord; //搜狗
 //        } else {
 //            address = "http://baidu.com/s?word=" + m_keyWord; //百度

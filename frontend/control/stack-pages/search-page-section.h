@@ -49,7 +49,7 @@ public:
 
 public Q_SLOTS:
     void onWidgetSizeChanged();
-    void setSelectionInfo(QString &pluginID);
+    void setSelectionInfo(const QString &pluginID, const SearchPluginIface::ResultInfo &info);
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -70,15 +70,14 @@ private:
 
     bool m_detail_open_state = false;
     bool m_is_selected = false;
+    bool m_is_first_selected = true;
     QString m_selectedPluginID;
     QPoint m_pressPoint;
 
 Q_SIGNALS:
     void startSearch(const QString &);
     void stopSearch();
-    void currentRowChanged(const QString &, const SearchPluginIface::ResultInfo&);
     void keyPressChanged(const QString &, const SearchPluginIface::ResultInfo&);
-    void clearSelectedRow();
     void resizeHeight(int height);
     void resizeWidth(const int &);
     void rowClicked();

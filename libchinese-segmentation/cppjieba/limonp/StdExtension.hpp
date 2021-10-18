@@ -6,7 +6,7 @@
 #ifdef __APPLE__
 #include <unordered_map>
 #include <unordered_set>
-#elif(__cplusplus >= 201103L)
+#elif (__cplusplus >= 201103L)
 #include <unordered_map>
 #include <unordered_set>
 #elif defined _MSC_VER
@@ -33,7 +33,7 @@ namespace std {
 
 template<typename T>
 ostream& operator << (ostream& os, const vector<T>& v) {
-  if(v.empty()) {
+  if (v.empty()) {
     return os << "[]";
   }
   os<<"["<<v[0];
@@ -46,7 +46,7 @@ ostream& operator << (ostream& os, const vector<T>& v) {
 
 template<>
 inline ostream& operator << (ostream& os, const vector<string>& v) {
-  if(v.empty()) {
+  if (v.empty()) {
     return os << "[]";
   }
   os<<"[\""<<v[0];
@@ -59,7 +59,7 @@ inline ostream& operator << (ostream& os, const vector<string>& v) {
 
 template<typename T>
 ostream& operator << (ostream& os, const deque<T>& dq) {
-  if(dq.empty()) {
+  if (dq.empty()) {
     return os << "[]";
   }
   os<<"[\""<<dq[0];
@@ -87,7 +87,7 @@ string& operator << (string& str, const T& obj) {
 
 template<class T1, class T2>
 ostream& operator << (ostream& os, const map<T1, T2>& mp) {
-  if(mp.empty()) {
+  if (mp.empty()) {
     os<<"{}";
     return os;
   }
@@ -104,7 +104,7 @@ ostream& operator << (ostream& os, const map<T1, T2>& mp) {
 }
 template<class T1, class T2>
 ostream& operator << (ostream& os, const std::unordered_map<T1, T2>& mp) {
-  if(mp.empty()) {
+  if (mp.empty()) {
     return os << "{}";
   }
   os<<'{';
@@ -119,7 +119,7 @@ ostream& operator << (ostream& os, const std::unordered_map<T1, T2>& mp) {
 
 template<class T>
 ostream& operator << (ostream& os, const set<T>& st) {
-  if(st.empty()) {
+  if (st.empty()) {
     os << "{}";
     return os;
   }

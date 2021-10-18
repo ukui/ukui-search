@@ -38,11 +38,11 @@ void Zeeker::FileSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultIn
     ++SearchManager::uniqueSymbolFile;
     SearchManager::m_mutexFile.unlock();
 
-    if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
+    if (FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         DirectSearch *directSearch;
         directSearch = new DirectSearch(keyword, searchResult, FILE_SEARCH_VALUE, SearchManager::uniqueSymbolFile);
         m_pool.start(directSearch);
-    } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
+    } else if (FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         FileSearch *filesearch;
         filesearch = new FileSearch(searchResult, SearchManager::uniqueSymbolFile, keyword, FILE_SEARCH_VALUE, 1, 0, 5);
         m_pool.start(filesearch);
@@ -60,7 +60,7 @@ void FileSearchPlugin::openAction(int actionkey, QString key, int type)
     qDebug() << "openAction!!!!!!!!";
     switch (actionkey) {
     case 0:
-        if(FileUtils::openFile(key) == -1) {
+        if (FileUtils::openFile(key) == -1) {
             QMessageBox msgBox(m_detailPage);
             msgBox.setWindowModality(Qt::WindowModal);
             msgBox.setStandardButtons(QMessageBox::Yes);
@@ -87,7 +87,7 @@ QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    //if(QString::compare(showname, ri.name)) {
+    //if (QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     //}
     m_pluginLabel->setText(tr("File"));
@@ -176,7 +176,7 @@ void FileSearchPlugin::initDetailPage()
     m_detailLyt->addStretch();
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
-        if(FileUtils::openFile(m_currentActionKey) == -1) {
+        if (FileUtils::openFile(m_currentActionKey) == -1) {
             QMessageBox msgBox(m_detailPage);
             msgBox.setWindowModality(Qt::WindowModal);
             msgBox.setStandardButtons(QMessageBox::Yes);
@@ -245,11 +245,11 @@ void Zeeker::DirSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInf
     ++SearchManager::uniqueSymbolDir;
     SearchManager::m_mutexDir.unlock();
 
-    if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
+    if (FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         DirectSearch *directSearch;
         directSearch = new DirectSearch(keyword, searchResult, DIR_SEARCH_VALUE, SearchManager::uniqueSymbolDir);
         m_pool.start(directSearch);
-    } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
+    } else if (FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         FileSearch *filesearch;
         filesearch = new FileSearch(searchResult, SearchManager::uniqueSymbolDir, keyword, DIR_SEARCH_VALUE, 1, 0, 5);
         m_pool.start(filesearch);
@@ -284,7 +284,7 @@ QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    //if(QString::compare(showname, ri.name)) {
+    //if (QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     //}
     m_pluginLabel->setText(tr("directory"));
@@ -426,9 +426,9 @@ void Zeeker::FileContengSearchPlugin::KeywordSearch(QString keyword, DataQueue<R
     SearchManager::m_mutexContent.unlock();
 
     m_keyWord = keyword;
-    if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
+    if (FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         return;
-    } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
+    } else if (FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         FileContentSearch *fileContentSearch;
         fileContentSearch = new FileContentSearch(searchResult, SearchManager::uniqueSymbolContent, keyword, 0, 5);
         m_pool.start(fileContentSearch);
@@ -465,7 +465,7 @@ QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    //if(QString::compare(showname, ri.name)) {
+    //if (QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     //}
 
@@ -481,14 +481,14 @@ QString FileContengSearchPlugin::getHtmlText(const QString &text, const QString 
     QString htmlString;
     bool boldOpenned = false;
     for(int i = 0; i < text.length(); i++) {
-        if((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
-            if(! boldOpenned) {
+        if ((keyword.toUpper()).contains(QString(text.at(i)).toUpper())) {
+            if (! boldOpenned) {
                 boldOpenned = true;
                 htmlString.append(QString("<b><font size=\"4\">"));
             }
             htmlString.append(FileUtils::escapeHtml(QString(text.at(i))));
         } else {
-            if(boldOpenned) {
+            if (boldOpenned) {
                 boldOpenned = false;
                 htmlString.append(QString("</font></b>"));
             }
@@ -505,17 +505,17 @@ QString FileContengSearchPlugin::wrapData(QLabel *p_label, const QString &text)
 
     QFontMetrics fontMetrics = p_label->fontMetrics();
     int textSize = fontMetrics.width(wrapText);
-    if(textSize > LABEL_MAX_WIDTH){
+    if (textSize > LABEL_MAX_WIDTH){
         int lastIndex = 0;
         int count = 0;
 
         for(int i = lastIndex; i < wrapText.length(); i++) {
 
-            if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == LABEL_MAX_WIDTH) {
+            if (fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == LABEL_MAX_WIDTH) {
                 lastIndex = i;
                 wrapText.insert(i, '\n');
                 count++;
-            } else if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > LABEL_MAX_WIDTH) {
+            } else if (fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > LABEL_MAX_WIDTH) {
                 lastIndex = i;
                 wrapText.insert(i - 1, '\n');
                 count++;
@@ -523,7 +523,7 @@ QString FileContengSearchPlugin::wrapData(QLabel *p_label, const QString &text)
                 continue;
             }
 
-            if(count == 2){
+            if (count == 2){
                 break;
             }
         }

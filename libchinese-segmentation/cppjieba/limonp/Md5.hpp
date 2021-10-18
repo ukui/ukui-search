@@ -260,7 +260,7 @@ public:
         index = (unsigned int)((context.count[0] >> 3) & 0x3F);
 
         // Update number of bits
-        if((context.count[0] += ((UINT4)inputLen << 3))
+        if ((context.count[0] += ((UINT4)inputLen << 3))
                 < ((UINT4)inputLen << 3))
             context.count[1]++;
         context.count[1] += ((UINT4)inputLen >> 29);
@@ -268,7 +268,7 @@ public:
         partLen = 64 - index;
 
         // Transform as many times as possible.
-        if(inputLen >= partLen) {
+        if (inputLen >= partLen) {
             memcpy((POINTER)&context.buffer[index], (POINTER)input, partLen);
             MD5Transform(context.state, context.buffer);
 
@@ -330,7 +330,7 @@ public:
     /// Load a file from disk and digest it
     // Digests a file and returns the result.
     const char* digestFile(const char *filename) {
-        if(NULL == filename || strcmp(filename, "") == 0)
+        if (NULL == filename || strcmp(filename, "") == 0)
             return NULL;
 
         Init() ;
@@ -339,7 +339,7 @@ public:
 
         unsigned char buffer[1024] ;
 
-        if((file = fopen(filename, "rb")) == NULL) {
+        if ((file = fopen(filename, "rb")) == NULL) {
             return NULL;
         }
         int len;
@@ -354,7 +354,7 @@ public:
 
     /// Digests a byte-array already in memory
     const char* digestMemory(BYTE *memchunk, int len) {
-        if(NULL == memchunk)
+        if (NULL == memchunk)
             return NULL;
 
         Init() ;
@@ -366,7 +366,7 @@ public:
 
     // Digests a string and prints the result.
     const char* digestString(const char *string) {
-        if(string == NULL)
+        if (string == NULL)
             return NULL;
 
         Init() ;
@@ -378,14 +378,14 @@ public:
 };
 
 inline bool md5String(const char* str, std::string& res) {
-    if(NULL == str) {
+    if (NULL == str) {
         res = "";
         return false;
     }
 
     MD5 md5;
     const char *pRes = md5.digestString(str);
-    if(NULL == pRes) {
+    if (NULL == pRes) {
         res = "";
         return false;
     }
@@ -395,7 +395,7 @@ inline bool md5String(const char* str, std::string& res) {
 }
 
 inline bool md5File(const char* filepath, std::string& res) {
-    if(NULL == filepath || strcmp(filepath, "") == 0) {
+    if (NULL == filepath || strcmp(filepath, "") == 0) {
         res = "";
         return false;
     }
@@ -403,7 +403,7 @@ inline bool md5File(const char* filepath, std::string& res) {
     MD5 md5;
     const char *pRes = md5.digestFile(filepath);
 
-    if(NULL == pRes) {
+    if (NULL == pRes) {
         res = "";
         return false;
     }

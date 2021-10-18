@@ -11,7 +11,7 @@ class IThread: NonCopyable {
   IThread(): isStarted(false), isJoined(false) {
   }
   virtual ~IThread() {
-    if(isStarted && !isJoined) {
+    if (isStarted && !isJoined) {
       XCHECK(!pthread_detach(thread_));
     }
   };

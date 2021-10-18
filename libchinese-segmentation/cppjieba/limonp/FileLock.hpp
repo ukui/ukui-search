@@ -19,14 +19,14 @@ class FileLock {
   FileLock() : fd_(-1), ok_(true) {
   }
   ~FileLock() {
-    if(fd_ > 0) {
+    if (fd_ > 0) {
       Close();
     }
   }
   void Open(const string& fname) {
     assert(fd_ == -1);
     fd_ = open(fname.c_str(), O_RDWR | O_CREAT, 0644);
-    if(fd_ < 0) {
+    if (fd_ < 0) {
       ok_ = false;
       err_ = strerror(errno);
     }
@@ -35,13 +35,13 @@ class FileLock {
     ::close(fd_);
   }
   void Lock() {
-    if(LockOrUnlock(fd_, true) < 0) {
+    if (LockOrUnlock(fd_, true) < 0) {
       ok_ = false;
       err_ = strerror(errno);
     }
   }
   void UnLock() {
-    if(LockOrUnlock(fd_, false) < 0) {
+    if (LockOrUnlock(fd_, false) < 0) {
       ok_ = false;
       err_ = strerror(errno);
     }

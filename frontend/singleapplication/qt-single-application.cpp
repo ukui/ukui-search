@@ -321,7 +321,7 @@ QWidget* QtSingleApplication::activationWindow() const {
 void QtSingleApplication::activateWindow() {
     //单例置顶策略，由于bootOptionsFilter in mainwindow自带置顶策略，故注掉此处
 //    if (actWin) {
-//        if(this->applicationState() & Qt::ApplicationInactive)
+//        if (this->applicationState() & Qt::ApplicationInactive)
 //        {
 //            MainWindow* w=qobject_cast<MainWindow*>(actWin);
 ////            w->loadMainWindow();

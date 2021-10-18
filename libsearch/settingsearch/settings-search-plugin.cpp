@@ -237,7 +237,7 @@ QWidget *SettingsSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    if(QString::compare(showname, ri.name)) {
+    if (QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     }
     return m_detailPage;
@@ -262,7 +262,7 @@ void SettingsSearchPlugin::xmlElement() {
     QString environment = QProcessEnvironment::systemEnvironment().value("XDG_SESSION_TYPE");
     QString version;
     QFile file(QString::fromLocal8Bit("/usr/share/ukui-control-center/shell/res/search.xml"));
-    if(!file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly)) {
         return;
     }
     QDomDocument doc;

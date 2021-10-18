@@ -85,20 +85,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow() {
 #if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
-    if(m_settingsWidget) {
+    if (m_settingsWidget) {
         delete m_settingsWidget;
         m_settingsWidget = NULL;
 
 #endif
-//    if(m_askDialog) {
+//    if (m_askDialog) {
 //        delete m_askDialog;
 //        m_askDialog = NULL;
 //    }
-//    if(m_askTimer) {
+//    if (m_askTimer) {
 //        delete m_askTimer;
 //        m_askTimer = NULL;
 //    }
-    if(m_search_gsettings) {
+    if (m_search_gsettings) {
         delete m_search_gsettings;
         m_search_gsettings = NULL;
     }
@@ -165,10 +165,10 @@ void MainWindow::initConnections()
  * @param opt
  */
 void MainWindow::bootOptionsFilter(QString opt) {
-    if(opt == "-s" || opt == "--show") {
+    if (opt == "-s" || opt == "--show") {
         clearSearchResult();
         centerToScreen(this);
-        if(this->isHidden()) {
+        if (this->isHidden()) {
             this->show();
         }
         this->m_searchBarWidget->setFocus();
@@ -190,8 +190,8 @@ void MainWindow::clearSearchResult() {
  */
 void MainWindow::trayIconActivatedSlot(QSystemTrayIcon::ActivationReason reason)
 {
-    if(reason == QSystemTrayIcon::Trigger) {
-        if(!this->isVisible()) {
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (!this->isVisible()) {
             clearSearchResult();
             centerToScreen(this);
             this->show();
@@ -211,13 +211,13 @@ void MainWindow::trayIconActivatedSlot(QSystemTrayIcon::ActivationReason reason)
  */
 void MainWindow::setSearchMethodConfig(const bool &create_index, const bool &no_longer_ask)
 {
-    if(no_longer_ask) {
+    if (no_longer_ask) {
         GlobalSettings::getInstance()->setValue(ENABLE_CREATE_INDEX_ASK_DIALOG, "false");
     } else {
         GlobalSettings::getInstance()->setValue(ENABLE_CREATE_INDEX_ASK_DIALOG, "true");
     }
-    if(create_index) {
-        if(m_search_gsettings && m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
+    if (create_index) {
+        if (m_search_gsettings && m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
             m_search_gsettings->set(SEARCH_METHOD_KEY, true);
         } else {
             //调用创建索引接口
@@ -234,8 +234,8 @@ void MainWindow::setSearchMethodConfig(const bool &create_index, const bool &no_
 void MainWindow::settingsBtnClickedSlot()
 {
 #if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
-    if(m_settingsWidget) {  //当此窗口已存在时，仅需置顶
-        if(!m_settingsWidget->isVisible()) {
+    if (m_settingsWidget) {  //当此窗口已存在时，仅需置顶
+        if (!m_settingsWidget->isVisible()) {
             centerToScreen(m_settingsWidget);
         }
         m_settingsWidget->showWidget();
@@ -246,7 +246,7 @@ void MainWindow::settingsBtnClickedSlot()
         m_settingsWidget->resetWebEngine();
     });
     connect(m_settingsWidget, &SettingsWidget::webEngineChanged, this, [ = ](const QString & engine) {
-        if(m_search_gsettings && m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
+        if (m_search_gsettings && m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
             m_search_gsettings->set(WEB_ENGINE_KEY, engine);
         } else {
             GlobalSettings::getInstance()->setValue(WEB_ENGINE, engine);
@@ -278,7 +278,7 @@ void MainWindow::settingsBtnClickedSlot()
 void MainWindow::searchKeywordSlot(const QString &keyword)
 {
     //NEW_TODO
-    if(keyword == "") {
+    if (keyword == "") {
 //        m_stackedWidget->setPage(int(StackedPage::HomePage));
 //        m_askTimer->stop();
         Q_EMIT m_searchResultPage->stopSearch();
@@ -333,7 +333,7 @@ void MainWindow::moveToPanel() {
                                           "/org/ukui/SettingsDaemon/wayland",
                                           "org.ukui.SettingsDaemon.wayland",
                                           QDBusConnection::sessionBus());
-    if(QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
+    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
         QDBusReply<int> x = primaryScreenInterface.call("x");
         QDBusReply<int> y = primaryScreenInterface.call("y");
         QDBusReply<int> width = primaryScreenInterface.call("width");
@@ -360,16 +360,16 @@ void MainWindow::moveToPanel() {
     int height = QDBusReply<int>(interface.call("GetPanelSize", "height"));
     int d = 8; //窗口边沿到任务栏距离
 
-    if(position == 0) {
+    if (position == 0) {
         //任务栏在下侧
         this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + screenGeometry.height() - this->height() - height - d);
-    } else if(position == 1) {
+    } else if (position == 1) {
         //任务栏在上侧
         this->move(availableGeometry.x() + availableGeometry.width() - this->width() - d, screenGeometry.y() + height + d);
-    } else if(position == 2) {
+    } else if (position == 2) {
         //任务栏在左侧
         this->move(screenGeometry.x() + height + d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
-    } else if(position == 3) {
+    } else if (position == 3) {
         //任务栏在右侧
         this->move(screenGeometry.x() + screenGeometry.width() - this->width() - height - d, screenGeometry.y() + screenGeometry.height() - this->height() - d);
     }
@@ -380,7 +380,7 @@ void MainWindow::moveToPanel() {
  * @param widget
  */
 void MainWindow::centerToScreen(QWidget* widget) {
-    if(!widget)
+    if (!widget)
         return;
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
@@ -392,7 +392,7 @@ void MainWindow::centerToScreen(QWidget* widget) {
 //                                          "/org/ukui/SettingsDaemon/wayland",
 //                                          "org.ukui.SettingsDaemon.wayland",
 //                                          QDBusConnection::sessionBus());
-//    if(QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
+//    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
 //        QDBusReply<int> width = primaryScreenInterface.call("width");
 //        QDBusReply<int> height = primaryScreenInterface.call("height");
 //        desk_x = width;
@@ -403,23 +403,23 @@ void MainWindow::centerToScreen(QWidget* widget) {
 
 void MainWindow::initGsettings() {
     const QByteArray id(UKUI_SEARCH_SCHEMAS);
-    if(QGSettings::isSchemaInstalled(id)) {
+    if (QGSettings::isSchemaInstalled(id)) {
         m_search_gsettings = new QGSettings(id);
         connect(m_search_gsettings, &QGSettings::changed, this, [ = ](const QString & key) {
-            if(key == SEARCH_METHOD_KEY) {
+            if (key == SEARCH_METHOD_KEY) {
                 bool is_index_search = m_search_gsettings->get(SEARCH_METHOD_KEY).toBool();
                 this->setSearchMethod(is_index_search);
-            } else if(key == WEB_ENGINE_KEY) {
+            } else if (key == WEB_ENGINE_KEY) {
                 QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
                 GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
                 Q_EMIT this->webEngineChanged();
             }
         });
-        if(m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
+        if (m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
             bool is_index_search = m_search_gsettings->get(SEARCH_METHOD_KEY).toBool();
             this->setSearchMethod(is_index_search);
         }
-        if(m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
+        if (m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
             QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
             GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
         }
@@ -435,7 +435,7 @@ void MainWindow::initTimer() {
     m_askTimer = new QTimer;
     m_askTimer->setInterval(ASK_INDEX_TIME);
     connect(m_askTimer, &QTimer::timeout, this, [ = ]() {
-        if(this->isVisible()) {
+        if (this->isVisible()) {
 //            m_isAskDialogVisible = true;
 //            m_askDialog->show();
             m_currentSearchAsked = true;
@@ -445,17 +445,17 @@ void MainWindow::initTimer() {
     m_researchTimer = new QTimer;
     m_researchTimer->setInterval(RESEARCH_TIME);
     connect(m_researchTimer, &QTimer::timeout, this, [ = ]() {
-        if(this->isVisible()) {
+        if (this->isVisible()) {
             m_searchBarWidget->reSearch();
         }
         m_researchTimer->stop();
     });
     connect(m_searchBarWidget, &SeachBarWidget::requestSearchKeyword, this, [ = ](QString text) {
-        if(text == "" || text.isEmpty()) {
+        if (text == "" || text.isEmpty()) {
             m_askTimer->stop();
         } else {
             //允许弹窗且当前次搜索（为关闭主界面，算一次搜索过程）未询问且当前为暴力搜索
-            if(GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
+            if (GlobalSettings::getInstance()->getValue(ENABLE_CREATE_INDEX_ASK_DIALOG).toString() != "false" && !m_currentSearchAsked && FileUtils::searchMethod == FileUtils::SearchMethod::DIRECTSEARCH)
                 m_askTimer->start();
         }
     });
@@ -486,7 +486,7 @@ bool MainWindow::tryHideMainwindow()
  * @param is_index_search true为索引搜索，false为暴力搜索
  */
 void MainWindow::setSearchMethod(const bool &is_index_search) {
-    if(is_index_search) {
+    if (is_index_search) {
         //调用创建索引接口
         Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
         //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
@@ -534,7 +534,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::ActivationChange) {
         qDebug() << "QEvent::ActivationChange!!!!" << "active" << (QApplication::activeWindow() == this) << "isVisble" << (this->isVisible());
-        if(QApplication::activeWindow() != this) {
+        if (QApplication::activeWindow() != this) {
             tryHideMainwindow();
         }
     }

@@ -129,27 +129,17 @@ void SearchResultPage::initConnections()
     connect(m_resultArea, &ResultArea::keyPressChanged, this, [=] () {
         sendResizeWidthSignal(266);
     });
-    connect(m_resultArea, &ResultArea::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
-    connect(m_resultArea, &ResultArea::currentRowChanged, this, &SearchResultPage::currentRowChanged);
-    connect(this, &SearchResultPage::currentRowChanged, m_resultArea, &ResultArea::clearSelectedRow);
-    //connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::resizeHeight);
     connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::getResult);
     connect(this, &SearchResultPage::resizeWidth, m_resultArea, &ResultArea::resizeWidth);
     connect(m_resultArea, &ResultArea::rowClicked, this, [=] () {
         sendResizeWidthSignal(266);
     });
-    connect(this, &SearchResultPage::setSelectionInfo, m_resultArea, &ResultArea::setSelectionInfo);
 }
 
 void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(widget, &ResultWidget::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
-    connect(widget, &ResultWidget::currentRowChanged, this, &SearchResultPage::currentRowChanged);
-    connect(widget, &ResultWidget::currentRowChanged, this, [=] {
-        QString pluginID = widget->pluginId();
-        Q_EMIT this->setSelectionInfo(pluginID);
-    });
-    connect(this, &SearchResultPage::currentRowChanged, widget, &ResultWidget::clearSelectedRow);
+    connect(widget, &ResultWidget::currentRowChanged, m_resultArea, &ResultArea::setSelectionInfo);
     connect(widget, &ResultWidget::rowClicked, this, [=] () {
         sendResizeWidthSignal(266);
     });
