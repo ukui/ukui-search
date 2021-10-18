@@ -21,6 +21,7 @@
 #include "search-list-view.h"
 #include <QDebug>
 #include <QFileInfo>
+#include <common.h>
 
 using namespace Zeeker;
 SearchListView::SearchListView(QWidget * parent, const QStringList& list, const int& type) : QTreeView(parent) {
@@ -197,14 +198,19 @@ int SearchListView::getCurrentType() {
  * @return
  */
 int SearchListView::getResType(const QString& path) {
-    if(path.endsWith(".desktop")) {
-        return SearchListView::ResType::App;
-    } else if(QFileInfo(path).isFile()) {
+    for(QString appPath: allAppPath) {
+        if(path.startsWith(appPath)){
+            return SearchListView::ResType::App;
+        }
+    }
+    if(QFileInfo(path).isFile()) {
         return SearchListView::ResType::Best;
     } else if(QFileInfo(path).isDir()) {
         return SearchListView::ResType::Dir;
-    } else {
+    } else if(path.left(1) != "/") {
         return SearchListView::ResType::Setting;
+    } else {
+        return SearchListView::ResType::Best;
     }
 }
 

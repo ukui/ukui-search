@@ -458,20 +458,27 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist) {
     if(list->isEmpty())
         return true;
     try {
+        qDebug() << "--delete start--";
         for(int i = 0; i < list->size(); i++) {
             QString doc = list->at(i);
             std::string uniqueterm = FileUtils::makeDocUterm(doc);
-            qDebug() << "--delete start--";
+            std::string upterm = "ZEEKERUPTERM" + FileUtils::makeDocUterm(doc);
+
             m_database_path->delete_document(uniqueterm);
             m_database_content->delete_document(uniqueterm);
+
+            //delete all files under it if it's a dir.
+            m_database_path->delete_document(upterm);
+            m_database_content->delete_document(upterm);
             qDebug() << "delete path" << doc;
-            qDebug() << "delete md5" << QString::fromStdString(uniqueterm);
-            qDebug() << "--delete finish--";
+//            qDebug() << "delete md5" << QString::fromStdString(uniqueterm);
+
             //            qDebug()<<"m_database_path->get_lastdocid()!!!"<<m_database_path->get_lastdocid();
             //            qDebug()<<"m_database_path->get_doccount()!!!"<<m_database_path->get_doccount();
         }
         m_database_path->commit();
         m_database_content->commit();
+        qDebug() << "--delete finish--";
     } catch(const Xapian::Error &e) {
         qWarning() << QString::fromStdString(e.get_description());
         return false;

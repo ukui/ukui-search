@@ -30,14 +30,24 @@ namespace Zeeker {
 class ConfigFile : public QObject {
     Q_OBJECT
 public:
-    static bool writeConfig(QString message);
-    static QMap<QString, QStringList> readConfig();
-    static void receiveMessage(QString message);
+    static ConfigFile *getInstance();
+    bool writeConfig(QString message);
+    QMap<QString, QStringList> readConfig();
+    void removeConfig(QString path);
+    bool itemExist(QString path);
+    void receiveMessage(QString message);
 private:
-    static bool writeCommonly(QString message);
-    static QStringList readCommonly();
-    static bool writeRecently(QString message);
-    static QStringList readRecently();
+    explicit ConfigFile();
+    ~ConfigFile();
+    QStringList readCommonly();
+    bool writeCommonly(QString message);
+    void removeCommonly(QString path);
+
+    QStringList readRecently();
+    bool writeRecently(QString message);
+    void removeRecently(QString path);
+private:
+    QSettings *m_settings;
 
 };
 }
