@@ -432,6 +432,7 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
 //    //            deleteAllIndex(pathTobeDelete)
     return 0;
 }
+
 FileSearchV4::FileSearchV4(std::queue<SearchResultInfo> *searchResultFile, size_t uniqueSymbol, QString keyword, QString value, unsigned slot, int begin, int num)
 {
     this->setAutoDelete(true);
@@ -798,6 +799,10 @@ DirectSearch::DirectSearch(QString keyword, QQueue<QString> *searchResultFile, Q
 }
 
 void DirectSearch::run() {
+    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
+    if(blockList.contains(QStandardPaths::writableLocation(QStandardPaths::HomeLocation).remove(0,1), Qt::CaseSensitive)) {
+        return;
+    }
     QQueue<QString> bfs;
     bfs.enqueue(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     QFileInfoList list;
@@ -805,7 +810,7 @@ void DirectSearch::run() {
     // QDir::Hidden
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
-    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
+
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();

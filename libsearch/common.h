@@ -1,8 +1,15 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <QMap>
+#include <QString>
+#include <QDir>
 #define UKUI_SEARCH_PIPE_PATH (QDir::homePath()+"/.config/org.ukui/ukui-search/ukuisearch").toLocal8Bit().constData()
+#define LABEL_MAX_WIDTH 320
 #define HOME_PATH QDir::homePath()
+static const QStringList allAppPath = {
+    QDir::homePath()+"/.local/share/applications/",
+    "/usr/share/applications/"
+};
 static const QMap<QString, bool> targetFileTypeMap = {
     std::map<QString, bool>::value_type("doc", true),
     std::map<QString, bool>::value_type("docx", true),

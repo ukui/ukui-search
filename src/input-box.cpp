@@ -105,20 +105,9 @@ void SearchBarHLayout::initUI() {
     queryWidLayout->setSpacing(5);
     m_queryWidget->setLayout(queryWidLayout);
 
-
-    if (!QIcon::fromTheme("system-search-symbolic").isNull()) {
-        QPixmap pixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(20, 20)));
-        m_queryIcon = new QLabel;
-        m_queryIcon->setFixedSize(pixmap.size());
-        m_queryIcon->setPixmap(pixmap);
-    } else {
-        QPixmap pixmap(QIcon(":/res/icons/system-search.symbolic.png").pixmap(QSize(20, 20)));
-        m_queryIcon = new QLabel;
-        m_queryIcon->setFixedSize(pixmap.size());
-        m_queryIcon->setPixmap(pixmap);
-    }
-    QPixmap pixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(20, 20)));
+    QPixmap pixmap(QIcon::fromTheme("system-search-symbolic", QIcon(":/res/icons/system-search.symbolic.png")).pixmap(QSize(20, 20)));
     m_queryIcon = new QLabel;
+    m_queryIcon->setProperty("useIconHighlightEffect", 0x10);
     m_queryIcon->setFixedSize(pixmap.size());
     m_queryIcon->setPixmap(pixmap);
 
