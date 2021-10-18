@@ -247,7 +247,7 @@
 <context>
     <name>Zeeker::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="305"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="306"/>
         <source>Best Matches</source>
         <translation type="unfinished">En İyi Eşleşen</translation>
     </message>
@@ -614,10 +614,10 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::WebSearchWidget</name>
+    <name>Zeeker::WebSearchViewDelegate</name>
     <message>
-        <location filename="../../frontend/view/web-search-view.cpp" line="149"/>
-        <source>Web Page</source>
+        <location filename="../../frontend/view/web-search-view-delegate.cpp" line="34"/>
+        <source>Search &apos;&lt;b&gt;%1&lt;/b&gt;&apos; with Baidu.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

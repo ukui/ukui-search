@@ -1,10 +1,11 @@
 #ifndef WEBSEARCHVIEW_H
 #define WEBSEARCHVIEW_H
 #include <QTreeView>
+#include <QObject>
 #include <QListView>
 #include <QMouseEvent>
 #include "web-search-model.h"
-#include "result-view-delegate.h"
+#include "web-search-view-delegate.h"
 #include "title-label.h"
 
 namespace Zeeker {
@@ -32,7 +33,7 @@ private:
 
     WebSearchModel * m_model = nullptr;
     bool m_is_selected = false;
-    ResultViewDelegate * m_style_delegate = nullptr;
+    WebSearchViewDelegate * m_style_delegate = nullptr;
     QString m_keyWord;
 };
 
