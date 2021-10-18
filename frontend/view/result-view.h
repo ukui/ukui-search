@@ -109,6 +109,7 @@ Q_SIGNALS:
     void resizeWidth(const int &);
     void showMoreClicked();
     void retractClicked();
+    void getResult();
 };
 }
 

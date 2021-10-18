@@ -42,8 +42,9 @@
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
-#define WINDOW_WIDTH 700
-#define WINDOW_HEIGHT 610
+#define WINDOW_WIDTH 720
+#define WINDOW_HEIGHT 808
+#define WINDOW_SPACE 8
 #define TITLE_HEIGHT 40
 #define WINDOW_ICON_SIZE 24
 #define SETTING_BTN_SIZE 30
@@ -108,7 +109,7 @@ MainWindow::~MainWindow() {
  * @brief initUi 初始化主界面主要ui控件
  */
 void MainWindow::initUi() {
-    this->setFixedSize(720, 50);
+    this->setFixedSize(WINDOW_WIDTH, SEARCH_BAR_SIZE);
 //    this->setStyleSheet("QMainWindow{border:2px solid red;}");
 
     m_widget = new QWidget(this);
@@ -118,7 +119,7 @@ void MainWindow::initUi() {
 //    m_widget->setFixedSize(this->size());
     m_mainLayout = new QVBoxLayout(m_widget);
     m_mainLayout->setContentsMargins(MAIN_MARGINS);
-    m_mainLayout->setSpacing(8);
+    m_mainLayout->setSpacing(WINDOW_SPACE);
 //    m_frame->setLayout(mainlayout);
 
 //    m_stackedWidget = new StackedWidget(m_frame);//内容栏
@@ -154,7 +155,7 @@ void MainWindow::initConnections()
     //connect(m_searchResultPage, &SearchResultPage::setWebSearchSelection, m_webSearchPage, &WebSearchPage::setWebSearchSelection);
     connect(this, &MainWindow::startWebSearch, m_webSearchPage, &WebSearchPage::startSearch);
     connect(m_searchResultPage, &SearchResultPage::getResult, this, [=] () {
-        this->resizeHeight(810);
+        this->resizeHeight(WINDOW_HEIGHT);
         m_searchResultPage->show();
         m_webSearchPage->clearResultSelection();
     });
@@ -279,25 +280,19 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
 {
     //NEW_TODO
     if (keyword == "") {
-//        m_stackedWidget->setPage(int(StackedPage::HomePage));
-//        m_askTimer->stop();
         Q_EMIT m_searchResultPage->stopSearch();
         m_searchResultPage->hide();
         m_webSearchPage->hide();
-        this->resizeHeight(50);
-
+        this->resizeHeight(SEARCH_BAR_SIZE);
     } else {
-//        m_stackedWidget->setPage(int(StackedPage::SearchPage));
         QTimer::singleShot(10, this, [ = ]() {
             Q_EMIT m_searchResultPage->startSearch(keyword);
+            this->resizeHeight(SEARCH_BAR_SIZE + WINDOW_SPACE + m_webSearchPage->height());
             Q_EMIT this->startWebSearch(keyword);
-            //this->resizeHeight(810);
-            this->resizeHeight(50 + 8 + m_webSearchPage->height());
             m_searchResultPage->hide();
             m_webSearchPage->show();
         });
     }
-//    m_researchTimer->stop(); //如果搜索内容发生改变，则停止建索引后重新搜索的倒计时
 }
 
 void MainWindow::resizeHeight(int height)
@@ -358,7 +353,7 @@ void MainWindow::moveToPanel() {
 
     int position = QDBusReply<int>(interface.call("GetPanelPosition", "position"));
     int height = QDBusReply<int>(interface.call("GetPanelSize", "height"));
-    int d = 8; //窗口边沿到任务栏距离
+    int d = WINDOW_SPACE; //窗口边沿到任务栏距离
 
     if (position == 0) {
         //任务栏在下侧

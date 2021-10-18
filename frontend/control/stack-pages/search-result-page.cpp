@@ -129,7 +129,7 @@ void SearchResultPage::initConnections()
     connect(m_resultArea, &ResultArea::keyPressChanged, this, [=] () {
         sendResizeWidthSignal(266);
     });
-    connect(m_resultArea, &ResultArea::resizeHeight, this, &SearchResultPage::getResult);
+    connect(m_resultArea, &ResultArea::getResult, this, &SearchResultPage::getResult);
     connect(this, &SearchResultPage::resizeWidth, m_resultArea, &ResultArea::resizeWidth);
     connect(m_resultArea, &ResultArea::rowClicked, this, [=] () {
         sendResizeWidthSignal(266);
