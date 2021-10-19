@@ -52,6 +52,7 @@
 #include <uchardet/uchardet.h>
 //#include <poppler-qt5.h>
 #include <poppler/qt5/poppler-qt5.h>
+#include <common.h>
 
 #include "libsearch_global.h"
 #include "gobject-template.h"
