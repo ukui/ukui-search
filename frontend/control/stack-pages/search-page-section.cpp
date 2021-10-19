@@ -240,7 +240,6 @@ void ResultArea::onWidgetSizeChanged()
 {
     int whole_height = 0;
 
-
     bool tmp = false;
     whole_height = 0;
     Q_FOREACH (ResultWidget *widget, m_widget_list) {
@@ -258,7 +257,6 @@ void ResultArea::onWidgetSizeChanged()
         }
         whole_height += widget->height();
     }
-
 
     int spacing_height = m_widget_list.length() > 1 ? m_mainLyt->spacing() : 0;
     m_widget->setFixedHeight(whole_height + spacing_height * (m_widget_list.length() - 1));
@@ -408,6 +406,7 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
     });
     connect(this, &ResultArea::stopSearch, widget, &ResultWidget::stopSearch);
     connect(widget, &ResultWidget::sizeChanged, this, &ResultArea::onWidgetSizeChanged);
+    connect(widget, &ResultWidget::getResult, this, &ResultArea::getResult);
     connect(widget, &ResultWidget::showMoreClicked, this, [=] () {//点击展开搜索结果后   显示悬浮窗
         this->verticalScrollBar()->setValue(widget->pos().ry()); //置顶当前类型搜索结果
         if (widget->height() > FRAME_HEIGHT) {//当前widget高度大于搜索结果界面高度则显示悬浮窗

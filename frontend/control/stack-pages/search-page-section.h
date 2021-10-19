@@ -81,6 +81,7 @@ Q_SIGNALS:
     void resizeHeight(int height);
     void resizeWidth(const int &);
     void rowClicked();
+    void getResult();
 };
 
 class DetailWidget : public QWidget

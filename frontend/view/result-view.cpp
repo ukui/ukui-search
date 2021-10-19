@@ -108,6 +108,9 @@ void ResultWidget::reduceListSlot()
  */
 void ResultWidget::onListLengthChanged(const int &length)
 {
+    if (length != 0) {
+        Q_EMIT this->getResult();
+    }
     this->setVisible(length > 0);
     int whole_height = this->isVisible() ? m_resultView->showHeight() + TITLE_HEIGHT : 0;
     this->setFixedHeight(whole_height);
