@@ -435,6 +435,10 @@ DirectSearch::DirectSearch(QString keyword, DataQueue<SearchPluginIface::ResultI
 }
 
 void DirectSearch::run() {
+    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
+    if(blockList.contains(QStandardPaths::writableLocation(QStandardPaths::HomeLocation).remove(0,1), Qt::CaseSensitive)) {
+        return;
+    }
     QQueue<QString> bfs;
     bfs.enqueue(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     QFileInfoList list;
@@ -446,8 +450,6 @@ void DirectSearch::run() {
         dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
         dir.setSorting(QDir::DirsFirst);
     }
-
-    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
