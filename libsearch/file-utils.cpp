@@ -50,7 +50,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
                               nullptr,
                               nullptr));
     if(!G_IS_FILE_INFO(info.get()->get()))
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
     GIcon *g_icon = g_file_info_get_icon(info.get()->get());
     QString icon_name;
     //do not unref the GIcon from info.
@@ -74,7 +74,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
         }
     }
     if(QIcon::fromTheme(icon_name).isNull()) {
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
     }
     return QIcon::fromTheme(icon_name);
 }
@@ -91,7 +91,7 @@ QIcon FileUtils::getAppIcon(const QString &path) {
     keyfile = g_key_file_new();
     if(!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)) {
         g_key_file_free(keyfile);
-        return QIcon::fromTheme("unknown");
+        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
     }
     QString icon = QString(g_key_file_get_locale_string(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, NULL, NULL));
     g_key_file_free(keyfile);
@@ -772,4 +772,99 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     stream.flush();
 
     return;
+}
+
+QString FileUtils::chineseSubString(const std::string &data, int start, int length)
+{
+    std::string afterSub = "";
+    //越界保护
+    if(start < 0 || length < 0){
+        return " ";
+    }
+    if (length >= data.length()) {
+        return QString::fromStdString(data);
+    }
+
+    QString snippet = "";
+    QFont ft(QApplication::font().family(),QApplication::font().pointSize());
+    QFontMetrics fm (ft);
+
+    if (start + length <= data.length()) {
+        afterSub = data.substr(start,length);    //截取
+        snippet = QString::fromStdString(afterSub);    //转QString
+
+        if(start + length < data.length()){
+           snippet.replace(snippet.length()-3,3,"...");    //替换后三位
+        }
+        snippet = fm.elidedText(snippet, Qt::ElideRight, 2*366);    //超过两行则省略
+    } else {
+        int newStart = data.length()-length;    //更新截取位置
+        int bodyByteCount = 0;
+        int letterCount = 0;
+
+        for(int i = newStart;i > 0;i--){
+            if(data[i] & 0x80) {
+                char tmp = data[i] << 1;
+                if(tmp & 0x80){
+                    break;
+                } else {
+                    bodyByteCount++;
+                }
+
+            } else {
+                letterCount++;
+                if(letterCount == 3) {
+                    break;
+                }
+
+            }
+        }
+        int correctionValue = letterCount + (bodyByteCount);
+        afterSub = data.substr(newStart - correctionValue, length + correctionValue);
+        snippet=QString::fromStdString(afterSub);
+
+        switch(letterCount)
+        {
+        case 0:
+            snippet.replace(0,1,".").prepend("..");
+            break;
+        case 1:
+            snippet.replace(0,2,"..").prepend(".");
+            break;
+        default:
+            snippet.replace(0,3,"...");
+        }
+
+        snippet = fm.elidedText(snippet, Qt::ElideLeft, 2*500);
+    }
+    return snippet;
+}
+
+QString FileUtils::wrapData(QLabel *p_label, const QString &text)
+{
+    QString wrapText = text;
+
+    QFontMetrics fontMetrics = p_label->fontMetrics();
+    int textSize = fontMetrics.width(wrapText);
+
+    if(textSize > LABEL_MAX_WIDTH){
+        int lastIndex = 0;
+        int count = 0;
+
+        for(int i = lastIndex; i < wrapText.length(); i++) {
+
+            if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) == LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i, '\n');
+                count++;
+            } else if(fontMetrics.width(wrapText.mid(lastIndex, i - lastIndex)) > LABEL_MAX_WIDTH) {
+                lastIndex = i;
+                wrapText.insert(i - 1, '\n');
+                count++;
+            } else {
+                continue;
+            }
+        }
+    }
+    return wrapText;
 }

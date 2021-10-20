@@ -4874,6 +4874,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
     const ULONG	*aulBlockDepot;
     ULONG	ulTextOffset, ulBeginTextInfo;
     ULONG	ulTotLength, ulLen;
+    ULONG   ulEncryptInfo;
     long	lIndex, lPieces, lOff;
     size_t	tTextInfoLen, tBlockDepotLen, tBlockSize;
     int	iType, iLen;
@@ -4882,6 +4883,11 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 
     ulBeginTextInfo = ulGetLong(0x1a2, aucHeader);	/* fcClx */
     tTextInfoLen = (size_t)ulGetLong(0x1a6, aucHeader);	/* lcbClx */
+    ulEncryptInfo = ulGetLong(0x0a, aucHeader);
+    if(ulEncryptInfo & 0x0100) {
+        qDebug() << "Encrypt file:" << m_strFileName << (size_t)ulEncryptInfo;
+        return false;
+    }
 
     if(pPPS->tTable.ulSize == 0)
         return false;

@@ -108,7 +108,7 @@ QIcon SearchItem::getBestIcon(const int &index) {
 //    } else {
 //        return FileUtils::getSettingIcon(m_pathlist.at(index), false);
 //    }
-    if(m_bestList.isEmpty() || !m_bestList.length() > index) return QIcon::fromTheme("unknown");
+    if(m_bestList.isEmpty() || !m_bestList.length() > index) return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
     switch(m_bestList.at(index).first) {
     case Apps: {
         return this->m_bestAppIcon;

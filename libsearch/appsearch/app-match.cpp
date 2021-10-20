@@ -46,7 +46,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
     if(!m_interFace->isValid()) {
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
-    m_interFace->setTimeout(200);
+    m_interFace->setTimeout(1500);
     qDebug() << "AppMatch is new";
 }
 
@@ -344,8 +344,7 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, QMa
         if(locale.language() == QLocale::Chinese) {
             appname = list.at(i).value("displayname_cn");
             pkgname = list.at(i).value("appname");
-        }
-        if(locale.language() == QLocale::English) {
+        }else {
             appname = list.at(i).value("appname");
         }
         appdiscription = list.at(i).value("discription");
