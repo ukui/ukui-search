@@ -75,6 +75,8 @@ public:
     QModelIndex getCurrentSelection();
     bool getExpandState();
     SearchPluginIface::ResultInfo getIndexResultInfo(QModelIndex &index);
+    void resetTitleLabel();
+    void setTitileLableHide(bool state);
 
 public Q_SLOTS:
     void expandListSlot();
@@ -100,6 +102,8 @@ Q_SIGNALS:
     void sizeChanged();
     void rowClicked();
     void resizeWidth(const int &);
+    void showMoreClicked();
+    void retractClicked();
 };
 }
 

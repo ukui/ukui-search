@@ -67,6 +67,7 @@ private:
     BestListWidget * m_bestListWidget = nullptr;
     QList<ResultWidget *> m_widget_list;
     WebSearchWidget * m_webSearchWidget = nullptr;
+    TitleLabel * m_titleLable = nullptr;
 
     bool m_detail_open_state = false;
     bool m_is_selected = false;

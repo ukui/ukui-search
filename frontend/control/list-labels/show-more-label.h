@@ -33,6 +33,7 @@ public:
     explicit ShowMoreLabel(QWidget *parent = nullptr);
     ~ShowMoreLabel() = default;
     void resetLabel();
+    void setLabel();
     bool getExpanded();
 
 protected:
@@ -40,7 +41,7 @@ protected:
 
 private:
     QHBoxLayout * m_layout = nullptr;
-    QLabel * m_textLabel = nullptr;
+    QLabel * m_iconLabel = nullptr;
     QLabel * m_loadingIconLabel = nullptr;
     QTimer * m_timer = nullptr;
     bool m_isOpen = false;
