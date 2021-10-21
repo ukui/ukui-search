@@ -105,8 +105,11 @@ void BestListView::onRowDoubleClickedSlot(const QModelIndex &index)
  */
 void BestListView::onRowSelectedSlot(const QModelIndex &index)
 {
-    m_is_selected = true;
-    Q_EMIT this->currentRowChanged(m_model->getPluginInfo(index), m_model->getInfo(index));
+    if (index.isValid()) {
+        m_is_selected = true;
+        this->setCurrentIndex(index);
+        Q_EMIT this->currentRowChanged(m_model->getPluginInfo(index), m_model->getInfo(index));
+    }
 }
 
 void BestListView::onItemListChanged(const int &count)
@@ -155,22 +158,22 @@ void BestListView::mousePressEvent(QMouseEvent *event)
 
 void BestListView::mouseReleaseEvent(QMouseEvent *event)
 {
-//    QModelIndex index = indexAt(event->pos());
-//    if (index.isValid()) {
-//        Q_EMIT this->clicked(index);
-//    } else {
-//        Q_EMIT this->clicked(this->currentIndex());
-//    }
+    QModelIndex index = indexAt(event->pos());
+    if (index.isValid()) {
+        Q_EMIT this->clicked(index);
+    } else {
+        Q_EMIT this->clicked(this->currentIndex());
+    }
     return QTreeView::mouseReleaseEvent(event);
 }
 
 void BestListView::mouseMoveEvent(QMouseEvent *event)
 {
-//   m_tmpCurrentIndex = this->currentIndex();
-//   m_tmpMousePressIndex = indexAt(event->pos());
-//   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
-//       Q_EMIT this->clicked(m_tmpMousePressIndex);
-//   }
+   m_tmpCurrentIndex = this->currentIndex();
+   m_tmpMousePressIndex = indexAt(event->pos());
+   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex) {
+       Q_EMIT this->clicked(m_tmpMousePressIndex);
+   }
     return QTreeView::mouseMoveEvent(event);
 }
 

@@ -71,6 +71,17 @@ SearchPluginIface::ResultInfo ResultWidget::getIndexResultInfo(QModelIndex &inde
     return m_resultView->getIndexResultInfo(index);
 }
 
+
+void ResultWidget::resetTitleLabel()
+{
+    Q_EMIT this->m_titleLabel->lableReset();
+}
+
+void ResultWidget::setTitileLableHide(bool state)
+{
+    m_titleLabel->setVisible(state);
+}
+
 /**
  * @brief ResultWidget::expandListSlot 展开列表的槽函数
  */
@@ -128,7 +139,9 @@ void ResultWidget::initConnections()
     connect(m_resultView, &ResultView::currentRowChanged, this, &ResultWidget::currentRowChanged);
     connect(this, &ResultWidget::clearSelectedRow, m_resultView, &ResultView::clearSelectedRow);
     connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &ResultWidget::expandListSlot);
+    connect(m_titleLabel, &TitleLabel::showMoreClicked, this, &ResultWidget::showMoreClicked);
     connect(m_titleLabel, &TitleLabel::retractClicked, this, &ResultWidget::reduceListSlot);
+    connect(m_titleLabel, &TitleLabel::retractClicked, this, &ResultWidget::retractClicked);
     connect(m_resultView, &ResultView::listLengthChanged, this, &ResultWidget::onListLengthChanged);
     connect(m_resultView, &ResultView::listLengthChanged, m_titleLabel, &TitleLabel::onListLengthChanged);
     connect(m_resultView, &ResultView::clicked, this, &ResultWidget::rowClicked);
@@ -236,16 +249,11 @@ void ResultView::onRowDoubleClickedSlot(const QModelIndex &index)
  */
 void ResultView::onRowSelectedSlot(const QModelIndex &index)
 {
-    //NEW_TODO
-    m_is_selected = true;
     if(index.isValid()) {
+        m_is_selected = true;
+        this->setCurrentIndex(index);
         Q_EMIT this->currentRowChanged(m_plugin_id, m_model->getInfo(index));
     }
-    //    if(!selected.isEmpty()) {
-//        QRegion region = visualRegionForSelection(selected);
-//        QRect rect = region.boundingRect();
-////            Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
-//    }
 }
 
 void ResultView::onItemListChanged(const int &count)
@@ -295,22 +303,22 @@ void ResultView::mousePressEvent(QMouseEvent *event)
 
 void ResultView::mouseReleaseEvent(QMouseEvent *event)
 {
-//    QModelIndex index = indexAt(event->pos());
-//    if (index.isValid()) {
-//        Q_EMIT this->clicked(index);
-//    } else {
-//        Q_EMIT this->clicked(this->currentIndex());
-//    }
+    QModelIndex index = indexAt(event->pos());
+    if (index.isValid()) {
+        Q_EMIT this->clicked(index);
+    } else {
+        Q_EMIT this->clicked(this->currentIndex());
+    }
     return QTreeView::mouseReleaseEvent(event);
 }
 
 void ResultView::mouseMoveEvent(QMouseEvent *event)
 {
-//   m_tmpCurrentIndex = this->currentIndex();
-//   m_tmpMousePressIndex = indexAt(event->pos());
-//   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex and event->source() != Qt::MouseEventSynthesizedByQt) {
-//       Q_EMIT this->clicked(m_tmpMousePressIndex);
-//   }
+   m_tmpCurrentIndex = this->currentIndex();
+   m_tmpMousePressIndex = indexAt(event->pos());
+   if (m_tmpMousePressIndex.isValid() and m_tmpCurrentIndex != m_tmpMousePressIndex and event->source() != Qt::MouseEventSynthesizedByQt) {
+       Q_EMIT this->clicked(m_tmpMousePressIndex);
+   }
     return QTreeView::mouseMoveEvent(event);
 }
 

@@ -120,19 +120,19 @@ private:
 //    StackedWidget * m_stackedWidget = nullptr;   // Stacked widget
 //    SearchBarHLayout * m_searchLayout = nullptr; // Search bar layout
 //    SeachBarWidget * m_searchWidget = nullptr;   // Search bar
-    SeachBarWidget *m_searchBarWidget;
-    SearchResultPage *m_searchResultPage;
+    SeachBarWidget * m_searchBarWidget;
+    SearchResultPage * m_searchResultPage;
 #if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
     SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
 #endif
 
     QStringList m_dirList;
 
-    QQueue<QString> *m_search_result_file = nullptr;
-    QQueue<QString> *m_search_result_dir = nullptr;
-    QQueue<QPair<QString, QStringList>> *m_search_result_content = nullptr;
+    QQueue<QString> * m_search_result_file = nullptr;
+    QQueue<QString> * m_search_result_dir = nullptr;
+    QQueue<QPair<QString, QStringList>> * m_search_result_content = nullptr;
 
-    QSystemTrayIcon *m_sys_tray_icon = nullptr;
+    QSystemTrayIcon * m_sys_tray_icon = nullptr;
     CreateIndexAskDialog * m_askDialog = nullptr;
     bool m_isAskDialogVisible = false;
 
