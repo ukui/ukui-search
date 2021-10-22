@@ -31,7 +31,7 @@ using namespace Zeeker;
 SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     setStyle(new LineEditStyle());
     this->setFocusPolicy(Qt::StrongFocus);
-    this->setFixedSize(720, 50);
+    this->setFixedSize(720, 48);
     this->setTextMargins(35, 0, 0, 0);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setDragEnabled(true);

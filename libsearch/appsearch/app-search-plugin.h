@@ -8,6 +8,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QAction>
+#include <QSettings>
 #include "search-plugin-iface.h"
 #include "app-match.h"
 #include "action-label.h"
@@ -66,8 +67,8 @@ private:
     ActionLabel *m_actionLabel2 = nullptr;
     ActionLabel *m_actionLabel3 = nullptr;
     ActionLabel *m_actionLabel4 = nullptr;
-
-    QVBoxLayout * m_actionLyt = nullptr;
+    QVBoxLayout *m_actionLyt = nullptr;
+    QSettings *m_disabledAppSetting;
 };
 
 class AppSearch : public QObject, public QRunnable {
