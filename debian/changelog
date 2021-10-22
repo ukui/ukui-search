@@ -1,3 +1,11 @@
+ukui-search (3.1-1.1.2+1022) v101; urgency=medium
+
+  * Bug 82669,82673,82371,81765,83227 
+  * 任务号:53491,53081
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 22 Oct 2021 15:04:26 +0800
+
 ukui-search (3.1-1.1.1+0917) v101; urgency=medium
 
   * Bug 81068,78036,73611,73609,73602
