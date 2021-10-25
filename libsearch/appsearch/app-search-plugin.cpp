@@ -2,6 +2,7 @@
 #include <gio/gdesktopappinfo.h>
 #include <QWidget>
 #include <QLabel>
+#include <qt5xdg/XdgDesktopFile>
 #include "file-utils.h"
 using namespace Zeeker;
 size_t AppSearchPlugin::uniqueSymbol = 0;
@@ -15,6 +16,8 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent)
     m_actionInfo_installed << open << addtoDesktop << addtoPanel;
     m_actionInfo_not_installed << install;
     AppMatch::getAppMatch()->start();
+    m_disabledAppSetting = new QSettings(QDir::homePath() + "/.cache/ukui-menu/ukui-menu.ini", QSettings::IniFormat, this);
+    m_disabledAppSetting->setIniCodec(QTextCodec::codecForName("utf-8"));
     m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
     initDetailPage();
@@ -215,10 +218,17 @@ void AppSearchPlugin::initDetailPage()
 
 bool AppSearchPlugin::launch(const QString &path)
 {
-    GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
-    bool res = static_cast<bool>(g_app_info_launch(G_APP_INFO(desktopAppInfo), nullptr, nullptr, nullptr));
-    g_object_unref(desktopAppInfo);
-    return res;
+    XdgDesktopFile desktopfile;
+    desktopfile.load(path);
+    m_disabledAppSetting->sync();
+    m_disabledAppSetting->beginGroup("application");
+    if (!m_disabledAppSetting->value(desktopfile.value("Exec").toString(), true).toBool()) {
+        qDebug() << path << "has been disabled.";
+        m_disabledAppSetting->endGroup();
+        return false;
+    }
+    m_disabledAppSetting->endGroup();
+    return desktopfile.startDetached();
 }
 bool AppSearchPlugin::addPanelShortcut(const QString& path) {
     QDBusInterface iface("com.ukui.panel.desktop",
