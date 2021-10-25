@@ -18,14 +18,13 @@
  *
  */
 #include "search-manager.h"
-
 using namespace Zeeker;
-size_t SearchManager::uniqueSymbol1 = 0;
-size_t SearchManager::uniqueSymbol2 = 0;
-size_t SearchManager::uniqueSymbol3 = 0;
-QMutex  SearchManager::m_mutex1;
-QMutex  SearchManager::m_mutex2;
-QMutex  SearchManager::m_mutex3;
+size_t SearchManager::uniqueSymbolFile = 0;
+size_t SearchManager::uniqueSymbolDir = 0;
+size_t SearchManager::uniqueSymbolContent = 0;
+QMutex  SearchManager::m_mutexFile;
+QMutex  SearchManager::m_mutexDir;
+QMutex  SearchManager::m_mutexContent;
 SearchManager::SearchManager(QObject *parent) : QObject(parent) {
     m_pool.setMaxThreadCount(3);
     m_pool.setExpiryTimeout(1000);
@@ -46,31 +45,31 @@ int SearchManager::getCurrentIndexCount() {
 
 void SearchManager::onKeywordSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir,
                                     QQueue<QPair<QString, QStringList>> *searchResultContent) {
-    m_mutex1.lock();
-    ++uniqueSymbol1;
-    m_mutex1.unlock();
-    m_mutex2.lock();
-    ++uniqueSymbol2;
-    m_mutex2.unlock();
-    m_mutex3.lock();
-    ++uniqueSymbol3;
-    m_mutex3.unlock();
+    m_mutexFile.lock();
+    ++uniqueSymbolFile;
+    m_mutexFile.unlock();
+    m_mutexDir.lock();
+    ++uniqueSymbolDir;
+    m_mutexDir.unlock();
+    m_mutexContent.lock();
+    ++uniqueSymbolContent;
+    m_mutexContent.unlock();
 
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         DirectSearch *directSearch;
-        directSearch = new DirectSearch(keyword, searchResultFile, searchResultDir, uniqueSymbol1);
+        directSearch = new DirectSearch(keyword, searchResultFile, searchResultDir, uniqueSymbolFile);
         m_pool.start(directSearch);
     } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         FileSearch *filesearch;
-        filesearch = new FileSearch(searchResultFile, uniqueSymbol1, keyword, "0", 1, 0, 5);
+        filesearch = new FileSearch(searchResultFile, uniqueSymbolFile, keyword, "0", 1, 0, 5);
         m_pool.start(filesearch);
 
         FileSearch *dirsearch;
-        dirsearch = new FileSearch(searchResultDir, uniqueSymbol2, keyword, "1", 1, 0, 5);
+        dirsearch = new FileSearch(searchResultDir, uniqueSymbolDir, keyword, "1", 1, 0, 5);
         m_pool.start(dirsearch);
 
         FileContentSearch *contentSearch;
-        contentSearch = new FileContentSearch(searchResultContent, uniqueSymbol3, keyword, 0, 5);
+        contentSearch = new FileContentSearch(searchResultContent, uniqueSymbolContent, keyword, 0, 5);
         m_pool.start(contentSearch);
     } else {
         qWarning() << "Unknown search method! FileUtils::searchMethod: " << static_cast<int>(FileUtils::searchMethod);
@@ -104,9 +103,20 @@ FileSearch::~FileSearch() {
 }
 
 void FileSearch::run() {
-    if(!m_search_result->isEmpty()) {
-        m_search_result->clear();
+    if(m_value == "0") {
+        SearchManager::m_mutexFile.lock();
+        if(!m_search_result->isEmpty()) {
+            m_search_result->clear();
+        }
+        SearchManager::m_mutexFile.unlock();
+    } else if(m_value == "1") {
+        SearchManager::m_mutexDir.lock();
+        if(!m_search_result->isEmpty()) {
+            m_search_result->clear();
+        }
+        SearchManager::m_mutexDir.unlock();
     }
+
     int resultCount = 0;
     int total = 0;
     while(total < 100) {
@@ -187,23 +197,23 @@ int FileSearch::getResult(Xapian::MSet &result) {
         } else {
             switch(m_value.toInt()) {
             case 1:
-                SearchManager::m_mutex1.lock();
-                if(m_uniqueSymbol == SearchManager::uniqueSymbol2) {
+                SearchManager::m_mutexDir.lock();
+                if(m_uniqueSymbol == SearchManager::uniqueSymbolDir) {
                     m_search_result->enqueue(path);
-                    SearchManager::m_mutex1.unlock();
+                    SearchManager::m_mutexDir.unlock();
                 } else {
-                    SearchManager::m_mutex1.unlock();
+                    SearchManager::m_mutexDir.unlock();
                     return -1;
                 }
 
                 break;
             case 0:
-                SearchManager::m_mutex2.lock();
-                if(m_uniqueSymbol == SearchManager::uniqueSymbol1) {
+                SearchManager::m_mutexFile.lock();
+                if(m_uniqueSymbol == SearchManager::uniqueSymbolFile) {
                     m_search_result->enqueue(path);
-                    SearchManager::m_mutex2.unlock();
+                    SearchManager::m_mutexFile.unlock();
                 } else {
-                    SearchManager::m_mutex2.unlock();
+                    SearchManager::m_mutexFile.unlock();
                     return -1;
                 }
                 break;
@@ -233,9 +243,11 @@ FileContentSearch::~FileContentSearch() {
 }
 
 void FileContentSearch::run() {
+    SearchManager::m_mutexContent.lock();
     if(!m_search_result->isEmpty()) {
         m_search_result->clear();
     }
+    SearchManager::m_mutexContent.unlock();
     int resultCount = 0;
     int total = 0;
 
@@ -375,14 +387,14 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
 //            QString().swap(snippet);
 //        }
 
-        SearchManager::m_mutex3.lock();
-        if(m_uniqueSymbol == SearchManager::uniqueSymbol3) {
+        SearchManager::m_mutexContent.lock();
+        if(m_uniqueSymbol == SearchManager::uniqueSymbolContent) {
             m_search_result->enqueue(qMakePair(path, snippets));
-            SearchManager::m_mutex3.unlock();
+            SearchManager::m_mutexContent.unlock();
             snippets.clear();
             QStringList().swap(snippets);
         } else {
-            SearchManager::m_mutex3.unlock();
+            SearchManager::m_mutexContent.unlock();
             return -1;
         }
         //        searchResult.insert(path,snippets);
@@ -402,6 +414,10 @@ DirectSearch::DirectSearch(QString keyword, QQueue<QString> *searchResultFile, Q
 }
 
 void DirectSearch::run() {
+    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
+    if(blockList.contains(QStandardPaths::writableLocation(QStandardPaths::HomeLocation).remove(0,1), Qt::CaseSensitive)) {
+        return;
+    }
     QQueue<QString> bfs;
     bfs.enqueue(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     QFileInfoList list;
@@ -409,7 +425,7 @@ void DirectSearch::run() {
     // QDir::Hidden
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
-    QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
+
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
@@ -432,16 +448,16 @@ void DirectSearch::run() {
                 bfs.enqueue(i.absoluteFilePath());
             }
             if(i.fileName().contains(m_keyword, Qt::CaseInsensitive)) {
-                SearchManager::m_mutex1.lock();
+                SearchManager::m_mutexFile.lock();
 //                qWarning() << i.fileName() << m_keyword;
-                if(m_uniqueSymbol == SearchManager::uniqueSymbol1) {
+                if(m_uniqueSymbol == SearchManager::uniqueSymbolFile) {
                     // TODO
                     if(i.isDir() && m_searchResultDir->length() < 51) {
                         m_searchResultDir->enqueue(i.absoluteFilePath());
                     } else if(m_searchResultFile->length() < 51) {
                         m_searchResultFile->enqueue(i.absoluteFilePath());
                     }
-                    SearchManager::m_mutex1.unlock();
+                    SearchManager::m_mutexFile.unlock();
                     if(m_searchResultDir->length() > 49 && m_searchResultFile->length() > 49) {
                         return;
                     }
@@ -450,7 +466,7 @@ void DirectSearch::run() {
                     // More suitable method?
                     m_searchResultFile->clear();
                     m_searchResultDir->clear();
-                    SearchManager::m_mutex1.unlock();
+                    SearchManager::m_mutexFile.unlock();
                     return;
                 }
             }

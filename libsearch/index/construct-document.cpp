@@ -54,12 +54,12 @@ void ConstructDocumentForPath::run() {
 //    }
 
     QString uniqueterm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath));
-    QString upTerm = QString::fromStdString(FileUtils::makeDocUterm(sourcePath.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
+    QString upTerm = QString::fromStdString("ZEEKERUPTERM" + FileUtils::makeDocUterm(sourcePath.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
 //    qDebug()<<"sourcePath"<<sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep);
 //    qDebug() << "sourcePath ---------------------------: " << sourcePath;
 //    qDebug() << "sourcePath.section -------------------: " << sourcePath.section("/",0,-2,QString::SectionIncludeLeadingSep);
 //    qDebug() << "ConstructDocumentForPath -- uniqueterm: " << uniqueterm;
-//    qDebug() << "ConstructDocumentForPath -- upTerm:     " << upTerm;
+//    qDebug() << "ConstructDocumentForPath -- upTerm :     " << upTerm;
 
 
     doc.setData(sourcePath);
@@ -69,14 +69,13 @@ void ConstructDocumentForPath::run() {
     /*    QStringList temp;
     //    temp.append(index_text);
         temp.append(pinyin_text_list)*/;
-    int postingCount = 0;
-    while(postingCount < index_text.size()) {
-//        QVector<size_t> p;
-//        p.append(postingCount);
-        doc.addPosting(QUrl::toPercentEncoding(index_text.at(postingCount)).toStdString(), postingCount);
-        ++postingCount;
-    }
     int i = 0;
+    int postingCount = 1; //terms post of Xapian document is start from 1!
+    while(postingCount < index_text.size()) {
+        doc.addPosting(QUrl::toPercentEncoding(index_text.at(i)).toStdString(), postingCount);
+        ++postingCount;
+        ++i;
+    }
     for(QString& s : pinyin_text_list) {
         i = 0;
         while(i < s.size()) {
@@ -115,7 +114,7 @@ void ConstructDocumentForContent::run() {
     //doc.setUniqueTerm(uniqueterm);
     doc.setUniqueTerm(FileUtils::makeDocUterm(m_path));
     //doc.addTerm(upTerm);
-    doc.addTerm(FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
+    doc.addTerm("ZEEKERUPTERM" + FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
     doc.addValue(m_path);
 
     //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.

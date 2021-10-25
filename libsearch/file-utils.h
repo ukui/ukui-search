@@ -37,6 +37,7 @@
 #include <QQueue>
 #include <QApplication>
 #include <QFontMetrics>
+#include <QLabel>
 
 #include <quazip/quazipfile.h>
 #include <stdio.h>
@@ -49,6 +50,7 @@
 #include <uchardet/uchardet.h>
 //#include <poppler-qt5.h>
 #include <poppler/qt5/poppler-qt5.h>
+#include <common.h>
 
 #include "libsearch_global.h"
 #include "gobject-template.h"
@@ -86,6 +88,7 @@ public:
     static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
     static QString chineseSubString(const std::string &data, int start, int length);
+    static QString wrapData(QLabel *p_label, const QString &text);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;
