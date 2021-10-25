@@ -10,5 +10,6 @@ Type=Application
 Icon=kylin-search
 X-UKUI-AutoRestart=true
 OnlyShowIn=UKUI
+NoDisplay=true
 X-UKUI-Autostart-Phase=Application
 Terminal=false
