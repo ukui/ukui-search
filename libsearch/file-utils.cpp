@@ -778,6 +778,25 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     return;
 }
 
+bool FileUtils::openXMLFileIsEncrypt(QString &path)
+{
+    QFile file(path);
+    file.open(QIODevice::ReadOnly|QIODevice::Text);
+    QByteArray encrypt = file.read(4);
+    file.close();
+    if (encrypt.length() < 4) {
+        qDebug() << "Reading file error!";
+        return true;
+    }
+    //比较前四位是否为对应值来判断OpenXML类型文件是否加密
+    if (encrypt[0] == 0x50 && encrypt[1] == 0x4b && encrypt[2] == 0x03 && encrypt[3] == 0x04) {
+        return false;
+    } else {
+        qDebug() << "Encrypt!";
+        return true;
+    }
+}
+
 QString FileUtils::chineseSubString(const std::string &data, int start, int length)
 {
     std::string afterSub = "";
