@@ -4884,7 +4884,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
     ulBeginTextInfo = ulGetLong(0x1a2, aucHeader);	/* fcClx */
     tTextInfoLen = (size_t)ulGetLong(0x1a6, aucHeader);	/* lcbClx */
     ulEncryptInfo = ulGetLong(0x0a, aucHeader);
-    if (ulEncryptInfo & 0x0100) {
+    if(ulEncryptInfo & BIT(8)) {
         qDebug() << "Encrypt file:" << m_strFileName << (size_t)ulEncryptInfo;
         return false;
     }
