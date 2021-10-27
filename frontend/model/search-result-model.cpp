@@ -81,7 +81,9 @@ void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)
     m_item->m_result_info_list.append(info);
     this->endResetModel();
     Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
-    Q_EMIT this->sendBestListData(m_plugin_id, m_item->m_result_info_list.at(0));
+    if (m_plugin_id != "Web Page") {
+        Q_EMIT this->sendBestListData(m_plugin_id, m_item->m_result_info_list.at(0));
+    }
 }
 
 void SearchResultModel::startSearch(const QString &keyword)

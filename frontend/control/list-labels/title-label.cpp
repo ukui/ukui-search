@@ -42,6 +42,7 @@ void TitleLabel::initUi() {
     this->setLayout(m_titleLyt);
     m_showMoreLabel = new ShowMoreLabel(this);
     m_showMoreLabel->setFixedHeight(UNFOLD_LABEL_HEIGHT);
+    m_showMoreLabel->adjustSize();
     m_showMoreLabel->hide();
     m_titleLyt->addStretch();
     m_titleLyt->addWidget(m_showMoreLabel);

@@ -18,7 +18,7 @@ NoteSearchPlugin::NoteSearchPlugin(QObject *parent)
 
 const QString NoteSearchPlugin::name()
 {
-    return tr("Note Search");
+    return "Note Search";
 }
 
 const QString NoteSearchPlugin::description()

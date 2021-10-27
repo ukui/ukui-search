@@ -19,7 +19,7 @@ FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
 
 const QString FileSearchPlugin::name()
 {
-    return tr("File Search");
+    return "File Search";
 }
 
 const QString FileSearchPlugin::description()
@@ -226,7 +226,7 @@ DirSearchPlugin::DirSearchPlugin(QObject *parent) : QObject(parent)
 
 const QString DirSearchPlugin::name()
 {
-    return tr("Dir Search");
+    return "Dir Search";
 }
 
 const QString DirSearchPlugin::description()
@@ -406,7 +406,7 @@ FileContengSearchPlugin::FileContengSearchPlugin(QObject *parent) : QObject(pare
 
 const QString FileContengSearchPlugin::name()
 {
-    return tr("File Content Search");
+    return "File Content Search";
 }
 
 const QString FileContengSearchPlugin::description()

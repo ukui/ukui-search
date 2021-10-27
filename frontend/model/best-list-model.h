@@ -43,8 +43,8 @@ private:
     void initConnections();
     SearchResultItem * m_item = nullptr;
     QVector<QString> m_plugin_id_list;
+    QVector<QString> m_plugin_action_key_list;
     bool m_isExpanded = false;
-    QString m_fileActionKey_tmp;
 };
 }
 #endif // BESTLISTMODEL_H

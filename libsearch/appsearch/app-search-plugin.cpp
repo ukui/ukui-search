@@ -22,7 +22,7 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent)
 
 const QString AppSearchPlugin::name()
 {
-    return tr("Applications Search");
+    return "Applications Search";
 }
 
 const QString AppSearchPlugin::description()

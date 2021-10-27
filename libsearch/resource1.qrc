@@ -7,5 +7,8 @@
         <file>res/icons/edit-find-symbolic.svg</file>
         <file>res/icons/net-disconnected.svg</file>
         <file>res/icons/system-search.symbolic.png</file>
+        <file>res/icons/search-web-icon.svg</file>
+        <file>res/icons/search-web-dark.svg</file>
+        <file>res/icons/search-web-default.svg</file>
     </qresource>
 </RCC>

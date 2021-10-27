@@ -18,7 +18,7 @@ SettingsSearchPlugin::SettingsSearchPlugin(QObject *parent) : QObject(parent)
 
 const QString SettingsSearchPlugin::name()
 {
-    return tr("Settings Search");
+    return "Settings Search";
 }
 
 const QString SettingsSearchPlugin::description()

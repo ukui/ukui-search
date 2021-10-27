@@ -31,6 +31,7 @@ include(parser/parser.pri)
 include(appsearch/appsearch.pri)
 include(notesearch/notesearch.pri)
 include(settingsearch/settingsearch.pri)
+include(websearch/websearch.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5 -luchardet -lQt5Xdg#-L/usr/local/lib/libjemalloc -ljemalloc
@@ -67,7 +68,7 @@ unix {
     INSTALLS += target
 
     header.path = /usr/include/ukui-search
-    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h plugininterface/*.h
+    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h plugininterface/*.h websearch/*.h
     INSTALLS += header
 }
 INCLUDEPATH += $$PWD/../libchinese-segmentation
