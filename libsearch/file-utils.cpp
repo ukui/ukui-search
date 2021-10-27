@@ -778,21 +778,54 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
     return;
 }
 
-bool FileUtils::openXMLFileIsEncrypt(QString &path)
+bool FileUtils::isOpenXMLFileEncrypted(QString &path)
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly|QIODevice::Text);
     QByteArray encrypt = file.read(4);
     file.close();
     if (encrypt.length() < 4) {
-        qDebug() << "Reading file error!";
+        qDebug() << "Reading file error!" << path;
         return true;
     }
     //比较前四位是否为对应值来判断OpenXML类型文件是否加密
     if (encrypt[0] == 0x50 && encrypt[1] == 0x4b && encrypt[2] == 0x03 && encrypt[3] == 0x04) {
         return false;
     } else {
-        qDebug() << "Encrypt!";
+        qDebug() << "Encrypt!" << path;
+        return true;
+    }
+}
+//todo: only support docx, pptx, xlsx
+bool FileUtils::isEncrypedOrUnreadable(QString path)
+{
+    QMimeType type = FileUtils::getMimetype(path);
+    QString name = type.name();
+    QFileInfo file(path);
+    QString strsfx =  file.suffix();
+    if(name == "application/zip") {
+        if (strsfx == "docx" || strsfx == "pptx" || strsfx == "xlsx") {
+
+            return FileUtils::isOpenXMLFileEncrypted(path);
+        } else {
+            return true;
+        }
+    } else if(name == "text/plain") {
+        if(strsfx.endsWith("txt"))
+            return false;
+        return true;
+    } else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
+        if(strsfx == "doc" || strsfx == "dot" || strsfx == "wps" || strsfx == "ppt" ||
+                strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls") {
+            return false;
+        }
+        return true;
+    } else if(name == "application/pdf") {
+        if(strsfx == "pdf")
+            return false;
+        return true;
+    } else {
+        qWarning() << "Unsupport format:[" << path << "][" << type.name() << "]";
         return true;
     }
 }
