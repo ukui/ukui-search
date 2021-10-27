@@ -910,6 +910,39 @@ bool FileUtils::isOpenXMLFileEncrypted(QString &path)
         return true;
     }
 }
+//todo: only support docx, pptx, xlsx
+bool FileUtils::isEncrypedOrUnreadable(QString path)
+{
+    QMimeType type = FileUtils::getMimetype(path);
+    QString name = type.name();
+    QFileInfo file(path);
+    QString strsfx =  file.suffix();
+    if(name == "application/zip") {
+        if (strsfx == "docx" || strsfx == "pptx" || strsfx == "xlsx") {
+
+            return FileUtils::isOpenXMLFileEncrypted(path);
+        } else {
+            return true;
+        }
+    } else if(name == "text/plain") {
+        if(strsfx.endsWith("txt"))
+            return false;
+        return true;
+    } else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
+        if(strsfx == "doc" || strsfx == "dot" || strsfx == "wps" || strsfx == "ppt" ||
+                strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls") {
+            return false;
+        }
+        return true;
+    } else if(name == "application/pdf") {
+        if(strsfx == "pdf")
+            return false;
+        return true;
+    } else {
+        qWarning() << "Unsupport format:[" << path << "][" << type.name() << "]";
+        return true;
+    }
+}
 
 QString FileUtils::getHtmlText(const QString &text, const QString &keyword)
 {

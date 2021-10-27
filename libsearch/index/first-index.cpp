@@ -47,7 +47,9 @@ FirstIndex::~FirstIndex() {
 void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
-    if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
+    if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1)
+            && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])
+            && (!FileUtils::isEncrypedOrUnreadable(fileInfo.absoluteFilePath()))) {
         //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
         if (fileInfo.fileName().split(".").last() == "docx") {
             QuaZip file(fileInfo.absoluteFilePath());
