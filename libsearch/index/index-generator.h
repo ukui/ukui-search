@@ -62,6 +62,7 @@ public Q_SLOTS:
     bool creatAllIndex(QQueue<QVector<QString>> *messageList);
     bool creatAllIndex(QQueue<QString> *messageList);
     bool deleteAllIndex(QStringList *pathlist);
+    bool deleteContentIndex(QStringList *pathlist);
     bool updateIndex(QVector<PendingFile> *pendingFiles);
 
 private:

@@ -486,11 +486,34 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist) {
     return true;
 }
 
+bool IndexGenerator::deleteContentIndex(QStringList *pathlist)
+{
+    if(pathlist->isEmpty())
+        return true;
+    try {
+        qDebug() << "--delete start--";
+        for(int i = 0; i < pathlist->size(); i++) {
+            QString doc = pathlist->at(i);
+            std::string uniqueterm = FileUtils::makeDocUterm(doc);
+            m_database_content->delete_document(uniqueterm);
+            qDebug() << "delete path" << doc;
+        }
+        m_database_content->commit();
+        qDebug() << "--delete finish--";
+    } catch(const Xapian::Error &e) {
+        qWarning() << QString::fromStdString(e.get_description());
+        return false;
+    }
+    return true;
+}
+
 bool IndexGenerator::updateIndex(QVector<PendingFile> *pendingFiles)
 {
+
     QQueue<QVector<QString>> *fileIndexInfo = new QQueue<QVector<QString>>;
     QQueue<QString> *fileContentIndexInfo = new QQueue<QString>;
     QStringList *deleteList = new  QStringList;
+    QStringList *contentDeleteList = new  QStringList;
     for(PendingFile file : *pendingFiles) {
         if (file.shouldRemoveIndex()) {
 
@@ -498,13 +521,22 @@ bool IndexGenerator::updateIndex(QVector<PendingFile> *pendingFiles)
             continue;
         }
         fileIndexInfo->append(QVector<QString>() << file.path().section("/" , -1) << file.path() << QString(file.isDir() ? "1" : "0"));
-        if ((!file.path().split(".").isEmpty()) && (true == targetFileTypeMap[file.path().section("/" , -1) .split(".").last()]))
-            fileContentIndexInfo->append(file.path());
+        if((!file.path().split(".").isEmpty()) && (true == targetFileTypeMap[file.path().section("/" , -1) .split(".").last()])) {
+            if(!FileUtils::isEncrypedOrUnreadable(file.path())) {
+                fileContentIndexInfo->append(file.path());
+            } else {
+                contentDeleteList->append(file.path());
+            }
+        }
+
     }
     if (!deleteList->isEmpty()) {
         deleteAllIndex(deleteList);
     }
-    if (!fileIndexInfo->isEmpty()) {
+    if(!contentDeleteList->isEmpty()) {
+        deleteContentIndex(contentDeleteList);
+    }
+    if(!fileIndexInfo->isEmpty()) {
         creatAllIndex(fileIndexInfo);
     }
     if (!fileContentIndexInfo->isEmpty()) {
