@@ -4,6 +4,7 @@
 #include "app-search-plugin.h"
 #include "settings-search-plugin.h"
 #include "note-search-plugin.h"
+#include "web-search-plugin.h"
 
 using namespace Zeeker;
 
@@ -16,7 +17,7 @@ SearchPluginManager::SearchPluginManager(QObject *parent)
     registerPlugin(new DirSearchPlugin(this));
     registerPlugin(new FileSearchPlugin(this));
     registerPlugin(new FileContengSearchPlugin(this));
-
+    registerPlugin(new WebSearchPlugin(this));
 }
 
 bool SearchPluginManager::registerPlugin(Zeeker::SearchPluginIface *plugin)

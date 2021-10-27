@@ -4,7 +4,7 @@
 <context>
     <name>Zeeker::AppMatch</name>
     <message>
-        <location filename="../../libsearch/appsearch/app-match.cpp" line="258"/>
+        <location filename="../../libsearch/appsearch/app-match.cpp" line="262"/>
         <source>Application Description:</source>
         <translation>应用描述：</translation>
     </message>
@@ -43,7 +43,6 @@
         <translation>安装</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="25"/>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="30"/>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="35"/>
         <source>Applications Search</source>
@@ -79,7 +78,6 @@
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="229"/>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="239"/>
         <source>Dir Search</source>
         <translation>目录搜索</translation>
@@ -114,13 +112,13 @@
     <name>Zeeker::FileContengSearchPlugin</name>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="398"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="597"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="596"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="399"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="598"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="597"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
@@ -130,9 +128,8 @@
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="409"/>
         <source>File Content Search</source>
-        <translation>文本内容搜索</translation>
+        <translation type="vanished">文本内容搜索</translation>
     </message>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="414"/>
@@ -150,17 +147,17 @@
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="572"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="571"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="584"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="583"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="599"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="598"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -185,7 +182,6 @@
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="22"/>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="32"/>
         <source>File Search</source>
         <translation>文件搜索</translation>
@@ -205,7 +201,7 @@
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="69"/>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="185"/>
         <source>Can not get a default application for opening %1.</source>
-        <translation type="unfinished">没有找到默认打开%1的应用。</translation>
+        <translation>没有找到默认打开%1的应用。</translation>
     </message>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="93"/>
@@ -247,7 +243,6 @@
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="21"/>
         <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="31"/>
         <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="97"/>
         <source>Note Search</source>
@@ -284,12 +279,11 @@
     <name>Zeeker::SettingsSearchPlugin</name>
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="364"/>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="405"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="21"/>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="31"/>
         <source>Settings Search</source>
         <translation>设置</translation>
@@ -300,9 +294,24 @@
         <translation>设置。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="350"/>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="391"/>
         <source>Settings</source>
         <translation>设置项</translation>
+    </message>
+</context>
+<context>
+    <name>Zeeker::WebSearchPlugin</name>
+    <message>
+        <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="7"/>
+        <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="94"/>
+        <source>Start browser search</source>
+        <translation>启动浏览器搜索</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="19"/>
+        <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="24"/>
+        <source>Web Page</source>
+        <translation>网页</translation>
     </message>
 </context>
 </TS>

@@ -105,11 +105,11 @@ QString BestListModel::getKey(const QModelIndex &index)
 
 void BestListModel::appendInfo(const QString &pluginId, const SearchPluginIface::ResultInfo &info)
 {
-    if (pluginId == "File Search" && m_fileActionKey_tmp != info.actionKey) {//临时保存文件搜索结果的actionKey
-        m_fileActionKey_tmp = info.actionKey;
-    }
-    if (pluginId == "File Content Search" && info.actionKey == m_fileActionKey_tmp) {//文本搜索判断是否和保存的actionKey相同
+    if (m_plugin_action_key_list.contains(info.actionKey)) {
+        qDebug() << "plugin ID:" << pluginId << "name:" << info.name << "action key:" << info.actionKey << "is same with pre-result!";
         return;
+    } else {
+        m_plugin_action_key_list.append(info.actionKey);
     }
     if (m_plugin_id_list.contains(pluginId)) {
         if (info.name == m_item->m_result_info_list.at(m_plugin_id_list.lastIndexOf(pluginId)).name) {
@@ -148,6 +148,7 @@ void BestListModel::startSearch(const QString &keyword)
     if (!m_item->m_result_info_list.isEmpty()) {
         this->beginResetModel();
         m_plugin_id_list.clear();
+        m_plugin_action_key_list.clear();
         m_item->m_result_info_list.clear();
         this->endResetModel();
         Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
