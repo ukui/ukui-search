@@ -106,7 +106,7 @@ QString BestListModel::getKey(const QModelIndex &index)
 void BestListModel::appendInfo(const QString &pluginId, const SearchPluginIface::ResultInfo &info)
 {
     if (m_plugin_action_key_list.contains(info.actionKey)) {
-        qDebug() << "plugin ID:" << pluginId << "name:" << info.name << "action key:" << info.actionKey << "is same with pre-result!";
+//        qDebug() << "plugin ID:" << pluginId << "name:" << info.name << "action key:" << info.actionKey << "is same with pre-result!";
         return;
     } else {
         m_plugin_action_key_list.append(info.actionKey);
@@ -115,14 +115,14 @@ void BestListModel::appendInfo(const QString &pluginId, const SearchPluginIface:
         if (info.name == m_item->m_result_info_list.at(m_plugin_id_list.lastIndexOf(pluginId)).name) {
             return;
         }
-        qDebug()<<"plugin ID:"<<pluginId<<"Repalce result. name ="<<info.name;
+//        qDebug()<<"plugin ID:"<<pluginId<<"Repalce result. name ="<<info.name;
         this->beginResetModel();
         m_item->m_result_info_list.replace(m_plugin_id_list.lastIndexOf(pluginId), info);
         this->endResetModel();
         return;
     }
     this->beginResetModel();
-    qDebug()<<"plugin ID:"<<pluginId<<"Got a result. name ="<<info.name;
+//    qDebug()<<"plugin ID:"<<pluginId<<"Got a result. name ="<<info.name;
     m_plugin_id_list.append(pluginId);
     m_item->m_result_info_list.append(info);
     QVector<SearchPluginIface::ResultInfo> result_info_list_tmp;
