@@ -1,3 +1,11 @@
+ukui-search (0.5.2+1025hw1) v101.hw; urgency=medium
+
+  * BUG号 86577-990,86568-9A0,86566,86076-990,81443-990,73288-990
+  * 需求号 无
+  * 其他改动说明：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 25 Oct 2021 16:33:21 +0800
+
 ukui-search (0.4.0+0823hw1) v101.hw; urgency=medium
 
   * BUG号 73232-9A0 73285-9A0
