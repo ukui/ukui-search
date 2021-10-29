@@ -1,3 +1,13 @@
+ukui-search (0.6.0+1029) v101; urgency=medium
+
+  * Bug 85526
+  * 任务号:无
+  * 其他改动：
+  * Add ukcc plugin.
+  * 集成控制面板插件.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 29 Oct 2021 08:50:57 +0800
+
 ukui-search (0.5.1+0926) v101; urgency=medium
 
   * Bug 78787
