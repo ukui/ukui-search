@@ -554,6 +554,7 @@ bool MainWindow::tryHideMainwindow()
         m_askTimer->stop();
         m_researchTimer->stop();
         m_contentFrame->closeWebView();
+        m_contentFrame->setKeyword("");
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
         return true;
@@ -617,6 +618,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         tryHideMainwindow();
 //        m_seach_app_thread->stop();
+    } else if (event->key() == Qt::Key_Return or event->key() == Qt::Key_Enter) {
+        this->m_contentFrame->pressEnter();
     }
     return QWidget::keyPressEvent(event);
 }
