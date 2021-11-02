@@ -108,3 +108,13 @@ QStringList Document::getIndexText() {
 Xapian::Document Document::getXapianDocument() {
     return m_document;
 }
+
+void Document::reuireDeleted()
+{
+    m_shouldDelete = true;
+}
+
+bool Document::isRequiredDeleted()
+{
+    return m_shouldDelete;
+}
