@@ -50,6 +50,7 @@ public:
 public Q_SLOTS:
     void onWidgetSizeChanged();
     void setSelectionInfo(QString &pluginID);
+
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

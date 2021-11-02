@@ -493,8 +493,8 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
         }
     });
     connect(widget, &ResultWidget::showMoreClicked, this, [=] () {//点击展开搜索结果后   显示悬浮窗
-        this->verticalScrollBar()->setValue(widget->pos().ry() + TITLE_HEIGHT); //置顶当前类型搜索结果
         if (widget->height() > FRAME_HEIGHT) {//当前widget高度大于搜索结果界面高度则显示悬浮窗
+            this->verticalScrollBar()->setValue(widget->pos().ry() + TITLE_HEIGHT); //置顶当前类型搜索结果,不显示标题栏
             viewport()->stackUnder(m_titleLable);
             m_titleLable->setText(widget->pluginId());
             m_titleLable->setFixedSize(widget->width(), TITLE_HEIGHT);
@@ -503,6 +503,8 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
                 m_titleLable->show();
                 this->setViewportMargins(0,TITLE_HEIGHT,0,0);
             }
+        } else {
+            this->verticalScrollBar()->setValue(widget->pos().ry()); //置顶当前类型搜索结果，显示标题栏
         }
     });
     connect(widget, &ResultWidget::retractClicked, this, [=] () {//点击收起搜索结果后
