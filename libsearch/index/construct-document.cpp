@@ -69,11 +69,10 @@ void ConstructDocumentForPath::run() {
     /*    QStringList temp;
     //    temp.append(index_text);
         temp.append(pinyin_text_list)*/;
-    int postingCount = 0;
-    while(postingCount < index_text.size()) {
-//        QVector<size_t> p;
-//        p.append(postingCount);
-        doc.addPosting(QUrl::toPercentEncoding(index_text.at(postingCount)).toStdString(), postingCount);
+    int i = 0;
+    int postingCount = 1; //terms post of Xapian document is start from 1!
+    while(postingCount <= index_text.size()) {
+        doc.addPosting(QUrl::toPercentEncoding(index_text.at(i)).toStdString(), postingCount);
         ++postingCount;
     }
     int i = 0;
