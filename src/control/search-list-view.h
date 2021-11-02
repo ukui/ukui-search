@@ -61,6 +61,8 @@ public:
     void setKeyword(QString);
     int getType();
     int getLength();
+    void pressEnter();
+
     bool isHidden = false;
 protected:
     void mousePressEvent(QMouseEvent *event) override;

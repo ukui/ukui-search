@@ -297,8 +297,12 @@ void ContentWidget::setupConnect(SearchListView * listview) {
         m_resultListArea->ensureVisible(pos.x(), pos.y());
     });
     connect(listview, &SearchListView::mousePressed, this, &ContentWidget::effectiveSearch);
+    connect(listview, &SearchListView::mousePressed, this, [=] () {
+        setPage(listview->getCurrentType());
+    });
     connect(listview, &SearchListView::currentRowChanged, this, &ContentWidget::onListViewRowChanged);
     connect(listview, &SearchListView::onRowDoubleClicked, this, &ContentWidget::onListViewRowDoubleClicked);
+
 }
 
 /**
@@ -537,6 +541,8 @@ void ContentWidget::resetSearchList() {
         m_appIconList.clear();
     if(!m_appDescList.isEmpty())
         m_appDescList.clear();
+
+    setPage(SearchItem::SearchType::Best);
 }
 
 /**
@@ -832,3 +838,11 @@ void ContentWidget::setQuicklyOpenList(const QStringList & list) {
 void ContentWidget::closeWebView() {
     m_detailView->closeWebWidget();
 }
+
+void ContentWidget::pressEnter()
+{
+    if(m_keyword != "" and m_currentType == SearchItem::SearchType::Best) {
+        m_bestListView->pressEnter();
+    }
+}
+
