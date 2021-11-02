@@ -71,7 +71,7 @@ void ConstructDocumentForPath::run() {
         temp.append(pinyin_text_list)*/;
     int i = 0;
     int postingCount = 1; //terms post of Xapian document is start from 1!
-    while(postingCount < index_text.size()) {
+    while(postingCount <= index_text.size()) {
         doc.addPosting(QUrl::toPercentEncoding(index_text.at(i)).toStdString(), postingCount);
         ++postingCount;
         ++i;
