@@ -261,9 +261,9 @@ void SettingsSearchPlugin::openAction(int actionkey, QString key, int type)
     case 0:
         //打开控制面板对应页面
         if (key.left(key.indexOf("/")).toLower() == "wallpaper")
-            process.startDetached(QString("ukui-control-center --background"));
+            process.startDetached(QString("ukui-control-center -m background"));
         else
-            process.startDetached(QString("ukui-control-center --%1").arg(key.left(key.indexOf("/")).toLower()));
+            process.startDetached(QString("ukui-control-center -m %1").arg(key.left(key.indexOf("/")).toLower()));
         break;
 
     default:
