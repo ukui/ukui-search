@@ -155,9 +155,16 @@ int SearchListView::getLength() {
     return m_item->getCurrentSize();
 }
 
+void SearchListView::pressEnter()
+{
+    if (this->currentIndex().isValid()) {
+        Q_EMIT this->onRowDoubleClicked(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+    }
+}
+
 void SearchListView::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        Q_EMIT mousePressed();
+        Q_EMIT this->mousePressed();
     }
     QTreeView::mousePressEvent(event);
 }

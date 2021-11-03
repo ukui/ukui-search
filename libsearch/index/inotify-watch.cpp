@@ -180,6 +180,7 @@ void InotifyWatch::run()
         int rc;
         rc = select(m_inotifyFd + 1, &fds, NULL, NULL, NULL);
         if(rc > 0) {
+            ++FileUtils::_index_status;
             int avail;
             if (ioctl(m_inotifyFd, FIONREAD, &avail) == EINVAL) {
                 qWarning() << "Did not receive an entire inotify event.";
@@ -210,6 +211,7 @@ void InotifyWatch::run()
                 slotEvent(buf, len);
                 free(buf);
             }
+            --FileUtils::_index_status;
         } else if(rc < 0) {
             // error
             qWarning() << "select result < 0, error!";
@@ -232,7 +234,6 @@ void InotifyWatch::run()
 void InotifyWatch::slotEvent(char *buf, ssize_t len)
 {
 //    eventProcess(socket);
-    ++FileUtils::_index_status;
     if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         pid_t pid;
         pid = fork();
@@ -301,7 +302,6 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
                 m_sharedMemory->detach();
                 currentPath = pathMap;
             }
-            --FileUtils::_index_status;
         } else {
             assert(false);
         }

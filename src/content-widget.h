@@ -50,6 +50,8 @@ public:
     void setKeyword(QString);
     void setQuicklyOpenList(const QStringList &);
     void closeWebView();
+    void pressEnter();
+
 private:
     void initUI();
     void initListView();
