@@ -22,7 +22,6 @@
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QPropertyAnimation>
@@ -45,6 +44,8 @@
 #include <QGSettings/QGSettings>
 #include <QSystemTrayIcon>
 #include <QTimer>
+#include <QtDBus>
+#include <QMouseEvent>
 
 #include "index-generator.h"
 #include "libsearch.h"
@@ -52,12 +53,7 @@
 #include "search-result-page.h"
 #include "search-line-edit.h"
 #include "web-search-page.h"
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include "xatom-helper.h"
-#endif
-#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
-#include "settings-widget.h"
-#endif
 
 namespace Zeeker {
 class SearchResult;
@@ -68,29 +64,12 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    /**
-     * @brief Load the main window
-     */
 
     // The position which mainwindow shows follow the ukui-panel.
     void moveToPanel();
-
     // The position which mainwindow shows in the center of screen where the cursor in.
-    void centerToScreen(QWidget* widget);
+    void centerToScreen();
     void initGsettings();
-
-protected:
-//    void paintEvent(QPaintEvent *);
-    void keyPressEvent(QKeyEvent *event);
-    bool eventFilter(QObject *watched, QEvent *event) override;
-    void initUi();
-    void initConnections();
-
-Q_SIGNALS:
-    void searchMethodChanged(FileUtils::SearchMethod);
-    void webEngineChanged();
-    void setText(QString keyword);
-    void startWebSearch(const QString &);
 
 public Q_SLOTS:
     /**
@@ -111,7 +90,21 @@ public Q_SLOTS:
     void searchKeywordSlot(const QString&);
     void resizeHeight(int height);
 
+protected:
+    void paintEvent(QPaintEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
+    void mousePressEvent(QMouseEvent *event);
+
+Q_SIGNALS:
+    void searchMethodChanged(FileUtils::SearchMethod);
+    void webEngineChanged();
+    void setText(QString keyword);
+    void startWebSearch(const QString &);
+
 private:
+    void initUi();
+    void initConnections();
     void setSearchMethod(const bool&);
     double getTransparentData();
     void initTimer();
@@ -124,26 +117,17 @@ private:
     QLabel * m_iconLabel = nullptr;              // Icon lable
     QLabel * m_titleLabel = nullptr;             // Title lable
     QPushButton * m_settingsBtn = nullptr;           // Menu button
-
     SeachBarWidget *m_searchBarWidget;
     SearchResultPage *m_searchResultPage;
     WebSearchPage *m_webSearchPage;
     QVBoxLayout *m_mainLayout;
-
-#if (QT_VERSION < QT_VERSION_CHECK(5, 12, 0))
-    SettingsWidget * m_settingsWidget = nullptr; // Settings Widget
-#endif
-
     QSystemTrayIcon *m_sys_tray_icon = nullptr;
-
     QTimer * m_askTimer = nullptr; //询问是否创建索引弹窗弹出的计时器
     QTimer * m_researchTimer = nullptr; //创建索引后重新执行一次搜索的计时器
     bool m_currentSearchAsked = false; //本次搜索是否已经询问过是否创建索引了
     QGSettings * m_search_gsettings = nullptr;
-
     SearchMethodManager m_searchMethodManager;
-
-
+    QDesktopWidget *m_desktopWidget;
 };
 }
 
