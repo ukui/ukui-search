@@ -23,6 +23,8 @@
 #include <QXmlStreamReader>
 #include <QMutexLocker>
 #include <gio/gdesktopappinfo.h>
+#include <QDBusMessage>
+#include <QDBusConnection>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -773,9 +775,21 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
 
 int FileUtils::openFile(QString &path, bool openInDir)
 {
-    if (openInDir) {
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
-        return 0;
+    if(openInDir) {
+        QStringList list;
+        list.append(path);
+        QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                              "/org/freedesktop/FileManager1",
+                                                              "org.freedesktop.FileManager1",
+                                                              "ShowItems");
+        message.setArguments({list, "ukui-search"});
+        QDBusMessage res = QDBusConnection::sessionBus().call(message);
+        if (QDBusMessage::ReplyMessage == res.ReplyMessage) {
+            return 0;
+        } else {
+            qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << res.ReplyMessage;
+            return -1;
+        }
     } else {
         auto file = wrapGFile(g_file_new_for_uri(QUrl::fromLocalFile(path).toString().toUtf8().constData()));
         auto fileInfo = wrapGFileInfo(g_file_query_info(file.get()->get(),
