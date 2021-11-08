@@ -35,6 +35,7 @@
 #include <QDBusMetaType>
 //#include <QWebEngineCookieStore>
 #include "config-file.h"
+#include <QDBusMessage>
 
 using namespace Zeeker;
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent) {
@@ -656,7 +657,20 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
  * @return
  */
 bool SearchDetailView::openPathAction(const QString& path) {
-    return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+    QStringList list;
+    list.append(path);
+    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                          "/org/freedesktop/FileManager1",
+                                                          "org.freedesktop.FileManager1",
+                                                          "ShowItems");
+    message.setArguments({list, "ukui-search"});
+    QDBusMessage res = QDBusConnection::sessionBus().call(message);
+    if (QDBusMessage::ReplyMessage == res.ReplyMessage) {
+        return true;
+    } else {
+        qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << res.ReplyMessage;
+        return false;
+    }
 }
 
 /**
