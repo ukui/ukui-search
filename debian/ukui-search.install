@@ -5,5 +5,6 @@ frontend/.qm/*.qm usr/share/ukui-search/translations
 usr/share/glib-2.0/schemas/*.xml
 usr/lib/*/ukui-control-center/*
 usr/share/ukui-search/search-ukcc-plugin/translations/*
+search-ukcc-plugin/.qm/*.qm usr/share/ukui-search/search-ukcc-plugin/translations
 usr/share/ukui-search/search-ukcc-plugin/image/*
 
