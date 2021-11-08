@@ -298,12 +298,6 @@ void MainWindow::resizeHeight(int height)
     m_widget->setFixedHeight(height);
 }
 
-void MainWindow::screenParamChanged(QString param)
-{
-    qDebug() << param;
-    centerToScreen();
-}
-
 /**
  * @brief monitorResolutionChange  监听屏幕改变
  * @param rect

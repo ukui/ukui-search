@@ -62,6 +62,7 @@ public Q_SLOTS:
     bool creatAllIndex(QQueue<QVector<QString>> *messageList);
     bool creatAllIndex(QQueue<QString> *messageList);
     bool deleteAllIndex(QStringList *pathlist);
+    bool deleteContentIndex(QStringList *pathlist);
     bool updateIndex(QVector<PendingFile> *pendingFiles);
 
 private:
@@ -77,10 +78,10 @@ private:
     void insertIntoDatabase(Document& doc);
     void insertIntoContentDatabase(Document& doc);
 
-    static QVector<Document> _doc_list_path;
-    static QMutex  _mutex_doc_list_path;
-    static QVector<Document> _doc_list_content;
-    static QMutex  _mutex_doc_list_content;
+    static QVector<Document> g_docListForPath;
+    static QMutex  g_mutexDocListForPath;
+    static QVector<Document> g_docListForContent;
+    static QMutex  g_mutexDocListForContent;
     QMap<QString, QStringList> m_index_map;
     QString m_index_data_path;
     Xapian::WritableDatabase* m_database_path;

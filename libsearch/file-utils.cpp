@@ -23,6 +23,8 @@
 #include <QXmlStreamReader>
 #include <QMutexLocker>
 #include <gio/gdesktopappinfo.h>
+#include <QDBusMessage>
+#include <QDBusConnection>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -773,9 +775,21 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
 
 int FileUtils::openFile(QString &path, bool openInDir)
 {
-    if (openInDir) {
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
-        return 0;
+    if(openInDir) {
+        QStringList list;
+        list.append(path);
+        QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                              "/org/freedesktop/FileManager1",
+                                                              "org.freedesktop.FileManager1",
+                                                              "ShowItems");
+        message.setArguments({list, "ukui-search"});
+        QDBusMessage res = QDBusConnection::sessionBus().call(message);
+        if (QDBusMessage::ReplyMessage == res.ReplyMessage) {
+            return 0;
+        } else {
+            qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << res.ReplyMessage;
+            return -1;
+        }
     } else {
         auto file = wrapGFile(g_file_new_for_uri(QUrl::fromLocalFile(path).toString().toUtf8().constData()));
         auto fileInfo = wrapGFileInfo(g_file_query_info(file.get()->get(),
@@ -891,6 +905,58 @@ QIcon FileUtils::iconFromTheme(const QString &name, const QIcon &iconDefault)
 {
     QMutexLocker locker(&iconMutex);
     return QIcon::fromTheme(name, iconDefault);
+}
+
+bool FileUtils::isOpenXMLFileEncrypted(QString &path)
+{
+    QFile file(path);
+    file.open(QIODevice::ReadOnly|QIODevice::Text);
+    QByteArray encrypt = file.read(4);
+    file.close();
+    if (encrypt.length() < 4) {
+        qDebug() << "Reading file error!" << path;
+        return true;
+    }
+    //比较前四位是否为对应值来判断OpenXML类型文件是否加密
+    if (encrypt[0] == 0x50 && encrypt[1] == 0x4b && encrypt[2] == 0x03 && encrypt[3] == 0x04) {
+        return false;
+    } else {
+        qDebug() << "Encrypt!" << path;
+        return true;
+    }
+}
+//todo: only support docx, pptx, xlsx
+bool FileUtils::isEncrypedOrUnreadable(QString path)
+{
+    QMimeType type = FileUtils::getMimetype(path);
+    QString name = type.name();
+    QFileInfo file(path);
+    QString strsfx =  file.suffix();
+    if(name == "application/zip") {
+        if (strsfx == "docx" || strsfx == "pptx" || strsfx == "xlsx") {
+
+            return FileUtils::isOpenXMLFileEncrypted(path);
+        } else {
+            return true;
+        }
+    } else if(name == "text/plain") {
+        if(strsfx.endsWith("txt"))
+            return false;
+        return true;
+    } else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
+        if(strsfx == "doc" || strsfx == "dot" || strsfx == "wps" || strsfx == "ppt" ||
+                strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls") {
+            return false;
+        }
+        return true;
+    } else if(name == "application/pdf") {
+        if(strsfx == "pdf")
+            return false;
+        return true;
+    } else {
+        qWarning() << "Unsupport format:[" << path << "][" << type.name() << "]";
+        return true;
+    }
 }
 
 QString FileUtils::getHtmlText(const QString &text, const QString &keyword)

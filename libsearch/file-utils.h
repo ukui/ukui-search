@@ -95,6 +95,8 @@ public:
     static QString escapeHtml(const QString & str);
     static QString chineseSubString(const std::string &myStr,int start,int length);
     static QIcon iconFromTheme(const QString& name, const QIcon &iconDefault);
+    static bool isOpenXMLFileEncrypted(QString &path);
+    static bool isEncrypedOrUnreadable(QString path);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
     static unsigned short _index_status;
