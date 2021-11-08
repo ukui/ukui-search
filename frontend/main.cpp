@@ -264,24 +264,18 @@ int main(int argc, char *argv[]) {
     }
 
     //PluginManager::getInstance();
-    //set main window to the center of screen
-    MainWindow *w = new MainWindow;
-    UkuiSearchDbusServices dbusService(w);
     qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
-    centerToScreen(w);
 
-    //请务必在connect之后初始化mainwindow的Gsettings，为了保证gsettings第一次读取到的配置值能成功应用
-    w->initGsettings();
-
-    app.setActivationWindow(w);
+//    BlurredBackground *bb = new BlurredBackground;
+    MainWindow *mw = new MainWindow;
+    UkuiSearchDbusServices usds(mw);
 
     // Processing startup parameters
     if (QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
-        centerToScreen(w);
-        w->show();
+        mw->bootOptionsFilter("-s");
     }
 
-    QObject::connect(&app, &QtSingleApplication::messageReceived, w, &MainWindow::bootOptionsFilter);
+    QObject::connect(&app, &QtSingleApplication::messageReceived, mw, &MainWindow::bootOptionsFilter);
 
     // Start app search thread
 //    AppMatch::getAppMatch()->start();

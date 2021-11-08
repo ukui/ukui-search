@@ -67,7 +67,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setAutoFillBackground(false);
     this->setFocusPolicy(Qt::StrongFocus);
-    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    this->setWindowState(Qt::WindowFullScreen);
+
+//    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
     initUi();
 //    initTimer();
@@ -78,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_sys_tray_icon->show();
     installEventFilter(this);
     initConnections();
+    initGsettings();
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
@@ -109,14 +112,13 @@ MainWindow::~MainWindow() {
  * @brief initUi 初始化主界面主要ui控件
  */
 void MainWindow::initUi() {
-    this->setFixedSize(WINDOW_WIDTH, SEARCH_BAR_SIZE);
+    this->setGeometry(QGuiApplication::screenAt(QCursor::pos())->geometry());
+    m_desktopWidget = QApplication::desktop();
+    connect(m_desktopWidget, &QDesktopWidget::resized, this, &MainWindow::centerToScreen);
 //    this->setStyleSheet("QMainWindow{border:2px solid red;}");
-
     m_widget = new QWidget(this);
-
-
-    this->setCentralWidget(m_widget);
-//    m_widget->setFixedSize(this->size());
+    m_widget->setFixedSize(WINDOW_WIDTH, SEARCH_BAR_SIZE);
+//    this->setCentralWidget(m_widget);
     m_mainLayout = new QVBoxLayout(m_widget);
     m_mainLayout->setContentsMargins(MAIN_MARGINS);
     m_mainLayout->setSpacing(WINDOW_SPACE);
@@ -168,7 +170,7 @@ void MainWindow::initConnections()
 void MainWindow::bootOptionsFilter(QString opt) {
     if (opt == "-s" || opt == "--show") {
         clearSearchResult();
-        centerToScreen(this);
+        centerToScreen();
         if (this->isHidden()) {
             this->show();
         }
@@ -193,12 +195,7 @@ void MainWindow::trayIconActivatedSlot(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::Trigger) {
         if (!this->isVisible()) {
-            clearSearchResult();
-            centerToScreen(this);
-            this->show();
-//            this->m_searchLineEdit->focusIn(); //打开主界面时输入框夺焦，可直接输入
-            this->raise();
-            this->activateWindow();
+            bootOptionsFilter("-s");
         } else {
             tryHideMainwindow();
         }
@@ -297,7 +294,14 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
 
 void MainWindow::resizeHeight(int height)
 {
-    this->setFixedHeight(height);
+//    this->setFixedHeight(height);
+    m_widget->setFixedHeight(height);
+}
+
+void MainWindow::screenParamChanged(QString param)
+{
+    qDebug() << param;
+    centerToScreen();
 }
 
 /**
@@ -374,26 +378,10 @@ void MainWindow::moveToPanel() {
  * @brief MainWindow::centerToScreen 使窗口显示在屏幕中间
  * @param widget
  */
-void MainWindow::centerToScreen(QWidget* widget) {
-    if (!widget)
-        return;
-    QDesktopWidget* m = QApplication::desktop();
-    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
-    int desk_x = desk_rect.width();
-    int desk_y = desk_rect.height();
-    int x = widget->width();
-    int y = widget->height();
-//    QDBusInterface primaryScreenInterface("org.ukui.SettingsDaemon",
-//                                          "/org/ukui/SettingsDaemon/wayland",
-//                                          "org.ukui.SettingsDaemon.wayland",
-//                                          QDBusConnection::sessionBus());
-//    if (QDBusReply<int>(primaryScreenInterface.call("x")).isValid()) {
-//        QDBusReply<int> width = primaryScreenInterface.call("width");
-//        QDBusReply<int> height = primaryScreenInterface.call("height");
-//        desk_x = width;
-//        desk_y = height;
-//    }
-    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 3 + desk_rect.top());
+void MainWindow::centerToScreen() {
+    this->setWindowState(Qt::WindowFullScreen);
+    this->setGeometry(QGuiApplication::screenAt(QCursor::pos())->geometry());
+    m_widget->move((this->width() - WINDOW_WIDTH) / 2, this->height() / 8);
 }
 
 void MainWindow::initGsettings() {
@@ -536,12 +524,20 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     return QMainWindow::eventFilter(watched,event);
 }
 
-//void MainWindow::paintEvent(QPaintEvent *event) {
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if(!m_widget->rect().contains(m_widget->mapFromParent(event->pos()))) {
+        this->tryHideMainwindow();
+    }
+}
 
-//    QPainterPath path;
+void MainWindow::paintEvent(QPaintEvent *event) {
+
+    QPainterPath path;
 
 //    path.addRoundedRect(m_searchBarWidget->x()+10, m_searchBarWidget->y()+10, m_searchBarWidget->width()-20, m_searchBarWidget->height()-20, 6, 6);
 //    path.addRoundedRect(m_searchResultPage->x()+10, m_searchResultPage->y()+10, m_searchResultPage->width()-20, m_searchResultPage->height()-20, 6, 6);
-//    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
+    path.addRect(this->rect());
+    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
-//}
+}
