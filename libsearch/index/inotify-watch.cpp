@@ -180,7 +180,6 @@ void InotifyWatch::run()
         int rc;
         rc = select(m_inotifyFd + 1, &fds, NULL, NULL, NULL);
         if (rc > 0) {
-        if(rc > 0) {
             ++FileUtils::_index_status;
             int avail;
             if (ioctl(m_inotifyFd, FIONREAD, &avail) == EINVAL) {
@@ -236,7 +235,6 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
 {
 //    eventProcess(socket);
     if (FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
-        ++FileUtils::_index_status;
         pid_t pid;
         pid = fork();
         if (pid  == 0) {

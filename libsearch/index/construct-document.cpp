@@ -74,8 +74,8 @@ void ConstructDocumentForPath::run() {
     while(postingCount <= index_text.size()) {
         doc.addPosting(QUrl::toPercentEncoding(index_text.at(i)).toStdString(), postingCount);
         ++postingCount;
+        ++i;
     }
-    int i = 0;
     for(QString& s : pinyin_text_list) {
         i = 0;
         while(i < s.size()) {
@@ -84,6 +84,7 @@ void ConstructDocumentForPath::run() {
             ++i;
         }
     }
+
 
 //    QMetaObject::invokeMethod(m_indexGenerator,"appendDocListPath",Q_ARG(Document,doc));
     IndexGenerator::g_mutexDocListForPath.lock();
