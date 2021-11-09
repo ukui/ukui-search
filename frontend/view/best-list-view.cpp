@@ -3,12 +3,14 @@
 #define MAIN_SPACING 0
 #define TITLE_HEIGHT 30
 #define UNFOLD_LABEL_HEIGHT 30
+#define VIEW_ICON_SIZE 24
 
 using namespace Zeeker;
 BestListView::BestListView(QWidget *parent) : QTreeView(parent)
 {
     this->setFrameShape(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
+    this->setIconSize(QSize(VIEW_ICON_SIZE, VIEW_ICON_SIZE));
     this->setRootIsDecorated(false);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
