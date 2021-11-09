@@ -93,7 +93,7 @@ public:
     static QString wrapData(QLabel *p_label, const QString &text);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
-    static unsigned short _index_status;
+    static unsigned short indexStatus;
 
     enum class SearchMethod { DIRECTSEARCH = 0, INDEXSEARCH = 1};
     static SearchMethod searchMethod;
