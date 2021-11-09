@@ -183,10 +183,11 @@ void InotifyWatch::run()
         int rc;
         rc = select(m_inotifyFd + 1, &fds, NULL, NULL, NULL);
         if(rc > 0) {
-            ++FileUtils::_index_status;
+            ++FileUtils::indexStatus;
             int avail;
             if (ioctl(m_inotifyFd, FIONREAD, &avail) == EINVAL) {
                 qWarning() << "Did not receive an entire inotify event.";
+                --FileUtils::indexStatus;
                 return;
             }
 
@@ -214,7 +215,7 @@ void InotifyWatch::run()
                 slotEvent(buf, len);
                 free(buf);
             }
-            --FileUtils::_index_status;
+            --FileUtils::indexStatus;
         } else if(rc < 0) {
             // error
             qWarning() << "select result < 0, error!";

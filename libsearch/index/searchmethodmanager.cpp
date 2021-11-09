@@ -14,7 +14,7 @@ void SearchMethodManager::searchMethod(FileUtils::SearchMethod sm) {
     } else {
         qWarning("enum class error!!!\n");
     }
-    if(FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::_index_status) {
+    if(FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::indexStatus) {
 
         // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
         QDir fifoDir = QDir(QDir::homePath() + "/.config/org.ukui/ukui-search");
