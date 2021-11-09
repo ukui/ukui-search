@@ -131,7 +131,7 @@ void searchMethod(FileUtils::SearchMethod sm){
         printf("enum class error!!!\n");
         qWarning("enum class error!!!\n");
     }
-    if (FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::_index_status) {
+    if (FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::indexStatus) {
         qWarning() << "start first index";
         FirstIndex fi("/home/zhangzihao/Desktop");
         fi.start();
