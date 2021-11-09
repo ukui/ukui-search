@@ -131,7 +131,7 @@ void FirstIndex::run() {
         assert(false);
     }
 
-    ++FileUtils::_index_status;
+    ++FileUtils::indexStatus;
     pid_t pid;
     pid = fork();
     if(pid  == 0) {
@@ -236,7 +236,7 @@ void FirstIndex::run() {
         qWarning() << "First Index fork error!!";
     } else {
         waitpid(pid, NULL, 0);
-        --FileUtils::_index_status;
+        --FileUtils::indexStatus;
     }
 
     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
