@@ -242,7 +242,7 @@ void MainWindow::initUi() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         //打开控制面板的设置页
         QProcess process;
-        process.startDetached("ukui-control-center --search");
+        process.startDetached("ukui-control-center -m search");
 #endif
     });
     m_titleLyt->addWidget(m_iconLabel);
