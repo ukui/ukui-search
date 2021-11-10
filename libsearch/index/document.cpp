@@ -69,8 +69,9 @@ void Document::addTerm(std::string term) {
     m_document.add_term(term);
 }
 
-void Document::addValue(QString value) {
-    m_document.add_value(1, value.toStdString());
+void Document::addValue(unsigned slot, QString value)
+{
+    m_document.add_value(slot, value.toStdString());
 }
 
 void Document::setUniqueTerm(QString term) {
