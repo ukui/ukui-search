@@ -43,8 +43,8 @@ QStringList SettingsMatch::startMatchApp(const QString &source) {
  * 将xml文件内容读到内存
  */
 void SettingsMatch::xmlElement() {
-    QString ChineseIndex;
-    QString EnglishIndex;
+    QString chineseIndex;
+    QString englishIndex;
     QString path = QProcessEnvironment::systemEnvironment().value("XDG_SESSION_TYPE");
     QString version;
     QFile file(QString::fromLocal8Bit("/usr/share/ukui-control-center/shell/res/search.xml"));
@@ -59,33 +59,40 @@ void SettingsMatch::xmlElement() {
 
     while(!node.isNull()) {
         QDomElement element = node.toElement();
-        QString key = element.attribute("name");;
-        m_chine_searchResult = m_chine_searchList.value(key);
-        m_English_searchResult = m_English_searchList.value(key);
         QDomNodeList list = element.childNodes();
-        for(int i = 0; i < list.count(); ++i) {
-            QDomNode n = list.at(i);
-            if(n.nodeName()==QString::fromLocal8Bit("Environment")){
-                version=n.toElement().text();
-                if((version=="v101"&&path=="wayland")||(version=="hw990"&&path=="x11")){
-                    break;
+        //通过子节点数判断xml文件父节点是否有问题
+        if (list.count() >= 8 && list.at(6).nodeName() == QString::fromLocal8Bit("EnglishFunc1")) {
+            //获取二级菜单英文名
+            QString key = list.at(6).toElement().text();
+            m_chineseSearchResult = m_chineseSearchList.value(key);
+            m_englishSearchResult = m_englishSearchList.value(key);
+            for(int i = 0; i < list.count(); ++i) {
+                QDomNode n = list.at(i);
+                if(n.nodeName()==QString::fromLocal8Bit("Environment")){
+                    version=n.toElement().text();
+                    if((version=="v101"&&path=="wayland")||(version=="hw990"&&path=="x11")){
+                        break;
+                    }
+                }
+                if(n.nodeName() == QString::fromLocal8Bit("ChineseFunc1")) {
+                    chineseIndex = n.toElement().text();
+                }
+                if(n.nodeName() == QString::fromLocal8Bit("ChineseFunc2")) {
+                    chineseIndex += QString::fromLocal8Bit("/") + n.toElement().text();
+                    m_chineseSearchResult.append(chineseIndex);
+                }
+                if(n.nodeName() == QString::fromLocal8Bit("EnglishFunc2")) {
+                    englishIndex = QString::fromLocal8Bit("/") + n.toElement().text();
+                    m_englishSearchResult.append(englishIndex);
                 }
             }
-            if(n.nodeName() == QString::fromLocal8Bit("ChinesePlugin")) {
-                ChineseIndex = n.toElement().text();
-            }
-            if(n.nodeName() == QString::fromLocal8Bit("ChineseFunc")) {
-                ChineseIndex += QString::fromLocal8Bit("/") + n.toElement().text();
-                m_chine_searchResult.append(ChineseIndex);
-            }
-            if(n.nodeName() == QString::fromLocal8Bit("EnglishFunc")) {
-                EnglishIndex = QString::fromLocal8Bit("/") + n.toElement().text();
-                m_English_searchResult.append(EnglishIndex);
-            }
+            m_chineseSearchList.insert(key, m_chineseSearchResult);
+            m_englishSearchList.insert(key, m_englishSearchResult);
+            node = node.nextSibling();
+        } else {
+            qWarning() << "There's something wrong with the xml file's item:" << element.attribute("name");
+            node = node.nextSibling();
         }
-        m_chine_searchList.insert(key, m_chine_searchResult);
-        m_English_searchList.insert(key, m_English_searchResult);
-        node = node.nextSibling();
     }
     file.close();
 }
@@ -103,7 +110,7 @@ QStringList SettingsMatch::matching() {
     QMap<QString, QStringList>::const_iterator i;
     QLocale ql;
     if(ql.language() == QLocale::Chinese) {
-        for(i = m_chine_searchList.constBegin(); i != m_chine_searchList.constEnd(); ++i) {
+        for(i = m_chineseSearchList.constBegin(); i != m_chineseSearchList.constEnd(); ++i) {
             regmatch = *i;
             key = i.key();
             for(int t = 0; t < regmatch.size(); t++) {
@@ -138,7 +145,7 @@ QStringList SettingsMatch::matching() {
         }
     }
     if(ql.language() == QLocale::English) {
-        for(i = m_English_searchList.constBegin(); i != m_English_searchList.constEnd(); ++i) {
+        for(i = m_englishSearchList.constBegin(); i != m_englishSearchList.constEnd(); ++i) {
             regmatch = *i;
             key = i.key();
             for(int t = 0; t < regmatch.size(); t++) {
