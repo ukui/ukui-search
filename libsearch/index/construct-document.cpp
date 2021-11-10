@@ -65,7 +65,7 @@ void ConstructDocumentForPath::run() {
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
-    doc.addValue(m_list.at(2));
+    doc.addValue(1, m_list.at(2));
     /*    QStringList temp;
     //    temp.append(index_text);
         temp.append(pinyin_text_list)*/;
@@ -107,7 +107,7 @@ void ConstructDocumentForContent::run() {
     Document doc;
     doc.setUniqueTerm(FileUtils::makeDocUterm(m_path));
     doc.addTerm("ZEEKERUPTERM" + FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
-    doc.addValue(m_path);
+    doc.addValue(1, m_path);
 
     if(content.isEmpty()) {
         doc.reuireDeleted();

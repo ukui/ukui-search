@@ -47,7 +47,7 @@ public:
     void addPosting(std::string term, unsigned int offset, int weight = 1);
     void addTerm(QString term);
     void addTerm(std::string term);
-    void addValue(QString value);
+    void addValue(unsigned slot, QString value);
     void setUniqueTerm(QString term);
     void setUniqueTerm(std::string term);
     std::string getUniqueTerm();

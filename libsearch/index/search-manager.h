@@ -59,11 +59,15 @@ struct SearchResultInfo{
     size_t size;
 };
 
+class FileMatchDecider;
+class FileContentMatchDecider;
 class LIBSEARCH_EXPORT SearchManager : public QObject {
     friend class FileSearch;
     friend class FileContentSearch;
     friend class FileSearchV4;
     friend class FileContentSearchV4;
+    friend class FileMatchDecider;
+    friend class FileContentMatchDecider;
     Q_OBJECT
 public:
     explicit SearchManager(QObject *parent = nullptr);
@@ -126,6 +130,7 @@ private:
     int getResult(Xapian::MSet &result);
 
     QQueue<QString> *m_search_result = nullptr;
+    FileMatchDecider *m_matchDecider;
     QString m_value;
     unsigned m_slot = 1;
     size_t m_uniqueSymbol;
@@ -145,6 +150,7 @@ private:
     int getResult(Xapian::MSet &result, std::string &keyWord);
 
     QQueue<QPair<QString, QStringList>> *m_search_result = nullptr;
+    FileContentMatchDecider *m_matchDecider;
     size_t m_uniqueSymbol;
     QString m_keyword;
     int m_begin = 0;
@@ -199,6 +205,15 @@ private:
     QQueue<QString>* m_searchResultFile = nullptr;
     QQueue<QString>* m_searchResultDir = nullptr;
     size_t m_uniqueSymbol;
+};
+
+class FileMatchDecider :public Xapian::MatchDecider {
+public:
+    bool operator ()(const Xapian::Document &doc) const;
+};
+class FileContentMatchDecider :public Xapian::MatchDecider {
+public:
+    bool operator ()(const Xapian::Document &doc) const;
 };
 
 }
