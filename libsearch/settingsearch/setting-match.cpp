@@ -74,6 +74,9 @@ void SettingsMatch::xmlElement() {
                         break;
                     }
                 }
+                if(n.nodeName() == QString::fromLocal8Bit("ChineseFunc1")) {
+                    chineseIndex = n.toElement().text();
+                }
                 if(n.nodeName() == QString::fromLocal8Bit("ChineseFunc2")) {
                     chineseIndex += QString::fromLocal8Bit("/") + n.toElement().text();
                     m_chineseSearchResult.append(chineseIndex);
