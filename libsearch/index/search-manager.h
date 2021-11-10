@@ -46,10 +46,14 @@
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 namespace Zeeker {
+class FileMatchDecider;
+class FileContentMatchDecider;
 class LIBSEARCH_EXPORT SearchManager : public QObject {
     friend class FileSearch;
     friend class FileContentSearch;
     friend class DirectSearch;
+    friend class FileMatchDecider;
+    friend class FileContentMatchDecider;
     Q_OBJECT
 public:
     explicit SearchManager(QObject *parent = nullptr);
@@ -90,6 +94,7 @@ private:
     int getResult(Xapian::MSet &result);
 
     DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
+    FileMatchDecider *m_matchDecider;
     QString m_value;
     unsigned m_slot = 1;
     size_t m_uniqueSymbol;
@@ -109,6 +114,7 @@ private:
     int getResult(Xapian::MSet &result, std::string &keyWord);
 
     DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
+    FileContentMatchDecider *m_matchDecider;
     size_t m_uniqueSymbol;
     QString m_keyword;
     int m_begin = 0;
@@ -125,6 +131,15 @@ private:
     DataQueue<SearchPluginIface::ResultInfo>* m_searchResult = nullptr;
     size_t m_uniqueSymbol;
     QString m_value;
+};
+
+class FileMatchDecider :public Xapian::MatchDecider {
+public:
+    bool operator ()(const Xapian::Document &doc) const;
+};
+class FileContentMatchDecider :public Xapian::MatchDecider {
+public:
+    bool operator ()(const Xapian::Document &doc) const;
 };
 
 }
