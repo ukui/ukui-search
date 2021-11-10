@@ -329,7 +329,7 @@ Document IndexGenerator::GenerateDocument(const QVector<QString> &list) {
     doc.setData(sourcePath);
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
-    doc.addValue(list.at(2));
+    doc.addValue(1, list.at(2));
     QStringList temp;
     temp.append(index_text);
     temp.append(pinyin_text_list);
@@ -355,7 +355,7 @@ Document IndexGenerator::GenerateContentDocument(const QString &path) {
     doc.setData(content);
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
-    doc.addValue(path);
+    doc.addValue(1, path);
     for(int i = 0; i < term.size(); ++i) {
         doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
 
