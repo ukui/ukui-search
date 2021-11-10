@@ -58,7 +58,6 @@ private:
 
     bool m_enable = true;
     QList<SettingsSearchPlugin::Actioninfo> m_actionInfo;
-    QThreadPool m_pool;
 };
 }
 #endif // SETTINGSSEARCHPLUGIN_H
