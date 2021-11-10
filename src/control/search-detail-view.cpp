@@ -438,9 +438,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
     case SearchListView::ResType::Setting: {
         //打开控制面板对应页面
         QProcess  process;
-        if(path.left(path.indexOf("/")).toLower() == "wallpaper")
-            return process.startDetached(QString("ukui-control-center -m background"));
-        else  return process.startDetached(QString("ukui-control-center -m %1").arg(path.left(path.indexOf("/")).toLower()));
+        return process.startDetached(QString("ukui-control-center -m %1").arg(path.left(path.indexOf("/")).toLower()));
         break;
     }
     default:
