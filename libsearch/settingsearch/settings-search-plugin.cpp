@@ -331,10 +331,10 @@ void SettingsSearchPlugin::xmlElement() {
     QStringList englishSearchResult;
     while (!node.isNull()) {
         QDomElement element = node.toElement();
-        QString key = element.attribute("name");
+        QDomNodeList list = element.childNodes();
+        QString key = list.at(6).toElement().text();
         chineseSearchResult = m_chineseSearchList.value(key);
         englishSearchResult = m_englishSearchList.value(key);
-        QDomNodeList list = element.childNodes();
         for (int i = 0; i < list.count(); ++i) {
             QDomNode n = list.at(i);
 
@@ -346,7 +346,7 @@ void SettingsSearchPlugin::xmlElement() {
                 }
                 continue;
             }
-            if (n.nodeName() == QString::fromLocal8Bit("ChinesePlugin")) {
+            if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc1")) {
                 chineseIndex = n.toElement().text();
                 if (chineseIndex.isEmpty()) {
                     continue;
@@ -355,7 +355,7 @@ void SettingsSearchPlugin::xmlElement() {
                     m_mixSearchList[key].insert(chineseIndex, key);
                 }
             }
-            if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc")) {
+            if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc2")) {
                 chineseIndex = n.toElement().text();
                 if (chineseIndex.isEmpty()) {
                     continue;
@@ -367,7 +367,7 @@ void SettingsSearchPlugin::xmlElement() {
                 }
             }
 
-            if (n.nodeName() == QString::fromLocal8Bit("EnglishFunc")) {
+            if (n.nodeName() == QString::fromLocal8Bit("EnglishFunc2")) {
                 englishIndex = /*QString::fromLocal8Bit("/") + */n.toElement().text();
                 if (englishIndex.isEmpty()) {
                     continue;
