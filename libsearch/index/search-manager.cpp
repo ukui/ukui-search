@@ -147,9 +147,19 @@ void FileSearch::run() {
         }
         SearchManager::m_mutexDir.unlock();
     }
+    //目前的需求是文件搜索数量无上限。
+    //但如果不设置单次搜索数量限制，在一些性能非常弱的机器上（如兆芯某些机器），就算我们这里不阻塞UI，也会因为搜索本身占用cpu过多（可能）导致UI卡顿。
+    //可能会有更好的方法，待优化。
     m_begin = 0;
-    m_num = -1;
-    keywordSearchfile();
+    m_num = 100;
+    int resultCount = 1;
+    int totalCount = 0;
+    while(resultCount > 0) {
+        resultCount = keywordSearchfile();
+        m_begin += m_num;
+        totalCount += resultCount;
+    }
+    qDebug() << "Total count:" << m_value << totalCount;
     return;
 }
 
@@ -242,7 +252,7 @@ int FileSearch::getResult(Xapian::MSet &result) {
             }
             //            searchResult.append(path);
         }
-        qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
+//        qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
@@ -272,9 +282,17 @@ void FileContentSearch::run() {
     }
     SearchManager::m_mutexContent.unlock();
 
+    //这里同文件搜索，待优化。
     m_begin = 0;
-    m_num = -1;
-    keywordSearchContent();
+    m_num = 100;
+    int resultCount = 1;
+    int totalCount = 0;
+    while(resultCount > 0) {
+        resultCount = keywordSearchContent();
+        m_begin += m_num;
+        totalCount += resultCount;
+    }
+    qDebug() << "Total count:" << totalCount;
     return;
 }
 
@@ -410,7 +428,7 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
             return -1;
         }
         //        searchResult.insert(path,snippets);
-        qDebug() << "path=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
+//        qDebug() << "path=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
     }
 //    //        if(!pathTobeDelete->isEmpty())
 //    //            deleteAllIndex(pathTobeDelete)
