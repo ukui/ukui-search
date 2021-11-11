@@ -4954,9 +4954,11 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
             if(pPPS->tWordDocument.ulSize < MIN_SIZE_FOR_BBD_USE)
                 ulFileOffset = ulDepotOffset(pPPS->tWordDocument.ulSB, SMALL_BLOCK_SIZE) + ulTextOffset;
             while(uOff < ulTotLength) {
-                ULONG iAllocSize = MAX_BUFF_SIZE;
-                if((ulTotLength - uOff) < MAX_BUFF_SIZE)
-                    iAllocSize = ulTotLength - uOff;
+//                ULONG iAllocSize = MAX_BUFF_SIZE;
+//                if((ulTotLength - uOff) < MAX_BUFF_SIZE)
+//                    iAllocSize = ulTotLength - uOff;
+
+                ULONG iAllocSize = (ulTotLength - uOff) < MAX_BUFF_SIZE ? (ulTotLength - uOff) : MAX_BUFF_SIZE;
 
                 ptaucBytes = (UCHAR*)xmalloc(iAllocSize);
                 if(!ptaucBytes)
@@ -4969,7 +4971,7 @@ bool KBinaryParser::read8DocText(FILE *pFile, const ppsInfoType *pPPS,
 
                 if(bUsesUnicode) {
                     ushort* usAucData = (ushort*)ptaucBytes;
-                    content.append(QString::fromUtf16(usAucData).replace("\n", "").replace("\r", " "));
+                    content.append(QString::fromUtf16(usAucData, iAllocSize/2).replace("\n", "").replace("\r", " "));//char num/2=short num
                     usAucData = (ushort*)xfree((void*)usAucData);
                     ptaucBytes = NULL;
                     if(content.length() >= 682666) //20480000/3
@@ -5071,8 +5073,7 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
             qWarning() << "Unsupport excel type:" << m_strFileName;
         } else {
             ushort* usData = (ushort*)chData;
-
-            content.append(QString::fromUtf16(usData).replace("\n", "").replace("\r", " "));
+            content.append(QString::fromUtf16(usData, ustotalLen/2).replace("\n", "").replace("\r", " ")).append(" ");//每个单元格数据之间使用空格，//char num/2=short num
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
             if(content.length() >= 682666) //20480000/3
@@ -5137,7 +5138,7 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
                 return -1;
             ushort* usData = (ushort*)chData;
 
-            content.append(QString::fromUtf16(usData).replace("\n", "").replace("\r", " "));
+            content.append(QString::fromUtf16(usData, llen/2).replace("\n", "").replace("\r", " "));//char num/2=short num
 
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
