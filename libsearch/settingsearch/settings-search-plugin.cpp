@@ -273,10 +273,7 @@ void SettingsSearchPlugin::openAction(int actionkey, QString key, int type)
     switch (actionkey) {
     case 0:
         //打开控制面板对应页面
-        if (key.left(key.indexOf("/")).toLower() == "wallpaper")
-            process.startDetached(QString("ukui-control-center -m background"));
-        else
-            process.startDetached(QString("ukui-control-center -m %1").arg(key.left(key.indexOf("/")).toLower()));
+        process.startDetached(QString("ukui-control-center -m %1").arg(key.left(key.indexOf("/")).toLower()));
         break;
 
     default:
@@ -332,57 +329,56 @@ void SettingsSearchPlugin::xmlElement() {
     while (!node.isNull()) {
         QDomElement element = node.toElement();
         QDomNodeList list = element.childNodes();
-        QString key = list.at(6).toElement().text();
-        chineseSearchResult = m_chineseSearchList.value(key);
-        englishSearchResult = m_englishSearchList.value(key);
-        for (int i = 0; i < list.count(); ++i) {
-            QDomNode n = list.at(i);
+        //通过xml文件的子节点判断父节点是否有问题
+        if (list.count() >= 8 && (list.at(6).nodeName() == QString::fromLocal8Bit("EnglishFunc1"))) {
+            //直接获取二级菜单英文名
+            QString key = list.at(6).toElement().text();
+            chineseSearchResult = m_chineseSearchList.value(key);
+            englishSearchResult = m_englishSearchList.value(key);
+            for (int i = 0; i < list.count(); ++i) {
+                QDomNode n = list.at(i);
 
-            if (n.nodeName() == QString::fromLocal8Bit("Environment")) {
-                version=n.toElement().text();
-                if ((version == "v101" && environment == "wayland")
-                        || (version == "hw990" && environment == "x11")) {
-                    break;
-                }
-                continue;
-            }
-            if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc1")) {
-                chineseIndex = n.toElement().text();
-                if (chineseIndex.isEmpty()) {
+                if (n.nodeName() == QString::fromLocal8Bit("Environment")) {
+                    version=n.toElement().text();
+                    if ((version == "v101" && environment == "wayland")
+                            || (version == "hw990" && environment == "x11")) {
+                        break;
+                    }
                     continue;
                 }
-                if (0 == m_mixSearchList[key].count(chineseIndex)) {
-                    m_mixSearchList[key].insert(chineseIndex, key);
+                if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc1")) {
+                    chineseIndex = n.toElement().text();
+                    if (chineseIndex.isEmpty()) {
+                        continue;
+                    }
+                    if (0 == m_mixSearchList[key].count(chineseIndex)) {
+                        m_mixSearchList[key].insert(chineseIndex, key);
+                    }
                 }
-            }
-            if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc2")) {
-                chineseIndex = n.toElement().text();
-                if (chineseIndex.isEmpty()) {
-                    continue;
-                }
-                if (chineseSearchResult.contains(chineseIndex)) {
-                    continue;
-                } else {
+                if (n.nodeName() == QString::fromLocal8Bit("ChineseFunc2")) {
+                    chineseIndex = n.toElement().text();
+                    if (chineseIndex.isEmpty()) {
+                        continue;
+                    }
                     chineseSearchResult.append(chineseIndex);
                 }
-            }
 
-            if (n.nodeName() == QString::fromLocal8Bit("EnglishFunc2")) {
-                englishIndex = /*QString::fromLocal8Bit("/") + */n.toElement().text();
-                if (englishIndex.isEmpty()) {
-                    continue;
-                }
-                if (englishSearchResult.contains(englishIndex)) {
-                    continue;
-                } else {
+                if (n.nodeName() == QString::fromLocal8Bit("EnglishFunc2")) {
+                    englishIndex = /*QString::fromLocal8Bit("/") + */n.toElement().text();
+                    if (englishIndex.isEmpty()) {
+                        continue;
+                    }
                     englishSearchResult.append(englishIndex);
                 }
             }
-        }
 
-        m_chineseSearchList.insert(key, chineseSearchResult);
-        m_englishSearchList.insert(key, englishSearchResult);
-        node = node.nextSibling();
+            m_chineseSearchList.insert(key, chineseSearchResult);
+            m_englishSearchList.insert(key, englishSearchResult);
+            node = node.nextSibling();
+        } else {
+            qWarning() << "There's something wrong with the xml file's item:" << element.attribute("name");
+            node = node.nextSibling();
+        }
     }
     file.close();
 }
