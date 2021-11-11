@@ -187,6 +187,8 @@ void Search::initUi()
     //~ contents_path /Search/Block Folders
     m_blockDirTitleLabel->setText(tr("Block Folders"));
     m_blockDirDescLabel = new QLabel(m_pluginWidget);
+    m_blockDirDescLabel->setContentsMargins(16, 0, 0, 0);    //TitleLabel自带16边距,QLabel需要自己设
+    m_blockDirDescLabel->setEnabled(false);
     m_blockDirDescLabel->setWordWrap(true);
     m_blockDirDescLabel->setText(tr("Following folders will not be searched. You can set it by adding and removing folders."));
 
