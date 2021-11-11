@@ -30,7 +30,6 @@
 #include "index/searchmethodmanager.h"
 #include "index/first-index.h"
 #include "index/ukui-search-qdbus.h"
-#include "index/inotify-index.h"
 #include "index/search-manager.h"
 
 

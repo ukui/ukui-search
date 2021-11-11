@@ -271,8 +271,8 @@ void SettingsWidget::clearLayout(QLayout * layout) {
  * @brief SettingsWidget::refreshIndexState 定时刷新索引项
  */
 void SettingsWidget::refreshIndexState() {
-//    qDebug()<<"FileUtils::_index_status: "<<FileUtils::_index_status;
-    if(FileUtils::_index_status != 0) {
+//    qDebug()<<"FileUtils::indexStatus: "<<FileUtils::indexStatus;
+    if(FileUtils::indexStatus != 0) {
         this->setIndexState(true);
     } else {
         this->setIndexState(false);
@@ -280,8 +280,8 @@ void SettingsWidget::refreshIndexState() {
     m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
-        qDebug() << "FileUtils::_index_status: " << FileUtils::_index_status;
-        if(FileUtils::_index_status != 0) {
+        qDebug() << "FileUtils::indexStatus: " << FileUtils::indexStatus;
+        if(FileUtils::indexStatus != 0) {
             this->setIndexState(true);
         } else {
             this->setIndexState(false);

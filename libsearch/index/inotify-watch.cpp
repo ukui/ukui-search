@@ -236,7 +236,6 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
 {
 //    eventProcess(socket);
     if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
-        ++FileUtils::_index_status;
         pid_t pid;
         pid = fork();
         if(pid  == 0) {
