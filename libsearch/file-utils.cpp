@@ -28,7 +28,6 @@
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
 size_t FileUtils::_current_index_count = 0;
-<<<<<<< HEAD
 unsigned short FileUtils::indexStatus = 0;
 //FileUtils::SearchMethod FileUtils::searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
 FileUtils::SearchMethod FileUtils::searchMethod = FileUtils::SearchMethod::INDEXSEARCH;

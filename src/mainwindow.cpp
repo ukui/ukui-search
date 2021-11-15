@@ -56,10 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent) {
 
     m_sys_tray_icon = new QSystemTrayIcon(this);
-    if (!QIcon::fromTheme("system-search-symbolic").isNull())
-        m_sys_tray_icon->setIcon(QIcon::fromTheme("system-search-symbolic"));
-    else
-        m_sys_tray_icon->setIcon(QIcon(":/res/icons/system-search.symbolic.png"));
+    m_sys_tray_icon->setIcon(QIcon(":/res/icons/ukui-search-systray.png"));
     m_sys_tray_icon->setToolTip(tr("Global Search"));
     m_sys_tray_icon->show();
     

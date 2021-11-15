@@ -1,3 +1,4 @@
 usr/bin/ukui-search
 etc/xdg/autostart/*.desktop
 usr/share/applications/*.desktop
+usr/share/ukui-search/res/icons/*

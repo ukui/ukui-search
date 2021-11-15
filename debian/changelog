@@ -1,3 +1,13 @@
+ukui-search (0.7.1+1115) v100; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * 合并主分支代码。
+  * 修改开始菜单和托盘图标。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 15 Nov 2021 11:42:27 +0800
+
 ukui-search (0.4.1+0901) v100; urgency=medium
 
   * Bug 无

@@ -10,5 +10,5 @@ Comment[zh_CN]=全局搜索
 Comment[bo_CN]=ཁྱོན་ཡོངས་བཤེར་འཚོལ།
 Exec=/usr/bin/ukui-search -s
 Type=Application
-Icon=kylin-search
+Icon=/usr/share/ukui-search/res/icons/kylin-search.png
 Terminal=false
