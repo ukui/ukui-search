@@ -58,8 +58,10 @@ data-menu.path = /usr/share/applications
 data-menu.files += ../data/ukui-search-menu.desktop
 data.path = /etc/xdg/autostart
 data.files += ../data/ukui-search.desktop
+icons.path = /usr/share/ukui-search/res/icons
+icons.files += ./res/icons/kylin-search.png
 
-INSTALLS += data data-menu
+INSTALLS += data data-menu icons
 
 RESOURCES += \
     resource.qrc

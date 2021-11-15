@@ -8,5 +8,6 @@
         <file>res/translations/zh_CN.qm</file>
         <file>res/icons/system-search.symbolic.png</file>
         <file>res/icons/unknown.png</file>
+        <file>res/icons/ukui-search-systray.png</file>
     </qresource>
 </RCC>
