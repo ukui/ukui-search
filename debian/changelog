@@ -1,3 +1,12 @@
+ukui-search (0.7.0+1116) v100; urgency=medium
+
+  * Bug 无
+  * 任务号:无
+  * 其他改动：
+  * 更改dekstop文件中的软件名。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 16 Nov 2021 16:41:27 +0800
+
 ukui-search (0.7.0+1115) v100; urgency=medium
 
   * Bug 无
