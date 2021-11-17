@@ -147,7 +147,7 @@ void HomePageItem::onItemClicked() {
     case SearchListView::ResType::Setting: {
         //打开控制面板对应页面
         QProcess process;
-        process.startDetached(QString("ukui-control-center --%1").arg(m_path.left(m_path.indexOf("/")).toLower()));
+        process.startDetached(QString("ukui-control-center -m %1").arg(m_path.left(m_path.indexOf("/")).toLower()));
         break;
     }
     default:

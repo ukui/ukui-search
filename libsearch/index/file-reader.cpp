@@ -24,34 +24,23 @@ using namespace Zeeker;
 FileReader::FileReader(QObject *parent) : QObject(parent) {
 
 }
-
 void FileReader::getTextContent(QString path, QString &textContent) {
-    QMimeType type = FileUtils::getMimetype(path);
-    QString name = type.name();
     QFileInfo file(path);
     QString strsfx =  file.suffix();
-    if(name == "application/zip") {
-        if(strsfx.endsWith("docx"))
-            FileUtils::getDocxTextContent(path, textContent);
-        if(strsfx.endsWith("pptx"))
-            FileUtils::getPptxTextContent(path, textContent);
-        if(strsfx.endsWith("xlsx"))
-            FileUtils::getXlsxTextContent(path, textContent);
-    } else if(name == "text/plain") {
-        if(strsfx.endsWith("txt"))
-            FileUtils::getTxtContent(path, textContent);
-    } else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
-        if(strsfx.endsWith("doc") || strsfx.endsWith("dot") || strsfx.endsWith("wps") || strsfx.endsWith("ppt") ||
-                strsfx.endsWith("pps") || strsfx.endsWith("dps") || strsfx.endsWith("et") || strsfx.endsWith("xls")) {
-            KBinaryParser searchdata;
-            searchdata.RunParser(path, textContent);
-        }
-    } else if(name == "application/pdf") {
-        if(strsfx.endsWith("pdf"))
-            FileUtils::getPdfTextContent(path, textContent);
-    } else {
-        qWarning() << "Unsupport format:[" << path << "][" << type.name() << "]";
+    if (strsfx == "docx") {
+        FileUtils::getDocxTextContent(path, textContent);
+    } else if (strsfx == "pptx") {
+        FileUtils::getPptxTextContent(path, textContent);
+    } else if (strsfx == "xlsx") {
+        FileUtils::getXlsxTextContent(path, textContent);
+    } else if (strsfx == "txt") {
+        FileUtils::getTxtContent(path, textContent);
+    } else if (strsfx == "doc" || strsfx == "dot" || strsfx == "wps" || strsfx == "ppt" ||
+            strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls") {
+        KBinaryParser searchdata;
+        searchdata.RunParser(path, textContent);
+    } else if (strsfx == "pdf") {
+        FileUtils::getPdfTextContent(path, textContent);
     }
-
     return;
 }

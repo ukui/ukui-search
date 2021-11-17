@@ -242,7 +242,7 @@ void MainWindow::initUi() {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
         //打开控制面板的设置页
         QProcess process;
-        process.startDetached("ukui-control-center --search");
+        process.startDetached("ukui-control-center -m search");
 #endif
     });
     m_titleLyt->addWidget(m_iconLabel);
@@ -555,6 +555,7 @@ bool MainWindow::tryHideMainwindow()
         m_askTimer->stop();
         m_researchTimer->stop();
         m_contentFrame->closeWebView();
+        m_contentFrame->setKeyword("");
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
         return true;
@@ -618,6 +619,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape) {
         tryHideMainwindow();
 //        m_seach_app_thread->stop();
+    } else if (event->key() == Qt::Key_Return or event->key() == Qt::Key_Enter) {
+        this->m_contentFrame->pressEnter();
     }
     return QWidget::keyPressEvent(event);
 }

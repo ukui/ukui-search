@@ -47,7 +47,9 @@ FirstIndex::~FirstIndex() {
 void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
-    if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1) && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])) {
+    if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1)
+            && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])
+            && (!FileUtils::isEncrypedOrUnreadable(fileInfo.absoluteFilePath()))) {
         //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
         if (fileInfo.fileName().split(".").last() == "docx") {
             QuaZip file(fileInfo.absoluteFilePath());
@@ -129,7 +131,7 @@ void FirstIndex::run() {
         assert(false);
     }
 
-    ++FileUtils::_index_status;
+    ++FileUtils::indexStatus;
     pid_t pid;
     pid = fork();
     if(pid  == 0) {
@@ -234,7 +236,7 @@ void FirstIndex::run() {
         qWarning() << "First Index fork error!!";
     } else {
         waitpid(pid, NULL, 0);
-        --FileUtils::_index_status;
+        --FileUtils::indexStatus;
     }
 
     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");

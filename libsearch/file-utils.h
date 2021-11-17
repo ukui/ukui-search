@@ -87,11 +87,13 @@ public:
     static void getXlsxTextContent(QString &path, QString &textcontent);
     static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
+    static bool isOpenXMLFileEncrypted(QString &path);
+    static bool isEncrypedOrUnreadable(QString path);
     static QString chineseSubString(const std::string &data, int start, int length);
     static QString wrapData(QLabel *p_label, const QString &text);
     static size_t _max_index_count;
     static size_t _current_index_count; //this one has been Abandoned,do not use it.
-    static unsigned short _index_status;
+    static unsigned short indexStatus;
 
     enum class SearchMethod { DIRECTSEARCH = 0, INDEXSEARCH = 1};
     static SearchMethod searchMethod;

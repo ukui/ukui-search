@@ -63,6 +63,16 @@ QString SysdbusRegister::setInotifyMaxUserWatchesStep1() {
 }
 
 QString SysdbusRegister::setInotifyMaxUserWatchesStep2() {
+    QFile file("/proc/sys/fs/inotify/max_user_watches");
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return QString();
+    QTextStream ts(&file);
+    QString s = ts.read(512);
+    file.close();
+    if(s.toInt() >= 9999999 ) {
+        return s;
+    }
+
     QByteArray ba;
     FILE * fp = NULL;
     char cmd[128];
@@ -109,6 +119,7 @@ int SysdbusRegister::AddInotifyMaxUserInstance(int addNum)
         return -1;
     QTextStream ts(&file);
     QString s = ts.read(512);
+    file.close();
     int instances = s.toInt() + addNum;
 
     QByteArray ba;
