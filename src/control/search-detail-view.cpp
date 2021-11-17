@@ -35,6 +35,7 @@
 #include <QDBusMetaType>
 //#include <QWebEngineCookieStore>
 #include "config-file.h"
+#include <QDBusMessage>
 
 using namespace Zeeker;
 SearchDetailView::SearchDetailView(QWidget *parent) : QWidget(parent) {
@@ -437,9 +438,7 @@ bool SearchDetailView::openAction(const int& type, const QString& path) {
     case SearchListView::ResType::Setting: {
         //打开控制面板对应页面
         QProcess  process;
-        if(path.left(path.indexOf("/")).toLower() == "wallpaper")
-            return process.startDetached(QString("ukui-control-center --background"));
-        else  return process.startDetached(QString("ukui-control-center --%1").arg(path.left(path.indexOf("/")).toLower()));
+        return process.startDetached(QString("ukui-control-center -m %1").arg(path.left(path.indexOf("/")).toLower()));
         break;
     }
     default:
@@ -656,7 +655,20 @@ bool SearchDetailView::addPanelShortcut(const QString& path) {
  * @return
  */
 bool SearchDetailView::openPathAction(const QString& path) {
-    return QDesktopServices::openUrl(QUrl::fromLocalFile(path.left(path.lastIndexOf("/"))));
+    QStringList list;
+    list.append(path);
+    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.FileManager1",
+                                                          "/org/freedesktop/FileManager1",
+                                                          "org.freedesktop.FileManager1",
+                                                          "ShowItems");
+    message.setArguments({list, "ukui-search"});
+    QDBusMessage res = QDBusConnection::sessionBus().call(message);
+    if (QDBusMessage::ReplyMessage == res.ReplyMessage) {
+        return true;
+    } else {
+        qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << res.ReplyMessage;
+        return false;
+    }
 }
 
 /**

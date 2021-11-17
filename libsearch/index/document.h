@@ -33,11 +33,13 @@ public:
         m_document = other.m_document;
         m_index_text = other.m_index_text;
         m_unique_term = other.m_unique_term;
+        m_shouldDelete = other.m_shouldDelete;
     }
     void operator=(const Document& other) {
         m_document = other.m_document;
         m_index_text = other.m_index_text;
         m_unique_term = other.m_unique_term;
+        m_shouldDelete = other.m_shouldDelete;
     }
     void setData(QString &data);
     void addPosting(std::string term, QVector<size_t> offset, int weight = 1);
@@ -45,18 +47,21 @@ public:
     void addPosting(std::string term, unsigned int offset, int weight = 1);
     void addTerm(QString term);
     void addTerm(std::string term);
-    void addValue(QString value);
+    void addValue(unsigned slot, QString value);
     void setUniqueTerm(QString term);
     void setUniqueTerm(std::string term);
     std::string getUniqueTerm();
     void setIndexText(QStringList indexText);
     QStringList getIndexText();
     Xapian::Document getXapianDocument();
+    void reuireDeleted();
+    bool isRequiredDeleted();
 private:
     Xapian::Document m_document;
     QStringList m_index_text;
     //QString m_unique_term;
     std::string m_unique_term;
+    bool m_shouldDelete = false;
 
 };
 }

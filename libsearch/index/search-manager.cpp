@@ -96,10 +96,13 @@ FileSearch::FileSearch(QQueue<QString> *searchResult, size_t uniqueSymbol, QStri
     m_slot = slot;
     m_begin = begin;
     m_num = num;
+    m_matchDecider = new FileMatchDecider();
 }
 
 FileSearch::~FileSearch() {
     m_search_result = nullptr;
+    if(m_matchDecider)
+        delete m_matchDecider;
 }
 
 void FileSearch::run() {
@@ -116,16 +119,19 @@ void FileSearch::run() {
         }
         SearchManager::m_mutexDir.unlock();
     }
-
-    int resultCount = 0;
-    int total = 0;
-    while(total < 100) {
+    //目前的需求是文件搜索数量无上限。
+    //但如果不设置单次搜索数量限制，在一些性能非常弱的机器上（如兆芯某些机器），就算我们这里不阻塞UI，也会因为搜索本身占用cpu过多（可能）导致UI卡顿。
+    //可能会有更好的方法，待优化。
+    m_begin = 0;
+    m_num = 100;
+    int resultCount = 1;
+    int totalCount = 0;
+    while(resultCount > 0) {
         resultCount = keywordSearchfile();
-        if(resultCount == 0 || resultCount == -1)
-            break;
-        total += resultCount;
         m_begin += m_num;
+        totalCount += resultCount;
     }
+    qDebug() << "Total count:" << m_value << totalCount;
     return;
 }
 
@@ -148,7 +154,7 @@ int FileSearch::keywordSearchfile() {
         qDebug() << "keywordSearchfile:" << QString::fromStdString(queryFile.get_description());
 
         enquire.set_query(queryFile);
-        Xapian::MSet result = enquire.get_mset(m_begin, m_num);
+        Xapian::MSet result = enquire.get_mset(m_begin, m_num, 0, m_matchDecider);
         int resultCount = result.size();
         qDebug() << "keywordSearchfile results count=" << resultCount;
         if(resultCount == 0)
@@ -185,10 +191,6 @@ int FileSearch::getResult(Xapian::MSet &result) {
         QString path = QString::fromStdString(data);
         std::string().swap(data);
 
-        if(SearchManager::isBlocked(path)) {
-            continue;
-        }
-
         QFileInfo info(path);
 
         if(!info.exists()) {
@@ -222,7 +224,7 @@ int FileSearch::getResult(Xapian::MSet &result) {
             }
             //            searchResult.append(path);
         }
-        qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
+//        qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
@@ -236,10 +238,13 @@ FileContentSearch::FileContentSearch(QQueue<QPair<QString, QStringList>> *search
     m_keyword = keyword;
     m_begin = begin;
     m_num = num;
+    m_matchDecider = new FileContentMatchDecider();
 }
 
 FileContentSearch::~FileContentSearch() {
     m_search_result = nullptr;
+    if(m_matchDecider)
+        delete m_matchDecider;
 }
 
 void FileContentSearch::run() {
@@ -248,17 +253,18 @@ void FileContentSearch::run() {
         m_search_result->clear();
     }
     SearchManager::m_mutexContent.unlock();
-    int resultCount = 0;
-    int total = 0;
 
-    while(total < 50) {
+    //这里同文件搜索，待优化。
+    m_begin = 0;
+    m_num = 100;
+    int resultCount = 1;
+    int totalCount = 0;
+    while(resultCount > 0) {
         resultCount = keywordSearchContent();
-        if(resultCount == 0 || resultCount == -1) {
-            break;
-        }
-        total += resultCount;
         m_begin += m_num;
+        totalCount += resultCount;
     }
+    qDebug() << "Total count:" << totalCount;
     return;
 }
 
@@ -305,7 +311,7 @@ int FileContentSearch::keywordSearchContent() {
 
         enquire.set_query(query);
 
-        Xapian::MSet result = enquire.get_mset(m_begin, m_num);
+        Xapian::MSet result = enquire.get_mset(m_begin, m_num, 0, m_matchDecider);
         int resultCount = result.size();
         if(result.size() == 0) {
             return 0;
@@ -332,10 +338,6 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
         double docScoreWeight = it.get_weight();
         Xapian::percent docScorePercent = it.get_percent();
         QString path = QString::fromStdString(doc.get_value(1));
-
-        if(SearchManager::isBlocked(path)) {
-            continue;
-        }
 
         QFileInfo info(path);
 
@@ -398,7 +400,7 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
             return -1;
         }
         //        searchResult.insert(path,snippets);
-        qDebug() << "path=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
+//        qDebug() << "path=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
     }
 //    //        if(!pathTobeDelete->isEmpty())
 //    //            deleteAllIndex(pathTobeDelete)
@@ -472,4 +474,22 @@ void DirectSearch::run() {
             }
         }
     }
+}
+
+bool FileMatchDecider::operator ()(const Xapian::Document &doc) const
+{
+    QString path = QString::fromStdString(doc.get_data());
+    if(SearchManager::isBlocked(path)) {
+        return false;
+    }
+    return true;
+}
+
+bool FileContentMatchDecider::operator ()(const Xapian::Document &doc) const
+{
+    QString path = QString::fromStdString(doc.get_value(1));
+    if(SearchManager::isBlocked(path)) {
+        return false;
+    }
+    return true;
 }
