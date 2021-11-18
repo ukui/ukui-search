@@ -67,7 +67,7 @@ RESOURCES += \
 TRANSLATIONS += \
     ../translations/ukui-search/zh_CN.ts \
     ../translations/ukui-search/tr.ts \
-    ../translations/ukui-search/bo.ts
+    ../translations/ukui-search/bo_CN.ts
 
 qm_files.path = /usr/share/ukui-search/translations/
 qm_files.files = $$OUT_PWD/.qm/*.qm
