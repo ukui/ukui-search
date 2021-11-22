@@ -1,3 +1,21 @@
+ukui-search (0.7.2+1119+1) v101; urgency=medium
+
+  * BUG:#85702【文件搜索】文本内容搜索表格/ppt系列文件时，表格文档属性页面会显示非文档内容的其他乱码字符
+  * BUG:#90300【需求-重构-9013】【控制面板】搜索界面"排除的文件夹"下的文字描述位置未和标题对齐且文字透明度和设计稿不一致（应该对齐和设计稿一致）
+  * BUG:#88538【产品适配】【内核参数】在sysctl.conf文件中添加fs.inotify.max_user_watches参数,重启系统后不生效
+  * 任务号：#61026 藏文翻译导入 影响域：藏文系统下翻译
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 22 Nov 2021 10:36:41 +0800
+
+ukui-search (0.7.2+1119) v101; urgency=medium
+
+  * Bug 无
+  * 任务号:61026
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 19 Nov 2021 10:52:32 +0800
+
 ukui-search (0.7.2+1117) v101; urgency=medium
 
   * Bug 85702,90300,88538 
