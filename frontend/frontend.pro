@@ -9,7 +9,7 @@ TEMPLATE = app
 PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 LIBS += -lxapian -lgsettings-qt -lquazip5 -lX11
-LIBS += -lukui-log4qt
+#LIBS += -lukui-log4qt
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -62,7 +62,7 @@ qm_files.path = /usr/share/ukui-search/translations/
 qm_files.files = $$OUT_PWD/.qm/*.qm
 
 schemes.path =  /usr/share/glib-2.0/schemas/
-schemes.files += ../data/org.ukui.search.data.gschema.xml ../data/org.ukui.log4qt.ukui-search.gschema.xml
+schemes.files += ../data/org.ukui.log4qt.ukui-search.gschema.xml
 
 INSTALLS += qm_files schemes
 
@@ -72,15 +72,5 @@ LIBS += -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
 
-INCLUDEPATH += $$PWD/../libsearch
-DEPENDPATH += $$PWD/../libsearch
-
-#DISTFILES += \
-#    ../data/ukui-search-menu.desktop \
-#    $$OUT_PWD/.qm/bo.qm \
-#    $$OUT_PWD/.qm/tr.qm \
-#    $$OUT_PWD/.qm/zh_CN.qm
-
 DISTFILES += \
     ../data/org.ukui.log4qt.ukui-search.gschema.xml \
-    ../data/org.ukui.search.data.gschema.xml

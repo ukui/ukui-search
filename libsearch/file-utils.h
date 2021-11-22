@@ -33,7 +33,6 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QMap>
-#include <QDomDocument>
 #include <QQueue>
 #include <QDesktopServices>
 #include <QApplication>
@@ -55,7 +54,6 @@
 #include <common.h>
 
 #include "libsearch_global.h"
-#include "gobject-template.h"
 #include "common.h"
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1

@@ -141,8 +141,6 @@ private:
     bool m_currentSearchAsked = false; //本次搜索是否已经询问过是否创建索引了
     QGSettings * m_search_gsettings = nullptr;
 
-    SearchMethodManager m_searchMethodManager;
-
     void setSearchMethod(const bool&);
     double getTransparentData();
     void initTimer();

@@ -1,8 +1,18 @@
-#include "searchmethodmanager.h"
+#include "search-method-manager.h"
 using namespace Zeeker;
+static SearchMethodManager* global_instance = nullptr;
+
 SearchMethodManager::SearchMethodManager()
 {
     m_iw = InotifyWatch::getInstance(HOME_PATH);
+}
+
+SearchMethodManager *SearchMethodManager::getInstance()
+{
+    if(!global_instance) {
+        global_instance = new SearchMethodManager();
+    }
+    return global_instance;
 }
 
 void SearchMethodManager::searchMethod(FileUtils::SearchMethod sm) {

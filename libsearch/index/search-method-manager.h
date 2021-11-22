@@ -7,9 +7,10 @@
 namespace Zeeker {
 class SearchMethodManager {
 public:
-    SearchMethodManager();
+    static SearchMethodManager *getInstance();
     void searchMethod(FileUtils::SearchMethod sm);
 private:
+    SearchMethodManager();
     FirstIndex m_fi;
 //    InotifyIndex* m_ii;
     InotifyWatch *m_iw = nullptr;
