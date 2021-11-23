@@ -25,6 +25,8 @@
 #include <gio/gdesktopappinfo.h>
 #include <QDBusMessage>
 #include <QDBusConnection>
+#include <QDomDocument>
+#include "gobject-template.h"
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;

@@ -1,4 +1,5 @@
 usr/bin/ukui-search
+usr/bin/ukui-search-service
 etc/xdg/autostart/*.desktop
 usr/share/applications/*.desktop
 frontend/.qm/*.qm usr/share/ukui-search/translations

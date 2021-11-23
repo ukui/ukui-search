@@ -77,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_sys_tray_icon->show();
     installEventFilter(this);
     initConnections();
+    initGsettings();
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
@@ -154,7 +155,7 @@ void MainWindow::initConnections()
 {
     connect(m_sys_tray_icon, &QSystemTrayIcon::activated, this, &MainWindow::trayIconActivatedSlot);
     QObject::connect(this, &MainWindow::searchMethodChanged, this, [ = ](FileUtils::SearchMethod sm) {
-        this->m_searchMethodManager.searchMethod(sm);
+        FileUtils::searchMethod = sm;
     });
     connect(QApplication::primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::monitorResolutionChange);
     connect(qApp, &QApplication::primaryScreenChanged, this, &MainWindow::primaryScreenChangedSlot);
@@ -234,12 +235,10 @@ void MainWindow::setSearchMethodConfig(const bool &create_index, const bool &no_
     if(create_index) {
         if(m_search_gsettings && m_search_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
             m_search_gsettings->set(SEARCH_METHOD_KEY, true);
-        } else {
-            //调用创建索引接口
-            Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
-            //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
-            m_researchTimer->start();
         }
+        Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
+        //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
+        m_researchTimer->start();
     }
 }
 
@@ -503,10 +502,7 @@ bool MainWindow::tryHideMainwindow()
  */
 void MainWindow::setSearchMethod(const bool &is_index_search) {
     if(is_index_search) {
-        //调用创建索引接口
         Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::INDEXSEARCH);
-        //创建索引十秒后重新搜索一次(如果用户十秒内没有退出搜索界面且没有重新搜索)
-        m_researchTimer->start();
     } else {
         Q_EMIT this->searchMethodChanged(FileUtils::SearchMethod::DIRECTSEARCH);
         m_researchTimer->stop();

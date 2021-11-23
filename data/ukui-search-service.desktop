@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=ukui-search-service
+Name[zh_CN]=搜索服务
+GenericName=ukui-search-service
+GenericName[zh_CN]=搜索服务
+Comment=ukui-search-service
+Comment[zh_CN]=搜索服务
+Exec=/usr/bin/ukui-search-service %U
+Type=Application
+Icon=kylin-search
+X-UKUI-AutoRestart=true
+OnlyShowIn=UKUI
+NoDisplay=true
+X-UKUI-Autostart-Phase=Application
+Terminal=false
+

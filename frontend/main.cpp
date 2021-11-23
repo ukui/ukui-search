@@ -190,53 +190,12 @@ int main(int argc, char *argv[]) {
         parser.addOptions({debugOption, showsearch});
         parser.process(app);
     }*/
-    /*
-        // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
-        QDir fifoDir = QDir(QDir::homePath()+"/.config/org.ukui/ukui-search");
-        if(!fifoDir.exists())
-            qDebug()<<"create fifo path"<<fifoDir.mkpath(fifoDir.absolutePath());
 
-        unlink(UKUI_SEARCH_PIPE_PATH);
-        int retval = mkfifo(UKUI_SEARCH_PIPE_PATH, 0777);
-        if(retval == -1)
-        {
-            qCritical()<<"creat fifo error!!";
-            syslog(LOG_ERR,"creat fifo error!!\n");
-            assert(false);
-            return -1;
-        }
-        qDebug()<<"create fifo success\n";
-    */
-    // Set max_user_watches to a number which is enough big.
     UkuiSearchQDBus usQDBus;
     usQDBus.setInotifyMaxUserWatches();
 
     // load chinese character and pinyin file to a Map
     FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
-    /*-------------InotyifyRefact Test Start---------------*/
-//    QTime t1 = QTime::currentTime();
-//    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
-//    imr->start();
-//    QTime t2 = QTime::currentTime();
-//    qDebug() << t1;
-//    qDebug() << t2;
-    /*-------------InotyifyRefact Test End-----------------*/
-
-    /*-------------content index Test Start---------------*/
-//    QTime t3 = QTime::currentTime();
-//    FileTypeFilter* ftf = new FileTypeFilter("/home");
-//    ftf->Test();
-//    QTime t4 = QTime::currentTime();
-//    delete ftf;
-//    ftf = nullptr;
-//    qDebug() << t3;
-//    qDebug() << t4;
-    /*-------------content index Test End-----------------*/
-    /*-------------文本搜索 Test start-----------------*/
-//    FileSearcher *search = new FileSearcher();
-//    search->onKeywordSearchContent("重要器官移植⑤白血病");
-//    search->onKeywordSearchContent("g,e,x");
-    /*-------------文本搜索 Test End-----------------*/
 
     // Load translations
     QTranslator translator;
@@ -268,10 +227,6 @@ int main(int argc, char *argv[]) {
     MainWindow *w = new MainWindow;
     UkuiSearchDbusServices dbusService(w);
     qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
-    centerToScreen(w);
-
-    //请务必在connect之后初始化mainwindow的Gsettings，为了保证gsettings第一次读取到的配置值能成功应用
-    w->initGsettings();
 
     app.setActivationWindow(w);
 
@@ -283,22 +238,9 @@ int main(int argc, char *argv[]) {
 
     QObject::connect(&app, &QtSingleApplication::messageReceived, w, &MainWindow::bootOptionsFilter);
 
-    // Start app search thread
-//    AppMatch::getAppMatch()->start();
-
     // NEW_TODO
     // Set threads which in global thread pool expiry time in 5ms, some prolems here
     QThreadPool::globalInstance()->setExpiryTimeout(5);
-
-    // NEW_TODO
-    // First insdex start, the parameter us useless, should remove the parameter
-//    FirstIndex fi("/home/zhangzihao/Desktop");
-//    fi.start();
-
-    // NEW_TODO
-    // Inotify index start, the parameter us useless, should remove the parameter
-//    InotifyIndex* ii = InotifyIndex::getInstance("/home");
-//    ii->start();
 
     return app.exec();
 }
