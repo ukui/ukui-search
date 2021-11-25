@@ -24,23 +24,13 @@
 #include <QTimer>
 #include "config-file.h"
 
+#define DEFAULT_APP_DESKTOP_PATH  "/usr/share/applications/"
+
 using namespace Zeeker;
 ContentWidget::ContentWidget(QWidget * parent): QStackedWidget(parent) {
     initUI();
     initListView();
-    //快速入口应用列表
-//    m_quicklyOpenList<<"/usr/share/applications/peony.desktop"<<"/usr/share/applications/ukui-control-center.desktop"<<"/usr/share/applications/ksc-defender.desktop";
-    m_quicklyOpenList << "/usr/share/applications/ksc-defender.desktop"
-                      << "/usr/share/applications/ukui-notebook.desktop"
-                      << "/usr/share/applications/kylin-photo-viewer.desktop"
-                      << "/usr/share/applications/pluma.desktop"
-                      << "/usr/share/applications/claws-mail.desktop" ;
-    if (QString::compare(FileUtils::getAppName(m_quicklyOpenList.at(2)), "Unknown App") == 0) {
-        m_quicklyOpenList.replace(2, "/usr/share/applications/eom.desktop");
-    }
-    if (QString::compare(FileUtils::getAppName(m_quicklyOpenList.at(4)), "Unknown App") == 0) {
-        m_quicklyOpenList.replace(4, "/usr/share/applications/evolution.desktop");
-    }
+    initQuickOpenList();
 }
 
 ContentWidget::~ContentWidget() {
@@ -278,6 +268,44 @@ void ContentWidget::hideListView() {
     m_contentShowMoreLabel->hide();
     m_webTitleLabel->hide();
     m_webListView->hide();
+}
+
+/**
+ * @brief ContentWidget::setupConnect 初始化quickOpen应用列表
+ */
+void ContentWidget::initQuickOpenList()
+{
+    QStringList appList;
+    appList << "ksc-defender.desktop"
+            << "ukui-notebook.desktop"
+            << "kylin-photo-viewer.desktop"
+            << "pluma.desktop"
+            << "claws-mail.desktop";
+    //get app name from .config/mimeapps.list
+    QList<char*> defaultAppList;
+    defaultAppList << "image/png"
+                   << "text/plain"
+                   << "x-scheme-handler/mailto";
+    //replace the app name
+    int index = 2;
+    for (const char* contentType: defaultAppList) {
+        GAppInfo * app = g_app_info_get_default_for_type(contentType, false);
+        if (app != NULL) {
+            QString appId = QString(g_app_info_get_id(app));
+            appList.replace(index, appId);
+        }
+        index++;
+        g_object_unref(app);
+    }
+    //initQuickOpenList
+    for (int i = 0; i < appList.length(); ++i) {
+        QString path = DEFAULT_APP_DESKTOP_PATH + appList.at(i);
+        if (QString::compare(FileUtils::getAppName(path), "Unknown App")) {
+            m_quicklyOpenList.append(path);
+        } else if (appList.length() < 6) {
+            appList.append("kylin-software-center.desktop");
+        }
+    }
 }
 
 /**

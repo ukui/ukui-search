@@ -28,6 +28,7 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
     this->setFrameShape(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
     setRootIsDecorated(false);
+    setIconSize(QSize(24, 24));
 
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionBehavior(QAbstractItemView::SelectRows);
