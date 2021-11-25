@@ -225,6 +225,54 @@
     </message>
 </context>
 <context>
+    <name>UkuiSearch::MailSearch</name>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="335"/>
+        <source>From</source>
+        <translation>发件人</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="336"/>
+        <source>Time</source>
+        <translation>时间</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="337"/>
+        <source>To</source>
+        <translation>收件人</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="338"/>
+        <source>Cc</source>
+        <translation>抄送人</translation>
+    </message>
+</context>
+<context>
+    <name>UkuiSearch::MailSearchPlugin</name>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="29"/>
+        <source>open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="38"/>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="43"/>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="48"/>
+        <source>Mail Search</source>
+        <translation>邮件搜索</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="88"/>
+        <source>Mail</source>
+        <translation>邮件</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/mailsearch/mail-search-plugin.cpp" line="229"/>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::NoteSearch</name>
     <message>
         <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="190"/>
