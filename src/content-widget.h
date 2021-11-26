@@ -56,6 +56,7 @@ private:
     void initUI();
     void initListView();
     void hideListView();
+    void initQuickOpenList();
     void setupConnect(SearchListView *);
     void clearHomepage();
     void resetListHeight();
