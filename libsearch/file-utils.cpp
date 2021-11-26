@@ -130,6 +130,11 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
     }
 }
 
+QIcon FileUtils::getSettingIcon()
+{
+    return QIcon::fromTheme("ukui-control-center");
+}
+
 /**
  * @brief FileUtils::getFileName 获取文件名
  * @param uri 格式为"file:///home/xxx/xxx/xxxx.txt"

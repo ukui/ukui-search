@@ -116,7 +116,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                 }
                 resultName.append(resultInfo.name);
                 str = key + "/" + str;
-                resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                resultInfo.icon = FileUtils::getSettingIcon();
                 resultInfo.actionKey = str;
                 searchResult->enqueue(resultInfo);
                 continue;
@@ -133,7 +133,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                         }
                         resultName.append(resultInfo.name);
                         str = key + "/" + str;
-                        resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                        resultInfo.icon = FileUtils::getSettingIcon();
                         resultInfo.actionKey = str;
                         searchResult->enqueue(resultInfo);
                         break;
@@ -148,7 +148,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                         }
                         resultName.append(resultInfo.name);
                         str = key + "/" + str;
-                        resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                        resultInfo.icon = FileUtils::getSettingIcon();
                         resultInfo.actionKey = str;
                         searchResult->enqueue(resultInfo);
                         break;
@@ -169,7 +169,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                 }
                 resultName.append(resultInfo.name);
                 str = key + "/" + str;
-                resultInfo.icon = FileUtils::getSettingIcon(str, true);
+                resultInfo.icon = FileUtils::getSettingIcon();
                 resultInfo.actionKey = str;
                 searchResult->enqueue(resultInfo);
             }
@@ -188,7 +188,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                 }
                 resultName.append(resultInfo.name);
                 chineseStr = key + "/" + chineseStr;
-                resultInfo.icon = FileUtils::getSettingIcon(chineseStr, true);
+                resultInfo.icon = FileUtils::getSettingIcon();
                 resultInfo.actionKey = chineseStr;
                 searchResult->enqueue(resultInfo);
             }
@@ -199,7 +199,7 @@ void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
                 }
                 resultName.append(resultInfo.name);
                 englishStr = key + "/" + englishStr;
-                resultInfo.icon = FileUtils::getSettingIcon(englishStr, true);
+                resultInfo.icon = FileUtils::getSettingIcon();
                 resultInfo.actionKey = englishStr;
                 searchResult->enqueue(resultInfo);
             }
@@ -219,10 +219,7 @@ void SettingsSearchPlugin::openAction(int actionkey, QString key, int type)
     switch (actionkey) {
     case 0:
         //打开控制面板对应页面
-        if (key.left(key.indexOf("/")).toLower() == "wallpaper")
-            process.startDetached(QString("ukui-control-center --background"));
-        else
-            process.startDetached(QString("ukui-control-center --%1").arg(key.left(key.indexOf("/")).toLower()));
+        process.startDetached(QString("ukui-control-center --%1").arg(key.left(key.indexOf("/")).toLower()));
         break;
 
     default:
