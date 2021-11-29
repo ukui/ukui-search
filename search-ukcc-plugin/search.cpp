@@ -200,16 +200,12 @@ void Search::initUi()
     m_blockDirsLyt->setContentsMargins(0, 0, 0, 0);
     m_blockDirsLyt->setSpacing(2);
 
-
     QFrame * m_addBlockDirFrame = new QFrame(m_blockDirsFrame);
     m_addBlockDirFrame->setFrameShape(QFrame::Shape::NoFrame);
     m_addBlockDirFrame->setFixedHeight(60);
 
-
-
-    m_addBlockDirWidget = new HoverWidget("", m_addBlockDirFrame);
+    m_addBlockDirWidget = new QPushButton(m_addBlockDirFrame);
     m_addBlockDirWidget->setFixedHeight(60);
-
 
 //        m_addBlockDirWidget->setObjectName("addBlockDirWidget");
 //        QPalette pal;
@@ -225,6 +221,8 @@ void Search::initUi()
 //                                       HoverWidget:hover:!pressed#addBlockDirWidget{background: %1;  \
 //                                       border-radius: 4px;}").arg(stringColor));
 
+    m_addBlockDirWidget->setProperty("useButtonPalette", true);
+    m_addBlockDirWidget->setStyleSheet("QPushButton:!checked{background: palette(base);}");
 
     m_addBlockDirIcon = new QLabel(m_addBlockDirWidget);
     m_addBlockDirIcon->setPixmap(QIcon("/usr/share/ukui-search/search-ukcc-plugin/image/add.svg").pixmap(12, 12));
@@ -248,7 +246,7 @@ void Search::initUi()
     m_mainLyt->addWidget(m_blockDirDescLabel);
     m_mainLyt->addWidget(m_blockDirsFrame);
     m_mainLyt->addStretch();
-    m_mainLyt->setContentsMargins(0, 0, 40, 0);
+    m_mainLyt->setContentsMargins(0, 0, 0, 0);
 }
 
 /**
@@ -390,7 +388,7 @@ void Search::removeBlockDirFromList(const QString &path)
 
 void Search::setupConnection()
 {
-    connect(m_addBlockDirWidget, &HoverWidget::widgetClicked, this, &Search::onBtnAddFolderClicked);
+    connect(m_addBlockDirWidget, &QPushButton::clicked, this, &Search::onBtnAddFolderClicked);
 }
 
 void Search::onBtnAddFolderClicked()
