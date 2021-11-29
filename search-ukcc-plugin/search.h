@@ -86,7 +86,7 @@ private:
     QLabel * m_blockDirDescLabel = nullptr;
     QFrame * m_blockDirsFrame = nullptr;
     QVBoxLayout * m_blockDirsLyt = nullptr;
-    HoverWidget * m_addBlockDirWidget = nullptr;
+    QPushButton * m_addBlockDirWidget = nullptr;
     QLabel * m_addBlockDirIcon = nullptr;
     QLabel * m_addBlockDirLabel = nullptr;
     QHBoxLayout * m_addBlockDirLyt = nullptr;
