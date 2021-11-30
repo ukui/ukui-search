@@ -68,6 +68,7 @@ public:
     static QIcon getFileIcon(const QString &, bool checkValid = true);
     static QIcon getAppIcon(const QString &);
     static QIcon getSettingIcon(const QString &, const bool&);
+    static QIcon getSettingIcon();
 
     static QString getFileName(const QString &);
     static QString getAppName(const QString &);
