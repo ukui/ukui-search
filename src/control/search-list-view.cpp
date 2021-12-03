@@ -80,8 +80,8 @@ SearchListView::~SearchListView() {
  */
 void SearchListView::appendItem(QString path) {
     m_model->appendItem(path);
-    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex())) + 1;
-    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+    rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight);
 }
 
 /**
@@ -96,7 +96,7 @@ void SearchListView::setList(QStringList list) {
         this->blockSignals(false);
     }
     rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
-    this->setFixedHeight(m_item->getCurrentSize() * rowheight + 4);
+    this->setFixedHeight(m_item->getCurrentSize() * rowheight);
 }
 
 void SearchListView::setAppList(const QStringList &pathlist, const QStringList &iconlist) {
