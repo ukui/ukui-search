@@ -25,6 +25,8 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 
+#define ICON_LEFT_MARGIN 4
+
 using namespace Zeeker;
 HighlightItemDelegate::HighlightItemDelegate(QObject *parent) : QStyledItemDelegate(parent) {
 }
@@ -42,6 +44,15 @@ void HighlightItemDelegate::paint(QPainter * painter, const QStyleOptionViewItem
     QStyle *style = optionV4.widget ? optionV4.widget->style() : QApplication::style();
 
     optionV4.text = QString();
+    QIcon tmpIcon = optionV4.icon;
+    optionV4.icon = QIcon();
+    QRect tmpRect = optionV4.rect;
+    optionV4.rect.setWidth(ICON_LEFT_MARGIN);
+    style->drawControl(QStyle::CE_ItemViewItem, &optionV4, painter); //绘制占位空间
+
+    tmpRect.moveLeft(ICON_LEFT_MARGIN);
+    optionV4.rect = tmpRect;
+    optionV4.icon = tmpIcon;
     style->drawControl(QStyle::CE_ItemViewItem, &optionV4, painter); //绘制非文本区域内容
     if(index.model()->data(index, Qt::DisplayRole).toString().isEmpty()) return;
 
@@ -82,7 +93,8 @@ QString HighlightItemDelegate::getHtmlText(QPainter *painter, const QStyleOption
     QString indexString = index.model()->data(index, Qt::DisplayRole).toString();
     QFont ft(painter->font().family(), GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toInt());
     QFontMetrics fm(ft);
-    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30); //当字体超过Item的长度时显示为省略号
+    //由于需要使图标和标题对齐，每一个item向左移动，故这里需要一并减掉，当主题更改后需要改动这里
+    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30 - 8); //当字体超过Item的长度时显示为省略号
 //    QFontMetrics m_QFontMetrics = painter->fontMetrics();
 //    QString indexColString = m_QFontMetrics.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() + 10); //当字体超过Item的长度时显示为省略号
     QString htmlString;
