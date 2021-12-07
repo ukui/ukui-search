@@ -71,6 +71,8 @@ void ContentWidget::initUI() {
     m_resultDetailArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultDetailArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     m_resultListArea->setFixedWidth(280);
+    //将详情页的滚动区域长度顶到最右边, 详情页384 + 边距8 = 392, 或: 总长度680 - 结果列表280 - 左边距8 = 392
+    m_resultDetailArea->setFixedWidth(392);
     m_resultPageLyt->addWidget(m_resultListArea);
     m_resultPageLyt->addWidget(m_resultDetailArea);
     m_resultPage->setLayout(m_resultPageLyt);
