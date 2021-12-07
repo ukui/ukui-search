@@ -183,7 +183,7 @@ void MainWindow::initUi() {
 
     this->setCentralWidget(m_frame);
     QVBoxLayout * mainlayout = new QVBoxLayout(m_frame);
-    mainlayout->setContentsMargins(8, 0, 8, 6);
+    mainlayout->setContentsMargins(8, 0, 0, 6);
     m_frame->setLayout(mainlayout);
 
     m_titleFrame = new QFrame(m_frame);//标题栏
@@ -255,6 +255,8 @@ void MainWindow::initUi() {
     m_searchLayout = new SearchBarHLayout(this);
     m_searchWidget->setLayout(m_searchLayout);
     m_searchWidget->setFixedHeight(44);
+    //搜索框长度为664,因取消右边距8故需要设置固定长度,后面有需求可更改
+    m_searchWidget->setFixedWidth(664);
 
     mainlayout->addWidget(m_titleFrame);
     mainlayout->addWidget(m_contentFrame);
