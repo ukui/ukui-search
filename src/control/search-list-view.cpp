@@ -50,9 +50,11 @@ SearchListView::SearchListView(QWidget * parent, const QStringList& list, const 
 
     m_type = type;
     connect(this->selectionModel(), &QItemSelectionModel::selectionChanged, this, [ = ](const QItemSelection & selected, const QItemSelection & deselected) {
-        Q_EMIT this->currentRowChanged(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
+        //Q_EMIT this->currentRowChanged(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
         m_isSelected = true;
         if(!selected.isEmpty()) {
+            this->setCurrentIndex(selected.indexes()[0]);
+            Q_EMIT this->currentRowChanged(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
             QRegion region = visualRegionForSelection(selected);
             QRect rect = region.boundingRect();
             Q_EMIT this->currentSelectPos(mapToParent(rect.topLeft()));
