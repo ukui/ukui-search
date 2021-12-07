@@ -48,7 +48,8 @@ bool ShowMoreLabel::getExpanded() {
 
 void ShowMoreLabel::initUi() {
     QPalette pal = palette();
-    pal.setColor(QPalette::WindowText, QColor(55, 144, 250, 255));
+    pal.setColor(QPalette::WindowText, NORMAL_COLOR);
+    pal.setColor(QPalette::Light, HOVER_COLOR);
     m_layout = new QHBoxLayout(this);
     m_layout->setContentsMargins(0, 0, 0, 6);
     m_textLabel = new QLabel(this);
@@ -124,6 +125,12 @@ bool ShowMoreLabel::eventFilter(QObject *watched, QEvent *event) {
                     Q_EMIT this->retractClicked();
                 }
             }
+        } else if (event->type() == QEvent::Enter) {
+            m_textLabel->setForegroundRole(QPalette::Light);
+            return true;
+        } else if (event->type() == QEvent::Leave) {
+            m_textLabel->setForegroundRole(QPalette::WindowText);
+            return true;
         }
     }
     return QWidget::eventFilter(watched, event);
