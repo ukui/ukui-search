@@ -26,6 +26,9 @@
 #include <QHBoxLayout>
 #include <QTimer>
 
+#define NORMAL_COLOR QColor(55, 144, 250, 255)
+#define HOVER_COLOR QColor(64, 169, 251, 255)
+
 namespace Zeeker {
 class ShowMoreLabel : public QWidget {
     Q_OBJECT
