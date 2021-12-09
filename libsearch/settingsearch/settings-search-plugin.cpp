@@ -350,10 +350,7 @@ void SettingsSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);

@@ -121,10 +121,7 @@ void FileSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_pathFrame = new QFrame(m_detailPage);
     m_pathFrameLyt = new QHBoxLayout(m_pathFrame);
@@ -147,10 +144,7 @@ void FileSearchPlugin::initDetailPage()
     m_timeFrameLyt->addStretch();
     m_timeFrameLyt->addWidget(m_timeLabel2);
 
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
@@ -318,10 +312,7 @@ void DirSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_pathFrame = new QFrame(m_detailPage);
     m_pathFrameLyt = new QHBoxLayout(m_pathFrame);
@@ -344,10 +335,7 @@ void DirSearchPlugin::initDetailPage()
     m_timeFrameLyt->addStretch();
     m_timeFrameLyt->addWidget(m_timeLabel2);
 
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
@@ -555,10 +543,7 @@ void FileContengSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_snippetLabel = new QLabel(m_detailPage);
 //    m_snippetLabel->setWordWrap(true);
@@ -585,10 +570,7 @@ void FileContengSearchPlugin::initDetailPage()
     m_timeFrameLyt->addStretch();
     m_timeFrameLyt->addWidget(m_timeLabel2);
 
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
