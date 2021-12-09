@@ -467,7 +467,8 @@ void SearchDetailView::initUI() {
     m_layout = new QVBoxLayout(this);
     this->setLayout(m_layout);
     m_layout->setContentsMargins(16, 60, 16, 24);
-    this->setFixedWidth(368);
+    //详情页总长度,368是将滚动条与搜索框对齐故为: 详情页总长度384 - 滚动条16 = 368,现将滚动区域移动到右边距的地方,故为:总长度384 + 右边距8 - 滚动条16 = 376
+    this->setFixedWidth(376);
 
     //没有网络的时候的提示信息
     m_noNetFrame = new QFrame(this);
