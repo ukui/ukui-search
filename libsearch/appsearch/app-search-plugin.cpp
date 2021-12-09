@@ -148,10 +148,7 @@ void AppSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
     m_descFrame = new QFrame(m_detailPage);
     m_descFrameLyt = new QVBoxLayout(m_descFrame);
     m_descLabel = new QLabel(m_descFrame);
@@ -160,10 +157,7 @@ void AppSearchPlugin::initDetailPage()
     m_descFrameLyt->addWidget(m_descLabel);
     m_descFrame->setLayout(m_descFrameLyt);
     m_descFrameLyt->setContentsMargins(8, 0, 0, 0);
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);

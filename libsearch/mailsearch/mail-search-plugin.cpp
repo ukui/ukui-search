@@ -9,7 +9,6 @@ using namespace Zeeker;
 #define DETAIL_ICON_HEIGHT 128
 #define NAME_LABEL_MARGINS 8, 0, 0, 0
 #define NAME_LABEL_WIDTH 282
-#define LINE_STYLE "QFrame{background: rgba(0, 0, 0, 0.2);}"
 #define DETAIL_ACTION_MARGINS 8, 0, 0, 0
 #define DESC_PAGE_WIDTH 316
 #define DESC_LABEL_MARGINS 0, 0, 0, 0
@@ -142,10 +141,7 @@ void MailSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet(LINE_STYLE);
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_descListArea = new MailDescArea(m_detailPage);
     QPalette scroll_bar_pal = m_descListArea->verticalScrollBar()->palette();
@@ -218,10 +214,7 @@ void MailSearchPlugin::initDetailPage()
     m_descPageLyt->addRow(m_ccLabel, m_ccFieldsLabel);
 //    m_descPageLyt->addRow(m_attachmentLabel, m_attachmentFieldsLabel);
 
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet(LINE_STYLE);
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
