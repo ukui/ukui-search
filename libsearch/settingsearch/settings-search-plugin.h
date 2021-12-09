@@ -11,6 +11,7 @@
 #include <QAction>
 #include <QDomDocument>
 #include "action-label.h"
+#include "separation-line.h"
 #include "search-plugin-iface.h"
 
 namespace UkuiSearch {
@@ -52,7 +53,7 @@ private:
     QHBoxLayout *m_nameFrameLyt = nullptr;
     QLabel *m_nameLabel = nullptr;
     QLabel *m_pluginLabel = nullptr;
-    QFrame *m_line_1 = nullptr;
+    SeparationLine *m_line_1 = nullptr;
     QFrame *m_actionFrame = nullptr;
     QVBoxLayout *m_actionFrameLyt = nullptr;
     ActionLabel *m_actionLabel1 = nullptr;

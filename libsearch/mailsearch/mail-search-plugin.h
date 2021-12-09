@@ -22,6 +22,7 @@
 #include <qt5xdg/xdgicon.h>
 #include "search-plugin-iface.h"
 #include "action-label.h"
+#include "separation-line.h"
 #include "libsearch_global.h"
 namespace UkuiSearch {
 
@@ -71,7 +72,7 @@ private:
     QHBoxLayout *m_nameFrameLyt = nullptr;
     QLabel *m_nameLabel = nullptr;
     QLabel *m_pluginLabel = nullptr;
-    QFrame *m_line_1 = nullptr;
+    SeparationLine *m_line_1 = nullptr;
 
     MailDescArea *m_descListArea = nullptr;
     QWidget *m_descPage = nullptr;
@@ -91,7 +92,7 @@ private:
     QTextBrowser *m_ccFieldsLabel = nullptr;
     QLabel *m_attachmentFieldsLabel = nullptr;
 
-    QFrame *m_line_2 = nullptr;
+    SeparationLine *m_line_2 = nullptr;
     QFrame *m_actionFrame = nullptr;
     QVBoxLayout *m_actionFrameLyt = nullptr;
     ActionLabel *m_actionLabel1 = nullptr;
