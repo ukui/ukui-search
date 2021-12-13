@@ -4,7 +4,7 @@
 #define NOMORL_LINE_STYLE "QFrame{background: rgba(0,0,0,0.1);}"
 #define DARK_LINE_STYLE "QFrame{background: rgba(255, 255, 255, 0.16);}"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 SeparationLine::SeparationLine(QWidget *parent) : QFrame(parent)
 {
     this->setLineWidth(0);
