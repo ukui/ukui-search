@@ -166,6 +166,7 @@ void ResultWidget::initConnections()
 
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
 {
+    setStyle(ResultItemStyle::getStyle());
     this->setFrameShape(QFrame::NoFrame);
     this->setIconSize(QSize(24, 24));
     this->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);

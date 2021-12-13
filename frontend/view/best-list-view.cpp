@@ -7,6 +7,7 @@
 using namespace Zeeker;
 BestListView::BestListView(QWidget *parent) : QTreeView(parent)
 {
+    setStyle(ResultItemStyle::getStyle());
     this->setFrameShape(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
     this->setRootIsDecorated(false);
