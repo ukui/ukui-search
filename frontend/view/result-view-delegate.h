@@ -26,6 +26,7 @@
 #include <QStyle>
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
+#include <QProxyStyle>
 #include "global-settings.h"
 
 namespace Zeeker {
@@ -42,6 +43,16 @@ private:
     void paint(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const override;
     QString getHtmlText(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const;
     QString escapeHtml(const QString&) const;
+};
+
+class ResultItemStyle : public QProxyStyle
+{
+public:
+    static ResultItemStyle *getStyle();
+    void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
+private:
+    explicit ResultItemStyle() {}
+    ~ResultItemStyle() = default;
 };
 }
 

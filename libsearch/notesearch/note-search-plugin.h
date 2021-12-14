@@ -15,6 +15,7 @@
 #include <typeinfo>
 #include "search-plugin-iface.h"
 #include "action-label.h"
+#include "separation-line.h"
 #include "libsearch_global.h"
 namespace Zeeker {
 
@@ -55,11 +56,11 @@ private:
     QHBoxLayout *m_nameFrameLyt = nullptr;
     QLabel *m_nameLabel = nullptr;
     QLabel *m_pluginLabel = nullptr;
-    QFrame *m_line_1 = nullptr;
+    SeparationLine *m_line_1 = nullptr;
     QFrame *m_descFrame = nullptr;
     QLabel *m_descLabel = nullptr;
     QVBoxLayout *m_descFrameLyt = nullptr;
-    QFrame *m_line_2 = nullptr;
+    SeparationLine *m_line_2 = nullptr;
     QFrame *m_actionFrame = nullptr;
     QVBoxLayout *m_actionFrameLyt = nullptr;
     ActionLabel *m_actionLabel1 = nullptr;
