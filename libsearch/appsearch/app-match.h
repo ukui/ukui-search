@@ -29,7 +29,7 @@
 #include <QtDBus>
 #include <QThread>
 #include "search-plugin-iface.h"
-namespace Zeeker {
+namespace UkuiSearch {
 class NameString {
 public:
     explicit NameString(const QString &str_) : app_name(str_) {}

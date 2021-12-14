@@ -24,7 +24,7 @@
 #include "file-utils.h"
 #include "app-search-plugin.h"
 #define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
-using namespace Zeeker;
+using namespace UkuiSearch;
 static AppMatch *app_match_Class = nullptr;
 
 AppMatch *AppMatch::getAppMatch() {

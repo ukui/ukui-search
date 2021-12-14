@@ -21,7 +21,7 @@
 #define ACTION_NORMAL_COLOR QColor(55, 144, 250, 255)
 #define ACTION_HOVER_COLOR QColor(64, 169, 251, 255)
 #define ACTION_PRESS_COLOR QColor(41, 108, 217, 255)
-using namespace Zeeker;
+using namespace UkuiSearch;
 ActionLabel::ActionLabel(const QString &action, const QString &key, QWidget *parent) : QLabel(parent)
 {
     m_action = action;

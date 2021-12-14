@@ -1,5 +1,5 @@
 #include "result-view-delegate.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 ResultViewDelegate::ResultViewDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {

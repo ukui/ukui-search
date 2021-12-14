@@ -37,7 +37,7 @@
 #include "xatom-helper.h"
 #endif
 
-namespace Zeeker {
+namespace UkuiSearch {
 class FolderListItem : public QWidget {
     Q_OBJECT
 public:

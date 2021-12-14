@@ -6,7 +6,7 @@
 
 #include "mainwindow.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class UkuiSearchDbusServices: public QObject{
     Q_OBJECT

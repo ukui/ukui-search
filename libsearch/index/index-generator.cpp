@@ -34,14 +34,14 @@
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 static IndexGenerator *global_instance = nullptr;
 QMutex  IndexGenerator::m_mutex;
-//QVector<Document> *Zeeker::g_docListForPath;
-//QMutex  Zeeker::g_mutexDocListForPath;
-//QVector<Document> *Zeeker::g_docListForContent;
-//QMutex  Zeeker::g_mutexDocListForContent;
+//QVector<Document> *UkuiSearch::g_docListForPath;
+//QMutex  UkuiSearch::g_mutexDocListForPath;
+//QVector<Document> *UkuiSearch::g_docListForContent;
+//QMutex  UkuiSearch::g_mutexDocListForContent;
 QMutex  IndexGenerator::g_mutexDocListForPath;
 QMutex  IndexGenerator::g_mutexDocListForContent;
 QVector<Document> IndexGenerator::g_docListForPath = QVector<Document>();

@@ -6,7 +6,7 @@
 #include <QLabel>
 #include "search-result-model.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class WebSearchModel : public QAbstractItemModel
 {
     Q_OBJECT

@@ -26,7 +26,7 @@
 #include <QHBoxLayout>
 #include <QTimer>
 
-namespace Zeeker {
+namespace UkuiSearch {
 class ShowMoreLabel : public QWidget {
     Q_OBJECT
 public:

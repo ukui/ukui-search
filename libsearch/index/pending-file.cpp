@@ -18,7 +18,7 @@
  *
  */
 #include "pending-file.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 PendingFile::PendingFile(const QString &path)
     : m_path(path)
     , m_deleted(false)

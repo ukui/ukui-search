@@ -51,7 +51,7 @@
 #define ASK_INDEX_TIME 5*1000
 #define RESEARCH_TIME 10*1000
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 /**
  * @brief MainWindow 主界面

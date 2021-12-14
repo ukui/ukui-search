@@ -6,7 +6,7 @@
 
 #define NUM_LIMIT_SHOWN_DEFAULT 5
 
-namespace Zeeker {
+namespace UkuiSearch {
 class BestListModel : public QAbstractItemModel
 {
     Q_OBJECT

@@ -245,7 +245,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::BestListWidget</name>
+    <name>UkuiSearch::BestListWidget</name>
     <message>
         <location filename="../../frontend/view/best-list-view.cpp" line="309"/>
         <source>Best Matches</source>
@@ -253,7 +253,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::ContentWidget</name>
+    <name>UkuiSearch::ContentWidget</name>
     <message>
         <source>Recently Opened</source>
         <translation type="obsolete">Yeni Açılan</translation>
@@ -296,7 +296,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::CreateIndexAskDialog</name>
+    <name>UkuiSearch::CreateIndexAskDialog</name>
     <message>
         <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="40"/>
         <source>ukui-search</source>
@@ -329,7 +329,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::FolderListItem</name>
+    <name>UkuiSearch::FolderListItem</name>
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="538"/>
         <source>Delete the folder out of blacklist</source>
@@ -337,7 +337,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::HomePage</name>
+    <name>UkuiSearch::HomePage</name>
     <message>
         <source>Open Quickly</source>
         <translation type="obsolete">Hızlı Aç</translation>
@@ -352,7 +352,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::MainWindow</name>
+    <name>UkuiSearch::MainWindow</name>
     <message>
         <location filename="../../frontend/mainwindow.cpp" line="70"/>
         <source>ukui-search</source>
@@ -369,7 +369,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::OptionView</name>
+    <name>UkuiSearch::OptionView</name>
     <message>
         <source>Open</source>
         <translation type="obsolete">Aç</translation>
@@ -392,14 +392,14 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::SearchBarHLayout</name>
+    <name>UkuiSearch::SearchBarHLayout</name>
     <message>
         <source>Search</source>
         <translation type="obsolete">Ara</translation>
     </message>
 </context>
 <context>
-    <name>Zeeker::SearchDetailView</name>
+    <name>UkuiSearch::SearchDetailView</name>
     <message>
         <source>Application</source>
         <translation type="obsolete">Uygulama</translation>
@@ -418,7 +418,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::SearchLineEdit</name>
+    <name>UkuiSearch::SearchLineEdit</name>
     <message>
         <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
         <source>Search</source>
@@ -426,7 +426,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::SettingsWidget</name>
+    <name>UkuiSearch::SettingsWidget</name>
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="35"/>
         <source>ukui-search-settings</source>
@@ -587,7 +587,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::ShowMoreLabel</name>
+    <name>UkuiSearch::ShowMoreLabel</name>
     <message>
         <source>Show More...</source>
         <translation type="obsolete">Daha Fazla Göster...</translation>
@@ -614,7 +614,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::WebSearchWidget</name>
+    <name>UkuiSearch::WebSearchWidget</name>
     <message>
         <location filename="../../frontend/view/web-search-view.cpp" line="150"/>
         <source>Web Page</source>

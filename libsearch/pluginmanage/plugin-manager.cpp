@@ -1,7 +1,7 @@
 #include "plugin-manager.h"
 #include "search-plugin-manager.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 static PluginManager *global_instance = nullptr;
 void PluginManager::init()

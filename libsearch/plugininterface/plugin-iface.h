@@ -1,7 +1,7 @@
 #ifndef PLUGININTERFACE_H
 #define PLUGININTERFACE_H
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class PluginInterface
 {

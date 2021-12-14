@@ -28,7 +28,7 @@
 #include <QAbstractTextDocumentLayout>
 #include "global-settings.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class ResultViewDelegate : public QStyledItemDelegate {
     Q_OBJECT
 public:

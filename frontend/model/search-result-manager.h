@@ -27,7 +27,7 @@
 #include <QDebug>
 #include "pluginmanage/search-plugin-manager.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class ReceiveResultThread : public QThread {
     Q_OBJECT

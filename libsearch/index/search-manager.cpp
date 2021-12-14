@@ -18,7 +18,7 @@
  *
  */
 #include "search-manager.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 size_t SearchManager::uniqueSymbolFile = 0;
 size_t SearchManager::uniqueSymbolDir = 0;
 size_t SearchManager::uniqueSymbolContent = 0;

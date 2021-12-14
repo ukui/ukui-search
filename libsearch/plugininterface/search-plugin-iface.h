@@ -10,7 +10,7 @@
 #include "plugin-iface.h"
 #include "data-queue.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class SearchPluginIface : public PluginInterface
 {
 public:
@@ -47,6 +47,6 @@ public:
 };
 }
 
-Q_DECLARE_INTERFACE(Zeeker::SearchPluginIface, SearchPluginIface_iid)
+Q_DECLARE_INTERFACE(UkuiSearch::SearchPluginIface, SearchPluginIface_iid)
 
 #endif // SEARCHPLUGINIFACE_H

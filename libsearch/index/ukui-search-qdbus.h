@@ -22,7 +22,7 @@
 
 #include <QDBusInterface>
 #include <QDBusReply>
-namespace Zeeker {
+namespace UkuiSearch {
 class UkuiSearchQDBus {
 public:
     UkuiSearchQDBus();

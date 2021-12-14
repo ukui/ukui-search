@@ -24,7 +24,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QQueue>
-namespace Zeeker {
+namespace UkuiSearch {
 class Traverse_BFS {
 public:
     Traverse_BFS() = default;

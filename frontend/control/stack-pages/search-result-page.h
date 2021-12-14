@@ -24,7 +24,7 @@
 #include <QSplitter>
 #include "search-page-section.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class SearchResultPage : public QWidget
 {
     Q_OBJECT

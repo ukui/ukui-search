@@ -10,7 +10,7 @@
 #include "plugininterface/plugin-iface.h"
 #include "plugininterface/search-plugin-iface.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class LIBSEARCH_EXPORT PluginManager : public QObject
 {
     Q_OBJECT

@@ -10,7 +10,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::BestListWidget</name>
+    <name>UkuiSearch::BestListWidget</name>
     <message>
         <location filename="../../frontend/view/best-list-view.cpp" line="309"/>
         <source>Best Matches</source>
@@ -18,7 +18,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::CreateIndexAskDialog</name>
+    <name>UkuiSearch::CreateIndexAskDialog</name>
     <message>
         <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="40"/>
         <source>ukui-search</source>
@@ -51,7 +51,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::FolderListItem</name>
+    <name>UkuiSearch::FolderListItem</name>
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="538"/>
         <source>Delete the folder out of blacklist</source>
@@ -59,7 +59,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::MainWindow</name>
+    <name>UkuiSearch::MainWindow</name>
     <message>
         <location filename="../../frontend/mainwindow.cpp" line="70"/>
         <source>ukui-search</source>
@@ -72,7 +72,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::SearchLineEdit</name>
+    <name>UkuiSearch::SearchLineEdit</name>
     <message>
         <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
         <source>Search</source>
@@ -80,7 +80,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::SettingsWidget</name>
+    <name>UkuiSearch::SettingsWidget</name>
     <message>
         <location filename="../../frontend/control/settings-widget.cpp" line="35"/>
         <source>ukui-search-settings</source>
@@ -241,7 +241,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::WebSearchWidget</name>
+    <name>UkuiSearch::WebSearchWidget</name>
     <message>
         <location filename="../../frontend/view/web-search-view.cpp" line="150"/>
         <source>Web Page</source>

@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>Zeeker::AppMatch</name>
+    <name>UkuiSearch::AppMatch</name>
     <message>
         <location filename="../../libsearch/appsearch/app-match.cpp" line="262"/>
         <source>Application Description:</source>
@@ -10,14 +10,14 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::AppSearch</name>
+    <name>UkuiSearch::AppSearch</name>
     <message>
         <source>Application Description:</source>
         <translation type="vanished">应用描述：</translation>
     </message>
 </context>
 <context>
-    <name>Zeeker::AppSearchPlugin</name>
+    <name>UkuiSearch::AppSearchPlugin</name>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="11"/>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="171"/>
@@ -59,7 +59,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::DirSearchPlugin</name>
+    <name>UkuiSearch::DirSearchPlugin</name>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="218"/>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="355"/>
@@ -109,7 +109,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::FileContengSearchPlugin</name>
+    <name>UkuiSearch::FileContengSearchPlugin</name>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="398"/>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="596"/>
@@ -163,7 +163,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::FileSearchPlugin</name>
+    <name>UkuiSearch::FileSearchPlugin</name>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="11"/>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="158"/>
@@ -225,7 +225,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::NoteSearch</name>
+    <name>UkuiSearch::NoteSearch</name>
     <message>
         <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="190"/>
         <source>Note Description:</source>
@@ -234,7 +234,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::NoteSearchPlugin</name>
+    <name>UkuiSearch::NoteSearchPlugin</name>
     <message>
         <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="12"/>
         <location filename="../../libsearch/notesearch/note-search-plugin.cpp" line="128"/>
@@ -263,7 +263,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::SearchManager</name>
+    <name>UkuiSearch::SearchManager</name>
     <message>
         <location filename="../../libsearch/index/search-manager.cpp" line="98"/>
         <source>Path:</source>
@@ -276,7 +276,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::SettingsSearchPlugin</name>
+    <name>UkuiSearch::SettingsSearchPlugin</name>
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="11"/>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="405"/>
@@ -300,7 +300,7 @@
     </message>
 </context>
 <context>
-    <name>Zeeker::WebSearchPlugin</name>
+    <name>UkuiSearch::WebSearchPlugin</name>
     <message>
         <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="7"/>
         <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="94"/>

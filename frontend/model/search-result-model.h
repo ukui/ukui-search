@@ -25,7 +25,7 @@
 
 #define NUM_LIMIT_SHOWN_DEFAULT 5
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class SearchResultItem : public QObject {
     friend class SearchResultModel;

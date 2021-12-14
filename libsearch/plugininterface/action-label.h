@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QLabel>
 #include <QEvent>
-namespace Zeeker {
+namespace UkuiSearch {
 class ActionLabel : public QLabel
 {
     Q_OBJECT

@@ -14,7 +14,7 @@
 #include "search-plugin-iface.h"
 #include "common.h"
 #include "action-label.h"
-namespace Zeeker {
+namespace UkuiSearch {
 //internal plugin
 class LIBSEARCH_EXPORT FileSearchPlugin : public QObject, public SearchPluginIface
 {

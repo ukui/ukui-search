@@ -26,7 +26,7 @@
 
 //extern QList<Document> *g_docListForPath;
 //extern QMutex  g_mutexDocListForPath;
-using namespace Zeeker;
+using namespace UkuiSearch;
 ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
     this->setAutoDelete(true);
     m_list = std::move(list);
@@ -34,8 +34,8 @@ ConstructDocumentForPath::ConstructDocumentForPath(QVector<QString> list) {
 
 void ConstructDocumentForPath::run() {
 //    qDebug()<<"ConstructDocumentForPath";
-//    if(!Zeeker::g_docListForPath)
-//        Zeeker::g_docListForPath = new QVector<Document>;
+//    if(!UkuiSearch::g_docListForPath)
+//        UkuiSearch::g_docListForPath = new QVector<Document>;
 //    qDebug()<<g_docListForPath->size();
     QString index_text = m_list.at(0).toLower();
     QString sourcePath = m_list.at(1);

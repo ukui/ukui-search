@@ -40,7 +40,7 @@
 #include "index-generator.h"
 #include "file-utils.h"
 #include "common.h"
-namespace Zeeker {
+namespace UkuiSearch {
 class FirstIndex : public QThread, public Traverse_BFS {
 public:
     FirstIndex();

@@ -7,7 +7,7 @@
 #include "result-view-delegate.h"
 #include "title-label.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class WebSearchView : public QTreeView
 {
     Q_OBJECT

@@ -4,7 +4,7 @@
 #include <qt5xdg/xdgicon.h>
 #include "file-utils.h"
 #include "chinese-segmentation.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 NoteSearchPlugin::NoteSearchPlugin(QObject *parent)
 {

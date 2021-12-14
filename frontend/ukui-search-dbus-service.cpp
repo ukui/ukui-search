@@ -1,6 +1,6 @@
 #include "ukui-search-dbus-service.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 void UkuiSearchDbusServices::showWindow(){
     qDebug() << "showWindow called";
     m_mainWindow->bootOptionsFilter("-s");

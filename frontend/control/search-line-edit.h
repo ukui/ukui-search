@@ -36,7 +36,7 @@
 #include <QProxyStyle>
 #include "global-settings.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class SearchLineEdit : public QLineEdit {
     Q_OBJECT

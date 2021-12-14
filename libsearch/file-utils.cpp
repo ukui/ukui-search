@@ -28,7 +28,7 @@
 #include <QDomDocument>
 #include "gobject-template.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 size_t FileUtils::_max_index_count = 0;
 size_t FileUtils::_current_index_count = 0;
 unsigned short FileUtils::indexStatus = 0;

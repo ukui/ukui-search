@@ -21,7 +21,7 @@
 #include "search-page-section.h"
 #include <QDebug>
 #include <QScrollBar>
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 #define RESULT_LAYOUT_MARGINS 0,0,0,0
 #define RESULT_BACKGROUND_COLOR QColor(0, 0, 0, 0)

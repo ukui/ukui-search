@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <QDebug>
 #include "ukui-search-service.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QByteArray localMsg = msg.toLocal8Bit();

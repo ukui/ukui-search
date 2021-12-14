@@ -41,7 +41,7 @@
 #include "plugin-manager.h"
 #include <X11/Xlib.h>
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 void messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {

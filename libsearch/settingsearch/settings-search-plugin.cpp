@@ -5,7 +5,7 @@
 #include "settings-search-plugin.h"
 #include "file-utils.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 static SettingsMatch * settingMatchClass = nullptr;
 size_t SettingsSearchPlugin::m_uniqueSymbolForSettings = 0;
 QMutex SettingsSearchPlugin::m_mutex;
@@ -35,7 +35,7 @@ QString SettingsSearchPlugin::getPluginName()
     return tr("Settings Search");
 }
 
-void Zeeker::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
+void UkuiSearch::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
     m_mutex.lock();
     ++m_uniqueSymbolForSettings;

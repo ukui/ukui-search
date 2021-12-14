@@ -33,7 +33,7 @@
 #include <QApplication>
 #include <QPainter>
 
-namespace Zeeker {
+namespace UkuiSearch {
 class CreateIndexAskDialog : public QDialog {
     Q_OBJECT
 public:

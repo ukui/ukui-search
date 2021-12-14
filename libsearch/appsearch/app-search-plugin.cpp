@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <QLabel>
 #include "file-utils.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 size_t AppSearchPlugin::uniqueSymbol = 0;
 QMutex  AppSearchPlugin::m_mutex;
 AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent)

@@ -4,7 +4,7 @@
 #include "first-index.h"
 //#include "inotify-index.h"
 #include "inotify-watch.h"
-namespace Zeeker {
+namespace UkuiSearch {
 class SearchMethodManager {
 public:
     static SearchMethodManager *getInstance();

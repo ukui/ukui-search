@@ -20,7 +20,7 @@
  */
 #include "best-list-model.h"
 #include "search-plugin-manager.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 BestListModel::BestListModel(QObject *parent)
     : QAbstractItemModel(parent)

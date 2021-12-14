@@ -25,7 +25,7 @@
 #include "show-more-label.h"
 #include <QHBoxLayout>
 
-namespace Zeeker {
+namespace UkuiSearch {
 class TitleLabel : public QLabel {
     Q_OBJECT
 public:

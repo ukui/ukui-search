@@ -15,7 +15,7 @@
 #include "first-index.h"
 #include "pending-file-queue.h"
 #include "common.h"
-namespace Zeeker {
+namespace UkuiSearch {
 class InotifyWatch : public QThread, public Traverse_BFS
 {
     Q_OBJECT
