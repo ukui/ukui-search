@@ -472,8 +472,8 @@ void DirectSearch::run() {
             }
             if(i.fileName().contains(m_keyword, Qt::CaseInsensitive)) {
 //                qWarning() << i.fileName() << m_keyword;
-                if(m_searchResult->length() > 49)
-                    return;
+//                if(m_searchResult->length() > 49)
+//                    return;
                 if((i.isDir() && m_value == DIR_SEARCH_VALUE)) {
                     SearchPluginIface::ResultInfo ri;
                     if(SearchManager::creatResultInfo(ri,i.absoluteFilePath())) {

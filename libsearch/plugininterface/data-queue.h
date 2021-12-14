@@ -7,7 +7,7 @@
 namespace Zeeker {
 // TODO I want a unlocked queue
 template <typename T>
-class LIBSEARCH_EXPORT DataQueue : public QList<T>
+class LIBSEARCH_EXPORT DataQueue : protected QList<T>
 {
 public:
     inline void enqueue(const T &t) {
