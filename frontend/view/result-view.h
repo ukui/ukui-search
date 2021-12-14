@@ -10,7 +10,7 @@
 #include "title-label.h"
 #include "result-view-delegate.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class ResultView : public QTreeView
 {

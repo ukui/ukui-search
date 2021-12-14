@@ -19,7 +19,7 @@
  *
  */
 #include "search-result-model.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 SearchResultModel::SearchResultModel(const QString &plugin_id)
 {

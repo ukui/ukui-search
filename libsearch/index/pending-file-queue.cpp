@@ -20,7 +20,7 @@
 #include "pending-file-queue.h"
 #include "file-utils.h"
 #include <malloc.h>
-using namespace Zeeker;
+using namespace UkuiSearch;
 static PendingFileQueue *global_instance_pending_file_queue = nullptr;
 PendingFileQueue::PendingFileQueue(QObject *parent) : QThread(parent)
 {

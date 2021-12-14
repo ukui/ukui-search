@@ -10,7 +10,7 @@
 #define INOTIFY_NORMAL_EXIT "inotify_normal_exit"
 #define PENDING_FILE_QUEUE_FINISH "pending_file_queue_finish"
 #define INDEX_STATUS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-index-status.conf"
-namespace Zeeker {
+namespace UkuiSearch {
 //fixme: we need a better way to record index status.
 class IndexStatusRecorder : public QObject
 {

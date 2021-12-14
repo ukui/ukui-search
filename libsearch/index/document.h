@@ -24,7 +24,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
-namespace Zeeker {
+namespace UkuiSearch {
 class Document {
 public:
     Document() = default;

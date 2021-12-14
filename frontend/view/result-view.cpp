@@ -5,7 +5,7 @@
 #define UNFOLD_LABEL_HEIGHT 30
 #define VIEW_ICON_SIZE 24
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 ResultWidget::ResultWidget(const QString &plugin_id, QWidget *parent) : QWidget(parent)
 {
     m_plugin_id = plugin_id;

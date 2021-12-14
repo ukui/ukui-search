@@ -1,7 +1,7 @@
 #include "web-search-plugin.h"
 #include "global-settings.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 WebSearchPlugin::WebSearchPlugin(QObject *parent) : QObject(parent)
 {
     SearchPluginIface::Actioninfo open { 0, tr("Start browser search")};
@@ -9,22 +9,22 @@ WebSearchPlugin::WebSearchPlugin(QObject *parent) : QObject(parent)
     initDetailPage();
 }
 
-const QString Zeeker::WebSearchPlugin::name()
+const QString UkuiSearch::WebSearchPlugin::name()
 {
     return "Web Page";
 }
 
-const QString Zeeker::WebSearchPlugin::description()
+const QString UkuiSearch::WebSearchPlugin::description()
 {
     return tr("Web Page");
 }
 
-QString Zeeker::WebSearchPlugin::getPluginName()
+QString UkuiSearch::WebSearchPlugin::getPluginName()
 {
     return tr("Web Page");
 }
 
-void Zeeker::WebSearchPlugin::KeywordSearch(QString keyword, DataQueue<Zeeker::SearchPluginIface::ResultInfo> *searchResult)
+void UkuiSearch::WebSearchPlugin::KeywordSearch(QString keyword, DataQueue<UkuiSearch::SearchPluginIface::ResultInfo> *searchResult)
 {
     m_keyWord = keyword;
     ResultInfo resultInfo;
@@ -35,12 +35,12 @@ void Zeeker::WebSearchPlugin::KeywordSearch(QString keyword, DataQueue<Zeeker::S
     searchResult->enqueue(resultInfo);
 }
 
-QList<Zeeker::SearchPluginIface::Actioninfo> Zeeker::WebSearchPlugin::getActioninfo(int type)
+QList<UkuiSearch::SearchPluginIface::Actioninfo> UkuiSearch::WebSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
 }
 
-void Zeeker::WebSearchPlugin::openAction(int actionkey, QString key, int type)
+void UkuiSearch::WebSearchPlugin::openAction(int actionkey, QString key, int type)
 {
     QString address;
     QString engine = GlobalSettings::getInstance()->getValue("web_engine").toString();
@@ -58,12 +58,12 @@ void Zeeker::WebSearchPlugin::openAction(int actionkey, QString key, int type)
     QDesktopServices::openUrl(address);
 }
 
-QWidget *Zeeker::WebSearchPlugin::detailPage(const Zeeker::SearchPluginIface::ResultInfo &ri)
+QWidget *UkuiSearch::WebSearchPlugin::detailPage(const UkuiSearch::SearchPluginIface::ResultInfo &ri)
 {
     return m_detailPage;
 }
 
-void Zeeker::WebSearchPlugin::initDetailPage()
+void UkuiSearch::WebSearchPlugin::initDetailPage()
 {
     m_detailPage = new QWidget();
     m_detailPage->setFixedWidth(360);

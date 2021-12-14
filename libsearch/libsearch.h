@@ -33,7 +33,7 @@
 #include "index/search-manager.h"
 
 
-namespace Zeeker {
+namespace UkuiSearch {
 //class  LIBSEARCH_EXPORT GlobalSearch {
 //public:
 

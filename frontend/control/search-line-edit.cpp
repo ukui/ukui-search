@@ -24,7 +24,7 @@
 QT_BEGIN_NAMESPACE
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 QT_END_NAMESPACE
-using namespace Zeeker;
+using namespace UkuiSearch;
 /**
  * @brief UKuiSearchLineEdit  全局搜索的输入框
  */

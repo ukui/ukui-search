@@ -2,7 +2,7 @@
 #include "ukui-search-service.h"
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "indexSearch"
-using namespace Zeeker;
+using namespace UkuiSearch;
 UkuiSearchService::UkuiSearchService(int &argc, char *argv[], const QString &applicationName): QtSingleApplication (applicationName, argc, argv)
 {
     qDebug()<<"ukui search service constructor start";

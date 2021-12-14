@@ -1,5 +1,5 @@
 #include "search-method-manager.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 static SearchMethodManager* global_instance = nullptr;
 
 SearchMethodManager::SearchMethodManager()

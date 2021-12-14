@@ -22,7 +22,7 @@
 
 #include <QObject>
 #include <QFileInfo>
-namespace Zeeker {
+namespace UkuiSearch {
 class FileReader : public QObject {
     Q_OBJECT
 public:

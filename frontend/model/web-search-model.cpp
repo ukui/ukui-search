@@ -21,7 +21,7 @@
 #include "web-search-model.h"
 #include <QDebug>
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 WebSearchModel::WebSearchModel(QObject *parent)
     : QAbstractItemModel(parent)
 {

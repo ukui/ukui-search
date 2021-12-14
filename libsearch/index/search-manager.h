@@ -45,7 +45,7 @@
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
-namespace Zeeker {
+namespace UkuiSearch {
 class FileMatchDecider;
 class FileContentMatchDecider;
 class LIBSEARCH_EXPORT SearchManager : public QObject {
@@ -77,7 +77,7 @@ Q_SIGNALS:
     void resultContent(QQueue<QPair<QString, QStringList>> *);
 private:
     static bool isBlocked(QString &path);
-    static bool creatResultInfo(Zeeker::SearchPluginIface::ResultInfo &ri, QString path);
+    static bool creatResultInfo(UkuiSearch::SearchPluginIface::ResultInfo &ri, QString path);
 
     QThreadPool m_pool;
 };

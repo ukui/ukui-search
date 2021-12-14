@@ -20,7 +20,7 @@
 #include "file-reader.h"
 #include "file-utils.h"
 #include "binary-parser.h"
-using namespace Zeeker;
+using namespace UkuiSearch;
 FileReader::FileReader(QObject *parent) : QObject(parent) {
 
 }

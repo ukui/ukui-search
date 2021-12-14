@@ -19,7 +19,7 @@
  */
 #include "ukui-search-qdbus.h"
 #include <QDebug>
-using namespace Zeeker;
+using namespace UkuiSearch;
 UkuiSearchQDBus::UkuiSearchQDBus() {
     this->tmpSystemQDBusInterface = new QDBusInterface("com.ukui.search.qt.systemdbus",
             "/",

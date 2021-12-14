@@ -22,7 +22,7 @@
 #include <QEvent>
 #include <QDebug>
 #include <QIcon>
-using namespace Zeeker;
+using namespace UkuiSearch;
 ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
     initUi();
     m_timer = new QTimer;

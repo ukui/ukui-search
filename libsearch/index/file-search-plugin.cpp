@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QMessageBox>
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
 {
@@ -32,7 +32,7 @@ QString FileSearchPlugin::getPluginName()
     return tr("File Search");
 }
 
-void Zeeker::FileSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
+void UkuiSearch::FileSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
     SearchManager::m_mutexFile.lock();
     ++SearchManager::uniqueSymbolFile;
@@ -239,7 +239,7 @@ QString DirSearchPlugin::getPluginName()
     return tr("Dir Search");
 }
 
-void Zeeker::DirSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
+void UkuiSearch::DirSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
     SearchManager::m_mutexDir.lock();
     ++SearchManager::uniqueSymbolDir;
@@ -419,7 +419,7 @@ QString FileContengSearchPlugin::getPluginName()
     return tr("File content search");
 }
 
-void Zeeker::FileContengSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
+void UkuiSearch::FileContengSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult)
 {
     SearchManager::m_mutexContent.lock();
     ++SearchManager::uniqueSymbolContent;

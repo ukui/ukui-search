@@ -36,7 +36,7 @@
 #include "common.h"
 #include "pending-file.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 //extern QVector<Document> *_doc_list_path;
 //extern QMutex  _mutex_doc_list_path;
 //extern QVector<Document> *_doc_list_content;

@@ -2,10 +2,10 @@
 #include <sys/ioctl.h>
 #include <malloc.h>
 #include <errno.h>
-using namespace Zeeker;
+using namespace UkuiSearch;
 static InotifyWatch* global_instance_InotifyWatch = nullptr;
 
-Zeeker::InotifyWatch *Zeeker::InotifyWatch::getInstance(const QString &path)
+UkuiSearch::InotifyWatch *UkuiSearch::InotifyWatch::getInstance(const QString &path)
 {
     if(!global_instance_InotifyWatch) {
         global_instance_InotifyWatch = new InotifyWatch(path);
@@ -13,7 +13,7 @@ Zeeker::InotifyWatch *Zeeker::InotifyWatch::getInstance(const QString &path)
     return global_instance_InotifyWatch;
 }
 
-Zeeker::InotifyWatch::InotifyWatch(const QString &path): Traverse_BFS(path)
+UkuiSearch::InotifyWatch::InotifyWatch(const QString &path): Traverse_BFS(path)
 {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;

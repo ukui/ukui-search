@@ -20,7 +20,7 @@
  */
 #include "search-result-manager.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 SearchResultManager::SearchResultManager(const QString& plugin_id, QObject *parent) : QObject(parent)
 {
     m_plugin_id = plugin_id;

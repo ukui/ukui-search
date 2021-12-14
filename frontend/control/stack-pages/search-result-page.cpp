@@ -22,7 +22,7 @@
 QT_BEGIN_NAMESPACE
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 QT_END_NAMESPACE
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 #define RESULT_WIDTH 266
 #define DETAIL_WIDTH 374

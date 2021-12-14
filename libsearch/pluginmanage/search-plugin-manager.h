@@ -4,7 +4,7 @@
 #include <QObject>
 #include "search-plugin-iface.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class SearchPluginManager : public QObject
 {

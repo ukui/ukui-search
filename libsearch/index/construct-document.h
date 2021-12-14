@@ -26,7 +26,7 @@
 #include "document.h"
 #include "index-generator.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 
 class IndexGenerator;
 class ConstructDocumentForPath : public QRunnable {

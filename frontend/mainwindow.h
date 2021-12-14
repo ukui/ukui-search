@@ -58,7 +58,7 @@
 #include "settings-widget.h"
 #endif
 
-namespace Zeeker {
+namespace UkuiSearch {
 class SearchResult;
 class MainWindow : public QMainWindow {
     friend class SearchResult;

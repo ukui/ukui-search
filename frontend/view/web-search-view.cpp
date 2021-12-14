@@ -24,7 +24,7 @@
 #define TITLE_HEIGHT 30
 #define VIEW_ICON_SIZE 24
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 WebSearchView::WebSearchView(QWidget *parent) : QTreeView(parent)
 {
     this->setFrameShape(QFrame::NoFrame);

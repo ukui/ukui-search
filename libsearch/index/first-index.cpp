@@ -24,7 +24,7 @@
 
 #define NEW_QUEUE(a) a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
 //#define DELETE_QUEUE(a )
-using namespace Zeeker;
+using namespace UkuiSearch;
 FirstIndex::FirstIndex() {
     m_pool.setMaxThreadCount(2);
     m_pool.setExpiryTimeout(100);

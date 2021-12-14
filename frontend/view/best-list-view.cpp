@@ -5,7 +5,7 @@
 #define UNFOLD_LABEL_HEIGHT 30
 #define VIEW_ICON_SIZE 24
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 BestListView::BestListView(QWidget *parent) : QTreeView(parent)
 {
     this->setFrameShape(QFrame::NoFrame);

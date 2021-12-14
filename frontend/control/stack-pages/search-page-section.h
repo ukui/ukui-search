@@ -29,7 +29,7 @@
 #include "best-list-view.h"
 #include "web-search-view.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class ResultArea : public QScrollArea
 {
     Q_OBJECT

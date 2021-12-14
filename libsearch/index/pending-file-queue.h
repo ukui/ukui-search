@@ -28,7 +28,7 @@
 #include "pending-file.h"
 #include "index-generator.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class PendingFileQueue : public QThread
 {
     Q_OBJECT

@@ -13,7 +13,7 @@
 #include "action-label.h"
 #include "search-plugin-iface.h"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class LIBSEARCH_EXPORT SettingsSearchPlugin : public QObject, public SearchPluginIface
 {
     Q_OBJECT

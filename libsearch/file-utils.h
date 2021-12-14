@@ -59,7 +59,7 @@
 //#define CREATING_INDEX 1
 //#define FINISH_CREATING_INDEX 2
 #define MAX_CONTENT_LENGTH 20480000
-namespace Zeeker {
+namespace UkuiSearch {
 class  LIBSEARCH_EXPORT FileUtils {
 public:
     static QString getHtmlText(const QString & text, const QString & keyword);

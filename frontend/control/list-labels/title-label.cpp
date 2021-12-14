@@ -23,7 +23,7 @@
 #include <QStyleOption>
 #define UNFOLD_LABEL_HEIGHT 30
 #define NUM_LIMIT_SHOWN_DEFAULT 5
-using namespace Zeeker;
+using namespace UkuiSearch;
 TitleLabel::TitleLabel(QWidget * parent) : QLabel(parent) {
     initUi();
     initConnections();

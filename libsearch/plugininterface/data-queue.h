@@ -4,7 +4,7 @@
 #include <QMutexLocker>
 #include <QList>
 #include "libsearch_global.h"
-namespace Zeeker {
+namespace UkuiSearch {
 // TODO I want a unlocked queue
 template <typename T>
 class LIBSEARCH_EXPORT DataQueue : public QList<T>

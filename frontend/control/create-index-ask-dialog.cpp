@@ -34,7 +34,7 @@
 #define BTN_FRAME_MARGINS 0,0,0,0
 #define CONTENT_MARGINS 32,0,32,24
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent) {
 //    this->setWindowIcon(QIcon::fromTheme("kylin-search"));
     this->setWindowTitle(tr("ukui-search"));

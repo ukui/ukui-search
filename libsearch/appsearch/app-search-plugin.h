@@ -12,7 +12,7 @@
 #include "app-match.h"
 #include "action-label.h"
 #include "libsearch_global.h"
-namespace Zeeker {
+namespace UkuiSearch {
 class LIBSEARCH_EXPORT AppSearchPlugin : public QObject, public SearchPluginIface
 {
     friend class AppSearch;

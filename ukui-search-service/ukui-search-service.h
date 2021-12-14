@@ -8,7 +8,7 @@
 #include "search-method-manager.h"
 #include "common.h"
 #include "file-utils.h"
-namespace Zeeker {
+namespace UkuiSearch {
 
 class UkuiSearchService : public QtSingleApplication
 {

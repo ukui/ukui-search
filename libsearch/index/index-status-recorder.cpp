@@ -1,6 +1,6 @@
 #include "index-status-recorder.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 static IndexStatusRecorder *global_instance_indexStatusRecorder = nullptr;
 
 IndexStatusRecorder *IndexStatusRecorder::getInstance()

@@ -6,7 +6,7 @@
 #include "note-search-plugin.h"
 #include "web-search-plugin.h"
 
-using namespace Zeeker;
+using namespace UkuiSearch;
 
 static SearchPluginManager *global_instance = nullptr;
 SearchPluginManager::SearchPluginManager(QObject *parent)
@@ -20,7 +20,7 @@ SearchPluginManager::SearchPluginManager(QObject *parent)
     registerPlugin(new WebSearchPlugin(this));
 }
 
-bool SearchPluginManager::registerPlugin(Zeeker::SearchPluginIface *plugin)
+bool SearchPluginManager::registerPlugin(UkuiSearch::SearchPluginIface *plugin)
 {
     if (m_map.end() != m_map.find(plugin->name())){
         return false;

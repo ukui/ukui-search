@@ -16,7 +16,7 @@
 #include "search-plugin-iface.h"
 #include "action-label.h"
 #include "libsearch_global.h"
-namespace Zeeker {
+namespace UkuiSearch {
 
 static size_t g_uniqueSymbol;
 static QMutex g_mutex;

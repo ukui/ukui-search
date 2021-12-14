@@ -22,7 +22,7 @@
 
 #include <QString>
 #include <QDebug>
-namespace Zeeker {
+namespace UkuiSearch {
 /**
  * Represents a file/folder which needs to be indexed.
  */

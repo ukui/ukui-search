@@ -57,7 +57,7 @@
 //#define CLOUD_HISTORY "history"
 //#define CLOUD_APPLICATIONS "applications"
 
-namespace Zeeker {
+namespace UkuiSearch {
 class LIBSEARCH_EXPORT GlobalSettings : public QObject {
     Q_OBJECT
 public:
