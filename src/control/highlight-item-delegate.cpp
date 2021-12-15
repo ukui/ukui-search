@@ -94,7 +94,7 @@ QString HighlightItemDelegate::getHtmlText(QPainter *painter, const QStyleOption
     QFont ft(painter->font().family(), GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toInt());
     QFontMetrics fm(ft);
     //由于需要使图标和标题对齐，每一个item向左移动，故这里需要一并减掉，当主题更改后需要改动这里
-    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30 - 8); //当字体超过Item的长度时显示为省略号
+    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30 - 10); //当字体超过Item的长度时显示为省略号
 //    QFontMetrics m_QFontMetrics = painter->fontMetrics();
 //    QString indexColString = m_QFontMetrics.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() + 10); //当字体超过Item的长度时显示为省略号
     QString htmlString;
@@ -123,7 +123,7 @@ QString HighlightItemDelegate::getHtmlText(QPainter *painter, const QStyleOption
         }
     }
 //    qDebug()<<indexColString<<"---->"<<htmlString;
-    return htmlString;
+    return "<pre>" + htmlString + "</pre>";
 }
 
 /**
