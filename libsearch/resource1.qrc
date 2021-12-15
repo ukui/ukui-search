@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>index/pinyinWithTone.txt</file>
         <file>index/pinyinWithoutTone.txt</file>
+        <file>res/icons/unknown.svg</file>
     </qresource>
 </RCC>
