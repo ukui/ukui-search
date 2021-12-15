@@ -220,7 +220,7 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(m_name, Qt::ElideRight, 200); //当字体长度超过200时显示为省略号
 //    m_nameLabel->setText(showname);
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(showname)));
+    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\"><pre>%1</pre></h3>").arg(escapeHtml(showname)));
     if(QString::compare(showname, m_name)) {
         m_nameLabel->setToolTip(m_name);
     }
@@ -271,6 +271,7 @@ QString SearchDetailView::getHtmlText(const QString & text, const QString & keyw
         }
     }
     htmlString.replace("\n", "<br />");//替换换行符
+//    return "<pre>" + htmlString + "</pre>";
     return htmlString;
 }
 
@@ -356,7 +357,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         QString wholeName = FileUtils::getFileName(path);
         QString name = fontMetrics.elidedText(wholeName, Qt::ElideRight, 200);
 //        m_nameLabel->setText(name);
-        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(name)));
+        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\"><pre>%1</pre></h3>").arg(escapeHtml(name)));
         if(QString::compare(name, wholeName)) {
             m_nameLabel->setToolTip(wholeName);
         }
@@ -367,7 +368,7 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         setIcon(path);
         QString settingType = path.mid(path.indexOf("/") + 1, path.lastIndexOf("/") - path.indexOf("/") - 1); //配置项所属控制面板插件名
 //        m_nameLabel->setText(settingType);
-        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(escapeHtml(settingType)));
+        m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\"><pre>%1</pre></h3>").arg(escapeHtml(settingType)));
         m_typeLabel->setText(FileUtils::getSettingName(path));
         break;
     }
