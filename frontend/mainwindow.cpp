@@ -373,6 +373,7 @@ void MainWindow::moveToPanel() {
  * @param widget
  */
 void MainWindow::centerToScreen() {
+    KWindowSystem::setState(this->winId(),NET::SkipTaskbar | NET::SkipPager);
     this->setWindowState(Qt::WindowFullScreen);
     this->setGeometry(QGuiApplication::screenAt(QCursor::pos())->geometry());
     m_widget->move((this->width() - WINDOW_WIDTH) / 2, this->height() / 8);
