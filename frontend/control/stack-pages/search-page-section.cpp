@@ -28,8 +28,9 @@ using namespace Zeeker;
 #define DETAIL_BACKGROUND_COLOR QColor(0, 0, 0, 0)
 #define DETAIL_WIDGET_TRANSPARENT 0.04
 #define DETAIL_WIDGET_BORDER_RADIUS 4
-#define DETAIL_WIDGET_MARGINS 8,0,8,0
-#define DETAIL_FRAME_MARGINS 8,0,0,0
+#define DETAIL_WIDGET_MARGINS 0, 0, 0, 0
+// 插件内部边距为8， 0， 16， 0，这里左边距加8以达到detailpage左右边距16的效果
+#define DETAIL_FRAME_MARGINS 8, 0, 0, 0
 #define DETAIL_ICON_HEIGHT 120
 #define NAME_LABEL_WIDTH 280
 #define ICON_SIZE QSize(120, 120)
