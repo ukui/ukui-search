@@ -403,6 +403,7 @@ void MainWindow::moveToPanel() {
 void MainWindow::centerToScreen(QWidget* widget) {
     if(!widget)
         return;
+    KWindowSystem::setState(this->winId(),NET::SkipTaskbar | NET::SkipPager);
     QDesktopWidget* m = QApplication::desktop();
     QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
     int desk_x = desk_rect.width();
