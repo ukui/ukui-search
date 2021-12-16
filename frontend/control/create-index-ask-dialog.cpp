@@ -21,6 +21,7 @@
 
 #include "create-index-ask-dialog.h"
 #include <QPainterPath>
+#include "kwindowsystem.h"
 
 #define MAIN_SIZE QSize(380, 202)
 #define MAIN_SPACING 0
@@ -43,6 +44,7 @@ CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent) {
 }
 
 void CreateIndexAskDialog::initUi() {
+    KWindowSystem::setState(this->winId(),NET::SkipTaskbar | NET::SkipPager);
     this->setFixedSize(MAIN_SIZE);
     m_mainLyt = new QVBoxLayout(this);
     this->setLayout(m_mainLyt);
