@@ -31,13 +31,13 @@ ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
 
 void ShowMoreLabel::resetLabel() {
     m_isOpen = false;
-    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
+    m_iconLabel->setPixmap(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/res/icons/drop.svg")).pixmap(QSize(16, 16)));
 }
 
 void ShowMoreLabel::setLabel()
 {
     m_isOpen = true;
-    m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
+    m_iconLabel->setPixmap(QIcon::fromTheme("ukui-up-symbolic", QIcon(":/res/icons/drop-up.svg")).pixmap(QSize(16, 16)));
 }
 
 /**
@@ -58,7 +58,7 @@ void ShowMoreLabel::initUi() {
     m_iconLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_iconLabel->installEventFilter(this);
     //m_iconLabel->setProperty("useIconHighlightEffect", 0x10);
-    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
+    m_iconLabel->setPixmap(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/res/icons/drop.svg")).pixmap(QSize(16, 16)));
     m_layout->addWidget(m_iconLabel);
 }
 
@@ -67,11 +67,11 @@ bool ShowMoreLabel::event(QEvent *event)
     if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::TouchBegin) {
         if (! m_timer->isActive()) {
             if (!m_isOpen) {
-                m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
+                m_iconLabel->setPixmap(QIcon::fromTheme("ukui-up-symbolic", QIcon(":/res/icons/drop-up.svg")).pixmap(QSize(16, 16)));
                 m_isOpen = true;
                 Q_EMIT this->showMoreClicked();
             } else {
-                m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
+                m_iconLabel->setPixmap(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/res/icons/drop.svg")).pixmap(QSize(16, 16)));
                 m_isOpen = false;
                 Q_EMIT this->retractClicked();
             }

@@ -38,12 +38,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
 
     m_queryIcon = new QLabel;
     QPixmap pixmap;
-    if (!QIcon::fromTheme("system-search-symbolic").isNull()) {
-        pixmap =  QPixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(21, 21)));
-    } else {
-        pixmap =  QPixmap(QIcon(":/res/icons/system-search.symbolic.png").pixmap(QSize(21, 21)));
-    }
-    m_queryIcon->setProperty("useIconHighlightEffect", 0x10);
+    pixmap = QIcon::fromTheme("search-symbolic", QIcon(":/res/icons/search.svg")).pixmap(21, 21);
     m_queryIcon->setFixedSize(pixmap.size());
     m_queryIcon->setPixmap(pixmap);
 
