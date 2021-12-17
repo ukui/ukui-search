@@ -94,7 +94,7 @@ void SearchResultPage::initUi()
 {
     this->setFixedSize(720,688);
     m_hlayout = new QHBoxLayout(this);
-    m_hlayout->setContentsMargins(18 ,18, 10, 18);
+    m_hlayout->setContentsMargins(16 ,18, 0, 18);  //右滚动条不需要边距；
 
 //    m_splitter = new QSplitter(this);
 //    m_splitter->setContentsMargins(0, 0, 0, 0);
@@ -123,16 +123,18 @@ void SearchResultPage::initConnections()
     connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
     connect(this, &SearchResultPage::startSearch, this, [=] () {
-        sendResizeWidthSignal(684);
+        //页面长720 - 左边距16
+        sendResizeWidthSignal(704);
     });
     connect(m_resultArea, &ResultArea::keyPressChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(m_resultArea, &ResultArea::keyPressChanged, this, [=] () {
-        sendResizeWidthSignal(266);
+        //结果区域长度298 - 左边距16，下同
+        sendResizeWidthSignal(282);
     });
     connect(m_resultArea, &ResultArea::getResult, this, &SearchResultPage::getResult);
     connect(this, &SearchResultPage::resizeWidth, m_resultArea, &ResultArea::resizeWidth);
     connect(m_resultArea, &ResultArea::rowClicked, this, [=] () {
-        sendResizeWidthSignal(266);
+        sendResizeWidthSignal(282);
     });
 }
 
@@ -141,7 +143,7 @@ void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
     connect(widget, &ResultWidget::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
     connect(widget, &ResultWidget::currentRowChanged, m_resultArea, &ResultArea::setSelectionInfo);
     connect(widget, &ResultWidget::rowClicked, this, [=] () {
-        sendResizeWidthSignal(266);
+        sendResizeWidthSignal(282);
     });
     connect(this, &SearchResultPage::resizeWidth, widget, &ResultWidget::resizeWidth);
 }

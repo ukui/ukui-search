@@ -1,5 +1,5 @@
 #include "result-view.h"
-#define MAIN_MARGINS 0,0,8,0
+#define MAIN_MARGINS 0, 0, 0, 0
 #define MAIN_SPACING 0
 #define TITLE_HEIGHT 30
 #define UNFOLD_LABEL_HEIGHT 30
@@ -133,7 +133,8 @@ void ResultWidget::initUi()
     m_mainLyt->addWidget(m_titleLabel);
     m_mainLyt->addWidget(m_resultView);
     this->setFixedHeight(m_resultView->height() + TITLE_HEIGHT);
-    this->setFixedWidth(656);
+    //全长720 - 左边距16 - 滚动条16 = 688
+    this->setFixedWidth(688);
 }
 
 void ResultWidget::initConnections()
@@ -158,7 +159,8 @@ void ResultWidget::initConnections()
     connect(m_resultView, &ResultView::sendBestListData, this, &ResultWidget::sendBestListData);
     connect(m_resultView, &ResultView::lableReset, m_titleLabel, &TitleLabel::lableReset);
     connect(this, &ResultWidget::resizeWidth, this, [=] (const int &size) {
-        this->setFixedWidth(size);
+        //留出16像素给滚动条
+        this->setFixedWidth(size - 16);
     });
 }
 
