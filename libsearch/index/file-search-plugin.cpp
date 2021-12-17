@@ -61,13 +61,7 @@ void FileSearchPlugin::openAction(int actionkey, QString key, int type)
     switch (actionkey) {
     case 0:
         if (FileUtils::openFile(key) == -1) {
-            QMessageBox msgBox(m_detailPage);
-            msgBox.setWindowModality(Qt::WindowModal);
-            msgBox.setStandardButtons(QMessageBox::Yes);
-            msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.setText(tr("Can not get a default application for opening %1.").arg(key));
-            msgBox.exec();
+            openFileMessagebox(key);
         }
         break;
     case 1:
@@ -96,6 +90,18 @@ QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
     m_pathLabel2->setToolTip(m_currentActionKey);
     m_timeLabel2->setText(ri.description.at(1).value);
     return m_detailPage;
+}
+
+void FileSearchPlugin::openFileMessagebox(QString &path)
+{
+    QMessageBox msgBox(m_detailPage);
+    msgBox.setWindowTitle(tr("ukui-search"));
+    msgBox.setWindowModality(Qt::WindowModal);
+    msgBox.setStandardButtons(QMessageBox::Yes);
+    msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setText(tr("Can not get a default application for opening %1.").arg(path));
+    msgBox.exec();
 }
 
 void FileSearchPlugin::initDetailPage()
@@ -177,13 +183,7 @@ void FileSearchPlugin::initDetailPage()
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
         if (FileUtils::openFile(m_currentActionKey) == -1) {
-            QMessageBox msgBox(m_detailPage);
-            msgBox.setWindowModality(Qt::WindowModal);
-            msgBox.setStandardButtons(QMessageBox::Yes);
-            msgBox.setButtonText(QMessageBox::Yes, tr("Yes"));
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.setText(tr("Can not get a default application for opening %1.").arg(m_currentActionKey));
-            msgBox.exec();
+            openFileMessagebox(m_currentActionKey);
         }
     });
     connect(m_actionLabel2, &ActionLabel::actionTriggered, [ & ](){

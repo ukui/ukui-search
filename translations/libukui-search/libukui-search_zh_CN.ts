@@ -19,38 +19,38 @@
 <context>
     <name>Zeeker::AppSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="171"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="12"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="174"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="12"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="172"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="13"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="175"/>
         <source>Add Shortcut to Desktop</source>
         <translation>添加到桌面快捷方式</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="13"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="173"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="14"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="176"/>
         <source>Add Shortcut to Panel</source>
         <translation>添加到任务栏快捷方式</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="14"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="174"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="15"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="177"/>
         <source>Install</source>
         <translation>安装</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="25"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="30"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="35"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="28"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="33"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="38"/>
         <source>Applications Search</source>
         <translation>应用程序</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="106"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="109"/>
         <source>Application</source>
         <translation>应用</translation>
     </message>
@@ -169,13 +169,13 @@
     <name>Zeeker::FileSearchPlugin</name>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="158"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="164"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="12"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="159"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="165"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
@@ -196,34 +196,37 @@
         <translation>文件搜索。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="67"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="183"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="98"/>
+        <source>ukui-search</source>
+        <translation>全局搜索</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="101"/>
         <source>Yes</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="69"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="185"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="103"/>
         <source>Can not get a default application for opening %1.</source>
         <translation>没有找到默认打开%1的应用。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="93"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="87"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="133"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="139"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="145"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="151"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="160"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="166"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -284,7 +287,7 @@
     <name>Zeeker::SettingsSearchPlugin</name>
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="364"/>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="361"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
@@ -300,7 +303,7 @@
         <translation>设置。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="350"/>
+        <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="347"/>
         <source>Settings</source>
         <translation>设置项</translation>
     </message>

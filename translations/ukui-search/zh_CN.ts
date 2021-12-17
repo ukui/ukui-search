@@ -69,7 +69,7 @@
     <message>
         <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="40"/>
         <source>ukui-search</source>
-        <translation>搜索</translation>
+        <translation>全局搜索</translation>
     </message>
     <message>
         <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="66"/>
@@ -123,12 +123,12 @@
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="70"/>
+        <location filename="../../frontend/mainwindow.cpp" line="73"/>
         <source>ukui-search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="76"/>
+        <location filename="../../frontend/mainwindow.cpp" line="79"/>
         <source>Global Search</source>
         <translation>搜索</translation>
     </message>
@@ -201,9 +201,13 @@
 <context>
     <name>Zeeker::SearchLineEdit</name>
     <message>
-        <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation type="vanished">搜索</translation>
+    </message>
+    <message>
+        <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
+        <source>ukui-search</source>
+        <translation>全局搜索</translation>
     </message>
 </context>
 <context>
