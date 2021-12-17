@@ -1,3 +1,13 @@
+ukui-search (3.1-1.1.5+1217) v101; urgency=medium
+
+  * BUG:无
+  * 需求号：无
+  * 其他改动：
+  * 为控制面板插件添加黑名单按钮增加悬浮效果。
+  * 详情页分割线增加切换主题时变换颜色功能。
+  
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 17 Dec 2021 11:17:26 +0800
+
 ukui-search (3.1-1.1.4+1117) v101; urgency=medium
 
   * Bug 83193,77755
