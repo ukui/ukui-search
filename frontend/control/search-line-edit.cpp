@@ -32,7 +32,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     setStyle(new LineEditStyle());
     this->setFocusPolicy(Qt::StrongFocus);
     this->setFixedSize(720, 48);
-    this->setTextMargins(35, 0, 0, 0);
+    this->setTextMargins(48, 0, 0, 0);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setDragEnabled(true);
 
@@ -43,7 +43,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     m_queryIcon->setPixmap(pixmap);
 
     m_ly = new QHBoxLayout(this);
-    m_ly->addSpacing(4);
+    m_ly->addSpacing(7);
     m_ly->addWidget(m_queryIcon);
     m_ly->addStretch();
 
