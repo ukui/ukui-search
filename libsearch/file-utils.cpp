@@ -107,7 +107,7 @@ QIcon FileUtils::getAppIcon(const QString &path) {
  * @param is_white 选择是否返回白色图标
  * @return
  */
-QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
+QIcon FileUtils::getSettingIcon(const QString &setting, const bool is_white) {
     QString name = setting.left(setting.indexOf("/"));
     if(! name.isEmpty()) {
         name.replace(QString(name.at(0)), QString(name.at(0).toUpper()));
@@ -140,7 +140,7 @@ QIcon FileUtils::getSettingIcon() {
  * @param uri 格式为"file:///home/xxx/xxx/xxxx.txt"
  * @return
  */
-QString FileUtils::getFileName(const QString& uri) {
+QString FileUtils::getFileName(const QString &uri) {
     QFileInfo info(uri);
     if(info.exists()) {
         return info.fileName();
@@ -159,7 +159,7 @@ QString FileUtils::getFileName(const QString& uri) {
  * @param path .destop文件的完整路径
  * @return
  */
-QString FileUtils::getAppName(const QString& path) {
+QString FileUtils::getAppName(const QString &path) {
     QByteArray ba;
     ba = path.toUtf8();
     GKeyFile * keyfile;
@@ -178,7 +178,7 @@ QString FileUtils::getAppName(const QString& path) {
  * @param setting 设置项传入参数，格式为 About/About->Properties
  * @return
  */
-QString FileUtils::getSettingName(const QString& setting) {
+QString FileUtils::getSettingName(const QString &setting) {
     return setting.right(setting.length() - setting.lastIndexOf("/") - 1);
 }
 
@@ -242,7 +242,7 @@ QString FileUtils::find(const QString &hanzi) {
 }
 
 //DFS多音字太多直接GG
-void stitchMultiToneWordsDFS(const QString& hanzi, const QString& resultAllPinYin, const QString& resultFirst, QStringList& resultList) {
+void stitchMultiToneWordsDFS(const QString &hanzi, const QString &resultAllPinYin, const QString &resultFirst, QStringList &resultList) {
     if(hanzi.size() == 0) {
         resultList.append(resultAllPinYin);
         resultList.append(resultFirst);
@@ -258,7 +258,7 @@ void stitchMultiToneWordsDFS(const QString& hanzi, const QString& resultAllPinYi
 }
 
 //BFS+Stack多音字太多会爆栈
-void stitchMultiToneWordsBFSStack(const QString& hanzi, QStringList& resultList) {
+void stitchMultiToneWordsBFSStack(const QString &hanzi, QStringList &resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString> tempQueue;
     tempHanzi = hanzi;
@@ -293,7 +293,7 @@ void stitchMultiToneWordsBFSStack(const QString& hanzi, QStringList& resultList)
     }
 }
 //BFS+Heap，多音字太多会耗尽内存
-void stitchMultiToneWordsBFSHeap(const QString& hanzi, QStringList& resultList) {
+void stitchMultiToneWordsBFSHeap(const QString &hanzi, QStringList &resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString>* tempQueue = new QQueue<QString>;
     tempHanzi = hanzi;
@@ -331,7 +331,7 @@ void stitchMultiToneWordsBFSHeap(const QString& hanzi, QStringList& resultList) 
 }
 
 //BFS+Heap+超过3个多音字只建一个索引，比较折中的方案
-void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultList) {
+void stitchMultiToneWordsBFSHeapLess3(const QString &hanzi, QStringList &resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString>* tempQueue = new QQueue<QString>;
     QQueue<QString>* tempQueueFirst = new QQueue<QString>;
@@ -404,7 +404,7 @@ void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultL
 }
 
 //BFS+Stack+超过3个多音字只建一个索引，比较折中的方案
-void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& resultList) {
+void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString> tempQueue;
     QQueue<QString> tempQueueFirst;
@@ -476,7 +476,7 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
     return;
 }
 
-QStringList FileUtils::findMultiToneWords(const QString& hanzi) {
+QStringList FileUtils::findMultiToneWords(const QString &hanzi) {
     //    QStringList* output = new QStringList();
     QStringList output;
     QString tempAllPinYin, tempFirst;
@@ -983,7 +983,12 @@ QString FileUtils::getHtmlText(const QString &text, const QString &keyword)
         }
     }
     htmlString.replace("\n", "<br />");//替换换行符
-    return htmlString;
+    return "<pre>" + htmlString + "</pre>";
+}
+
+QString FileUtils::setAllTextBold(const QString &name)
+{
+    return QString("<h3 style=\"font-weight:normal;\"><pre>%1</pre></h3>").arg(escapeHtml(name));
 }
 
 QString FileUtils::wrapData(QLabel *p_label, const QString &text)

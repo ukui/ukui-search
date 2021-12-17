@@ -99,7 +99,7 @@ QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
     m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
     if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     }

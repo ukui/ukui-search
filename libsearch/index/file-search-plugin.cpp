@@ -86,7 +86,7 @@ QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
     m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
     //if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     //}
@@ -277,7 +277,7 @@ QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
     m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
     //if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     //}
@@ -452,7 +452,7 @@ QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
     m_pluginLabel->setText(tr("File"));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
     //if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
     //}
@@ -484,7 +484,7 @@ QString FileContengSearchPlugin::getHtmlText(const QString &text, const QString 
         }
     }
     htmlString.replace("\n", "<br />");//替换换行符
-    return htmlString;
+    return "<pre>" + htmlString + "</pre>";
 }
 
 QString FileContengSearchPlugin::wrapData(QLabel *p_label, const QString &text)

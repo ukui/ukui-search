@@ -54,7 +54,7 @@ QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionVie
     QString indexString = index.model()->data(index, Qt::DisplayRole).toString();
     QFont ft(painter->font().family(), GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toInt());
     QFontMetrics fm(ft);
-    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30); //当字体超过Item的长度时显示为省略号
+    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30 - 10); //当字体超过Item的长度时显示为省略号
     QString htmlString;
     if((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
         indexFindLeft = indexColString.toUpper().indexOf(m_regFindKeyWords.toUpper()); //得到查找字体在当前整个Item字体中的位置
@@ -79,7 +79,7 @@ QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionVie
         }
     }
 //    qDebug()<<indexColString<<"---->"<<htmlString;
-    return htmlString;
+    return "<pre>" + htmlString + "</pre>";
 }
 
 QString ResultViewDelegate::escapeHtml(const QString &str) const
