@@ -64,25 +64,26 @@
 namespace Zeeker {
 class  LIBSEARCH_EXPORT FileUtils {
 public:
-    static QString getHtmlText(const QString & text, const QString & keyword);
+    static QString getHtmlText(const QString &text, const QString &keyword);
+    static QString setAllTextBold(const QString &name);
     static QString wrapData(QLabel *p_label, const QString &text);
-    static std::string makeDocUterm(QString);
-    static QIcon getFileIcon(const QString &, bool checkValid = true);
-    static QIcon getAppIcon(const QString &);
-    static QIcon getSettingIcon(const QString &, const bool&);
+    static std::string makeDocUterm(QString path);
+    static QIcon getFileIcon(const QString &uri, bool checkValid = true);
+    static QIcon getAppIcon(const QString &path);
+    static QIcon getSettingIcon(const QString &setting, const bool is_white);
     static QIcon getSettingIcon();
 
-    static QString getFileName(const QString &);
-    static QString getAppName(const QString &);
-    static QString getSettingName(const QString &);
+    static QString getFileName(const QString &uri);
+    static QString getAppName(const QString &path);
+    static QString getSettingName(const QString &setting);
     //A is or under B
     static bool isOrUnder(QString pathA, QString pathB);
 
     //chinese character to pinyin
     static QMap<QString, QStringList> map_chinese2pinyin;
-    static QString find(const QString&);
-    static QStringList findMultiToneWords(const QString&);
-    static void loadHanziTable(const QString&);
+    static QString find(const QString &hanzi);
+    static QStringList findMultiToneWords(const QString &hanzi);
+    static void loadHanziTable(const QString &fileName);
 
     //parse text,docx.....
     static QMimeType getMimetype(QString &path);
@@ -94,9 +95,9 @@ public:
 
     static int openFile(QString &path, bool openInDir = false);
     static bool copyPath(QString &path);
-    static QString escapeHtml(const QString & str);
+    static QString escapeHtml(const QString &str);
     static QString chineseSubString(const std::string &myStr,int start,int length);
-    static QIcon iconFromTheme(const QString& name, const QIcon &iconDefault);
+    static QIcon iconFromTheme(const QString &name, const QIcon &iconDefault);
     static bool isOpenXMLFileEncrypted(QString &path);
     static bool isEncrypedOrUnreadable(QString path);
     static size_t _max_index_count;
