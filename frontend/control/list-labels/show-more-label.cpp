@@ -22,6 +22,13 @@
 #include <QEvent>
 #include <QDebug>
 #include <QIcon>
+
+#define LABEL_MARGIN 0, 0, 0, 0
+#define ICON_TOUCH_SIZE 60, 30
+#define ICON_SIZE 16, 16
+//左36 + 图标大小16 + 右8 = 总长60
+#define ICON_MARGIN 36, 0, 8, 16
+
 using namespace Zeeker;
 ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
     initUi();
@@ -51,14 +58,14 @@ bool ShowMoreLabel::getExpanded() {
 void ShowMoreLabel::initUi() {
     //this->setStyleSheet("QWidget{ background: yellow }");
     m_layout = new QHBoxLayout(this);
-    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setContentsMargins(LABEL_MARGIN);
     m_iconLabel = new QLabel(this);
-    m_iconLabel->setFixedSize(60, 30);
-    m_iconLabel->setContentsMargins(22, 0, 22, 7);
+    m_iconLabel->setFixedSize(ICON_TOUCH_SIZE);
+    m_iconLabel->setContentsMargins(ICON_MARGIN);
     m_iconLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_iconLabel->installEventFilter(this);
     //m_iconLabel->setProperty("useIconHighlightEffect", 0x10);
-    m_iconLabel->setPixmap(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/res/icons/drop.svg")).pixmap(QSize(16, 16)));
+    m_iconLabel->setPixmap(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/res/icons/drop.svg")).pixmap(ICON_SIZE));
     m_layout->addWidget(m_iconLabel);
 }
 
@@ -67,11 +74,11 @@ bool ShowMoreLabel::event(QEvent *event)
     if (event->type() == QEvent::MouseButtonPress || event->type() == QEvent::TouchBegin) {
         if (! m_timer->isActive()) {
             if (!m_isOpen) {
-                m_iconLabel->setPixmap(QIcon::fromTheme("ukui-up-symbolic", QIcon(":/res/icons/drop-up.svg")).pixmap(QSize(16, 16)));
+                m_iconLabel->setPixmap(QIcon::fromTheme("ukui-up-symbolic", QIcon(":/res/icons/drop-up.svg")).pixmap(ICON_SIZE));
                 m_isOpen = true;
                 Q_EMIT this->showMoreClicked();
             } else {
-                m_iconLabel->setPixmap(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/res/icons/drop.svg")).pixmap(QSize(16, 16)));
+                m_iconLabel->setPixmap(QIcon::fromTheme("ukui-down-symbolic", QIcon(":/res/icons/drop.svg")).pixmap(ICON_SIZE));
                 m_isOpen = false;
                 Q_EMIT this->retractClicked();
             }
