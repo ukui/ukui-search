@@ -37,6 +37,8 @@ public:
 //    QWidget *previewPage(QString key, int type, QWidget *parent = nullptr);
     QWidget *detailPage(const ResultInfo &ri);
 
+    inline void openFileMessagebox(QString &path);
+
 private:
     void initDetailPage();
     QString m_currentActionKey;

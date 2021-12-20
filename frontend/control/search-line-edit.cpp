@@ -52,7 +52,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     m_ly->addWidget(m_queryIcon);
     m_ly->addStretch();
 
-    this->setPlaceholderText(tr("Search"));
+    this->setPlaceholderText(tr("ukui-search"));
     this->setMaxLength(100);
 
     m_timer = new QTimer;

@@ -61,12 +61,12 @@
 <context>
     <name>Zeeker::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="70"/>
+        <location filename="../../frontend/mainwindow.cpp" line="73"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="76"/>
+        <location filename="../../frontend/mainwindow.cpp" line="79"/>
         <source>Global Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -75,7 +75,7 @@
     <name>Zeeker::SearchLineEdit</name>
     <message>
         <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
-        <source>Search</source>
+        <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
