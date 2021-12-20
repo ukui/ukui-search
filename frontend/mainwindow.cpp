@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    initTimer();
 
     m_sys_tray_icon = new QSystemTrayIcon(this);
-    m_sys_tray_icon->setIcon(QIcon::fromTheme("system-search-symbolic"));
+    m_sys_tray_icon->setIcon(QIcon::fromTheme("preferences-system-search-symbolic"));
     m_sys_tray_icon->setToolTip(tr("Global Search"));
     m_sys_tray_icon->show();
     installEventFilter(this);
