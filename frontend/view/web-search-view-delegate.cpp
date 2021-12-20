@@ -43,7 +43,10 @@ void WebSearchViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem
     painter->restore();
 
     //绘制右侧箭头
-    QIcon icon = QIcon::fromTheme("go-next-symbolic");
+    QIcon icon = QIcon::fromTheme("ukui-end-symbolic", QIcon(":/res/icons/arrow.svg"));
+    if(opt.state & QStyle::State_Selected) {
+        icon = QIcon::fromTheme("ukui-end-white-symbolic", QIcon(":/res/icons/arrow-selected.svg"));
+    }
     icon.paint(painter, rect.right() - 40, rect.height()/2-8,  16, 16, Qt::AlignCenter);
 }
 

@@ -32,23 +32,18 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     setStyle(new LineEditStyle());
     this->setFocusPolicy(Qt::StrongFocus);
     this->setFixedSize(720, 48);
-    this->setTextMargins(35, 0, 0, 0);
+    this->setTextMargins(48, 0, 0, 0);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setDragEnabled(true);
 
     m_queryIcon = new QLabel;
     QPixmap pixmap;
-    if (!QIcon::fromTheme("system-search-symbolic").isNull()) {
-        pixmap =  QPixmap(QIcon::fromTheme("system-search-symbolic").pixmap(QSize(21, 21)));
-    } else {
-        pixmap =  QPixmap(QIcon(":/res/icons/system-search.symbolic.png").pixmap(QSize(21, 21)));
-    }
-    m_queryIcon->setProperty("useIconHighlightEffect", 0x10);
+    pixmap = QIcon::fromTheme("search-symbolic", QIcon(":/res/icons/search.svg")).pixmap(21, 21);
     m_queryIcon->setFixedSize(pixmap.size());
     m_queryIcon->setPixmap(pixmap);
 
     m_ly = new QHBoxLayout(this);
-    m_ly->addSpacing(4);
+    m_ly->addSpacing(7);
     m_ly->addWidget(m_queryIcon);
     m_ly->addStretch();
 
