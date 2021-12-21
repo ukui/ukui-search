@@ -1,3 +1,15 @@
+ukui-search (0.7.0+1221) v101; urgency=medium
+
+  * Delay 600 secs for first-index.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 21 Dec 2021 08:33:15 +0800
+
+ukui-search (0.7.0+1208) v101; urgency=medium
+
+  * Add gsettings to open or close index search.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 08 Dec 2021 16:42:55 +0800
+
 ukui-search (0.7.0+1115) v100; urgency=medium
 
   * Bug 无

@@ -149,6 +149,7 @@ void FirstIndex::run() {
 //            p_indexGenerator = IndexGenerator::getInstance(false,this);
             p_indexGenerator = IndexGenerator::getInstance(true, this);
         }
+        ::sleep(600);
         //TODO Fix these weird code.
         QSemaphore sem(5);
         QMutex mutex1, mutex2, mutex3;
