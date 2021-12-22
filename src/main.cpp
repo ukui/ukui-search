@@ -148,6 +148,7 @@ void searchMethod(FileUtils::SearchMethod sm){
 }
 */
 int main(int argc, char *argv[]) {
+    ::sleep(1800);
 //v101日志模块
 //#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 //    //Init log module
