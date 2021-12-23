@@ -1,3 +1,15 @@
+ukui-search (0.7.0+1223) v101; urgency=medium
+
+  * Move delay to first index and inotify watch.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 23 Dec 2021 10:40:41 +0800
+
+ukui-search (0.7.0+1222) v101; urgency=medium
+
+  * Add delay to 30 mins.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 22 Dec 2021 10:40:56 +0800
+
 ukui-search (0.7.0+1221) v101; urgency=medium
 
   * Delay 600 secs for first-index.
