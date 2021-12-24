@@ -5018,6 +5018,7 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
         if(!eRrd.bUni)
             ustotalLen += uscharlen;
         UCHAR* chData = (UCHAR*)xmalloc(ustotalLen);
+        ushort ustotalLenTmp = ustotalLen;
         if(ulNextOff < usPartLen && (ulNextOff + ustotalLen) >= usPartLen) {
             ushort usIdf = usPartLen - ulNextOff;
             uchar chTemp[MAX_BUFF_SIZE];
@@ -5073,7 +5074,7 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
             qWarning() << "Unsupport excel type:" << m_strFileName;
         } else {
             ushort* usData = (ushort*)chData;
-            content.append(QString::fromUtf16(usData, ustotalLen/2).replace("\n", "").replace("\r", " ")).append(" ");//每个单元格数据之间使用空格，//char num/2=short num
+            content.append(QString::fromUtf16(usData, ustotalLenTmp/2).replace("\n", "").replace("\r", " ")).append(" ");//每个单元格数据之间使用空格，//char num/2=short num
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
             if(content.length() >= 682666) //20480000/3
@@ -5131,6 +5132,7 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
     } else {
         if(usType == PPT_TEXTBYTEATOM || usType == PPT_TEXTCHARATOM) {
             long llen = (long)ulLen;
+            long llenTmp = llen;
             UCHAR* chData = (UCHAR*)xmalloc(llen);
             if(!bReadBuffer(pFile, PPS_info->tPPTDocument.ulSB,
                             aulBBD, tBBDLen, BIG_BLOCK_SIZE,
@@ -5138,7 +5140,7 @@ ULONG KBinaryParser::readPPtRecord(FILE* pFile, ppsInfoType* PPS_info, ULONG* au
                 return -1;
             ushort* usData = (ushort*)chData;
 
-            content.append(QString::fromUtf16(usData, llen/2).replace("\n", "").replace("\r", " "));//char num/2=short num
+            content.append(QString::fromUtf16(usData, llenTmp/2).replace("\n", "").replace("\r", " "));//char num/2=short num
 
             usData = (ushort*)xfree((void*)usData);
             chData = NULL;
