@@ -9,6 +9,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QAction>
+#include <QDomDocument>
 #include "action-label.h"
 #include "separation-line.h"
 #include "search-plugin-iface.h"
@@ -17,8 +18,9 @@ namespace Zeeker {
 class LIBSEARCH_EXPORT SettingsSearchPlugin : public QObject, public SearchPluginIface
 {
     Q_OBJECT
+    friend class SettingsSearch;
+    friend class SettingsMatch;
 public:
-
     SettingsSearchPlugin(QObject *parent = nullptr);
     PluginType pluginType() {return PluginType::SearchPlugin;}
     const QString name();
@@ -36,8 +38,13 @@ public:
     QWidget *detailPage(const ResultInfo &ri);
 
 private:
-    void xmlElement();
     void initDetailPage();
+    bool m_enable = true;
+    QList<SettingsSearchPlugin::Actioninfo> m_actionInfo;
+    QThreadPool m_pool;
+    static size_t m_uniqueSymbolForSettings;
+    static QMutex m_mutex;
+
     QString m_currentActionKey;
     QWidget *m_detailPage = nullptr;
     QVBoxLayout *m_detailLyt = nullptr;
@@ -50,16 +57,38 @@ private:
     QFrame *m_actionFrame = nullptr;
     QVBoxLayout *m_actionFrameLyt = nullptr;
     ActionLabel *m_actionLabel1 = nullptr;
-
     QVBoxLayout * m_actionLyt = nullptr;
+};
 
-    QMap<QString, QStringList> m_chineseSearchList;
-    QMap<QString, QStringList> m_englishSearchList;
-    QMap<QString, QMap<QString, QString>> m_mixSearchList;//map数据对应Chinese Name和English Name
+class SettingsSearch :public QObject, public QRunnable {
+    Q_OBJECT
+public:
+    SettingsSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, const QString& keyword, size_t uniqueSymbol);
+    ~SettingsSearch() = default;
+protected:
+    void run() override;
+private:
+    QString m_keyword;
+    size_t m_uniqueSymbol;
+    DataQueue<SearchPluginIface::ResultInfo> *m_searchResult = nullptr;
+};
 
-    bool m_enable = true;
-    QList<SettingsSearchPlugin::Actioninfo> m_actionInfo;
-    QThreadPool m_pool;
+class SettingsMatch :public QObject , public QThread {
+public:
+    static SettingsMatch *getInstance();
+    void startSearch(QString &keyword, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
+protected:
+    void run() override;
+private:
+    explicit SettingsMatch() = default;
+    ~SettingsMatch() = default;
+    void initDataOfXml();
+    bool matchCommonEnvironment(QDomNode childNode);
+    void matchNodes(QDomNode node);
+    void matchDataMap(QString &key, QString &keyword, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult);
+    void createResultInfo(SearchPluginIface::ResultInfo &resultInfo, const QStringList &itemInfo, const QString &path);
+    QMap<QString, QStringList> m_searchMap;
+    QMap<QString, QStringList> m_dataMap;
 };
 }
 #endif // SETTINGSSEARCHPLUGIN_H
