@@ -10,7 +10,8 @@ public:
     {
         MenuPlugin,
         PreviewPagePlugin,
-        SearchPlugin,
+        SearchPlugin, // for ukui-search itself.
+        SearchTaskPlugin, // for search service.
         Other
     };
 
