@@ -1,3 +1,9 @@
+ukui-search (0.7.0+1228) v101; urgency=medium
+
+  * Change default search method from direct search to index search.
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 28 Dec 2021 08:50:19 +0800
+
 ukui-search (0.7.0+1223) v101; urgency=medium
 
   * Move delay to first index and inotify watch.
