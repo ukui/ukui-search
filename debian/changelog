@@ -1,3 +1,11 @@
+ukui-search (0.7.3+1228) v101; urgency=medium
+
+  * BUG#99681 【搜索】存在.et 格式文件无法根据文件内容搜到的情况
+  * 任务号：无
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 28 Dec 2021 16:12:33 +0800
+
 ukui-search (0.7.3+1217) v101; urgency=medium
 
   * BUG#96331 【搜索】内容详情的底色要跟下边搜索框右侧对齐
