@@ -74,10 +74,10 @@ TRANSLATIONS += \
 qm_files.path = /usr/share/ukui-search/translations/
 qm_files.files = $$OUT_PWD/.qm/*.qm
 
-#schemes.path =  /usr/share/glib-2.0/schemas/
-#schemes.files += ../data/org.ukui.search.data.gschema.xml ../data/org.ukui.log4qt.ukui-search.gschema.xml
+schemes.path =  /usr/share/glib-2.0/schemas/
+schemes.files += ../data/org.ukui.search.data.gschema.xml #../data/org.ukui.log4qt.ukui-search.gschema.xml
 
-INSTALLS += qm_files
+INSTALLS += qm_files schemes
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
         -L$$OUT_PWD/../libsearch -lukui-search

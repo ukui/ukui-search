@@ -125,7 +125,7 @@ private:
     SearchManager* m_searcher = nullptr;
     SettingsMatch *m_settingsMatch = nullptr;
     QSystemTrayIcon *m_sys_tray_icon = nullptr;
-//    CreateIndexAskDialog * m_askDialog = nullptr;
+    CreateIndexAskDialog * m_askDialog = nullptr;
     bool m_isAskDialogVisible = false;
 
     QTimer * m_askTimer = nullptr; //询问是否创建索引弹窗弹出的计时器
@@ -135,9 +135,9 @@ private:
 
     SearchMethodManager m_searchMethodManager;
 
-//    void setSearchMethod(const bool&);
+    void setSearchMethod(const bool&);
     double getTransparentData();
-//    void initTimer();
+    void initTimer();
     bool tryHideMainwindow();
 
 protected:
@@ -147,7 +147,7 @@ protected:
     void initUi();
 
 Q_SIGNALS:
-//    void searchMethodChanged(FileUtils::SearchMethod);
+    void searchMethodChanged(FileUtils::SearchMethod);
     void webEngineChanged();
 
 public Q_SLOTS:

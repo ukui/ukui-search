@@ -133,6 +133,7 @@ void InotifyWatch::stopWatch()
 
 void InotifyWatch::run()
 {
+    ::sleep(1800);
     m_inotifyFd = inotify_init();
     if (m_inotifyFd > 0) {
         qDebug()<<"Inotify init success!";

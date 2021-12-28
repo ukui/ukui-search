@@ -96,6 +96,7 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 }
 
 void FirstIndex::run() {
+    ::sleep(1800);
     QTime t1 = QTime::currentTime();
     // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
     QString indexDataBaseStatus =  IndexStatusRecorder::getInstance()->getStatus(INDEX_DATABASE_STATE).toString();
