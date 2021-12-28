@@ -147,8 +147,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this, &MainWindow::searchMethodChanged, this, [ = ](FileUtils::SearchMethod sm) {
         this->m_searchMethodManager.searchMethod(sm);
     });
-//    this->m_searchMethodManager.searchMethod(FileUtils::SearchMethod::INDEXSEARCH);
-    this->m_searchMethodManager.searchMethod(FileUtils::SearchMethod::DIRECTSEARCH);
+    this->m_searchMethodManager.searchMethod(FileUtils::SearchMethod::INDEXSEARCH);
+//    this->m_searchMethodManager.searchMethod(FileUtils::SearchMethod::DIRECTSEARCH);
 
 }
 
