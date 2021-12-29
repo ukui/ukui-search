@@ -268,6 +268,7 @@ void SettingsMatch::matchDataMap(QString &key, QString &keyword, size_t uniqueSy
         if (data.contains(keyword, Qt::CaseInsensitive)) {
             createResultInfo(resultInfo, m_dataMap.value(key), key);
             //判断是否为同一次搜索
+            SettingsSearchPlugin::m_mutex.lock();
             if (uniqueSymbol == SettingsSearchPlugin::m_uniqueSymbolForSettings) {
                 searchResult->enqueue(resultInfo);
                 SettingsSearchPlugin::m_mutex.unlock();
