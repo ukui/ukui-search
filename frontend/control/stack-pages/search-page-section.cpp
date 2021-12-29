@@ -374,7 +374,7 @@ void ResultArea::initConnections()
             if (!widget->getExpandState()) {
                 continue;
             }
-            if (value < (widget->pos().ry() - TITLE_HEIGHT)
+            if (value < (widget->pos().ry())
                     or value > (widget->pos().ry() + widget->height() - FRAME_HEIGHT + 2*TITLE_HEIGHT)) {//暂定下一项标题显示完全后悬浮标题隐藏
                 m_titleLable->hide();
             } else {
