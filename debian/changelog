@@ -1,3 +1,9 @@
+ukui-search (3.1-1.1.2+1229t) v101; urgency=medium
+
+  *BUG:#99242【全局搜索】【控制面板】通过全局搜索只能搜到锁屏模块的“本地壁纸”，而搜不到背景模块的“本地壁纸”
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 29 Dec 2021 14:17:13 +0800
+
 ukui-search (3.1-1.1.2+1220t) v101; urgency=medium
 
   *BUG:#97984:打开搜索后，能够看到任务栏多了全局搜索的图标 
