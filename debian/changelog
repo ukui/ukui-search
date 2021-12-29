@@ -1,3 +1,15 @@
+ukui-search (3.1-1.1.6+1229) v101; urgency=medium
+
+  *BUG:#82904【UKUI3.1】【文件搜索】当文件名称前有空格时，搜到的文件看不出空格区分；且空格在中间时，不论有多少个空格也只能看出一个空格
+  *BUG:#98763【UKUI V3.1】【搜索】【UI】黑色分割线透明度应该稍微在降低一点
+  *BUG:#98762【UKUI V3.1】【搜索】【UI】图标应该与标题对齐
+  *BUG:#98752【UKUI V3.1】【搜索】【UI】24px的图标应该与标题对齐
+  *BUG:#99690【搜索】存在.et文件无法根据文件内容搜到的情况
+  *需求号：无
+  *其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 29 Dec 2021 09:31:34 +0800
+
 ukui-search (3.1-1.1.5+1217) v101; urgency=medium
 
   * BUG:无
