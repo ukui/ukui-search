@@ -122,7 +122,7 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
     if(file.exists()) {
         return QIcon(path);
     } else {
-        return QIcon::fromTheme("ukui-control-center"); //无插件图标时，返回控制面板应用图标
+        return QIcon::fromTheme("ukui-control-center", QIcon(":/res/icons/ukui-control-center.svg")); //无插件图标时，返回控制面板应用图标
 //        if (is_white) {
 //            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg("About"));
 //        } else {
@@ -132,7 +132,7 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
 }
 
 QIcon FileUtils::getSettingIcon() {
-    return QIcon::fromTheme("ukui-control-center"); //返回控制面板应用图标
+    return QIcon::fromTheme("ukui-control-center", QIcon(":/res/icons/ukui-control-center.svg")); //返回控制面板应用图标
 }
 
 /**
