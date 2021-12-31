@@ -4,7 +4,7 @@
 #include "search-controller.h"
 #include <QIcon>
 namespace UkuiSearch {
-class FileSearchTask : public SearchTaskPLuginIface
+class FileSearchTask : public SearchTaskPluginIface
 {
     Q_OBJECT
 public:
@@ -16,7 +16,8 @@ public:
     void setEnable(bool enable) {}
     bool isEnable() {}
 
-    QString getSearchType();
+    SearchType getSearchType() {return SearchType::File;}
+    QString getCustomSearchType();
     void startSearch(SearchController searchController);
     void stop();
 protected:

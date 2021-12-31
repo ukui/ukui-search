@@ -1,5 +1,6 @@
 #include "ukui-search-task.h"
 #include "ukui-search-task-private.h"
+#include "search-task-plugin-manager.h"
 #include <QDebug>
 using namespace UkuiSearch;
 UkuiSearchTaskPrivate::UkuiSearchTaskPrivate(UkuiSearchTask *parent)
@@ -43,17 +44,21 @@ void UkuiSearchTaskPrivate::setSearchOnlineApps(bool searchOnlineApps)
 {
 }
 
-size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype)
+size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype, QString customSearchType)
 {
 
     m_searchId = m_searchCotroller->refreshSearchId();
-//    if(!m_dataQueue) {
-//        qWarning() << "Please run init first!";
-//        return -1;
-//    }
+    if(m_searchCotroller->getDataQueue() == nullptr) {
+        qWarning() << "the date queue has not been initialized, you need run init first!";
+    }
 
     //plugin manager do async search here
-    // plugin->search(SearchController(m_searchController))
+    if(SearchType::Custom != searchtype) {
+        SearchTaskPluginManager::getInstance()->pluginSearch(searchtype, SearchController(m_searchCotroller));
+    } else {
+        SearchTaskPluginManager::getInstance()->pluginSearch(customSearchType, SearchController(m_searchCotroller));
+
+    }
 
     return m_searchId;
 }
@@ -102,9 +107,9 @@ void UkuiSearchTask::setSearchOnlineApps(bool searchOnlineApps)
     d->setSearchOnlineApps(searchOnlineApps);
 }
 
-size_t UkuiSearchTask::startSearch(SearchType searchtype)
+size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchTYpe)
 {
-    return d->startSearch(searchtype);
+    return d->startSearch(searchtype, customSearchTYpe);
 }
 
 void UkuiSearchTask::stop()

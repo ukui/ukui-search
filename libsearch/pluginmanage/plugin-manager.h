@@ -6,9 +6,9 @@
 #include <QDir>
 #include <QPluginLoader>
 #include <QApplication>
-#include "libsearch_global.h"
-#include "plugininterface/plugin-iface.h"
-#include "plugininterface/search-plugin-iface.h"
+#include "plugin-iface.h"
+#include "search-plugin-iface.h"
+#include "search-task-plugin-iface.h"
 
 namespace UkuiSearch {
 class LIBSEARCH_EXPORT PluginManager : public QObject

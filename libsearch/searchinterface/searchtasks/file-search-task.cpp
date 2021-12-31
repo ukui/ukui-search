@@ -14,7 +14,7 @@ const QString FileSearchTask::description()
 
 }
 
-QString FileSearchTask::getSearchType()
+QString FileSearchTask::getCustomSearchType()
 {
 
 }

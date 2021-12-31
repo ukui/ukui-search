@@ -3,7 +3,7 @@
 namespace UkuiSearch {
 enum class SearchType
 {
-    File,
+    File = 0,
     FileContent,
     Application,
     Setting,
