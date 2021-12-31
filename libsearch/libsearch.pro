@@ -32,6 +32,7 @@ include(appsearch/appsearch.pri)
 include(notesearch/notesearch.pri)
 include(settingsearch/settingsearch.pri)
 include(websearch/websearch.pri)
+include(searchinterface/search-interface.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -lquazip5 -luchardet -lQt5Xdg#-L/usr/local/lib/libjemalloc -ljemalloc
