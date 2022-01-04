@@ -78,6 +78,13 @@ MainWindow::MainWindow(QWidget *parent) :
     installEventFilter(this);
     initConnections();
     initGsettings();
+
+    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this,[&](WId activeWindowId){
+            if (activeWindowId != this->winId()) {
+                tryHideMainwindow();
+            }
+        });
+
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());
@@ -535,17 +542,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         }
     }
     return QWidget::keyPressEvent(event);
-}
-
-bool MainWindow::eventFilter(QObject *watched, QEvent *event)
-{
-    if (event->type() == QEvent::ActivationChange) {
-        qDebug() << "QEvent::ActivationChange!!!!" << "active" << (QApplication::activeWindow() == this) << "isVisble" << (this->isVisible());
-        if(QApplication::activeWindow() != this) {
-            tryHideMainwindow();
-        }
-    }
-    return QMainWindow::eventFilter(watched,event);
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {
