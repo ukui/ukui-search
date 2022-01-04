@@ -5,4 +5,5 @@ INCLUDEPATH += $$PWD/parser
 INCLUDEPATH += $$PWD/pluginmanage
 INCLUDEPATH += $$PWD/settingsearch
 INCLUDEPATH += $$PWD/appsearch
+INCLUDEPATH += $$PWD/searchinterface
 

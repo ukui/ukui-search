@@ -1,5 +1,6 @@
 #include "plugin-manager.h"
 #include "search-plugin-manager.h"
+#include "search-task-plugin-manager.h"
 
 using namespace UkuiSearch;
 
@@ -44,6 +45,11 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         case PluginInterface::PluginType::SearchPlugin: {
             auto p = dynamic_cast<SearchPluginIface *>(plugin);
             SearchPluginManager::getInstance()->registerPlugin(p);
+            break;
+        }
+        case PluginInterface::PluginType::SearchTaskPlugin: {
+            auto p = dynamic_cast<SearchTaskPluginIface*>(plugin);
+            SearchTaskPluginManager::getInstance()->registerPlugin(p);
             break;
         }
         default:

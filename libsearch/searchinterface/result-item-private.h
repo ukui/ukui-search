@@ -18,5 +18,6 @@ private:
     ResultItem *q;
 
 };
+
 }
 #endif // RESULTITEMPRIVATE_H

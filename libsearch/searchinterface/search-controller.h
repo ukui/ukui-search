@@ -17,18 +17,21 @@ public:
     DataQueue<ResultItem>* refreshDataqueue();
     size_t refreshSearchId();
     DataQueue<ResultItem>* initDataQueue();
+    void stop();
 
     void addSearchDir(QString &path);
     void setRecurse(bool recurse = true);
     void addKeyword(QString &keyword);
     void setActiveKeywordSegmentation(bool active);
     void addFileLabel(QString &label);
+    //以上方法插件请不要调用
 
+    //以下方法插件可以调用
     size_t getCurrentSearchId();
     DataQueue<ResultItem>* getDataQueue();
     bool beginSearchIdCheck(size_t searchId);
     void finishSearchIdCheck();
-    void stop();
+
     QStringList getSearchDir();
     bool isRecurse();
     QStringList getKeyword();

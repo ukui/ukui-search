@@ -21,7 +21,7 @@ public:
     void addKeyword(QString &keyword);
     void addFileLabel(QString &label);
     void setSearchOnlineApps(bool searchOnlineApps);
-    size_t startSearch(SearchType searchtype);
+    size_t startSearch(SearchType searchtype, QString customSearchType = QString());
     void stop();
 
 private:
