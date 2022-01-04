@@ -141,7 +141,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this, &MainWindow::searchMethodChanged, this, [ = ](FileUtils::SearchMethod sm) {
         this->m_searchMethodManager.searchMethod(sm);
     });
-
+    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this,[&](WId activeWindowId){
+        if (activeWindowId != this->winId()) {
+            tryHideMainwindow();
+        }
+    });
 }
 
 MainWindow::~MainWindow() {
@@ -625,16 +629,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         this->m_contentFrame->pressEnter();
     }
     return QWidget::keyPressEvent(event);
-}
-
-bool MainWindow::eventFilter(QObject *watched, QEvent *event)
-{
-    if (event->type() == QEvent::ActivationChange) {
-        if(QApplication::activeWindow() != this) {
-            tryHideMainwindow();
-        }
-    }
-    return QMainWindow::eventFilter(watched,event);
 }
 
 void MainWindow::paintEvent(QPaintEvent *event) {

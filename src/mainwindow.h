@@ -138,7 +138,6 @@ private:
 protected:
     void paintEvent(QPaintEvent *);
     void keyPressEvent(QKeyEvent *event);
-    bool eventFilter(QObject *watched, QEvent *event) override;
     void initUi();
 
 Q_SIGNALS:
