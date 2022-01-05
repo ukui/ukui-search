@@ -56,6 +56,7 @@ public:
     const bool &isExpanded();
     QStringList getActions(const QModelIndex &);
     QString getKey(const QModelIndex &);
+    void refresh();
 
 public Q_SLOTS:
     void appendInfo(const SearchPluginIface::ResultInfo &);
@@ -71,6 +72,7 @@ private:
     QString m_plugin_id;
     SearchResultManager * m_search_manager = nullptr;
     bool m_isExpanded = false;
+    QTimer * m_timer;
 };
 }
 

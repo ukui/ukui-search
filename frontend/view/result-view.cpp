@@ -277,6 +277,9 @@ void ResultView::onItemListChanged(const int &count)
 {
     m_count = count;
     Q_EMIT this->listLengthChanged(count);
+    QModelIndex index = this->currentIndex();
+    m_model->refresh();
+    this->setCurrentIndex(index);
 }
 
 void ResultView::setExpanded(const bool &is_expanded)
