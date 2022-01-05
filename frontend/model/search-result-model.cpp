@@ -26,6 +26,8 @@ SearchResultModel::SearchResultModel(const QString &plugin_id)
     m_item = new SearchResultItem;
     m_plugin_id = plugin_id;
     m_search_manager = new SearchResultManager(plugin_id);
+    m_timer = new QTimer(this);
+    m_timer->setInterval(500);
     initConnections();
 }
 
@@ -67,17 +69,22 @@ QVariant SearchResultModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-//bool SearchResultModel::insertRows(int row, int count, const QModelIndex &parent)
-//{
-//    this->beginInsertRows(parent, row, count);
-//    this->endInsertRows();
-//    return true;
-//}
-
-void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)
+void SearchResultModel::appendInfo(const SearchPluginIface::ResultInfo &info)//TODO 代码逻辑可尝试梳理优化
 {
+    if (m_item->m_result_info_list.length() > 5 //搜索结果大于5个并且搜索结果处于收起状态时只存储数据无需刷新UI
+            and !m_isExpanded) {
+        m_item->m_result_info_list.append(info);
+        return;
+    }
+    if (m_item->m_result_info_list.length() > 50
+            and m_isExpanded) {//搜索结果大于50个并且搜索结果处于展开状态时只存储数据并启动定时，500ms刷新一次UI
+        m_item->m_result_info_list.append(info);
+        if (!m_timer->isActive()) {
+            m_timer->start();
+        }
+        return;
+    }
     this->beginResetModel();
-    //qDebug()<<"Got a result. name ="<<info.name;
     m_item->m_result_info_list.append(info);
     this->endResetModel();
     Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
@@ -101,6 +108,10 @@ void SearchResultModel::initConnections()
 {
     connect(this, &SearchResultModel::stopSearch, m_search_manager, &SearchResultManager::stopSearch);
     connect(m_search_manager, &SearchResultManager::gotResultInfo, this, &SearchResultModel::appendInfo);
+    connect(m_timer, &QTimer::timeout, [ = ] () {//500ms刷新一次UI,防止搜索结果数据量过大导致的UI卡顿
+        Q_EMIT this->itemListChanged(m_item->m_result_info_list.length());
+        m_timer->stop();
+    });
 }
 
 const SearchPluginIface::ResultInfo &SearchResultModel::getInfo(const QModelIndex &index)
@@ -137,7 +148,13 @@ QString SearchResultModel::getKey(const QModelIndex &index)
 {
     if (m_item->m_result_info_list.length() > index.row() && index.row() >= 0)
 //        return m_item->m_result_info_list.at(index.row()).key;
-    return NULL;
+        return NULL;
+}
+
+void SearchResultModel::refresh()
+{
+    this->beginResetModel();
+    this->endResetModel();
 }
 
 SearchResultItem::SearchResultItem(QObject *parent) : QObject(parent)
