@@ -1,3 +1,11 @@
+ukui-search (0.7.4+0106) v101; urgency=medium
+
+  * BUG#85653 【文件搜索】按住win不动，连续匀速按S， 会发现存在 搜索框没有重新打开，而是直接关闭的情况
+  * 任务号：无
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 06 Jan 2022 15:30:03 +0800
+
 ukui-search (0.7.3+1228) v101; urgency=medium
 
   * BUG#99681 【搜索】存在.et 格式文件无法根据文件内容搜到的情况
