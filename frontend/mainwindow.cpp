@@ -136,6 +136,7 @@ void MainWindow::initUi() {
     m_mainLayout->addWidget(m_webSearchPage);
     m_webSearchPage->hide();
     this->setFocusProxy(m_searchBarWidget);
+    m_backgroundPixmap = QPixmap(":/res/icons/wallpaper.png");
 
 }
 
@@ -528,11 +529,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 void MainWindow::paintEvent(QPaintEvent *event) {
 
-    QPainterPath path;
-
-//    path.addRoundedRect(m_searchBarWidget->x()+10, m_searchBarWidget->y()+10, m_searchBarWidget->width()-20, m_searchBarWidget->height()-20, 6, 6);
-//    path.addRoundedRect(m_searchResultPage->x()+10, m_searchResultPage->y()+10, m_searchResultPage->width()-20, m_searchResultPage->height()-20, 6, 6);
-    path.addRect(this->rect());
-    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-
+//    QPainterPath path;
+//    path.addRect(this->rect());
+//    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
+    //临时方案
+    m_backgroundPixmap = m_backgroundPixmap.scaled(this->rect().size(), Qt::KeepAspectRatioByExpanding);
+    QPainter p(this);
+    p.drawPixmap((this->width() - m_backgroundPixmap.rect().width()) / 2,
+                 (this->height() - m_backgroundPixmap.rect().height()) / 2,
+                 m_backgroundPixmap);
 }

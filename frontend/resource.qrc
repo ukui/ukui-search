@@ -11,5 +11,6 @@
         <file>res/icons/search.svg</file>
         <file>res/icons/arrow-selected.svg</file>
         <file>res/icons/drop-up.svg</file>
+        <file>res/icons/wallpaper.png</file>
     </qresource>
 </RCC>
