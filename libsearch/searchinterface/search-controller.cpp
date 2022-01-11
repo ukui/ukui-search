@@ -4,23 +4,12 @@
 #include <QDebug>
 using namespace UkuiSearch;
 SearchControllerPrivate::SearchControllerPrivate(SearchController *parent)
-    : q(parent)
+    : q(parent), m_formerController(q->m_parent)
 {
-    if(q->m_parent) {
-        m_formerController = QSharedPointer<SearchController>(q->m_parent);
-        m_searchId = q->m_parent->d->m_searchId;
-        m_dataQueue = q->m_parent->d->m_dataQueue;
-        m_keywords = q->m_parent->d->m_keywords;
-        m_searchDirs = q->m_parent->d->m_searchDirs;
-        m_FileLabels = q->m_parent->d->m_FileLabels;
-        m_recurse = q->m_parent->d->m_recurse;
-        m_activeKeywordSegmentation = q->m_parent->d->m_activeKeywordSegmentation;
-    }
 }
 
 SearchControllerPrivate::~SearchControllerPrivate()
 {
-    m_formerController.clear();
 }
 
 size_t SearchControllerPrivate::refreshSearchId()
@@ -75,6 +64,16 @@ void SearchControllerPrivate::addFileLabel(QString &label)
     m_FileLabels.append(label);
 }
 
+void SearchControllerPrivate::setOnlySearchFile(bool onlySearchFile)
+{
+    m_onlySearchFile = onlySearchFile;
+}
+
+void SearchControllerPrivate::setOnlySearchDir(bool onlySearchDir)
+{
+    m_onlySearchDir = onlySearchDir;
+}
+
 size_t SearchControllerPrivate::getCurrentSearchId()
 {
     return m_searchId;
@@ -112,30 +111,55 @@ void SearchControllerPrivate::stop()
 
 QStringList SearchControllerPrivate::getSearchDir()
 {
-
+    return m_searchDirs;
 }
 
 bool SearchControllerPrivate::isRecurse()
 {
-
+     return m_recurse;
 }
 
 QStringList SearchControllerPrivate::getKeyword()
 {
-
+    return m_keywords;
 }
 
 bool SearchControllerPrivate::isKeywordSegmentationActived()
 {
-
+    return m_activeKeywordSegmentation;
 }
 
 QStringList SearchControllerPrivate::getFileLabel()
 {
-
+    return m_FileLabels;
 }
 
-SearchController::SearchController(SearchController *parent) : m_parent(parent), d(new SearchControllerPrivate(this))
+bool SearchControllerPrivate::isSearchFileOnly()
+{
+    return m_onlySearchFile;
+}
+
+bool SearchControllerPrivate::isSearchDirOnly()
+{
+    return m_onlySearchDir;
+}
+
+void SearchControllerPrivate::copyData()
+{
+    if(m_formerController.get()) {
+        m_searchId = m_formerController.get()->getCurrentSearchId();
+        m_dataQueue = m_formerController.get()->getDataQueue();
+        m_keywords = m_formerController.get()->getKeyword();
+        m_searchDirs = m_formerController.get()->getSearchDir();
+        m_FileLabels = m_formerController.get()->getFileLabel();
+        m_onlySearchFile = m_formerController.get()->isSearchFileOnly();
+        m_onlySearchDir = m_formerController.get()->isSearchDirOnly();
+        m_recurse = m_formerController.get()->isRecurse();
+        m_activeKeywordSegmentation = m_formerController.get()->isKeywordSegmentationActived();
+    }
+}
+
+SearchController::SearchController(std::shared_ptr<SearchController> parent) : m_parent(parent), d(new SearchControllerPrivate(this))
 {
 }
 
@@ -176,7 +200,7 @@ void SearchController::addKeyword(QString &keyword)
 
 size_t SearchController::getCurrentSearchId()
 {
-    d->getCurrentSearchId();
+    return d->getCurrentSearchId();
 }
 
 DataQueue<ResultItem> *SearchController::getDataQueue()
@@ -194,6 +218,16 @@ void SearchController::addFileLabel(QString &label)
     d->addFileLabel(label);
 }
 
+void SearchController::setOnlySearchFile(bool onlySearchFile)
+{
+    d->setOnlySearchFile(onlySearchFile);
+}
+
+void SearchController::setOnlySearchDir(bool onlySearchDir)
+{
+    d->setOnlySearchDir(onlySearchDir);
+}
+
 bool SearchController::beginSearchIdCheck(size_t searchId)
 {
     return d->beginSearchIdCheck(searchId);
@@ -201,7 +235,42 @@ bool SearchController::beginSearchIdCheck(size_t searchId)
 
 void SearchController::finishSearchIdCheck()
 {
-   d->finishSearchIdCheck();
+    d->finishSearchIdCheck();
+}
+
+QStringList SearchController::getSearchDir()
+{
+    return d->getSearchDir();
+}
+
+bool SearchController::isRecurse()
+{
+    return d->isRecurse();
+}
+
+QStringList SearchController::getKeyword()
+{
+    return d->getKeyword();
+}
+
+bool SearchController::isKeywordSegmentationActived()
+{
+    return d->isKeywordSegmentationActived();
+}
+
+QStringList SearchController::getFileLabel()
+{
+    return d->getFileLabel();
+}
+
+bool SearchController::isSearchFileOnly()
+{
+    return d->isSearchFileOnly();
+}
+
+bool SearchController::isSearchDirOnly()
+{
+    return d->isSearchDirOnly();
 }
 
 void SearchController::stop()

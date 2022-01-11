@@ -6,10 +6,12 @@ namespace UkuiSearch {
 class ResultItemPrivate
 {
 public:
-    explicit ResultItemPrivate(const QString &itemKey, ResultItem *parent);
+    explicit ResultItemPrivate(ResultItem *parent);
     ~ResultItemPrivate();
+    void setSearchId(size_t searchId);
+    void setItemKey(QString itemKey);
 private:
-    size_t searchId;
+    size_t m_searchId;
     QString m_itemKey;
     QString m_label;
     QVariant m_extral;

@@ -1,8 +1,12 @@
 #ifndef FILESEARCHTASK_H
 #define FILESEARCHTASK_H
+
+#include <QIcon>
+#include <QThreadPool>
+#include <QRunnable>
 #include "search-task-plugin-iface.h"
 #include "search-controller.h"
-#include <QIcon>
+#include "result-item.h"
 namespace UkuiSearch {
 class FileSearchTask : public SearchTaskPluginIface
 {
@@ -13,17 +17,30 @@ public:
     const QString name();
     const QString description();
     const QIcon icon() {return QIcon::fromTheme("folder");}
-    void setEnable(bool enable) {}
-    bool isEnable() {}
+    void setEnable() {}
+    bool isEnable() { return true;}
 
     SearchType getSearchType() {return SearchType::File;}
     QString getCustomSearchType();
     void startSearch(SearchController searchController);
     void stop();
+    Q_INVOKABLE void sendFinishSignal(size_t searchId);
 protected:
     void run();
 private:
     SearchController m_searchControl;
+    QThreadPool *m_pool = nullptr;
+};
+
+class FileSearchWorker : public QRunnable
+{
+public:
+    explicit FileSearchWorker(FileSearchTask *fileSarchTask, SearchController searchController);
+protected:
+    void run();
+private:
+    FileSearchTask *m_FileSearchTask;
+    SearchController m_searchController;
 };
 }
 #endif // FILESEARCHTASK_H

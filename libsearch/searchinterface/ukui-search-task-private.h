@@ -4,7 +4,7 @@
 #include "ukui-search-task.h"
 #include <QThreadPool>
 #include <QMutex>
-#include <QSharedPointer>
+#include <memory>
 
 #include "data-queue.h"
 #include "search-controller.h"
@@ -20,12 +20,14 @@ public:
     void setRecurse(bool recurse = true);
     void addKeyword(QString &keyword);
     void addFileLabel(QString &label);
+    void setOnlySearchFile(bool onlySearchFile);
+    void setOnlySearchDir(bool onlySearchDir);
     void setSearchOnlineApps(bool searchOnlineApps);
     size_t startSearch(SearchType searchtype, QString customSearchType = QString());
     void stop();
 
 private:
-    SearchController* m_searchCotroller;
+    std::shared_ptr<SearchController> m_searchCotroller = nullptr;
     size_t m_searchId = 0;
     UkuiSearchTask* q = nullptr;
 

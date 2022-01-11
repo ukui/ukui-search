@@ -2,6 +2,7 @@
 #define SEARCHCONTROLLER_H
 
 #include <QStringList>
+#include <memory>
 #include "data-queue.h"
 //todo: url parser?
 namespace UkuiSearch {
@@ -12,7 +13,7 @@ class SearchController
 {
     friend class SearchControllerPrivate;
 public:
-    explicit SearchController(SearchController *parent = nullptr);
+    explicit SearchController(std::shared_ptr<SearchController> parent = nullptr);
     ~SearchController();
     DataQueue<ResultItem>* refreshDataqueue();
     size_t refreshSearchId();
@@ -24,6 +25,8 @@ public:
     void addKeyword(QString &keyword);
     void setActiveKeywordSegmentation(bool active);
     void addFileLabel(QString &label);
+    void setOnlySearchFile(bool onlySearchFile);
+    void setOnlySearchDir(bool onlySearchDir);
     //以上方法插件请不要调用
 
     //以下方法插件可以调用
@@ -37,9 +40,12 @@ public:
     QStringList getKeyword();
     bool isKeywordSegmentationActived();
     QStringList getFileLabel();
+    bool isSearchFileOnly();
+    bool isSearchDirOnly();
 private:
-    SearchControllerPrivate *d;
-    SearchController *m_parent;
+    std::shared_ptr<SearchController> m_parent = nullptr;
+    SearchControllerPrivate *d = nullptr;
+
 };
 }
 

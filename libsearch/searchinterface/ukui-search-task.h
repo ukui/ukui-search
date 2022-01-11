@@ -17,6 +17,8 @@ public:
     void setRecurse(bool recurse = true);
     void addKeyword(QString &keyword);
     void addFileLabel(QString &label);
+    void setOnlySearchFile(bool onlySearchFile);
+    void setOnlySearchDir(bool onlySearchDir);
     void setSearchOnlineApps(bool searchOnlineApps);
     size_t startSearch(SearchType searchtype, QString customSearchTYpe = QString());
     void stop();
