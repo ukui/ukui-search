@@ -20,7 +20,7 @@ public:
     void setOnlySearchFile(bool onlySearchFile);
     void setOnlySearchDir(bool onlySearchDir);
     void setSearchOnlineApps(bool searchOnlineApps);
-    size_t startSearch(SearchType searchtype, QString customSearchTYpe = QString());
+    size_t startSearch(SearchType searchtype, QString customSearchType = QString());
     void stop();
 
 Q_SIGNALS:

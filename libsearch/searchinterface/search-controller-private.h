@@ -37,7 +37,9 @@ public:
 
 private:
     void copyData();
+    //TODO: 这里是否可以改为字节对齐的写法？
     DataQueue<ResultItem>* m_dataQueue = nullptr ;
+    std::shared_ptr<DataQueue<ResultItem>> m_sharedDataueue = nullptr;
     size_t m_searchId = 0;
     QMutex m_searchIdMutex;
     SearchController *q = nullptr;

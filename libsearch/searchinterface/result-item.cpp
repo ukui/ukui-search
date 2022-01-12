@@ -33,7 +33,7 @@ ResultItem::ResultItem(const QString itemKey) : d(new ResultItemPrivate(this))
     d->setItemKey(itemKey);
 }
 
-ResultItem::ResultItem(const size_t searchId, const QString itemKey)
+ResultItem::ResultItem(const size_t searchId, const QString itemKey) : d(new ResultItemPrivate(this))
 {
     d->setSearchId(searchId);
     d->setItemKey(itemKey);

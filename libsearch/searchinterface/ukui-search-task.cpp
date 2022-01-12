@@ -127,9 +127,9 @@ void UkuiSearchTask::setSearchOnlineApps(bool searchOnlineApps)
     d->setSearchOnlineApps(searchOnlineApps);
 }
 
-size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchTYpe)
+size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchType)
 {
-    return d->startSearch(searchtype, customSearchTYpe);
+    return d->startSearch(searchtype, customSearchType);
 }
 
 void UkuiSearchTask::stop()

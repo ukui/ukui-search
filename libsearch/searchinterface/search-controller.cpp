@@ -4,8 +4,10 @@
 #include <QDebug>
 using namespace UkuiSearch;
 SearchControllerPrivate::SearchControllerPrivate(SearchController *parent)
-    : q(parent), m_formerController(q->m_parent)
+    : q(parent),
+      m_formerController(q->m_parent) //如果构造参数里包含父节点智能指针，则子节点带有一个智能指针指向父节点
 {
+    copyData();
 }
 
 SearchControllerPrivate::~SearchControllerPrivate()
@@ -24,6 +26,7 @@ DataQueue<ResultItem> *SearchControllerPrivate::refreshDataqueue()
 {
     if(!m_dataQueue) {
         m_dataQueue = new DataQueue<ResultItem>;
+        m_sharedDataueue = std::shared_ptr<DataQueue<ResultItem>>(m_dataQueue);
         return m_dataQueue;
     }
     m_dataQueue->clear();
@@ -34,6 +37,7 @@ DataQueue<ResultItem> *SearchControllerPrivate::initDataQueue()
 {
     if(!m_dataQueue) {
         m_dataQueue = new DataQueue<ResultItem>;
+        m_sharedDataueue = std::shared_ptr<DataQueue<ResultItem>>(m_dataQueue);
         return m_dataQueue;
     }
     return m_dataQueue;
@@ -81,7 +85,7 @@ size_t SearchControllerPrivate::getCurrentSearchId()
 
 DataQueue<ResultItem> *SearchControllerPrivate::getDataQueue()
 {
-    return m_dataQueue;
+    return m_sharedDataueue.get();
 }
 
 bool SearchControllerPrivate::beginSearchIdCheck(size_t searchId)
@@ -146,9 +150,11 @@ bool SearchControllerPrivate::isSearchDirOnly()
 
 void SearchControllerPrivate::copyData()
 {
+
     if(m_formerController.get()) {
         m_searchId = m_formerController.get()->getCurrentSearchId();
-        m_dataQueue = m_formerController.get()->getDataQueue();
+        //所有子节点都有一个指向根节点的队列的智能指针
+        m_sharedDataueue = m_formerController.get()->d->m_sharedDataueue;
         m_keywords = m_formerController.get()->getKeyword();
         m_searchDirs = m_formerController.get()->getSearchDir();
         m_FileLabels = m_formerController.get()->getFileLabel();

@@ -9,6 +9,11 @@ namespace UkuiSearch {
 class UkuiSearchTask;
 class ResultItem;
 class SearchControllerPrivate;
+/*
+ *搜索控制，用于传递搜索条件，搜索唯一ID，以及管理队列等。
+ *为树形结构，所有子节点含有智能指针指向父节点。
+ *只要有插件还在使用资源，其对应的子节点以及通向根节点上所有的实例就不会被释放，析构时，从下往上由智能指针自动析构
+ */
 class SearchController
 {
     friend class SearchControllerPrivate;

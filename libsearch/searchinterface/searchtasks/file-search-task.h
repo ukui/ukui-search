@@ -8,6 +8,9 @@
 #include "search-controller.h"
 #include "result-item.h"
 namespace UkuiSearch {
+/*
+ * 这里只写了大概框架，具体逻辑未实现，可以当成伪代码参考。
+*/
 class FileSearchTask : public SearchTaskPluginIface
 {
     Q_OBJECT
