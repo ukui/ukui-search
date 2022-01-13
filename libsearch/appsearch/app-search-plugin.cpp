@@ -100,6 +100,7 @@ QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
 {
     m_currentActionKey = ri.actionKey;
     m_iconLabel->setPixmap(ri.icon.pixmap(240, 240));
+
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
@@ -210,20 +211,36 @@ void AppSearchPlugin::initDetailPage()
 //    return nullptr;
 //}
 
+//bool AppSearchPlugin::launch(const QString &path)
+//{
+//    XdgDesktopFile desktopfile;
+//    desktopfile.load(path);
+//    m_disabledAppSetting->sync();
+//    m_disabledAppSetting->beginGroup("application");
+//    if (!m_disabledAppSetting->value(desktopfile.value("Exec").toString(), true).toBool()) {
+//        qDebug() << path << "has been disabled.";
+//        m_disabledAppSetting->endGroup();
+//        return false;
+//    }
+//    m_disabledAppSetting->endGroup();
+//    return desktopfile.startDetached();
+//}
+
 bool AppSearchPlugin::launch(const QString &path)
 {
     XdgDesktopFile desktopfile;
     desktopfile.load(path);
     m_disabledAppSetting->sync();
     m_disabledAppSetting->beginGroup("application");
-    if (!m_disabledAppSetting->value(desktopfile.value("Exec").toString(), true).toBool()) {
+    bool flag = m_disabledAppSetting->value(desktopfile.value("Exec").toString(), true).toBool();
+    m_disabledAppSetting->endGroup();
+    if (!flag) {
         qDebug() << path << "has been disabled.";
-        m_disabledAppSetting->endGroup();
         return false;
     }
-    m_disabledAppSetting->endGroup();
     return desktopfile.startDetached();
 }
+
 bool AppSearchPlugin::addPanelShortcut(const QString& path) {
     QDBusInterface iface("com.ukui.panel.desktop",
                          "/",
