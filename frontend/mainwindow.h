@@ -46,6 +46,7 @@
 #include <QTimer>
 #include <QtDBus>
 #include <QMouseEvent>
+#include <QPixmap>
 
 #include "index-generator.h"
 #include "libsearch.h"
@@ -128,6 +129,7 @@ private:
     QGSettings * m_search_gsettings = nullptr;
     SearchMethodManager m_searchMethodManager;
     QDesktopWidget *m_desktopWidget;
+    QPixmap m_backgroundPixmap;
 };
 }
 
