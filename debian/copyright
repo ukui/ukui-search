@@ -4,9 +4,25 @@ Files: *
 Copyright: 2020, KylinSoft Co., Ltd.
 License: GPL-3+
 
-Files: libchinese-segmentation/cppjieba/limonp/Md5.hpp
-Copyright: 1991, 1992, RSA Data Security, Inc. Created 1991
-License: NTP
+Files: libchinese-segmentation/*
+Copyright: 2020-2022, KylinSoft Co., Ltd.
+License: GPL-3+
+
+Files: libchinese-segmentation/dict/*
+Copyright: 2020, KylinSoft Co., Ltd.
+License: GPL-3+
+
+Files: libsearch/*
+Copyright: 2020-2022, KylinSoft Co., Ltd.
+License: GPL-3+
+
+Files: search-ukcc-plugin/*
+Copyright: 2020-2022, KylinSoft Co., Ltd.
+License: GPL-3+
+
+Files: src/*
+Copyright: 2020-2022, KylinSoft Co., Ltd.
+License: GPL-3+
 
 Files: src/singleapplication/*
 Copyright: 2013, Digia Plc and/or its subsidiary(-ies)
