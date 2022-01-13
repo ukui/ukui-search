@@ -20,7 +20,6 @@
 #include "app-match.h"
 #include <glib.h>
 #include <qt5xdg/XdgIcon>
-#include <qt5xdg/XdgDesktopFile>
 #include "file-utils.h"
 #include "app-search-plugin.h"
 #define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
@@ -52,6 +51,8 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
     m_interFace->setTimeout(200);
+    m_disabledAppSetting = new QSettings(QDir::homePath() + "/.cache/ukui-menu/ukui-menu.ini", QSettings::IniFormat, this);
+    m_disabledAppSetting->setIniCodec(QTextCodec::codecForName("utf-8"));
     qDebug() << "AppMatch init finished.";
 }
 
@@ -67,7 +68,10 @@ AppMatch::~AppMatch() {
 }
 
 void AppMatch::startMatchApp(QString input, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
+    m_disabledAppSetting->beginGroup("application");
+    m_disabledAppSetting->sync();
     appNameMatch(input, uniqueSymbol, searchResult);
+    m_disabledAppSetting->endGroup();
     slotDBusCallFinished(input, uniqueSymbol, searchResult);
     qDebug() << "App match finished!";
 }
@@ -89,7 +93,7 @@ void AppMatch::getAllDesktopFilePath(QString path) {
     if (list.size() < 1) {
         return;
     }
-    XdgDesktopFile desktopfile;
+    XdgDesktopFile desktopFile;
     int i = 0;
     while(i < list.size()) {
         QFileInfo fileInfo = list.at(i);
@@ -112,27 +116,27 @@ void AppMatch::getAllDesktopFilePath(QString path) {
                 continue;
             }
 
-            desktopfile.load(filePathStr);
-            if (desktopfile.value("NoDisplay").toString().contains("true") || desktopfile.value("NotShowIn").toString().contains("UKUI")) {
+            desktopFile.load(filePathStr);
+            if (desktopFile.value("NoDisplay").toString().contains("true") || desktopFile.value("NotShowIn").toString().contains("UKUI")) {
                 ++i;
                 continue;
             }
 
-            QString name = desktopfile.localizedValue("Name").toString();
+            QString name = desktopFile.localizedValue("Name").toString();
             if (name.isEmpty()) {
                 ++i;
                 qDebug() << filePathStr << "name!!";
                 continue;
             }
 
-            QString icon = desktopfile.iconName();
+            QString icon = desktopFile.iconName();
             NameString appname;
             QStringList appInfolist;
 
             appname.app_name = name;
             appInfolist << filePathStr << icon;
-            appInfolist.append(desktopfile.value("Name").toString());
-            appInfolist.append(desktopfile.value("Name[zh_CN]").toString());
+            appInfolist.append(desktopFile.value("Name").toString());
+            appInfolist.append(desktopFile.value("Name[zh_CN]").toString());
             m_installAppMap.insert(appname, appInfolist);
             ++i;
         }
@@ -274,8 +278,11 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, siz
 
 void AppMatch::creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<NameString, QStringList> &iter, bool isInstalled)
 {
-//    ri.icon = QIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
+    m_desktopFile.load(iter.value().at(0));
     ri.icon = XdgIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
+    if (!m_disabledAppSetting->value(m_desktopFile.value("Exec").toString(), true).toBool()) {
+        ri.icon = QIcon(ri.icon.pixmap(240, 240, QIcon::Disabled));
+    }
     ri.name = iter.key().app_name;
     ri.actionKey = iter.value().at(0);
     ri.type = 0; //0 means installed apps.

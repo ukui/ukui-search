@@ -28,6 +28,7 @@
 #include <QDBusReply>
 #include <QtDBus>
 #include <QThread>
+#include <qt5xdg/XdgDesktopFile>
 #include "search-plugin-iface.h"
 namespace Zeeker {
 class NameString {
@@ -78,6 +79,8 @@ private:
     QDBusInterface *m_interFace = nullptr;
     QFileSystemWatcher *m_watchAppDir = nullptr;
     QMap<NameString, QStringList> m_installAppMap;
+    XdgDesktopFile m_desktopFile;
+    QSettings *m_disabledAppSetting;
 
     QStringList m_ExcludedDesktopfiles = {
         "/usr/share/applications/software-properties-livepatch.desktop",
