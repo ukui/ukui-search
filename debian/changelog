@@ -1,3 +1,10 @@
+ukui-search (3.1-1.1.3+0113t) v101; urgency=medium
+
+  *BUG:#99739【全局搜索】关掉特效模式 搜索显示全透明
+  *BUG:#48091 禁用app图标置灰
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 13 Jan 2022 17:13:34 +0800
+
 ukui-search (3.1-1.1.2+1229t) v101; urgency=medium
 
   *BUG:#99242【全局搜索】【控制面板】通过全局搜索只能搜到锁屏模块的“本地壁纸”，而搜不到背景模块的“本地壁纸”
