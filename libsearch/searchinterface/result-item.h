@@ -8,7 +8,10 @@ class ResultItemPrivate;
 class ResultItem
 {
 public:
-    explicit ResultItem(const QString &itemKey);
+    explicit ResultItem();
+    explicit ResultItem(const size_t searchId);
+    explicit ResultItem(const QString itemKey);
+    explicit ResultItem(const size_t searchId, const QString itemKey);
     ~ResultItem();
 private:
     ResultItemPrivate *d;

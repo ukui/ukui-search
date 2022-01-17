@@ -20,6 +20,7 @@ Q_SIGNALS:
 private:
     explicit SearchTaskPluginManager(QObject *parent = nullptr);
 
+    //这里初衷是把内外部插件分开管理，内部插件可以增加枚举值，外部插件似乎只能用编写者自定义的字符串区分？
     QHash<int, SearchTaskPluginIface*> m_buildinPlugin;
     QHash<QString, SearchTaskPluginIface*> m_loadedPlugin;
 

@@ -7,7 +7,7 @@ UkuiSearchTaskPrivate::UkuiSearchTaskPrivate(UkuiSearchTask *parent)
     : QObject(parent),
       q(parent)
 {
-    m_searchCotroller = new SearchController();
+    m_searchCotroller = std::shared_ptr<SearchController>(new SearchController());
 }
 
 UkuiSearchTaskPrivate::~UkuiSearchTaskPrivate()
@@ -38,6 +38,16 @@ void UkuiSearchTaskPrivate::addKeyword(QString &keyword)
 void UkuiSearchTaskPrivate::addFileLabel(QString &label)
 {
     m_searchCotroller->addFileLabel(label);
+}
+
+void UkuiSearchTaskPrivate::setOnlySearchFile(bool onlySearchFile)
+{
+    m_searchCotroller->setOnlySearchFile(onlySearchFile);
+}
+
+void UkuiSearchTaskPrivate::setOnlySearchDir(bool onlySearchDir)
+{
+    m_searchCotroller->setOnlySearchDir(onlySearchDir);
 }
 
 void UkuiSearchTaskPrivate::setSearchOnlineApps(bool searchOnlineApps)
@@ -79,7 +89,7 @@ UkuiSearchTask::~UkuiSearchTask()
 
 DataQueue<ResultItem> *UkuiSearchTask::init()
 {
-    d->init();
+    return d->init();
 }
 
 void UkuiSearchTask::addSearchDir(QString &path)
@@ -102,14 +112,24 @@ void UkuiSearchTask::addFileLabel(QString &label)
     d->addFileLabel(label);
 }
 
+void UkuiSearchTask::setOnlySearchFile(bool onlySearchFile)
+{
+    d->setOnlySearchFile(onlySearchFile);
+}
+
+void UkuiSearchTask::setOnlySearchDir(bool onlySearchDir)
+{
+    d->setOnlySearchDir(onlySearchDir);
+}
+
 void UkuiSearchTask::setSearchOnlineApps(bool searchOnlineApps)
 {
     d->setSearchOnlineApps(searchOnlineApps);
 }
 
-size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchTYpe)
+size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchType)
 {
-    return d->startSearch(searchtype, customSearchTYpe);
+    return d->startSearch(searchtype, customSearchType);
 }
 
 void UkuiSearchTask::stop()
