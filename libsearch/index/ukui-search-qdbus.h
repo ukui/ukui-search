@@ -28,7 +28,7 @@ public:
     UkuiSearchQDBus();
     ~UkuiSearchQDBus();
     void setInotifyMaxUserWatches();
-    int addInotifyUserInstances(int addNum);
+    void addInotifyUserInstances(int addNum);
 private:
     QDBusInterface* tmpSystemQDBusInterface;
 };
