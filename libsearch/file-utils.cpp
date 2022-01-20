@@ -211,7 +211,6 @@ void FileUtils::loadHanziTable(const QString &fileName) {
         QString content = QString::fromUtf8(file.readLine());
         FileUtils::map_chinese2pinyin[content.split(" ").last().trimmed()] = content.split(" ").first().split(",");
     }
-
     file.close();
 
     return;

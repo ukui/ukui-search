@@ -21,25 +21,18 @@
  *
  */
 
-#include "mainwindow.h"
+
 #include <QDesktopWidget>
 #include <QFile>
-#include <QScreen>
-#include <QTranslator>
-#include <QLocale>
+#include <QDir>
 #include <syslog.h>
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include <ukui-log4qt.h>
 #endif
 #include <QObject>
 #include <QApplication>
-#include "qt-single-application.h"
-#include "qt-local-peer.h"
-#include "libsearch.h"
-#include "global-settings.h"
-#include "ukui-search-dbus-service.h"
-#include "plugin-manager.h"
-#include <X11/Xlib.h>
+#include <QX11Info>
+#include "ukui-search-gui.h"
 
 using namespace UkuiSearch;
 
@@ -88,42 +81,6 @@ void messageOutput(QtMsgType type, const QMessageLogContext &context, const QStr
         fclose(log_file);
 }
 
-void centerToScreen(QWidget* widget) {
-    if(!widget)
-        return;
-    QDesktopWidget* m = QApplication::desktop();
-    QRect desk_rect = m->screenGeometry(m->screenNumber(QCursor::pos()));
-    int desk_x = desk_rect.width();
-    int desk_y = desk_rect.height();
-    int x = widget->width();
-    int y = widget->height();
-    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 2 - y / 2 + desk_rect.top());
-}
-/*
-void searchMethod(FileUtils::SearchMethod sm){
-    qWarning() << "searchMethod start: " << static_cast<int>(sm);
-    if (FileUtils::SearchMethod::INDEXSEARCH == sm || FileUtils::SearchMethod::DIRECTSEARCH == sm) {
-        FileUtils::searchMethod = sm;
-    } else {
-        printf("enum class error!!!\n");
-        qWarning("enum class error!!!\n");
-    }
-    if (FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::indexStatus) {
-        qWarning() << "start first index";
-        FirstIndex fi("/home/zhangzihao/Desktop");
-        fi.start();
-        qWarning() << "start inotify index";
-//        InotifyIndex ii("/home");
-//        ii.start();
-        InotifyIndex* ii = InotifyIndex::getInstance("/home");
-        if (!ii->isRunning()) {
-            ii->start();
-        }
-        qDebug()<<"Search method has been set to INDEXSEARCH";
-    }
-    qWarning() << "searchMethod end: " << static_cast<int>(FileUtils::searchMethod);
-}
-*/
 int main(int argc, char *argv[]) {
 //v101日志模块
 //#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
@@ -163,9 +120,6 @@ int main(int argc, char *argv[]) {
 
     // Register meta type
     qDebug() << "ukui-search main start";
-    qRegisterMetaType<QPair<QString, QStringList>>("QPair<QString,QStringList>");
-    qRegisterMetaType<Document>("Document");
-
     // If qt version bigger than 5.12, enable high dpi scaling and use high dpi pixmaps?
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -174,73 +128,9 @@ int main(int argc, char *argv[]) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
-
-    // Make sure only one ukui-search is running.
-    QtSingleApplication app("ukui-search", argc, argv);
-    app.setQuitOnLastWindowClosed(false);
-
-    if(app.isRunning()) {
-        app.sendMessage(QApplication::arguments().length() > 1 ? QApplication::arguments().at(1) : app.applicationFilePath());
-        qDebug() << QObject::tr("ukui-search is already running!");
-        return EXIT_SUCCESS;
-    }/*else {
-        QCommandLineParser parser;
-        QCommandLineOption debugOption({"d", "debug"}, QObject::tr("Display debug information"));
-        QCommandLineOption showsearch({"s", "show"}, QObject::tr("show search widget"));
-        parser.addOptions({debugOption, showsearch});
-        parser.process(app);
-    }*/
-
-    UkuiSearchQDBus usQDBus;
-    usQDBus.setInotifyMaxUserWatches();
-
-    // load chinese character and pinyin file to a Map
-    FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
-
-    // Load translations
-    QTranslator translator;
-    try {
-        if(! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw - 1;
-        app.installTranslator(&translator);
-    } catch(...) {
-        qDebug() << "Load translations file" << QLocale() << "failed!";
-    }
-
-    QTranslator qt_translator;
-    try {
-        if(! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
-        app.installTranslator(&qt_translator);
-    } catch(...) {
-        qDebug() << "Load translations file" << QLocale() << "failed!";
-    }
-
-    QTranslator lib_translator;
-    try {
-        if(! lib_translator.load("/usr/share/ukui-search/translations/libukui-search_" + QLocale::system().name())) throw - 1;
-        app.installTranslator(&lib_translator);
-    } catch(...) {
-        qDebug() << "Load translations file" << QLocale() << "failed!";
-    }
-
-    PluginManager::getInstance();
-    //set main window to the center of screen
-    MainWindow *w = new MainWindow;
-    UkuiSearchDbusServices dbusService(w);
-    qApp->setWindowIcon(QIcon::fromTheme("kylin-search"));
-
-    app.setActivationWindow(w);
-
-    // Processing startup parameters
-    if(QString::compare(QString("-s"), QString(QLatin1String(argv[1]))) == 0) {
-        centerToScreen(w);
-        w->show();
-    }
-
-    QObject::connect(&app, &QtSingleApplication::messageReceived, w, &MainWindow::bootOptionsFilter);
-
-    // NEW_TODO
-    // Set threads which in global thread pool expiry time in 5ms, some prolems here
-    QThreadPool::globalInstance()->setExpiryTimeout(5);
+    UkuiSearchGui app(argc, argv, QString("ukui-search-gui-%1").arg(QX11Info::appScreen()));
+    if (app.isRunning())
+        return 0;
 
     return app.exec();
 }

@@ -33,7 +33,6 @@
 #include <KWindowEffects>
 #include "kwindowsystem.h"
 #endif
-#include "qt-single-application.h"
 #include "global-settings.h"
 #include <QtX11Extras/QX11Info>
 

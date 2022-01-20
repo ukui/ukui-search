@@ -13,6 +13,8 @@ UkuiSearchService::UkuiSearchService(int &argc, char *argv[], const QString &app
         connect(this, &QtSingleApplication::messageReceived, [=](QString msg) {
             this->parseCmd(msg, true);
         });
+
+        FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
         initGsettings();
     }
 

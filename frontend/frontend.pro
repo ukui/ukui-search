@@ -2,7 +2,8 @@ QT       += core gui dbus  KWindowSystem xml x11extras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-VERSION = 0.0.1
+VERSION = 1.0.0
+DEFINES += VERSION='\\"$${VERSION}\\"'
 TARGET = ukui-search
 TEMPLATE = app
 
@@ -24,19 +25,21 @@ include(../libsearch/libukui-search-headers.pri)
 include(control/control.pri)
 include(model/model.pri)
 include(xatom/xatom.pri)
-include(singleapplication/qt-single-application.pri)
+include(../3rd-parties/qtsingleapplication/qtsingleapplication.pri)
 include(view/view.pri)
 
 
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    ukui-search-dbus-service.cpp
+    ukui-search-dbus-service.cpp \
+    ukui-search-gui.cpp
 
 
 HEADERS += \
     mainwindow.h \
-    ukui-search-dbus-service.h
+    ukui-search-dbus-service.h \
+    ukui-search-gui.h
 
 # Default rules for deployment.
 
