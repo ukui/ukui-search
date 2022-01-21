@@ -41,7 +41,7 @@ include(dirwatcher/dirwatcher.pri)
 include(mailsearch/mailsearch.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
-LIBS += -lxapian -lquazip5 -luchardet -lQt5Xdg#-L/usr/local/lib/libjemalloc -ljemalloc
+LIBS += -lxapian -lquazip5 -luchardet -lQt5Xdg -ltesseract #-L/usr/local/lib/libjemalloc -ljemalloc
 
 SOURCES += \
     file-utils.cpp \

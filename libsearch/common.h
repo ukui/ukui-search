@@ -27,5 +27,11 @@ static const QMap<QString, bool> targetFileTypeMap = {
     std::map<QString, bool>::value_type("et", true),
     std::map<QString, bool>::value_type("pdf", true)
 };
+
+static const QMap<QString, bool> targetPhotographTypeMap = {
+    std::map<QString, bool>::value_type("png", true),
+    std::map<QString, bool>::value_type("jpg", true),
+    std::map<QString, bool>::value_type("jpeg", true)//TODO 待完善,后续改为配置文件
+};
 //TODO Put things that needed to be put here here.
 #endif // COMMON_H
