@@ -538,8 +538,22 @@ bool IndexGenerator::updateIndex(QVector<PendingFile> *pendingFiles)
     if(!fileContentIndexInfo->isEmpty()) {
         creatAllIndex(fileContentIndexInfo);
     }
-    delete fileIndexInfo;
-    delete fileContentIndexInfo;
+    if (fileIndexInfo){
+        delete fileIndexInfo;
+        fileIndexInfo = nullptr;
+    }
+    if (fileContentIndexInfo){
+        delete fileContentIndexInfo;
+        fileContentIndexInfo = nullptr;
+    }
+    if (deleteList) {
+        delete deleteList;
+        deleteList = nullptr;
+    }
+    if (contentDeleteList) {
+        delete contentDeleteList;
+        contentDeleteList = nullptr;
+    }
     return true;
 }
 
