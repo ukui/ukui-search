@@ -18,16 +18,18 @@
  *
  */
 #include "search-manager.h"
+
 using namespace Zeeker;
 size_t SearchManager::uniqueSymbolFile = 0;
 size_t SearchManager::uniqueSymbolDir = 0;
 size_t SearchManager::uniqueSymbolContent = 0;
+size_t SearchManager::uniqueSymbolOcr = 0;
 QMutex  SearchManager::m_mutexFile;
 QMutex  SearchManager::m_mutexDir;
 QMutex  SearchManager::m_mutexContent;
+QMutex  SearchManager::m_mutexOcr;
+
 SearchManager::SearchManager(QObject *parent) : QObject(parent) {
-    m_pool.setMaxThreadCount(3);
-    m_pool.setExpiryTimeout(1000);
 }
 
 SearchManager::~SearchManager() {
@@ -41,39 +43,6 @@ int SearchManager::getCurrentIndexCount() {
         qWarning() << QString::fromStdString(e.get_description());
         return 0;
     }
-}
-
-void SearchManager::onKeywordSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir,
-                                    QQueue<QPair<QString, QStringList>> *searchResultContent) {
-//    m_mutexFile.lock();
-//    ++uniqueSymbolFile;
-//    m_mutexFile.unlock();
-//    m_mutexDir.lock();
-//    ++uniqueSymbolDir;
-//    m_mutexDir.unlock();
-//    m_mutexContent.lock();
-//    ++uniqueSymbolContent;
-//    m_mutexContent.unlock();
-//    if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
-//        DirectSearch *directSearch;
-//        directSearch = new DirectSearch(keyword, searchResultFile, searchResultDir, uniqueSymbolFile);
-//        m_pool.start(directSearch);
-//    } else if(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
-//        FileSearch *filesearch;
-//        filesearch = new FileSearch(searchResultFile, uniqueSymbolFile, keyword, "0", 1, 0, 5);
-//        m_pool.start(filesearch);
-
-//        FileSearch *dirsearch;
-//        dirsearch = new FileSearch(searchResultDir, uniqueSymbolDir, keyword, "1", 1, 0, 5);
-//        m_pool.start(dirsearch);
-
-//        FileContentSearch *contentSearch;
-//        contentSearch = new FileContentSearch(searchResultContent, uniqueSymbolContent, keyword, 0, 5);
-//        m_pool.start(contentSearch);
-//    } else {
-//        qWarning() << "Unknown search method! FileUtils::searchMethod: " << static_cast<int>(FileUtils::searchMethod);
-//    }
-    return;
 }
 
 bool SearchManager::isBlocked(QString &path) {
@@ -101,6 +70,7 @@ bool SearchManager::creatResultInfo(SearchPluginIface::ResultInfo &ri, QString p
     ri.type = 0;
     return true;
 }
+
 FileSearch::FileSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol, QString keyword, QString value, unsigned slot, int begin, int num) {
     this->setAutoDelete(true);
     m_search_result = searchResult;
@@ -428,6 +398,121 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
     return 0;
 }
 
+OcrSearch::OcrSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol, QString keyword, int begin, int num) {
+    this->setAutoDelete(true);
+    m_search_result = searchResult;
+    m_uniqueSymbol = uniqueSymbol;
+    m_keyword = keyword;
+    m_begin = begin;
+    m_num = num;
+    m_matchDecider = new OcrMatchDecider();
+}
+
+OcrSearch::~OcrSearch() {
+    m_search_result = nullptr;
+    if(m_matchDecider)
+        delete m_matchDecider;
+}
+
+void OcrSearch::run() {
+    SearchManager::m_mutexOcr.lock();
+    if(!m_search_result->isEmpty()) {
+        m_search_result->clear();
+    }
+    SearchManager::m_mutexOcr.unlock();
+
+    //这里同文件搜索，待优化。
+    m_begin = 0;
+    m_num = 100;
+    int resultCount = 1;
+    int totalCount = 0;
+    while(resultCount > 0) {
+        resultCount = keywordSearchOcr();
+        m_begin += m_num;
+        totalCount += resultCount;
+    }
+    qDebug() << "Total count:" << totalCount;
+    return;
+}
+
+int OcrSearch::keywordSearchOcr() {
+    try {
+        qDebug() << "--keywordSearch OCR search start--";
+        Xapian::Database db(OCR_INDEX_PATH);
+        Xapian::Enquire enquire(db);
+        Xapian::QueryParser qp;
+        qp.set_default_op(Xapian::Query::OP_AND);
+        qp.set_database(db);
+        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
+        //Creat a query
+        std::string words;
+        for(int i = 0; i < sKeyWord.size(); i++) {
+            words.append(sKeyWord.at(i).word).append(" ");
+        }
+        std::vector<Xapian::Query> v;
+        for(int i=0; i<sKeyWord.size(); i++) {
+            v.push_back(Xapian::Query(sKeyWord.at(i).word));
+            qDebug() << QString::fromStdString(sKeyWord.at(i).word);
+        }
+        Xapian::Query query = Xapian::Query(Xapian::Query::OP_AND, v.begin(), v.end());
+
+        qDebug() << "keywordSearch OCR:" << QString::fromStdString(query.get_description());
+
+        enquire.set_query(query);
+
+        Xapian::MSet result = enquire.get_mset(m_begin, m_num, 0, m_matchDecider);
+        int resultCount = result.size();
+        if(result.size() == 0) {
+            return 0;
+        }
+        qDebug() << "keywordSearch OCR results count=" << resultCount;
+
+        if(getResult(result, words) == -1) {
+            return -1;
+        }
+
+        qDebug() << "--keywordSearch OCR search finish--";
+        return resultCount;
+    } catch(const Xapian::Error &e) {
+        qWarning() << QString::fromStdString(e.get_description());
+        qDebug() << "--keywordSearch OCR search finish--";
+        return -1;
+    }
+}
+
+int OcrSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
+    for(auto it = result.begin(); it != result.end(); ++it) {
+        Xapian::Document doc = it.get_document();
+        std::string data = doc.get_data();
+        QString path = QString::fromStdString(doc.get_value(1));
+
+        SearchPluginIface::ResultInfo ri;
+        if(!SearchManager::creatResultInfo(ri, path)) {
+            continue;
+        }
+        // Construct snippets containing keyword.
+        auto term = doc.termlist_begin();
+        std::string wordTobeFound = QString::fromStdString(keyWord).section(" ", 0, 0).toStdString();
+        term.skip_to(wordTobeFound);
+        //fix me: make a snippet without cut cjk char.
+        auto pos = term.positionlist_begin();
+        QString snippet = FileUtils::chineseSubString(data,*pos,120);
+
+        ri.description.prepend(SearchPluginIface::DescriptionInfo{"",snippet});
+        QString().swap(snippet);
+        std::string().swap(data);
+        SearchManager::m_mutexOcr.lock();
+        if(m_uniqueSymbol == SearchManager::uniqueSymbolOcr) {
+            m_search_result->enqueue(ri);
+            SearchManager::m_mutexOcr.unlock();
+        } else {
+            SearchManager::m_mutexOcr.unlock();
+            return -1;
+        }
+    }
+    return 0;
+}
+
 DirectSearch::DirectSearch(QString keyword, DataQueue<SearchPluginIface::ResultInfo> *searchResult, QString value, size_t uniqueSymbol) {
     this->setAutoDelete(true);
     m_keyword = keyword;
@@ -514,6 +599,15 @@ bool FileMatchDecider::operator ()(const Xapian::Document &doc) const
 }
 
 bool FileContentMatchDecider::operator ()(const Xapian::Document &doc) const
+{
+    QString path = QString::fromStdString(doc.get_value(1));
+    if(SearchManager::isBlocked(path)) {
+        return false;
+    }
+    return true;
+}
+
+bool OcrMatchDecider::operator ()(const Xapian::Document &doc) const
 {
     QString path = QString::fromStdString(doc.get_value(1));
     if(SearchManager::isBlocked(path)) {

@@ -20,6 +20,7 @@
 #include "file-reader.h"
 #include "file-utils.h"
 #include "binary-parser.h"
+#include "ocrobject.h"
 using namespace Zeeker;
 FileReader::FileReader(QObject *parent) : QObject(parent) {
 
@@ -41,6 +42,8 @@ void FileReader::getTextContent(QString path, QString &textContent) {
         searchdata.RunParser(path, textContent);
     } else if (strsfx == "pdf") {
         FileUtils::getPdfTextContent(path, textContent);
+    } else if (strsfx == "png" || strsfx == "jpg" || strsfx == "jpeg"){
+        OcrObject::getInstance()->getTxtContent(path, textContent);;
     }
     return;
 }

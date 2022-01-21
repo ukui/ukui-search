@@ -9,6 +9,7 @@ HEADERS += \
     $$PWD/index-generator.h \
     $$PWD/index-status-recorder.h \
     $$PWD/inotify-watch.h \
+    $$PWD/ocrobject.h \
     $$PWD/pending-file-queue.h \
     $$PWD/pending-file.h \
     $$PWD/search-manager.h \
@@ -25,6 +26,7 @@ SOURCES += \
     $$PWD/index-generator.cpp \
     $$PWD/index-status-recorder.cpp \
     $$PWD/inotify-watch.cpp \
+    $$PWD/ocrobject.cpp \
     $$PWD/pending-file-queue.cpp \
     $$PWD/pending-file.cpp \
     $$PWD/search-manager.cpp \

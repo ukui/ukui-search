@@ -60,7 +60,8 @@ private:
 //    QQueue<QString>* q_content_index;
     //修改QQueue存储数据为QPair<QString,qint64>，增加存储文件大小数据便于处理时统计--jxx20210519
     QQueue<QPair<QString,qint64>>* q_content_index;
-
+    //新增ocr队列存储ocr可识别处理的图片信息及大小；
+    QQueue<QPair<QString,qint64>>* m_ocr_index;
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;
 };
