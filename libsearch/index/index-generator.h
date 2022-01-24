@@ -45,6 +45,7 @@ namespace Zeeker {
 class IndexGenerator : public QObject {
     friend class ConstructDocumentForPath;
     friend class ConstructDocumentForContent;
+    friend class ConstructDocumentForOcr;
     Q_OBJECT
 public:
     static IndexGenerator *getInstance(bool rebuild = false, QObject *parent = nullptr);
@@ -61,8 +62,10 @@ Q_SIGNALS:
 public Q_SLOTS:
     bool creatAllIndex(QQueue<QVector<QString>> *messageList);
     bool creatAllIndex(QQueue<QString> *messageList);
+    bool creatOcrIndex(QQueue<QString> *messageList);
     bool deleteAllIndex(QStringList *pathlist);
     bool deleteContentIndex(QStringList *pathlist);
+    bool deleteOcrIndex(QStringList *pathlist);
     bool updateIndex(QVector<PendingFile> *pendingFiles);
 
 private:
@@ -72,6 +75,8 @@ private:
     void HandlePathList(QQueue<QVector<QString> > *messageList);
     //For file content index
     void HandlePathList(QQueue<QString> *messageList);
+    //For ocr index
+    void HandleOcrPathList(QQueue<QString> *messageList);
     static Document GenerateDocument(const QVector<QString> &list);
     static Document GenerateContentDocument(const QString &list);
     //add one data in database
@@ -82,10 +87,13 @@ private:
     static QMutex  g_mutexDocListForPath;
     static QVector<Document> g_docListForContent;
     static QMutex  g_mutexDocListForContent;
+    static QVector<Document> g_docListForOcr;
+    static QMutex  g_mutexDocListForOcr;
     QMap<QString, QStringList> m_index_map;
     QString m_index_data_path;
     Xapian::WritableDatabase* m_database_path;
     Xapian::WritableDatabase* m_database_content;
+    Xapian::WritableDatabase* m_database_ocr;
     std::string m_docstr;
     std::string m_index_text_str;
     Xapian::TermGenerator m_indexer;

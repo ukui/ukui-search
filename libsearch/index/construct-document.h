@@ -48,6 +48,16 @@ protected:
 private:
     QString m_path;
 };
+
+class ConstructDocumentForOcr : public QRunnable {
+public:
+    explicit ConstructDocumentForOcr(QString path);
+    ~ConstructDocumentForOcr() = default;
+protected:
+    void run();
+private:
+    QString m_path;
+};
 }
 
 #endif // CONSTRUCTDOCUMENT_H

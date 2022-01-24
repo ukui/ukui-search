@@ -45,15 +45,19 @@
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
+#define OCR_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/ocr_index_data").toStdString()
 namespace Zeeker {
 class FileMatchDecider;
 class FileContentMatchDecider;
+class OcrMatchDecider;
 class LIBSEARCH_EXPORT SearchManager : public QObject {
     friend class FileSearch;
     friend class FileContentSearch;
+    friend class OcrSearch;
     friend class DirectSearch;
     friend class FileMatchDecider;
     friend class FileContentMatchDecider;
+    friend class OcrMatchDecider;
     Q_OBJECT
 public:
     explicit SearchManager(QObject *parent = nullptr);
@@ -64,22 +68,15 @@ public:
     static size_t uniqueSymbolFile;
     static size_t uniqueSymbolDir;
     static size_t uniqueSymbolContent;
+    static size_t uniqueSymbolOcr;
     static QMutex m_mutexFile;
     static QMutex m_mutexDir;
     static QMutex m_mutexContent;
+    static QMutex m_mutexOcr;
 
-public Q_SLOTS:
-    void onKeywordSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, QQueue<QPair<QString, QStringList>> *searchResultContent);
-
-Q_SIGNALS:
-    void resultFile(QQueue<QString> *);
-    void resultDir(QQueue<QString> *);
-    void resultContent(QQueue<QPair<QString, QStringList>> *);
 private:
     static bool isBlocked(QString &path);
     static bool creatResultInfo(Zeeker::SearchPluginIface::ResultInfo &ri, QString path);
-
-    QThreadPool m_pool;
 };
 
 class FileSearch : public QRunnable {
@@ -121,6 +118,24 @@ private:
     int m_num = 20;
 };
 
+class OcrSearch : public QRunnable {
+public:
+    explicit OcrSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, size_t uniqueSymbol, QString keyword, int begin = 0, int num = 20);
+    ~OcrSearch();
+protected:
+    void run();
+private:
+    int keywordSearchOcr();
+    int getResult(Xapian::MSet &result, std::string &keyWord);
+
+    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
+    OcrMatchDecider *m_matchDecider;
+    size_t m_uniqueSymbol;
+    QString m_keyword;
+    int m_begin = 0;
+    int m_num = 20;
+};
+
 class DirectSearch : public QRunnable {
 public:
     explicit DirectSearch(QString keyword, DataQueue<SearchPluginIface::ResultInfo> *searchResult, QString value, size_t uniqueSymbol);
@@ -133,11 +148,15 @@ private:
     QString m_value;
 };
 
-class FileMatchDecider :public Xapian::MatchDecider {
+class FileMatchDecider : public Xapian::MatchDecider {
 public:
     bool operator ()(const Xapian::Document &doc) const;
 };
-class FileContentMatchDecider :public Xapian::MatchDecider {
+class FileContentMatchDecider : public Xapian::MatchDecider {
+public:
+    bool operator ()(const Xapian::Document &doc) const;
+};
+class OcrMatchDecider : public Xapian::MatchDecider {
 public:
     bool operator ()(const Xapian::Document &doc) const;
 };
