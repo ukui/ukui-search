@@ -12,6 +12,8 @@ public:
     explicit ResultItem(const size_t searchId);
     explicit ResultItem(const QString itemKey);
     explicit ResultItem(const size_t searchId, const QString itemKey);
+    size_t getSearchId();
+    QString getItemKey();
     ~ResultItem();
 private:
     ResultItemPrivate *d;

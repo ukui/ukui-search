@@ -171,7 +171,10 @@ SearchController::SearchController(std::shared_ptr<SearchController> parent) : m
 
 SearchController::~SearchController()
 {
-    delete d;
+    if(d) {
+        delete d;
+        d = nullptr;
+    }
 }
 
 DataQueue<ResultItem> *SearchController::refreshDataqueue()

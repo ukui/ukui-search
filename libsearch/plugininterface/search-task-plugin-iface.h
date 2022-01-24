@@ -17,7 +17,7 @@ public:
     virtual QString getCustomSearchType() = 0;
     virtual SearchType getSearchType() = 0;
     //Asynchronous,multithread.
-    virtual void startSearch(SearchController searchController) = 0;
+    virtual void startSearch(std::shared_ptr<SearchController> searchController) = 0;
     virtual void stop() = 0;
 Q_SIGNALS:
     void searchFinished(size_t searchId);

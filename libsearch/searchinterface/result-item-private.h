@@ -10,6 +10,8 @@ public:
     ~ResultItemPrivate();
     void setSearchId(size_t searchId);
     void setItemKey(QString itemKey);
+    size_t getSearchId();
+    QString getItemKey();
 private:
     size_t m_searchId;
     QString m_itemKey;
