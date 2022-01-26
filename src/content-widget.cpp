@@ -420,8 +420,10 @@ void ContentWidget::initHomePage() {
             else itemWidget->setFixedHeight(104);
             titleLabel->setText(tr("Recently Opened"));
             QGridLayout * layout = new QGridLayout(itemWidget);
-            layout->setSpacing(8);
-            layout->setContentsMargins(0, 0, 0, 0);
+            layout->setHorizontalSpacing(16);
+            layout->setVerticalSpacing(8);
+            layout->setContentsMargins(8, 0, 0, 0);
+            layout->setAlignment(Qt::AlignLeft);
             itemWidget->setLayout(layout);
             for(int j = 0; j < lists.at(i).count(); j++) {
                 HomePageItem * item = new HomePageItem(itemWidget, i, lists.at(i).at(j));
