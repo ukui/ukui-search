@@ -1,5 +1,7 @@
 #include "search-task-plugin-manager.h"
 #include <QDebug>
+
+#include "file-search-task.h"
 using namespace UkuiSearch;
 static SearchTaskPluginManager *global_instance = nullptr;
 SearchTaskPluginManager *SearchTaskPluginManager::getInstance()
@@ -8,6 +10,14 @@ SearchTaskPluginManager *SearchTaskPluginManager::getInstance()
         global_instance = new SearchTaskPluginManager;
     }
     return global_instance;
+}
+
+void SearchTaskPluginManager::initPlugins(SearchType searchType)
+{
+    size_t type = static_cast<size_t>(searchType);
+    if (type & static_cast<size_t>(SearchType::File)) {
+        registerBuildinPlugin(new FileSearchTask(this));
+    }
 }
 
 bool SearchTaskPluginManager::registerPlugin(SearchTaskPluginIface *plugin)
@@ -26,34 +36,34 @@ bool SearchTaskPluginManager::registerPlugin(SearchTaskPluginIface *plugin)
 
 bool SearchTaskPluginManager::registerBuildinPlugin(SearchTaskPluginIface *plugin)
 {
-    m_buildinPlugin.insert(static_cast<int>(plugin->getSearchType()), plugin);
+    m_buildinPlugin.insert(static_cast<size_t>(plugin->getSearchType()), plugin);
     connect(plugin, &SearchTaskPluginIface::searchFinished, this, &SearchTaskPluginManager::searchFinished);
     return true;
 }
 
 SearchTaskPluginManager::SearchTaskPluginManager(QObject *parent) : QObject(parent)
 {
-    //register buildin plugin into m_buildinPlugin
-    //registerBuildinPlugin();
 }
 
-void SearchTaskPluginManager::pluginSearch(SearchType searchType, SearchController searchController)
+void SearchTaskPluginManager::pluginSearch(SearchType searchType, std::shared_ptr<SearchController> searchController)
 {
-    int type = static_cast<int>(searchType);
+    size_t type = static_cast<size_t>(searchType);
+    qDebug() << "search type" << type;
     if(m_buildinPlugin.contains(type)) {
         if(!m_buildinPlugin.value(type)->isEnable()) {
-            Q_EMIT this->pluginDisable(searchController.getCurrentSearchId());
+            Q_EMIT this->pluginDisable(searchController.get()->getCurrentSearchId());
             return;
         }
+        qDebug() << "start search";
         m_buildinPlugin.value(type)->startSearch(searchController);
     }
 }
 
-void SearchTaskPluginManager::pluginSearch(QString customSearchType, SearchController searchController)
+void SearchTaskPluginManager::pluginSearch(QString customSearchType, std::shared_ptr<SearchController> searchController)
 {
     if(m_loadedPlugin.contains(customSearchType)) {
         if(!m_loadedPlugin.value(customSearchType)->isEnable()) {
-            Q_EMIT this->pluginDisable(searchController.getCurrentSearchId());
+            Q_EMIT this->pluginDisable(searchController.get()->getCurrentSearchId());
             return;
         }
         m_loadedPlugin.value(customSearchType)->startSearch(searchController);

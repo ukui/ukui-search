@@ -8,6 +8,7 @@ UkuiSearchTaskPrivate::UkuiSearchTaskPrivate(UkuiSearchTask *parent)
       q(parent)
 {
     m_searchCotroller = std::shared_ptr<SearchController>(new SearchController());
+    connect(SearchTaskPluginManager::getInstance(), &SearchTaskPluginManager::searchFinished, this, &UkuiSearchTaskPrivate::searchFinished);
 }
 
 UkuiSearchTaskPrivate::~UkuiSearchTaskPrivate()
@@ -54,6 +55,11 @@ void UkuiSearchTaskPrivate::setSearchOnlineApps(bool searchOnlineApps)
 {
 }
 
+void UkuiSearchTaskPrivate::initSearchPlugin(SearchType searchType)
+{
+    SearchTaskPluginManager::getInstance()->initPlugins(searchType);
+}
+
 size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype, QString customSearchType)
 {
 
@@ -64,9 +70,9 @@ size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype, QString customS
 
     //plugin manager do async search here
     if(SearchType::Custom != searchtype) {
-        SearchTaskPluginManager::getInstance()->pluginSearch(searchtype, SearchController(m_searchCotroller));
+        SearchTaskPluginManager::getInstance()->pluginSearch(searchtype, m_searchCotroller);
     } else {
-        SearchTaskPluginManager::getInstance()->pluginSearch(customSearchType, SearchController(m_searchCotroller));
+        SearchTaskPluginManager::getInstance()->pluginSearch(customSearchType, m_searchCotroller);
 
     }
 
@@ -125,6 +131,11 @@ void UkuiSearchTask::setOnlySearchDir(bool onlySearchDir)
 void UkuiSearchTask::setSearchOnlineApps(bool searchOnlineApps)
 {
     d->setSearchOnlineApps(searchOnlineApps);
+}
+
+void UkuiSearchTask::initSearchPlugin(SearchType searchType)
+{
+    d->initSearchPlugin(searchType);
 }
 
 size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchType)

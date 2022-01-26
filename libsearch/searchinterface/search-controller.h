@@ -19,6 +19,8 @@ class SearchController
     friend class SearchControllerPrivate;
 public:
     explicit SearchController(std::shared_ptr<SearchController> parent = nullptr);
+    SearchController(SearchController &) = delete;
+    SearchController &operator =(const SearchController &) = delete;
     ~SearchController();
     DataQueue<ResultItem>* refreshDataqueue();
     size_t refreshSearchId();

@@ -1,7 +1,13 @@
 #include "file-search-task.h"
+#include <QDir>
+#include <QFile>
+#include <QQueue>
+#include <QDebug>
 using namespace UkuiSearch;
-FileSearchTask::FileSearchTask(SearchController searchController): m_searchControl(searchController)
+FileSearchTask::FileSearchTask(QObject *parent)
 {
+    this->setParent(parent);
+    qRegisterMetaType<size_t>("size_t");
     m_pool = new QThreadPool(this);
     m_pool->setMaxThreadCount(1);
 }
@@ -21,7 +27,7 @@ QString FileSearchTask::getCustomSearchType()
     return "File";
 }
 
-void FileSearchTask::startSearch(SearchController searchController)
+void FileSearchTask::startSearch(std::shared_ptr<SearchController> searchController)
 {
     FileSearchWorker *fileSearchWorker;
     fileSearchWorker = new FileSearchWorker(this, searchController);
@@ -38,35 +44,56 @@ void FileSearchTask::sendFinishSignal(size_t searchId)
     Q_EMIT searchFinished(searchId);
 }
 
-void FileSearchTask::run()
-{
-    //file search, based on index or direct search?
-    //1.do search
-    if(m_searchControl.beginSearchIdCheck(m_searchControl.getCurrentSearchId())) {
 
-        //do enqueue here
-        m_searchControl.finishSearchIdCheck();
-    }
-    m_searchControl.finishSearchIdCheck();
-    //finish
-}
-
-FileSearchWorker::FileSearchWorker(FileSearchTask *fileSarchTask, SearchController searchController) : m_FileSearchTask(fileSarchTask), m_searchController(searchController)
+FileSearchWorker::FileSearchWorker(FileSearchTask *fileSarchTask, std::shared_ptr<SearchController> searchController) : m_FileSearchTask(fileSarchTask), m_searchController(searchController)
 {
 }
 
 void FileSearchWorker::run()
 {
+    qDebug() << "File search start";
     //TODO do search here
-
-    size_t searchId = m_searchController.getCurrentSearchId();
-    ResultItem ri(searchId);
-    if(m_searchController.beginSearchIdCheck(m_searchController.getCurrentSearchId())) {
-        m_searchController.getDataQueue()->enqueue(ri);
-        m_searchController.finishSearchIdCheck();
+    QQueue<QString> bfs;
+    bfs.enqueue(QDir::homePath());
+    QFileInfoList list;
+    QDir dir;
+    if(true == m_searchController.get()->isSearchDirOnly()) {
+         dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
     } else {
-        m_searchController.finishSearchIdCheck();
-        return;
+        dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
+        dir.setSorting(QDir::DirsFirst);
     }
-    QMetaObject::invokeMethod(m_FileSearchTask, "searchFinished", Q_ARG(size_t, searchId));
+    while(!bfs.empty()) {
+        dir.setPath(bfs.dequeue());
+        list = dir.entryInfoList();
+        for (auto i : list) {
+            if (i.isDir() && (!(i.isSymLink()))) {
+                bfs.enqueue(i.absoluteFilePath());
+            }
+            bool matched = true;
+            for(QString word : m_searchController.get()->getKeyword()) {
+                if(!i.fileName().contains(word, Qt::CaseInsensitive)) {
+                    matched = false;
+//                    return;
+                }
+            }
+            if(matched) {
+                if((i.isDir() && true == m_searchController.get()->isSearchFileOnly()) ||
+                   (i.isFile() && true == m_searchController.get()->isSearchDirOnly())) {
+                    continue;
+                } else {
+                    ResultItem ri(m_searchController.get()->getCurrentSearchId(), i.absoluteFilePath());
+                    if(m_searchController.get()->beginSearchIdCheck(m_searchController.get()->getCurrentSearchId())) {
+                        m_searchController.get()->getDataQueue()->enqueue(ri);
+                        m_searchController.get()->finishSearchIdCheck();
+                    } else {
+                        qDebug() << "Search id changed!";
+                        m_searchController.get()->finishSearchIdCheck();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    QMetaObject::invokeMethod(m_FileSearchTask, "searchFinished", Q_ARG(size_t, m_searchController.get()->getCurrentSearchId()));
 }

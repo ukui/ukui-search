@@ -15,35 +15,33 @@ class FileSearchTask : public SearchTaskPluginIface
 {
     Q_OBJECT
 public:
-    explicit FileSearchTask(SearchController searchController);
+    explicit FileSearchTask(QObject *parent);
     PluginType pluginType() {return PluginType::SearchTaskPlugin;}
     const QString name();
     const QString description();
     const QIcon icon() {return QIcon::fromTheme("folder");}
-    void setEnable() {}
+    void setEnable(bool enable) {}
     bool isEnable() { return true;}
 
     SearchType getSearchType() {return SearchType::File;}
     QString getCustomSearchType();
-    void startSearch(SearchController searchController);
+    void startSearch(std::shared_ptr<SearchController> searchController);
     void stop();
     Q_INVOKABLE void sendFinishSignal(size_t searchId);
-protected:
-    void run();
+
 private:
-    SearchController m_searchControl;
     QThreadPool *m_pool = nullptr;
 };
 
 class FileSearchWorker : public QRunnable
 {
 public:
-    explicit FileSearchWorker(FileSearchTask *fileSarchTask, SearchController searchController);
+    explicit FileSearchWorker(FileSearchTask *fileSarchTask, std::shared_ptr<SearchController> searchController);
 protected:
     void run();
 private:
     FileSearchTask *m_FileSearchTask;
-    SearchController m_searchController;
+    std::shared_ptr<SearchController> m_searchController;
 };
 }
 #endif // FILESEARCHTASK_H
