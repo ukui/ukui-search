@@ -38,15 +38,6 @@ Search::Search()
     initBlockDirsList();
 }
 
-Search::~Search()
-{
-    delete m_pluginWidget;
-    if (m_gsettings) {
-        delete m_gsettings;
-        m_gsettings = nullptr;
-    }
-}
-
 QString Search::plugini18nName()
 {
     return m_plugin_name;
