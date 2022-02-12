@@ -49,6 +49,13 @@ void Zeeker::FileSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultIn
     }
 }
 
+void FileSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexFile.lock();
+    ++SearchManager::uniqueSymbolFile;
+    SearchManager::m_mutexFile.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> FileSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -250,6 +257,13 @@ void Zeeker::DirSearchPlugin::KeywordSearch(QString keyword, DataQueue<ResultInf
     }
 }
 
+void DirSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexDir.lock();
+    ++SearchManager::uniqueSymbolDir;
+    SearchManager::m_mutexDir.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> DirSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -421,6 +435,13 @@ void Zeeker::FileContengSearchPlugin::KeywordSearch(QString keyword, DataQueue<R
         fileContentSearch = new FileContentSearch(searchResult, SearchManager::uniqueSymbolContent, keyword, 0, 5);
         m_pool.start(fileContentSearch);
     }
+}
+
+void FileContengSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexContent.lock();
+    ++SearchManager::uniqueSymbolContent;
+    SearchManager::m_mutexContent.unlock();
 }
 
 QList<SearchPluginIface::Actioninfo> FileContengSearchPlugin::getActioninfo(int type)

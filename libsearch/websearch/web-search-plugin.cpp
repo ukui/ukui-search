@@ -35,6 +35,10 @@ void Zeeker::WebSearchPlugin::KeywordSearch(QString keyword, DataQueue<Zeeker::S
     searchResult->enqueue(resultInfo);
 }
 
+void WebSearchPlugin::stopSearch()
+{
+}
+
 QList<Zeeker::SearchPluginIface::Actioninfo> Zeeker::WebSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;

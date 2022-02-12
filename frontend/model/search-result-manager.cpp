@@ -31,9 +31,7 @@ SearchResultManager::SearchResultManager(const QString& plugin_id, QObject *pare
 
 void SearchResultManager::startSearch(const QString &keyword)
 {
-    //NEW_TODO 加锁？停止线程？重新搜索？
-//    stopSearch();
-    qDebug()<<m_plugin_id<<"------------------>start by others";
+    qDebug()<<m_plugin_id<<"started";
     if(! m_get_result_thread->isRunning()) {
         m_get_result_thread->start();
     }
@@ -48,8 +46,10 @@ void SearchResultManager::startSearch(const QString &keyword)
 void SearchResultManager::stopSearch()
 {
     if(m_get_result_thread->isRunning()) {
-        qDebug()<<m_plugin_id<<"-------------->stopped by others";
+        qDebug()<<m_plugin_id<<"stopped";
         m_get_result_thread->stop();
+        SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(m_plugin_id);
+        plugin->stopSearch();
 //        m_get_result_thread->quit();
     }
 }
@@ -70,7 +70,6 @@ void ReceiveResultThread::stop()
     this->quit();
 }
 
-//NEW_TODO 还未对队列加锁
 void ReceiveResultThread::run()
 {
     QTimer * m_timer = new QTimer;
@@ -86,7 +85,7 @@ void ReceiveResultThread::run()
         }
         if(m_timer->isActive() && m_timer->remainingTime() < 0.01) {
             this->requestInterruption();
-            qWarning()<<"-------------->stopped by self";
+            qWarning()<<"-------------->stopped by itself";
         }
         if(is_empty && !m_timer->isActive()) {
             m_timer->start();
