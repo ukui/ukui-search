@@ -57,6 +57,13 @@ void MailSearchPlugin::KeywordSearch(QString keyword, DataQueue<SearchPluginIfac
     m_pool.start(mailSearch);
 }
 
+void MailSearchPlugin::stopSearch()
+{
+    m_mutex.lock();
+    ++uniqueSymbol;
+    m_mutex.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> MailSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;

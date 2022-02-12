@@ -49,6 +49,13 @@ void UkuiSearch::FileSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
     }
 }
 
+void FileSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexFile.lock();
+    ++SearchManager::uniqueSymbolFile;
+    SearchManager::m_mutexFile.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> FileSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -250,6 +257,13 @@ void UkuiSearch::DirSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resul
     }
 }
 
+void DirSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexDir.lock();
+    ++SearchManager::uniqueSymbolDir;
+    SearchManager::m_mutexDir.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> DirSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -421,6 +435,13 @@ void UkuiSearch::FileContengSearchPlugin::KeywordSearch(QString keyword, DataQue
         fileContentSearch = new FileContentSearch(searchResult, SearchManager::uniqueSymbolContent, keyword, 0, 5);
         m_pool.start(fileContentSearch);
     }
+}
+
+void FileContengSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexContent.lock();
+    ++SearchManager::uniqueSymbolContent;
+    SearchManager::m_mutexContent.unlock();
 }
 
 QList<SearchPluginIface::Actioninfo> FileContengSearchPlugin::getActioninfo(int type)

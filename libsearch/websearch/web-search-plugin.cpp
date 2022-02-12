@@ -35,6 +35,10 @@ void UkuiSearch::WebSearchPlugin::KeywordSearch(QString keyword, DataQueue<UkuiS
     searchResult->enqueue(resultInfo);
 }
 
+void WebSearchPlugin::stopSearch()
+{
+}
+
 QList<UkuiSearch::SearchPluginIface::Actioninfo> UkuiSearch::WebSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;

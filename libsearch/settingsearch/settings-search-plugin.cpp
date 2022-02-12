@@ -44,6 +44,13 @@ void UkuiSearch::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<
     m_pool.start(settingSearch);
 }
 
+void SettingsSearchPlugin::stopSearch()
+{
+    m_mutex.lock();
+    ++m_uniqueSymbolForSettings;
+    m_mutex.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> SettingsSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;

@@ -44,6 +44,13 @@ void AppSearchPlugin::KeywordSearch(QString keyword, DataQueue<SearchPluginIface
     m_pool.start(appsearch);
 }
 
+void AppSearchPlugin::stopSearch()
+{
+    m_mutex.lock();
+    ++uniqueSymbol;
+    m_mutex.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> AppSearchPlugin::getActioninfo(int type)
 {
     switch (type) {
