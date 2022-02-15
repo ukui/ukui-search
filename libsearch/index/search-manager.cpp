@@ -77,6 +77,19 @@ void SearchManager::onKeywordSearch(QString keyword, QQueue<QString> *searchResu
     return;
 }
 
+void SearchManager::stopSearch()
+{
+    m_mutexFile.lock();
+    ++uniqueSymbolFile;
+    m_mutexFile.unlock();
+    m_mutexDir.lock();
+    ++uniqueSymbolDir;
+    m_mutexDir.unlock();
+    m_mutexContent.lock();
+    ++uniqueSymbolContent;
+    m_mutexContent.unlock();
+}
+
 bool SearchManager::isBlocked(QString &path) {
     QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
     for(QString i : blockList) {

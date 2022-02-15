@@ -70,6 +70,7 @@ public:
 
 public Q_SLOTS:
     void onKeywordSearch(QString keyword, QQueue<QString> *searchResultFile, QQueue<QString> *searchResultDir, QQueue<QPair<QString, QStringList>> *searchResultContent);
+    void stopSearch();
 
 Q_SIGNALS:
     void resultFile(QQueue<QString> *);
