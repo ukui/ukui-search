@@ -562,6 +562,7 @@ bool MainWindow::tryHideMainwindow()
         m_researchTimer->stop();
         m_contentFrame->closeWebView();
         m_contentFrame->setKeyword("");
+        m_searcher->stopSearch();
         m_search_result_thread->requestInterruption();
         m_search_result_thread->quit();
         return true;
