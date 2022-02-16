@@ -126,8 +126,8 @@ void SearchBarHLayout::initUI() {
     m_animation->setDuration(100); //动画时长
     connect(m_animation, &QPropertyAnimation::finished, this, [ = ]() {
         if(m_isSearching) {
-            m_queryWidget->layout()->removeWidget(m_queryText);
-            m_queryText->setParent(nullptr);
+//            m_queryWidget->layout()->removeWidget(m_queryText);
+//            m_queryText->setParent(nullptr);
         } else {
             m_queryWidget->layout()->addWidget(m_queryText);
         }
@@ -166,6 +166,7 @@ bool SearchBarHLayout::eventFilter(QObject *watched, QEvent *event) {
         if(event->type() == QEvent::FocusIn) {
             if(m_queryLineEdit->text().isEmpty()) {
                 m_animation->stop();
+                m_queryWidget->layout()->removeWidget(m_queryText);
                 m_animation->setStartValue(m_queryWidget->geometry());
                 m_animation->setEndValue(QRect(0, 0, m_queryIcon->width() + 10, 35));
                 m_animation->setEasingCurve(QEasingCurve::OutQuad);
