@@ -87,9 +87,11 @@ QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
-    //if(QString::compare(showname, ri.name)) {
+    if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    //}
+    } else {
+        m_nameLabel->setToolTip("");
+    }
     m_pluginLabel->setText(tr("File"));
 
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -278,9 +280,11 @@ QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
-    //if(QString::compare(showname, ri.name)) {
+    if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    //}
+    } else {
+        m_nameLabel->setToolTip("");
+    }
     m_pluginLabel->setText(tr("directory"));
 
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -453,9 +457,11 @@ QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
-    //if(QString::compare(showname, ri.name)) {
+    if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    //}
+    } else {
+        m_nameLabel->setToolTip("");
+    }
 
     m_snippetLabel->setText(getHtmlText(wrapData(m_snippetLabel,ri.description.at(0).value), m_keyWord));
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));

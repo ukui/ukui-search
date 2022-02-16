@@ -67,6 +67,8 @@ QWidget *NoteSearchPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
     if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
+    } else {
+        m_nameLabel->setToolTip("");
     }
     m_pluginLabel->setText(tr("Application"));
     QString showDesc = fontMetrics.elidedText(/*ri.description.at(0).key + " " + */ri.description.at(0).value, Qt::ElideRight, m_descLabel->width() * 2); //当字体长度超过215时显示为省略号

@@ -102,6 +102,8 @@ QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
     if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
+    } else {
+        m_nameLabel->setToolTip("");
     }
     m_pluginLabel->setText(tr("Application"));
     if(ri.type == 1) {

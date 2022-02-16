@@ -91,6 +91,8 @@ QWidget *MailSearchPlugin::detailPage(const SearchPluginIface::ResultInfo &ri)
     m_senderFieldsLabel->setText(FileUtils::escapeHtml(senderName));
     if (QString::compare(senderName, ri.description.at(0).value)) {
         m_senderFieldsLabel->setToolTip(ri.description.at(0).value);
+    } else {
+        m_nameLabel->setToolTip("");
     }
 
     m_timeLabel->setText(ri.description.at(1).key);
