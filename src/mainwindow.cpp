@@ -141,7 +141,7 @@ MainWindow::MainWindow(QWidget *parent) :
         this->m_searchMethodManager.searchMethod(sm);
     });
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this,[&](WId activeWindowId){
-        if (activeWindowId != this->winId()) {
+        if (activeWindowId != this->winId() and activeWindowId) {
             tryHideMainwindow();
         }
     });
