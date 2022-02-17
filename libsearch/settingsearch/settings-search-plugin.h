@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QAction>
 #include <QDomDocument>
+#include <QDBusInterface>
 #include "action-label.h"
 #include "separation-line.h"
 #include "search-plugin-iface.h"

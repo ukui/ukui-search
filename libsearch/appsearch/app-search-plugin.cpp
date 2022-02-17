@@ -189,6 +189,10 @@ void AppSearchPlugin::initDetailPage()
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
         launch(m_currentActionKey);
+        QDBusMessage res = QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall("com.ukui.search.service",
+                                                                                             "/",
+                                                                                             "org.ukui.search.service",
+                                                                                             "hideWindow"));
     });
     connect(m_actionLabel2, &ActionLabel::actionTriggered, [ & ](){
         addDesktopShortcut(m_currentActionKey);

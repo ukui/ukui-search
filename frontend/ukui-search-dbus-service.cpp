@@ -6,6 +6,11 @@ void UkuiSearchDbusServices::showWindow(){
     m_mainWindow->bootOptionsFilter("-s");
 }
 
+void UkuiSearchDbusServices::hideWindow(){
+    qDebug() << "hideWindow called";
+    m_mainWindow->hideMainWindow();
+}
+
 void UkuiSearchDbusServices::searchKeyword(QString keyword)
 {
     showWindow();
