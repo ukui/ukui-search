@@ -1,3 +1,9 @@
+ukui-search (3.1-1.1.4+0217t) v101; urgency=medium
+
+  *BUG:99119 【全局搜索】已打开控制面板的情况下，再通过搜索选中任意条目并打开，全局搜索页面未退出 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 17 Feb 2022 09:58:23 +0800
+
 ukui-search (3.1-1.1.3+0113t) v101; urgency=medium
 
   *BUG:#99739【全局搜索】关掉特效模式 搜索显示全透明
