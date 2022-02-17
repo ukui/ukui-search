@@ -405,6 +405,11 @@ void MainWindow::initGsettings() {
     }
 }
 
+void MainWindow::hideMainWindow()
+{
+    tryHideMainwindow();
+}
+
 //使用GSetting获取当前窗口应该使用的透明度
 double MainWindow::getTransparentData() {
     return GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble();

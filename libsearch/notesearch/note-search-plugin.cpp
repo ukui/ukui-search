@@ -133,6 +133,10 @@ void NoteSearchPlugin::initDetailPage()
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
         openAction(0, m_currentActionKey, 0);
+        QDBusMessage res = QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall("com.ukui.search.service",
+                                                                                             "/",
+                                                                                             "org.ukui.search.service",
+                                                                                             "hideWindow"));
     });
 }
 

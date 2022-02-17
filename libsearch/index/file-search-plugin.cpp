@@ -178,10 +178,19 @@ void FileSearchPlugin::initDetailPage()
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
         if (FileUtils::openFile(m_currentActionKey) == -1) {
             openFileMessagebox(m_currentActionKey);
+        } else {
+            QDBusMessage res = QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall("com.ukui.search.service",
+                                                                                                 "/",
+                                                                                                 "org.ukui.search.service",
+                                                                                                 "hideWindow"));
         }
     });
     connect(m_actionLabel2, &ActionLabel::actionTriggered, [ & ](){
         FileUtils::openFile(m_currentActionKey, true);
+        QDBusMessage res = QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall("com.ukui.search.service",
+                                                                                             "/",
+                                                                                             "org.ukui.search.service",
+                                                                                             "hideWindow"));
     });
     connect(m_actionLabel3, &ActionLabel::actionTriggered, [ & ](){
         FileUtils::copyPath(m_currentActionKey);
@@ -362,9 +371,17 @@ void DirSearchPlugin::initDetailPage()
 
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
         FileUtils::openFile(m_currentActionKey);
+        QDBusMessage res = QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall("com.ukui.search.service",
+                                                                                             "/",
+                                                                                             "org.ukui.search.service",
+                                                                                             "hideWindow"));
     });
     connect(m_actionLabel2, &ActionLabel::actionTriggered, [ & ](){
         FileUtils::openFile(m_currentActionKey, true);
+        QDBusMessage res = QDBusConnection::sessionBus().call(QDBusMessage::createMethodCall("com.ukui.search.service",
+                                                                                             "/",
+                                                                                             "org.ukui.search.service",
+                                                                                             "hideWindow"));
     });
     connect(m_actionLabel3, &ActionLabel::actionTriggered, [ & ](){
         FileUtils::copyPath(m_currentActionKey);

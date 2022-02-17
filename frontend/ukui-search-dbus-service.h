@@ -19,6 +19,7 @@ public:
 
 public Q_SLOTS:
     void showWindow();
+    void hideWindow();
     void searchKeyword(QString keyword);
 
 private:

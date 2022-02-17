@@ -71,6 +71,7 @@ public:
     // The position which mainwindow shows in the center of screen where the cursor in.
     void centerToScreen();
     void initGsettings();
+    void hideMainWindow();
 
 public Q_SLOTS:
     /**
