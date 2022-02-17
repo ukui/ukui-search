@@ -24,23 +24,22 @@ size_t SearchControllerPrivate::refreshSearchId()
 
 DataQueue<ResultItem> *SearchControllerPrivate::refreshDataqueue()
 {
-    if(!m_dataQueue) {
-        m_dataQueue = new DataQueue<ResultItem>;
-        m_sharedDataueue = std::shared_ptr<DataQueue<ResultItem>>(m_dataQueue);
-        return m_dataQueue;
+    if(!m_sharedDataueue.get()) {
+//        m_dataQueue = new DataQueue<ResultItem>;
+        m_sharedDataueue = std::make_shared<DataQueue<ResultItem>>();
+        return m_sharedDataueue.get();
     }
-    m_dataQueue->clear();
-    return m_dataQueue;;
+    m_sharedDataueue.get()->clear();
+    return m_sharedDataueue.get();
 }
 
 DataQueue<ResultItem> *SearchControllerPrivate::initDataQueue()
 {
-    if(!m_dataQueue) {
-        m_dataQueue = new DataQueue<ResultItem>;
-        m_sharedDataueue = std::shared_ptr<DataQueue<ResultItem>>(m_dataQueue);
-        return m_dataQueue;
+    if(!m_sharedDataueue.get()) {
+        m_sharedDataueue = std::make_shared<DataQueue<ResultItem>>();
+        return m_sharedDataueue.get();
     }
-    return m_dataQueue;
+    return m_sharedDataueue.get();
 }
 
 void SearchControllerPrivate::addSearchDir(QString &path)
