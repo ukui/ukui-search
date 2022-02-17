@@ -1,3 +1,11 @@
+ukui-search (0.7.5+0217hw1) v101.hw; urgency=medium
+
+  * BUG号:103995【用户手册|设置】“设置”的用户手册侧边导航栏中有两个“搜索”
+  * 需求号 无
+  * 其他改动说明：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 17 Feb 2022 11:42:36 +0800
+
 ukui-search (0.7.1+1117hw1) v101.hw; urgency=medium
 
   * BUG号:无
