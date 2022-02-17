@@ -223,6 +223,8 @@ void SearchDetailView::setAppWidget(const QString &appname, const QString &path,
     m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\"><pre>%1</pre></h3>").arg(escapeHtml(showname)));
     if(QString::compare(showname, m_name)) {
         m_nameLabel->setToolTip(m_name);
+    } else {
+        m_nameLabel->setToolTip("");
     }
     m_typeLabel->setText(tr("Application"));
 }
@@ -360,6 +362,8 @@ void SearchDetailView::setupWidget(const int& type, const QString& path) {
         m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\"><pre>%1</pre></h3>").arg(escapeHtml(name)));
         if(QString::compare(name, wholeName)) {
             m_nameLabel->setToolTip(wholeName);
+        } else {
+            m_nameLabel->setToolTip("");
         }
         m_typeLabel->setText(tr("Document"));
         break;
