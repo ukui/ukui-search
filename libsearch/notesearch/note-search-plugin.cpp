@@ -41,6 +41,13 @@ void NoteSearchPlugin::KeywordSearch(QString keyword, DataQueue<SearchPluginIfac
     m_pool.start(ns);
 }
 
+void NoteSearchPlugin::stopSearch()
+{
+    g_mutex.lock();
+    ++g_uniqueSymbol;
+    g_mutex.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> NoteSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;

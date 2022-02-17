@@ -51,6 +51,7 @@ public:
 
     QString getPluginName();
     void KeywordSearch(QString keyword, DataQueue<ResultInfo> *searchResult);
+    void stopSearch();
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type);
     QWidget *detailPage(const ResultInfo &ri);
