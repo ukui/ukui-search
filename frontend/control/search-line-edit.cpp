@@ -36,14 +36,14 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setDragEnabled(true);
 
-    m_queryIcon = new QLabel;
+    m_queryIcon = new QLabel(this);
     QPixmap pixmap;
     pixmap = QIcon::fromTheme("search-symbolic", QIcon(":/res/icons/search.svg")).pixmap(21, 21);
     m_queryIcon->setFixedSize(pixmap.size());
     m_queryIcon->setPixmap(pixmap);
 
     m_ly = new QHBoxLayout(this);
-    m_ly->addSpacing(7);
+    m_ly->setContentsMargins(17,0,0,0);
     m_ly->addWidget(m_queryIcon);
     m_ly->addStretch();
 
