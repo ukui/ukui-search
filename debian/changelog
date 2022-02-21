@@ -1,3 +1,11 @@
+ukui-search (3.1-1.1.7+0218) jammy; urgency=medium
+
+  *BUG:106039 【设计】搜索3.1深色模式图标未反白
+  *需求号：无
+  *其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 18 Feb 2022 13:42:12 +0800
+
 ukui-search (3.1-1.1.6+1229) v101; urgency=medium
 
   *BUG:#82904【UKUI3.1】【文件搜索】当文件名称前有空格时，搜到的文件看不出空格区分；且空格在中间时，不论有多少个空格也只能看出一个空格
