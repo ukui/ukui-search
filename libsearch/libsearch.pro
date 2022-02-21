@@ -1,5 +1,5 @@
 QT += core xml widgets dbus concurrent sql
-VERSION = 1.0.0
+VERSION = 1.1.0
 DEFINES += VERSION='\\"$${VERSION}\\"'
 
 TARGET = ukui-search
