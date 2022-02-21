@@ -1,0 +1,6 @@
+#include "action-label.h"
+#include "separation-line.h"
+#include "plugin-iface.h"
+#include "data-queue.h"
+#include "search-plugin-iface.h"
+

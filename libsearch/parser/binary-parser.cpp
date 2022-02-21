@@ -5086,6 +5086,7 @@ int KBinaryParser:: readSSTRecord(readDataParam &rdParam, ppsInfoType PPS_info, 
 
     if(ulCount >= ulSize)
         return -1;
+    return 0;
 }
 
 int KBinaryParser::read8BiffRecord(uchar ucFlag, ulong ulOff, ulong &ulNext, readDataParam &rdParam, excelRecord &eR) {
