@@ -1,3 +1,9 @@
+ukui-search (3.1-1.1.5+0224t) v101; urgency=medium
+
+  *106980 【全局搜索】全局搜索输入框中左侧的放大镜按钮没有居中（必现） 
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 24 Feb 2022 09:19:08 +0800
+
 ukui-search (3.1-1.1.4+0217t) v101; urgency=medium
 
   *BUG:99119 【全局搜索】已打开控制面板的情况下，再通过搜索选中任意条目并打开，全局搜索页面未退出 
