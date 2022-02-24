@@ -1,4 +1,5 @@
 #include "result-view-delegate.h"
+#include <QPainterPath>
 using namespace Zeeker;
 static ResultItemStyle *global_instance_of_item_style = nullptr;
 

@@ -41,14 +41,14 @@
 #include <QFontMetrics>
 #include <QLabel>
 
-#include <quazip/quazipfile.h>
+#include <quazip5/quazipfile.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <quazip/quazip.h>
+#include <quazip5/quazip.h>
 #include <uchardet/uchardet.h>
 //#include <poppler-qt5.h>
 #include <poppler/qt5/poppler-qt5.h>

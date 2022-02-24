@@ -19,6 +19,7 @@
  *
  */
 #include "search-result-page.h"
+#include <QPainterPath>
 QT_BEGIN_NAMESPACE
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);
 QT_END_NAMESPACE

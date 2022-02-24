@@ -6,7 +6,7 @@ TARGET = ukui-search
 TEMPLATE = lib
 DEFINES += LIBSEARCH_LIBRARY
 
-PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt poppler-qt5
+PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt poppler-qt5 quazip
 
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 
@@ -35,7 +35,7 @@ include(websearch/websearch.pri)
 include(mailsearch/mailsearch.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
-LIBS += -lxapian -lquazip5 -luchardet -lQt5Xdg -ltesseract #-L/usr/local/lib/libjemalloc -ljemalloc
+LIBS += -lxapian -luchardet -lQt5Xdg -ltesseract #-L/usr/local/lib/libjemalloc -ljemalloc
 
 SOURCES += \
     file-utils.cpp \
