@@ -45,7 +45,7 @@ void UkuiSearchQDBus::setInotifyMaxUserWatches() {
     //    this->tmpSystemQDBusInterface->call("setInotifyMaxUserWatchesStep3");
 }
 
-int UkuiSearchQDBus::addInotifyUserInstances(int addNum)
+void UkuiSearchQDBus::addInotifyUserInstances(int addNum)
 {
     QDBusReply<int> reply = tmpSystemQDBusInterface->call("AddInotifyMaxUserInstance", addNum);
     if(reply.isValid()) {

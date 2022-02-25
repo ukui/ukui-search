@@ -1,2 +1,3 @@
 usr/include/ukui-search/*
+usr/lib/*/pkgconfig/*.pc
 usr/lib/*/libukui-search.so
