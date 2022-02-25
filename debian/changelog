@@ -1,3 +1,12 @@
+ukui-search (3.1-1.1.7+0224) jammy; urgency=medium
+
+  * BUG:无
+  * 需求号：无
+  * 其他改动：
+  * 解决了由于平台libquazip5-dev包版本升级导致的编译问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Thu, 24 Feb 2022 19:59:46 +0800
+
 ukui-search (3.1-1.1.7+0218) jammy; urgency=medium
 
   *BUG:106039 【设计】搜索3.1深色模式图标未反白
