@@ -388,9 +388,18 @@ void MainWindow::primaryScreenChangedSlot(QScreen *screen) {
  * @param keyword
  */
 void MainWindow::startSearch(QString keyword) {
+    this->m_searcher->m_mutexFile.lock();
     m_search_result_file->clear();
+    this->m_searcher->m_mutexFile.unlock();
+
+    this->m_searcher->m_mutexDir.lock();
     m_search_result_dir->clear();
+    this->m_searcher->m_mutexDir.unlock();
+
+    this->m_searcher->m_mutexContent.lock();
     m_search_result_content->clear();
+    this->m_searcher->m_mutexContent.unlock();
+
     if(! m_search_result_thread->isRunning()) {
         m_search_result_thread->start();
     }
