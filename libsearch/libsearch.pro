@@ -1,4 +1,4 @@
-QT += core xml widgets dbus concurrent
+QT += core xml widgets dbus concurrent sql
 VERSION = 1.0.0
 DEFINES += VERSION='\\"$${VERSION}\\"'
 
