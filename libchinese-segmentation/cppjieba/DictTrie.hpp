@@ -131,6 +131,7 @@ private:
         const auto dict_list = dict_path + "|" + user_dict_paths;
         size_t file_size_sum = 0;
         const string md5 = CalcFileListMD5(dict_list, file_size_sum);
+        total_dict_size_ = file_size_sum;
 
         if (dat_cache_path.empty()) {
             //未指定词库数据文件存储位置的默认存储在tmp目录下--jxx20200519
@@ -140,7 +141,6 @@ private:
         qDebug() << "#########Dict path:" << path;
         if (dat_.InitAttachDat(dat_cache_path, md5)) {
             LoadUserDict(user_dict_paths, false); // for load user_dict_single_chinese_word_;
-            total_dict_size_ = file_size_sum;
             return;
         }
 
@@ -154,7 +154,6 @@ private:
         LoadUserDict(user_dict_paths);
         const auto build_ret = dat_.InitBuildDat(static_node_infos_, dat_cache_path, md5);
         assert(build_ret);
-        total_dict_size_ = file_size_sum;
         vector<DatElement>().swap(static_node_infos_);
     }
 

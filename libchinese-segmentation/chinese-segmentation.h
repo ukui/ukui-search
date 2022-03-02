@@ -46,16 +46,17 @@ struct SKeyWord {
 class CHINESESEGMENTATION_EXPORT ChineseSegmentation {
 public:
     static ChineseSegmentation *getInstance();
-    ~ChineseSegmentation();
     QVector<SKeyWord> callSegement(std::string s);
-    //新添加callSegementStd函数，修改返回值为std：：vector<cppjieba::KeywordExtractor::Word>并简化内部处理流程--jxx20210517
-    //修改函数入参形式为引用，去掉Qstring与std::string转换代码--jxx20210519
     std::vector<cppjieba::KeyWord> callSegementStd(const std::string& str);
+
+private:
+    explicit ChineseSegmentation();
+    ~ChineseSegmentation();
     void convert(std::vector<cppjieba::KeyWord>& keywordres, QVector<SKeyWord>& kw);
+
 private:
     static QMutex m_mutex;
     cppjieba::Jieba *m_jieba;
-    explicit ChineseSegmentation();
 
 };
 

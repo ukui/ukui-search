@@ -27,6 +27,7 @@
 #include <QDBusConnection>
 #include <QDomDocument>
 #include "gobject-template.h"
+#include "pinyinmanager.h"
 
 using namespace UkuiSearch;
 size_t FileUtils::_max_index_count = 0;
@@ -405,25 +406,25 @@ void stitchMultiToneWordsBFSHeapLess3(const QString &hanzi, QStringList &resultL
 
 //BFS+Stack+超过3个多音字只建一个索引，比较折中的方案
 void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &resultList) {
-    QString tempHanzi, resultAllPinYin, resultFirst;
+    QString tempHanzi;
     QQueue<QString> tempQueue;
     QQueue<QString> tempQueueFirst;
     tempHanzi = hanzi;
     int tempQueueSize = 0;
     int multiToneWordNum = 0;
-    for(auto i : hanzi) {
-        if(FileUtils::map_chinese2pinyin.contains(i)) {
-            if(FileUtils::map_chinese2pinyin[i].size() > 1) {
-                ++multiToneWordNum;
-            }
-        }
+
+    for (auto i:hanzi) {
+        if (PinYinManager::getInstance()->isMultiTon(QString(i).toStdString()))
+            ++multiToneWordNum;
     }
     if(multiToneWordNum > 3) {
         QString oneResult, oneResultFirst;
         for(auto i : hanzi) {
-            if(FileUtils::map_chinese2pinyin.contains(i)) {
-                oneResult += FileUtils::map_chinese2pinyin[i].first();
-                oneResultFirst += FileUtils::map_chinese2pinyin[i].first().at(0);
+            QStringList results;
+            PinYinManager::getInstance()->getResults(QString(i).toStdString(), results);
+            if(results.size()) {
+                oneResult += results.first();
+                oneResultFirst += results.first().at(0);
             } else {
                 oneResult += i;
                 oneResultFirst += i;
@@ -434,8 +435,10 @@ void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &result
         return;
     }
 
-    if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
-        for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
+    QStringList results;
+    PinYinManager::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
+    if(results.size()) {
+        for(auto i : results) {
             tempQueue.enqueue(i);
             tempQueueFirst.enqueue(i.at(0));
         }
@@ -445,10 +448,11 @@ void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &result
     }
     tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
     while(tempHanzi.size() != 0) {
+        PinYinManager::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
         tempQueueSize = tempQueue.size();
-        if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+        if(results.size()) {
             for(int j = 0; j < tempQueueSize; ++j) {
-                for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
+                for(auto i : results) {
                     tempQueue.enqueue(tempQueue.head() + i);
                     tempQueueFirst.enqueue(tempQueueFirst.head() + i.at(0));
                 }
@@ -469,22 +473,12 @@ void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &result
         resultList.append(tempQueue.dequeue());
         resultList.append(tempQueueFirst.dequeue());
     }
-    //    delete tempQueue;
-    //    delete tempQueueFirst;
-    //    tempQueue = nullptr;
-    //    tempQueueFirst = nullptr;
     return;
 }
 
 QStringList FileUtils::findMultiToneWords(const QString &hanzi) {
-    //    QStringList* output = new QStringList();
     QStringList output;
-    QString tempAllPinYin, tempFirst;
-    QStringList stringList = hanzi.split("");
-
-    //    stitchMultiToneWordsDFS(hanzi, tempAllPinYin, tempFirst, output);
     stitchMultiToneWordsBFSStackLess3(hanzi, output);
-    //    qDebug() << output;
     return output;
 }
 
