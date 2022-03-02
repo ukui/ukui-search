@@ -23,14 +23,17 @@ include(cppjieba/cppjieba.pri)
 
 SOURCES += \
     chinese-segmentation.cpp \
+    pinyinmanager.cpp
 
 HEADERS += \
     chinese-segmentation.h \
-    libchinese-segmentation_global.h
+    libchinese-segmentation_global.h \
+    pinyinmanager.h
 
 dict_files.path = /usr/share/ukui-search/res/dict/
 dict_files.files = $$PWD/dict/*.utf8\
 dict_files.files += $$PWD/dict/pos_dict/*.utf8\
+dict_files.files += $$PWD/dict/*.txt\
 
 INSTALLS += \
     dict_files \
@@ -60,5 +63,6 @@ DISTFILES += \
     dict/pos_dict/prob_start.utf8 \
     dict/pos_dict/prob_trans.utf8 \
     dict/stop_words.utf8 \
-    dict/user.dict.utf8
+    dict/user.dict.utf8 \
+    dict/pinyinWithoutTone.txt
 

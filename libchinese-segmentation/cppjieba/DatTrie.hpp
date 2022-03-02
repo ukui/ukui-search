@@ -46,6 +46,16 @@ struct IdfElement {
     }
 };
 
+struct PinYinElement
+{
+    string word;
+    string tag;
+
+    bool operator < (const DatElement & b) const {
+        return this->word < b.word;
+    }
+};
+
 inline std::ostream & operator << (std::ostream& os, const DatElement & elem) {
     return os << "word=" << elem.word << "/tag=" << elem.tag << "/weight=" << elem.weight;
 }
@@ -53,6 +63,19 @@ inline std::ostream & operator << (std::ostream& os, const DatElement & elem) {
 struct DatMemElem {
     double weight = 0.0;
     char tag[8] = {};
+
+    void SetTag(const string & str) {
+        memset(&tag[0], 0, sizeof(tag));
+        strncpy(&tag[0], str.c_str(), std::min(str.size(), sizeof(tag) - 1));
+    }
+
+    string GetTag() const {
+        return &tag[0];
+    }
+};
+
+struct PinYinMemElem {
+    char tag[6] = {};
 
     void SetTag(const string & str) {
         memset(&tag[0], 0, sizeof(tag));
@@ -122,6 +145,17 @@ public:
         return idf_elements_ptr_[ find_result.value ];
     }
 
+    const PinYinMemElem * PinYinFind(const string & key) const {
+        JiebaDAT::result_pair_type find_result;
+        dat_.exactMatchSearch(key.c_str(), find_result);
+
+        if ((0 == find_result.length) || (find_result.value < 0) || ((size_t)find_result.value >= elements_num_)) {
+            return nullptr;
+        }
+
+        return &pinyin_elements_ptr_[ find_result.value ];
+    }
+
     void Find(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end,
               vector<struct DatDag>&res, size_t max_word_len) const {
 
@@ -167,6 +201,7 @@ public:
         }
     }
 
+    /*
     void Find_Reverse(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end,
               vector<struct DatDag>&res, size_t max_word_len) const {
 
@@ -208,7 +243,8 @@ public:
                 res[str_size - i - 1].nexts.push_back(pair<size_t, const DatMemElem *>(str_size - 1 - i + char_num, pValue));
             }
         }
-    }
+    }*/
+
     void Find(RuneStrArray::const_iterator begin, RuneStrArray::const_iterator end,
               vector<WordRange>& words, size_t max_word_len) const {
 
@@ -300,6 +336,11 @@ public:
         return InitIdfAttachDat(dat_cache_file, md5);
     }
 
+    bool InitBuildDat(vector<PinYinElement>& elements, const string & dat_cache_file, const string & md5) {
+        BuildDatCache(elements, dat_cache_file, md5);
+        return InitPinYinAttachDat(dat_cache_file, md5);
+    }
+
     bool InitAttachDat(const string & dat_cache_file, const string & md5) {
         mmap_fd_ = ::open(dat_cache_file.c_str(), O_RDONLY);
 
@@ -358,6 +399,37 @@ public:
         assert(mmap_length_ == sizeof(header) + header.elements_num * sizeof(double)  + header.dat_size * dat_.unit_size());
         idf_elements_ptr_ = (const double *)(mmap_addr_ + sizeof(header));
         const char * dat_ptr = mmap_addr_ + sizeof(header) + sizeof(double) * elements_num_;
+        dat_.set_array(dat_ptr, header.dat_size);
+        return true;
+    }
+
+    bool InitPinYinAttachDat(const string & dat_cache_file, const string & md5) {
+        mmap_fd_ = ::open(dat_cache_file.c_str(), O_RDONLY);
+
+        if (mmap_fd_ < 0) {
+            return false;
+        }
+
+        const auto seek_off = ::lseek(mmap_fd_, 0, SEEK_END);
+        assert(seek_off >= 0);
+        mmap_length_ = seek_off;
+
+        mmap_addr_ = reinterpret_cast<char *>(mmap(NULL, mmap_length_, PROT_READ, MAP_SHARED, mmap_fd_, 0));
+        assert(MAP_FAILED != mmap_addr_);
+
+        assert(mmap_length_ >= sizeof(CacheFileHeader));
+        CacheFileHeader & header = *reinterpret_cast<CacheFileHeader*>(mmap_addr_);
+        elements_num_ = header.elements_num;
+        min_weight_ = header.min_weight;
+        assert(sizeof(header.md5_hex) == md5.size());
+
+        if (0 != memcmp(&header.md5_hex[0], md5.c_str(), md5.size())) {
+            return false;
+        }
+
+        assert(mmap_length_ == sizeof(header) + header.elements_num * sizeof(PinYinMemElem)  + header.dat_size * dat_.unit_size());
+        pinyin_elements_ptr_ = (const PinYinMemElem *)(mmap_addr_ + sizeof(header));
+        const char * dat_ptr = mmap_addr_ + sizeof(header) + sizeof(PinYinMemElem) * elements_num_;
         dat_.set_array(dat_ptr, header.dat_size);
         return true;
     }
@@ -464,13 +536,64 @@ private:
         }
     }
 
+    void BuildDatCache(vector<PinYinElement>& elements, const string & dat_cache_file, const string & md5) {
+        //std::sort(elements.begin(), elements.end());
+
+        vector<const char*> keys_ptr_vec;
+        vector<int> values_vec;
+        vector<PinYinMemElem> mem_elem_vec;
+
+        keys_ptr_vec.reserve(elements.size());
+        values_vec.reserve(elements.size());
+        mem_elem_vec.reserve(elements.size());
+
+        CacheFileHeader header;
+        header.min_weight = min_weight_;
+        assert(sizeof(header.md5_hex) == md5.size());
+        memcpy(&header.md5_hex[0], md5.c_str(), md5.size());
+
+        for (size_t i = 0; i < elements.size(); ++i) {
+            keys_ptr_vec.push_back(elements[i].word.data());
+            values_vec.push_back(i);
+            mem_elem_vec.push_back(PinYinMemElem());
+            auto & mem_elem = mem_elem_vec.back();
+            mem_elem.SetTag(elements[i].tag);
+        }
+
+        auto const ret = dat_.build(keys_ptr_vec.size(), &keys_ptr_vec[0], NULL, &values_vec[0]);
+        assert(0 == ret);
+        header.elements_num = mem_elem_vec.size();
+        header.dat_size = dat_.size();
+
+        {
+            string tmp_filepath = string(dat_cache_file) + "_XXXXXX";
+            ::umask(S_IWGRP | S_IWOTH);
+            //const int fd =::mkstemp(&tmp_filepath[0]);
+            const int fd =::mkstemp((char *)tmp_filepath.data());
+            qDebug() << "mkstemp :" << errno << tmp_filepath.data();
+            assert(fd >= 0);
+            ::fchmod(fd, 0644);
+
+            auto write_bytes = ::write(fd, (const char *)&header, sizeof(header));
+            write_bytes += ::write(fd, (const char *)&mem_elem_vec[0], sizeof(mem_elem_vec[0]) * mem_elem_vec.size());
+            write_bytes += ::write(fd, dat_.array(), dat_.total_size());
+
+            assert(write_bytes == sizeof(header) + mem_elem_vec.size() * sizeof(mem_elem_vec[0]) + dat_.total_size());
+            ::close(fd);
+
+            const auto rename_ret = ::rename(tmp_filepath.c_str(), dat_cache_file.c_str());
+            assert(0 == rename_ret);
+        }
+    }
+
     DatTrie(const DatTrie &);
     DatTrie &operator=(const DatTrie &);
 
 private:
     JiebaDAT dat_;
     const DatMemElem * elements_ptr_ = nullptr;
-    const double * idf_elements_ptr_= nullptr;
+    const double * idf_elements_ptr_ = nullptr;
+    const PinYinMemElem * pinyin_elements_ptr_ = nullptr;
     size_t elements_num_ = 0;
     double min_weight_ = 0;
 

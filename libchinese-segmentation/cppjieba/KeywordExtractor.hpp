@@ -84,6 +84,7 @@ private:
     MixSegment segment_;
     IdfTrie idf_trie_;
 
+
     unordered_set<Rune> symbols_;
 }; // class KeywordExtractor
 

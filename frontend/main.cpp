@@ -212,31 +212,7 @@ int main(int argc, char *argv[]) {
     usQDBus.setInotifyMaxUserWatches();
 
     // load chinese character and pinyin file to a Map
-    FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
-    /*-------------InotyifyRefact Test Start---------------*/
-//    QTime t1 = QTime::currentTime();
-//    InotifyManagerRefact* imr = new InotifyManagerRefact("/home");
-//    imr->start();
-//    QTime t2 = QTime::currentTime();
-//    qDebug() << t1;
-//    qDebug() << t2;
-    /*-------------InotyifyRefact Test End-----------------*/
-
-    /*-------------content index Test Start---------------*/
-//    QTime t3 = QTime::currentTime();
-//    FileTypeFilter* ftf = new FileTypeFilter("/home");
-//    ftf->Test();
-//    QTime t4 = QTime::currentTime();
-//    delete ftf;
-//    ftf = nullptr;
-//    qDebug() << t3;
-//    qDebug() << t4;
-    /*-------------content index Test End-----------------*/
-    /*-------------文本搜索 Test start-----------------*/
-//    FileSearcher *search = new FileSearcher();
-//    search->onKeywordSearchContent("重要器官移植⑤白血病");
-//    search->onKeywordSearchContent("g,e,x");
-    /*-------------文本搜索 Test End-----------------*/
+    //FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
 
     // Load translations
     QTranslator translator;
