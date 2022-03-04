@@ -39,21 +39,6 @@ public:
         return dat_.Find(word, length, node_pos);
     }
 
-    void Find(RuneStrArray::const_iterator begin,
-              RuneStrArray::const_iterator end,
-              vector<struct DatDag>&res,
-              size_t max_word_len = MAX_WORD_LENGTH) const {
-        dat_.Find(begin, end, res, max_word_len);
-    }
-
-    bool IsUserDictSingleChineseWord(const Rune& word) const {
-        return IsIn(user_dict_single_chinese_word_, word);
-    }
-
-    double GetMinWeight() const {
-        return dat_.GetMinWeight();
-    }
-
     size_t GetTotalDictSize() const {
         return total_dict_size_;
     }
@@ -63,6 +48,7 @@ private:
               UserWordWeightOption user_word_weight_opt) {
         size_t file_size_sum = 0;
         const string md5 = CalcFileListMD5(dict_path, file_size_sum);
+        total_dict_size_ = file_size_sum;
 
         if (dat_cache_path.empty()) {
             //未指定词库数据文件存储位置的默认存储在tmp目录下--jxx20200519
@@ -71,7 +57,6 @@ private:
         QString path = QString::fromStdString(dat_cache_path);
         qDebug() << "#########Idf path:" << path;
         if (dat_.InitIdfAttachDat(dat_cache_path, md5)) {
-            total_dict_size_ = file_size_sum;
             return;
         }
 
@@ -85,7 +70,6 @@ private:
 
         const auto build_ret = dat_.InitBuildDat(static_node_infos_, dat_cache_path, md5);
         assert(build_ret);
-        total_dict_size_ = file_size_sum;
         vector<IdfElement>().swap(static_node_infos_);
     }
 
@@ -128,7 +112,6 @@ private:
     vector<IdfElement> static_node_infos_;
     size_t total_dict_size_ = 0;
     DatTrie dat_;
-    unordered_set<Rune> user_dict_single_chinese_word_;
 };
 }
 

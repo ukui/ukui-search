@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>index/pinyinWithTone.txt</file>
-        <file>index/pinyinWithoutTone.txt</file>
         <file>res/icons/desktop.png</file>
         <file>res/icons/close.svg</file>
         <file>res/icons/edit-find-symbolic.svg</file>
