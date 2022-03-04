@@ -20,6 +20,7 @@
  */
 //#include <QtConcurrent>
 #include "first-index.h"
+#include "dir-watcher.h"
 #include <QDebug>
 
 #define NEW_QUEUE(a) a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
@@ -158,8 +159,13 @@ void FirstIndex::run() {
         sem.acquire(4);
         sem.acquire(1);
         mutex1.unlock();
-        this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        this->Traverse();
+
+        qInfo() << "index dir" << DirWatcher::getDirWatcher()->currentindexableDir();
+        qInfo() << "index block dir" << DirWatcher::getDirWatcher()->currentBlackListOfIndex();
+        setPath(DirWatcher::getDirWatcher()->currentindexableDir());
+        setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
+        Traverse();
+
         FileUtils::_max_index_count = this->q_index->length();
         qDebug() << "max_index_count:" << FileUtils::_max_index_count;
         sem.release(5);

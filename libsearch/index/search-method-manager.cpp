@@ -1,10 +1,12 @@
 #include "search-method-manager.h"
+#include "dir-watcher.h"
 using namespace UkuiSearch;
 static SearchMethodManager* global_instance = nullptr;
 
 SearchMethodManager::SearchMethodManager()
 {
-    m_iw = InotifyWatch::getInstance(HOME_PATH);
+    m_iw = InotifyWatch::getInstance();
+
 }
 
 SearchMethodManager *SearchMethodManager::getInstance()

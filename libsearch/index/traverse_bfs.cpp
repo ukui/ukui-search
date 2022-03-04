@@ -18,17 +18,29 @@
  *
  */
 #include "traverse_bfs.h"
+#include "file-utils.h"
 using namespace UkuiSearch;
-Traverse_BFS::Traverse_BFS(const QString& path) {
+Traverse_BFS::Traverse_BFS(const QStringList &path) {
     Q_ASSERT('/' == path.at(0));
-    this->path = path;
+    m_pathList = path;
 }
 
 void Traverse_BFS::Traverse() {
     QQueue<QString> bfs;
-    bfs.enqueue(this->path);
+    for(QString blockPath : m_blockList) {
+        for(QString path : m_pathList) {
+            if(FileUtils::isOrUnder(path, blockPath)) {
+                m_pathList.removeOne(path);
+            }
+        }
+    }
+    for(QString path : m_pathList) {
+        bfs.enqueue(path);
+    }
+
     QFileInfoList list;
     QDir dir;
+    QStringList tmpList = m_blockList;
     // QDir::Hidden
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
@@ -36,6 +48,17 @@ void Traverse_BFS::Traverse() {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
         for(auto i : list) {
+            bool isBlocked = false;
+            for(QString path : tmpList) {
+                if(i.absoluteFilePath() == path) {
+                    isBlocked = true;
+                    tmpList.removeOne(path);
+                    break;
+                }
+            }
+            if(isBlocked)
+                continue;
+
             if(i.isDir() && (!(i.isSymLink()))) {
                 bfs.enqueue(i.absoluteFilePath());
             }
@@ -44,6 +67,11 @@ void Traverse_BFS::Traverse() {
     }
 }
 
-void Traverse_BFS::setPath(const QString& path) {
-    this->path = path;
+void Traverse_BFS::setPath(const QStringList &pathList) {
+    m_pathList = pathList;
+}
+
+void Traverse_BFS::setBlockPath(const QStringList &pathList)
+{
+    m_blockList =pathList;
 }
