@@ -1,5 +1,8 @@
 #include "web-search-plugin.h"
 #include "global-settings.h"
+#define WEB_ENGINE_KEY "webEngine"
+#define BROWSERTYPE "x-scheme-handler/http"
+#define DESKTOPPATH "/usr/share/applications/"
 
 using namespace Zeeker;
 WebSearchPlugin::WebSearchPlugin(QObject *parent) : QObject(parent)
@@ -30,9 +33,22 @@ void Zeeker::WebSearchPlugin::KeywordSearch(QString keyword, DataQueue<Zeeker::S
     ResultInfo resultInfo;
     resultInfo.name = m_keyWord;
     resultInfo.type = 0;
-    resultInfo.icon = QIcon(":/res/icons/search-web-icon.svg");
+
+
+
+    QString defaultwebengines(getDefaultAppId(BROWSERTYPE));
+    QByteArray ba = QString(DESKTOPPATH + defaultwebengines).toUtf8();
+    GDesktopAppInfo * textinfo = g_desktop_app_info_new_from_filename(ba.constData());
+    const char * iconname = g_icon_to_string(g_app_info_get_icon(G_APP_INFO(textinfo)));
+    QIcon appicon;
+    appicon = QIcon::fromTheme(QString(QLatin1String(iconname)),
+                               QIcon(QString("/usr/share/pixmaps/"+QString(QLatin1String(iconname))
+                                             +".png")));
+    resultInfo.icon = QIcon(appicon);
+
     resultInfo.actionKey = m_keyWord;
     searchResult->enqueue(resultInfo);
+    g_object_unref(textinfo);
 }
 
 void WebSearchPlugin::stopSearch()
@@ -111,4 +127,17 @@ void Zeeker::WebSearchPlugin::initDetailPage()
     connect(m_actionLabel1, &ActionLabel::actionTriggered, [ & ](){
         openAction(0, m_currentActionKey, 0);
     });
+}
+
+QString WebSearchPlugin::getDefaultAppId(const char *contentType)
+{
+    GAppInfo * app = g_app_info_get_default_for_type(contentType, false);
+    if(app != NULL){
+        const char * id = g_app_info_get_id(app);
+        QString strId(id);
+        g_object_unref(app);
+        return strId;
+    } else {
+        return QString("");
+    }
 }
