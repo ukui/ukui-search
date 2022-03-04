@@ -161,6 +161,7 @@ int SearchListView::getLength() {
 void SearchListView::pressEnter()
 {
     if (this->currentIndex().isValid()) {
+        Q_EMIT this->enterPressed();
         Q_EMIT this->onRowDoubleClicked(this, getCurrentType(), m_item->m_pathlist.at(this->currentIndex().row()));
     }
 }

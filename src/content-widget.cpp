@@ -326,6 +326,7 @@ void ContentWidget::setupConnect(SearchListView * listview) {
     connect(listview, &SearchListView::currentSelectPos, [ = ](QPoint pos) {
         m_resultListArea->ensureVisible(pos.x(), pos.y());
     });
+    connect(listview, &SearchListView::enterPressed, this, &ContentWidget::effectiveSearch);
     connect(listview, &SearchListView::mousePressed, this, &ContentWidget::effectiveSearch);
     connect(listview, &SearchListView::mousePressed, this, [=] () {
         setPage(listview->getCurrentType());
