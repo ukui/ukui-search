@@ -80,6 +80,7 @@ Q_SIGNALS:
     void onRowDoubleClicked(SearchListView *, const int&, const QString&);
     void currentSelectPos(QPoint pos);
     void mousePressed();
+    void enterPressed();
 
 public Q_SLOTS:
     void clearSelection();
