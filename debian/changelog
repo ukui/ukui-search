@@ -1,3 +1,11 @@
+ukui-search (0.7.6+0305) v101; urgency=medium
+
+  * BUG:108577 按enter键无法记录搜索记录
+  * 任务号：无
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 05 Mar 2022 11:40:30 +0800
+
 ukui-search (0.7.5+0217) v101; urgency=medium
 
   *BUG:106086 【搜索】偶现打开搜索页面后，搜索的放大镜图标显示不全的情况 
