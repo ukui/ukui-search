@@ -13,6 +13,8 @@
 #include "action-label.h"
 #include "search-plugin-iface.h"
 
+#include <gio/gdesktopappinfo.h>
+
 namespace Zeeker {
 class LIBSEARCH_EXPORT WebSearchPlugin : public QObject, public SearchPluginIface
 {
@@ -48,6 +50,8 @@ private:
 
     bool m_enable = true;
     QList<WebSearchPlugin::Actioninfo> m_actionInfo;
+
+    QString getDefaultAppId(const char * contentType);
 };
 }
 #endif // WEBSEARCHPLUGIN_H
