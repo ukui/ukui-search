@@ -772,6 +772,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
 
 int FileUtils::openFile(QString &path, bool openInDir)
 {
+    int res = -1;
     if(openInDir) {
         QStringList list;
         list.append(path);
@@ -780,12 +781,12 @@ int FileUtils::openFile(QString &path, bool openInDir)
                                                               "org.freedesktop.FileManager1",
                                                               "ShowItems");
         message.setArguments({list, "ukui-search"});
-        QDBusMessage res = QDBusConnection::sessionBus().call(message);
-        if (QDBusMessage::ReplyMessage == res.ReplyMessage) {
-            return 0;
+        QDBusMessage messageRes = QDBusConnection::sessionBus().call(message);
+        if (QDBusMessage::ReplyMessage == messageRes.ReplyMessage) {
+            res = 0;
         } else {
-            qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << res.ReplyMessage;
-            return -1;
+            qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << messageRes.ReplyMessage;
+            res = -1;
         }
     } else {
         auto file = wrapGFile(g_file_new_for_uri(QUrl::fromLocalFile(path).toString().toUtf8().constData()));
@@ -800,6 +801,7 @@ int FileUtils::openFile(QString &path, bool openInDir)
                 mimeType = g_file_info_get_attribute_string(fileInfo.get()->get(), "standard::fast-content-type");
             }
         }
+
         GError *error = NULL;
         GAppInfo *info  = NULL;
         /*
@@ -825,11 +827,14 @@ int FileUtils::openFile(QString &path, bool openInDir)
         }
         g_key_file_free (keyfile);
         if(!G_IS_APP_INFO(info)) {
-            return -1;
+            res = -1;
+        } else {
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+            res = 0;
         }
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-        return 0;
+        g_object_unref(info);
     }
+    return res;
 }
 
 bool FileUtils::copyPath(QString &path)
