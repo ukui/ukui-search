@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QThread>
 #include <QMutex>
+#include <QSystemSemaphore>
 #include "pending-file.h"
 #include "index-generator.h"
 
@@ -57,6 +58,7 @@ private:
     QVector<PendingFile> m_pendingFiles;
     QMutex m_mutex;
     QMutex m_timeoutMutex;
+    QSystemSemaphore m_semaphore;
 
     QThread *m_timerThread = nullptr;
     bool m_timeout = false;

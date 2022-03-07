@@ -1,7 +1,9 @@
-#include "searchmethodmanager.h"
+#include "search-method-manager.h"
 using namespace Zeeker;
-SearchMethodManager::SearchMethodManager()
+SearchMethodManager::SearchMethodManager() : m_semaphore(INDEX_SEM, 1, QSystemSemaphore::AccessMode::Create)
 {
+    qDebug() << m_semaphore.errorString();
+    m_fi = FirstIndex::getInstance();
     m_iw = InotifyWatch::getInstance(HOME_PATH);
 }
 
@@ -29,7 +31,8 @@ void SearchMethodManager::searchMethod(FileUtils::SearchMethod sm) {
         }
         qDebug() << "create fifo success\n";
         qWarning() << "start first index";
-        m_fi.start();
+        m_semaphore.acquire();
+        m_fi->start();
         qWarning() << "start inotify index";
 //        InotifyIndex ii("/home");
 //        ii.start();

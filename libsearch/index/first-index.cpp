@@ -22,12 +22,21 @@
 #include "first-index.h"
 #include <QDebug>
 
-#define NEW_QUEUE(a) a = new QQueue<QString>(); qDebug("---------------------------%s %s %s new at %d..",__FILE__,__FUNCTION__,#a,__LINE__);
-//#define DELETE_QUEUE(a )
 using namespace Zeeker;
-FirstIndex::FirstIndex() {
+FirstIndex *FirstIndex::m_instance = nullptr;
+std::once_flag g_firstIndexInstanceFlag;
+FirstIndex::FirstIndex() : m_semaphore(INDEX_SEM, 1, QSystemSemaphore::AccessMode::Open)
+{
     m_pool.setMaxThreadCount(2);
     m_pool.setExpiryTimeout(100);
+}
+
+FirstIndex *FirstIndex::getInstance()
+{
+    std::call_once(g_firstIndexInstanceFlag, [] () {
+        m_instance = new FirstIndex;
+    });
+    return m_instance;
 }
 
 FirstIndex::~FirstIndex() {
@@ -126,17 +135,6 @@ void FirstIndex::run() {
     this->q_content_index = new QQueue<QPair<QString,qint64>>();
     this->m_ocr_index = new QQueue<QPair<QString,qint64>>();
 
-    int fifo_fd;
-    char buffer[2];
-    memset(buffer, 0, sizeof(buffer));
-    buffer[0] = 0x1;
-    buffer[1] = '\0';
-    fifo_fd = open(UKUI_SEARCH_PIPE_PATH, O_RDWR);
-    if(fifo_fd == -1) {
-        perror("open fifo error\n");
-        assert(false);
-    }
-
     ++FileUtils::indexStatus;
     pid_t pid;
     pid = fork();
@@ -160,18 +158,14 @@ void FirstIndex::run() {
         QMutex mutex1, mutex2, mutex3;
         mutex1.lock();
         mutex2.lock();
-        mutex3.lock();
-        sem.acquire(4);
-        sem.acquire(1);
-        mutex1.unlock();
+//        mutex3.lock();
         this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
         this->Traverse();
         FileUtils::_max_index_count = this->q_index->length();
         qDebug() << "max_index_count:" << FileUtils::_max_index_count;
-        sem.release(5);
         QtConcurrent::run(&m_pool, [&]() {
             sem.acquire(2);
-            mutex2.unlock();
+            mutex1.unlock();
             qDebug() << "index start;";
             QQueue<QVector<QString>>* tmp1 = new QQueue<QVector<QString>>();
             while(!this->q_index->empty()) {
@@ -187,7 +181,7 @@ void FirstIndex::run() {
         });
         QtConcurrent::run(&m_pool,[&]() {
             sem.acquire(2);
-            mutex3.unlock();
+            mutex2.unlock();
             QQueue<QString>* tmp2 = new QQueue<QString>();
             qDebug() << "q_content_index:" << q_content_index->size();
             while(!this->q_content_index->empty()) {
@@ -214,9 +208,10 @@ void FirstIndex::run() {
             qDebug() << "content index end;";
             sem.release(2);
         });
-        //OCR功能暂时屏蔽
+//        OCR功能暂时屏蔽
 //        QtConcurrent::run(&m_pool,[&]() {
 //            sem.acquire(5);
+//            mutex3.unlock();
 //            QQueue<QString>* tmpOcr = new QQueue<QString>();
 //            qDebug() << "m_ocr_index:" << m_ocr_index->size();
 //            while(!this->m_ocr_index->empty()) {
@@ -244,11 +239,11 @@ void FirstIndex::run() {
 //        });
         mutex1.lock();
         mutex2.lock();
-        mutex3.lock();
+//        mutex3.lock();
         sem.acquire(5);
         mutex1.unlock();
         mutex2.unlock();
-        mutex3.unlock();
+//        mutex3.unlock();
 
         if(this->q_index)
             delete this->q_index;
@@ -273,12 +268,13 @@ void FirstIndex::run() {
         --FileUtils::indexStatus;
     }
 
+    m_semaphore.release(1);
     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
-    int retval1 = write(fifo_fd, buffer, strlen(buffer));
-    if(retval1 == -1) {
-        qWarning("write error\n");
-    }
-    qDebug("write data ok!\n");
+//    int retval1 = write(fifo_fd, buffer, strlen(buffer));
+//    if(retval1 == -1) {
+//        qWarning("write error\n");
+//    }
+//    qDebug("write data ok!\n");
     QTime t2 = QTime::currentTime();
     qWarning() << t1;
     qWarning() << t2;

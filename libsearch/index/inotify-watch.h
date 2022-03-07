@@ -2,17 +2,20 @@
 #define INOTIFYWATCH_H
 
 #include <QThread>
-#include <unistd.h>
-#include <sys/inotify.h>
+#include <QBuffer>
 #include <QSocketNotifier>
 #include <QDataStream>
 #include <QSharedMemory>
+
+#include <sys/prctl.h>
+#include <sys/wait.h>
+#include <sys/inotify.h>
+#include <unistd.h>
 
 #include "traverse_bfs.h"
 #include "ukui-search-qdbus.h"
 #include "index-status-recorder.h"
 #include "file-utils.h"
-#include "first-index.h"
 #include "pending-file-queue.h"
 #include "common.h"
 namespace Zeeker {
@@ -21,6 +24,7 @@ class InotifyWatch : public QThread, public Traverse_BFS
     Q_OBJECT
 public:
     static InotifyWatch* getInstance(const QString& path);
+    ~InotifyWatch();
 
     bool addWatch(const QString &path);
     bool removeWatch(const QString &path, bool removeFromDatabase = true);
@@ -35,7 +39,6 @@ private Q_SLOTS:
     void slotEvent(char *buf, ssize_t len);
 private:
     explicit InotifyWatch(const QString& path);
-    ~InotifyWatch();
     char * filter();
     void eventProcess(int socket);
     void eventProcess(const char *buffer, ssize_t len);
