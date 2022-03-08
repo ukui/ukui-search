@@ -23,7 +23,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(../libsearch/libukui-search-headers.pri)
 include(../3rd-parties/qtsingleapplication/qtsingleapplication.pri)
 
-LIBS += -L$$OUT_PWD/../libsearch -lukui-search
+LIBS += -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
+        -L$$OUT_PWD/../libsearch -lukui-search
 
 SOURCES += \
         main.cpp \

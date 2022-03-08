@@ -171,7 +171,7 @@ void MainWindow::initConnections()
     connect(m_askDialog, &CreateIndexAskDialog::btnClicked, this, [ = ](const bool &is_create_index, const bool &is_ask_again) {
         setSearchMethodConfig(is_create_index, is_ask_again);
     });
-    connect(m_settingsBtn, &QPushButton::clicked, this, &MainWindow::settingsBtnClickedSlot);
+//    connect(m_settingsBtn, &QPushButton::clicked, this, &MainWindow::settingsBtnClickedSlot);
     //主题改变时，更新自定义标题栏的图标
 //    connect(qApp, &QApplication::paletteChanged, this, [ = ]() {
 //        m_iconLabel->setPixmap(QIcon::fromTheme("kylin-search").pixmap(QSize(WINDOW_ICON_SIZE, WINDOW_ICON_SIZE)));

@@ -7,7 +7,7 @@ TEMPLATE = lib
 DEFINES += LIBSEARCH_LIBRARY
 CONFIG += create_pc create_prl no_install_prl
 
-PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt poppler-qt5 quazip
+PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt poppler-qt5
 
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 QMAKE_CXXFLAGS += -Werror=return-type -Werror=return-local-addr -Werror=uninitialized
@@ -41,7 +41,7 @@ include(dirwatcher/dirwatcher.pri)
 include(mailsearch/mailsearch.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
-LIBS += -lxapian -luchardet -lQt5Xdg -ltesseract #-L/usr/local/lib/libjemalloc -ljemalloc
+LIBS += -lxapian -luchardet -lQt5Xdg -lquazip5 -ltesseract #-L/usr/local/lib/libjemalloc -ljemalloc
 
 SOURCES += \
     file-utils.cpp \
