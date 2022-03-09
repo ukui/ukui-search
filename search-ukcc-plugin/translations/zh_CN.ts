@@ -48,7 +48,7 @@
         <extra-contents_path>/Search/Block Folders</extra-contents_path>
     </message>
     <message>
-        <location filename="../search.cpp" line="191"/>
+        <location filename="../search.cpp" line="193"/>
         <source>Following folders will not be searched. You can set it by adding and removing folders.</source>
         <translation>搜索将不查看以下文件夹，通过添加和删除可以设置排除的文件夹位置</translation>
     </message>
