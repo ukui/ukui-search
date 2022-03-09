@@ -19,7 +19,7 @@ public:
 private:
     explicit AppDBManager(QObject *parent = nullptr);
     ~AppDBManager();
-    QSqlDatabase *m_database = nullptr;
+    QSqlDatabase m_database;
 
 };
 }

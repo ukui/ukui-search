@@ -1,19 +1,20 @@
 #include "inotify-watch.h"
+#include "dir-watcher.h"
 #include <sys/ioctl.h>
 #include <malloc.h>
 #include <errno.h>
 using namespace UkuiSearch;
 static InotifyWatch* global_instance_InotifyWatch = nullptr;
 
-UkuiSearch::InotifyWatch *UkuiSearch::InotifyWatch::getInstance(const QString &path)
+UkuiSearch::InotifyWatch *UkuiSearch::InotifyWatch::getInstance()
 {
     if(!global_instance_InotifyWatch) {
-        global_instance_InotifyWatch = new InotifyWatch(path);
+        global_instance_InotifyWatch = new InotifyWatch();
     }
     return global_instance_InotifyWatch;
 }
 
-UkuiSearch::InotifyWatch::InotifyWatch(const QString &path): Traverse_BFS(path)
+UkuiSearch::InotifyWatch::InotifyWatch(): Traverse_BFS()
 {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;
@@ -98,17 +99,40 @@ void InotifyWatch::DoSomething(const QFileInfo &info)
 void InotifyWatch::firstTraverse()
 {
     QQueue<QString> bfs;
-    bfs.enqueue(this->path);
+    for(QString blockPath : m_blockList) {
+        for(QString path : m_pathList) {
+            if(FileUtils::isOrUnder(path, blockPath)) {
+                m_pathList.removeOne(path);
+            }
+        }
+    }
+    for(QString path : m_pathList) {
+        addWatch(path);
+        bfs.enqueue(path);
+    }
+
     QFileInfoList list;
     QDir dir;
+    QStringList tmpList = m_blockList;
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
     while(!bfs.empty()) {
         dir.setPath(bfs.dequeue());
         list = dir.entryInfoList();
         for(auto i : list) {
+            bool isBlocked = false;
+            for(QString path : tmpList) {
+                if(i.absoluteFilePath() == path) {
+                    isBlocked = true;
+                    tmpList.removeOne(path);
+                    break;
+                }
+            }
+            if(isBlocked)
+                continue;
+
             if(i.isDir() && (!(i.isSymLink()))) {
-                this->addWatch(i.absoluteFilePath());
+                addWatch(i.absoluteFilePath());
                 bfs.enqueue(i.absoluteFilePath());
             }
         }
@@ -147,9 +171,9 @@ void InotifyWatch::run()
         }
     }
 
-    this->addWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-    this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-    this->firstTraverse();
+    setPath(DirWatcher::getDirWatcher()->currentindexableDir());
+    setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
+    firstTraverse();
 
     int fifo_fd;
     char buffer[2];
@@ -385,6 +409,13 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
 //        qDebug("mask:0x%x,",event->mask);
         if(event->name[0] != '.') {
             QString path = currentPath[event->wd] + '/' + event->name;
+
+            //过滤黑名单下的信号
+            for(QString i : m_blockList) {
+                if(FileUtils::isOrUnder(path, i))
+                    goto next;
+            }
+
             //Create top dir first, traverse it last.
             if(event->mask & IN_CREATE) {
 //                qDebug() << "IN_CREATE";
@@ -397,7 +428,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
                 if(event->mask & IN_ISDIR) {
                     if(!QFileInfo(path).isSymLink()){
                         addWatch(path);
-                        setPath(path);
+                        setPath(QStringList() << path);
                         Traverse();
                     }
                 }
@@ -437,7 +468,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
 
                     if(!QFileInfo(path).isSymLink()){
                         addWatch(path);
-                        setPath(path);
+                        setPath(QStringList() << path);
                         Traverse();
                     }
                 } else {

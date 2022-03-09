@@ -25,13 +25,13 @@ AppDBManager::~AppDBManager()
 }
 void AppDBManager::initDateBaseConnection()
 {
-    if(!m_database->isValid()) {
-        qWarning() << m_database->lastError();
+    if(!m_database.isValid()) {
+        qWarning() << m_database.lastError();
         QApplication::quit();
     }
-    m_database->setDatabaseName(APP_DATABASE_PATH);
-    if(!m_database->open()) {
-        qWarning() << m_database->lastError();
+    m_database.setDatabaseName(APP_DATABASE_PATH);
+    if(!m_database.open()) {
+        qWarning() << m_database.lastError();
         QApplication::quit();
     }
     //todo: 建表

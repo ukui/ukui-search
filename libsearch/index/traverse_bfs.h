@@ -31,10 +31,12 @@ public:
     void Traverse();
     virtual ~Traverse_BFS() = default;
     virtual void DoSomething(const QFileInfo&) = 0;
-    void setPath(const QString&);
+    void setPath(const QStringList&);
+    void setBlockPath(const QStringList &pathList);
 protected:
-    Traverse_BFS(const QString&);
-    QString path = "/home";
+    Traverse_BFS(const QStringList&);
+    QStringList m_pathList;
+    QStringList m_blockList;
 private:
     Traverse_BFS(const Traverse_BFS&) = delete;
     void operator=(const Traverse_BFS&) = delete;

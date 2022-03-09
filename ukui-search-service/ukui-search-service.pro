@@ -7,7 +7,7 @@ TARGET = ukui-search-service
 VERSION = 1.0.0
 DEFINES += VERSION='\\"$${VERSION}\\"'
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
-PKGCONFIG += gsettings-qt
+PKGCONFIG += gsettings-qt gio-unix-2.0
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
