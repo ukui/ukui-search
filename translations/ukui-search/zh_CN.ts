@@ -12,7 +12,7 @@
 <context>
     <name>Zeeker::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="309"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="312"/>
         <source>Best Matches</source>
         <translation>最佳匹配</translation>
     </message>
@@ -67,32 +67,32 @@
 <context>
     <name>Zeeker::CreateIndexAskDialog</name>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="40"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="41"/>
         <source>ukui-search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="66"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="68"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="91"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="93"/>
         <source>Creating index can help you getting results quickly, whether to create or not?</source>
         <translation>创建索引可以快速获取搜索结果，是否创建？</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="102"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="104"/>
         <source>Don&apos;t remind</source>
         <translation>不再提醒</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="113"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="115"/>
         <source>No</source>
         <translation>否(N)</translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="115"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="117"/>
         <source>Yes</source>
         <translation>是(Y)</translation>
     </message>
@@ -201,7 +201,7 @@
 <context>
     <name>Zeeker::SearchLineEdit</name>
     <message>
-        <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
+        <location filename="../../frontend/control/search-line-edit.cpp" line="56"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -397,7 +397,7 @@
 <context>
     <name>Zeeker::WebSearchWidget</name>
     <message>
-        <location filename="../../frontend/view/web-search-view.cpp" line="150"/>
+        <location filename="../../frontend/view/web-search-view.cpp" line="152"/>
         <source>Web Page</source>
         <translation type="unfinished"></translation>
     </message>

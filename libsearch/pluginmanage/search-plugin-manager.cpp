@@ -6,6 +6,7 @@
 #include "note-search-plugin.h"
 #include "web-search-plugin.h"
 #include "mail-search-plugin.h"
+#include "ocr-search-plugin.h"
 
 using namespace Zeeker;
 
@@ -18,6 +19,7 @@ SearchPluginManager::SearchPluginManager(QObject *parent)
     registerPlugin(new DirSearchPlugin(this));
     registerPlugin(new FileSearchPlugin(this));
     registerPlugin(new FileContengSearchPlugin(this));
+//    registerPlugin(new OcrSearchPlugin(this));
 //    registerPlugin(new MailSearchPlugin(this));
     registerPlugin(new WebSearchPlugin(this));
 }

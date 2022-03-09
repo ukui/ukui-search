@@ -10,7 +10,7 @@ FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
 {
     SearchPluginIface::Actioninfo open { 0, tr("Open")};
     SearchPluginIface::Actioninfo Openpath { 1, tr("Open path")};
-    SearchPluginIface::Actioninfo CopyPath { 2, tr("Copy Path")};
+    SearchPluginIface::Actioninfo CopyPath { 2, tr("Copy path")};
     m_actionInfo << open << Openpath << CopyPath;
     m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
@@ -24,7 +24,7 @@ const QString FileSearchPlugin::name()
 
 const QString FileSearchPlugin::description()
 {
-    return tr("File search.");
+    return tr("File Search");
 }
 
 QString FileSearchPlugin::getPluginName()
