@@ -8,6 +8,7 @@
 #define DIR_SEARCH_VALUE "1"
 #define LABEL_MAX_WIDTH 300
 #define HOME_PATH QDir::homePath()
+#define INDEX_SEM "ukui-search-index-sem"
 static const QStringList allAppPath = {
     QDir::homePath()+"/.local/share/applications/",
     "/usr/share/applications/"

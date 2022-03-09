@@ -25,6 +25,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <signal.h>
 #include <QSemaphore>
+#include <QSystemSemaphore>
 #include<sys/types.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -43,14 +44,16 @@
 namespace Zeeker {
 class FirstIndex : public QThread, public Traverse_BFS {
 public:
-    FirstIndex();
+    static FirstIndex* getInstance();
     ~FirstIndex();
     virtual void DoSomething(const QFileInfo &) final;
 protected:
     void run() override;
 private:
+    FirstIndex();
     FirstIndex(const FirstIndex&) = delete;
     void operator=(const FirstIndex&) = delete;
+    static FirstIndex *m_instance;
     bool bool_dataBaseStatusOK = false;
     bool bool_dataBaseExist = false;
     IndexGenerator* p_indexGenerator = nullptr;
@@ -64,6 +67,8 @@ private:
     QQueue<QPair<QString,qint64>>* m_ocr_index;
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;
+    QSystemSemaphore m_semaphore;
+
 };
 }
 

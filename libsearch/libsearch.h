@@ -27,7 +27,7 @@
 
 #include "plugininterface/search-plugin-iface.h"
 #include "plugininterface/data-queue.h"
-#include "index/searchmethodmanager.h"
+#include "index/search-method-manager.h"
 #include "index/first-index.h"
 #include "index/ukui-search-qdbus.h"
 #include "index/search-manager.h"

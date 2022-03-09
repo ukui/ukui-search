@@ -151,28 +151,6 @@ void InotifyWatch::run()
     this->setPath(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     this->firstTraverse();
 
-    int fifo_fd;
-    char buffer[2];
-    memset(buffer, 0, sizeof(buffer));
-    fifo_fd = open(UKUI_SEARCH_PIPE_PATH, O_RDWR);
-    if(fifo_fd == -1) {
-        qWarning() << "Open fifo error\n";
-        assert(false);
-    }
-    int retval = read(fifo_fd, buffer, sizeof(buffer));
-    if(retval == -1) {
-        qWarning() << "read error\n";
-        assert(false);
-    }
-    qDebug("Read fifo[%s]", buffer);
-
-    qDebug("Read data ok");
-    close(fifo_fd);
-    if(buffer[0] & 0x1) {
-        qDebug("Data confirmed\n");
-    }
-    unlink(UKUI_SEARCH_PIPE_PATH);
-
     while(FileUtils::SearchMethod::INDEXSEARCH == FileUtils::searchMethod) {
         fd_set fds;
         FD_ZERO(&fds);
