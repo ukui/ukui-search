@@ -33,6 +33,7 @@
 
 #define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
 #define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
+#define OCR_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/ocr_index_data").toStdString()
 
 using namespace UkuiSearch;
 
@@ -44,8 +45,11 @@ QMutex  IndexGenerator::m_mutex;
 //QMutex  UkuiSearch::g_mutexDocListForContent;
 QMutex  IndexGenerator::g_mutexDocListForPath;
 QMutex  IndexGenerator::g_mutexDocListForContent;
+QMutex  IndexGenerator::g_mutexDocListForOcr;
 QVector<Document> IndexGenerator::g_docListForPath = QVector<Document>();
 QVector<Document> IndexGenerator::g_docListForContent = QVector<Document>();
+QVector<Document> IndexGenerator::g_docListForOcr = QVector<Document>();
+
 
 IndexGenerator *IndexGenerator::getInstance(bool rebuild, QObject *parent) {
     QMutexLocker locker(&m_mutex);
@@ -134,6 +138,44 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
 
 }
 
+bool IndexGenerator::creatOcrIndex(QQueue<QString> *messageList)
+{
+    HandleOcrPathList(messageList);
+    if(IndexGenerator::g_docListForOcr.isEmpty()) {
+        return false;
+    }
+    int size = IndexGenerator::g_docListForOcr.size();
+    qDebug() << "begin creatAllIndex for ocr" << size;
+    if(!size == 0) {
+        try {
+            int count = 0;
+            for(Document i : IndexGenerator::g_docListForOcr) {
+                if(!i.isRequiredDeleted()) {
+                    m_database_ocr->replace_document(i.getUniqueTerm(), i.getXapianDocument());
+                } else {
+                    m_database_ocr->delete_document(i.getUniqueTerm());
+                }
+                if(++count > 999) {
+                    count = 0;
+                    m_database_ocr->commit();
+                }
+            }
+            m_database_ocr->commit();
+        } catch(const Xapian::Error &e) {
+            qWarning() << "creat ocr Index fail!" << QString::fromStdString(e.get_description());
+            IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "1");
+            assert(false);
+        }
+        qDebug() << "finish creatAllIndex for ocr";
+
+        IndexGenerator::g_docListForOcr.clear();
+        IndexGenerator::g_docListForOcr.squeeze();
+        QVector<Document>().swap(IndexGenerator::g_docListForOcr);
+        malloc_trim(0);
+    }
+    return true;
+}
+
 IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent) {
     QDir database(QString::fromStdString(INDEX_PATH));
 
@@ -153,6 +195,7 @@ IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent) 
 
     m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
     m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
+    m_database_ocr = new Xapian::WritableDatabase(OCR_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
 }
 
 IndexGenerator::~IndexGenerator() {
@@ -165,8 +208,11 @@ IndexGenerator::~IndexGenerator() {
     if(m_database_content)
         m_database_content->~WritableDatabase();
 //        delete m_database_content;
+    if(m_database_ocr)
+        m_database_ocr->~WritableDatabase();
     m_database_path = nullptr;
     m_database_content = nullptr;
+    m_database_ocr = nullptr;
     global_instance = nullptr;
 //    if(m_index_map)
 //        delete m_index_map;
@@ -266,28 +312,25 @@ void IndexGenerator::HandlePathList(QQueue<QString> *messageList) {
         pool.start(constructer);
     }
     qDebug() << "pool finish" << pool.waitForDone(-1);
-//    if(constructer)
-//        delete constructer;
-//    constructer = nullptr;
-
-//    QFuture<Document> future = QtConcurrent::mapped(*messageList,&IndexGenerator::GenerateContentDocument);
-
-//    future.waitForFinished();
-//    ChineseSegmentation::getInstance()->~ChineseSegmentation();
-
-//    QList<Document> docList = future.results();
-//    mg_docListForContent = new QList<Document>(docList);
-
-//    qDebug()<<g_docListForContent->size();
-
-//    QList<Document> docList = future.results();
-//    mg_docListForContent = new QList<Document>(docList);
-//    mg_docListForContent = std::move(future.results());
-//    future.cancel();
-
     qDebug() << "Finish HandlePathList for content index!";
     return;
+}
 
+void IndexGenerator::HandleOcrPathList(QQueue<QString> *messageList)
+{
+    qDebug() << "Begin HandlePathList for ocr index!";
+    qDebug() << messageList->size();
+    ConstructDocumentForOcr *constructer;
+    QThreadPool pool;
+    pool.setMaxThreadCount(1);
+    pool.setExpiryTimeout(100);
+    while(!messageList->isEmpty()) {
+        constructer = new ConstructDocumentForOcr(messageList->dequeue());
+        pool.start(constructer);
+    }
+    qDebug() << "pool finish" << pool.waitForDone(-1);
+    qDebug() << "Finish HandlePathList for content index!";
+    return;
 }
 //deprecated
 Document IndexGenerator::GenerateDocument(const QVector<QString> &list) {
@@ -460,10 +503,13 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist) {
 
             m_database_path->delete_document(uniqueterm);
             m_database_content->delete_document(uniqueterm);
+            m_database_ocr->delete_document(uniqueterm);
 
             //delete all files under it if it's a dir.
             m_database_path->delete_document(upterm);
             m_database_content->delete_document(upterm);
+            m_database_ocr->delete_document(upterm);
+
             qDebug() << "delete path" << doc;
 //            qDebug() << "delete md5" << QString::fromStdString(uniqueterm);
 
@@ -472,6 +518,7 @@ bool IndexGenerator::deleteAllIndex(QStringList *pathlist) {
         }
         m_database_path->commit();
         m_database_content->commit();
+        m_database_ocr->commit();
         qDebug() << "--delete finish--";
     } catch(const Xapian::Error &e) {
         qWarning() << QString::fromStdString(e.get_description());
@@ -503,43 +550,85 @@ bool IndexGenerator::deleteContentIndex(QStringList *pathlist)
     return true;
 }
 
+bool IndexGenerator::deleteOcrIndex(QStringList *pathlist)
+{
+    if(pathlist->isEmpty())
+        return true;
+    try {
+        qDebug() << "--delete start--";
+        for(int i = 0; i < pathlist->size(); i++) {
+            QString doc = pathlist->at(i);
+            std::string uniqueterm = FileUtils::makeDocUterm(doc);
+            m_database_ocr->delete_document(uniqueterm);
+            qDebug() << "delete path" << doc;
+        }
+        m_database_ocr->commit();
+        qDebug() << "--delete finish--";
+    } catch(const Xapian::Error &e) {
+        qWarning() << QString::fromStdString(e.get_description());
+        return false;
+    }
+    return true;
+}
+
 bool IndexGenerator::updateIndex(QVector<PendingFile> *pendingFiles)
 {
 
     QQueue<QVector<QString>> *fileIndexInfo = new QQueue<QVector<QString>>;
     QQueue<QString> *fileContentIndexInfo = new QQueue<QString>;
+    QQueue<QString> *fileOcrIndexInfo = new QQueue<QString>;
     QStringList *deleteList = new  QStringList;
     QStringList *contentDeleteList = new  QStringList;
-    for(PendingFile file : *pendingFiles) {
-        if(file.shouldRemoveIndex()) {
-
+    for (PendingFile file : *pendingFiles) {
+        if (file.shouldRemoveIndex()) {
             deleteList->append(file.path());
             continue;
         }
         fileIndexInfo->append(QVector<QString>() << file.path().section("/" , -1) << file.path() << QString(file.isDir() ? "1" : "0"));
-        if((!file.path().split(".").isEmpty()) && (true == targetFileTypeMap[file.path().section("/" , -1) .split(".").last()])) {
-            if(!FileUtils::isEncrypedOrUnreadable(file.path())) {
+        if ((!file.path().split(".").isEmpty()) && (true == targetFileTypeMap[file.path().section("/" , -1) .split(".").last()])) {
+            if (!FileUtils::isEncrypedOrUnreadable(file.path())) {
                 fileContentIndexInfo->append(file.path());
             } else {
                 contentDeleteList->append(file.path());
             }
         }
-
     }
-    if(!deleteList->isEmpty()) {
+    if (!deleteList->isEmpty()) {
         deleteAllIndex(deleteList);
     }
-    if(!contentDeleteList->isEmpty()) {
+    if (!contentDeleteList->isEmpty()) {
         deleteContentIndex(contentDeleteList);
     }
-    if(!fileIndexInfo->isEmpty()) {
+    if (!fileIndexInfo->isEmpty()) {
         creatAllIndex(fileIndexInfo);
     }
-    if(!fileContentIndexInfo->isEmpty()) {
+    if (!fileContentIndexInfo->isEmpty()) {
         creatAllIndex(fileContentIndexInfo);
     }
-    delete fileIndexInfo;
-    delete fileContentIndexInfo;
+    if (!fileOcrIndexInfo->isEmpty()) {
+        creatOcrIndex(fileOcrIndexInfo);
+    }
+    if (fileIndexInfo) {
+        delete fileIndexInfo;
+        fileIndexInfo = nullptr;
+    }
+    if (fileContentIndexInfo) {
+        delete fileContentIndexInfo;
+        fileContentIndexInfo = nullptr;
+    }
+    if (fileOcrIndexInfo) {
+        delete fileOcrIndexInfo;
+        fileOcrIndexInfo = nullptr;
+    }
+    if (deleteList) {
+        delete deleteList;
+        deleteList = nullptr;
+    }
+    if (contentDeleteList) {
+        delete contentDeleteList;
+        contentDeleteList = nullptr;
+    }
+
     return true;
 }
 

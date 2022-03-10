@@ -130,3 +130,40 @@ void ConstructDocumentForContent::run() {
 
     return;
 }
+
+ConstructDocumentForOcr::ConstructDocumentForOcr(QString path)
+{
+    this->setAutoDelete(true);
+    m_path = std::move(path);
+}
+
+void ConstructDocumentForOcr::run()
+{
+    QString content;
+    FileReader::getTextContent(m_path, content);
+
+    Document doc;
+    doc.setUniqueTerm(FileUtils::makeDocUterm(m_path));
+    doc.addTerm("ZEEKERUPTERM" + FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
+    doc.addValue(1, m_path);
+
+    if(content.isEmpty()) {
+        doc.reuireDeleted();
+    } else {
+        doc.setData(content);
+        //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.
+        content = content.replace("\t", " ").replace("\xEF\xBC\x8C", "   ").replace("\xE3\x80\x82", "   ");
+        std::vector<cppjieba::KeyWord> term = ChineseSegmentation::getInstance()->callSegementStd(content.toStdString());
+        for(size_t i = 0; i < term.size(); ++i) {
+            doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
+        }
+        term.clear();
+        term.shrink_to_fit();
+    }
+    IndexGenerator::g_mutexDocListForOcr.lock();
+    IndexGenerator::g_docListForOcr.append(doc);
+    IndexGenerator::g_mutexDocListForOcr.unlock();
+    content.clear();
+    content.squeeze();
+}
+

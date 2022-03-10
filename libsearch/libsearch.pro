@@ -1,5 +1,5 @@
 QT += core xml widgets dbus concurrent sql
-VERSION = 1.0.0
+VERSION = 1.1.0
 DEFINES += VERSION='\\"$${VERSION}\\"'
 
 TARGET = ukui-search
@@ -38,9 +38,10 @@ include(settingsearch/settingsearch.pri)
 include(websearch/websearch.pri)
 include(searchinterface/search-interface.pri)
 include(dirwatcher/dirwatcher.pri)
+include(mailsearch/mailsearch.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
-LIBS += -lxapian -lquazip5 -luchardet -lQt5Xdg#-L/usr/local/lib/libjemalloc -ljemalloc
+LIBS += -lxapian -luchardet -lQt5Xdg -lquazip5 -ltesseract #-L/usr/local/lib/libjemalloc -ljemalloc
 
 SOURCES += \
     file-utils.cpp \

@@ -49,6 +49,13 @@ void UkuiSearch::FileSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resu
     }
 }
 
+void FileSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexFile.lock();
+    ++SearchManager::uniqueSymbolFile;
+    SearchManager::m_mutexFile.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> FileSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -86,10 +93,12 @@ QWidget *FileSearchPlugin::detailPage(const ResultInfo &ri)
     m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    //if(QString::compare(showname, ri.name)) {
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
+    if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    //}
+    } else {
+        m_nameLabel->setToolTip("");
+    }
     m_pluginLabel->setText(tr("File"));
 
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -121,10 +130,7 @@ void FileSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_pathFrame = new QFrame(m_detailPage);
     m_pathFrameLyt = new QHBoxLayout(m_pathFrame);
@@ -147,10 +153,7 @@ void FileSearchPlugin::initDetailPage()
     m_timeFrameLyt->addStretch();
     m_timeFrameLyt->addWidget(m_timeLabel2);
 
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
@@ -256,6 +259,13 @@ void UkuiSearch::DirSearchPlugin::KeywordSearch(QString keyword, DataQueue<Resul
     }
 }
 
+void DirSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexDir.lock();
+    ++SearchManager::uniqueSymbolDir;
+    SearchManager::m_mutexDir.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> DirSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -283,10 +293,12 @@ QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
     m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    //if(QString::compare(showname, ri.name)) {
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
+    if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    //}
+    } else {
+        m_nameLabel->setToolTip("");
+    }
     m_pluginLabel->setText(tr("directory"));
 
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -318,10 +330,7 @@ void DirSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_pathFrame = new QFrame(m_detailPage);
     m_pathFrameLyt = new QHBoxLayout(m_pathFrame);
@@ -344,10 +353,7 @@ void DirSearchPlugin::initDetailPage()
     m_timeFrameLyt->addStretch();
     m_timeFrameLyt->addWidget(m_timeLabel2);
 
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
@@ -435,6 +441,13 @@ void UkuiSearch::FileContengSearchPlugin::KeywordSearch(QString keyword, DataQue
     }
 }
 
+void FileContengSearchPlugin::stopSearch()
+{
+    SearchManager::m_mutexContent.lock();
+    ++SearchManager::uniqueSymbolContent;
+    SearchManager::m_mutexContent.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> FileContengSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -464,10 +477,12 @@ QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
     m_pluginLabel->setText(tr("File"));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
-    //if(QString::compare(showname, ri.name)) {
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
+    if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
-    //}
+    } else {
+        m_nameLabel->setToolTip("");
+    }
 
     m_snippetLabel->setText(getHtmlText(wrapData(m_snippetLabel,ri.description.at(0).value), m_keyWord));
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
@@ -496,7 +511,7 @@ QString FileContengSearchPlugin::getHtmlText(const QString &text, const QString 
         }
     }
     htmlString.replace("\n", "<br />");//替换换行符
-    return htmlString;
+    return "<pre>" + htmlString + "</pre>";
 }
 
 QString FileContengSearchPlugin::wrapData(QLabel *p_label, const QString &text)
@@ -555,10 +570,7 @@ void FileContengSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_snippetLabel = new QLabel(m_detailPage);
 //    m_snippetLabel->setWordWrap(true);
@@ -585,10 +597,7 @@ void FileContengSearchPlugin::initDetailPage()
     m_timeFrameLyt->addStretch();
     m_timeFrameLyt->addWidget(m_timeLabel2);
 
-    m_line_2 = new QFrame(m_detailPage);
-    m_line_2->setLineWidth(0);
-    m_line_2->setFixedHeight(1);
-    m_line_2->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_2 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);

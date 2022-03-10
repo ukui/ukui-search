@@ -27,6 +27,7 @@
 #include <QDBusConnection>
 #include <QDomDocument>
 #include "gobject-template.h"
+#include "pinyinmanager.h"
 
 using namespace UkuiSearch;
 size_t FileUtils::_max_index_count = 0;
@@ -58,7 +59,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
                               nullptr,
                               nullptr));
     if(!G_IS_FILE_INFO(info.get()->get()))
-        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
+        return QIcon::fromTheme("unknown",QIcon(":/res/icons/unknown.svg"));
     GIcon *g_icon = g_file_info_get_icon(info.get()->get());
 
     //do not unref the GIcon from info.
@@ -76,7 +77,7 @@ QIcon FileUtils::getFileIcon(const QString &uri, bool checkValid) {
             }
         }
     }
-    return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
+    return QIcon::fromTheme("unknown",QIcon(":/res/icons/unknown.svg"));
 }
 
 /**
@@ -91,7 +92,7 @@ QIcon FileUtils::getAppIcon(const QString &path) {
     keyfile = g_key_file_new();
     if(!g_key_file_load_from_file(keyfile, ba.data(), G_KEY_FILE_NONE, NULL)) {
         g_key_file_free(keyfile);
-        return QIcon::fromTheme("unknown",QIcon(":res/icons/unknown.png"));
+        return QIcon::fromTheme("unknown",QIcon(":/res/icons/unknown.svg"));
     }
     QString icon = QString(g_key_file_get_locale_string(keyfile, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, NULL, NULL));
     g_key_file_free(keyfile);
@@ -107,7 +108,7 @@ QIcon FileUtils::getAppIcon(const QString &path) {
  * @param is_white 选择是否返回白色图标
  * @return
  */
-QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
+QIcon FileUtils::getSettingIcon(const QString &setting, const bool is_white) {
     QString name = setting.left(setting.indexOf("/"));
     if(! name.isEmpty()) {
         name.replace(QString(name.at(0)), QString(name.at(0).toUpper()));
@@ -122,7 +123,7 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
     if(file.exists()) {
         return QIcon(path);
     } else {
-        return QIcon::fromTheme("ukui-control-center"); //无插件图标时，返回控制面板应用图标
+        return QIcon::fromTheme("ukui-control-center", QIcon(":/res/icons/ukui-control-center.svg")); //无插件图标时，返回控制面板应用图标
 //        if (is_white) {
 //            return QIcon(QString("/usr/share/ukui-control-center/shell/res/secondaryleftmenu/%1White.svg").arg("About"));
 //        } else {
@@ -132,7 +133,7 @@ QIcon FileUtils::getSettingIcon(const QString& setting, const bool& is_white) {
 }
 
 QIcon FileUtils::getSettingIcon() {
-    return QIcon::fromTheme("ukui-control-center"); //返回控制面板应用图标
+    return QIcon::fromTheme("ukui-control-center", QIcon(":/res/icons/ukui-control-center.svg")); //返回控制面板应用图标
 }
 
 /**
@@ -140,7 +141,7 @@ QIcon FileUtils::getSettingIcon() {
  * @param uri 格式为"file:///home/xxx/xxx/xxxx.txt"
  * @return
  */
-QString FileUtils::getFileName(const QString& uri) {
+QString FileUtils::getFileName(const QString &uri) {
     QFileInfo info(uri);
     if(info.exists()) {
         return info.fileName();
@@ -159,7 +160,7 @@ QString FileUtils::getFileName(const QString& uri) {
  * @param path .destop文件的完整路径
  * @return
  */
-QString FileUtils::getAppName(const QString& path) {
+QString FileUtils::getAppName(const QString &path) {
     QByteArray ba;
     ba = path.toUtf8();
     GKeyFile * keyfile;
@@ -178,7 +179,7 @@ QString FileUtils::getAppName(const QString& path) {
  * @param setting 设置项传入参数，格式为 About/About->Properties
  * @return
  */
-QString FileUtils::getSettingName(const QString& setting) {
+QString FileUtils::getSettingName(const QString &setting) {
     return setting.right(setting.length() - setting.lastIndexOf("/") - 1);
 }
 
@@ -242,7 +243,7 @@ QString FileUtils::find(const QString &hanzi) {
 }
 
 //DFS多音字太多直接GG
-void stitchMultiToneWordsDFS(const QString& hanzi, const QString& resultAllPinYin, const QString& resultFirst, QStringList& resultList) {
+void stitchMultiToneWordsDFS(const QString &hanzi, const QString &resultAllPinYin, const QString &resultFirst, QStringList &resultList) {
     if(hanzi.size() == 0) {
         resultList.append(resultAllPinYin);
         resultList.append(resultFirst);
@@ -258,7 +259,7 @@ void stitchMultiToneWordsDFS(const QString& hanzi, const QString& resultAllPinYi
 }
 
 //BFS+Stack多音字太多会爆栈
-void stitchMultiToneWordsBFSStack(const QString& hanzi, QStringList& resultList) {
+void stitchMultiToneWordsBFSStack(const QString &hanzi, QStringList &resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString> tempQueue;
     tempHanzi = hanzi;
@@ -293,7 +294,7 @@ void stitchMultiToneWordsBFSStack(const QString& hanzi, QStringList& resultList)
     }
 }
 //BFS+Heap，多音字太多会耗尽内存
-void stitchMultiToneWordsBFSHeap(const QString& hanzi, QStringList& resultList) {
+void stitchMultiToneWordsBFSHeap(const QString &hanzi, QStringList &resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString>* tempQueue = new QQueue<QString>;
     tempHanzi = hanzi;
@@ -331,7 +332,7 @@ void stitchMultiToneWordsBFSHeap(const QString& hanzi, QStringList& resultList) 
 }
 
 //BFS+Heap+超过3个多音字只建一个索引，比较折中的方案
-void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultList) {
+void stitchMultiToneWordsBFSHeapLess3(const QString &hanzi, QStringList &resultList) {
     QString tempHanzi, resultAllPinYin, resultFirst;
     QQueue<QString>* tempQueue = new QQueue<QString>;
     QQueue<QString>* tempQueueFirst = new QQueue<QString>;
@@ -404,26 +405,26 @@ void stitchMultiToneWordsBFSHeapLess3(const QString& hanzi, QStringList& resultL
 }
 
 //BFS+Stack+超过3个多音字只建一个索引，比较折中的方案
-void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& resultList) {
-    QString tempHanzi, resultAllPinYin, resultFirst;
+void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &resultList) {
+    QString tempHanzi;
     QQueue<QString> tempQueue;
     QQueue<QString> tempQueueFirst;
     tempHanzi = hanzi;
     int tempQueueSize = 0;
     int multiToneWordNum = 0;
-    for(auto i : hanzi) {
-        if(FileUtils::map_chinese2pinyin.contains(i)) {
-            if(FileUtils::map_chinese2pinyin[i].size() > 1) {
-                ++multiToneWordNum;
-            }
-        }
+
+    for (auto i:hanzi) {
+        if (PinYinManager::getInstance()->isMultiTon(QString(i).toStdString()))
+            ++multiToneWordNum;
     }
     if(multiToneWordNum > 3) {
         QString oneResult, oneResultFirst;
         for(auto i : hanzi) {
-            if(FileUtils::map_chinese2pinyin.contains(i)) {
-                oneResult += FileUtils::map_chinese2pinyin[i].first();
-                oneResultFirst += FileUtils::map_chinese2pinyin[i].first().at(0);
+            QStringList results;
+            PinYinManager::getInstance()->getResults(QString(i).toStdString(), results);
+            if(results.size()) {
+                oneResult += results.first();
+                oneResultFirst += results.first().at(0);
             } else {
                 oneResult += i;
                 oneResultFirst += i;
@@ -434,8 +435,10 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
         return;
     }
 
-    if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
-        for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
+    QStringList results;
+    PinYinManager::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
+    if(results.size()) {
+        for(auto i : results) {
             tempQueue.enqueue(i);
             tempQueueFirst.enqueue(i.at(0));
         }
@@ -445,10 +448,11 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
     }
     tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
     while(tempHanzi.size() != 0) {
+        PinYinManager::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
         tempQueueSize = tempQueue.size();
-        if(FileUtils::map_chinese2pinyin.contains(tempHanzi.at(0))) {
+        if(results.size()) {
             for(int j = 0; j < tempQueueSize; ++j) {
-                for(auto i : FileUtils::map_chinese2pinyin[tempHanzi.at(0)]) {
+                for(auto i : results) {
                     tempQueue.enqueue(tempQueue.head() + i);
                     tempQueueFirst.enqueue(tempQueueFirst.head() + i.at(0));
                 }
@@ -469,22 +473,12 @@ void stitchMultiToneWordsBFSStackLess3(const QString& hanzi, QStringList& result
         resultList.append(tempQueue.dequeue());
         resultList.append(tempQueueFirst.dequeue());
     }
-    //    delete tempQueue;
-    //    delete tempQueueFirst;
-    //    tempQueue = nullptr;
-    //    tempQueueFirst = nullptr;
     return;
 }
 
-QStringList FileUtils::findMultiToneWords(const QString& hanzi) {
-    //    QStringList* output = new QStringList();
+QStringList FileUtils::findMultiToneWords(const QString &hanzi) {
     QStringList output;
-    QString tempAllPinYin, tempFirst;
-    QStringList stringList = hanzi.split("");
-
-    //    stitchMultiToneWordsDFS(hanzi, tempAllPinYin, tempFirst, output);
     stitchMultiToneWordsBFSStackLess3(hanzi, output);
-    //    qDebug() << output;
     return output;
 }
 
@@ -779,6 +773,7 @@ void FileUtils::getTxtContent(QString &path, QString &textcontent) {
 
 int FileUtils::openFile(QString &path, bool openInDir)
 {
+    int res = -1;
     if(openInDir) {
         QStringList list;
         list.append(path);
@@ -787,12 +782,12 @@ int FileUtils::openFile(QString &path, bool openInDir)
                                                               "org.freedesktop.FileManager1",
                                                               "ShowItems");
         message.setArguments({list, "ukui-search"});
-        QDBusMessage res = QDBusConnection::sessionBus().call(message);
-        if (QDBusMessage::ReplyMessage == res.ReplyMessage) {
-            return 0;
+        QDBusMessage messageRes = QDBusConnection::sessionBus().call(message);
+        if (QDBusMessage::ReplyMessage == messageRes.ReplyMessage) {
+            res = 0;
         } else {
-            qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << res.ReplyMessage;
-            return -1;
+            qDebug() << "Error! QDBusMessage reply error! ReplyMessage:" << messageRes.ReplyMessage;
+            res = -1;
         }
     } else {
         auto file = wrapGFile(g_file_new_for_uri(QUrl::fromLocalFile(path).toString().toUtf8().constData()));
@@ -807,6 +802,7 @@ int FileUtils::openFile(QString &path, bool openInDir)
                 mimeType = g_file_info_get_attribute_string(fileInfo.get()->get(), "standard::fast-content-type");
             }
         }
+
         GError *error = NULL;
         GAppInfo *info  = NULL;
         /*
@@ -832,11 +828,14 @@ int FileUtils::openFile(QString &path, bool openInDir)
         }
         g_key_file_free (keyfile);
         if(!G_IS_APP_INFO(info)) {
-            return -1;
+            res = -1;
+        } else {
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+            res = 0;
         }
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-        return 0;
+        g_object_unref(info);
     }
+    return res;
 }
 
 bool FileUtils::copyPath(QString &path)
@@ -983,7 +982,12 @@ QString FileUtils::getHtmlText(const QString &text, const QString &keyword)
         }
     }
     htmlString.replace("\n", "<br />");//替换换行符
-    return htmlString;
+    return "<pre>" + htmlString + "</pre>";
+}
+
+QString FileUtils::setAllTextBold(const QString &name)
+{
+    return QString("<h3 style=\"font-weight:normal;\"><pre>%1</pre></h3>").arg(escapeHtml(name));
 }
 
 QString FileUtils::wrapData(QLabel *p_label, const QString &text)

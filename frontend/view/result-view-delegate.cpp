@@ -1,5 +1,7 @@
 #include "result-view-delegate.h"
+#include <QPainterPath>
 using namespace UkuiSearch;
+static ResultItemStyle *global_instance_of_item_style = nullptr;
 
 ResultViewDelegate::ResultViewDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
@@ -38,7 +40,8 @@ void ResultViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
         ctx.palette.setColor(QPalette::Text, optionV4.palette.color(QPalette::Active, QPalette::HighlightedText));
 
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &optionV4);
-    textRect.adjust(0, 0, 0, 0);
+    //使图标和文本间隔与原来保持一致，故文本区域右移4
+    textRect.adjust(4, 0, 0, 0);
     painter->save();
     painter->translate(textRect.topLeft());
     painter->setClipRect(textRect.translated(-textRect.topLeft()));
@@ -52,7 +55,7 @@ QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionVie
     QString indexString = index.model()->data(index, Qt::DisplayRole).toString();
     QFont ft(painter->font().family(), GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toInt());
     QFontMetrics fm(ft);
-    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30); //当字体超过Item的长度时显示为省略号
+    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30 - 10); //当字体超过Item的长度时显示为省略号
     QString htmlString;
     if((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
         indexFindLeft = indexColString.toUpper().indexOf(m_regFindKeyWords.toUpper()); //得到查找字体在当前整个Item字体中的位置
@@ -77,7 +80,7 @@ QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionVie
         }
     }
 //    qDebug()<<indexColString<<"---->"<<htmlString;
-    return htmlString;
+    return "<pre>" + htmlString + "</pre>";
 }
 
 QString ResultViewDelegate::escapeHtml(const QString &str) const
@@ -86,4 +89,72 @@ QString ResultViewDelegate::escapeHtml(const QString &str) const
     temp.replace("<", "&lt;");
     temp.replace(">", "&gt;");
     return temp;
+}
+
+ResultItemStyle *ResultItemStyle::getStyle()
+{
+    if (!global_instance_of_item_style) {
+        global_instance_of_item_style = new ResultItemStyle;
+    }
+    return global_instance_of_item_style;
+}
+
+void ResultItemStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    switch (element) {
+    case CE_ItemViewItem: {
+        if (const QStyleOptionViewItem *vopt = qstyleoption_cast<const QStyleOptionViewItem *>(option)) {
+            painter->save();
+            if (painter->clipPath().isEmpty()) {
+                painter->setClipRect(option->rect);
+            }
+
+            QRect checkRect = proxy()->subElementRect(SE_ItemViewItemCheckIndicator, vopt, widget);
+            QRect iconRect = proxy()->subElementRect(SE_ItemViewItemDecoration, vopt, widget);
+
+            // draw the background
+            proxy()->drawPrimitive(PE_PanelItemViewItem, option, painter, widget);
+
+            // draw the check mark
+            if (vopt->features & QStyleOptionViewItem::HasCheckIndicator) {
+                QStyleOptionViewItem option(*vopt);
+                option.rect = checkRect;
+                option.state = option.state & ~QStyle::State_HasFocus;
+
+                switch (vopt->checkState) {
+                case Qt::Unchecked:
+                    option.state |= QStyle::State_Off;
+                    break;
+                case Qt::PartiallyChecked:
+                    option.state |= QStyle::State_NoChange;
+                    break;
+                case Qt::Checked:
+                    option.state |= QStyle::State_On;
+                    break;
+                default:
+                    break;
+                }
+                proxy()->drawPrimitive(QStyle::PE_IndicatorViewItemCheck, &option, painter, widget);
+            }
+
+            // draw the icon
+            QIcon::Mode mode = QIcon::Normal;
+            if (!(vopt->state & QStyle::State_Enabled)) {
+                mode = QIcon::Disabled;
+            } else if (vopt->state & QStyle::State_Selected) {
+                mode = QIcon::Selected;
+            }
+            QIcon::State state = vopt->state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+            auto pixmap = vopt->icon.pixmap(vopt->decorationSize, mode, state);
+
+            iconRect.moveLeft(8);
+            QStyle::drawItemPixmap(painter, iconRect, vopt->decorationAlignment, pixmap);
+            painter->restore();
+            return;
+        }
+        break;
+    }
+    default:
+        break;
+    }
 }

@@ -5,9 +5,11 @@ HEADERS += \
     $$PWD/common-defines.h \
     $$PWD/plugin-iface.h \
     $$PWD/search-plugin-iface.h \
+    $$PWD/search-task-plugin-iface.h \
     $$PWD/data-queue.h \
-    $$PWD/search-task-plugin-iface.h
+    $$PWD/separation-line.h
 
 SOURCES += \
-    $$PWD/action-label.cpp
+    $$PWD/action-label.cpp \
+    $$PWD/separation-line.cpp
 

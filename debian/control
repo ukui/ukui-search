@@ -11,7 +11,7 @@ Build-Depends: debhelper (>=9.0.0),
                qtscript5-dev,
                qttools5-dev-tools,
                libxapian-dev,
-               libquazip5-dev(>=0.7.6-6build1),
+               libquazip5-dev(>=0.9.1-2),
                libglib2.0-dev,
                libkf5windowsystem-dev,
                libgsettings-qt-dev,
@@ -20,7 +20,9 @@ Build-Depends: debhelper (>=9.0.0),
                libpoppler-qt5-dev,
                libukui-log4qt-dev,
                libqt5xdg-dev,
-               libukcc-dev
+               libukcc-dev,
+               libopencv-dev,
+               libtesseract-dev
 Standards-Version: 4.5.0
 Homepage: https://www.ukui.org/
 Vcs-Git:  https://github.com/ukui/ukui-search.git

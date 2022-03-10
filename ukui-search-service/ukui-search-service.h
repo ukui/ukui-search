@@ -7,7 +7,6 @@
 #include "qtsingleapplication.h"
 #include "search-method-manager.h"
 #include "common.h"
-#include "file-utils.h"
 namespace UkuiSearch {
 
 class UkuiSearchService : public QtSingleApplication

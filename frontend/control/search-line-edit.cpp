@@ -20,6 +20,7 @@
  */
 #include "search-line-edit.h"
 #include <KWindowEffects>
+#include <QPainterPath>
 
 QT_BEGIN_NAMESPACE
 extern void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed);

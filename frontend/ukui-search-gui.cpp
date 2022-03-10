@@ -8,7 +8,6 @@
 #include "search-plugin-manager.h"
 #include "document.h"
 
-#include "file-utils.h"
 using namespace UkuiSearch;
 UkuiSearchGui::UkuiSearchGui(int &argc, char *argv[], const QString &applicationName): QtSingleApplication (applicationName, argc, argv)
 {
@@ -53,10 +52,6 @@ UkuiSearchGui::UkuiSearchGui(int &argc, char *argv[], const QString &application
         qDebug() << "Loading plugins and resources...";
         SearchPluginManager::getInstance();
         PluginManager::getInstance();
-
-        // load chinese character and pinyin file to a Map
-        FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
-        qDebug() << "Finish loading plugins and resources";
 
         m_mainWindow = new UkuiSearch::MainWindow();
         m_dbusService = new UkuiSearch::UkuiSearchDbusServices(m_mainWindow);

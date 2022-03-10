@@ -16,7 +16,6 @@ UkuiSearchService::UkuiSearchService(int &argc, char *argv[], const QString &app
         });
 
         DirWatcher::getDirWatcher();
-        FileUtils::loadHanziTable("://index/pinyinWithoutTone.txt");
         initGsettings();
     }
 

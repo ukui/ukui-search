@@ -12,8 +12,10 @@
 #include <QAction>
 #include "action-label.h"
 #include "search-plugin-iface.h"
+#include <gio/gdesktopappinfo.h>
 
 namespace UkuiSearch {
+
 class LIBSEARCH_EXPORT WebSearchPlugin : public QObject, public SearchPluginIface
 {
     Q_OBJECT
@@ -28,6 +30,7 @@ public:
     bool isEnable() {return m_enable;}
     QString getPluginName();
     void KeywordSearch(QString keyword,DataQueue<ResultInfo> *searchResult);
+    void stopSearch();
     QList<SearchPluginIface::Actioninfo> getActioninfo(int type);
     void openAction(int actionkey, QString key, int type);
     QWidget *detailPage(const ResultInfo &ri);
@@ -47,6 +50,8 @@ private:
 
     bool m_enable = true;
     QList<WebSearchPlugin::Actioninfo> m_actionInfo;
+
+    QString getDefaultAppId(const char * contentType);
 };
 }
 #endif // WEBSEARCHPLUGIN_H

@@ -30,13 +30,13 @@ ShowMoreLabel::ShowMoreLabel(QWidget *parent) : QWidget(parent) {
 
 void ShowMoreLabel::resetLabel() {
     m_isOpen = false;
-    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
+    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic", QIcon(":/res/icons/pan-down-symbolic.svg")).pixmap(QSize(16, 16)));
 }
 
 void ShowMoreLabel::setLabel()
 {
     m_isOpen = true;
-    m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
+    m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic", QIcon(":/res/icons/pan-up-symbolic.svg")).pixmap(QSize(16, 16)));
 }
 
 /**
@@ -53,7 +53,7 @@ void ShowMoreLabel::initUi() {
     m_layout = new QHBoxLayout(this);
     m_layout->setContentsMargins(0, 0, 0, 6);
     m_iconLabel = new QLabel(this);
-    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
+    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic", QIcon(":/res/icons/pan-down-symbolic.svg")).pixmap(QSize(16, 16)));
     m_iconLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_iconLabel->installEventFilter(this);
 //    m_loadingIconLabel = new QLabel(this); //使用图片显示加载状态时，取消此label的注释
@@ -63,6 +63,7 @@ void ShowMoreLabel::initUi() {
     m_layout->addWidget(m_iconLabel);
     m_iconLabel->setPalette(pal);
     m_iconLabel->setCursor(QCursor(Qt::PointingHandCursor));
+    m_iconLabel->setProperty("useIconHighlightEffect", 0x08);
 //    m_layout->addWidget(m_loadingIconLabel);
 }
 
@@ -71,11 +72,11 @@ bool ShowMoreLabel::eventFilter(QObject *watched, QEvent *event) {
         if(event->type() == QEvent::MouseButtonPress) {
             if(! m_timer->isActive()) {
                 if(!m_isOpen) {
-                    m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic").pixmap(QSize(16, 16)));
+                    m_iconLabel->setPixmap(QIcon::fromTheme("pan-up-symbolic", QIcon(":/res/icons/pan-up-symbolic.svg")).pixmap(QSize(16, 16)));
                     m_isOpen = true;
                     Q_EMIT this->showMoreClicked();
                 } else {
-                    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic").pixmap(QSize(16, 16)));
+                    m_iconLabel->setPixmap(QIcon::fromTheme("pan-down-symbolic", QIcon(":/res/icons/pan-down-symbolic.svg")).pixmap(QSize(16, 16)));
                     m_isOpen = false;
                     Q_EMIT this->retractClicked();
                 }

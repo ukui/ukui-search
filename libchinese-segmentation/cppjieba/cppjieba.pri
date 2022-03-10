@@ -3,6 +3,7 @@ INCLUDEPATH += $$PWD
 HEADERS += \
     $$PWD/DictTrie.hpp \
     $$PWD/IdfTrie.hpp \
+    $$PWD/PinYinTrie.hpp \
     $$PWD/FullSegment.hpp \
     $$PWD/HMMModel.hpp \
     $$PWD/HMMSegment.hpp \

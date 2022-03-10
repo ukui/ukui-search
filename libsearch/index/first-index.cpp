@@ -39,6 +39,9 @@ FirstIndex::~FirstIndex() {
     if(this->q_content_index)
         delete this->q_content_index;
     this->q_content_index = nullptr;
+    if(this->m_ocr_index)
+        delete this->m_ocr_index;
+    this->m_ocr_index = nullptr;
     if(this->p_indexGenerator)
         delete this->p_indexGenerator;
     this->p_indexGenerator = nullptr;
@@ -48,10 +51,10 @@ FirstIndex::~FirstIndex() {
 void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
 //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
-    if((fileInfo.fileName().split(".", QString::SkipEmptyParts).length() > 1)
-            && (true == targetFileTypeMap[fileInfo.fileName().split(".").last()])
-            && (!FileUtils::isEncrypedOrUnreadable(fileInfo.absoluteFilePath()))) {
-        //this->q_content_index->enqueue(fileInfo.absoluteFilePath());
+    if (fileInfo.fileName().split(".", QString::SkipEmptyParts).length() < 2)
+        return;
+    if (true == targetFileTypeMap[fileInfo.fileName().split(".").last()]
+            and false == FileUtils::isEncrypedOrUnreadable(fileInfo.absoluteFilePath())) {
         if (fileInfo.fileName().split(".").last() == "docx") {
             QuaZip file(fileInfo.absoluteFilePath());
             if(!file.open(QuaZip::mdUnzip))
@@ -93,6 +96,8 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
         } else {
             this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
         }
+    } else if (true == targetPhotographTypeMap[fileInfo.fileName().split(".").last()]) {
+        this->m_ocr_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
     }
 }
 
@@ -120,6 +125,7 @@ void FirstIndex::run() {
 
     this->q_index = new QQueue<QVector<QString>>();
     this->q_content_index = new QQueue<QPair<QString,qint64>>();
+    this->m_ocr_index = new QQueue<QPair<QString,qint64>>();
 
     int fifo_fd;
     char buffer[2];
@@ -214,7 +220,34 @@ void FirstIndex::run() {
             qDebug() << "content index end;";
             sem.release(2);
         });
-
+        //OCR功能暂时屏蔽
+//        QtConcurrent::run(&m_pool,[&]() {
+//            sem.acquire(5);
+//            QQueue<QString>* tmpOcr = new QQueue<QString>();
+//            qDebug() << "m_ocr_index:" << m_ocr_index->size();
+//            while(!this->m_ocr_index->empty()) {
+//                qint64 fileSize = 0;
+//                //一次处理的数据量文件总大小为50M以下，50M为暂定值
+//                for(size_t i = 0;/* (i < 30) && (fileSize < 52428800) && */(!this->m_ocr_index->empty()); ++i) {
+//                    QPair<QString,qint64> tempPair = this->m_ocr_index->dequeue();
+//                    fileSize += tempPair.second;
+//                    if (fileSize > 52428800) {
+//                        if (tmpOcr->size() == 0) {
+//                            tmpOcr->enqueue(tempPair.first);
+//                            break;
+//                        }
+//                        this->m_ocr_index->enqueue(tempPair);
+//                        break;
+//                    }
+//                    tmpOcr->enqueue(tempPair.first);
+//                }
+//                this->p_indexGenerator->creatOcrIndex(tmpOcr);
+//                tmpOcr->clear();
+//            }
+//            delete tmpOcr;
+//            qDebug() << "OCR index end;";
+//            sem.release(5);
+//        });
         mutex1.lock();
         mutex2.lock();
         mutex3.lock();
@@ -223,14 +256,15 @@ void FirstIndex::run() {
         mutex2.unlock();
         mutex3.unlock();
 
-
-
         if(this->q_index)
             delete this->q_index;
         this->q_index = nullptr;
         if(this->q_content_index)
             delete this->q_content_index;
         this->q_content_index = nullptr;
+        if(this->m_ocr_index)
+            delete this->m_ocr_index;
+        this->m_ocr_index = nullptr;
         if(p_indexGenerator)
             delete p_indexGenerator;
         p_indexGenerator = nullptr;

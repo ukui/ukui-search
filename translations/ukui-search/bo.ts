@@ -2,17 +2,9 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>QObject</name>
-    <message>
-        <location filename="../../frontend/main.cpp" line="184"/>
-        <source>ukui-search is already running!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>UkuiSearch::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="309"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="312"/>
         <source>Best Matches</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20,32 +12,32 @@
 <context>
     <name>UkuiSearch::CreateIndexAskDialog</name>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="40"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="41"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="66"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="68"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="91"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="93"/>
         <source>Creating index can help you getting results quickly, whether to create or not?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="102"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="104"/>
         <source>Don&apos;t remind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="113"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="115"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="115"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="117"/>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -61,12 +53,12 @@
 <context>
     <name>UkuiSearch::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="70"/>
+        <location filename="../../frontend/mainwindow.cpp" line="69"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="76"/>
+        <location filename="../../frontend/mainwindow.cpp" line="75"/>
         <source>Global Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -74,7 +66,7 @@
 <context>
     <name>UkuiSearch::SearchLineEdit</name>
     <message>
-        <location filename="../../frontend/control/search-line-edit.cpp" line="55"/>
+        <location filename="../../frontend/control/search-line-edit.cpp" line="56"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -241,9 +233,22 @@
     </message>
 </context>
 <context>
+    <name>UkuiSearch::UkuiSearchGui</name>
+    <message>
+        <location filename="../../frontend/ukui-search-gui.cpp" line="88"/>
+        <source>Quit ukui-search application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../frontend/ukui-search-gui.cpp" line="91"/>
+        <source>Show main window</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::WebSearchWidget</name>
     <message>
-        <location filename="../../frontend/view/web-search-view.cpp" line="150"/>
+        <location filename="../../frontend/view/web-search-view.cpp" line="152"/>
         <source>Web Page</source>
         <translation type="unfinished"></translation>
     </message>

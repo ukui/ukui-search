@@ -44,6 +44,13 @@ void UkuiSearch::SettingsSearchPlugin::KeywordSearch(QString keyword, DataQueue<
     m_pool.start(settingSearch);
 }
 
+void SettingsSearchPlugin::stopSearch()
+{
+    m_mutex.lock();
+    ++m_uniqueSymbolForSettings;
+    m_mutex.unlock();
+}
+
 QList<SearchPluginIface::Actioninfo> SettingsSearchPlugin::getActioninfo(int type)
 {
     return m_actionInfo;
@@ -70,9 +77,11 @@ QWidget *SettingsSearchPlugin::detailPage(const ResultInfo &ri)
     m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
-    m_nameLabel->setText(QString("<h3 style=\"font-weight:normal;\">%1</h3>").arg(FileUtils::escapeHtml(showname)));
+    m_nameLabel->setText(FileUtils::setAllTextBold(showname));
     if(QString::compare(showname, ri.name)) {
         m_nameLabel->setToolTip(ri.name);
+    } else {
+        m_nameLabel->setToolTip("");
     }
     return m_detailPage;
 }
@@ -111,10 +120,7 @@ void SettingsSearchPlugin::initDetailPage()
     m_nameFrameLyt->addStretch();
     m_nameFrameLyt->addWidget(m_pluginLabel);
 
-    m_line_1 = new QFrame(m_detailPage);
-    m_line_1->setLineWidth(0);
-    m_line_1->setFixedHeight(1);
-    m_line_1->setStyleSheet("QFrame{background: rgba(0,0,0,0.2);}");
+    m_line_1 = new SeparationLine(m_detailPage);
 
     m_actionFrame = new QFrame(m_detailPage);
     m_actionFrameLyt = new QVBoxLayout(m_actionFrame);
@@ -282,6 +288,7 @@ void SettingsMatch::matchDataMap(QString &key, QString &keyword, size_t uniqueSy
         if (data.contains(keyword, Qt::CaseInsensitive)) {
             createResultInfo(resultInfo, m_dataMap.value(key), key);
             //判断是否为同一次搜索
+            SettingsSearchPlugin::m_mutex.lock();
             if (uniqueSymbol == SettingsSearchPlugin::m_uniqueSymbolForSettings) {
                 searchResult->enqueue(resultInfo);
                 SettingsSearchPlugin::m_mutex.unlock();

@@ -160,6 +160,7 @@ void ResultWidget::initConnections()
 
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
 {
+    setStyle(ResultItemStyle::getStyle());
     this->setFrameShape(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
     this->setIconSize(QSize(VIEW_ICON_SIZE, VIEW_ICON_SIZE));
