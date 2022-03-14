@@ -3,7 +3,7 @@ QT += core gui dbus
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
-TARGET = ukui-search-service
+TARGET = ukui-search-app-data-service
 VERSION = 1.0.0
 DEFINES += VERSION='\\"$${VERSION}\\"'
 CONFIG += c++11 link_pkgconfig no_keywords lrelease

@@ -28,6 +28,7 @@ bool SearchPluginManager::registerPlugin(UkuiSearch::SearchPluginIface *plugin)
         return false;
     }
     m_map[plugin->name()] = plugin;
+    qDebug() << "register search plugin: " << plugin->name();
     m_plugin_order[m_plugin_order.size()] = plugin->name();//按注册顺序绑定优先级
     return true;
 }
