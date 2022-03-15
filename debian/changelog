@@ -1,3 +1,30 @@
+ukui-search (3.1-2.0.0+0315) jammy; urgency=medium
+
+  * Bug:无
+  * 需求号:无
+  * 其他改动：
+  * 分离前后端进程，增加ukui-search-service搜索服务进程。
+  * ukui-search作为gui进程支持多DISPLAY同时启动。
+  * 增加搜索服务接口。
+  * 增加命令行：
+    搜索应用：
+    Usage: ukui-search [options]
+    Options:
+    -h, --help     Displays this help.
+    -v, --version  Displays version information.
+    -q, --quit     Quit ukui-search application
+    -s, --show     Show main window
+    Usage: ukui-search-service [options]
+    搜索服务：
+    Options:
+    -h, --help            Displays this help.
+    -v, --version         Displays version information.
+    -q, --quit            Stop service
+    -i, --index <option>  start or stop file index
+  * 增加OCR搜索后端功能，暂未启用。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Tue, 15 Mar 2022 10:03:00 +0800
+
 ukui-search (3.1-1.1.4+1117) v101; urgency=medium
 
   * Bug 83193,77755
