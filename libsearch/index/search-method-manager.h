@@ -1,6 +1,7 @@
 #ifndef SEARCHMETHODMANAGER_H
 #define SEARCHMETHODMANAGER_H
 
+#include <QSystemSemaphore>
 #include "first-index.h"
 //#include "inotify-index.h"
 #include "inotify-watch.h"
@@ -11,9 +12,10 @@ public:
     void searchMethod(FileUtils::SearchMethod sm);
 private:
     SearchMethodManager();
-    FirstIndex m_fi;
+    FirstIndex *m_fi;
 //    InotifyIndex* m_ii;
     InotifyWatch *m_iw = nullptr;
+    QSystemSemaphore m_semaphore;
 };
 }
 

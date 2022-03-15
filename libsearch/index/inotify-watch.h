@@ -2,17 +2,20 @@
 #define INOTIFYWATCH_H
 
 #include <QThread>
-#include <unistd.h>
-#include <sys/inotify.h>
+#include <QBuffer>
 #include <QSocketNotifier>
 #include <QDataStream>
 #include <QSharedMemory>
+
+#include <sys/prctl.h>
+#include <sys/wait.h>
+#include <sys/inotify.h>
+#include <unistd.h>
 
 #include "traverse_bfs.h"
 #include "ukui-search-qdbus.h"
 #include "index-status-recorder.h"
 #include "file-utils.h"
-#include "first-index.h"
 #include "pending-file-queue.h"
 #include "common.h"
 namespace UkuiSearch {
@@ -21,7 +24,6 @@ class InotifyWatch : public QThread, public Traverse_BFS
     Q_OBJECT
 public:
     static InotifyWatch* getInstance();
-
     bool addWatch(const QString &path);
     bool removeWatch(const QString &path, bool removeFromDatabase = true);
     virtual void DoSomething(const QFileInfo &info) final;
