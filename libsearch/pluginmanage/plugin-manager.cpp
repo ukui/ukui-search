@@ -30,15 +30,10 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
 
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        if(pluginLoader.isLoaded()) {
-            // version check
-            QString version = pluginLoader.metaData().value("MetaData").toObject().value("version").toString();
-            if (version != VERSION) {
-                qWarning() << "Plugin version check failed:" << fileName << "version," << "iface version : " << VERSION;
-                continue;
-            }
-        } else {
-            qWarning() << "Fail to load fileName";
+        // version check
+        QString version = pluginLoader.metaData().value("MetaData").toObject().value("version").toString();
+        if (version != VERSION) {
+            qWarning() << "Plugin version check failed:" << fileName << "version," << "iface version : " << VERSION;
             continue;
         }
 

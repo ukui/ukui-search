@@ -22,7 +22,7 @@
 #include <malloc.h>
 using namespace UkuiSearch;
 static PendingFileQueue *global_instance_pending_file_queue = nullptr;
-PendingFileQueue::PendingFileQueue(QObject *parent) : QThread(parent)
+PendingFileQueue::PendingFileQueue(QObject *parent) : QThread(parent), m_semaphore(INDEX_SEM, 0, QSystemSemaphore::AccessMode::Open)
 {
     this->start();
 
@@ -72,10 +72,11 @@ PendingFileQueue::~PendingFileQueue()
 
 void PendingFileQueue::forceFinish()
 {
-    QThread::msleep(600);
     Q_EMIT timerStop();
     this->quit();
     this->wait();
+    processCache();
+    m_semaphore.release(1);
 }
 void PendingFileQueue::enqueue(const PendingFile &file)
 {
@@ -128,6 +129,8 @@ void PendingFileQueue::enqueue(const PendingFile &file)
 
 void PendingFileQueue::run()
 {
+    //阻塞线程直到first-index进程结束
+    m_semaphore.acquire();
     exec();
 }
 
