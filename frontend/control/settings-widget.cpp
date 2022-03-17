@@ -277,7 +277,7 @@ void SettingsWidget::refreshIndexState() {
     } else {
         this->setIndexState(false);
     }
-    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
+    m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::maxIndexCount)));
     m_timer = new QTimer;
     connect(m_timer, &QTimer::timeout, this, [ = ]() {
         qDebug() << "FileUtils::indexStatus: " << FileUtils::indexStatus;
@@ -286,7 +286,7 @@ void SettingsWidget::refreshIndexState() {
         } else {
             this->setIndexState(false);
         }
-        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::_max_index_count)));
+        m_indexNumLabel->setText(QString("%1/%2").arg(QString::number(SearchManager::getCurrentIndexCount())).arg(QString::number(FileUtils::maxIndexCount)));
     });
     m_timer->start(0.5 * 1000);
 }

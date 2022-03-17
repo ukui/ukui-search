@@ -25,15 +25,11 @@
 #include <QFuture>
 #include <QThreadPool>
 #include <QFile>
+#include <QStandardPaths>
+#include <malloc.h>
 #include "file-utils.h"
 #include "index-generator.h"
 #include "chinese-segmentation.h"
-#include <QStandardPaths>
-#include <malloc.h>
-
-#define INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/index_data").toStdString()
-#define CONTENT_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/content_index_data").toStdString()
-#define OCR_INDEX_PATH (QStandardPaths::writableLocation(QStandardPaths::HomeLocation)+"/.config/org.ukui/ukui-search/ocr_index_data").toStdString()
 
 using namespace UkuiSearch;
 
@@ -51,19 +47,12 @@ QVector<Document> IndexGenerator::g_docListForContent = QVector<Document>();
 QVector<Document> IndexGenerator::g_docListForOcr = QVector<Document>();
 
 
-IndexGenerator *IndexGenerator::getInstance(bool rebuild, QObject *parent) {
+IndexGenerator *IndexGenerator::getInstance() {
     QMutexLocker locker(&m_mutex);
     if(!global_instance) {
-        qDebug() << "IndexGenerator=================";
-        global_instance = new IndexGenerator(rebuild, parent);
+        global_instance = new IndexGenerator();
     }
-    qDebug() << "global_instance" << global_instance;
-    qDebug() << "QThread::currentThreadId()" << QThread::currentThreadId();
     return global_instance;
-}
-
-bool IndexGenerator::setIndexdataPath() {
-    return true;
 }
 
 //文件名索引
@@ -86,7 +75,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QVector<QString> > *messageList) {
         qWarning() << "creatAllIndex fail!" << QString::fromStdString(e.get_description());
         //need a record
         IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "1");
-        assert(false);
+        return false;
     }
     qDebug() << "finish creatAllIndex";
     IndexGenerator::g_docListForPath.clear();
@@ -124,7 +113,7 @@ bool IndexGenerator::creatAllIndex(QQueue<QString> *messageList) {
         } catch(const Xapian::Error &e) {
             qWarning() << "creat content Index fail!" << QString::fromStdString(e.get_description());
             IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "1");
-            assert(false);
+            return false;
         }
         qDebug() << "finish creatAllIndex for content";
 
@@ -163,8 +152,8 @@ bool IndexGenerator::creatOcrIndex(QQueue<QString> *messageList)
             m_database_ocr->commit();
         } catch(const Xapian::Error &e) {
             qWarning() << "creat ocr Index fail!" << QString::fromStdString(e.get_description());
-            IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "1");
-            assert(false);
+            IndexStatusRecorder::getInstance()->setStatus(OCR_DATABASE_STATE, "1");
+            return false;
         }
         qDebug() << "finish creatAllIndex for ocr";
 
@@ -176,26 +165,30 @@ bool IndexGenerator::creatOcrIndex(QQueue<QString> *messageList)
     return true;
 }
 
-IndexGenerator::IndexGenerator(bool rebuild, QObject *parent) : QObject(parent) {
-    QDir database(QString::fromStdString(INDEX_PATH));
-
-    if(database.exists()) {
-        if(rebuild)
-            qDebug() << "remove" << database.removeRecursively();
-    } else {
-        qDebug() << "create index path" << database.mkpath(QString::fromStdString(INDEX_PATH));
+IndexGenerator::IndexGenerator(QObject *parent) : QObject(parent)
+{
+    QDir database(INDEX_PATH);
+    if(!database.exists()) {
+        qDebug() << "create index path" << INDEX_PATH<< database.mkpath(INDEX_PATH);
     }
-    database.setPath(QString::fromStdString(CONTENT_INDEX_PATH));
-    if(database.exists()) {
-        if(rebuild)
-            qDebug() << "remove" << database.removeRecursively();
-    } else {
-        qDebug() << "create content index path" << database.mkpath(QString::fromStdString(CONTENT_INDEX_PATH));
+    database.setPath(CONTENT_INDEX_PATH);
+    if(!database.exists()) {
+        qDebug() << "create content index path" << CONTENT_INDEX_PATH << database.mkpath(CONTENT_INDEX_PATH);
+    }
+    database.setPath(OCR_INDEX_PATH);
+    if(!database.exists()) {
+        qDebug() << "create ocr index path" << OCR_INDEX_PATH << database.mkpath(OCR_INDEX_PATH);
     }
 
-    m_database_path = new Xapian::WritableDatabase(INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
-    m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
-    m_database_ocr = new Xapian::WritableDatabase(OCR_INDEX_PATH, Xapian::DB_CREATE_OR_OPEN);
+    try {
+        m_database_path = new Xapian::WritableDatabase(INDEX_PATH.toStdString(), Xapian::DB_CREATE_OR_OPEN);
+        m_database_content = new Xapian::WritableDatabase(CONTENT_INDEX_PATH.toStdString(), Xapian::DB_CREATE_OR_OPEN);
+        m_database_ocr = new Xapian::WritableDatabase(OCR_INDEX_PATH.toStdString(), Xapian::DB_CREATE_OR_OPEN);
+    } catch(const Xapian::Error &e) {
+        qWarning() << "creat Index fail!" << QString::fromStdString(e.get_description());
+        IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "1");
+        assert(false);
+    }
 }
 
 IndexGenerator::~IndexGenerator() {
@@ -235,6 +228,45 @@ IndexGenerator::~IndexGenerator() {
 
     qDebug() << "QThread::currentThreadId()" << QThread::currentThreadId();
     qDebug() << "~IndexGenerator end";
+}
+
+void IndexGenerator::rebuildIndexDatabase(const QString &path)
+{
+    QDir database(path);
+    if(database.exists()) {
+        qDebug() << "remove" << path << database.removeRecursively();
+    } else {
+        qDebug() << "create index path" << path << database.mkpath(path);
+    }
+    if(m_database_path)
+        m_database_path->~WritableDatabase();
+    m_database_path = new Xapian::WritableDatabase(path.toStdString(), Xapian::DB_CREATE_OR_OPEN);
+}
+
+void IndexGenerator::rebuildContentIndexDatabase(const QString &path)
+{
+    QDir database(path);
+    if(database.exists()) {
+        qDebug() << "remove" << path << database.removeRecursively();
+    } else {
+        qDebug() << "create content index path" << path << database.mkpath(path);
+    }
+    if(m_database_content)
+        m_database_content->~WritableDatabase();
+    m_database_content = new Xapian::WritableDatabase(path.toStdString(), Xapian::DB_CREATE_OR_OPEN);
+}
+
+void IndexGenerator::rebuildOcrIndexDatabase(const QString &path)
+{
+    QDir database(path);
+    if(database.exists()) {
+        qDebug() << "remove" << path << database.removeRecursively();
+    } else {
+        qDebug() << "create ocr index path" << path << database.mkpath(path);
+    }
+    if(m_database_ocr)
+        m_database_ocr->~WritableDatabase();
+    m_database_ocr = new Xapian::WritableDatabase(path.toStdString(), Xapian::DB_CREATE_OR_OPEN);
 }
 
 void IndexGenerator::insertIntoDatabase(Document& doc) {
@@ -417,20 +449,13 @@ Document IndexGenerator::GenerateContentDocument(const QString &path) {
     return doc;
 }
 
-bool IndexGenerator::isIndexdataExist() {
-
-//    Xapian::Database db(m_index_data_path->toStdString());
-    return true;
-
-
-}
 //deprecated
 QStringList IndexGenerator::IndexSearch(QString indexText) {
     QStringList searchResult;
     try {
         qDebug() << "--search start--";
 
-        Xapian::Database db(INDEX_PATH);
+        Xapian::Database db(INDEX_PATH.toStdString());
         Xapian::Enquire enquire(db);
         Xapian::QueryParser qp;
         qp.set_default_op(Xapian::Query::OP_PHRASE);

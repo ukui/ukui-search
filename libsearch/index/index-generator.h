@@ -35,6 +35,7 @@
 #include "file-reader.h"
 #include "common.h"
 #include "pending-file.h"
+#include "common.h"
 
 namespace UkuiSearch {
 //extern QVector<Document> *_doc_list_path;
@@ -48,10 +49,12 @@ class IndexGenerator : public QObject {
     friend class ConstructDocumentForOcr;
     Q_OBJECT
 public:
-    static IndexGenerator *getInstance(bool rebuild = false, QObject *parent = nullptr);
+    static IndexGenerator *getInstance();
     ~IndexGenerator();
-    bool setIndexdataPath();
-    bool isIndexdataExist();
+
+    void rebuildIndexDatabase(const QString &path = INDEX_PATH);
+    void rebuildContentIndexDatabase(const QString &path = CONTENT_INDEX_PATH);
+    void rebuildOcrIndexDatabase(const QString &path = OCR_INDEX_PATH);
 //    Q_INVOKABLE void appendDocListPath(Document doc);
     //for search test
     static QStringList IndexSearch(QString indexText);
@@ -69,7 +72,7 @@ public Q_SLOTS:
     bool updateIndex(QVector<PendingFile> *pendingFiles);
 
 private:
-    explicit IndexGenerator(bool rebuild = false, QObject *parent = nullptr);
+    explicit IndexGenerator(QObject *parent = nullptr);
     static QMutex m_mutex;
     //For file name index
     void HandlePathList(QQueue<QVector<QString> > *messageList);
@@ -91,9 +94,9 @@ private:
     static QMutex  g_mutexDocListForOcr;
     QMap<QString, QStringList> m_index_map;
     QString m_index_data_path;
-    Xapian::WritableDatabase* m_database_path;
-    Xapian::WritableDatabase* m_database_content;
-    Xapian::WritableDatabase* m_database_ocr;
+    Xapian::WritableDatabase* m_database_path = nullptr;
+    Xapian::WritableDatabase* m_database_content = nullptr;
+    Xapian::WritableDatabase* m_database_ocr = nullptr;
     std::string m_docstr;
     std::string m_index_text_str;
     Xapian::TermGenerator m_indexer;

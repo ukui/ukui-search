@@ -1,14 +1,15 @@
 #include "index-status-recorder.h"
+#include <mutex>
 
 using namespace UkuiSearch;
-static IndexStatusRecorder *global_instance_indexStatusRecorder = nullptr;
-
+IndexStatusRecorder *IndexStatusRecorder::m_instance = nullptr;
+std::once_flag g_IndexStatusRecorderInstanceFlag;
 IndexStatusRecorder *IndexStatusRecorder::getInstance()
 {
-    if(!global_instance_indexStatusRecorder) {
-        global_instance_indexStatusRecorder = new IndexStatusRecorder;
-    }
-    return global_instance_indexStatusRecorder;
+    std::call_once(g_IndexStatusRecorderInstanceFlag, [] () {
+        m_instance = new IndexStatusRecorder;
+    });
+    return m_instance;
 }
 
 void IndexStatusRecorder::setStatus(const QString &key, const QVariant &value)
@@ -22,6 +23,33 @@ void IndexStatusRecorder::setStatus(const QString &key, const QVariant &value)
 const QVariant IndexStatusRecorder::getStatus(const QString &key)
 {
     return m_status->value(key);
+}
+
+bool IndexStatusRecorder::indexDatabaseEnable()
+{
+    m_mutex.lock();
+    m_status->sync();
+    m_mutex.unlock();
+    return m_status->value(INDEX_DATABASE_STATE, QVariant(false)).toBool();
+
+}
+
+bool IndexStatusRecorder::contentIndexDatabaseEnable()
+{
+    m_mutex.lock();
+    m_status->sync();
+    m_mutex.unlock();
+    return m_status->value(CONTENT_INDEX_DATABASE_STATE, QVariant(false)).toBool();
+
+}
+
+bool IndexStatusRecorder::ocrDatabaseEnable()
+{
+    m_mutex.lock();
+    m_status->sync();
+    m_mutex.unlock();
+    return m_status->value(OCR_DATABASE_STATE, QVariant(false)).toBool();
+
 }
 
 IndexStatusRecorder::IndexStatusRecorder(QObject *parent) : QObject(parent)
