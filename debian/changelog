@@ -1,3 +1,9 @@
+ukui-search (3.1-1.1.6+0321t) v101; urgency=medium
+
+  * BUG:110566 【全局搜索】竖屏模式打开搜索后，搜任意内容但不退出搜索；后机器再转回横屏；会出现全局搜索的黑色填充页面
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 21 Mar 2022 13:35:11 +0800
+
 ukui-search (3.1-1.1.5+0224t) v101; urgency=medium
 
   *106980 【全局搜索】全局搜索输入框中左侧的放大镜按钮没有居中（必现） 
