@@ -47,24 +47,28 @@ public:
     static FirstIndex* getInstance();
     ~FirstIndex();
     virtual void DoSomething(const QFileInfo &) final;
+
 protected:
     void run() override;
 private:
     FirstIndex();
     FirstIndex(const FirstIndex&) = delete;
     void operator=(const FirstIndex&) = delete;
+
     static FirstIndex *m_instance;
-    bool bool_dataBaseStatusOK = false;
-    bool bool_dataBaseExist = false;
-    IndexGenerator* p_indexGenerator = nullptr;
+
+    bool m_indexDatabaseStatus = false;
+    bool m_contentIndexDatabaseStatus = false;
+    bool m_ocrIndexDatabaseStatus = false;
+    bool m_allDatadaseStatus = false;
     QThreadPool m_pool;
 
-    QQueue<QVector<QString>>* q_index;
+    QQueue<QVector<QString>>* m_indexData = nullptr;
 //    QQueue<QString>* q_content_index;
     //修改QQueue存储数据为QPair<QString,qint64>，增加存储文件大小数据便于处理时统计--jxx20210519
-    QQueue<QPair<QString,qint64>>* q_content_index;
+    QQueue<QPair<QString,qint64>>* m_contentIndexData = nullptr;
     //新增ocr队列存储ocr可识别处理的图片信息及大小；
-    QQueue<QPair<QString,qint64>>* m_ocr_index;
+    QQueue<QPair<QString,qint64>>* m_ocrIndexData = nullptr;
     //xapian will auto commit per 10,000 changes, donnot change it!!!
     const size_t u_send_length = 8192;
     QSystemSemaphore m_semaphore;

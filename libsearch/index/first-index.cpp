@@ -42,24 +42,21 @@ FirstIndex *FirstIndex::getInstance()
 
 FirstIndex::~FirstIndex() {
     qDebug() << "~FirstIndex";
-    if(this->q_index)
-        delete this->q_index;
-    this->q_index = nullptr;
-    if(this->q_content_index)
-        delete this->q_content_index;
-    this->q_content_index = nullptr;
-    if(this->m_ocr_index)
-        delete this->m_ocr_index;
-    this->m_ocr_index = nullptr;
-    if(this->p_indexGenerator)
-        delete this->p_indexGenerator;
-    this->p_indexGenerator = nullptr;
+    if(this->m_indexData)
+        delete this->m_indexData;
+    this->m_indexData = nullptr;
+    if(this->m_contentIndexData)
+        delete this->m_contentIndexData;
+    this->m_contentIndexData = nullptr;
+    if(this->m_ocrIndexData)
+        delete this->m_ocrIndexData;
+    this->m_ocrIndexData = nullptr;
     qDebug() << "~FirstIndex end";
 }
 
 void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
-//    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
-    this->q_index->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
+    //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
+    this->m_indexData->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     if (fileInfo.fileName().split(".", QString::SkipEmptyParts).length() < 2)
         return;
     if (true == targetFileTypeMap[fileInfo.fileName().split(".").last()]
@@ -71,7 +68,7 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
             if(!file.setCurrentFile("word/document.xml", QuaZip::csSensitive))
                 return;
             QuaZipFile fileR(&file);
-            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//docx解压缩后的xml文件为实际需要解析文件大小
+            this->m_contentIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//docx解压缩后的xml文件为实际需要解析文件大小
             file.close();
         } else if (fileInfo.fileName().split(".").last() == "pptx") {
             QuaZip file(fileInfo.absoluteFilePath());
@@ -92,7 +89,7 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
                 }
             }
             file.close();
-            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileSize));//pptx解压缩后的xml文件为实际需要解析文件大小
+            this->m_contentIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileSize));//pptx解压缩后的xml文件为实际需要解析文件大小
         } else if (fileInfo.fileName().split(".").last() == "xlsx") {
             QuaZip file(fileInfo.absoluteFilePath());
             if(!file.open(QuaZip::mdUnzip))
@@ -100,14 +97,14 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
             if(!file.setCurrentFile("xl/sharedStrings.xml", QuaZip::csSensitive))
                 return;
             QuaZipFile fileR(&file);
-            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//xlsx解压缩后的xml文件为实际解析文件大小
+            this->m_contentIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileR.usize()));//xlsx解压缩后的xml文件为实际解析文件大小
             file.close();
         } else {
-            this->q_content_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
+            this->m_contentIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
         }
-    } else if (true == targetPhotographTypeMap[fileInfo.fileName().split(".").last()]) {
-        this->m_ocr_index->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
-    }
+    } /*else if (true == targetPhotographTypeMap[fileInfo.fileName().split(".").last()]) {
+        this->m_ocrIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
+    }*/
 }
 
 void FirstIndex::run() {
@@ -115,26 +112,28 @@ void FirstIndex::run() {
     // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
     QString indexDataBaseStatus =  IndexStatusRecorder::getInstance()->getStatus(INDEX_DATABASE_STATE).toString();
     QString contentIndexDataBaseStatus = IndexStatusRecorder::getInstance()->getStatus(CONTENT_INDEX_DATABASE_STATE).toString();
+//    QString ocrIndexDatabaseStatus = IndexStatusRecorder::getInstance()->getStatus(OCR_DATABASE_STATE).toString();
     QString inotifyIndexStatus = IndexStatusRecorder::getInstance()->getStatus(INOTIFY_NORMAL_EXIT).toString();
 
-    qDebug() << "indexDataBaseStatus: " << indexDataBaseStatus;
-    qDebug() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
-    qDebug() << "inotifyIndexStatus: " << inotifyIndexStatus;
+    qInfo() << "indexDataBaseStatus: " << indexDataBaseStatus;
+    qInfo() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
+//    qInfo() << "ocrIndexDatabaseStatus: " << ocrIndexDatabaseStatus;
+    qInfo() << "inotifyIndexStatus: " << inotifyIndexStatus;
 
-    if(indexDataBaseStatus == "") {
-        this->bool_dataBaseExist = false;
-    } else {
-        this->bool_dataBaseExist = true;
-    }
-    if(indexDataBaseStatus != "2" || contentIndexDataBaseStatus != "2" || inotifyIndexStatus != "2") {
-        this->bool_dataBaseStatusOK = false;
-    } else {
-        this->bool_dataBaseStatusOK = true;
+    m_allDatadaseStatus = inotifyIndexStatus == "2" ? true : false;
+    m_indexDatabaseStatus = indexDataBaseStatus == "2" ? true : false;
+    m_contentIndexDatabaseStatus = contentIndexDataBaseStatus == "2" ? true : false;
+//    m_ocrIndexDatabaseStatus = ocrIndexDatabaseStatus == "2" ? true : false;
+
+    if(m_allDatadaseStatus && m_indexDatabaseStatus && m_contentIndexDatabaseStatus /*&& m_ocrIndexDatabaseStatus*/) {
+        m_semaphore.release(1);
+        return;
     }
 
-    this->q_index = new QQueue<QVector<QString>>();
-    this->q_content_index = new QQueue<QPair<QString,qint64>>();
-    this->m_ocr_index = new QQueue<QPair<QString,qint64>>();
+
+    this->m_indexData = new QQueue<QVector<QString>>();
+    this->m_contentIndexData = new QQueue<QPair<QString,qint64>>();
+//    this->m_ocrIndexData = new QQueue<QPair<QString,qint64>>();
 
     ++FileUtils::indexStatus;
     pid_t pid;
@@ -142,23 +141,12 @@ void FirstIndex::run() {
     if(pid  == 0) {
         prctl(PR_SET_PDEATHSIG, SIGTERM);
         prctl(PR_SET_NAME, "first-index");
-        if(this->bool_dataBaseExist) {
-            if(this->bool_dataBaseStatusOK) {
-                ::_exit(0);
-            } else {
-                //if the parameter is false, index won't be rebuild
-                //if it is true, index will be rebuild
-                p_indexGenerator = IndexGenerator::getInstance(true, this);
-            }
-        } else {
-//            p_indexGenerator = IndexGenerator::getInstance(false,this);
-            p_indexGenerator = IndexGenerator::getInstance(true, this);
-        }
-        //TODO Fix these weird code.
+
         QSemaphore sem(5);
         QMutex mutex1, mutex2, mutex3;
         mutex1.lock();
         mutex2.lock();
+        //        mutex3.lock();
 
         qInfo() << "index dir" << DirWatcher::getDirWatcher()->currentindexableDir();
         qInfo() << "index block dir" << DirWatcher::getDirWatcher()->currentBlackListOfIndex();
@@ -166,59 +154,89 @@ void FirstIndex::run() {
         setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
         this->Traverse();
 
-        FileUtils::_max_index_count = this->q_index->length();
-        qDebug() << "max_index_count:" << FileUtils::_max_index_count;
+        FileUtils::maxIndexCount = this->m_indexData->length();
+        qDebug() << "max_index_count:" << FileUtils::maxIndexCount;
         QtConcurrent::run(&m_pool, [&]() {
             sem.acquire(2);
             mutex1.unlock();
-            qDebug() << "index start;";
+            if(m_allDatadaseStatus && m_indexDatabaseStatus) {
+                sem.release(2);
+                return;
+            }
+            qDebug() << "index start;" << m_indexData->size();
+            IndexGenerator::getInstance()->rebuildIndexDatabase();
             QQueue<QVector<QString>>* tmp1 = new QQueue<QVector<QString>>();
-            while(!this->q_index->empty()) {
-                for(size_t i = 0; (i < 8192) && (!this->q_index->empty()); ++i) {
-                    tmp1->enqueue(this->q_index->dequeue());
+            bool sucess = true;
+            while(!this->m_indexData->empty()) {
+                for(size_t i = 0; (i < 8192) && (!this->m_indexData->empty()); ++i) {
+                    tmp1->enqueue(this->m_indexData->dequeue());
                 }
-                this->p_indexGenerator->creatAllIndex(tmp1);
+                if(!IndexGenerator::getInstance()->creatAllIndex(tmp1)) {
+                    sucess = false;
+                    break;
+                }
                 tmp1->clear();
             }
             delete tmp1;
             qDebug() << "index end;";
+            if(sucess) {
+                IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "2");
+            }
             sem.release(2);
         });
         QtConcurrent::run(&m_pool,[&]() {
             sem.acquire(2);
             mutex2.unlock();
+            if(m_allDatadaseStatus && m_contentIndexDatabaseStatus) {
+                sem.release(2);
+                return;
+            }
+            qDebug() << "content index start:" << m_contentIndexData->size();
+            IndexGenerator::getInstance()->rebuildContentIndexDatabase();
             QQueue<QString>* tmp2 = new QQueue<QString>();
-            qDebug() << "q_content_index:" << q_content_index->size();
-            while(!this->q_content_index->empty()) {
+            bool sucess = true;
+            while(!this->m_contentIndexData->empty()) {
                 qint64 fileSize = 0;
                 //修改一次处理的数据量，从30个文件改为文件总大小为50M以下，50M为暂定值--jxx20210519
-                for(size_t i = 0;/* (i < 30) && (fileSize < 52428800) && */(!this->q_content_index->empty()); ++i) {
-                    QPair<QString,qint64> tempPair = this->q_content_index->dequeue();
+                for(size_t i = 0;/* (i < 30) && (fileSize < 52428800) && */(!this->m_contentIndexData->empty()); ++i) {
+                    QPair<QString,qint64> tempPair = this->m_contentIndexData->dequeue();
                     fileSize += tempPair.second;
                     if (fileSize > 52428800 ) {
                         if (tmp2->size() == 0) {
                             tmp2->enqueue(tempPair.first);
                             break;
                         }
-                        this->q_content_index->enqueue(tempPair);
+                        this->m_contentIndexData->enqueue(tempPair);
                         break;
                     }
                     tmp2->enqueue(tempPair.first);
                 }
                 //                qDebug() << ">>>>>>>>all fileSize:" << fileSize << "file num:" << tmp->size() << "<<<<<<<<<<<<<<<<<<<";
-                this->p_indexGenerator->creatAllIndex(tmp2);
+                if(!IndexGenerator::getInstance()->creatAllIndex(tmp2)) {
+                    sucess = false;
+                    break;
+                }
                 tmp2->clear();
             }
             delete tmp2;
             qDebug() << "content index end;";
+            if(sucess) {
+                IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "2");
+            }
             sem.release(2);
         });
-//        OCR功能暂时屏蔽
+        //        OCR功能暂时屏蔽
 //        QtConcurrent::run(&m_pool,[&]() {
 //            sem.acquire(5);
 //            mutex3.unlock();
 //            QQueue<QString>* tmpOcr = new QQueue<QString>();
 //            qDebug() << "m_ocr_index:" << m_ocr_index->size();
+//            if(m_allDatadaseStatus && m_contentIndexDatabaseStatus) {
+//                sem.release(2);
+//                return;
+//            }
+//            IndexGenerator::getInstance()->rebuildOcrIndexDatabase();
+//            bool sucess = true;
 //            while(!this->m_ocr_index->empty()) {
 //                qint64 fileSize = 0;
 //                //一次处理的数据量文件总大小为50M以下，50M为暂定值
@@ -235,36 +253,36 @@ void FirstIndex::run() {
 //                    }
 //                    tmpOcr->enqueue(tempPair.first);
 //                }
-//                this->p_indexGenerator->creatOcrIndex(tmpOcr);
+//                if(!IndexGenerator::getInstance()->creatAllIndex(tmpOcr)) {
+//                    sucess = false;
+//                    break;
+//                }
 //                tmpOcr->clear();
 //            }
 //            delete tmpOcr;
 //            qDebug() << "OCR index end;";
+//            if(sucess) {
+//                IndexStatusRecorder::getInstance()->setStatus(OCR_DATABASE_STATE, "2");
+//            }
 //            sem.release(5);
 //        });
         mutex1.lock();
         mutex2.lock();
-//        mutex3.lock();
+        //        mutex3.lock();
         sem.acquire(5);
         mutex1.unlock();
         mutex2.unlock();
-//        mutex3.unlock();
+        //        mutex3.unlock();
 
-        if(this->q_index)
-            delete this->q_index;
-        this->q_index = nullptr;
-        if(this->q_content_index)
-            delete this->q_content_index;
-        this->q_content_index = nullptr;
-        if(this->m_ocr_index)
-            delete this->m_ocr_index;
-        this->m_ocr_index = nullptr;
-        if(p_indexGenerator)
-            delete p_indexGenerator;
-        p_indexGenerator = nullptr;
-//        GlobalSettings::getInstance()->forceSync();
-        IndexStatusRecorder::getInstance()->setStatus(INDEX_DATABASE_STATE, "2");
-        IndexStatusRecorder::getInstance()->setStatus(CONTENT_INDEX_DATABASE_STATE, "2");
+        if(this->m_indexData)
+            delete this->m_indexData;
+        this->m_indexData = nullptr;
+        if(this->m_contentIndexData)
+            delete this->m_contentIndexData;
+        this->m_contentIndexData = nullptr;
+        if(this->m_ocrIndexData)
+            delete this->m_ocrIndexData;
+        this->m_ocrIndexData = nullptr;
         ::_exit(0);
     } else if(pid < 0) {
         qWarning() << "First Index fork error!!";
@@ -275,11 +293,11 @@ void FirstIndex::run() {
 
     m_semaphore.release(1);
     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
-//    int retval1 = write(fifo_fd, buffer, strlen(buffer));
-//    if(retval1 == -1) {
-//        qWarning("write error\n");
-//    }
-//    qDebug("write data ok!\n");
+    //    int retval1 = write(fifo_fd, buffer, strlen(buffer));
+    //    if(retval1 == -1) {
+    //        qWarning("write error\n");
+    //    }
+    //    qDebug("write data ok!\n");
     QTime t2 = QTime::currentTime();
     qWarning() << t1;
     qWarning() << t2;

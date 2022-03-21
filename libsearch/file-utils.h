@@ -97,8 +97,7 @@ public:
     static QIcon iconFromTheme(const QString &name, const QIcon &iconDefault);
     static bool isOpenXMLFileEncrypted(QString &path);
     static bool isEncrypedOrUnreadable(QString path);
-    static size_t _max_index_count;
-    static size_t _current_index_count; //this one has been Abandoned,do not use it.
+    static size_t maxIndexCount;
     static unsigned short indexStatus;
 
     enum class SearchMethod { DIRECTSEARCH = 0, INDEXSEARCH = 1};
