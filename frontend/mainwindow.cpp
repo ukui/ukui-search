@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     this->setWindowTitle(tr("ukui-search"));
+    KWindowSystem::setState(this->winId(),NET::SkipTaskbar | NET::SkipPager | NET::SkipSwitcher );
     initUi();
 //    initTimer();
 
