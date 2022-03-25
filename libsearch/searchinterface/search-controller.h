@@ -49,6 +49,14 @@ public:
     QStringList getFileLabel();
     bool isSearchFileOnly();
     bool isSearchDirOnly();
+    void clearAllConditions();
+    void clearKeyWords();
+    void clearSearchDir();
+
+    void setPagination(unsigned int first, unsigned int maxResults);
+    unsigned int first() const;
+    unsigned int maxResults() const;
+
 private:
     std::shared_ptr<SearchController> m_parent = nullptr;
     SearchControllerPrivate *d = nullptr;

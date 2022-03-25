@@ -84,6 +84,26 @@ void UkuiSearchTaskPrivate::stop()
     m_searchCotroller->stop();
 }
 
+void UkuiSearchTaskPrivate::clearKeyWords()
+{
+    m_searchCotroller->clearKeyWords();
+}
+
+void UkuiSearchTaskPrivate::clearAllConditions()
+{
+    m_searchCotroller->clearAllConditions();
+}
+
+void UkuiSearchTaskPrivate::clearSearchDir()
+{
+    m_searchCotroller->clearSearchDir();
+}
+
+void UkuiSearchTaskPrivate::setPagination(unsigned int first, unsigned int maxResults)
+{
+    m_searchCotroller->setPagination(first, maxResults);
+}
+
 UkuiSearchTask::UkuiSearchTask(QObject *parent) : QObject(parent), d(new UkuiSearchTaskPrivate(this))
 {
     connect(d, &UkuiSearchTaskPrivate::searchFinished, this, &UkuiSearchTask::searchFinished);
@@ -146,4 +166,24 @@ size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchTy
 void UkuiSearchTask::stop()
 {
     d->stop();
+}
+
+void UkuiSearchTask::clearAllConditions()
+{
+    d->clearAllConditions();
+}
+
+void UkuiSearchTask::clearKeyWords()
+{
+    d->clearKeyWords();
+}
+
+void UkuiSearchTask::clearSearchDir()
+{
+    d->clearSearchDir();
+}
+
+void UkuiSearchTask::setPagination(unsigned int first, unsigned int maxResults)
+{
+    d->setPagination(first, maxResults);
 }

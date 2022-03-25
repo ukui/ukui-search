@@ -34,6 +34,18 @@ public:
     QStringList getFileLabel();
     bool isSearchFileOnly();
     bool isSearchDirOnly();
+    void clearAllConditions();
+    void clearKeyWords();
+    void clearSearchDir();
+
+    /**
+     * @brief 分页选项
+     * @param first 指定起始位置
+     * @param maxResults 每次搜索结果集的数量
+     */
+    void setPagination(unsigned int first, unsigned int maxResults);
+    unsigned int first() const;
+    unsigned int maxResults() const;
 
 private:
     void copyData();
@@ -53,6 +65,8 @@ private:
     bool m_onlySearchFile = false;
     bool m_onlySearchDir = false;
 
+    unsigned int m_first = 0;
+    unsigned int m_maxResults = 100;        //默认取100条结果
 };
 }
 
