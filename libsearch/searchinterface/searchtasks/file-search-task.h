@@ -47,8 +47,15 @@ protected:
     void run();
 
 private:
-    void searchWithIndex();
-    void directSearch();
+    /**
+     * @brief 通过索引进行搜索，如果搜索过程正常，返回true
+     * 如果搜索被打断，返回false.
+     * 搜索被打断是指用户使用同一个task发起多次搜索，导致searchId发生变化，那么上一次搜索即被打断。
+     * @return
+     */
+    bool searchWithIndex();
+    //同上
+    bool directSearch();
     Xapian::Query creatQueryForFileSearch();
 
 private:

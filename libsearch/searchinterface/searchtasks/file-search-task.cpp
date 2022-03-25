@@ -73,17 +73,18 @@ void FileSearchWorker::run()
         }
     }
 
+    bool finished = true;
     //TODO 还需要判断是否为不能建立索引的目录
     if (IndexStatusRecorder::getInstance()->indexDatabaseEnable()) {
         qDebug() << "index ready";
-        searchWithIndex();
+        finished = searchWithIndex();
 
     } else {
         qDebug() << "direct search";
-        directSearch();
+        finished = directSearch();
     }
 
-    QMetaObject::invokeMethod(m_FileSearchTask, "searchFinished", Q_ARG(size_t, m_currentSearchId));
+    if (finished) QMetaObject::invokeMethod(m_FileSearchTask, "searchFinished", Q_ARG(size_t, m_currentSearchId));
 }
 
 Xapian::Query FileSearchWorker::creatQueryForFileSearch() {
@@ -115,7 +116,7 @@ Xapian::Query FileSearchWorker::creatQueryForFileSearch() {
     return {Xapian::Query::OP_AND, {Xapian::Query::OP_AND, queries.begin(), queries.end()}, fileOrDir};
 }
 
-void FileSearchWorker::searchWithIndex()
+bool FileSearchWorker::searchWithIndex()
 {
     try {
         Xapian::Database db(INDEX_PATH.toStdString());
@@ -137,17 +138,20 @@ void FileSearchWorker::searchWithIndex()
             } else {
                 qDebug() << "Search id changed!";
                 m_searchController->finishSearchIdCheck();
-                return;
+                return false;
             }
         }
 
     } catch(const Xapian::Error &e) {
         qWarning() << QString::fromStdString(e.get_description());
     }
+
+    return true;
 }
 
-void FileSearchWorker::directSearch()
+bool FileSearchWorker::directSearch()
 {
+    unsigned int maxResults = m_searchController->maxResults();
     QQueue<QString> searchPathQueue;
     for (QString &dir : m_validDirectories) {
         searchPathQueue.enqueue(dir);
@@ -194,15 +198,21 @@ void FileSearchWorker::directSearch()
                 if (matched) {
                     ResultItem ri(m_currentSearchId, fileInfo.absoluteFilePath());
                     m_searchController->getDataQueue()->enqueue(ri);
+                    --maxResults;
                 }
                 m_searchController->finishSearchIdCheck();
+                if (maxResults == 0) {
+                    return true;
+                }
             } else {
                 qDebug() << "Search id changed!";
                 m_searchController->finishSearchIdCheck();
-                return;
+                return false;
             }
         }
     }
+
+    return true;
 }
 
 FileSearchFilter::FileSearchFilter(FileSearchWorker *parent) : parent(parent) {}
