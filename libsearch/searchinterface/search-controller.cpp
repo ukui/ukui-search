@@ -79,7 +79,11 @@ void SearchControllerPrivate::setOnlySearchDir(bool onlySearchDir)
 
 size_t SearchControllerPrivate::getCurrentSearchId()
 {
-    return m_searchId;
+    m_searchIdMutex.lock();
+    size_t searchId = m_searchId;
+    m_searchIdMutex.unlock();
+
+    return searchId;
 }
 
 DataQueue<ResultItem> *SearchControllerPrivate::getDataQueue()
@@ -162,6 +166,38 @@ void SearchControllerPrivate::copyData()
         m_recurse = m_formerController.get()->isRecurse();
         m_activeKeywordSegmentation = m_formerController.get()->isKeywordSegmentationActived();
     }
+}
+
+void SearchControllerPrivate::clearAllConditions()
+{
+    clearKeyWords();
+    clearSearchDir();
+}
+
+void SearchControllerPrivate::clearKeyWords()
+{
+    m_keywords.clear();
+}
+
+void SearchControllerPrivate::clearSearchDir()
+{
+    m_searchDirs.clear();
+}
+
+void SearchControllerPrivate::setPagination(unsigned int first, unsigned int maxResults)
+{
+    m_first = first;
+    m_maxResults = maxResults;
+}
+
+unsigned int SearchControllerPrivate::first() const
+{
+    return m_first;
+}
+
+unsigned int SearchControllerPrivate::maxResults() const
+{
+    return m_maxResults;
 }
 
 SearchController::SearchController(std::shared_ptr<SearchController> parent) : m_parent(parent), d(new SearchControllerPrivate(this))
@@ -284,4 +320,34 @@ bool SearchController::isSearchDirOnly()
 void SearchController::stop()
 {
     d->stop();
+}
+
+void SearchController::clearAllConditions()
+{
+    d->clearAllConditions();
+}
+
+void SearchController::clearKeyWords()
+{
+    d->clearKeyWords();
+}
+
+void SearchController::clearSearchDir()
+{
+    d->clearSearchDir();
+}
+
+void SearchController::setPagination(unsigned int first, unsigned int maxResults)
+{
+    d->setPagination(first, maxResults);
+}
+
+unsigned int SearchController::first() const
+{
+    return d->first();
+}
+
+unsigned int SearchController::maxResults() const
+{
+    return d->maxResults();
 }

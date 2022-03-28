@@ -21,6 +21,11 @@ public:
     void setOnlySearchDir(bool onlySearchDir);
     void setSearchOnlineApps(bool searchOnlineApps);
     void initSearchPlugin(SearchType searchType);
+    void clearAllConditions();
+    void clearKeyWords();
+    void clearSearchDir();
+    void setPagination(unsigned int first, unsigned int maxResults);
+
     size_t startSearch(SearchType searchtype, QString customSearchType = QString());
     void stop();
 
