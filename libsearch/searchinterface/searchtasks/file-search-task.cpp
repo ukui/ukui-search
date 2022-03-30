@@ -89,17 +89,17 @@ void FileSearchWorker::run()
 
 Xapian::Query FileSearchWorker::creatQueryForFileSearch() {
     Xapian::Query fileOrDir = Xapian::Query::MatchAll;
-    if (!m_searchController->isSearchDirOnly() || !m_searchController->isSearchFileOnly()) {
+    if (m_searchController->isSearchDirOnly() && m_searchController->isSearchFileOnly()) {
+        //同时指定'只搜索目录'和'只搜索文件',那麼拒絕搜索
+        return {};
+
+    } else {
         if (m_searchController->isSearchDirOnly()) {
             fileOrDir = Xapian::Query(Xapian::Query::OP_VALUE_RANGE, 1, "1", "1");
 
         } else if (m_searchController->isSearchFileOnly()) {
             fileOrDir = Xapian::Query(Xapian::Query::OP_VALUE_RANGE, 1, "0", "0");
         }
-
-    } else {
-        //同时指定只搜索目录和只搜索文件。。。
-        return {};
     }
 
     std::vector<Xapian::Query> queries;
