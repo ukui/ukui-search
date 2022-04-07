@@ -382,7 +382,12 @@ void MainWindow::moveToPanel() {
 void MainWindow::centerToScreen() {
     KWindowSystem::setState(this->winId(),NET::SkipTaskbar | NET::SkipPager);
     this->setWindowState(Qt::WindowFullScreen);
-    this->setGeometry(QGuiApplication::screenAt(QCursor::pos())->geometry());
+    QScreen *focusScreen = QGuiApplication::screenAt(QCursor::pos());
+    this->setGeometry(focusScreen->geometry());
+    if (m_focusScreen != focusScreen) {
+        m_focusScreen = focusScreen;
+        m_forceRefresh = true;
+    }
     m_widget->move((this->width() - WINDOW_WIDTH) / 2, this->height() / 8);
 }
 
@@ -416,7 +421,11 @@ void MainWindow::initGsettings() {
         QStringList keys = m_backgroundGSetting->keys();
         if (keys.contains(PICTURE_FILE_NAME) && keys.contains(PICTURE_OPTIONS) && keys.contains(PRIMARY_COLOR)) {
             //不需要监听
-
+            connect(m_backgroundGSetting, &QGSettings::changed, this, [=](const QString &key) {
+                if (key == PICTURE_FILE_NAME || key == PICTURE_OPTIONS || key == PRIMARY_COLOR) {
+                    m_forceRefresh = true;
+                }
+            });
         } else {
             qt_blurImage(m_backgroundImage, PICTURE_BLUR_RADIUS, false, 0);
             m_backgroundGSetting->deleteLater();
@@ -557,7 +566,11 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 //    QPainterPath path;
 //    path.addRect(this->rect());
 //    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-    rebuildBackground();
+    if (m_forceRefresh || (size() != m_backgroundImage.size())) {
+        m_forceRefresh = false;
+        rebuildBackground();
+    }
+
     QPainter p(this);
     p.drawImage(0, 0, m_backgroundImage);
 }
@@ -568,15 +581,7 @@ void MainWindow::rebuildBackground()
         return;
     }
 
-    QPoint centerPoint = this->mapToGlobal(this->rect().center());
-    QScreen *focusScreen = QGuiApplication::screenAt(centerPoint);
-    if ((m_focusScreen == focusScreen) && (focusScreen->size() == m_backgroundImage.size())) {
-        return;
-    }
-
-    m_focusScreen = focusScreen;
-
-    QImage backgroundImage(m_focusScreen->size(), QImage::Format_ARGB32_Premultiplied);
+    QImage backgroundImage(size(), QImage::Format_ARGB32_Premultiplied);
     backgroundImage.fill(Qt::black);
     QString imagePath = m_backgroundGSetting->get(PICTURE_FILE_NAME).toString();
 

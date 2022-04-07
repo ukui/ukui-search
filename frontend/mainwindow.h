@@ -135,6 +135,7 @@ private:
     QImage  m_backgroundImage;
     QGSettings *m_backgroundGSetting = nullptr;
     QScreen *m_focusScreen = nullptr;
+    bool m_forceRefresh = false;
 };
 }
 
