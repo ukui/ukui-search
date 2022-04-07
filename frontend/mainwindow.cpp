@@ -40,6 +40,11 @@
 #define MAIN_MARGINS 0, 0, 0, 0
 #define TITLE_MARGINS 0,0,0,0
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
+#define BACKGROUND_SCHEMAS  "org.mate.background"
+#define PICTURE_FILE_NAME   "pictureFilename"
+#define PRIMARY_COLOR       "primaryColor"
+#define PICTURE_OPTIONS     "pictureOptions"
+#define PICTURE_BLUR_RADIUS  25
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
 #define WINDOW_WIDTH 720
@@ -93,7 +98,7 @@ MainWindow::~MainWindow() {
     if (m_settingsWidget) {
         delete m_settingsWidget;
         m_settingsWidget = NULL;
-
+    }
 #endif
 //    if (m_askDialog) {
 //        delete m_askDialog;
@@ -137,7 +142,7 @@ void MainWindow::initUi() {
     m_mainLayout->addWidget(m_webSearchPage);
     m_webSearchPage->hide();
     this->setFocusProxy(m_searchBarWidget);
-    m_backgroundPixmap = QPixmap(":/res/icons/wallpaper.png");
+    m_backgroundImage = QImage(":/res/icons/wallpaper.png");
 
 }
 
@@ -404,6 +409,20 @@ void MainWindow::initGsettings() {
             GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
         }
     }
+
+    if (QGSettings::isSchemaInstalled(BACKGROUND_SCHEMAS)) {
+        m_backgroundGSetting = new QGSettings(BACKGROUND_SCHEMAS, QByteArray(), this);
+
+        QStringList keys = m_backgroundGSetting->keys();
+        if (keys.contains(PICTURE_FILE_NAME) && keys.contains(PICTURE_OPTIONS) && keys.contains(PRIMARY_COLOR)) {
+            //不需要监听
+
+        } else {
+            qt_blurImage(m_backgroundImage, PICTURE_BLUR_RADIUS, false, 0);
+            m_backgroundGSetting->deleteLater();
+            m_backgroundGSetting = nullptr;
+        }
+    }
 }
 
 void MainWindow::hideMainWindow()
@@ -538,10 +557,154 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 //    QPainterPath path;
 //    path.addRect(this->rect());
 //    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-    //临时方案
-    m_backgroundPixmap = m_backgroundPixmap.scaled(this->rect().size(), Qt::KeepAspectRatioByExpanding);
+    rebuildBackground();
     QPainter p(this);
-    p.drawPixmap((this->width() - m_backgroundPixmap.rect().width()) / 2,
-                 (this->height() - m_backgroundPixmap.rect().height()) / 2,
-                 m_backgroundPixmap);
+    p.drawImage(0, 0, m_backgroundImage);
+}
+
+void MainWindow::rebuildBackground()
+{
+    if (!m_backgroundGSetting) {
+        return;
+    }
+
+    QScreen *focusScreen = QGuiApplication::screenAt(QCursor::pos());
+    if ((m_focusScreen == focusScreen) && (focusScreen->size() == m_backgroundImage.size())) {
+        return;
+    }
+
+    m_focusScreen = focusScreen;
+
+    QImage backgroundImage(m_focusScreen->size(), QImage::Format_ARGB32_Premultiplied);
+    backgroundImage.fill(Qt::black);
+    QString imagePath = m_backgroundGSetting->get(PICTURE_FILE_NAME).toString();
+
+    if (imagePath.isEmpty()) {
+        QColor color(Qt::black);
+        QString primaryColor = m_backgroundGSetting->get(PRIMARY_COLOR).toString();
+        if (!primaryColor.isEmpty()) {
+            color = QColor(primaryColor);
+        }
+        backgroundImage.fill(color);
+
+    } else {
+        QImage loadedImage(imagePath);
+        QString pictureOptions = m_backgroundGSetting->get(PICTURE_OPTIONS).toString();
+        if (pictureOptions.isEmpty()) {
+            pictureOptions = "scaled";
+        }
+        QPainter painter(&backgroundImage);
+
+        if (pictureOptions == "centered") {
+            painter.drawImage((backgroundImage.width() - loadedImage.width()) / 2,
+                              (backgroundImage.height() - loadedImage.height()) / 2,
+                              loadedImage);
+
+        } else if (pictureOptions == "stretched") {
+            painter.drawImage(backgroundImage.rect(), loadedImage, loadedImage.rect());
+
+        } else if (pictureOptions == "scaled") {
+            painter.drawImage(backgroundImage.rect(), loadedImage,
+                              getSourceRect(backgroundImage.rect(), loadedImage));
+
+        } else if (pictureOptions == "wallpaper") {
+            int drewWidth = 0;
+            int drewHeight = 0;
+            while (true) {
+                drewWidth = 0;
+                while (true) {
+                    painter.drawImage(drewWidth, drewHeight, loadedImage);
+                    drewWidth += loadedImage.width();
+                    if (drewWidth >= backgroundImage.width()) {
+                        break;
+                    }
+                }
+                drewHeight += loadedImage.height();
+                if (drewHeight >= backgroundImage.height()) {
+                    break;
+                }
+            }
+        } else {
+            painter.drawImage(backgroundImage.rect(), loadedImage, loadedImage.rect());
+        }
+    }
+
+    qt_blurImage(backgroundImage, PICTURE_BLUR_RADIUS, false, 0);
+
+    //以下为修补模糊算法造成的边缘像素透明问题的代码，暂时不用
+//    QRect   imgRect = backgroundImage.rect();
+//    QRegion resetReg(imgRect);
+//    QRegion excReg(imgRect.adjusted(PICTURE_BLUR_RADIUS, PICTURE_BLUR_RADIUS, -PICTURE_BLUR_RADIUS, -PICTURE_BLUR_RADIUS));
+//    resetReg = resetReg.subtracted(excReg);
+//
+//    for (int x = 0; x < imgRect.width(); ++x) {
+//        for (int y = 0; y < imgRect.height(); ++y) {
+//            if (resetReg.contains({x, y})) {
+//                QColor color = backgroundImage.pixelColor(x, y);
+//                qDebug() << "==" << x << y << color.alpha();
+//                if (color.alpha() <= 128) {
+//                    backgroundImage.setPixelColor(x, y, Qt::white);
+//                    qDebug() << "==" << x << y << Qt::white;
+//                }
+//            }
+//        }
+//    }
+
+    m_backgroundImage.swap(backgroundImage);
+}
+
+QRect MainWindow::getSourceRect(const QRect &targetRect, const QImage &image)
+{
+    qreal screenScale = qreal(targetRect.width()) / qreal(targetRect.height());
+    qreal width = image.width();
+    qreal height = image.height();
+
+    if ((width / height) == screenScale) {
+        return image.rect();
+    }
+
+    bool isShortX = (width <= height);
+    if (isShortX) {
+        screenScale = qreal(targetRect.height()) / qreal(targetRect.width());
+    }
+
+    //使用长边与短边目的是屏蔽单独的宽与高概念，减少一部分判断逻辑
+    qreal shortEdge = isShortX ? width : height;
+    qreal longEdge = isShortX ? height : width;
+
+    while (shortEdge > 1) {
+        qint32 temp = qFloor(shortEdge * screenScale);
+        if (temp <= longEdge) {
+            longEdge = temp;
+            break;
+        }
+
+        //每次递减5%进行逼近
+        qint32 spacing = qRound(shortEdge / 20);
+        if (spacing <= 0) {
+            spacing = 1;
+        }
+        shortEdge -= spacing;
+    }
+
+    QSize sourceSize = image.size();
+    if (shortEdge > 1 && longEdge > 1) {
+        sourceSize.setWidth(isShortX ? shortEdge : longEdge);
+        sourceSize.setHeight(isShortX ? longEdge : shortEdge);
+    }
+
+    qint32 offsetX = 0;
+    qint32 offsetY = 0;
+    if (image.width() > sourceSize.width()) {
+        offsetX = (image.width() - sourceSize.width()) / 2;
+    }
+
+    if (image.height() > sourceSize.height()) {
+        offsetY = (image.height() - sourceSize.height()) / 2;
+    }
+
+    QPoint offsetPoint = image.rect().topLeft();
+    offsetPoint += QPoint(offsetX, offsetY);
+
+    return {offsetPoint, sourceSize};
 }
