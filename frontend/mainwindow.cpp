@@ -568,7 +568,8 @@ void MainWindow::rebuildBackground()
         return;
     }
 
-    QScreen *focusScreen = QGuiApplication::screenAt(QCursor::pos());
+    QPoint centerPoint = this->mapToGlobal(this->rect().center());
+    QScreen *focusScreen = QGuiApplication::screenAt(centerPoint);
     if ((m_focusScreen == focusScreen) && (focusScreen->size() == m_backgroundImage.size())) {
         return;
     }
