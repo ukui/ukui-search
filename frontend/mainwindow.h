@@ -132,7 +132,7 @@ private:
     QGSettings * m_search_gsettings = nullptr;
     SearchMethodManager m_searchMethodManager;
     QDesktopWidget *m_desktopWidget;
-    QImage  m_backgroundImage;
+    QPixmap  m_backgroundPixmap;
     QGSettings *m_backgroundGSetting = nullptr;
     QScreen *m_focusScreen = nullptr;
     bool m_forceRefresh = false;

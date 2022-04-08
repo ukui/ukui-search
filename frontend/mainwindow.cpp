@@ -37,6 +37,10 @@
 #include "global-settings.h"
 #include <QtX11Extras/QX11Info>
 
+//opencv
+#include <opencv2/imgproc.hpp>
+#include <opencv2/core/mat.hpp>
+
 #define MAIN_MARGINS 0, 0, 0, 0
 #define TITLE_MARGINS 0,0,0,0
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
@@ -44,7 +48,7 @@
 #define PICTURE_FILE_NAME   "pictureFilename"
 #define PRIMARY_COLOR       "primaryColor"
 #define PICTURE_OPTIONS     "pictureOptions"
-#define PICTURE_BLUR_RADIUS  25
+#define PICTURE_BLUR_RADIUS  101
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
 #define WINDOW_WIDTH 720
@@ -142,8 +146,7 @@ void MainWindow::initUi() {
     m_mainLayout->addWidget(m_webSearchPage);
     m_webSearchPage->hide();
     this->setFocusProxy(m_searchBarWidget);
-    m_backgroundImage = QImage(":/res/icons/wallpaper.png");
-
+    m_backgroundPixmap = QPixmap(":/res/icons/wallpaper.png");
 }
 
 void MainWindow::initConnections()
@@ -427,7 +430,6 @@ void MainWindow::initGsettings() {
                 }
             });
         } else {
-            qt_blurImage(m_backgroundImage, PICTURE_BLUR_RADIUS, false, 0);
             m_backgroundGSetting->deleteLater();
             m_backgroundGSetting = nullptr;
         }
@@ -566,13 +568,13 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 //    QPainterPath path;
 //    path.addRect(this->rect());
 //    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-    if (m_forceRefresh || (size() != m_backgroundImage.size())) {
+    if (m_forceRefresh || (size() != m_backgroundPixmap.size())) {
         m_forceRefresh = false;
         rebuildBackground();
     }
 
     QPainter p(this);
-    p.drawImage(0, 0, m_backgroundImage);
+    p.drawPixmap(0, 0, m_backgroundPixmap);
 }
 
 void MainWindow::rebuildBackground()
@@ -635,28 +637,22 @@ void MainWindow::rebuildBackground()
         }
     }
 
-    qt_blurImage(backgroundImage, PICTURE_BLUR_RADIUS, false, 0);
+    cv::Mat input = cv::Mat(backgroundImage.height(), backgroundImage.width(), CV_8UC4,
+                            (void*)backgroundImage.constBits(), backgroundImage.bytesPerLine());
+    cv::Mat output;
+    //执行高斯模糊
+    cv::GaussianBlur(input, output, cv::Size(PICTURE_BLUR_RADIUS, PICTURE_BLUR_RADIUS), 0, 0);
 
-    //以下为修补模糊算法造成的边缘像素透明问题的代码，暂时不用
-//    QRect   imgRect = backgroundImage.rect();
-//    QRegion resetReg(imgRect);
-//    QRegion excReg(imgRect.adjusted(PICTURE_BLUR_RADIUS, PICTURE_BLUR_RADIUS, -PICTURE_BLUR_RADIUS, -PICTURE_BLUR_RADIUS));
-//    resetReg = resetReg.subtracted(excReg);
-//
-//    for (int x = 0; x < imgRect.width(); ++x) {
-//        for (int y = 0; y < imgRect.height(); ++y) {
-//            if (resetReg.contains({x, y})) {
-//                QColor color = backgroundImage.pixelColor(x, y);
-//                qDebug() << "==" << x << y << color.alpha();
-//                if (color.alpha() <= 128) {
-//                    backgroundImage.setPixelColor(x, y, Qt::white);
-//                    qDebug() << "==" << x << y << Qt::white;
-//                }
-//            }
-//        }
-//    }
+    QPixmap blurPixmap = QPixmap::fromImage({output.data, output.cols, output.rows,
+                                             static_cast<int>(output.step), QImage::Format_ARGB32_Premultiplied});
 
-    m_backgroundImage.swap(backgroundImage);
+    if (blurPixmap.isNull()) {
+        //此处使用25是为了减少边缘透明像素的数量
+        qt_blurImage(backgroundImage, 25, false, 0);
+        blurPixmap = QPixmap::fromImage(backgroundImage);
+    }
+
+    m_backgroundPixmap.swap(blurPixmap);
 }
 
 QRect MainWindow::getSourceRect(const QRect &targetRect, const QImage &image)
