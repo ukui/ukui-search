@@ -6,6 +6,8 @@
 #include <QDBusArgument>
 #include <QThread>
 #include <fstab.h>
+#include <QMutexLocker>
+
 
 static std::once_flag flag;
 static DirWatcher *global_intance = nullptr;
@@ -36,17 +38,15 @@ DirWatcher *DirWatcher::getDirWatcher()
 
 QStringList DirWatcher::currentindexableDir()
 {
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     QStringList indexableDirList = m_indexableDirList;
-    s_mutex.unlock();
     return indexableDirList;
 }
 
 QStringList DirWatcher::currentBlackListOfIndex()
 {
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     QStringList blackListOfIndex = m_blackListOfIndex;
-    s_mutex.unlock();
     return blackListOfIndex;
 }
 
@@ -59,7 +59,7 @@ QStringList DirWatcher::blackListOfDir(const QString &dirPath)
     //new TODO: Optimize the search algorithm.
     //There is no processing for the subvolumes.May be a bug.
     QStringList blackListOfDir;
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     for (auto t = m_repeatedlyMountedDeviceInfo.constBegin(); t != m_repeatedlyMountedDeviceInfo.constEnd(); t++) {
         QString topRepeatedMountPoint;
         for (QString mountPoint: t.value()) {
@@ -76,40 +76,59 @@ QStringList DirWatcher::blackListOfDir(const QString &dirPath)
             }
         }
     }
-    s_mutex.unlock();
+    for (auto i = m_infoOfSubvolume.constBegin(); i != m_infoOfSubvolume.constEnd(); i++) {
+        QString mountPoint = i.value();
+        QString spec = i.key();
+        //排除搜索列表指定多个目录时子卷会重复包含的情况，比如同时指定/home和/data/home
+        QString tmp = dirPath;
+        if (dirPath.startsWith(mountPoint)) {
+            blackListOfDir.append(tmp.replace(0, mountPoint.length(), spec));
+        }
+        if (dirPath.startsWith(spec)) {
+            blackListOfDir.append(tmp.replace(0, spec.length(), mountPoint));
+        }
+    }
     return blackListOfDir;
 }
 
 void DirWatcher::appendBlackListItemOfIndex(const QString &path)
 {
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     m_blackListOfIndex.append(path);
     m_blackListOfIndex = m_blackListOfIndex.toSet().toList();
-    s_mutex.unlock();
 }
 
 void DirWatcher::appendBlackListItemOfIndex(const QStringList &pathList)
 {
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     m_blackListOfIndex.append(pathList);
     m_blackListOfIndex = m_blackListOfIndex.toSet().toList();
-    s_mutex.unlock();
 }
 
 void DirWatcher::removeBlackListItemOfIndex(const QString &path)
 {
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     m_blackListOfIndex.removeAll(path);
-    s_mutex.unlock();
 }
 
 void DirWatcher::removeBlackListItemOfIndex(const QStringList &pathList)
 {
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     for (QString path: pathList) {
         m_blackListOfIndex.removeAll(path);
     }
-    s_mutex.unlock();
+}
+
+QStringList DirWatcher::currentSearchableDir()
+{
+    QMutexLocker locker(&s_mutex);
+    return m_searchableDirList;
+}
+
+QStringList DirWatcher::searchableDirForSearchApplication()
+{
+    QMutexLocker locker(&s_mutex);
+    return m_searchableListForApplication;
 }
 
 void DirWatcher::mountAddCallback(GVolumeMonitor *monitor, GMount *gmount, DirWatcher *pThis)
@@ -121,7 +140,7 @@ void DirWatcher::mountAddCallback(GVolumeMonitor *monitor, GMount *gmount, DirWa
 void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, DirWatcher *pThis)
 {
     qDebug() << "Mount Removed";
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     //处理u盘设备
     if (pThis->m_removedUDiskDevice != NULL) {
         pThis->m_currentUDiskDeviceInfo.remove(pThis->m_removedUDiskDevice);
@@ -130,7 +149,6 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
         qDebug() << "m_currentUDiskDeviceInfo:" << pThis->m_currentUDiskDeviceInfo;
         qDebug() << "m_blackListOfIndex:" << pThis->m_blackListOfIndex;
         pThis->m_removedUDiskDevice = "";
-        s_mutex.unlock();
         return;
     }
 
@@ -138,12 +156,10 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
     GFile* rootFile;
     rootFile = g_mount_get_root(mount);
     if (!rootFile) {
-        s_mutex.unlock();
         return;
     }
     QString mountPoint = g_file_get_uri(rootFile);
     if (mountPoint.isEmpty()) {
-        s_mutex.unlock();
         return;
     }
     //处理uri转码,处理子卷情况
@@ -158,13 +174,11 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
                 pThis->m_blackListOfIndex.removeAll(removedMountPoint.replace(t.key(), t.value()));
             }
         }
-        s_mutex.unlock();
         qDebug() << "m_currentMountedDeviceInfo:" << pThis->m_currentMountedDeviceInfo;
         qDebug() << "m_repeatedlyMountedDeviceInfo:" << pThis->m_repeatedlyMountedDeviceInfo;
         qDebug() << "m_currentUDiskDeviceInfo:" << pThis->m_currentUDiskDeviceInfo;
         qDebug() << "m_blackListOfIndex:" << pThis->m_blackListOfIndex;
     } else {
-        s_mutex.unlock();
         qWarning() << "There's someting wrong with the MountPoint!";
     }
     g_object_unref(rootFile);
@@ -175,6 +189,10 @@ void DirWatcher::initData()
     //目前方案只索引数据盘和家目录。
     m_indexableDirList << "/data" << QDir::homePath();
     m_blackListOfIndex << "/data/home" << "/data/root";
+
+    //目前方案：可搜索目录（服务）默认根目录，可搜索目录（应用）默认家目录和/data目录
+    m_searchableListForApplication << "/data" << QDir::homePath();
+    m_searchableDirList << "/";
 
     //init auto mounted device list
     setfsent();
@@ -225,7 +243,7 @@ void DirWatcher::initDiskWatcher()
 void DirWatcher::handleDisk()
 {
     //init current mounted device info
-    s_mutex.lock();
+    QMutexLocker locker(&s_mutex);
     m_currentMountedDeviceInfo.clear();
     for (QStorageInfo &storage: QStorageInfo::mountedVolumes()) {
         if (storage.isValid() && storage.isReady() && QString(storage.device()).contains(QRegExp("/sd[a-z][1-9]"))) {
@@ -270,17 +288,15 @@ void DirWatcher::handleDisk()
     qDebug() << "m_currentUDiskDeviceInfo:" << m_currentUDiskDeviceInfo;
     qDebug() << "m_blackListOfIndex:" << m_blackListOfIndex;
 
-    s_mutex.unlock();
 }
 
 void DirWatcher::handleAddedUDiskDevice(QDBusMessage msg)
 {
     QDBusObjectPath objPath = msg.arguments().at(0).value<QDBusObjectPath>();
     if (objPath.path().contains(QRegExp("/sd[a-z][1-9]"))) {
-        s_mutex.lock();
+        QMutexLocker locker(&s_mutex);
         m_addedUDiskDeviceList.append(objPath.path().section("/",-1));
         qDebug() << "Add Udisk:" << m_addedUDiskDeviceList;
-        s_mutex.unlock();
     }
 }
 
@@ -289,9 +305,8 @@ void DirWatcher::handleRemovedUDiskDevice(QDBusMessage msg)
     Q_EMIT this->udiskRemoved();
     QDBusObjectPath objPath = msg.arguments().at(0).value<QDBusObjectPath>();
     if (objPath.path().contains(QRegExp("/sd[a-z][1-9]"))) {
-        s_mutex.lock();
+        QMutexLocker locker(&s_mutex);
         m_removedUDiskDevice = objPath.path().section("/",-1);
         m_addedUDiskDeviceList.removeAll(m_removedUDiskDevice);
-        s_mutex.unlock();
     }
 }

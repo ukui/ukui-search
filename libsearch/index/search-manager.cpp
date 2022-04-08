@@ -18,6 +18,7 @@
  *
  */
 #include "search-manager.h"
+#include "dir-watcher.h"
 using namespace UkuiSearch;
 
 size_t SearchManager::uniqueSymbolFile = 0;
@@ -523,11 +524,19 @@ DirectSearch::DirectSearch(QString keyword, DataQueue<SearchPluginIface::ResultI
 
 void DirectSearch::run() {
     QStringList blockList = GlobalSettings::getInstance()->getBlockDirs();
-    if(blockList.contains(QStandardPaths::writableLocation(QStandardPaths::HomeLocation).remove(0,1), Qt::CaseSensitive)) {
+    QStringList searchPath = DirWatcher::getDirWatcher()->searchableDirForSearchApplication();
+    QQueue<QString> bfs;
+    for (const QString &path : searchPath) {
+        if (blockList.contains(path)) {
+            continue;
+        }
+        blockList.append(DirWatcher::getDirWatcher()->blackListOfDir(path));
+        bfs.enqueue(path);
+    }
+    if (bfs.isEmpty()) {
         return;
     }
-    QQueue<QString> bfs;
-    bfs.enqueue(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
+
     QFileInfoList list;
     QDir dir;
     // QDir::Hidden
