@@ -1,3 +1,12 @@
+ukui-search (3.1-2.0.1+0323) v101; urgency=medium
+
+  * Bug:无
+  * 需求号:无
+  * 其他改动：
+  * 搜索窗口增加NET::SkipTaskbar | NET::SkipPager | NET::SkipSwitcher属性。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Wed, 23 Mar 2022 16:03:05 +0800
+
 ukui-search (3.1-2.0.0+0315) jammy; urgency=medium
 
   * Bug:无
