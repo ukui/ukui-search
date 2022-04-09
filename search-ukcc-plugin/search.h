@@ -43,7 +43,7 @@ class Search : public QObject, CommonInterface
 
 public:
     explicit Search();
-    ~Search();
+    virtual ~Search() = default;
 
     QString plugini18nName()   Q_DECL_OVERRIDE;
     int pluginTypes()       Q_DECL_OVERRIDE;

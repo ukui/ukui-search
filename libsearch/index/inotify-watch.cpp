@@ -401,7 +401,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
                 if(event->mask & IN_ISDIR) {
                     f.setIsDir();
                 }
-                PendingFileQueue::getInstance(this)->enqueue(f);
+                PendingFileQueue::getInstance()->enqueue(f);
 
                 if(event->mask & IN_ISDIR) {
                     if(!QFileInfo(path).isSymLink()){
