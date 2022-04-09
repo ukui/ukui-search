@@ -1,4 +1,4 @@
-ukui-search (3.1-1.1.6+0321t) v101; urgency=medium
+ukui-search (3.1-1.1.6+0330t) v101; urgency=medium
 
   * BUG:110566 【全局搜索】竖屏模式打开搜索后，搜任意内容但不退出搜索；后机器再转回横屏；会出现全局搜索的黑色填充页面
 
