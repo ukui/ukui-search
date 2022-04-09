@@ -27,6 +27,8 @@ public:
     void removeBlackListItemOfIndex(const QString &path);
     void removeBlackListItemOfIndex(const QStringList &pathList);
 
+    QStringList currentSearchableDir();
+    QStringList searchableDirForSearchApplication();
     QStringList blackListOfDir(const QString &dirPath);
 
     static void mountAddCallback(GVolumeMonitor *monitor, GMount *gmount, DirWatcher *pThis);
@@ -49,6 +51,8 @@ private:
 
     QStringList m_blackListOfIndex;
     QStringList m_indexableDirList;
+    QStringList m_searchableDirList;
+    QStringList m_searchableListForApplication;
     QStringList m_autoMountList;
     QMultiMap<QString, QString> m_infoOfSubvolume;
     QMap<QString, QStringList> m_currentMountedDeviceInfo;
