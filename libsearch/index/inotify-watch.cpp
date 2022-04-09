@@ -225,7 +225,10 @@ void InotifyWatch::run()
     qDebug() << "Leave watch loop";
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "3");
-        removeWatch(QStandardPaths::writableLocation(QStandardPaths::HomeLocation), false);
+        for(QString path : currentPath) {
+            inotify_rm_watch(m_inotifyFd, currentPath.key(path));
+        }
+        currentPath.clear();
     }
     close(m_inotifyFd);
 //    fcntl(m_inotifyFd, F_SETFD, FD_CLOEXEC);
