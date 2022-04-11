@@ -37,9 +37,18 @@
 #include "global-settings.h"
 #include <QtX11Extras/QX11Info>
 
+//opencv
+#include <opencv2/imgproc.hpp>
+#include <opencv2/core/mat.hpp>
+
 #define MAIN_MARGINS 0, 0, 0, 0
 #define TITLE_MARGINS 0,0,0,0
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
+#define BACKGROUND_SCHEMAS  "org.mate.background"
+#define PICTURE_FILE_NAME   "pictureFilename"
+#define PRIMARY_COLOR       "primaryColor"
+#define PICTURE_OPTIONS     "pictureOptions"
+#define PICTURE_BLUR_RADIUS  101
 #define SEARCH_METHOD_KEY "indexSearch"
 #define WEB_ENGINE_KEY "webEngine"
 #define WINDOW_WIDTH 720
@@ -93,7 +102,7 @@ MainWindow::~MainWindow() {
     if (m_settingsWidget) {
         delete m_settingsWidget;
         m_settingsWidget = NULL;
-
+    }
 #endif
 //    if (m_askDialog) {
 //        delete m_askDialog;
@@ -138,7 +147,6 @@ void MainWindow::initUi() {
     m_webSearchPage->hide();
     this->setFocusProxy(m_searchBarWidget);
     m_backgroundPixmap = QPixmap(":/res/icons/wallpaper.png");
-
 }
 
 void MainWindow::initConnections()
@@ -377,7 +385,12 @@ void MainWindow::moveToPanel() {
 void MainWindow::centerToScreen() {
     KWindowSystem::setState(this->winId(),NET::SkipTaskbar | NET::SkipPager);
     this->setWindowState(Qt::WindowFullScreen);
-    this->setGeometry(QGuiApplication::screenAt(QCursor::pos())->geometry());
+    QScreen *focusScreen = QGuiApplication::screenAt(QCursor::pos());
+    this->setGeometry(focusScreen->geometry());
+    if (m_focusScreen != focusScreen) {
+        m_focusScreen = focusScreen;
+        m_forceRefresh = true;
+    }
     m_widget->move((this->width() - WINDOW_WIDTH) / 2, this->height() / 8);
 }
 
@@ -402,6 +415,23 @@ void MainWindow::initGsettings() {
         if (m_search_gsettings->keys().contains(WEB_ENGINE_KEY)) {
             QString web_engine = m_search_gsettings->get(WEB_ENGINE_KEY).toString();
             GlobalSettings::getInstance()->setValue(WEB_ENGINE, web_engine);
+        }
+    }
+
+    if (QGSettings::isSchemaInstalled(BACKGROUND_SCHEMAS)) {
+        m_backgroundGSetting = new QGSettings(BACKGROUND_SCHEMAS, QByteArray(), this);
+
+        QStringList keys = m_backgroundGSetting->keys();
+        if (keys.contains(PICTURE_FILE_NAME) && keys.contains(PICTURE_OPTIONS) && keys.contains(PRIMARY_COLOR)) {
+            //不需要监听
+            connect(m_backgroundGSetting, &QGSettings::changed, this, [=](const QString &key) {
+                if (key == PICTURE_FILE_NAME || key == PICTURE_OPTIONS || key == PRIMARY_COLOR) {
+                    m_forceRefresh = true;
+                }
+            });
+        } else {
+            m_backgroundGSetting->deleteLater();
+            m_backgroundGSetting = nullptr;
         }
     }
 }
@@ -538,10 +568,145 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 //    QPainterPath path;
 //    path.addRect(this->rect());
 //    KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
-    //临时方案
-    m_backgroundPixmap = m_backgroundPixmap.scaled(this->rect().size(), Qt::KeepAspectRatioByExpanding);
+    if (m_forceRefresh || (size() != m_backgroundPixmap.size())) {
+        m_forceRefresh = false;
+        rebuildBackground();
+    }
+
     QPainter p(this);
-    p.drawPixmap((this->width() - m_backgroundPixmap.rect().width()) / 2,
-                 (this->height() - m_backgroundPixmap.rect().height()) / 2,
-                 m_backgroundPixmap);
+    p.drawPixmap(0, 0, m_backgroundPixmap);
+}
+
+void MainWindow::rebuildBackground()
+{
+    if (!m_backgroundGSetting) {
+        return;
+    }
+
+    QImage backgroundImage(size(), QImage::Format_ARGB32_Premultiplied);
+    backgroundImage.fill(Qt::black);
+    QString imagePath = m_backgroundGSetting->get(PICTURE_FILE_NAME).toString();
+
+    if (imagePath.isEmpty()) {
+        QColor color(Qt::black);
+        QString primaryColor = m_backgroundGSetting->get(PRIMARY_COLOR).toString();
+        if (!primaryColor.isEmpty()) {
+            color = QColor(primaryColor);
+        }
+        backgroundImage.fill(color);
+
+    } else {
+        QImage loadedImage(imagePath);
+        QString pictureOptions = m_backgroundGSetting->get(PICTURE_OPTIONS).toString();
+        if (pictureOptions.isEmpty()) {
+            pictureOptions = "scaled";
+        }
+        QPainter painter(&backgroundImage);
+
+        if (pictureOptions == "centered") {
+            painter.drawImage((backgroundImage.width() - loadedImage.width()) / 2,
+                              (backgroundImage.height() - loadedImage.height()) / 2,
+                              loadedImage);
+
+        } else if (pictureOptions == "stretched") {
+            painter.drawImage(backgroundImage.rect(), loadedImage, loadedImage.rect());
+
+        } else if (pictureOptions == "scaled") {
+            painter.drawImage(backgroundImage.rect(), loadedImage,
+                              getSourceRect(backgroundImage.rect(), loadedImage));
+
+        } else if (pictureOptions == "wallpaper") {
+            int drewWidth = 0;
+            int drewHeight = 0;
+            while (true) {
+                drewWidth = 0;
+                while (true) {
+                    painter.drawImage(drewWidth, drewHeight, loadedImage);
+                    drewWidth += loadedImage.width();
+                    if (drewWidth >= backgroundImage.width()) {
+                        break;
+                    }
+                }
+                drewHeight += loadedImage.height();
+                if (drewHeight >= backgroundImage.height()) {
+                    break;
+                }
+            }
+        } else {
+            painter.drawImage(backgroundImage.rect(), loadedImage, loadedImage.rect());
+        }
+    }
+
+    cv::Mat input = cv::Mat(backgroundImage.height(), backgroundImage.width(), CV_8UC4,
+                            (void*)backgroundImage.constBits(), backgroundImage.bytesPerLine());
+    cv::Mat output;
+    //执行高斯模糊
+    cv::GaussianBlur(input, output, cv::Size(PICTURE_BLUR_RADIUS, PICTURE_BLUR_RADIUS), 0, 0);
+
+    QPixmap blurPixmap = QPixmap::fromImage({output.data, output.cols, output.rows,
+                                             static_cast<int>(output.step), QImage::Format_ARGB32_Premultiplied});
+
+    if (blurPixmap.isNull()) {
+        //此处使用25是为了减少边缘透明像素的数量
+        qt_blurImage(backgroundImage, 25, false, 0);
+        blurPixmap = QPixmap::fromImage(backgroundImage);
+    }
+
+    m_backgroundPixmap.swap(blurPixmap);
+}
+
+QRect MainWindow::getSourceRect(const QRect &targetRect, const QImage &image)
+{
+    qreal screenScale = qreal(targetRect.width()) / qreal(targetRect.height());
+    qreal width = image.width();
+    qreal height = image.height();
+
+    if ((width / height) == screenScale) {
+        return image.rect();
+    }
+
+    bool isShortX = (width <= height);
+    if (isShortX) {
+        screenScale = qreal(targetRect.height()) / qreal(targetRect.width());
+    }
+
+    //使用长边与短边目的是屏蔽单独的宽与高概念，减少一部分判断逻辑
+    qreal shortEdge = isShortX ? width : height;
+    qreal longEdge = isShortX ? height : width;
+
+    while (shortEdge > 1) {
+        qint32 temp = qFloor(shortEdge * screenScale);
+        if (temp <= longEdge) {
+            longEdge = temp;
+            break;
+        }
+
+        //每次递减5%进行逼近
+        qint32 spacing = qRound(shortEdge / 20);
+        if (spacing <= 0) {
+            spacing = 1;
+        }
+        shortEdge -= spacing;
+    }
+
+    QSize sourceSize = image.size();
+    if (shortEdge > 1 && longEdge > 1) {
+        sourceSize.setWidth(isShortX ? shortEdge : longEdge);
+        sourceSize.setHeight(isShortX ? longEdge : shortEdge);
+    }
+
+    qint32 offsetX = 0;
+    qint32 offsetY = 0;
+    if (image.width() > sourceSize.width()) {
+        offsetX = (image.width() - sourceSize.width()) / 2;
+    }
+
+    if (image.height() > sourceSize.height()) {
+        offsetY = (image.height() - sourceSize.height()) / 2;
+    }
+
+    QPoint offsetPoint = image.rect().topLeft();
+    offsetPoint += QPoint(offsetX, offsetY);
+
+    return {offsetPoint, sourceSize};
 }

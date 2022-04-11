@@ -10,6 +10,11 @@ PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 LIBS += -lxapian -lgsettings-qt -lquazip5 -lX11
 LIBS += -lukui-log4qt
+
+# opencv
+INCLUDEPATH += /usr/include/opencv4/
+LIBS += -lopencv_core -lopencv_imgcodecs -lopencv_imgproc
+
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the

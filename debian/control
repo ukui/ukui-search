@@ -19,7 +19,8 @@ Build-Depends: debhelper (>=9.0.0),
                libuchardet-dev,
                libpoppler-qt5-dev,
                libukui-log4qt-dev,
-               libqt5xdg-dev
+               libqt5xdg-dev,
+               libopencv-dev
 Standards-Version: 4.5.0
 Homepage: https://www.ukui.org/
 Vcs-Git:  https://github.com/ukui/ukui-search.git
@@ -27,11 +28,11 @@ Vcs-Browser: https://github.com/ukui/ukui-search
 
 Package: ukui-search
 Architecture: any
-Depends: ${shlibs:Depends}, 
+Depends: ${shlibs:Depends},
          ${misc:Depends},
          libukui-search0 (= ${binary:Version}),
          ukui-search-systemdbus (= ${binary:Version})
-Description: ukui-search is a user-wide desktop search 
+Description: ukui-search is a user-wide desktop search
  feature of UKUI desktop environment.
 
 Package: libchinese-segmentation0
@@ -42,7 +43,7 @@ Depends: ${misc:Depends},
 Provides: libchinese-segmentation,
 Description: Libraries for chinese-segmentation
  .
- This package contains a few runtime libraries needed by 
+ This package contains a few runtime libraries needed by
  libsearch.
 
 Package: libukui-search0
@@ -53,7 +54,7 @@ Depends: ${misc:Depends},
          libchinese-segmentation0 (= ${binary:Version}),
          ukui-search-systemdbus (= ${binary:Version})
 Provides: libukui-search,
-Description: Libraries for ukui-search. 
+Description: Libraries for ukui-search.
 
 Package: libukui-search-dev
 Section: libdevel
@@ -67,7 +68,7 @@ Description: Libraries for  ukui-search(development files).
 
 Package: ukui-search-systemdbus
 Architecture: any
-Depends: ${shlibs:Depends}, 
+Depends: ${shlibs:Depends},
          ${misc:Depends},
-Description: ukui-search-systemdbus is a systembus interface to modify max_user_watches nums 
+Description: ukui-search-systemdbus is a systembus interface to modify max_user_watches nums
  permanent.

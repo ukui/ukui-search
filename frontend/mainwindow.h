@@ -112,6 +112,8 @@ private:
     void initTimer();
     bool tryHideMainwindow();
     void setSearchMethodConfig(const bool&, const bool&);
+    static QRect getSourceRect(const QRect &targetRect, const QImage &image);
+    void rebuildBackground();
 
     QWidget *m_widget = nullptr;                  // central widget
     QFrame * m_titleFrame = nullptr;             // Title bar frame
@@ -130,7 +132,10 @@ private:
     QGSettings * m_search_gsettings = nullptr;
     SearchMethodManager m_searchMethodManager;
     QDesktopWidget *m_desktopWidget;
-    QPixmap m_backgroundPixmap;
+    QPixmap  m_backgroundPixmap;
+    QGSettings *m_backgroundGSetting = nullptr;
+    QScreen *m_focusScreen = nullptr;
+    bool m_forceRefresh = false;
 };
 }
 
