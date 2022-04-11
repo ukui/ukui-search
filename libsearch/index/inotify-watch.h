@@ -45,7 +45,7 @@ private:
     int m_inotifyFd;
     QSocketNotifier* m_notifier = nullptr;
     QSharedMemory *m_sharedMemory = nullptr;
-    QMap<int, QString> currentPath;
+    QMap<int, QString> m_pathMap;
     QMutex m_mutex;
 
 
