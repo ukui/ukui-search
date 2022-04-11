@@ -1,3 +1,12 @@
+ukui-search (3.1-2.0.1+0409) jammy; urgency=medium
+
+  * Bug:无
+  * 需求号:无
+  * 其他改动：
+  * 修复了一个偶现的控制面板搜索插件产生coredump的问题。
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Sat, 09 Apr 2022 16:42:55 +0800
+
 ukui-search (3.1-2.0.1+0323) v101; urgency=medium
 
   * Bug:无
