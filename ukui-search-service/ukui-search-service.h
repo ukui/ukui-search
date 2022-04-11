@@ -5,7 +5,7 @@
 #include <QCommandLineParser>
 #include <QGSettings/QGSettings>
 #include "qtsingleapplication.h"
-#include "search-method-manager.h"
+#include "file-index-manager.h"
 #include "common.h"
 namespace UkuiSearch {
 

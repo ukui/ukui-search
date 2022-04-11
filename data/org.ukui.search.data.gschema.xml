@@ -1,9 +1,9 @@
 <schemalist gettext-domain="ukui-search">
     <schema id="org.ukui.search.settings" path="/org/ukui/ukui-search/settings/">
-        <key name="index-search" type="b">
+        <key name="file-index-enable" type="b">
             <default>false</default>
-            <summary>search method</summary>
-            <description>Is current search-method index-search.</description>
+            <summary>file index switch</summary>
+            <description>Enable or disable file index service.</description>
         </key>
         <key name="web-engine" type="s">
             <default>"baidu"</default>

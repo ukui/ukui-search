@@ -1,21 +1,21 @@
-#include "search-method-manager.h"
+#include "file-index-manager.h"
 using namespace UkuiSearch;
-static SearchMethodManager* global_instance = nullptr;
-SearchMethodManager::SearchMethodManager() : m_semaphore(INDEX_SEM, 1, QSystemSemaphore::AccessMode::Create)
+static FileIndexManager* global_instance = nullptr;
+FileIndexManager::FileIndexManager(QObject *parent) : QObject(parent), m_semaphore(INDEX_SEM, 1, QSystemSemaphore::AccessMode::Create)
 {
     m_fi = FirstIndex::getInstance();
     m_iw = InotifyWatch::getInstance();
 }
 
-SearchMethodManager *SearchMethodManager::getInstance()
+FileIndexManager *FileIndexManager::getInstance()
 {
     if(!global_instance) {
-            global_instance = new SearchMethodManager();
+            global_instance = new FileIndexManager();
         }
        return global_instance;
 }
 
-void SearchMethodManager::searchMethod(FileUtils::SearchMethod sm) {
+void FileIndexManager::searchMethod(FileUtils::SearchMethod sm) {
     qWarning() << "searchMethod start: " << static_cast<int>(sm);
     if(FileUtils::SearchMethod::INDEXSEARCH == sm || FileUtils::SearchMethod::DIRECTSEARCH == sm) {
         FileUtils::searchMethod = sm;

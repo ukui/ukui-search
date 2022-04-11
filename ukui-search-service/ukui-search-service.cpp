@@ -2,7 +2,7 @@
 #include "ukui-search-service.h"
 #include "dir-watcher.h"
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
-#define SEARCH_METHOD_KEY "indexSearch"
+#define SEARCH_METHOD_KEY "file-index-enable"
 using namespace UkuiSearch;
 UkuiSearchService::UkuiSearchService(int &argc, char *argv[], const QString &applicationName): QtSingleApplication (applicationName, argc, argv)
 {
@@ -96,7 +96,8 @@ void UkuiSearchService::setSearchMethodByGsettings()
     } else {
         FileUtils::searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
     }
-    SearchMethodManager::getInstance()->searchMethod(FileUtils::searchMethod);
+    FileIndexManager::getInstance()->searchMethod(FileUtils::searchMethod);
+
 }
 
 void UkuiSearchService::indexServiceSwitch(bool startIndex)
@@ -106,7 +107,7 @@ void UkuiSearchService::indexServiceSwitch(bool startIndex)
     } else {
         FileUtils::searchMethod = FileUtils::SearchMethod::DIRECTSEARCH;
     }
-    SearchMethodManager::getInstance()->searchMethod(FileUtils::searchMethod);
+    FileIndexManager::getInstance()->searchMethod(FileUtils::searchMethod);
 
     const QByteArray id(UKUI_SEARCH_SCHEMAS);
     if(QGSettings::isSchemaInstalled(id)) {

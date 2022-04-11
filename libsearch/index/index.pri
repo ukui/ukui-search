@@ -13,13 +13,14 @@ HEADERS += \
     $$PWD/pending-file-queue.h \
     $$PWD/pending-file.h \
     $$PWD/search-manager.h \
-    $$PWD/search-method-manager.h \
+    $$PWD/file-index-manager.h \
     $$PWD/traverse_bfs.h \
     $$PWD/ukui-search-qdbus.h
 
 SOURCES += \
     $$PWD/construct-document.cpp \
     $$PWD/document.cpp \
+    $$PWD/file-index-manager.cpp \
     $$PWD/file-reader.cpp \
     $$PWD/file-search-plugin.cpp \
     $$PWD/first-index.cpp \
@@ -30,7 +31,6 @@ SOURCES += \
     $$PWD/pending-file-queue.cpp \
     $$PWD/pending-file.cpp \
     $$PWD/search-manager.cpp \
-    $$PWD/search-method-manager.cpp \
     $$PWD/traverse_bfs.cpp \
     $$PWD/ukui-search-qdbus.cpp
 
