@@ -8,6 +8,8 @@
 #include <fstab.h>
 #include <QMutexLocker>
 
+#define CURRENT_INDEXABLE_DIR_SETTINGS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-current-indexable-dir.conf"
+#define INDEXABLE_DIR_VALUE "IndexableDir"
 
 static std::once_flag flag;
 static DirWatcher *global_intance = nullptr;
@@ -15,8 +17,10 @@ QMutex DirWatcher::s_mutex;
 
 DirWatcher::DirWatcher(QObject *parent) : QObject(parent)
 {
+    m_qSettings = new QSettings(CURRENT_INDEXABLE_DIR_SETTINGS, QSettings::IniFormat);
     initData();
     initDiskWatcher();
+    m_adaptor = new DirWatcherAdaptor(this);
 }
 
 DirWatcher::~DirWatcher()
@@ -25,6 +29,9 @@ DirWatcher::~DirWatcher()
         g_signal_handler_disconnect(m_volumeMonitor, m_mountAddHandle);
         g_signal_handler_disconnect(m_volumeMonitor, m_mountRemoveHandle);
         m_volumeMonitor = nullptr;
+    }
+    if(m_qSettings){
+        delete m_qSettings;
     }
 }
 
@@ -39,8 +46,11 @@ DirWatcher *DirWatcher::getDirWatcher()
 QStringList DirWatcher::currentindexableDir()
 {
     QMutexLocker locker(&s_mutex);
-    QStringList indexableDirList = m_indexableDirList;
-    return indexableDirList;
+    m_qSettings->beginGroup(INDEXABLE_DIR_VALUE);
+    m_indexableDirList = m_qSettings->value(INDEXABLE_DIR_VALUE).toStringList();
+    m_qSettings->endGroup();
+    QStringList indexableDirs = m_indexableDirList;
+    return indexableDirs;
 }
 
 QStringList DirWatcher::currentBlackListOfIndex()
@@ -48,6 +58,23 @@ QStringList DirWatcher::currentBlackListOfIndex()
     QMutexLocker locker(&s_mutex);
     QStringList blackListOfIndex = m_blackListOfIndex;
     return blackListOfIndex;
+}
+
+void DirWatcher::handleIndexItemAppend(const QString &path)
+{
+    m_indexableDirList << path;
+    m_indexableDirList.removeDuplicates();
+    m_qSettings->beginGroup(INDEXABLE_DIR_VALUE);
+    m_qSettings->setValue(INDEXABLE_DIR_VALUE, m_indexableDirList);
+    m_qSettings->endGroup();
+}
+
+void DirWatcher::handleIndexItemRemove(const QString &path)
+{
+    m_indexableDirList.removeAll(path);
+    m_qSettings->beginGroup(INDEXABLE_DIR_VALUE);
+    m_qSettings->setValue(INDEXABLE_DIR_VALUE, m_indexableDirList);
+    m_qSettings->endGroup();
 }
 
 /**
@@ -184,11 +211,75 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
     g_object_unref(rootFile);
 }
 
+void DirWatcher::appendIndexableListItem(const QString &path)
+{
+    if (path == "/") {
+        this->currentindexableDir();
+        this->handleIndexItemAppend(path);
+        Q_EMIT this->appendIndexItem(path, m_blackListOfIndex);
+        qDebug() << "index path:" << path << "blacklist:" << m_blackListOfIndex;
+        return;
+    }
+
+    QStringList blackList = this->blackListOfDir(path);
+    //处理要添加索引的路径与索引黑名单中路径为父子关系的情况
+    for (const QString& blackListPath : m_blackListOfIndex) {
+        if (path.startsWith(blackListPath + "/")) {
+            return;
+        }
+        if (blackListPath.startsWith(path + "/")) {
+            blackList.append(blackListPath);
+        }
+    }
+
+    this->currentindexableDir();
+    qDebug() << "m_indexableDirList:" << m_indexableDirList;
+    //处理要添加索引的路径与已索引路径为父子关系的情况
+    for (int i = 0; i < m_indexableDirList.length(); i++) {
+        const QString indexablePath = m_indexableDirList.at(i);
+        if (path.startsWith(indexablePath + "/")) {
+            qDebug() << "return in:" << __FILE__ << ":" << __LINE__;
+            return;
+        }
+        if (blackList.contains(indexablePath)) {
+            qDebug() << "return in:" << __FILE__ << ":" << __LINE__;
+            return;
+        }
+        if (indexablePath.startsWith(path + "/")) {
+            m_indexableDirList.removeAll(indexablePath);
+            blackList.append(indexablePath);
+        }
+    }
+    this->handleIndexItemAppend(path);
+    Q_EMIT this->appendIndexItem(path, blackList);
+    qDebug() << "index path:" << path << "blacklist:" << blackList;
+}
+
+void DirWatcher::removeIndexableListItem(const QString &path)
+{
+    this->currentindexableDir();
+    this->handleIndexItemRemove(path);
+    Q_EMIT this->removeIndexItem(path);
+}
+
 void DirWatcher::initData()
 {
-    //目前方案只索引数据盘和家目录。
-    m_indexableDirList << "/data" << QDir::homePath();
-    m_blackListOfIndex << "/data/home" << "/data/root";
+    //适配需求，可索引目录为用户指定。
+//    m_indexableDirList << "/data" << QDir::homePath();
+    /* boot里面存放Linux核心文件，开机选单与开机所需配置文件等
+     * backup里面是系统备份文件
+     * bin放置的是在单人维护模式下还能够被操作的指令，在bin底下的指令可以被root与一般账号所使用。
+     * dev里面存放设备文件
+     * etc里面存放了几乎所有的系统主要配置文件，包括人员的账号密码文件，各种服务的起始档等
+     * lib放置最基本的共享库和内核模块，lib32，lib64，libx32分别面向32位，64位以及x32 ABI。他们都分别连接到usr下的lib*中
+     * media一般放置可移除的装置，包括软盘，光盘和一些移动存储设备都自动挂载到这里
+     * mnt原本和media用途相同，现用来放置暂时挂载一些额外装置
+     * usr是Unix操作系统软件资源所放置的目录,所有系统默认的软件(distribution发布者提供的软件)都会放置到usr底下
+     * var目录主要针对常态性变动的文件，包括缓存(cache)、登录档(log file)以及某些软件运作所产生的文件，包括程序文件(lock file, run file)，或者如MySQL数据库的文件等
+     */
+    m_blackListOfIndex << "/boot" << "backup" << "bin" << "/dev" << "/etc" << "/usr" << "/var"
+                       << "/lib" << "lib32" << "lib64" << "libx32" << "/media" << "/mnt" << "cdrom"
+                       << "/sys" << "/proc" << "tmp" << "/srv" << "/sbin" << "/run" << "/opt";
 
     //目前方案：可搜索目录（服务）默认根目录，可搜索目录（应用）默认家目录和/data目录
     m_searchableListForApplication << "/data" << QDir::homePath();
