@@ -6,7 +6,7 @@
         <file>res/qt-translations/qt_zh_CN.qm</file>
         <file>res/icons/net-disconnected.svg</file>
         <file>res/icons/system-search.symbolic.png</file>
-        <file>res/icons/pan-up-symbolic.svg</file>
-        <file>res/icons/pan-down-symbolic.svg</file>
+        <file>res/icons/ukui-up-symbolic.svg</file>
+        <file>res/icons/ukui-down-symbolic.svg</file>
     </qresource>
 </RCC>
