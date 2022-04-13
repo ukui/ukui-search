@@ -25,25 +25,26 @@ using namespace UkuiSearch;
 FileReader::FileReader(QObject *parent) : QObject(parent) {
 
 }
-void FileReader::getTextContent(QString path, QString &textContent) {
+void FileReader::getTextContent(QString path, QString &textContent, QString &suffix) {
     QFileInfo file(path);
-    QString strsfx =  file.suffix();
-    if (strsfx == "docx") {
+    suffix =  file.suffix();
+
+    if (suffix == "docx") {
         FileUtils::getDocxTextContent(path, textContent);
-    } else if (strsfx == "pptx") {
+    } else if (suffix == "pptx") {
         FileUtils::getPptxTextContent(path, textContent);
-    } else if (strsfx == "xlsx") {
+    } else if (suffix == "xlsx") {
         FileUtils::getXlsxTextContent(path, textContent);
-    } else if (strsfx == "txt") {
+    } else if (suffix == "txt") {
         FileUtils::getTxtContent(path, textContent);
-    } else if (strsfx == "doc" || strsfx == "dot" || strsfx == "wps" || strsfx == "ppt" ||
-            strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls") {
+    } else if (suffix == "doc" || suffix == "dot" || suffix == "wps" || suffix == "ppt" ||
+            suffix == "pps" || suffix == "dps" || suffix == "et" || suffix == "xls") {
         KBinaryParser searchdata;
         searchdata.RunParser(path, textContent);
-    } else if (strsfx == "pdf") {
+    } else if (suffix == "pdf") {
         FileUtils::getPdfTextContent(path, textContent);
-    } else if (strsfx == "png" || strsfx == "jpg" || strsfx == "jpeg"){
-        OcrObject::getInstance()->getTxtContent(path, textContent);;
+    } else if (true == targetPhotographTypeMap[suffix]){
+        OcrObject::getInstance()->getTxtContent(path, textContent);
     }
     return;
 }

@@ -4,6 +4,9 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QMessageBox>
+
+#define OCR_ICONLABLE_WITH 352
+#define OCR_ICONLABLE_HEIGHT 256
 using namespace UkuiSearch;
 
 FileSearchPlugin::FileSearchPlugin(QObject *parent) : QObject(parent)
@@ -471,10 +474,27 @@ void FileContengSearchPlugin::openAction(int actionkey, QString key, int type)
 
 QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
 {
+    if (1 == ri.type) {
+        QPixmap pixmap;
+        pixmap.load(ri.actionKey);
+        if (pixmap.width()/OCR_ICONLABLE_WITH > pixmap.height()/OCR_ICONLABLE_HEIGHT) {
+            pixmap = pixmap.scaled(OCR_ICONLABLE_WITH, (pixmap.height()*OCR_ICONLABLE_WITH)/pixmap.width(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        } else {
+            pixmap = pixmap.scaled((pixmap.width()*OCR_ICONLABLE_HEIGHT)/pixmap.height(), OCR_ICONLABLE_HEIGHT, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+        m_iconLabel->setPixmap(pixmap);
+        m_pluginLabel->setText(tr("OCR"));
+        m_detailLyt->setContentsMargins(8, (OCR_ICONLABLE_HEIGHT-pixmap.height())/2+8, 16, 0);
+        m_snippetLabel->hide();
+    } else {
+        m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
+        m_pluginLabel->setText(tr("File"));
+        m_snippetLabel->setText(getHtmlText(wrapData(m_snippetLabel,ri.description.at(0).value), m_keyWord));
+        m_snippetLabel->show();
+        m_detailLyt->setContentsMargins(8, 50, 16, 0);
+    }
     m_currentActionKey = ri.actionKey;
-    m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
 
-    m_pluginLabel->setText(tr("File"));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
@@ -484,7 +504,6 @@ QWidget *FileContengSearchPlugin::detailPage(const ResultInfo &ri)
         m_nameLabel->setToolTip("");
     }
 
-    m_snippetLabel->setText(getHtmlText(wrapData(m_snippetLabel,ri.description.at(0).value), m_keyWord));
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
     m_pathLabel2->setToolTip(m_currentActionKey);
     m_timeLabel2->setText(ri.description.at(2).value);
@@ -553,10 +572,10 @@ void FileContengSearchPlugin::initDetailPage()
     m_detailPage->setFixedWidth(360);
     m_detailPage->setAttribute(Qt::WA_TranslucentBackground);
     m_detailLyt = new QVBoxLayout(m_detailPage);
-    m_detailLyt->setContentsMargins(8, 0, 16, 0);
+    m_detailLyt->setContentsMargins(8, 50, 16, 0);
     m_iconLabel = new QLabel(m_detailPage);
     m_iconLabel->setAlignment(Qt::AlignCenter);
-    m_iconLabel->setFixedHeight(128);
+    //m_iconLabel->setFixedHeight(128);
 
     m_nameFrame = new QFrame(m_detailPage);
     m_nameFrameLyt = new QHBoxLayout(m_nameFrame);
@@ -611,7 +630,7 @@ void FileContengSearchPlugin::initDetailPage()
     m_actionFrameLyt->addWidget(m_actionLabel3);
     m_actionFrame->setLayout(m_actionFrameLyt);
 
-    m_detailLyt->addSpacing(50);
+//    m_detailLyt->addSpacing(50);
     m_detailLyt->addWidget(m_iconLabel);
     m_detailLyt->addWidget(m_nameFrame);
     m_detailLyt->addWidget(m_line_1);

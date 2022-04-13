@@ -68,7 +68,11 @@ bool SearchManager::creatResultInfo(SearchPluginIface::ResultInfo &ri, QString p
                     << SearchPluginIface::DescriptionInfo{tr("Path:"), path} \
                     << SearchPluginIface::DescriptionInfo{tr("Modified time:"), info.lastModified().toString("yyyy/MM/dd hh:mm:ss")};
     ri.actionKey = path;
-    ri.type = 0;
+    if (true == targetPhotographTypeMap[info.suffix()]) {
+        ri.type = 1;//1为ocr图片文件
+    } else {
+        ri.type = 0;//0为默认文本文件
+    }
     return true;
 }
 
@@ -257,20 +261,7 @@ int FileContentSearch::keywordSearchContent() {
         Xapian::QueryParser qp;
         qp.set_default_op(Xapian::Query::OP_AND);
         qp.set_database(db);
-        /*
-                ::friso::ResultMap ret;
-                ::friso::FrisoSegmentation::getInstance()->callSegement(ret, keyword.toLocal8Bit().data());
-                for (::friso::ResultMap::iterator it_map = ret.begin(); it_map != ret.end(); ++it_map){
-                    target_str += it_map->first;
-                    target_str += " ";
-                    it_map->second.first.clear();
-                    ::std::vector<size_t>().swap(it_map->second.first);
-                }
 
-                ret.clear();
-                ret.erase(ret.begin(), ret.end());
-                ::friso::ResultMap().swap(ret);
-        */
         QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
         //Creat a query
         std::string words;
@@ -318,6 +309,7 @@ int FileContentSearch::getResult(Xapian::MSet &result, std::string &keyWord) {
         double docScoreWeight = it.get_weight();
         Xapian::percent docScorePercent = it.get_percent();
         QString path = QString::fromStdString(doc.get_value(1));
+        QString suffix = QString::fromStdString(doc.get_value(2));
 
         SearchPluginIface::ResultInfo ri;
         if(!SearchManager::creatResultInfo(ri, path)) {
