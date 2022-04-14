@@ -28,7 +28,7 @@ class FileReader : public QObject {
 public:
     explicit FileReader(QObject *parent = nullptr);
     ~FileReader() = default;
-    static void getTextContent(QString path, QString &textContent);
+    static void getTextContent(QString path, QString &textContent, QString &suffix);
 
 };
 }

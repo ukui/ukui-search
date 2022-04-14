@@ -102,12 +102,14 @@ void ConstructDocumentForContent::run() {
 //    qDebug() << "ConstructDocumentForContent  currentThreadId()" << QThread::currentThreadId();
     //构造文本索引的document
     QString content;
-    FileReader::getTextContent(m_path, content);
+    QString suffix;
+    FileReader::getTextContent(m_path, content, suffix);
 
     Document doc;
     doc.setUniqueTerm(FileUtils::makeDocUterm(m_path));
     doc.addTerm("ZEEKERUPTERM" + FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
     doc.addValue(1, m_path);
+    doc.addValue(2, suffix);
 
     if(content.isEmpty()) {
         doc.reuireDeleted();
@@ -140,12 +142,14 @@ ConstructDocumentForOcr::ConstructDocumentForOcr(QString path)
 void ConstructDocumentForOcr::run()
 {
     QString content;
-    FileReader::getTextContent(m_path, content);
+    QString suffix;
+    FileReader::getTextContent(m_path, content, suffix);
 
     Document doc;
     doc.setUniqueTerm(FileUtils::makeDocUterm(m_path));
     doc.addTerm("ZEEKERUPTERM" + FileUtils::makeDocUterm(m_path.section("/", 0, -2, QString::SectionIncludeLeadingSep)));
     doc.addValue(1, m_path);
+    doc.addValue(2, suffix);
 
     if(content.isEmpty()) {
         doc.reuireDeleted();

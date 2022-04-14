@@ -35,7 +35,6 @@
 #include "file-reader.h"
 #include "common.h"
 #include "pending-file.h"
-#include "common.h"
 
 namespace UkuiSearch {
 //extern QVector<Document> *_doc_list_path;

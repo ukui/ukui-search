@@ -54,6 +54,8 @@
 
 #include "libsearch_global.h"
 #include "common.h"
+#include <leptonica/allheaders.h>
+
 //#define INITIAL_STATE 0
 //#define CREATING_INDEX 1
 //#define FINISH_CREATING_INDEX 2
@@ -97,6 +99,7 @@ public:
     static QIcon iconFromTheme(const QString &name, const QIcon &iconDefault);
     static bool isOpenXMLFileEncrypted(QString &path);
     static bool isEncrypedOrUnreadable(QString path);
+    static bool isOcrSupportSize(QString path);
     static size_t maxIndexCount;
     static unsigned short indexStatus;
 

@@ -961,6 +961,28 @@ bool FileUtils::isEncrypedOrUnreadable(QString path)
     }
 }
 
+bool FileUtils::isOcrSupportSize(QString path)
+{
+/*
+    bool res;
+    Pix *image = pixRead(path.toStdString().data());
+    if (image->h < OCR_MIN_SIZE or image->w < OCR_MIN_SIZE) {//限制图片像素尺寸
+        qDebug() << "file:" << path << "is not right size.";
+        res = false;
+    } else
+        res = true;
+
+    pixDestroy(&image);
+    return res;
+*/
+    QImage file(path);
+    if (file.height() < OCR_MIN_SIZE or file.width() < OCR_MIN_SIZE) {//限制图片像素尺寸
+        qDebug() << "file:" << path << "is not right size.";
+        return false;
+    } else
+        return true;
+}
+
 QString FileUtils::getHtmlText(const QString &text, const QString &keyword)
 {
     QString htmlString;

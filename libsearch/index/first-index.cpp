@@ -102,9 +102,12 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
         } else {
             this->m_contentIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
         }
-    } /*else if (true == targetPhotographTypeMap[fileInfo.fileName().split(".").last()]) {
-        this->m_ocrIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
-    }*/
+    } else if (true == targetPhotographTypeMap[fileInfo.fileName().split(".").last()]) {
+        if (FileUtils::isOcrSupportSize(fileInfo.absoluteFilePath())) {
+            this->m_contentIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
+            //this->m_ocrIndexData->enqueue(qMakePair(fileInfo.absoluteFilePath(),fileInfo.size()));
+        }
+    }
 }
 
 void FirstIndex::run() {
@@ -211,7 +214,6 @@ void FirstIndex::run() {
                     }
                     tmp2->enqueue(tempPair.first);
                 }
-                //                qDebug() << ">>>>>>>>all fileSize:" << fileSize << "file num:" << tmp->size() << "<<<<<<<<<<<<<<<<<<<";
                 if(!IndexGenerator::getInstance()->creatAllIndex(tmp2)) {
                     sucess = false;
                     break;
@@ -225,7 +227,7 @@ void FirstIndex::run() {
             }
             sem.release(2);
         });
-        //        OCR功能暂时屏蔽
+        //        OCR功能目前合到内容搜索分类中
 //        QtConcurrent::run(&m_pool,[&]() {
 //            sem.acquire(5);
 //            mutex3.unlock();
