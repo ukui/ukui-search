@@ -1,3 +1,11 @@
+ukui-search (3.1-1.2.0+0411t) v101; urgency=medium
+
+  * BUG:无
+  * 需求号：#12895 全局搜索背景模糊需求
+  * 其他改动：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Mon, 11 Apr 2022 18:03:38 +0800
+
 ukui-search (3.1-1.1.6+0330t) v101; urgency=medium
 
   * BUG:110566 【全局搜索】竖屏模式打开搜索后，搜任意内容但不退出搜索；后机器再转回横屏；会出现全局搜索的黑色填充页面
