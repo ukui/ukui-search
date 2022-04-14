@@ -14,7 +14,7 @@ UkuiSearch::InotifyWatch *UkuiSearch::InotifyWatch::getInstance()
     return global_instance_InotifyWatch;
 }
 
-UkuiSearch::InotifyWatch::InotifyWatch(): Traverse_BFS()
+UkuiSearch::InotifyWatch::InotifyWatch(): Traverse_BFS(), m_semaphore(INDEX_SEM, 0, QSystemSemaphore::AccessMode::Open)
 {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;
@@ -83,7 +83,7 @@ bool InotifyWatch::removeWatch(const QString &path, bool removeFromDatabase)
     return true;
 }
 
-void InotifyWatch::DoSomething(const QFileInfo &info)
+void InotifyWatch::work(const QFileInfo &info)
 {
     qDebug() << info.fileName() << "-------" << info.absoluteFilePath();
     if(info.isDir() && (!info.isSymLink())) {
@@ -96,24 +96,31 @@ void InotifyWatch::DoSomething(const QFileInfo &info)
     PendingFileQueue::getInstance()->enqueue(f);
 }
 
-void InotifyWatch::firstTraverse()
+void InotifyWatch::firstTraverse(QStringList pathList, QStringList blockList)
 {
+    if(pathList.isEmpty()) {
+        pathList = m_pathList;
+    }
+    if(blockList.isEmpty()) {
+        blockList = m_blockList;
+    }
+
     QQueue<QString> bfs;
-    for(QString blockPath : m_blockList) {
-        for(QString path : m_pathList) {
+    for(QString blockPath : blockList) {
+        for(QString path : pathList) {
             if(FileUtils::isOrUnder(path, blockPath)) {
-                m_pathList.removeOne(path);
+                pathList.removeOne(path);
             }
         }
     }
-    for(QString path : m_pathList) {
+    for(QString path : pathList) {
         addWatch(path);
         bfs.enqueue(path);
     }
 
     QFileInfoList list;
     QDir dir;
-    QStringList tmpList = m_blockList;
+    QStringList tmpList = blockList;
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
     while(!bfs.empty()) {
@@ -137,6 +144,16 @@ void InotifyWatch::firstTraverse()
             }
         }
     }
+}
+
+void InotifyWatch::addIndexPath(const QString path, const QStringList blockList)
+{
+    this->firstTraverse(QStringList() << path, blockList);
+}
+
+void InotifyWatch::removeIndexPath(QString &path)
+{
+
 }
 
 void InotifyWatch::stopWatch()

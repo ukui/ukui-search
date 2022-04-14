@@ -43,6 +43,19 @@ DirWatcher *DirWatcher::getDirWatcher()
     return global_intance;
 }
 
+void DirWatcher::initDbusService()
+{
+    //注册服务
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
+    if (!sessionBus.registerService("com.ukui.search.fileindex.service")) {
+        qWarning() << "ukui-search-fileindex dbus register service failed reason:" << sessionBus.lastError();
+    }
+
+    if(!sessionBus.registerObject("/org/ukui/search/fileindex", this, QDBusConnection::ExportAdaptors)){
+        qWarning() << "ukui-search-fileindex dbus register object failed reason:" << sessionBus.lastError();
+    }
+}
+
 QStringList DirWatcher::currentindexableDir()
 {
     QMutexLocker locker(&s_mutex);

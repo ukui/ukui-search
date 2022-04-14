@@ -22,7 +22,7 @@
 #include <ukcc/widgets/titlelabel.h>
 
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
-#define SEARCH_METHOD_KEY "file-index-enable"
+#define SEARCH_METHOD_KEY "fileIndexEnable"
 #define WEB_ENGINE_KEY "webEngine"
 //TODO
 #define CONFIG_FILE "/.config/org.ukui/ukui-search/ukui-search-block-dirs.conf"

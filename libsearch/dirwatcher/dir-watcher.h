@@ -27,6 +27,7 @@ class DirWatcher : public QObject
 
 public:
     static DirWatcher *getDirWatcher();
+    void initDbusService();
     QStringList currentindexableDir();
     QStringList currentBlackListOfIndex();
     void handleIndexItemAppend(const QString &path);

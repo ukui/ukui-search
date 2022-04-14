@@ -6,6 +6,7 @@
 #include <QSocketNotifier>
 #include <QDataStream>
 #include <QSharedMemory>
+#include <QSystemSemaphore>
 
 #include <sys/prctl.h>
 #include <sys/wait.h>
@@ -26,10 +27,12 @@ public:
     static InotifyWatch* getInstance();
     bool addWatch(const QString &path);
     bool removeWatch(const QString &path, bool removeFromDatabase = true);
-    virtual void DoSomething(const QFileInfo &info) final;
+    virtual void work(const QFileInfo &info) final;
 
-    void firstTraverse();
+    void firstTraverse(QStringList pathList = {}, QStringList blockList = {});
     void stopWatch();
+    void addIndexPath(const QString path, const QStringList blockList);
+    void removeIndexPath(QString &path);
 protected:
     void run() override;
 
@@ -47,7 +50,7 @@ private:
     QSharedMemory *m_sharedMemory = nullptr;
     QMap<int, QString> m_pathMap;
     QMutex m_mutex;
-
+    QSystemSemaphore m_semaphore;
 
 };
 }

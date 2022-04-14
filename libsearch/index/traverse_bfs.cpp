@@ -35,6 +35,7 @@ void Traverse_BFS::Traverse() {
         }
     }
     for(QString path : m_pathList) {
+        work(QFileInfo(path));
         bfs.enqueue(path);
     }
 
@@ -62,7 +63,7 @@ void Traverse_BFS::Traverse() {
             if(i.isDir() && (!(i.isSymLink()))) {
                 bfs.enqueue(i.absoluteFilePath());
             }
-            DoSomething(i);
+            work(i);
         }
     }
 }

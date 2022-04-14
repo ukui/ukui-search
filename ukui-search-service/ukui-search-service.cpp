@@ -2,11 +2,9 @@
 #include "ukui-search-service.h"
 #include "dir-watcher.h"
 #include "dir-watcher-adaptor.h"
-
+#include "common.h"
 #include <QDBusConnection>
 
-#define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
-#define SEARCH_METHOD_KEY "file-index-enable"
 using namespace UkuiSearch;
 UkuiSearchService::UkuiSearchService(int &argc, char *argv[], const QString &applicationName): QtSingleApplication (applicationName, argc, argv)
 {
@@ -19,17 +17,8 @@ UkuiSearchService::UkuiSearchService(int &argc, char *argv[], const QString &app
             this->parseCmd(msg, true);
         });
 
-        //注册服务
-        QDBusConnection sessionBus = QDBusConnection::sessionBus();
-        if (!sessionBus.registerService("com.ukui.search.fileindex.service")) {
-            qWarning() << "ukui-search-fileindex dbus register service failed reason:" << sessionBus.lastError();
-        }
-
-        if(!sessionBus.registerObject("/org/ukui/search/fileindex", DirWatcher::getDirWatcher(), QDBusConnection::ExportAdaptors)){
-            qWarning() << "ukui-search-fileindex dbus register object failed reason:" << sessionBus.lastError();
-        }
-
         initGsettings();
+        FileIndexManager::getInstance()->initIndexPathSetFunction();
     }
 
     //parse cmd

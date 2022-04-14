@@ -46,7 +46,8 @@ class FirstIndex : public QThread, public Traverse_BFS {
 public:
     static FirstIndex* getInstance();
     ~FirstIndex();
-    virtual void DoSomething(const QFileInfo &) final;
+    virtual void work(const QFileInfo &) final;
+    void addIndexPath(const QString path, const QStringList blockList);
 
 protected:
     void run() override;
@@ -61,6 +62,7 @@ private:
     bool m_contentIndexDatabaseStatus = false;
     bool m_ocrIndexDatabaseStatus = false;
     bool m_allDatadaseStatus = false;
+    bool m_isFirstIndex = true;
     QThreadPool m_pool;
 
     QQueue<QVector<QString>>* m_indexData = nullptr;

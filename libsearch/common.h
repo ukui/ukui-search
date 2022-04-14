@@ -17,6 +17,8 @@ static const QString FILE_SEARCH_VALUE = QStringLiteral("0");
 static const QString DIR_SEARCH_VALUE = QStringLiteral("1");
 static const QString INDEX_SEM = QStringLiteral("ukui-search-index-sem");
 static const int OCR_MIN_SIZE = 200;
+static const QByteArray UKUI_SEARCH_SCHEMAS = QByteArrayLiteral("org.ukui.search.settings");
+static const QString SEARCH_METHOD_KEY = QStringLiteral("fileIndexEnable");
 
 static const QStringList allAppPath = {
     {HOME_PATH + "/.local/share/applications/"},
