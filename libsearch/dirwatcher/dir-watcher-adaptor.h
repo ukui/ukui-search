@@ -29,16 +29,16 @@ QT_END_NAMESPACE
 class DirWatcherAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.ukui.search.fileindex.service")
+    Q_CLASSINFO("D-Bus Interface", "org.ukui.search.fileindex")
     Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"org.ukui.search.fileindex\">\n"
-"    <method name=\"appendIndexableListItem\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
-"    </method>\n"
-"    <method name=\"removeIndexableListItem\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"path\"/>\n"
-"    </method>\n"
-"  </interface>\n"
+"  <interface name=\"org.ukui.search.fileindex\">"
+"    <method name=\"appendIndexableListItem\">"
+"      <arg direction=\"in\" type=\"s\" name=\"path\"/>"
+"    </method>"
+"    <method name=\"removeIndexableListItem\">"
+"      <arg direction=\"in\" type=\"s\" name=\"path\"/>"
+"    </method>"
+"  </interface>"
         "")
 public:
     DirWatcherAdaptor(QObject *parent);

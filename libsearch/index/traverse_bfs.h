@@ -30,7 +30,7 @@ public:
     Traverse_BFS() = default;
     void Traverse();
     virtual ~Traverse_BFS() = default;
-    virtual void DoSomething(const QFileInfo&) = 0;
+    virtual void work(const QFileInfo&) = 0;
     void setPath(const QStringList&);
     void setBlockPath(const QStringList &pathList);
 protected:

@@ -14,7 +14,7 @@ UkuiSearch::InotifyWatch *UkuiSearch::InotifyWatch::getInstance()
     return global_instance_InotifyWatch;
 }
 
-UkuiSearch::InotifyWatch::InotifyWatch(): Traverse_BFS()
+UkuiSearch::InotifyWatch::InotifyWatch(): Traverse_BFS(), m_semaphore(INDEX_SEM, 0, QSystemSemaphore::AccessMode::Open)
 {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;
@@ -37,40 +37,40 @@ bool InotifyWatch::addWatch(const QString &path)
         qWarning() << "AddWatch error:" << path;
         return false;
     }
-    currentPath[ret] = path;
+    m_pathMap[ret] = path;
 //    qDebug() << "Watch: " << path << "ret: " << ret;
     return true;
 }
 
 bool InotifyWatch::removeWatch(const QString &path, bool removeFromDatabase)
 {
-    inotify_rm_watch(m_inotifyFd, currentPath.key(path));
+    inotify_rm_watch(m_inotifyFd, m_pathMap.key(path));
 
     if(removeFromDatabase) {
-        for(QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
+        for(QMap<int, QString>::Iterator i = m_pathMap.begin(); i != m_pathMap.end();) {
             //        qDebug() << i.value();
             //            if(i.value().length() > path.length()) {
             if(FileUtils::isOrUnder(i.value(), path)) {
                 qDebug() << "remove path: " << i.value();
-                inotify_rm_watch(m_inotifyFd, currentPath.key(path));
+                inotify_rm_watch(m_inotifyFd, m_pathMap.key(path));
                 PendingFile f(i.value());
                 f.setDeleted();
                 f.setIsDir();
                 PendingFileQueue::getInstance()->enqueue(f);
-                currentPath.erase(i++);
+                m_pathMap.erase(i++);
             } else {
                 i++;
             }
         }
     } else {
-        for(QMap<int, QString>::Iterator i = currentPath.begin(); i != currentPath.end();) {
+        for(QMap<int, QString>::Iterator i = m_pathMap.begin(); i != m_pathMap.end();) {
             //        qDebug() << i.value();
             if(i.value().length() > path.length()) {
                 if(FileUtils::isOrUnder(i.value(), path)) {
 //                if(i.value().startsWith(path + "/")) {
 //                    qDebug() << "remove path: " << i.value();
-                    inotify_rm_watch(m_inotifyFd, currentPath.key(path));
-                    currentPath.erase(i++);
+                    inotify_rm_watch(m_inotifyFd, m_pathMap.key(path));
+                    m_pathMap.erase(i++);
                 } else {
                     i++;
                 }
@@ -79,11 +79,11 @@ bool InotifyWatch::removeWatch(const QString &path, bool removeFromDatabase)
             }
         }
     }
-    currentPath.remove(currentPath.key(path));
+    m_pathMap.remove(m_pathMap.key(path));
     return true;
 }
 
-void InotifyWatch::DoSomething(const QFileInfo &info)
+void InotifyWatch::work(const QFileInfo &info)
 {
     qDebug() << info.fileName() << "-------" << info.absoluteFilePath();
     if(info.isDir() && (!info.isSymLink())) {
@@ -96,24 +96,31 @@ void InotifyWatch::DoSomething(const QFileInfo &info)
     PendingFileQueue::getInstance()->enqueue(f);
 }
 
-void InotifyWatch::firstTraverse()
+void InotifyWatch::firstTraverse(QStringList pathList, QStringList blockList)
 {
+    if(pathList.isEmpty()) {
+        pathList = m_pathList;
+    }
+    if(blockList.isEmpty()) {
+        blockList = m_blockList;
+    }
+
     QQueue<QString> bfs;
-    for(QString blockPath : m_blockList) {
-        for(QString path : m_pathList) {
+    for(QString blockPath : blockList) {
+        for(QString path : pathList) {
             if(FileUtils::isOrUnder(path, blockPath)) {
-                m_pathList.removeOne(path);
+                pathList.removeOne(path);
             }
         }
     }
-    for(QString path : m_pathList) {
+    for(QString path : pathList) {
         addWatch(path);
         bfs.enqueue(path);
     }
 
     QFileInfoList list;
     QDir dir;
-    QStringList tmpList = m_blockList;
+    QStringList tmpList = blockList;
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
     dir.setSorting(QDir::DirsFirst);
     while(!bfs.empty()) {
@@ -137,6 +144,16 @@ void InotifyWatch::firstTraverse()
             }
         }
     }
+}
+
+void InotifyWatch::addIndexPath(const QString path, const QStringList blockList)
+{
+    this->firstTraverse(QStringList() << path, blockList);
+}
+
+void InotifyWatch::removeIndexPath(QString &path)
+{
+
 }
 
 void InotifyWatch::stopWatch()
@@ -225,10 +242,10 @@ void InotifyWatch::run()
     qDebug() << "Leave watch loop";
     if(FileUtils::SearchMethod::DIRECTSEARCH == FileUtils::searchMethod) {
         IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "3");
-        for(QString path : currentPath) {
-            inotify_rm_watch(m_inotifyFd, currentPath.key(path));
+        for(QString path : m_pathMap) {
+            inotify_rm_watch(m_inotifyFd, m_pathMap.key(path));
         }
-        currentPath.clear();
+        m_pathMap.clear();
     }
     close(m_inotifyFd);
 //    fcntl(m_inotifyFd, F_SETFD, FD_CLOEXEC);
@@ -271,7 +288,7 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
                         m_sharedMemory->detach();
                     }
                     buffer.open(QBuffer::ReadWrite);
-                    out << currentPath;
+                    out << m_pathMap;
                     int size = buffer.size();
                     if (!m_sharedMemory->create(size)) {
                         qDebug() << "Create sharedMemory Error: " << m_sharedMemory->errorString();
@@ -306,7 +323,7 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
                 in >> pathMap;
                 m_sharedMemory->unlock();
                 m_sharedMemory->detach();
-                currentPath = pathMap;
+                m_pathMap = pathMap;
             }
         } else {
             assert(false);
@@ -389,7 +406,7 @@ void InotifyWatch::eventProcess(const char *buffer, ssize_t len)
 //        qDebug() << "Read Event: " << currentPath[event->wd] << QString(event->name) << event->cookie << event->wd << event->mask;
 //        qDebug("mask:0x%x,",event->mask);
         if(event->name[0] != '.') {
-            QString path = currentPath[event->wd] + '/' + event->name;
+            QString path = m_pathMap[event->wd] + '/' + event->name;
 
             //过滤黑名单下的信号
             for(QString i : m_blockList) {
