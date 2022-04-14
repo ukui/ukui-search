@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSystemSemaphore>
+#include <QGSettings/QGSettings>
 #include "first-index.h"
 //#include "inotify-index.h"
 #include "inotify-watch.h"
@@ -12,12 +13,16 @@ class FileIndexManager : public QObject {
 public:
     static FileIndexManager *getInstance();
     void searchMethod(FileUtils::SearchMethod sm);
+    void initIndexPathSetFunction();
+private Q_SLOTS:
+    void handleIndexPathAppend(const QString path, const QStringList blockList);
 private:
     FileIndexManager(QObject *parent = nullptr);
     FirstIndex *m_fi;
 //    InotifyIndex* m_ii;
     InotifyWatch *m_iw = nullptr;
     QSystemSemaphore m_semaphore;
+    QGSettings *m_searchSettings = nullptr;
 };
 }
 

@@ -54,7 +54,7 @@ FirstIndex::~FirstIndex() {
     qDebug() << "~FirstIndex end";
 }
 
-void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
+void FirstIndex::work(const QFileInfo& fileInfo) {
     //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
     this->m_indexData->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
     if (fileInfo.fileName().split(".", QString::SkipEmptyParts).length() < 2)
@@ -107,29 +107,46 @@ void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
     }*/
 }
 
+void FirstIndex::addIndexPath(const QString path, const QStringList blockList)
+{
+    m_semaphore.acquire();
+    setPath(QStringList() << path);
+    setBlockPath(blockList);
+    this->wait();
+    this->start();
+}
+
 void FirstIndex::run() {
     QTime t1 = QTime::currentTime();
     // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
     QString indexDataBaseStatus =  IndexStatusRecorder::getInstance()->getStatus(INDEX_DATABASE_STATE).toString();
     QString contentIndexDataBaseStatus = IndexStatusRecorder::getInstance()->getStatus(CONTENT_INDEX_DATABASE_STATE).toString();
-//    QString ocrIndexDatabaseStatus = IndexStatusRecorder::getInstance()->getStatus(OCR_DATABASE_STATE).toString();
+    //    QString ocrIndexDatabaseStatus = IndexStatusRecorder::getInstance()->getStatus(OCR_DATABASE_STATE).toString();
     QString inotifyIndexStatus = IndexStatusRecorder::getInstance()->getStatus(INOTIFY_NORMAL_EXIT).toString();
 
     qInfo() << "indexDataBaseStatus: " << indexDataBaseStatus;
     qInfo() << "contentIndexDataBaseStatus: " << contentIndexDataBaseStatus;
-//    qInfo() << "ocrIndexDatabaseStatus: " << ocrIndexDatabaseStatus;
+    //    qInfo() << "ocrIndexDatabaseStatus: " << ocrIndexDatabaseStatus;
     qInfo() << "inotifyIndexStatus: " << inotifyIndexStatus;
 
     m_allDatadaseStatus = inotifyIndexStatus == "2" ? true : false;
     m_indexDatabaseStatus = indexDataBaseStatus == "2" ? true : false;
     m_contentIndexDatabaseStatus = contentIndexDataBaseStatus == "2" ? true : false;
-//    m_ocrIndexDatabaseStatus = ocrIndexDatabaseStatus == "2" ? true : false;
+    //    m_ocrIndexDatabaseStatus = ocrIndexDatabaseStatus == "2" ? true : false;
 
     if(m_allDatadaseStatus && m_indexDatabaseStatus && m_contentIndexDatabaseStatus /*&& m_ocrIndexDatabaseStatus*/) {
-        m_semaphore.release(1);
-        return;
+        if(m_isFirstIndex) {
+            m_isFirstIndex = false;
+            m_semaphore.release(1);
+            return;
+        }
+    } else {
+        setPath(DirWatcher::getDirWatcher()->currentindexableDir());
+        setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
     }
 
+
+    IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "0");
 
     this->m_indexData = new QQueue<QVector<QString>>();
     this->m_contentIndexData = new QQueue<QPair<QString,qint64>>();
@@ -150,8 +167,6 @@ void FirstIndex::run() {
 
         qInfo() << "index dir" << DirWatcher::getDirWatcher()->currentindexableDir();
         qInfo() << "index block dir" << DirWatcher::getDirWatcher()->currentBlackListOfIndex();
-        setPath(DirWatcher::getDirWatcher()->currentindexableDir());
-        setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
         this->Traverse();
 
         FileUtils::maxIndexCount = this->m_indexData->length();
@@ -159,7 +174,7 @@ void FirstIndex::run() {
         QtConcurrent::run(&m_pool, [&]() {
             sem.acquire(2);
             mutex1.unlock();
-            if(m_allDatadaseStatus && m_indexDatabaseStatus) {
+            if(m_isFirstIndex && m_allDatadaseStatus && m_indexDatabaseStatus) {
                 sem.release(2);
                 return;
             }
@@ -187,7 +202,7 @@ void FirstIndex::run() {
         QtConcurrent::run(&m_pool,[&]() {
             sem.acquire(2);
             mutex2.unlock();
-            if(m_allDatadaseStatus && m_contentIndexDatabaseStatus) {
+            if(m_isFirstIndex && m_allDatadaseStatus && m_contentIndexDatabaseStatus) {
                 sem.release(2);
                 return;
             }
@@ -231,7 +246,7 @@ void FirstIndex::run() {
 //            mutex3.unlock();
 //            QQueue<QString>* tmpOcr = new QQueue<QString>();
 //            qDebug() << "m_ocr_index:" << m_ocr_index->size();
-//            if(m_allDatadaseStatus && m_contentIndexDatabaseStatus) {
+//            if(m_isFirstIndex && m_allDatadaseStatus && m_contentIndexDatabaseStatus) {
 //                sem.release(2);
 //                return;
 //            }
@@ -291,8 +306,9 @@ void FirstIndex::run() {
         --FileUtils::indexStatus;
     }
 
-    m_semaphore.release(1);
+    m_isFirstIndex = false; //首次索引后置为false,后续start为添加索引目录时新建索引。
     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
+    m_semaphore.release(1);
     //    int retval1 = write(fifo_fd, buffer, strlen(buffer));
     //    if(retval1 == -1) {
     //        qWarning("write error\n");

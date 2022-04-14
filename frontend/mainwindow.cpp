@@ -39,7 +39,7 @@
 #define MAIN_MARGINS 0, 0, 0, 0
 #define TITLE_MARGINS 0,0,0,0
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
-#define SEARCH_METHOD_KEY "file-index-enable"
+#define SEARCH_METHOD_KEY "fileIndexEnable"
 #define WEB_ENGINE_KEY "webEngine"
 #define WINDOW_WIDTH 700
 #define WINDOW_HEIGHT 610
