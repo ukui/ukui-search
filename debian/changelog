@@ -1,3 +1,12 @@
+ukui-search (3.1-2.1.0+0415) jammy; urgency=medium
+
+  * BUG：114388 【设计】搜索UI 问题(更换了展开按钮的图标)
+  * 需求号：12816 增加OCR功能，文本内容搜索可以搜索图片中的文字。
+  * 其他改动：无
+  * 其他改动影响域：无
+
+ -- zhangpengfei <zhangpengfei@kylinos.cn>  Fri, 15 Apr 2022 16:38:29 +0800
+
 ukui-search (3.1-2.0.1+0409) jammy; urgency=medium
 
   * Bug:无
