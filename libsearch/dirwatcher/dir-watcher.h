@@ -30,8 +30,6 @@ public:
     void initDbusService();
     QStringList currentindexableDir();
     QStringList currentBlackListOfIndex();
-    void handleIndexItemAppend(const QString &path);
-    void handleIndexItemRemove(const QString &path);
     void appendBlackListItemOfIndex(const QString &path);
     void appendBlackListItemOfIndex(const QStringList &pathList);
     void removeBlackListItemOfIndex(const QString &path);
@@ -55,6 +53,9 @@ private:
     ~DirWatcher();
     void initData();
     void initDiskWatcher();
+
+    void handleIndexItemAppend(const QString &path, QStringList &blackList);
+    void handleIndexItemRemove(const QString &path);
 
     static QMutex s_mutex;
 

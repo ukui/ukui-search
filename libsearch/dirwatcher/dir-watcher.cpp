@@ -73,13 +73,18 @@ QStringList DirWatcher::currentBlackListOfIndex()
     return blackListOfIndex;
 }
 
-void DirWatcher::handleIndexItemAppend(const QString &path)
+void DirWatcher::handleIndexItemAppend(const QString &path, QStringList &blackList)
 {
+    if (m_indexableDirList.contains(path)) {
+        qDebug() << QString("index path %1 is already added.").arg(path);
+        return;
+    }
     m_indexableDirList << path;
-    m_indexableDirList.removeDuplicates();
     m_qSettings->beginGroup(INDEXABLE_DIR_VALUE);
     m_qSettings->setValue(INDEXABLE_DIR_VALUE, m_indexableDirList);
     m_qSettings->endGroup();
+    Q_EMIT this->appendIndexItem(path, blackList);
+    qDebug() << "index path:" << path << "blacklist:" << blackList;
 }
 
 void DirWatcher::handleIndexItemRemove(const QString &path)
@@ -226,11 +231,14 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
 
 void DirWatcher::appendIndexableListItem(const QString &path)
 {
+    QFile file(path);
+    if (!file.exists()) {
+        qWarning() << QString("target path:%1 is not exists!").arg(path);
+        return;
+    }
     if (path == "/") {
         this->currentindexableDir();
-        this->handleIndexItemAppend(path);
-        Q_EMIT this->appendIndexItem(path, m_blackListOfIndex);
-        qDebug() << "index path:" << path << "blacklist:" << m_blackListOfIndex;
+        this->handleIndexItemAppend(path, m_blackListOfIndex);
         return;
     }
 
@@ -263,9 +271,7 @@ void DirWatcher::appendIndexableListItem(const QString &path)
             blackList.append(indexablePath);
         }
     }
-    this->handleIndexItemAppend(path);
-    Q_EMIT this->appendIndexItem(path, blackList);
-    qDebug() << "index path:" << path << "blacklist:" << blackList;
+    this->handleIndexItemAppend(path, blackList);
 }
 
 void DirWatcher::removeIndexableListItem(const QString &path)
