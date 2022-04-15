@@ -67,7 +67,7 @@ private:
     QVBoxLayout * m_mainLyt = nullptr;
     BestListWidget * m_bestListWidget = nullptr;
     QList<ResultWidget *> m_widget_list;
-    TitleLabel * m_titleLable = nullptr;
+    TitleLabel * m_titleLabel = nullptr;
 
     bool m_detail_open_state = false;
     bool m_is_selected = false;
