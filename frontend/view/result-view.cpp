@@ -18,6 +18,11 @@ QString ResultWidget::pluginId()
     return m_plugin_id;
 }
 
+QString ResultWidget::pluginName()
+{
+    return m_titleLabel->text();
+}
+
 void ResultWidget::setEnabled(const bool &enabled)
 {
     m_enabled = enabled;
@@ -120,7 +125,8 @@ void ResultWidget::initUi()
     m_mainLyt->setSpacing(MAIN_SPACING);
 
     m_titleLabel = new TitleLabel(this);
-    m_titleLabel->setText(SearchPluginManager::getInstance()->getPlugin(m_plugin_id)->getPluginName());
+    m_plugin_name = SearchPluginManager::getInstance()->getPlugin(m_plugin_id)->getPluginName();
+    m_titleLabel->setText(m_plugin_name);
     m_titleLabel->setFixedHeight(TITLE_HEIGHT);
 
     m_resultView = new ResultView(m_plugin_id, this);

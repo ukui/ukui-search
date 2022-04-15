@@ -65,6 +65,7 @@ public:
     ResultWidget(const QString &plugin_id, QWidget *parent = nullptr);
     ~ResultWidget() = default;
     QString pluginId();
+    QString pluginName();
     void setEnabled(const bool&);
     void clearResult();
     int getResultNum();
@@ -88,6 +89,7 @@ private:
     void initConnections();
 
     QString m_plugin_id;
+    QString m_plugin_name;
     bool m_enabled = true;
     QVBoxLayout * m_mainLyt = nullptr;
     TitleLabel * m_titleLabel = nullptr;
