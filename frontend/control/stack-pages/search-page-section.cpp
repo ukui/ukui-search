@@ -392,8 +392,8 @@ void ResultArea::initUi()
     this->widget()->setContentsMargins(0,0,0,0);
     m_mainLyt->setSpacing(0);
 
-    m_titleLable = new TitleLabel(this);
-    m_titleLable->hide();
+    m_titleLabel = new TitleLabel(this);
+    m_titleLabel->hide();
 }
 
 void ResultArea::initConnections()
@@ -439,35 +439,35 @@ void ResultArea::initConnections()
             }
             if (value < (widget->pos().ry() + TITLE_HEIGHT)
                     or value > (widget->pos().ry() + widget->height() - FRAME_HEIGHT + 2*TITLE_HEIGHT)) {//暂定下一项标题显示完全后悬浮标题隐藏
-                if (!m_titleLable->isHidden()) {
-                    m_titleLable->hide();
+                if (!m_titleLabel->isHidden()) {
+                    m_titleLabel->hide();
                     this->setViewportMargins(0,0,0,0);
                 }
             } else {
-                if (m_titleLable->isHidden()) {
-                    m_titleLable->setText(widget->pluginId());
-                    m_titleLable->setShowMoreLableVisible();//防止多项展开后无法收回其他项
-                    m_titleLable->show();
+                if (m_titleLabel->isHidden()) {
+                    m_titleLabel->setText(widget->pluginName());
+                    m_titleLabel->setShowMoreLableVisible();//防止多项展开后无法收回其他项
+                    m_titleLabel->show();
                     this->setViewportMargins(0,TITLE_HEIGHT,0,0);
                 }
                 break;
             }
         }
     });
-    connect(this->m_titleLable, &TitleLabel::retractClicked, this, [=] () {
+    connect(this->m_titleLabel, &TitleLabel::retractClicked, this, [=] () {
         Q_FOREACH(auto widget, m_widget_list) {
-            if (widget->pluginId() == m_titleLable->text()) {
+            if (widget->pluginName() == m_titleLabel->text()) {
                 widget->reduceListSlot();
                 widget->resetTitleLabel();
-                if (!m_titleLable->isHidden()) {
-                    m_titleLable->hide();
+                if (!m_titleLabel->isHidden()) {
+                    m_titleLabel->hide();
                     this->setViewportMargins(0,0,0,0);
                 }
             }
         }
     });
     connect(this, &ResultArea::resizeWidth, this, [=] (int size) {
-        m_titleLable->setFixedWidth(size);
+        m_titleLabel->setFixedWidth(size);
     });
 }
 
@@ -475,8 +475,8 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(this, &ResultArea::startSearch, widget, &ResultWidget::startSearch);
     connect(this, &ResultArea::startSearch, this, [=] () {
-        if (!m_titleLable->isHidden()) {
-            m_titleLable->hide();
+        if (!m_titleLabel->isHidden()) {
+            m_titleLabel->hide();
             this->setViewportMargins(0,0,0,0);
         }
     });
@@ -495,12 +495,12 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
     connect(widget, &ResultWidget::showMoreClicked, this, [=] () {//点击展开搜索结果后   显示悬浮窗
         if (widget->height() > FRAME_HEIGHT) {//当前widget高度大于搜索结果界面高度则显示悬浮窗
             this->verticalScrollBar()->setValue(widget->pos().ry() + TITLE_HEIGHT); //置顶当前类型搜索结果,不显示标题栏
-            viewport()->stackUnder(m_titleLable);
-            m_titleLable->setText(widget->pluginId());
-            m_titleLable->setFixedSize(widget->width(), TITLE_HEIGHT);
-            m_titleLable->setShowMoreLableVisible();
-            if (m_titleLable->isHidden()) {
-                m_titleLable->show();
+            viewport()->stackUnder(m_titleLabel);
+            m_titleLabel->setText(widget->pluginName());
+            m_titleLabel->setFixedSize(widget->width(), TITLE_HEIGHT);
+            m_titleLabel->setShowMoreLableVisible();
+            if (m_titleLabel->isHidden()) {
+                m_titleLabel->show();
                 this->setViewportMargins(0,TITLE_HEIGHT,0,0);
             }
         } else {
@@ -508,8 +508,8 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
         }
     });
     connect(widget, &ResultWidget::retractClicked, this, [=] () {//点击收起搜索结果后
-        if (!m_titleLable->isHidden()) {
-            m_titleLable->hide();
+        if (!m_titleLabel->isHidden()) {
+            m_titleLabel->hide();
             this->setViewportMargins(0,0,0,0);
         }
     });
