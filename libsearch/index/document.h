@@ -48,6 +48,7 @@ public:
     void addTerm(QString term);
     void addTerm(std::string term);
     void addValue(unsigned slot, QString value);
+    void addSortableSerialiseValue(unsigned slot, QString value);
     void setUniqueTerm(QString term);
     void setUniqueTerm(std::string term);
     std::string getUniqueTerm();

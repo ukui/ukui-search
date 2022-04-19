@@ -74,6 +74,11 @@ void Document::addValue(unsigned slot, QString value)
     m_document.add_value(slot, value.toStdString());
 }
 
+void Document::addSortableSerialiseValue(unsigned slot, QString value)
+{
+    m_document.add_value(slot, Xapian::sortable_serialise(value.toDouble()));
+}
+
 void Document::setUniqueTerm(QString term) {
     if(term.isEmpty())
         return;

@@ -143,6 +143,8 @@ int FileSearch::keywordSearchfile() {
         qDebug() << "keywordSearchfile:" << QString::fromStdString(queryFile.get_description());
 
         enquire.set_query(queryFile);
+        enquire.set_docid_order(enquire.DONT_CARE);
+        enquire.set_sort_by_relevance_then_value(2, true);
         Xapian::MSet result = enquire.get_mset(m_begin, m_num, 0, m_matchDecider);
         int resultCount = result.size();
         qDebug() << "keywordSearchfile results count=" << resultCount;
@@ -175,8 +177,10 @@ int FileSearch::getResult(Xapian::MSet &result) {
     for(auto it = result.begin(); it != result.end(); ++it) {
         Xapian::Document doc = it.get_document();
         std::string data = doc.get_data();
-        Xapian::weight docScoreWeight = it.get_weight();
-        Xapian::percent docScorePercent = it.get_percent();
+//        Xapian::weight docScoreWeight = it.get_weight();
+//        Xapian::percent docScorePercent = it.get_percent();
+//        std::string date = doc.get_value(2);
+
         QString path = QString::fromStdString(data);
         std::string().swap(data);
 
@@ -208,7 +212,13 @@ int FileSearch::getResult(Xapian::MSet &result) {
                 break;
             }
         }
-        //qDebug() << "doc=" << path << ",weight=" << docScoreWeight << ",percent=" << docScorePercent;
+//        qDebug() << "doc=" << path
+//                 << ",weight="
+//                 << docScoreWeight
+//                 << ",percent="
+//                 << docScorePercent
+//                 << "date"
+//                 << QString::fromStdString(date);
     }
     //        if(!pathTobeDelete->isEmpty())
     //            deleteAllIndex(pathTobeDelete)
