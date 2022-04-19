@@ -56,7 +56,10 @@ FirstIndex::~FirstIndex() {
 
 void FirstIndex::DoSomething(const QFileInfo& fileInfo) {
     //    qDebug() << "there are some shit here"<<fileInfo.fileName() << fileInfo.absoluteFilePath() << QString(fileInfo.isDir() ? "1" : "0");
-    this->m_indexData->enqueue(QVector<QString>() << fileInfo.fileName() << fileInfo.absoluteFilePath() << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0"));
+    this->m_indexData->enqueue(QVector<QString>() << fileInfo.fileName()
+                                                  << fileInfo.absoluteFilePath()
+                                                  << QString((fileInfo.isDir() && (!fileInfo.isSymLink())) ? "1" : "0")
+                                                  << fileInfo.lastModified().toString("yyyyMMddHHmmss"));
     if (fileInfo.fileName().split(".", QString::SkipEmptyParts).length() < 2)
         return;
     if (true == targetFileTypeMap[fileInfo.fileName().split(".").last()]

@@ -610,7 +610,9 @@ bool IndexGenerator::updateIndex(QVector<PendingFile> *pendingFiles)
             deleteList->append(file.path());
             continue;
         }
-        fileIndexInfo->append(QVector<QString>() << file.path().section("/" , -1) << file.path() << QString(file.isDir() ? "1" : "0"));
+        fileIndexInfo->append(QVector<QString>() << file.path().section("/" , -1)
+                                                 << file.path() << QString(file.isDir() ? "1" : "0")
+                                                 << QFileInfo(file.path()).lastModified().toString("yyyyMMddHHmmss"));
         if (file.path().split(".").isEmpty()){
             continue;
         }

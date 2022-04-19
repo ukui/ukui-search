@@ -66,6 +66,7 @@ void ConstructDocumentForPath::run() {
     doc.setUniqueTerm(uniqueterm);
     doc.addTerm(upTerm);
     doc.addValue(1, m_list.at(2));
+    doc.addSortableSerialiseValue(2, m_list.at(3));
     /*    QStringList temp;
     //    temp.append(index_text);
         temp.append(pinyin_text_list)*/;
