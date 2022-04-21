@@ -41,6 +41,8 @@ CreateIndexAskDialog::CreateIndexAskDialog(QWidget *parent) : QDialog(parent) {
     this->setWindowTitle(tr("ukui-search"));
 
     initUi();
+
+    this->installEventFilter(this);
 }
 
 void CreateIndexAskDialog::initUi() {
@@ -74,7 +76,6 @@ void CreateIndexAskDialog::initUi() {
     m_closeBtn->setFlat(true);
     connect(m_closeBtn, &QPushButton::clicked, this, [ = ]() {
         this->hide();
-        Q_EMIT this->closed();
     });
     m_titleLyt->addWidget(m_iconLabel);
     m_titleLyt->addWidget(m_titleLabel);
@@ -118,12 +119,10 @@ void CreateIndexAskDialog::initUi() {
     connect(m_cancelBtn, &QPushButton::clicked, this, [ = ]() {
         Q_EMIT this->btnClicked(false, m_checkBox->isChecked());
         this->hide();
-        Q_EMIT this->closed();
     });
     connect(m_confirmBtn, &QPushButton::clicked, this, [ = ]() {
         Q_EMIT this->btnClicked(true, m_checkBox->isChecked());
         this->hide();
-        Q_EMIT this->closed();
     });
     m_btnLyt->addStretch();
     m_btnLyt->addWidget(m_cancelBtn);
@@ -149,4 +148,22 @@ void CreateIndexAskDialog::paintEvent(QPaintEvent *event) {
     p.fillPath(rectPath, palette().color(QPalette::Base));
     p.restore();
     return QDialog::paintEvent(event);
+}
+
+// esc按键直接调用hide，产生hideEvent
+void CreateIndexAskDialog::hideEvent(QHideEvent *event)
+{
+    Q_EMIT this->closed();
+    QWidget::hideEvent(event);
+}
+
+bool CreateIndexAskDialog::eventFilter(QObject *watched, QEvent *event)
+{
+    // kwin alt+f4发送的close事件会改变窗口的winid,屏蔽掉该事件，并发送hide事件
+    if ((watched == this) && (event->type() == QEvent::Close)) {
+        event->ignore();
+        this->hide();
+        return true;
+    }
+    return QDialog::eventFilter(watched, event);
 }

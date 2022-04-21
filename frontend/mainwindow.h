@@ -84,6 +84,9 @@ protected:
     void initUi();
     void initConnections();
 
+public:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 Q_SIGNALS:
     void searchMethodChanged(FileUtils::SearchMethod);
     void webEngineChanged();

@@ -65,6 +65,10 @@ private:
 
     void paintEvent(QPaintEvent *);
 
+protected:
+    void hideEvent(QHideEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 Q_SIGNALS:
     void closed();
     void btnClicked(const bool&, const bool&);
