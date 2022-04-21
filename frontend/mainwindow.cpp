@@ -96,7 +96,7 @@ MainWindow::~MainWindow() {
     if(m_settingsWidget) {
         delete m_settingsWidget;
         m_settingsWidget = NULL;
-
+    }
 #endif
     if(m_askDialog) {
         delete m_askDialog;
@@ -189,13 +189,13 @@ void MainWindow::initConnections()
  */
 void MainWindow::bootOptionsFilter(QString opt) {
     if(opt == "-s" || opt == "--show") {
-        clearSearchResult();
-        centerToScreen(this);
-        if(this->isHidden()) {
+        if (this->isHidden()) {
+            clearSearchResult();
+            centerToScreen(this);
             this->show();
+            this->m_searchBarWidget->setFocus();
+            this->activateWindow();
         }
-        this->m_searchBarWidget->setFocus();
-        this->activateWindow();
     }
 }
 
@@ -554,4 +554,15 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 
     KWindowEffects::enableBlurBehind(this->winId(), true, QRegion(path.toFillPolygon().toPolygon()));
 
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    //kwin alt+f4发出close事件, 需要在存在子窗口时屏蔽该事件
+    if ((watched == this) && (event->type() == QEvent::Close)) {
+        event->ignore();
+        tryHideMainwindow();
+        return true;
+    }
+    return QObject::eventFilter(watched, event);
 }
