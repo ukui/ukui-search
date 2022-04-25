@@ -2,6 +2,8 @@
 #include <QDebug>
 
 #include "file-search-task.h"
+#include "file-content-search-task.h"
+
 using namespace UkuiSearch;
 static SearchTaskPluginManager *global_instance = nullptr;
 SearchTaskPluginManager *SearchTaskPluginManager::getInstance()
@@ -14,9 +16,15 @@ SearchTaskPluginManager *SearchTaskPluginManager::getInstance()
 
 void SearchTaskPluginManager::initPlugins(SearchType searchType)
 {
-    size_t type = static_cast<size_t>(searchType);
-    if (type & static_cast<size_t>(SearchType::File)) {
-        registerBuildinPlugin(new FileSearchTask(this));
+    switch (searchType) {
+        case SearchType::File:
+            registerBuildinPlugin(new FileSearchTask(this));
+            break;
+        case SearchType::FileContent:
+            registerBuildinPlugin(new FileContentSearchTask(this));
+            break;
+        default:
+            break;
     }
 }
 
