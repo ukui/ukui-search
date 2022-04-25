@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=ukui-search-service-dir-manager
+Name[zh_CN]=搜索服务目录管理
+GenericName=ukui-search-service-dir-manager
+GenericName[zh_CN]=搜索服务目录管理
+Comment=ukui-search-service-dir-manager
+Comment[zh_CN]=搜索服务目录管理
+Exec=/usr/bin/ukui-search-service-dir-manager %U
+Type=Application
+Icon=kylin-search
+X-UKUI-AutoRestart=true
+OnlyShowIn=UKUI
+NoDisplay=true
+X-UKUI-Autostart-Phase=Application
+Terminal=false
