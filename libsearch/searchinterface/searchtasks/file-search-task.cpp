@@ -240,11 +240,7 @@ bool FileSearchFilter::operator ()(const Xapian::Document &doc) const
             return true;
         });
 
-        bool inBlackList = std::any_of(parent->m_blackList.begin(), parent->m_blackList.end(), [&](QString &dir) {
-            return path.startsWith(dir);
-        });
-
-        return inSearchDir && !inBlackList;
+        return inSearchDir;
     }
 
     return true;
