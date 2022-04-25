@@ -1,7 +1,6 @@
 #include <QDebug>
 #include "ukui-search-service.h"
 #include "dir-watcher.h"
-#include "dir-watcher-adaptor.h"
 #include "common.h"
 #include <QDBusConnection>
 
@@ -16,7 +15,7 @@ UkuiSearchService::UkuiSearchService(int &argc, char *argv[], const QString &app
         connect(this, &QtSingleApplication::messageReceived, [=](QString msg) {
             this->parseCmd(msg, true);
         });
-
+        DirWatcher::getDirWatcher();
         initGsettings();
         FileIndexManager::getInstance()->initIndexPathSetFunction();
     }

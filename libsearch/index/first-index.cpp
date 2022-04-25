@@ -141,7 +141,7 @@ void FirstIndex::run() {
             return;
         }
     } else {
-        setPath(DirWatcher::getDirWatcher()->currentindexableDir());
+        setPath(DirWatcher::getDirWatcher()->currentIndexableDir());
         setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
     }
 
@@ -165,8 +165,11 @@ void FirstIndex::run() {
         mutex2.lock();
         //        mutex3.lock();
 
-        qInfo() << "index dir" << DirWatcher::getDirWatcher()->currentindexableDir();
-        qInfo() << "index block dir" << DirWatcher::getDirWatcher()->currentBlackListOfIndex();
+        //FIXME:在子进程里使用和父进程同样的dbus接口会出问题。
+//        qInfo() << "index dir" << DirWatcher::getDirWatcher()->currentIndexableDir();
+//        qInfo() << "index block dir" << DirWatcher::getDirWatcher()->currentBlackListOfIndex();
+        qInfo() << "index dir" << m_pathList;
+        qInfo() << "index block dir" << m_blockList;
         this->Traverse();
 
         FileUtils::maxIndexCount = this->m_indexData->length();

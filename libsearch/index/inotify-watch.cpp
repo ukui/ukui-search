@@ -188,7 +188,7 @@ void InotifyWatch::run()
         }
     }
 
-    setPath(DirWatcher::getDirWatcher()->currentindexableDir());
+    setPath(DirWatcher::getDirWatcher()->currentIndexableDir());
     setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
     firstTraverse();
 

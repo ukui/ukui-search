@@ -54,13 +54,22 @@ void FileIndexManager::initIndexPathSetFunction()
         return;
     }
 
-    connect(DirWatcher::getDirWatcher(), &DirWatcher::appendIndexItem, this, &FileIndexManager::handleIndexPathAppend, Qt::QueuedConnection);
+    QDBusInterface *interface = new QDBusInterface("com.ukui.search.fileindex.service",
+                                                   "/org/ukui/search/privateDirWatcher",
+                                                   "org.ukui.search.fileindex");
+
+    if (interface->isValid()) {
+        connect(interface, SIGNAL(appendIndexItem(QString, QStringList)), this, SLOT(handleIndexPathAppend(QString, QStringList)), Qt::QueuedConnection);
+    }
+//    connect(DirWatcher::getDirWatcher(), &DirWatcher::appendIndexItem, this, &FileIndexManager::handleIndexPathAppend, Qt::QueuedConnection);
 
     DirWatcher::getDirWatcher()->initDbusService();
 }
 
 void FileIndexManager::handleIndexPathAppend(const QString path, const QStringList blockList)
 {
+    qDebug() << "I'm in handleIndexPathAppend";
+    qDebug() << "path" << path << "blockList" << blockList;
     if(!m_searchSettings->get(SEARCH_METHOD_KEY).toBool()) {
         m_searchSettings->set(SEARCH_METHOD_KEY, true);
     } else {
