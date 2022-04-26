@@ -37,32 +37,32 @@ PluginInterface::PluginType FileContentSearchTask::pluginType()
 
 const QString FileContentSearchTask::name()
 {
-    return "File Content";
+    return tr("File Content");
 }
 
 const QString FileContentSearchTask::description()
 {
-    return "File Content Search";
+    return tr("File Content Search");
 }
 
 const QIcon FileContentSearchTask::icon()
 {
-    return QIcon::fromTheme("folder");
+    return QIcon::fromTheme("folder", QIcon(":/unknown.svg"));
 }
 
 void FileContentSearchTask::setEnable(bool enable)
 {
-
+    e_enable = enable;
 }
 
 bool FileContentSearchTask::isEnable()
 {
-    return true;
+    return e_enable && IndexStatusRecorder::getInstance()->contentIndexDatabaseEnable();
 }
 
 QString FileContentSearchTask::getCustomSearchType()
 {
-    return "File Content";
+    return tr("File Content");
 }
 
 SearchType FileContentSearchTask::getSearchType()
