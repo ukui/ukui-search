@@ -35,7 +35,7 @@ void FileReader::getTextContent(QString path, QString &textContent, QString &suf
         FileUtils::getPptxTextContent(path, textContent);
     } else if (suffix == "xlsx") {
         FileUtils::getXlsxTextContent(path, textContent);
-    } else if (suffix == "txt") {
+    } else if (strsfx == "txt" or strsfx == "html") {
         FileUtils::getTxtContent(path, textContent);
     } else if (suffix == "doc" || suffix == "dot" || suffix == "wps" || suffix == "ppt" ||
             suffix == "pps" || suffix == "dps" || suffix == "et" || suffix == "xls") {
