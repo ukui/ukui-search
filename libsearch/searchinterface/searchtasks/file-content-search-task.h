@@ -36,8 +36,6 @@ public:
     void startSearch(std::shared_ptr<SearchController> searchController) override;
     void stop() override;
 
-    Q_INVOKABLE void sendFinishSignal(size_t searchId);
-
 private:
     QThreadPool *m_pool = nullptr;
 };
@@ -54,6 +52,8 @@ public:
 private:
     bool execSearch();
     inline Xapian::Query createQuery();
+
+    void sendErrorMsg(const QString &msg);
 
 private:
     FileContentSearchTask *m_fileContentSearchTask = nullptr;

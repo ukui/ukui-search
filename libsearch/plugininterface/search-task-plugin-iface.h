@@ -21,6 +21,7 @@ public:
     virtual void stop() = 0;
 Q_SIGNALS:
     void searchFinished(size_t searchId);
+    void searchError(size_t searchId, QString msg = {});
 };
 }
 Q_DECLARE_INTERFACE(UkuiSearch::SearchTaskPluginIface, SearchTaskPluginIface_iid)

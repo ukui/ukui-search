@@ -81,11 +81,6 @@ void FileContentSearchTask::stop()
 
 }
 
-void FileContentSearchTask::sendFinishSignal(size_t searchId)
-{
-    Q_EMIT sendFinishSignal(searchId);
-}
-
 FileContentSearchWorker::FileContentSearchWorker(FileContentSearchTask *fileContentSearchTask, std::shared_ptr<SearchController> searchController)
 {
     m_fileContentSearchTask = fileContentSearchTask;
@@ -114,9 +109,19 @@ void FileContentSearchWorker::run()
 
     } else {
         qWarning() << "content index incomplete";
+        sendErrorMsg(QObject::tr("Content index incomplete."));
+
+        finished = false;
     }
 
     if (finished) QMetaObject::invokeMethod(m_fileContentSearchTask, "searchFinished", Q_ARG(size_t, m_currentSearchId));
+}
+
+void FileContentSearchWorker::sendErrorMsg(const QString &msg)
+{
+    QMetaObject::invokeMethod(m_fileContentSearchTask, "searchError",
+                              Q_ARG(size_t, m_currentSearchId),
+                              Q_ARG(QString, msg));
 }
 
 bool FileContentSearchWorker::execSearch()
@@ -150,6 +155,7 @@ bool FileContentSearchWorker::execSearch()
 
     } catch (const Xapian::Error &e) {
         qWarning() << QString::fromStdString(e.get_description());
+        sendErrorMsg("Xapian Error: " + QString::fromStdString(e.get_description()));
         return false;
     }
 }
