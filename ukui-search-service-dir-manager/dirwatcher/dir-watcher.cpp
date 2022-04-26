@@ -291,9 +291,11 @@ void DirWatcher::initData()
      * usr是Unix操作系统软件资源所放置的目录,所有系统默认的软件(distribution发布者提供的软件)都会放置到usr底下
      * var目录主要针对常态性变动的文件，包括缓存(cache)、登录档(log file)以及某些软件运作所产生的文件，包括程序文件(lock file, run file)，或者如MySQL数据库的文件等
      */
-    m_blackListOfIndex << "/boot" << "backup" << "bin" << "/dev" << "/etc" << "/usr" << "/var"
-                       << "/lib" << "lib32" << "lib64" << "libx32" << "/media" << "/mnt" << "cdrom"
-                       << "/sys" << "/proc" << "tmp" << "/srv" << "/sbin" << "/run" << "/opt";
+    //将磁盘分区后其他分区都会挂载到media下，多块硬盘也会挂到media，因此media放开，mnt同理；
+    //backup是备份文件，tmp是临时文件，也都放开
+    m_blackListOfIndex << "/boot" << "/bin" << "/dev" << "/etc" << "/usr" << "/var"
+                       << "/lib" << "/lib32" << "/lib64" << "/libx32" << "/cdrom"
+                       << "/sys" << "/proc" << "/srv" << "/sbin" << "/run" << "/opt";
 
     //目前方案：可搜索目录（服务）默认根目录，可搜索目录（应用）默认家目录和/data目录
     m_searchableListForApplication << "/data" << QDir::homePath();
