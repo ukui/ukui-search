@@ -945,6 +945,10 @@ bool FileUtils::isEncrypedOrUnreadable(QString path)
         if(strsfx.endsWith("txt"))
             return false;
         return true;
+    } else if(name == "text/html") {
+        if(strsfx.endsWith("html"))
+            return false;
+        return true;
     } else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
         if(strsfx == "doc" || strsfx == "dot" || strsfx == "wps" || strsfx == "ppt" ||
                 strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls") {
