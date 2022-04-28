@@ -4,6 +4,9 @@
 #include <QString>
 #include <QDir>
 
+#define CONTENT_DATABASE_PATH_SLOT 1
+#define CONTENT_DATABASE_SUFFIX_SLOT 2
+
 static const int LABEL_MAX_WIDTH = 300;
 
 static const QString HOME_PATH = QDir::homePath();

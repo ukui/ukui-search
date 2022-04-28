@@ -17,7 +17,8 @@ public:
     void pluginSearch(QString customSearchType, std::shared_ptr<SearchController> searchController);
 Q_SIGNALS:
     void searchFinished(size_t searchId);
-    void pluginDisable(size_t searchId);
+    void searchError(size_t searchId, QString msg);
+
 private:
     explicit SearchTaskPluginManager(QObject *parent = nullptr);
 
