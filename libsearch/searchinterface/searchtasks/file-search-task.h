@@ -57,7 +57,6 @@ private:
     //同上
     bool directSearch();
     Xapian::Query creatQueryForFileSearch();
-    void sendErrorMsg(const QString &msg);
 
 private:
     FileSearchTask *m_FileSearchTask;

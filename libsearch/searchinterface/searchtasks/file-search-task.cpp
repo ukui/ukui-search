@@ -144,18 +144,9 @@ bool FileSearchWorker::searchWithIndex()
 
     } catch(const Xapian::Error &e) {
         qWarning() << QString::fromStdString(e.get_description());
-        sendErrorMsg("Xapian Error: " + QString::fromStdString(e.get_description()));
-        return false;
     }
 
     return true;
-}
-
-void FileSearchWorker::sendErrorMsg(const QString &msg)
-{
-    QMetaObject::invokeMethod(m_FileSearchTask, "searchError",
-                              Q_ARG(size_t, m_currentSearchId),
-                              Q_ARG(QString, msg));
 }
 
 bool FileSearchWorker::directSearch()

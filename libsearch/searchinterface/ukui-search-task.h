@@ -31,7 +31,6 @@ public:
 
 Q_SIGNALS:
     void searchFinished(size_t searchId);
-    void searchError(size_t searchId, QString msg);
 
 private:
     UkuiSearchTaskPrivate* d = nullptr;

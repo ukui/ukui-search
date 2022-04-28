@@ -9,7 +9,6 @@ UkuiSearchTaskPrivate::UkuiSearchTaskPrivate(UkuiSearchTask *parent)
 {
     m_searchCotroller = std::shared_ptr<SearchController>(new SearchController());
     connect(SearchTaskPluginManager::getInstance(), &SearchTaskPluginManager::searchFinished, this, &UkuiSearchTaskPrivate::searchFinished);
-    connect(SearchTaskPluginManager::getInstance(), &SearchTaskPluginManager::searchError, q, &UkuiSearchTask::searchError);
 }
 
 UkuiSearchTaskPrivate::~UkuiSearchTaskPrivate()
