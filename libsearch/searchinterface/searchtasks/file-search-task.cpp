@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QQueue>
 #include <QDebug>
+#include <gio/gio.h>
 
 using namespace UkuiSearch;
 FileSearchTask::FileSearchTask(QObject *parent)
@@ -62,14 +63,23 @@ void FileSearchWorker::run()
     searchDirs.removeDuplicates();
 
     for (QString &dir : searchDirs) {
-        if (dir.endsWith("/")) {
-            dir = dir.mid(0, dir.length() - 1);
-        }
+        if (QFileInfo::exists(dir)) {
+            if (dir.endsWith("/")) {
+                dir.remove(dir.length() - 1, 1);
+            }
 
-        QStringList blackListTmp = DirWatcher::getDirWatcher()->blackListOfDir(dir);
-        if (!blackListTmp.contains(dir)) {
-            m_validDirectories.append(dir);
-            m_blackList.append(blackListTmp);
+            QStringList blackListTmp = DirWatcher::getDirWatcher()->blackListOfDir(dir);
+            if (!blackListTmp.contains(dir)) {
+                m_validDirectories.append(dir);
+                m_blackList.append(blackListTmp);
+            }
+        }
+    }
+
+    //过滤空标签
+    for (QString &label : m_searchController->getFileLabel()) {
+        if (!label.isEmpty()) {
+            m_labels.append(label);
         }
     }
 
@@ -80,6 +90,15 @@ void FileSearchWorker::run()
         finished = searchWithIndex();
 
     } else {
+        if (m_validDirectories.empty()) {
+            //TODO 使用全局的默认可搜索目录
+            if (QFileInfo::exists(QDir::homePath())) {
+                sendErrorMsg(QObject::tr("Warning, Can not find home path."));
+                return;
+            }
+            m_validDirectories.append(QDir::homePath());
+            m_blackList.append(DirWatcher::getDirWatcher()->blackListOfDir(QDir::homePath()));
+        }
         qDebug() << "direct search";
         finished = directSearch();
     }
@@ -182,7 +201,12 @@ bool FileSearchWorker::directSearch()
         for (const auto &fileInfo : infoList) {
             if (fileInfo.isDir() && !fileInfo.isSymLink()) {
                 QString newPath = fileInfo.absoluteFilePath();
-                if (m_blackList.contains(newPath)) {
+
+                bool inBlackList = std::any_of(m_blackList.begin(), m_blackList.end(), [&] (const QString &dir) {
+                    return newPath.startsWith(dir + "/");
+                });
+
+                if (inBlackList) {
                     //在黑名单的路径忽略搜索
                     continue;
                 }
@@ -201,6 +225,10 @@ bool FileSearchWorker::directSearch()
                         break;
                     }
                 }
+            }
+
+            if (matched && !m_labels.empty()) {
+                matched = FileSearchFilter::checkFileLabel(fileInfo.absoluteFilePath(), m_labels);
             }
 
             if (m_searchController->beginSearchIdCheck(m_currentSearchId)) {
@@ -224,33 +252,69 @@ bool FileSearchWorker::directSearch()
     return true;
 }
 
-FileSearchFilter::FileSearchFilter(FileSearchWorker *parent) : parent(parent) {}
+FileSearchFilter::FileSearchFilter(FileSearchWorker *parent) : m_parent(parent) {}
 
 bool FileSearchFilter::operator ()(const Xapian::Document &doc) const
 {
-    if (parent) {
+    if (m_parent) {
         QString path = QString::fromStdString(doc.get_data());
-        bool isRecurse = parent->m_searchController->isRecurse();
-        bool inSearchDir = std::any_of(parent->m_validDirectories.begin(), parent->m_validDirectories.end(), [&](QString &dir) {
-            bool startWithDir = path.startsWith(dir);
-            if (!startWithDir) {
-                return false;
-            }
+        bool isRecurse = m_parent->m_searchController->isRecurse();
+        bool inSearchDir = true;
 
-            if (path.length() == dir.length()) {
-                return false;
-            }
+        if (!m_parent->m_validDirectories.empty()) {
+            inSearchDir = std::any_of(m_parent->m_validDirectories.begin(), m_parent->m_validDirectories.end(), [&](QString &dir) {
+                //限制搜索在该目录下
+                if (!path.startsWith(dir + "/")) {
+                    return false;
+                }
 
-            if (!isRecurse) {
-                //去除搜索路径后，是否包含 "/"
-                return !path.midRef((dir.length() + 1), (path.length() - dir.length() - 1)).contains("/");
-            }
+                if (!isRecurse) {
+                    //去除搜索路径后，是否包含 "/"
+                    return !path.midRef((dir.length() + 1), (path.length() - dir.length() - 1)).contains("/");
+                }
 
-            return true;
-        });
+                return true;
+            });
+        }
 
-        return inSearchDir;
+        bool hasLabel = true;
+        if (inSearchDir && !m_parent->m_labels.empty()) {
+            hasLabel = FileSearchFilter::checkFileLabel(path, m_parent->m_labels);
+        }
+
+        return inSearchDir && hasLabel;
     }
 
     return true;
+}
+
+bool FileSearchFilter::checkFileLabel(const QString &path, const QStringList &labels)
+{
+    bool hasLabel = false;
+
+    GFile *file = g_file_new_for_path(path.toUtf8().constData());
+    if (file) {
+        GFileInfo *info = g_file_query_info(file, "metadata::*," G_FILE_ATTRIBUTE_ID_FILE, G_FILE_QUERY_INFO_NONE,
+                                            nullptr, nullptr);
+        if (info) {
+            gboolean hasKey = g_file_info_has_attribute(info, "metadata::peony-file-label-ids");
+            if (hasKey) {
+                char *fileLabels = g_file_info_get_attribute_as_string(info, "metadata::peony-file-label-ids");
+                if (fileLabels) {
+                    QStringList fileLabelList = QString::fromUtf8(fileLabels).split("\n");
+                    g_free(fileLabels);
+
+                    hasLabel = std::any_of(fileLabelList.begin(), fileLabelList.end(), [&](QString &fileLabel) {
+                        return labels.contains(fileLabel);
+                    });
+                }
+            }
+
+            g_object_unref(info);
+        }
+
+        g_object_unref(file);
+    }
+
+    return hasLabel;
 }

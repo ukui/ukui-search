@@ -52,6 +52,7 @@ public:
     void clearAllConditions();
     void clearKeyWords();
     void clearSearchDir();
+    void clearFileLabel();
 
     void setPagination(unsigned int first, unsigned int maxResults);
     unsigned int first() const;

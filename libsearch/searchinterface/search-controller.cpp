@@ -172,6 +172,7 @@ void SearchControllerPrivate::clearAllConditions()
 {
     clearKeyWords();
     clearSearchDir();
+    clearFileLabel();
 }
 
 void SearchControllerPrivate::clearKeyWords()
@@ -182,6 +183,11 @@ void SearchControllerPrivate::clearKeyWords()
 void SearchControllerPrivate::clearSearchDir()
 {
     m_searchDirs.clear();
+}
+
+void SearchControllerPrivate::clearFileLabel()
+{
+    m_FileLabels.clear();
 }
 
 void SearchControllerPrivate::setPagination(unsigned int first, unsigned int maxResults)
@@ -335,6 +341,11 @@ void SearchController::clearKeyWords()
 void SearchController::clearSearchDir()
 {
     d->clearSearchDir();
+}
+
+void SearchController::clearFileLabel()
+{
+    d->clearFileLabel();
 }
 
 void SearchController::setPagination(unsigned int first, unsigned int maxResults)

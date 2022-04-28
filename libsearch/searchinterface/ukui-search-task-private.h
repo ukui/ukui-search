@@ -27,6 +27,7 @@ public:
     void clearAllConditions();
     void clearKeyWords();
     void clearSearchDir();
+    void clearFileLabel();
     void setPagination(unsigned int first, unsigned int maxResults);
 
     size_t startSearch(SearchType searchtype, QString customSearchType = QString());
