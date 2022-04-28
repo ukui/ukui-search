@@ -22,6 +22,11 @@
 #include "first-index.h"
 #include "dir-watcher.h"
 #include <QDebug>
+/*需要重构：
+ *支持新建或重建指定目录索引
+ *支持判断所有数据库状态，根据状态判断是否单独重建某个数据库。
+ *支持自定义增加索引目录。
+ */
 
 using namespace UkuiSearch;
 FirstIndex *FirstIndex::m_instance = nullptr;
@@ -124,7 +129,6 @@ void FirstIndex::addIndexPath(const QString path, const QStringList blockList)
 
 void FirstIndex::run() {
     QTime t1 = QTime::currentTime();
-    // Create a fifo at ~/.config/org.ukui/ukui-search, the fifo is used to control the order of child processes' running.
     QString indexDataBaseStatus =  IndexStatusRecorder::getInstance()->getStatus(INDEX_DATABASE_STATE).toString();
     QString contentIndexDataBaseStatus = IndexStatusRecorder::getInstance()->getStatus(CONTENT_INDEX_DATABASE_STATE).toString();
     //    QString ocrIndexDatabaseStatus = IndexStatusRecorder::getInstance()->getStatus(OCR_DATABASE_STATE).toString();
@@ -187,8 +191,11 @@ void FirstIndex::run() {
                 sem.release(2);
                 return;
             }
+            if (!m_allDatadaseStatus || !m_indexDatabaseStatus || !m_contentIndexDatabaseStatus) {
+                IndexGenerator::getInstance()->rebuildIndexDatabase();
+            }
             qDebug() << "index start;" << m_indexData->size();
-            IndexGenerator::getInstance()->rebuildIndexDatabase();
+
             QQueue<QVector<QString>>* tmp1 = new QQueue<QVector<QString>>();
             bool sucess = true;
             while(!this->m_indexData->empty()) {
@@ -215,8 +222,10 @@ void FirstIndex::run() {
                 sem.release(2);
                 return;
             }
+            if (!m_allDatadaseStatus || !m_contentIndexDatabaseStatus || !m_indexDatabaseStatus) {
+                IndexGenerator::getInstance()->rebuildContentIndexDatabase();
+            }
             qDebug() << "content index start:" << m_contentIndexData->size();
-            IndexGenerator::getInstance()->rebuildContentIndexDatabase();
             QQueue<QString>* tmp2 = new QQueue<QString>();
             bool sucess = true;
             while(!this->m_contentIndexData->empty()) {
