@@ -62,14 +62,32 @@ QStringList DirWatcher::currentBlackListOfIndex()
 
 void DirWatcher::handleIndexItemAppend(const QString &path, QStringList &blackList)
 {
+    //排除要添加的路径已被索引的情况
     if (m_indexableDirList.contains(path)) {
         qDebug() << QString("index path %1 is already added.").arg(path);
         return;
     }
+
+    //处理添加路径非根目录时，要添加索引的路径与已索引路径为父子关系的情况
+    if (path != "/") {
+        for (int i = 0; i < m_indexableDirList.length(); i++) {
+            const QString indexablePath = m_indexableDirList.at(i);
+            if (path.startsWith(indexablePath + "/")) {
+                qCritical() << QString("The parent of the path:%1 has been added.").arg(path);
+                return;
+            }
+            if (indexablePath.startsWith(path + "/")) {
+                m_indexableDirList.removeAll(indexablePath);
+                blackList.append(indexablePath);
+            }
+        }
+    }
+
     m_indexableDirList << path;
     m_qSettings->beginGroup(INDEXABLE_DIR_VALUE);
     m_qSettings->setValue(INDEXABLE_DIR_VALUE, m_indexableDirList);
     m_qSettings->endGroup();
+    blackList.removeDuplicates();
     Q_EMIT this->appendIndexItem(path, blackList);
     qDebug() << "index path:" << path << "blacklist:" << blackList;
 }
@@ -180,14 +198,12 @@ void DirWatcher::mountAddCallback(GVolumeMonitor *monitor, GMount *gmount, DirWa
 void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, DirWatcher *pThis)
 {
     qDebug() << "Mount Removed";
+    pThis->handleDisk();
     QMutexLocker locker(&s_mutex);
     //处理u盘设备
     if (pThis->m_removedUDiskDevice != NULL) {
         pThis->m_currentUDiskDeviceInfo.remove(pThis->m_removedUDiskDevice);
-        qDebug() << "m_currentMountedDeviceInfo:" << pThis->m_currentMountedDeviceInfo;
-        qDebug() << "m_repeatedlyMountedDeviceInfo:" << pThis->m_repeatedlyMountedDeviceInfo;
-        qDebug() << "m_currentUDiskDeviceInfo:" << pThis->m_currentUDiskDeviceInfo;
-        qDebug() << "m_blackListOfIndex:" << pThis->m_blackListOfIndex;
+        qDebug() << "m_currentUDiskDeviceInfo(after remove):" << pThis->m_currentUDiskDeviceInfo;
         pThis->m_removedUDiskDevice = "";
         return;
     }
@@ -214,10 +230,7 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
                 pThis->m_blackListOfIndex.removeAll(removedMountPoint.replace(t.key(), t.value()));
             }
         }
-        qDebug() << "m_currentMountedDeviceInfo:" << pThis->m_currentMountedDeviceInfo;
-        qDebug() << "m_repeatedlyMountedDeviceInfo:" << pThis->m_repeatedlyMountedDeviceInfo;
-        qDebug() << "m_currentUDiskDeviceInfo:" << pThis->m_currentUDiskDeviceInfo;
-        qDebug() << "m_blackListOfIndex:" << pThis->m_blackListOfIndex;
+        qDebug() << "m_blackListOfIndex(after remove):" << pThis->m_blackListOfIndex;
     } else {
         qWarning() << "There's someting wrong with the MountPoint!";
     }
@@ -226,46 +239,138 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
 
 void DirWatcher::appendIndexableListItem(const QString &path)
 {
+    //排除path不存在的情况
     QFile file(path);
     if (!file.exists()) {
         qWarning() << QString("target path:%1 is not exists!").arg(path);
         return;
     }
+
+    //同步配置文件中的已索引目录
+    this->currentIndexableDir();
+    qDebug() << "current indexable dirs:" << m_indexableDirList;
+
+    //根目录特殊处理
     if (path == "/") {
         this->currentIndexableDir();
         this->handleIndexItemAppend(path, m_blackListOfIndex);
         return;
     }
 
-    QStringList blackList = this->blackListOfDir(path);
+    QStringList blackList;
+    QMutexLocker locker(&s_mutex);
+
     //处理要添加索引的路径与索引黑名单中路径为父子关系的情况
     for (const QString& blackListPath : m_blackListOfIndex) {
-        if (path.startsWith(blackListPath + "/")) {
+        if (path.startsWith(blackListPath + "/") or path == blackListPath) {
+            qCritical() << QString("path:%1 is or under the blacklistpath:%2.").arg(path, blackListPath);
             return;
         }
+
         if (blackListPath.startsWith(path + "/")) {
             blackList.append(blackListPath);
         }
     }
 
-    this->currentIndexableDir();
-    qDebug() << "current indexable dirs:" << m_indexableDirList;
-    //处理要添加索引的路径与已索引路径为父子关系的情况
-    for (int i = 0; i < m_indexableDirList.length(); i++) {
-        const QString indexablePath = m_indexableDirList.at(i);
-        if (path.startsWith(indexablePath + "/")) {
-            qCritical() << QString("The parent of the path:%1 has been added.").arg(path);
-            return;
-        }
-        if (blackList.contains(indexablePath)) {
-            qCritical() << "current path is in repeat mounted devices and another path which is in the device that has the same dev num has been added to the indexable list.";
-            return;
-        }
-        if (indexablePath.startsWith(path + "/")) {
-            m_indexableDirList.removeAll(indexablePath);
-            blackList.append(indexablePath);
+    //排除要添加的目录为某设备的重复挂载目录，并且之前已索引过该设备其他挂载目录或其父目录的情况
+    for (auto i = m_repeatedlyMountedDeviceInfo.constBegin(); i != m_repeatedlyMountedDeviceInfo.constEnd(); i++) {
+        bool pathToBeAddedIsRepeatedDevice = false;
+        bool pathToBeAddedHasRepeatedDevice = false;
+        bool addedPathIsRepeatedDevice = false;
+        bool addedPathHasRepeatedDevice = false;
+        QString addedRelativeDir;
+        QString repeatedDir;
+        for (const QString &addedPath : m_indexableDirList) {
+            for (const QString &mountPoint : i.value()) {
+
+                //要添加索引路径在重复挂载设备路径下(1)
+                if (path.startsWith(mountPoint + "/") or mountPoint == path) {
+                    repeatedDir = mountPoint;
+                    pathToBeAddedIsRepeatedDevice = true;
+                }
+                //重复挂载设备路径在要添加索引路径下(2)
+                if (mountPoint.startsWith(path + "/")) {
+                    repeatedDir = mountPoint;
+                    pathToBeAddedHasRepeatedDevice = true;
+                }
+
+                //已索引路径在重复挂载设备路径下(3)
+                if (addedPath.startsWith(mountPoint + "/") or mountPoint == addedPath) {
+                    addedRelativeDir = addedPath;
+                    addedRelativeDir.remove(mountPoint);
+                    addedPathIsRepeatedDevice = true;
+                }
+                //重复挂载设备路径在已索引路径下(4)
+                if (mountPoint.startsWith(addedPath + "/")) {
+                    addedPathHasRepeatedDevice = true;
+                }
+
+                //(1)(4)直接返回
+                if (pathToBeAddedIsRepeatedDevice and addedPathHasRepeatedDevice) {
+                    qCritical() << "current path is in repeat mounted devices and another path which is in the same device has been indexed!";
+                    return;
+                }
+                //(2)(4)将要添加索引目录相应的重复挂载路径添加到黑名单
+                if (pathToBeAddedHasRepeatedDevice and addedPathHasRepeatedDevice) {
+                    blackList.append(repeatedDir);
+                    break;
+                }
+                //(1)(3)将已索引路径的前缀替换为要添加路径的前缀（前缀为mountPoint），判断替换后路径是否在要索引路径下，如果是则返回，否则将替换后路径添加到黑名单
+                if (pathToBeAddedIsRepeatedDevice and addedPathIsRepeatedDevice) {
+                    QString pathAfterReplace = repeatedDir + addedRelativeDir;
+                    if (path.startsWith(pathAfterReplace) or path == pathAfterReplace) {
+                        qCritical() << QString("another path:%1 which is in the same device has been indexed").arg(pathAfterReplace);
+                        return;
+                    } else {
+                        blackList.append(pathAfterReplace);
+                        break;
+                    }
+                }
+                //(2)(3)将替换前缀后的已索引路径添加到黑名单
+                if (pathToBeAddedHasRepeatedDevice and addedPathIsRepeatedDevice) {
+                    blackList.append(repeatedDir + addedRelativeDir);
+                    break;
+                }
+            }
         }
     }
+
+    //排除重复挂载设备的目录
+    for (auto i = m_repeatedlyMountedDeviceInfo.constBegin(); i != m_repeatedlyMountedDeviceInfo.constEnd(); i++) {
+        QString topRepeatedMountPoint;
+        for (const QString &mountPoint : i.value()) {
+            if (mountPoint.startsWith(path + "/") or mountPoint == path) {
+                if (topRepeatedMountPoint.isEmpty()) {
+                    topRepeatedMountPoint = mountPoint;
+                    continue;
+                } else if (topRepeatedMountPoint.startsWith(mountPoint)) {
+                    blackList.append(topRepeatedMountPoint);
+                    topRepeatedMountPoint = mountPoint;
+                } else {
+                    blackList.append(mountPoint);
+                }
+            }
+        }
+    }
+
+    //处理自动挂载子卷下的目录，目前方案将其合并为一个，只保留了mountpoint下的目录
+    for (auto t = m_infoOfSubvolume.constBegin(); t != m_infoOfSubvolume.constEnd(); t++) {
+        QString mountPoint = t.value();
+        QString spec = t.key();
+        QString tmp = path;
+
+        if (spec.startsWith(path + "/")) {
+            blackList << spec;
+        }
+
+        if (path.startsWith(spec + "/") or path == spec) {
+            tmp.replace(0, spec.length(), mountPoint);
+            this->handleIndexItemAppend(tmp, blackList);
+            qDebug() << QString("The path:%1 has been replaced into %2").arg(path, tmp);
+            return;
+        }
+    }
+
     this->handleIndexItemAppend(path, blackList);
 }
 
@@ -316,6 +421,7 @@ void DirWatcher::initData()
         if (automaticMountPoint.contains("/data") || automaticMountPoint.contains("/home")) {
             m_autoMountList.append(automaticMountPoint);
         }
+        //存储所有子卷自动挂载
         if (!spec.startsWith("UUID")) {
             m_infoOfSubvolume.insert(spec, automaticMountPoint);
         }
@@ -332,17 +438,17 @@ void DirWatcher::initDiskWatcher()
 
     QDBusConnection dbc = QDBusConnection::systemBus();
 
-    qDebug() << dbc.connect("org.freedesktop.UDisks2",
-                                                     "/org/freedesktop/UDisks2",
-                                                     "org.freedesktop.DBus.ObjectManager",
-                                                     "InterfacesAdded",
-                                                     this, SLOT(handleAddedUDiskDevice(QDBusMessage)));
+    qDebug() << "Connect The Signal:InterfacesAdded" << dbc.connect("org.freedesktop.UDisks2",
+                                                                     "/org/freedesktop/UDisks2",
+                                                                     "org.freedesktop.DBus.ObjectManager",
+                                                                     "InterfacesAdded",
+                                                                     this, SLOT(handleAddedUDiskDevice(QDBusMessage)));
     qDebug() << dbc.lastError();
-    qDebug() << dbc.connect("org.freedesktop.UDisks2",
-                                                     "/org/freedesktop/UDisks2",
-                                                     "org.freedesktop.DBus.ObjectManager",
-                                                     "InterfacesRemoved",
-                                                     this, SLOT(handleRemovedUDiskDevice(QDBusMessage)));
+    qDebug() << "Connect The Signal:InterfacesRemove" << dbc.connect("org.freedesktop.UDisks2",
+                                                                      "/org/freedesktop/UDisks2",
+                                                                      "org.freedesktop.DBus.ObjectManager",
+                                                                      "InterfacesRemoved",
+                                                                      this, SLOT(handleRemovedUDiskDevice(QDBusMessage)));
 
     m_volumeMonitor = g_volume_monitor_get();
     if (!m_volumeMonitor) {
@@ -357,27 +463,30 @@ void DirWatcher::handleDisk()
     //init current mounted device info
     QMutexLocker locker(&s_mutex);
     m_currentMountedDeviceInfo.clear();
+    m_repeatedlyMountedDeviceInfo.clear();
     for (QStorageInfo &storage: QStorageInfo::mountedVolumes()) {
-        if (storage.isValid() && storage.isReady() && QString(storage.device()).contains(QRegExp("/sd[a-z][1-9]"))) {
+        //遍历当前系统所有挂载的，且以sd*开头的存储设备
+        if (storage.isValid() and storage.isReady() and QString(storage.device()).contains(QRegExp("/sd[a-z][1-9]"))) {
             m_currentMountedDeviceInfo[storage.device()].append(storage.rootPath());
-
-            if (m_currentMountedDeviceInfo.value(storage.device()).length() > 1) {
+            //存储非子卷的重复挂载设备
+            if (m_currentMountedDeviceInfo.value(storage.device()).length() > 1 and storage.subvolume().isEmpty()) {
                 m_repeatedlyMountedDeviceInfo.insert(storage.device(), m_currentMountedDeviceInfo.value(storage.device()));
             }
-            if (storage.rootPath().startsWith("/data") || storage.rootPath().startsWith("/home")) {
-                m_blackListOfIndex.append(storage.rootPath());
-            }
+            //排除挂载到data和home下挂载的所有其他设备，后面需要修改
+//            if (storage.rootPath().startsWith("/data") || storage.rootPath().startsWith("/home")) {
+//                m_blackListOfIndex.append(storage.rootPath());
+//            }
         }
     }
 
-    //init udisk info
+    //初始化u盘信息, 目前由于未知原因收不到udisk挂载信号因此暂时不生效
     if (!m_addedUDiskDeviceList.isEmpty()) {
-        for (QString addedUDiskDevice: m_addedUDiskDeviceList) {
+        for (const QString &addedUDiskDevice: m_addedUDiskDeviceList) {
             m_currentUDiskDeviceInfo.insert(addedUDiskDevice, m_currentMountedDeviceInfo.value("/dev/" + addedUDiskDevice));
         }
     }
 
-    //将u盘设备在/data和/home下的所有挂载点添加到索引黑名单
+    //将u盘设备在/data和/home下的所有挂载点添加到索引黑名单, 目前由于未知原因收不到udisk挂载信号因此暂时不生效
     if (!m_currentUDiskDeviceInfo.isEmpty()) {
         for (auto t = m_currentUDiskDeviceInfo.constBegin(); t != m_currentUDiskDeviceInfo.constEnd(); t++) {
             for (QString udiskDevice: t.value()) {
@@ -388,13 +497,13 @@ void DirWatcher::handleDisk()
         }
     }
 
-    //从黑名单中移除所有自动挂载设备（目前只包含自动挂载到/data和/home目录下的设备）
-    for (QString autoMountDevice: m_autoMountList) {
+    //从索引黑名单中移除所有自动挂载设备（目前只包含自动挂载到/data和/home目录下的设备），m_infoOfSubvolume存储全部fstab文件中的子卷自动挂载
+    for (const QString &autoMountDevice: m_autoMountList) {
         m_blackListOfIndex.removeAll(autoMountDevice);
     }
     m_blackListOfIndex.removeDuplicates();
 
-    qDebug() << "autoMountList:" << m_autoMountList;
+    qDebug() << "m_infoOfSubvolume" << m_infoOfSubvolume;
     qDebug() << "m_currentMountedDeviceInfo:" << m_currentMountedDeviceInfo;
     qDebug() << "m_repeatedlyMountedDeviceInfo:" << m_repeatedlyMountedDeviceInfo;
     qDebug() << "m_currentUDiskDeviceInfo:" << m_currentUDiskDeviceInfo;
