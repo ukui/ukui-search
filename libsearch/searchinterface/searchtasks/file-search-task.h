@@ -66,6 +66,7 @@ private:
     size_t m_currentSearchId = 0;
     QStringList m_validDirectories;
     QStringList m_blackList;
+    QStringList m_labels;
 };
 
 class FileSearchFilter : public Xapian::MatchDecider {
@@ -73,8 +74,16 @@ public:
     explicit FileSearchFilter(FileSearchWorker *parent);
     bool operator ()(const Xapian::Document &doc) const;
 
+    /**
+     * @brief 检查path对应的文件是否包含labels中的标签
+     * @param path
+     * @param labels
+     * @return
+     */
+    static bool checkFileLabel(const QString &path, const QStringList &labels);
+
 private:
-    FileSearchWorker *parent = nullptr;
+    FileSearchWorker *m_parent = nullptr;
 };
 
 }

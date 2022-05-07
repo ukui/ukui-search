@@ -100,6 +100,11 @@ void UkuiSearchTaskPrivate::clearSearchDir()
     m_searchCotroller->clearSearchDir();
 }
 
+void UkuiSearchTaskPrivate::clearFileLabel()
+{
+    m_searchCotroller->clearFileLabel();
+}
+
 void UkuiSearchTaskPrivate::setPagination(unsigned int first, unsigned int maxResults)
 {
     m_searchCotroller->setPagination(first, maxResults);
@@ -182,6 +187,11 @@ void UkuiSearchTask::clearKeyWords()
 void UkuiSearchTask::clearSearchDir()
 {
     d->clearSearchDir();
+}
+
+void UkuiSearchTask::clearFileLabel()
+{
+    d->clearFileLabel();
 }
 
 void UkuiSearchTask::setPagination(unsigned int first, unsigned int maxResults)

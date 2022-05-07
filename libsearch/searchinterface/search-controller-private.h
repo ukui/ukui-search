@@ -37,6 +37,7 @@ public:
     void clearAllConditions();
     void clearKeyWords();
     void clearSearchDir();
+    void clearFileLabel();
 
     /**
      * @brief 分页选项
