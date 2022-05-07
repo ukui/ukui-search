@@ -35,7 +35,12 @@ static const QMap<QString, bool> targetFileTypeMap = {
     {"dps", true},
     {"et", true},
     {"pdf", true},
-    {"html", true}
+    {"html", true},
+    {"uof", true},
+    {"uot", true},
+    {"uos", true},
+    {"uop", false},
+    {"ofd", true}
 };
 
 static const QMap<QString, bool> targetPhotographTypeMap = {

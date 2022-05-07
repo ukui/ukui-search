@@ -42,6 +42,23 @@ void FileReader::getTextContent(QString path, QString &textContent) {
         searchdata.RunParser(path, textContent);
     } else if (strsfx == "pdf") {
         FileUtils::getPdfTextContent(path, textContent);
+    } else if (strsfx == "uof") {
+        QString mimeName = FileUtils::getMimetype(path).name();
+        if (mimeName == "application/xml" || mimeName == "application/uof") {
+            FileUtils::getUOFTextContent(path, textContent);
+
+        } else if (mimeName == "application/x-ole-storage") {
+            //uof的ppt文档不支持修改母版。一旦进行这些操作，uof文档可能会被wps存为doc文件
+            KBinaryParser searchdata;
+            searchdata.RunParser(path, textContent);
+        }
+
+    } else if (strsfx == "uot" || strsfx == "uos" || strsfx == "uop") {
+        FileUtils::getUOF2TextContent(path, textContent);
+
+    } else if (strsfx == "ofd") {
+        FileUtils::getOFDTextContent(path, textContent);
+
     } else if (strsfx == "png" || strsfx == "jpg" || strsfx == "jpeg"){
         OcrObject::getInstance()->getTxtContent(path, textContent);;
     }
