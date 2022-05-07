@@ -89,6 +89,9 @@ public:
     static void getXlsxTextContent(QString &path, QString &textcontent);
     static void getPdfTextContent(QString &path, QString &textcontent);
     static void getTxtContent(QString &path, QString &textcontent);
+    static void getUOFTextContent(QString &path, QString &textContent);
+    static void getUOF2TextContent(QString &path, QString &textContent);
+    static void getOFDTextContent(QString &path, QString &textContent);
 
     static int openFile(QString &path, bool openInDir = false);
     static bool copyPath(QString &path);
