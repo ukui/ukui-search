@@ -107,6 +107,13 @@ public:
     static SearchMethod searchMethod;
 
 private:
+    static void findNodes(const QDomElement &elem, QQueue<QString> &names, QList<QDomElement> &nodes);
+    static inline void findNodesByAttr(const QDomElement&, QQueue<QString>&, QList<QDomElement>&, const QString &, const QStringList&);
+    static inline bool findNodeText(const QDomElement &elem, QQueue<QString> &names, QString &content);
+    static inline void findNodeAttr(const QDomElement &elem, QQueue<QString> &names, const QString &attr, QStringList &attrs);
+    static void processUOFPPT(const QDomDocument &doc, QString &content);
+
+private:
     FileUtils();
 };
 
