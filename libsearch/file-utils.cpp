@@ -1107,6 +1107,7 @@ void FileUtils::getUOFTextContent(QString &path, QString &textContent)
     //单独处理pdf文档
     if (isPDF) {
         qDebug() << path << "is PDF";
+        processUOFPPT(doc, textContent);
         return;
     }
 
@@ -1123,6 +1124,111 @@ void FileUtils::getUOFTextContent(QString &path, QString &textContent)
     }
 
     file.close();
+}
+
+void FileUtils::processUOFPPT(const QDomDocument &doc, QString &content)
+{
+    QDomElement rootElem = doc.documentElement();
+    QList<QDomElement> nodes;
+    QQueue<QString> names; //每个节点的名称
+    names << "uof:演示文稿" << "演:主体" << "演:幻灯片集" << "演:幻灯片";
+
+    findNodes(rootElem, names, nodes);
+
+    if (nodes.empty()) {
+        //TODO 在uof-ppt不存在锚点节点时，直接查找文本节点？
+        return;
+    }
+
+    QStringList objs;
+    //每一个 演:幻灯片 -> 锚点
+    for (const auto &node : nodes) {
+        names.clear();
+        names << "uof:锚点";
+        findNodeAttr(node, names, "uof:图形引用", objs);
+    }
+
+    nodes.clear();
+    names.clear();
+    names << "uof:对象集" << "图:图形";
+    findNodesByAttr(rootElem, names, nodes, "图:标识符", objs);
+
+    if (nodes.empty()) {
+        return;
+    }
+
+    for (const auto &node : nodes) {
+        names.clear();
+        names << "图:文本内容" << "字:段落" << "字:句" << "字:文本串";
+        if (findNodeText(node, names, content)) {
+            break;
+        }
+    }
+}
+
+/**
+ * @brief 查找elem的子节点
+ * @param elem 起始节点
+ * @param names 名称链
+ * @param nodes 查找到的全部结果
+ */
+void FileUtils::findNodes(const QDomElement &elem, QQueue<QString> &names, QList<QDomElement> &nodes)
+{
+    QString targetName = names.dequeue();
+    QDomNode node = elem.firstChild();
+    while (!node.isNull()) {
+        QDomElement e = node.toElement();
+        if (!e.isNull() && e.tagName() == targetName) {
+            if (names.empty()) {
+                nodes.append(e);
+
+            } else {
+                findNodes(e, names, nodes);
+                break;
+            }
+        }
+        node = node.nextSibling();
+    }
+}
+
+inline void FileUtils::findNodesByAttr(const QDomElement &elem, QQueue <QString> &names, QList <QDomElement> &nodes, const QString &attr, const QStringList &values)
+{
+    findNodes(elem, names, nodes);
+
+    QList<QDomElement>::iterator it = nodes.begin();
+    while (it != nodes.end()) {
+        if ((*it).hasAttribute(attr) && values.contains((*it).attribute(attr))) {
+            it++;
+        } else {
+            it = nodes.erase(it);
+        }
+    }
+}
+
+inline bool FileUtils::findNodeText(const QDomElement &elem, QQueue<QString> &names, QString &content)
+{
+    QList<QDomElement> nodes;
+    findNodes(elem, names, nodes);
+
+    for (const auto &node : nodes) {
+        content.append(node.text());
+        if (content.length() >= MAX_CONTENT_LENGTH / 3) {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline void FileUtils::findNodeAttr(const QDomElement &elem, QQueue<QString> &names, const QString &attr, QStringList &attrs)
+{
+    QList<QDomElement> nodes;
+    findNodes(elem, names, nodes);
+
+    for (const auto &node : nodes) {
+        if (node.hasAttribute(attr)) {
+            attrs.append(node.attribute(attr));
+        }
+    }
 }
 
 /**
