@@ -2,6 +2,7 @@
 #include <QDomDocument>
 #include <QProcessEnvironment>
 #include <QWidget>
+#include <QDBusReply>
 #include "settings-search-plugin.h"
 #include "file-utils.h"
 
@@ -52,13 +53,38 @@ QList<SearchPluginIface::Actioninfo> SettingsSearchPlugin::getActioninfo(int typ
 void SettingsSearchPlugin::openAction(int actionkey, QString key, int type)
 {
     //TODO add some return message here.
-    QProcess  process;
     switch (actionkey) {
     case 0:
+    {
+        bool res(false);
+        QDBusInterface * appLaunchInterface = new QDBusInterface("com.kylin.AppManager",
+                                                                 "/com/kylin/AppManager",
+                                                                 "com.kylin.AppManager",
+                                                                 QDBusConnection::sessionBus());
+        if(!appLaunchInterface->isValid()) {
+            qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+            res = false;
+        } else {
+            appLaunchInterface->setTimeout(10000);
+            QDBusReply<bool> reply = appLaunchInterface->call("LaunchAppWithArguments", "ukui-control-center.desktop", QStringList() << "-m" << key.toLower());
+            if(reply.isValid()) {
+                res = reply;
+            } else {
+                qWarning() << "SoftWareCenter dbus called failed!";
+                res = false;
+            }
+        }
+        if(appLaunchInterface) {
+            delete appLaunchInterface;
+        }
+        appLaunchInterface = NULL;
+        if (res)
+            break;
         //打开控制面板对应页面
+        QProcess  process;
         process.startDetached(QString("ukui-control-center --%1").arg(key.left(key.indexOf("/")).toLower()));
         break;
-
+    }
     default:
         break;
     }

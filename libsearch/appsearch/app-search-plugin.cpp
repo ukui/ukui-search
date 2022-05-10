@@ -232,6 +232,30 @@ void AppSearchPlugin::initDetailPage()
 
 bool AppSearchPlugin::launch(const QString &path)
 {
+    bool res(false);
+    QDBusInterface * appLaunchInterface = new QDBusInterface("com.kylin.AppManager",
+                                                             "/com/kylin/AppManager",
+                                                             "com.kylin.AppManager",
+                                                             QDBusConnection::sessionBus());
+    if(!appLaunchInterface->isValid()) {
+        qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+        res = false;
+    } else {
+        appLaunchInterface->setTimeout(10000);
+        QDBusReply<bool> reply = appLaunchInterface->call("LaunchApp", path);
+        if(reply.isValid()) {
+            res = reply;
+        } else {
+            qWarning() << "SoftWareCenter dbus called failed!";
+            res = false;
+        }
+    }
+    if(appLaunchInterface) {
+        delete appLaunchInterface;
+    }
+    appLaunchInterface = NULL;
+    if (res)
+        return true;
     XdgDesktopFile desktopfile;
     desktopfile.load(path);
     m_disabledAppSetting->sync();
@@ -242,6 +266,7 @@ bool AppSearchPlugin::launch(const QString &path)
         qDebug() << path << "has been disabled.";
         return false;
     }
+
     return desktopfile.startDetached();
 }
 
@@ -292,6 +317,30 @@ bool AppSearchPlugin::installAppAction(const QString & name) {
     } else {
         //软件商店未打开，打开软件商店下载此软件
         qDebug() << "Softwarecenter has not been launched, now launch it." << name;
+        bool res(false);
+        QDBusInterface * appLaunchInterface = new QDBusInterface("com.kylin.AppManager",
+                                                                 "/com/kylin/AppManager",
+                                                                 "com.kylin.AppManager",
+                                                                 QDBusConnection::sessionBus());
+        if(!appLaunchInterface->isValid()) {
+            qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+            res = false;
+        } else {
+            appLaunchInterface->setTimeout(10000);
+            QDBusReply<bool> reply = appLaunchInterface->call("LaunchAppWithArguments", "kylin-software-center.desktop", QStringList() << "-find" << name);
+            if(reply.isValid()) {
+                res = reply;
+            } else {
+                qWarning() << "SoftWareCenter dbus called failed!";
+                res = false;
+            }
+        }
+        if(appLaunchInterface) {
+            delete appLaunchInterface;
+        }
+        appLaunchInterface = NULL;
+        if (res)
+            return true;
         QProcess process;
         return process.startDetached(QString("kylin-software-center -find %1").arg(name));
     }
