@@ -25,6 +25,8 @@
 #include <gio/gdesktopappinfo.h>
 #include <QDBusMessage>
 #include <QDBusConnection>
+#include <QDBusInterface>
+#include <QDBusReply>
 
 using namespace Zeeker;
 size_t FileUtils::_max_index_count = 0;
@@ -835,7 +837,32 @@ int FileUtils::openFile(QString &path, bool openInDir)
         if (!G_IS_APP_INFO(info)) {
             return -1;
         }
-        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+
+        bool isSuccess(false);
+        QDBusInterface * appLaunchInterface = new QDBusInterface("com.kylin.AppManager",
+                                                                 "/com/kylin/AppManager",
+                                                                 "com.kylin.AppManager",
+                                                                 QDBusConnection::sessionBus());
+        if(!appLaunchInterface->isValid()) {
+            qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+            isSuccess = false;
+        } else {
+            appLaunchInterface->setTimeout(10000);
+            QDBusReply<bool> reply = appLaunchInterface->call("LaunchDefaultAppWithUrl", "file:"+(path));
+            if(reply.isValid()) {
+                isSuccess = reply;
+            } else {
+                qWarning() << "SoftWareCenter dbus called failed!";
+                isSuccess = false;
+            }
+        }
+        if(appLaunchInterface) {
+            delete appLaunchInterface;
+        }
+        appLaunchInterface = NULL;
+        if (!isSuccess){
+            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        }
         return 0;
     }
 }
