@@ -55,11 +55,37 @@ QList<SearchPluginIface::Actioninfo> NoteSearchPlugin::getActioninfo(int type)
 
 void NoteSearchPlugin::openAction(int actionkey, QString key, int type)
 {
-    QProcess process;
     switch (actionkey) {
     case 0:
+    {
+        bool res(false);
+        QDBusInterface * appLaunchInterface = new QDBusInterface("com.kylin.AppManager",
+                                                                 "/com/kylin/AppManager",
+                                                                 "com.kylin.AppManager",
+                                                                 QDBusConnection::sessionBus());
+        if(!appLaunchInterface->isValid()) {
+            qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+            res = false;
+        } else {
+            appLaunchInterface->setTimeout(10000);
+            QDBusReply<bool> reply = appLaunchInterface->call("LaunchAppWithArguments", "ukui-notebook.desktop", QStringList() << "--show" << key);
+            if(reply.isValid()) {
+                res = reply;
+            } else {
+                qWarning() << "SoftWareCenter dbus called failed!";
+                res = false;
+            }
+        }
+        if(appLaunchInterface) {
+            delete appLaunchInterface;
+        }
+        appLaunchInterface = NULL;
+        if (res)
+            break;
+        QProcess process;
         process.startDetached(QString("ukui-notebook --show %1").arg(key.toInt()));
         break;
+    }
     default:
         break;
     }
