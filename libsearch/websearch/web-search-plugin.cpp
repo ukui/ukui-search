@@ -1,3 +1,4 @@
+#include <QDBusReply>
 #include "web-search-plugin.h"
 #include "global-settings.h"
 #define WEB_ENGINE_KEY "webEngine"
@@ -75,6 +76,30 @@ void UkuiSearch::WebSearchPlugin::openAction(int actionkey, QString key, int typ
     } else { //默认值
         address = "http://baidu.com/s?word=" + m_keyWord ; //百度
     }
+    bool res(false);
+    QDBusInterface * appLaunchInterface = new QDBusInterface("com.kylin.AppManager",
+                                                             "/com/kylin/AppManager",
+                                                             "com.kylin.AppManager",
+                                                             QDBusConnection::sessionBus());
+    if(!appLaunchInterface->isValid()) {
+        qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+        res = false;
+    } else {
+        appLaunchInterface->setTimeout(10000);
+        QDBusReply<bool> reply = appLaunchInterface->call("LaunchDefaultAppWithUrl", address);
+        if(reply.isValid()) {
+            res = reply;
+        } else {
+            qWarning() << "SoftWareCenter dbus called failed!";
+            res = false;
+        }
+    }
+    if(appLaunchInterface) {
+        delete appLaunchInterface;
+    }
+    appLaunchInterface = NULL;
+    if (res)
+        return;
     QDesktopServices::openUrl(address);
 }
 
