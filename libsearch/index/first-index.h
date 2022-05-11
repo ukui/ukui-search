@@ -42,13 +42,17 @@
 #include "file-utils.h"
 #include "common.h"
 namespace UkuiSearch {
-class FirstIndex : public QThread, public Traverse_BFS {
+class FirstIndex : public QThread, public Traverse_BFS
+{
+    Q_OBJECT
 public:
     static FirstIndex* getInstance();
     ~FirstIndex();
     virtual void work(const QFileInfo &) final;
+    void rebuildDatebase();
     void addIndexPath(const QString path, const QStringList blockList);
-
+Q_SIGNALS:
+    void needRebuild();
 protected:
     void run() override;
 private:
@@ -61,8 +65,9 @@ private:
     bool m_indexDatabaseStatus = false;
     bool m_contentIndexDatabaseStatus = false;
     bool m_ocrIndexDatabaseStatus = false;
-    bool m_allDatadaseStatus = false;
-    bool m_isFirstIndex = true;
+    bool m_inotifyIndexStatus = false;
+    bool m_isRebuildProcess = true;
+    bool m_needRebuild = false;
     QThreadPool m_pool;
 
     QQueue<QVector<QString>>* m_indexData = nullptr;
