@@ -55,9 +55,11 @@ void FileReader::getTextContent(QString path, QString &textContent, QString &suf
             KBinaryParser searchdata;
             searchdata.RunParser(path, textContent);
         }
-
-    } else if (suffix == "uot" || suffix == "uos" || suffix == "uop") {
+    } else if (suffix == "uot" || suffix == "uos") {
         FileUtils::getUOF2TextContent(path, textContent);
+
+    } else if (suffix == "uop") {
+        FileUtils::getUOF2PPTContent(path, textContent);
 
     } else if (suffix == "ofd") {
         FileUtils::getOFDTextContent(path, textContent);

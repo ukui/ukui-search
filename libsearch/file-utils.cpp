@@ -1092,21 +1092,21 @@ void FileUtils::getUOFTextContent(QString &path, QString &textContent)
     }
     file.close();
 
-    bool isPDF = false;
+    bool isPPT = false;
     QDomElement rootElem = doc.documentElement();
     QDomNode node = rootElem.firstChild();
     while (!node.isNull()) {
         QDomElement e = node.toElement();
         if (!e.isNull() && e.tagName() == "uof:演示文稿") {
-            isPDF = true;
+            isPPT = true;
             break;
         }
         node = node.nextSibling();
     }
 
     //单独处理pdf文档
-    if (isPDF) {
-        qDebug() << path << "is PDF";
+    if (isPPT) {
+        qDebug() << path << "is PPT";
         processUOFPPT(doc, textContent);
         return;
     }
@@ -1157,9 +1157,23 @@ void FileUtils::processUOFPPT(const QDomDocument &doc, QString &content)
         return;
     }
 
+    QList<QDomElement> paraNodes; //全部段落节点
     for (const auto &node : nodes) {
         names.clear();
-        names << "图:文本内容" << "字:段落" << "字:句" << "字:文本串";
+        names << "图:文本内容" << "字:段落";
+        findNodes(node, names, paraNodes);
+    }
+
+    nodes.clear();
+    for (const auto &node : paraNodes) {
+        names.clear();
+        names << "字:句";
+        findNodes(node, names, nodes); //全部段落下的全部句节点
+    }
+
+    for (const auto &node : nodes) {
+        names.clear();
+        names << "字:文本串";
         if (findNodeText(node, names, content)) {
             break;
         }
@@ -1270,6 +1284,97 @@ void FileUtils::getUOF2TextContent(QString &path, QString &textContent)
 
     fileR.close();
     file.close();
+}
+
+void FileUtils::getUOF2PPTContent(QString &path, QString &textContent)
+{
+    QFileInfo info = QFileInfo(path);
+    if (!info.exists() || info.isDir())
+        return;
+
+    QuaZip zipFile(path);
+    QDomDocument doc;
+    if (!loadZipFileToDoc(zipFile, doc, "content.xml")) {
+        return;
+    }
+
+    QDomElement rootElem = doc.documentElement();
+    QList<QDomElement> nodes;
+    QQueue<QString> names; //每个节点的名称
+    names << "演:幻灯片集_6C0E" << "演:幻灯片_6C0F";
+    findNodes(rootElem, names, nodes);
+
+    if (nodes.empty()) {
+        return;
+    }
+
+    QStringList attrs;
+    for (const auto &node : nodes) {
+        names.clear();
+        names << "uof:锚点_C644";
+        findNodeAttr(node, names, "图形引用_C62E", attrs);
+    }
+
+    if (attrs.empty()) {
+        return;
+    }
+
+    if (!loadZipFileToDoc(zipFile, doc, "graphics.xml")) {
+        return;
+    }
+
+    nodes.clear();
+    names.clear();
+    names << "图:图形_8062";
+    rootElem = doc.documentElement();
+    findNodesByAttr(rootElem, names, nodes, "标识符_804B", attrs);
+
+    QList<QDomElement> nodes416B; //字:段落_416B
+    for (const auto &node : nodes) {
+        names.clear();
+        names << "图:文本_803C" << "图:内容_8043" << "字:段落_416B";
+        findNodes(node, names, nodes416B);
+    }
+
+    nodes.clear();
+    for (const auto &node : nodes416B) {
+        names.clear();
+        names << "字:句_419D";
+        findNodes(node, names, nodes); //所有的 字:句_419D
+    }
+
+    for (const auto &node : nodes) {
+        names.clear();
+        names << "字:文本串_415B";
+        if (findNodeText(node, names, textContent)) {
+            break;
+        }
+    }
+}
+
+inline bool FileUtils::loadZipFileToDoc(QuaZip &zipFile, QDomDocument &doc, const QString &fileName)
+{
+    if (!zipFile.isOpen() && !zipFile.open(QuaZip::mdUnzip)) {
+        return false;
+    }
+
+    if (!zipFile.setCurrentFile(fileName)) {
+        return false;
+    }
+
+    QuaZipFile file(&zipFile);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    doc.clear();
+    if (!doc.setContent(&file)) {
+        file.close();
+        return false;
+    }
+    file.close();
+
+    return true;
 }
 
 /**

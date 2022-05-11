@@ -93,6 +93,7 @@ public:
     static void getTxtContent(QString &path, QString &textcontent);
     static void getUOFTextContent(QString &path, QString &textContent);
     static void getUOF2TextContent(QString &path, QString &textContent);
+    static void getUOF2PPTContent(QString &path, QString &textContent);
     static void getOFDTextContent(QString &path, QString &textContent);
 
     static int openFile(QString &path, bool openInDir = false);
@@ -115,6 +116,7 @@ private:
     static inline bool findNodeText(const QDomElement &elem, QQueue<QString> &names, QString &content);
     static inline void findNodeAttr(const QDomElement &elem, QQueue<QString> &names, const QString &attr, QStringList &attrs);
     static void processUOFPPT(const QDomDocument &doc, QString &content);
+    static inline bool loadZipFileToDoc(QuaZip &zipFile, QDomDocument &doc, const QString &fileName);
 
 private:
     FileUtils();

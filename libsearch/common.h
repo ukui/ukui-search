@@ -43,7 +43,7 @@ static const QMap<QString, bool> targetFileTypeMap = {
     {"uof", true},
     {"uot", true},
     {"uos", true},
-    {"uop", false},
+    {"uop", true},
     {"ofd", true}
 };
 
