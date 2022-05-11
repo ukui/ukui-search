@@ -1,0 +1,3 @@
+[submodule "debian"]
+	path = debian
+	url = http://gitlab2.kylin.com/kylin-desktop/ukui-search-debian.git
