@@ -53,8 +53,11 @@ void FileReader::getTextContent(QString path, QString &textContent) {
             searchdata.RunParser(path, textContent);
         }
 
-    } else if (strsfx == "uot" || strsfx == "uos" || strsfx == "uop") {
+    } else if (strsfx == "uot" || strsfx == "uos") {
         FileUtils::getUOF2TextContent(path, textContent);
+
+    } else if (strsfx == "uop") {
+        FileUtils::getUOF2PPTContent(path, textContent);
 
     } else if (strsfx == "ofd") {
         FileUtils::getOFDTextContent(path, textContent);
