@@ -83,7 +83,7 @@ private:
     QMap<QString, QStringList> m_currentMountedDeviceInfo;
     QMap<QString, QStringList> m_repeatedlyMountedDeviceInfo;
 
-    QStringList m_addedUDiskDeviceList;
+    QStringList m_currentUDiskDeviceList;
     QString m_removedUDiskDevice;
     QMap<QString, QStringList> m_currentUDiskDeviceInfo;
 Q_SIGNALS:

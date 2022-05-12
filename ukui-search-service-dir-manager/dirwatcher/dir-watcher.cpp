@@ -18,8 +18,8 @@ QMutex DirWatcher::s_mutex;
 DirWatcher::DirWatcher(QObject *parent) : QObject(parent)
 {
     m_qSettings = new QSettings(CURRENT_INDEXABLE_DIR_SETTINGS, QSettings::IniFormat);
-    initData();
     initDiskWatcher();
+    initData();
     m_adaptor = new DirWatcherAdaptor(this);
 }
 
@@ -192,6 +192,20 @@ QStringList DirWatcher::searchableDirForSearchApplication()
 void DirWatcher::mountAddCallback(GVolumeMonitor *monitor, GMount *gmount, DirWatcher *pThis)
 {
     qDebug() << "Mount Added";
+    GMount* mount = (GMount*)g_object_ref(gmount);
+    GVolume* volume = g_mount_get_volume(mount);
+    if (volume) {
+        bool canEject = g_volume_can_eject(volume);
+        QString devName = g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+        if (canEject and devName.contains(QRegExp("/sd[a-z][1-9]"))) {
+            QMutexLocker locker(&s_mutex);
+            pThis->m_currentUDiskDeviceList.append(devName.section("/", -1));
+        }
+        qDebug() << "added device name:" << devName.section("/", -1);
+        g_object_unref(volume);
+    } else {
+        qWarning() << "GVolume(add) is NULL.";
+    }
     pThis->handleDisk();
 }
 
@@ -200,7 +214,7 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
     qDebug() << "Mount Removed";
     pThis->handleDisk();
     QMutexLocker locker(&s_mutex);
-    //处理u盘设备
+    //处理u盘设备(由于udisk2信号连不上，不生效）
     if (pThis->m_removedUDiskDevice != NULL) {
         pThis->m_currentUDiskDeviceInfo.remove(pThis->m_removedUDiskDevice);
         qDebug() << "m_currentUDiskDeviceInfo(after remove):" << pThis->m_currentUDiskDeviceInfo;
@@ -214,25 +228,25 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
     if (!rootFile) {
         return;
     }
-    QString mountPoint = g_file_get_uri(rootFile);
-    if (mountPoint.isEmpty()) {
+    QString removedUri = g_file_get_uri(rootFile);
+    if (removedUri.isEmpty()) {
         return;
     }
     //处理uri转码,处理子卷情况
-    if (mountPoint.startsWith("file:///")) {
-        QString removedMountPoint = g_filename_from_uri(mountPoint.toUtf8().constData(), nullptr, nullptr);
+    if (removedUri.startsWith("file:///")) {
+        QString removedMountPoint = g_filename_from_uri(removedUri.toUtf8().constData(), nullptr, nullptr);
         pThis->m_blackListOfIndex.removeAll(removedMountPoint);
         for (auto t = pThis->m_infoOfSubvolume.constBegin(); t != pThis->m_infoOfSubvolume.constEnd(); t++) {
-            if (removedMountPoint.startsWith(t.value())) {
+            if (removedMountPoint.startsWith(t.value() + "/")) {
                 pThis->m_blackListOfIndex.removeAll(removedMountPoint.replace(t.value(), t.key()));
             }
-            if (removedMountPoint.startsWith(t.key())) {
+            if (removedMountPoint.startsWith(t.key() + "/")) {
                 pThis->m_blackListOfIndex.removeAll(removedMountPoint.replace(t.key(), t.value()));
             }
         }
         qDebug() << "m_blackListOfIndex(after remove):" << pThis->m_blackListOfIndex;
     } else {
-        qWarning() << "There's someting wrong with the MountPoint!";
+        qWarning() << QString("Removed uri:%1 is not starts with 'file:///', there's no handling of it.").arg(removedUri);
     }
     g_object_unref(rootFile);
 }
@@ -252,7 +266,6 @@ void DirWatcher::appendIndexableListItem(const QString &path)
 
     //根目录特殊处理
     if (path == "/") {
-        this->currentIndexableDir();
         this->handleIndexItemAppend(path, m_blackListOfIndex);
         return;
     }
@@ -427,6 +440,21 @@ void DirWatcher::initData()
         }
     }
 
+    GList *list = g_volume_monitor_get_volumes(m_volumeMonitor);
+    if (!list) {
+        qDebug() << "Error in glist!!!";
+        return;
+    }
+    for (guint i = 0; i < g_list_length(list); i++) {
+        GVolume *volume = (GVolume*)g_list_nth_data(list, i);
+        QString udiskDevName = g_volume_get_identifier(volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+        bool canEject = g_volume_can_eject(volume);
+        if (canEject and udiskDevName.contains(QRegExp("/sd[a-z][1-9]"))) {
+            qDebug() << "udiskDevName:" << udiskDevName.section("/",-1);
+            m_currentUDiskDeviceList.append(udiskDevName.section("/",-1));
+        }
+    }
+
     //init disk data, refresh the black list
     handleDisk();
 }
@@ -479,10 +507,16 @@ void DirWatcher::handleDisk()
         }
     }
 
-    //初始化u盘信息, 目前由于未知原因收不到udisk挂载信号因此暂时不生效
-    if (!m_addedUDiskDeviceList.isEmpty()) {
-        for (const QString &addedUDiskDevice: m_addedUDiskDeviceList) {
-            m_currentUDiskDeviceInfo.insert(addedUDiskDevice, m_currentMountedDeviceInfo.value("/dev/" + addedUDiskDevice));
+    //根据设备号(key)更新u盘信息
+    if (!m_currentUDiskDeviceList.isEmpty()) {
+        for (const QString &udiskDevice: m_currentUDiskDeviceList) {
+            QStringList udiskMountPointList = m_currentMountedDeviceInfo.value("/dev/" + udiskDevice);
+            if (udiskMountPointList.isEmpty()) {
+                m_currentUDiskDeviceInfo.remove(udiskDevice);
+            } else {
+                m_currentUDiskDeviceInfo.insert(udiskDevice, udiskMountPointList);
+            }
+
         }
     }
 
@@ -516,8 +550,8 @@ void DirWatcher::handleAddedUDiskDevice(QDBusMessage msg)
     QDBusObjectPath objPath = msg.arguments().at(0).value<QDBusObjectPath>();
     if (objPath.path().contains(QRegExp("/sd[a-z][1-9]"))) {
         QMutexLocker locker(&s_mutex);
-        m_addedUDiskDeviceList.append(objPath.path().section("/",-1));
-        qDebug() << "Add Udisk:" << m_addedUDiskDeviceList;
+        m_currentUDiskDeviceList.append(objPath.path().section("/",-1));
+        qDebug() << "Add Udisk:" << m_currentUDiskDeviceList;
     }
 }
 
@@ -528,6 +562,6 @@ void DirWatcher::handleRemovedUDiskDevice(QDBusMessage msg)
     if (objPath.path().contains(QRegExp("/sd[a-z][1-9]"))) {
         QMutexLocker locker(&s_mutex);
         m_removedUDiskDevice = objPath.path().section("/",-1);
-        m_addedUDiskDeviceList.removeAll(m_removedUDiskDevice);
+        m_currentUDiskDeviceList.removeAll(m_removedUDiskDevice);
     }
 }
