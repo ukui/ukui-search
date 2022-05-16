@@ -35,6 +35,7 @@ FirstIndex::FirstIndex() : m_semaphore(INDEX_SEM, 1, QSystemSemaphore::AccessMod
 {
     m_pool.setMaxThreadCount(2);
     m_pool.setExpiryTimeout(100);
+    connect(this, &FirstIndex::needRebuild, this, &FirstIndex::rebuildDatebase, Qt::QueuedConnection);
 }
 
 FirstIndex *FirstIndex::getInstance()
@@ -112,9 +113,18 @@ void FirstIndex::work(const QFileInfo& fileInfo) {
     }*/
 }
 
+void FirstIndex::rebuildDatebase()
+{
+    m_semaphore.acquire();
+    m_isRebuildProcess = true;
+    this->wait();
+    this->start();
+}
+
 void FirstIndex::addIndexPath(const QString path, const QStringList blockList)
 {
     m_semaphore.acquire();
+    m_isRebuildProcess = false;
     setPath(QStringList() << path);
     setBlockPath(blockList);
     this->wait();
@@ -133,20 +143,34 @@ void FirstIndex::run() {
     //    qInfo() << "ocrIndexDatabaseStatus: " << ocrIndexDatabaseStatus;
     qInfo() << "inotifyIndexStatus: " << inotifyIndexStatus;
 
-    m_allDatadaseStatus = inotifyIndexStatus == "2" ? true : false;
+    m_inotifyIndexStatus = inotifyIndexStatus == "2" ? true : false;
     m_indexDatabaseStatus = indexDataBaseStatus == "2" ? true : false;
     m_contentIndexDatabaseStatus = contentIndexDataBaseStatus == "2" ? true : false;
     //    m_ocrIndexDatabaseStatus = ocrIndexDatabaseStatus == "2" ? true : false;
 
-    if(m_allDatadaseStatus && m_indexDatabaseStatus && m_contentIndexDatabaseStatus /*&& m_ocrIndexDatabaseStatus*/) {
-        if(m_isFirstIndex) {
-            m_isFirstIndex = false;
+    if(m_inotifyIndexStatus && m_indexDatabaseStatus && m_contentIndexDatabaseStatus /*&& m_ocrIndexDatabaseStatus*/) {
+        m_needRebuild = false;
+        if(m_isRebuildProcess) {
+            m_isRebuildProcess = false;
             m_semaphore.release(1);
             return;
         }
     } else {
-        setPath(DirWatcher::getDirWatcher()->currentIndexableDir());
-        setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
+        if(m_isRebuildProcess) {
+            setPath(DirWatcher::getDirWatcher()->currentIndexableDir());
+            setBlockPath(DirWatcher::getDirWatcher()->currentBlackListOfIndex());
+        } else {
+            if(m_inotifyIndexStatus && (!m_indexDatabaseStatus || !m_contentIndexDatabaseStatus)) {
+                m_needRebuild = true;
+            }
+            if(!m_inotifyIndexStatus || (!m_indexDatabaseStatus && !m_contentIndexDatabaseStatus)) {
+                m_needRebuild = false;
+                qInfo() << "Entering rebuild procedure";
+                Q_EMIT needRebuild();
+                m_semaphore.release(1);
+                return;
+            }
+        }
     }
 
 
@@ -181,12 +205,15 @@ void FirstIndex::run() {
         QtConcurrent::run(&m_pool, [&]() {
             sem.acquire(2);
             mutex1.unlock();
-            if(m_isFirstIndex && m_allDatadaseStatus && m_indexDatabaseStatus) {
+            if(m_isRebuildProcess && m_inotifyIndexStatus && m_indexDatabaseStatus) { //重建索引且无异常
                 sem.release(2);
                 return;
-            }
-            if (!m_allDatadaseStatus || !m_indexDatabaseStatus || !m_contentIndexDatabaseStatus) {
+            } else if(m_isRebuildProcess) { //重建索引且有异常
                 IndexGenerator::getInstance()->rebuildIndexDatabase();
+            } else if(!m_inotifyIndexStatus || !m_indexDatabaseStatus) { //添加目录且有异常
+                qWarning() << "Index database need rebuild!";
+                sem.release(2);
+                return;
             }
             qDebug() << "index start;" << m_indexData->size();
 
@@ -212,12 +239,15 @@ void FirstIndex::run() {
         QtConcurrent::run(&m_pool,[&]() {
             sem.acquire(2);
             mutex2.unlock();
-            if(m_isFirstIndex && m_allDatadaseStatus && m_contentIndexDatabaseStatus) {
+            if(m_isRebuildProcess && m_inotifyIndexStatus && m_contentIndexDatabaseStatus) {
                 sem.release(2);
                 return;
-            }
-            if (!m_allDatadaseStatus || !m_contentIndexDatabaseStatus || !m_indexDatabaseStatus) {
+            } else if(m_isRebuildProcess) { //重建索引且有异常
                 IndexGenerator::getInstance()->rebuildContentIndexDatabase();
+            } else if(!m_inotifyIndexStatus || !m_contentIndexDatabaseStatus) { //添加目录且有异常
+                qWarning() << "Content index database need rebuild!";
+                sem.release(2);
+                return;
             }
             qDebug() << "content index start:" << m_contentIndexData->size();
             QQueue<QString>* tmp2 = new QQueue<QString>();
@@ -318,8 +348,12 @@ void FirstIndex::run() {
         --FileUtils::indexStatus;
     }
 
-    m_isFirstIndex = false; //首次索引后置为false,后续start为添加索引目录时新建索引。
     IndexStatusRecorder::getInstance()->setStatus(INOTIFY_NORMAL_EXIT, "2");
+    if(m_needRebuild) {
+        m_needRebuild = false;
+        qInfo() << "Entering rebuild procedure";
+        Q_EMIT needRebuild();
+    }
     m_semaphore.release(1);
     //    int retval1 = write(fifo_fd, buffer, strlen(buffer));
     //    if(retval1 == -1) {

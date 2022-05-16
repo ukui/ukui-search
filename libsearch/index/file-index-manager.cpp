@@ -26,8 +26,7 @@ void FileIndexManager::searchMethod(FileUtils::SearchMethod sm) {
     }
     if(FileUtils::SearchMethod::INDEXSEARCH == sm && 0 == FileUtils::indexStatus) {
         qDebug() << "start first index";
-        m_semaphore.acquire();
-        m_fi->start();
+        m_fi->rebuildDatebase();
         qDebug() << "start inotify index";
         if(!this->m_iw->isRunning()) {
             this->m_iw->start();

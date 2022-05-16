@@ -22,6 +22,7 @@ void IndexStatusRecorder::setStatus(const QString &key, const QVariant &value)
 
 const QVariant IndexStatusRecorder::getStatus(const QString &key)
 {
+    m_status->sync();
     return m_status->value(key);
 }
 
