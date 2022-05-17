@@ -49,6 +49,7 @@ class ResultItemStyle : public QProxyStyle
 {
 public:
     static ResultItemStyle *getStyle();
+    void drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const;
     void drawControl(ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget = nullptr) const override;
 private:
     explicit ResultItemStyle() {}
