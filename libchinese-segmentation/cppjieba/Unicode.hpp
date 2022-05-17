@@ -7,6 +7,7 @@
 #include <ostream>
 #include "limonp/LocalVector.hpp"
 #include "limonp/StringUtil.hpp"
+#include "common-struct.h"
 
 namespace cppjieba {
 
@@ -15,24 +16,24 @@ using std::vector;
 
 typedef uint32_t Rune;
 
-struct KeyWord {
-    string word;
-    vector<size_t> offsets;
-    double weight;
-}; // struct Word
+//struct KeyWord {
+//    string word;
+//    vector<size_t> offsets;
+//    double weight;
+//}; // struct Word
 
-struct Word {
-    string word;
-    uint32_t offset;
-    uint32_t unicode_offset;
-    uint32_t unicode_length;
-    Word(const string& w, uint32_t o)
-        : word(w), offset(o) {
-    }
-    Word(const string& w, uint32_t o, uint32_t unicode_offset, uint32_t unicode_length)
-        : word(w), offset(o), unicode_offset(unicode_offset), unicode_length(unicode_length) {
-    }
-}; // struct Word
+//struct Word {
+//    string word;
+//    uint32_t offset;
+//    uint32_t unicode_offset;
+//    uint32_t unicode_length;
+//    Word(const string& w, uint32_t o)
+//        : word(w), offset(o) {
+//    }
+//    Word(const string& w, uint32_t o, uint32_t unicode_offset, uint32_t unicode_length)
+//        : word(w), offset(o), unicode_offset(unicode_offset), unicode_length(unicode_length) {
+//    }
+//}; // struct Word
 
 inline std::ostream& operator << (std::ostream& os, const Word& w) {
     return os << "{\"word\": \"" << w.word << "\", \"offset\": " << w.offset << "}";

@@ -165,7 +165,7 @@ inline Xapian::Query FileContentSearchWorker::createQuery()
     std::vector<Xapian::Query> v;
 
     for (const auto &keyword : m_searchController->getKeyword()) {
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(keyword.toStdString());
+        std::vector<KeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegment(keyword.toStdString());
 
         for(const auto & c : sKeyWord) {
             v.emplace_back(c.word);

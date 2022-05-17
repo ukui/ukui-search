@@ -27,7 +27,7 @@
 #include <QDBusConnection>
 #include <QDomDocument>
 #include "gobject-template.h"
-#include "pinyinmanager.h"
+#include "hanzi-to-pinyin.h"
 
 using namespace UkuiSearch;
 size_t FileUtils::maxIndexCount = 0;
@@ -413,14 +413,14 @@ void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &result
     int multiToneWordNum = 0;
 
     for (auto i:hanzi) {
-        if (PinYinManager::getInstance()->isMultiTon(QString(i).toStdString()))
+        if (HanZiToPinYin::getInstance()->isMultiTone(QString(i).toStdString()))
             ++multiToneWordNum;
     }
     if(multiToneWordNum > 3) {
         QString oneResult, oneResultFirst;
         for(auto i : hanzi) {
             QStringList results;
-            PinYinManager::getInstance()->getResults(QString(i).toStdString(), results);
+            HanZiToPinYin::getInstance()->getResults(QString(i).toStdString(), results);
             if(results.size()) {
                 oneResult += results.first();
                 oneResultFirst += results.first().at(0);
@@ -435,7 +435,7 @@ void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &result
     }
 
     QStringList results;
-    PinYinManager::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
+    HanZiToPinYin::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
     if(results.size()) {
         for(auto i : results) {
             tempQueue.enqueue(i);
@@ -447,7 +447,7 @@ void stitchMultiToneWordsBFSStackLess3(const QString &hanzi, QStringList &result
     }
     tempHanzi = tempHanzi.right(tempHanzi.size() - 1);
     while(tempHanzi.size() != 0) {
-        PinYinManager::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
+        HanZiToPinYin::getInstance()->getResults(QString(tempHanzi.at(0)).toStdString(), results);
         tempQueueSize = tempQueue.size();
         if(results.size()) {
             for(int j = 0; j < tempQueueSize; ++j) {

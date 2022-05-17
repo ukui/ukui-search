@@ -118,7 +118,7 @@ void ConstructDocumentForContent::run() {
         doc.setData(content);
         //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.
         content = content.replace("\t", " ").replace("\xEF\xBC\x8C", "   ").replace("\xE3\x80\x82", "   ");
-        std::vector<cppjieba::KeyWord> term = ChineseSegmentation::getInstance()->callSegementStd(content.left(20480000).toStdString());
+        std::vector<KeyWord> term = ChineseSegmentation::getInstance()->callSegment(content.left(20480000).toStdString());
         for(size_t i = 0; i < term.size(); ++i) {
             doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
         }
@@ -158,7 +158,7 @@ void ConstructDocumentForOcr::run()
         doc.setData(content);
         //'\xEF\xBC\x8C' is "，" "\xE3\x80\x82" is "。"  use three " " to replace ,to ensure the offset info.
         content = content.replace("\t", " ").replace("\xEF\xBC\x8C", "   ").replace("\xE3\x80\x82", "   ");
-        std::vector<cppjieba::KeyWord> term = ChineseSegmentation::getInstance()->callSegementStd(content.toStdString());
+        std::vector<KeyWord> term = ChineseSegmentation::getInstance()->callSegment(content.toStdString());
         for(size_t i = 0; i < term.size(); ++i) {
             doc.addPosting(term.at(i).word, term.at(i).offsets, static_cast<int>(term.at(i).weight));
         }

@@ -272,7 +272,7 @@ int FileContentSearch::keywordSearchContent() {
         qp.set_default_op(Xapian::Query::OP_AND);
         qp.set_database(db);
 
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
+        std::vector<KeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegment(m_keyword.toStdString());
         //Creat a query
         std::string words;
         for(int i = 0; i < sKeyWord.size(); i++) {
@@ -446,7 +446,7 @@ int OcrSearch::keywordSearchOcr() {
         Xapian::QueryParser qp;
         qp.set_default_op(Xapian::Query::OP_AND);
         qp.set_database(db);
-        QVector<SKeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
+        std::vector<KeyWord> sKeyWord = ChineseSegmentation::getInstance()->callSegment(m_keyword.toStdString());
         //Creat a query
         std::string words;
         for(int i = 0; i < sKeyWord.size(); i++) {

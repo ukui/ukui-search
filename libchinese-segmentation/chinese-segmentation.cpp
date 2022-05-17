@@ -19,12 +19,10 @@
  *
  */
 #include "chinese-segmentation.h"
-#include <QFileInfo>
-#include <QDebug>
-static ChineseSegmentation *global_instance_chinese_segmentation = nullptr;
-QMutex  ChineseSegmentation::m_mutex;
+#include "chinese-segmentation-private.h"
 
-ChineseSegmentation::ChineseSegmentation() {
+ChineseSegmentationPrivate::ChineseSegmentationPrivate(ChineseSegmentation *parent) : q(parent)
+{
     const char * const DICT_PATH = "/usr/share/ukui-search/res/dict/jieba.dict.utf8";
     const char * const  HMM_PATH = "/usr/share/ukui-search/res/dict/hmm_model.utf8";
     const char * const USER_DICT_PATH = "/usr/share/ukui-search/res/dict/user.dict.utf8";
@@ -38,53 +36,127 @@ ChineseSegmentation::ChineseSegmentation() {
                                   "");
 }
 
-ChineseSegmentation::~ChineseSegmentation() {
+ChineseSegmentationPrivate::~ChineseSegmentationPrivate() {
     if(m_jieba)
         delete m_jieba;
     m_jieba = nullptr;
 }
 
-ChineseSegmentation *ChineseSegmentation::getInstance() {
-    QMutexLocker locker(&m_mutex);
-    if(!global_instance_chinese_segmentation) {
-        global_instance_chinese_segmentation = new ChineseSegmentation;
-    }
-    return global_instance_chinese_segmentation;
-}
-
-QVector<SKeyWord> ChineseSegmentation::callSegement(std::string s) {
-//    std::string s;
-//    s = str.toStdString();
-//    str.squeeze();
-
+vector<KeyWord> ChineseSegmentationPrivate::callSegment(const string &sentence) {
     const size_t topk = -1;
-    std::vector<cppjieba::KeyWord> keywordres;
-    ChineseSegmentation::m_jieba->extractor.Extract(s, keywordres, topk);
-    std::string().swap(s);
-    QVector<SKeyWord> vecNeeds;
-    convert(keywordres, vecNeeds);
+    vector<KeyWord> keywordres;
+    ChineseSegmentationPrivate::m_jieba->extractor.Extract(sentence, keywordres, topk);
 
-    keywordres.clear();
-//    keywordres.shrink_to_fit();
-    return vecNeeds;
+    return keywordres;
 
 }
 
-std::vector<cppjieba::KeyWord> ChineseSegmentation::callSegementStd(const std::string &str) {
-
-    const size_t topk = -1;
-    std::vector<cppjieba::KeyWord> keywordres;
-    ChineseSegmentation::m_jieba->extractor.Extract(str, keywordres, topk);
-
+vector<string> ChineseSegmentationPrivate::callMixSegmentCutStr(const string &sentence)
+{
+    vector<string> keywordres;
+    ChineseSegmentationPrivate::m_jieba->Cut(sentence, keywordres);
     return keywordres;
 }
 
-void ChineseSegmentation::convert(std::vector<cppjieba::KeyWord> &keywordres, QVector<SKeyWord> &kw) {
-    for(auto i : keywordres) {
-        SKeyWord temp;
-        temp.word = i.word;
-        temp.offsets = QVector<size_t>::fromStdVector(i.offsets);
-        temp.weight = i.weight;
-        kw.append(temp);
-    }
+vector<Word> ChineseSegmentationPrivate::callMixSegmentCutWord(const string &sentence)
+{
+    vector<Word> keywordres;
+    ChineseSegmentationPrivate::m_jieba->Cut(sentence, keywordres);
+    return keywordres;
+}
+
+string ChineseSegmentationPrivate::lookUpTagOfWord(const string &word)
+{
+    return ChineseSegmentationPrivate::m_jieba->LookupTag(word);
+}
+
+vector<pair<string, string>> ChineseSegmentationPrivate::getTagOfWordsInSentence(const string &sentence)
+{
+     vector<pair<string, string>> words;
+     ChineseSegmentationPrivate::m_jieba->Tag(sentence, words);
+     return words;
+}
+
+vector<Word> ChineseSegmentationPrivate::callFullSegment(const string &sentence)
+{
+    vector<Word> keywordres;
+    ChineseSegmentationPrivate::m_jieba->CutAll(sentence, keywordres);
+    return keywordres;
+}
+
+vector<Word> ChineseSegmentationPrivate::callQuerySegment(const string &sentence)
+{
+    vector<Word> keywordres;
+    ChineseSegmentationPrivate::m_jieba->CutForSearch(sentence, keywordres);
+    return keywordres;
+}
+
+vector<Word> ChineseSegmentationPrivate::callHMMSegment(const string &sentence)
+{
+    vector<Word> keywordres;
+    ChineseSegmentationPrivate::m_jieba->CutHMM(sentence, keywordres);
+    return keywordres;
+}
+
+vector<Word> ChineseSegmentationPrivate::callMPSegment(const string &sentence)
+{
+    size_t maxWordLen = 512;
+    vector<Word> keywordres;
+    ChineseSegmentationPrivate::m_jieba->CutSmall(sentence, keywordres, maxWordLen);
+    return keywordres;
+}
+
+ChineseSegmentation *ChineseSegmentation::getInstance()
+{
+    static ChineseSegmentation *global_instance_chinese_segmentation = new ChineseSegmentation;
+    return global_instance_chinese_segmentation;
+}
+
+vector<KeyWord> ChineseSegmentation::callSegment(const string &sentence)
+{
+    return d->callSegment(sentence);
+}
+
+vector<string> ChineseSegmentation::callMixSegmentCutStr(const string &sentence)
+{
+    return d->callMixSegmentCutStr(sentence);
+}
+
+vector<Word> ChineseSegmentation::callMixSegmentCutWord(const string &str)
+{
+    return d->callMixSegmentCutWord(str);
+}
+
+string ChineseSegmentation::lookUpTagOfWord(const string &word)
+{
+    return d->lookUpTagOfWord(word);
+}
+
+vector<pair<string, string> > ChineseSegmentation::getTagOfWordsInSentence(const string &sentence)
+{
+    return d->getTagOfWordsInSentence(sentence);
+}
+
+vector<Word> ChineseSegmentation::callFullSegment(const string &sentence)
+{
+    return d->callFullSegment(sentence);
+}
+
+vector<Word> ChineseSegmentation::callQuerySegment(const string &sentence)
+{
+    return d->callQuerySegment(sentence);
+}
+
+vector<Word> ChineseSegmentation::callHMMSegment(const string &sentence)
+{
+    return d->callHMMSegment(sentence);
+}
+
+vector<Word> ChineseSegmentation::callMPSegment(const string &sentence)
+{
+    return d->callMPSegment(sentence);
+}
+
+ChineseSegmentation::ChineseSegmentation() : d(new ChineseSegmentationPrivate)
+{
 }

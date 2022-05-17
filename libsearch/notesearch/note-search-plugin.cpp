@@ -154,9 +154,9 @@ NoteSearch::NoteSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, c
 }
 
 void NoteSearch::run() {
-    QVector<SKeyWord> sKeyWordVec = ChineseSegmentation::getInstance()->callSegement(m_keyword.toStdString());
+    std::vector<KeyWord> sKeyWordVec = ChineseSegmentation::getInstance()->callSegment(m_keyword.toStdString());
     QStringList keywordList;
-    for (SKeyWord sKeyWord : sKeyWordVec) {
+    for (KeyWord sKeyWord : sKeyWordVec) {
         keywordList.append(QString::fromStdString(sKeyWord.word));
     }
     QDBusInterface qi("org.ukui.note", "/org/ukui/note", "org.ukui.note.interface", QDBusConnection::sessionBus());
