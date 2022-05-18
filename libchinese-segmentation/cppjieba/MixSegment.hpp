@@ -138,15 +138,15 @@ public:
 
                 string str = GetStringFromRunes(s, words[i].left, words[i].right);
 
-                if (stopWords_.find(str) != stopWords_.end()) {
-                    continue;
-                }
-
                 if (words[i].left != words[i].right) {
+                    if (stopWords_.find(str) != stopWords_.end()) {
+                        continue;
+                    }
                     res[str].offsets.push_back(words[i].left->offset);
                     res[str].weight += 1.0;
                     continue;
                 }
+
                 if (mpSeg_.IsUserDictSingleChineseWord(words[i].left->rune)
                         || i == (words.size() - 1)) {//i++后如果是最后一个字符则直接push_back
                     if (stopWords_.find(str) != stopWords_.end()) {
@@ -156,20 +156,27 @@ public:
                     res[str].weight += 1.0;
                     continue;
                 }
-
                 // if mp Get a single one and it is not in userdict, collect it in sequence
                 size_t j = i + 1; //当前i字符为单独的字符并且不在用户字典里（i字符不是最后一个字符），直接判定j字符
-
-                while (j < (words.size() - 1)
+                bool isLastWordsSingle(false);
+                while (j <= (words.size() - 1)
                        && words[j].left == words[j].right
                        && !mpSeg_.IsUserDictSingleChineseWord(words[j].left->rune)) {
+                    if (j == (words.size() - 1)) {//最后一个分词结果是单字
+                        isLastWordsSingle = true;
+                        break;
+                    }
                     j++;
                 }
 
                 // Cut the sequence with hmm
                 assert(j - 1 >= i);
                 // TODO
-                hmmSeg_.CutRuneArray(words[i].left, words[j - 1].left + 1, hmmRes);
+                if (isLastWordsSingle) {
+                    hmmSeg_.CutRuneArray(words[i].left, words[j].left + 1, hmmRes);
+                } else {
+                    hmmSeg_.CutRuneArray(words[i].left, words[j].left, hmmRes);
+                }
 
                 //put hmm result to result
                 for (size_t k = 0; k < hmmRes.size(); k++) {
@@ -185,6 +192,9 @@ public:
                 hmmRes.clear();
 
                 //let i jump over this piece
+                if (isLastWordsSingle) {
+                    break;
+                }
                 i = j - 1;
             }
         } else {//不存在中文分词结果
