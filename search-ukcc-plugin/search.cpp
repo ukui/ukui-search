@@ -119,7 +119,7 @@ bool Search::isShowOnHomePage() const
 
 QIcon Search::icon() const
 {
-    return QIcon();
+    return QIcon::fromTheme("search-symbolic");
 }
 
 bool Search::isEnable() const
