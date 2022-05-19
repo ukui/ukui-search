@@ -22,31 +22,49 @@ QSize ResultViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
 }
 
 void ResultViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const {
-    QStyleOptionViewItemV4 optionV4 = option;
-    initStyleOption(&optionV4, index);
+    QStyleOptionViewItem opt = option;
+       initStyleOption(&opt, index);
 
-    QStyle *style = optionV4.widget ? optionV4.widget->style() : QApplication::style();
+       QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
 
-    optionV4.text = QString();
-    style->drawControl(QStyle::CE_ItemViewItem, &optionV4, painter); //绘制非文本区域内容
-    if(index.model()->data(index, Qt::DisplayRole).toString().isEmpty()) return;
+       QString text = opt.text;
+       if(text.isEmpty()) {
+           return;
+       }
+       opt.text = QString();
+       style->drawControl(QStyle::CE_ItemViewItem, &opt, painter); //绘制非文本区域内容
+   //    style->drawPrimitive(QStyle::PE_PanelItemViewItem, qstyleoption_cast<QStyleOption *>(&opt), painter, opt.widget);
 
-    //fix me: for files which name begin with some ' ' , space will be hide...
-    QTextDocument doc;
-    doc.setHtml(getHtmlText(painter, option, index)); //提取富文本
-    QAbstractTextDocumentLayout::PaintContext ctx;
+       opt.text = text;
+       QTextDocument doc;
+       doc.setHtml(getHtmlText(painter, opt, index)); //提取富文本
+       QAbstractTextDocumentLayout* layout = doc.documentLayout();
+       const double height = layout->documentSize().height();
 
-    if(optionV4.state & QStyle::State_Selected)
-        ctx.palette.setColor(QPalette::Text, optionV4.palette.color(QPalette::Active, QPalette::HighlightedText));
 
-    QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &optionV4);
-    //使图标和文本间隔与原来保持一致，故文本区域右移4
-    textRect.adjust(4, 0, 0, 0);
-    painter->save();
-    painter->translate(textRect.topLeft());
-    painter->setClipRect(textRect.translated(-textRect.topLeft()));
-    doc.documentLayout()->draw(painter, ctx); //绘制文本区域内容
-    painter->restore();
+       QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+       //使图标和文本间隔与原来保持一致，故文本区域右移4
+       textRect.adjust(4, 0, 0, 0);
+       double y = textRect.y();
+       y += (textRect.height() - height) / 2;
+
+       QAbstractTextDocumentLayout::PaintContext context;
+
+       QPalette::ColorGroup cg = opt.state & QStyle::State_Enabled
+               ? QPalette::Normal : QPalette::Disabled;
+       if (cg == QPalette::Normal && !(opt.state & QStyle::State_Active))
+           cg = QPalette::Inactive;
+
+       if(opt.state & QStyle::State_Selected) {
+           painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
+       } else {
+           painter->setPen(opt.palette.color(cg, QPalette::Text));
+       }
+       painter->save();
+       painter->translate(QPointF(textRect.x(), y));
+       layout->draw(painter, context); //绘制文本区域内容
+       painter->restore();
+
 }
 
 QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionViewItem &itemOption, const QModelIndex &index) const
@@ -97,6 +115,90 @@ ResultItemStyle *ResultItemStyle::getStyle()
         global_instance_of_item_style = new ResultItemStyle;
     }
     return global_instance_of_item_style;
+}
+
+void ResultItemStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const
+{
+    switch (element) {
+        case PE_PanelItemViewItem: {
+
+            bool isIconView = false;
+            auto opt = qstyleoption_cast<const QStyleOptionViewItem *>(option);
+            if (!opt)
+                return;
+            if (opt) {
+                isIconView = (opt->decorationPosition & QStyleOptionViewItem::Top);
+            }
+
+            bool isHover = (option->state & State_MouseOver) && (option->state & ~State_Selected);
+            bool isSelected = option->state & State_Selected;
+            bool enable = option->state & State_Enabled;
+            QColor color = option->palette.color(enable? QPalette::Active: QPalette::Disabled, QPalette::Highlight);
+
+            if (isSelected) {
+                color.setAlpha(255);
+            } else if (isHover) {
+    //            color = opt->palette.color(QPalette::Active, QPalette::BrightText);
+    //            color.setAlpha(0.05);
+                color = QColor(241, 241, 241);
+            } else {
+                color.setAlpha(0);
+            }
+            QPainterPath path;
+
+            if(opt->viewItemPosition == QStyleOptionViewItem::OnlyOne) {
+                path.addRoundedRect(option->rect, 6, 6);
+            } else if(opt->viewItemPosition == QStyleOptionViewItem::Beginning) {
+                //一个左侧有两个圆角的矩形
+                path.moveTo(option->rect.topLeft() + QPoint(6, 0));
+                path.cubicTo(option->rect.topLeft() + QPoint(6, 0),
+                             option->rect.topLeft(), option->rect.topLeft() +
+                             QPoint(0, 6));
+
+                path.lineTo(option->rect.bottomLeft() - QPoint(0, 6));
+                path.cubicTo(option->rect.bottomLeft() - QPoint(0, 6),
+                             option->rect.bottomLeft() + QPoint(0, 1),
+                             option->rect.bottomLeft() + QPoint(6, 1));
+
+                path.lineTo(option->rect.bottomRight() + QPoint(1, 1));
+                path.lineTo(option->rect.topRight()+ QPoint(1, 0));
+                path.lineTo(option->rect.topLeft() + QPoint(6, 0));
+            } else if(opt->viewItemPosition == QStyleOptionViewItem::Middle) {
+                path.addRect(option->rect.adjusted(-1, 0, 1, 0));
+            } else if(opt->viewItemPosition == QStyleOptionViewItem::End) {
+                //一个右侧有两个圆角的矩形
+                path.moveTo(option->rect.topRight() + QPoint(-6, 0));
+                path.cubicTo(option->rect.topRight() + QPoint(-6, 0),
+                             option->rect.topRight(),
+                             option->rect.topRight() +
+                             QPoint(0, 6));
+
+                path.lineTo(option->rect.bottomRight() - QPoint(0, 6));
+                path.cubicTo(option->rect.bottomRight() - QPoint(0, 6),
+                             option->rect.bottomRight() + QPoint(0, 1),
+                             option->rect.bottomRight() + QPoint(-6, 1));
+
+                path.lineTo(option->rect.bottomLeft() + QPoint(0, 1));
+                path.lineTo(option->rect.topLeft());
+                path.lineTo(option->rect.topRight() + QPoint(-6, 0));
+            } else {
+                //                    path.addRoundedRect(option->rect, 8, 8);
+            }
+
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(color);
+            painter->drawPath(path);
+            //            painter->fillPath(path, painter->brush());
+
+            painter->restore();
+            break;
+        }
+        default:
+            return QProxyStyle::drawPrimitive(element, option, painter, widget);
+        }
+
 }
 
 void ResultItemStyle::drawControl(QStyle::ControlElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const

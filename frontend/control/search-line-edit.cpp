@@ -49,7 +49,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
     m_queryIcon->setPixmap(pixmap);
 
     m_ly = new QHBoxLayout(this);
-    m_ly->addSpacing(4);
+    m_ly->addSpacing(8);
     m_ly->addWidget(m_queryIcon);
     m_ly->addStretch();
 
@@ -88,7 +88,7 @@ void SearchLineEdit::paintEvent(QPaintEvent *e)
     p.setBrush(palette().base());
     p.setOpacity(GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble());
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(this->rect(), 6, 6);
+    p.drawRoundedRect(this->rect(), 12, 12);
     return QLineEdit::paintEvent(e);
 }
 
@@ -132,7 +132,7 @@ void SeachBarWidget::paintEvent(QPaintEvent *e)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     QPainterPath rectPath;
-    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
+    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 12, 12);
 
 
     // 画一个黑底
@@ -191,7 +191,7 @@ void LineEditStyle::drawPrimitive(QStyle::PrimitiveElement element, const QStyle
                 painter->setPen(Qt::NoPen);
                 painter->setBrush(f->palette.brush(QPalette::Active, QPalette::Button));
                 painter->setRenderHint(QPainter::Antialiasing, true);
-                painter->drawRoundedRect(option->rect, 4, 4);
+                painter->drawRoundedRect(option->rect, 12, 12);
                 painter->restore();
                 return;
             }
