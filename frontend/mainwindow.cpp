@@ -643,8 +643,10 @@ void MainWindow::rebuildBackground()
     //执行高斯模糊
     cv::GaussianBlur(input, output, cv::Size(PICTURE_BLUR_RADIUS, PICTURE_BLUR_RADIUS), 0, 0);
 
-    QPixmap blurPixmap = QPixmap::fromImage({output.data, output.cols, output.rows,
-                                             static_cast<int>(output.step), QImage::Format_ARGB32_Premultiplied});
+    QImage outputImage(output.data, output.cols, output.rows,
+                       static_cast<int>(output.step), QImage::Format_ARGB32_Premultiplied);
+
+    QPixmap blurPixmap = QPixmap::fromImage(outputImage.copy());
 
     if (blurPixmap.isNull()) {
         //此处使用25是为了减少边缘透明像素的数量
