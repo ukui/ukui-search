@@ -13,7 +13,7 @@ public:
     bool registerPlugin(SearchPluginIface *plugin);
 
     static SearchPluginManager *getInstance();
-    const QStringList getPluginIds();
+    Q_INVOKABLE const QStringList getPluginIds();
     SearchPluginIface *getPlugin(const QString &pluginId);
 
     void close();

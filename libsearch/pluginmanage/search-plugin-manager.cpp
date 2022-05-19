@@ -35,6 +35,7 @@ bool SearchPluginManager::registerPlugin(UkuiSearch::SearchPluginIface *plugin)
 
 SearchPluginManager *SearchPluginManager::getInstance()
 {
+    qDebug() << "fuck qml";
     if (!global_instance) {
         global_instance = new SearchPluginManager;
     }

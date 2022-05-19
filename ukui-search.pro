@@ -5,7 +5,8 @@ SUBDIRS += $$PWD/libchinese-segmentation \
            $$PWD/ukuisearch-systemdbus \
            $$PWD/search-ukcc-plugin \
            $$PWD/ukui-search-service \
-           ukui-search-app-data-service
+           $$PWD/ukui-search-app-data-service \
+           $$PWD/frontend-qml
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -21,6 +22,7 @@ libsearch.depends += libchinese-segmentation
 ukui-search-service.depends += libsearch
 #src.depends = libsearch
 frontend.depends = libsearch
+frontend-qml.depends = libsearch
 
 CONFIG += ordered \
 

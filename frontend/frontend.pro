@@ -24,7 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(../libsearch/libukui-search-headers.pri)
 include(control/control.pri)
 include(model/model.pri)
-include(xatom/xatom.pri)
+include(../xatom/xatom.pri)
 include(../3rd-parties/qtsingleapplication/qtsingleapplication.pri)
 include(view/view.pri)
 
