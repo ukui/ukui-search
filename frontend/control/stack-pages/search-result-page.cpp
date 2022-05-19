@@ -88,10 +88,10 @@ void SearchResultPage::paintEvent(QPaintEvent *event)
     p.setBrush(palette().base());
     p.setOpacity(GlobalSettings::getInstance()->getValue(TRANSPARENCY_KEY).toDouble());
     p.setPen(Qt::NoPen);
-    p.drawRoundedRect(this->rect().adjusted(10,10,-10,-10), 6, 6);
+    p.drawRoundedRect(this->rect().adjusted(10,10,-10,-10), 12, 12);
 
     QPainterPath rectPath;
-    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 6, 6);
+    rectPath.addRoundedRect(this->rect().adjusted(10, 10, -10, -10), 12, 12);
 
     // 画一个黑底
     QPixmap pixmap(this->rect().size());
