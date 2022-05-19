@@ -64,6 +64,7 @@ void ShowMoreLabel::initUi() {
     m_iconLabel->setPalette(pal);
     m_iconLabel->setCursor(QCursor(Qt::PointingHandCursor));
     m_iconLabel->setProperty("useIconHighlightEffect", 0x08);
+    m_iconLabel->setProperty("iconHighlightEffectMode", 1);
 //    m_layout->addWidget(m_loadingIconLabel);
 }
 
