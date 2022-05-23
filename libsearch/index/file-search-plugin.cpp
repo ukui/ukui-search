@@ -302,7 +302,7 @@ QWidget *DirSearchPlugin::detailPage(const ResultInfo &ri)
     } else {
         m_nameLabel->setToolTip("");
     }
-    m_pluginLabel->setText(tr("directory"));
+    m_pluginLabel->setText(tr("Directory"));
 
     m_pathLabel2->setText(m_pathLabel2->fontMetrics().elidedText(m_currentActionKey, Qt::ElideRight, m_pathLabel2->width()));
     m_pathLabel2->setToolTip(m_currentActionKey);
