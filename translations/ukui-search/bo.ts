@@ -58,7 +58,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="75"/>
+        <location filename="../../frontend/mainwindow.cpp" line="76"/>
         <source>Global Search</source>
         <translation type="unfinished"></translation>
     </message>

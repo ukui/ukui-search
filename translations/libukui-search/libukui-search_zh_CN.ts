@@ -83,14 +83,18 @@
         <translation>目录搜索</translation>
     </message>
     <message>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="302"/>
+        <source>Directory</source>
+        <translation>目录</translation>
+    </message>
+    <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="237"/>
         <source>Dir search.</source>
         <translation>目录搜索。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="302"/>
         <source>directory</source>
-        <translation>目录</translation>
+        <translation type="vanished">目录</translation>
     </message>
     <message>
         <location filename="../../libsearch/index/file-search-plugin.cpp" line="339"/>
@@ -313,12 +317,12 @@
 <context>
     <name>UkuiSearch::SearchManager</name>
     <message>
-        <location filename="../../libsearch/index/search-manager.cpp" line="67"/>
+        <location filename="../../libsearch/index/search-manager.cpp" line="68"/>
         <source>Path:</source>
         <translation>路径：</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/search-manager.cpp" line="68"/>
+        <location filename="../../libsearch/index/search-manager.cpp" line="69"/>
         <source>Modified time:</source>
         <translation>修改时间：</translation>
     </message>

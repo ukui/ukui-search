@@ -25,26 +25,26 @@ UkuiSearchGui::UkuiSearchGui(int &argc, char *argv[], const QString &application
 
 
         //load translations.
-        QTranslator translator;
+        QTranslator *translator = new QTranslator(this);
         try {
-            if(! translator.load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw - 1;
-            this->installTranslator(&translator);
+            if(! translator->load("/usr/share/ukui-search/translations/" + QLocale::system().name())) throw - 1;
+            this->installTranslator(translator);
         } catch(...) {
             qDebug() << "Load translations file" << QLocale() << "failed!";
         }
 
-        QTranslator qt_translator;
+        QTranslator *qt_translator = new QTranslator(this);
         try {
-            if(! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
-            this->installTranslator(&qt_translator);
+            if(! qt_translator->load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
+            this->installTranslator(qt_translator);
         } catch(...) {
             qDebug() << "Load translations file" << QLocale() << "failed!";
         }
 
-        QTranslator lib_translator;
+        QTranslator *lib_translator = new QTranslator(this);
         try {
-            if(! lib_translator.load("/usr/share/ukui-search/translations/libukui-search_" + QLocale::system().name())) throw - 1;
-            this->installTranslator(&lib_translator);
+            if(! lib_translator->load("/usr/share/ukui-search/translations/libukui-search_" + QLocale::system().name())) throw - 1;
+            this->installTranslator(lib_translator);
         } catch(...) {
             qDebug() << "Load translations file" << QLocale() << "failed!";
         }
