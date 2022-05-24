@@ -63,6 +63,9 @@ QVariant SearchResultModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole: {
         return m_item->m_result_info_list.at(index.row()).name;
     }
+    case Qt::ToolTipRole: {
+        return m_item->m_result_info_list.at(index.row()).name;
+    }
     default:
         return QVariant();
     }
