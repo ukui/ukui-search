@@ -35,7 +35,7 @@ void FileReader::getTextContent(QString path, QString &textContent, QString &suf
         FileUtils::getPptxTextContent(path, textContent);
     } else if (suffix == "xlsx") {
         FileUtils::getXlsxTextContent(path, textContent);
-    } else if (strsfx == "txt" or strsfx == "html") {
+    } else if (suffix == "txt" or suffix == "html") {
         FileUtils::getTxtContent(path, textContent);
     } else if (suffix == "doc" || suffix == "dot" || suffix == "wps" || suffix == "ppt" ||
             suffix == "pps" || suffix == "dps" || suffix == "et" || suffix == "xls") {
@@ -45,6 +45,22 @@ void FileReader::getTextContent(QString path, QString &textContent, QString &suf
         FileUtils::getPdfTextContent(path, textContent);
     } else if (true == targetPhotographTypeMap[suffix]){
         OcrObject::getInstance()->getTxtContent(path, textContent);
+    } else if (suffix == "uof") {
+        QString mimeName = FileUtils::getMimetype(path).name();
+        if (mimeName == "application/xml" || mimeName == "application/uof") {
+            FileUtils::getUOFTextContent(path, textContent);
+
+        } else if (mimeName == "application/x-ole-storage") {
+            //uof的ppt文档不支持修改母版。一旦进行这些操作，uof文档可能会被wps存为doc文件
+            KBinaryParser searchdata;
+            searchdata.RunParser(path, textContent);
+        }
+
+    } else if (suffix == "uot" || suffix == "uos" || suffix == "uop") {
+        FileUtils::getUOF2TextContent(path, textContent);
+
+    } else if (suffix == "ofd") {
+        FileUtils::getOFDTextContent(path, textContent);
     }
     return;
 }

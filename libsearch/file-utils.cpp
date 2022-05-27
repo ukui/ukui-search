@@ -938,6 +938,12 @@ bool FileUtils::isEncrypedOrUnreadable(QString path)
         if (strsfx == "docx" || strsfx == "pptx" || strsfx == "xlsx") {
 
             return FileUtils::isOpenXMLFileEncrypted(path);
+        } else if (strsfx == "uot" || strsfx == "uos" || strsfx == "uop") {
+            return false;
+
+        } else if (strsfx == "ofd") {
+            return false;
+
         } else {
             return true;
         }
@@ -951,7 +957,7 @@ bool FileUtils::isEncrypedOrUnreadable(QString path)
         return true;
     } else if(type.inherits("application/msword") || type.name() == "application/x-ole-storage") {
         if(strsfx == "doc" || strsfx == "dot" || strsfx == "wps" || strsfx == "ppt" ||
-                strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls") {
+                strsfx == "pps" || strsfx == "dps" || strsfx == "et" || strsfx == "xls" || strsfx == "uof") {
             return false;
         }
         return true;
@@ -959,6 +965,13 @@ bool FileUtils::isEncrypedOrUnreadable(QString path)
         if(strsfx == "pdf")
             return false;
         return true;
+
+    } else if(name == "application/xml" || name == "application/uof") {
+        if(strsfx == "uof") {
+            return false;
+        }
+        return true;
+
     } else {
         qWarning() << "Unsupport format:[" << path << "][" << type.name() << "]";
         return true;
@@ -1047,4 +1060,160 @@ QString FileUtils::wrapData(QLabel *p_label, const QString &text)
     }
 //    p_label->setText(wrapText);
     return wrapText;
+}
+
+/**
+ * uof1.0解析
+ * 参考规范：GB/T 20916-2007
+ * 1.文字处理
+ * 2.电子表格
+ * 3.演示文稿
+ * ppt的内容存放在对象集中，
+ * 可以通过演示文稿-主体-幻灯片集-幻灯片下的锚点属性获取引用了哪些内容：
+ * <uof:锚点 uof:图形引用="OBJ16"/>
+ * 目标：文本串
+ */
+void FileUtils::getUOFTextContent(QString &path, QString &textContent)
+{
+    QFileInfo info(path);
+    if (!info.exists() || info.isDir()) {
+        return;
+    }
+
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QDomDocument doc;
+    if (!doc.setContent(&file)) {
+        file.close();
+        return;
+    }
+    file.close();
+
+    bool isPDF = false;
+    QDomElement rootElem = doc.documentElement();
+    QDomNode node = rootElem.firstChild();
+    while (!node.isNull()) {
+        QDomElement e = node.toElement();
+        if (!e.isNull() && e.tagName() == "uof:演示文稿") {
+            isPDF = true;
+            break;
+        }
+        node = node.nextSibling();
+    }
+
+    //单独处理pdf文档
+    if (isPDF) {
+        qDebug() << path << "is PDF";
+        return;
+    }
+
+    file.open(QIODevice::ReadOnly);
+    QXmlStreamReader reader(&file);
+    while (!reader.atEnd()) {
+        //适用于文字处理与电子表格
+        if (reader.readNextStartElement() && reader.name().toString() == "文本串") {
+            textContent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+            if (textContent.length() >= MAX_CONTENT_LENGTH / 3) {
+                break;
+            }
+        }
+    }
+
+    file.close();
+}
+
+/**
+ * uof2.0解析
+ * @brief 参考规范文档 https://www.doc88.com/p-9089133923912.html 或 GJB/Z 165-2012
+ * ppt文档的内容存放在graphics.xml中，需要先解析content中的引用再解析graphics内容
+ * @param path
+ * @param textContent
+ */
+void FileUtils::getUOF2TextContent(QString &path, QString &textContent)
+{
+    QFileInfo info = QFileInfo(path);
+    if (!info.exists() || info.isDir())
+        return;
+
+    QuaZip file(path);
+    if (!file.open(QuaZip::mdUnzip))
+        return;
+
+    if (!file.setCurrentFile("content.xml")) {
+        return;
+    }
+
+    QuaZipFile fileR(&file);
+    if (!fileR.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QXmlStreamReader reader(&fileR);
+
+    while (!reader.atEnd()) {
+        if (reader.readNextStartElement() && reader.name().toString() == "文本串_415B") {
+            textContent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+            if (textContent.length() >= MAX_CONTENT_LENGTH / 3) {
+                break;
+            }
+        }
+    }
+
+    fileR.close();
+    file.close();
+}
+
+/**
+ * OFD文件解析
+ * @brief 参考： GB/T 33190-2016
+ * @param path
+ * @param textContent
+ */
+void FileUtils::getOFDTextContent(QString &path, QString &textContent)
+{
+    QFileInfo info = QFileInfo(path);
+    if (!info.exists() || info.isDir())
+        return;
+
+    QuaZip zipfile(path);
+    if (!zipfile.open(QuaZip::mdUnzip))
+        return;
+
+    // GB/T 33190-2016规范定义可以存在多个Doc_x目录，暂时只取第一个目录的内容
+    QString prefix("Doc_0/Pages/");
+    QStringList fileList;
+    for (const auto &file: zipfile.getFileNameList()) {
+        if (file.startsWith(prefix)) {
+            fileList << file;
+        }
+    }
+
+    for (int i = 0; i < fileList.count(); ++i) {
+        QString filename = prefix + "Page_" + QString::number(i) + "/Content.xml";
+        if (!zipfile.setCurrentFile(filename)) {
+            continue;
+        }
+
+        QuaZipFile fileR(&zipfile);
+        fileR.open(QIODevice::ReadOnly);
+        QXmlStreamReader reader(&fileR);
+
+        while (!reader.atEnd()) {
+            if (reader.readNextStartElement() && reader.name().toString() == "TextCode") {
+                textContent.append(reader.readElementText().replace("\n", "").replace("\r", " "));
+                if (textContent.length() >= MAX_CONTENT_LENGTH / 3) {
+                    fileR.close();
+                    zipfile.close();
+                    return;
+                }
+            }
+        }
+
+        fileR.close();
+    }
+
+    zipfile.close();
 }
