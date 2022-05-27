@@ -63,7 +63,7 @@ public:
         return false;
     }
 
-    bool isMultiTone(string &word) {
+    bool isMultiTone(const string &word) {
         if (qmap_chinese2pinyin.contains(QString::fromStdString(word)))
             return true;
 //        if (map_chinese2pinyin.contains(word))

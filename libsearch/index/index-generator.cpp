@@ -414,15 +414,15 @@ Document IndexGenerator::GenerateContentDocument(const QString &path) {
 //    构造文本索引的document
     QString content;
     QStringList tmp;
-    QVector<SKeyWord> term;
-    SKeyWord skw;
+    std::vector<KeyWord> term;
+    KeyWord skw;
     Document doc;
     QString uniqueterm;
     QString upTerm;
     QString suffix;
     FileReader::getTextContent(path, content, suffix);
 
-    term = ChineseSegmentation::getInstance()->callSegement(content.toStdString());
+    term = ChineseSegmentation::getInstance()->callSegment(content.toStdString());
 //    QStringList  term = content.split("");
 
     doc.setData(content);
