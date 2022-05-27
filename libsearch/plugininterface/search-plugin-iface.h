@@ -1,6 +1,7 @@
 #ifndef SEARCHPLUGINIFACE_H
 #define SEARCHPLUGINIFACE_H
 #define SearchPluginIface_iid "org.ukui.ukui-search.plugin-iface.SearchPluginInterface"
+#define SEARCH_PLUGIN_IFACE_VERSION "1.1.0"
 
 #include <QString>
 #include <QIcon>

@@ -31,9 +31,20 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
     Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files)) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
         // version check
+        QString type = pluginLoader.metaData().value("MetaData").toObject().value("type").toString();
         QString version = pluginLoader.metaData().value("MetaData").toObject().value("version").toString();
-        if (version != VERSION) {
-            qWarning() << "Plugin version check failed:" << fileName << "version," << "iface version : " << VERSION;
+        if(type == "SEARCH_PLUGIN") {
+            if (version != SEARCH_PLUGIN_IFACE_VERSION) {
+                qWarning() << "SEARCH_PLUGIN version check failed:" << fileName << "version:" << version << "iface version : " << SEARCH_PLUGIN_IFACE_VERSION;
+                continue;
+            }
+        } else if(type == "SEARCH_TASK_PLUGIN") {
+            if (version != SEARCH_TASK_PLUGIN_IFACE_VERSION) {
+                qWarning() << "SEARCH_TASK_PLUGIN_IFACE_VERSION version check failed:" << fileName << "version:" << version << "iface version : " << SEARCH_TASK_PLUGIN_IFACE_VERSION;
+                continue;
+            }
+        } else {
+            qWarning() << "Unsupport plugin:" << fileName << "type:" << type;
             continue;
         }
 

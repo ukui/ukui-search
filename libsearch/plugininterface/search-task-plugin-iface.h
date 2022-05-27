@@ -1,6 +1,7 @@
 #ifndef SEARCHTASKPLUGINIFACE_H
 #define SEARCHTASKPLUGINIFACE_H
 #define SearchTaskPluginIface_iid "org.ukui.ukui-search.plugin-iface.SearchTaskPluginIface"
+#define SEARCH_TASK_PLUGIN_IFACE_VERSION "1.0.0"
 
 #include <QObject>
 #include <QtPlugin>

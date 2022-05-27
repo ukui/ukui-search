@@ -2,7 +2,7 @@ QT       += core gui dbus  KWindowSystem xml x11extras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-VERSION = 1.0.0
+VERSION = 2.2.3
 DEFINES += VERSION='\\"$${VERSION}\\"'
 TARGET = ukui-search
 TEMPLATE = app
