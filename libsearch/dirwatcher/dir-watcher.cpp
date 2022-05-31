@@ -14,6 +14,9 @@ DirWatcher::DirWatcher(QObject *parent) : QObject(parent)
     if (!m_dbusInterface->isValid()) {
         qCritical() << "Create privateDirWatcher Interface Failed Because: " << QDBusConnection::sessionBus().lastError();
         return;
+    } else {
+        connect(m_dbusInterface, SIGNAL(appendIndexItem(QString, QStringList)), this, SLOT(sendAppendSignal(QString, QStringList)));
+        connect(m_dbusInterface, SIGNAL(removeIndexItem(QString)), this, SLOT(sendRemoveSignal(QString)));
     }
 }
 
@@ -102,4 +105,14 @@ void DirWatcher::removeIndexableListItem(const QString &path)
     if (!reply.isValid()) {
         qCritical() << "removeIndexableListItem call filed!";
     }
+}
+
+void DirWatcher::sendAppendSignal(const QString &path, const QStringList &blockList)
+{
+    Q_EMIT this->appendIndexItem(path, blockList);
+}
+
+void DirWatcher::sendRemoveSignal(const QString &path)
+{
+    Q_EMIT this->removeIndexItem(path);
 }

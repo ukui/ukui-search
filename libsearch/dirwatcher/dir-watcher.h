@@ -24,7 +24,11 @@ public Q_SLOTS:
 
     void appendIndexableListItem(const QString &path);
     void removeIndexableListItem(const QString &path);
-
+    void sendAppendSignal(const QString &path, const QStringList &blockList);
+    void sendRemoveSignal(const QString&path);
+Q_SIGNALS:
+    void appendIndexItem(const QString&, const QStringList&);
+    void removeIndexItem(const QString&);
 private:
     DirWatcher(QObject *parent = nullptr);
     ~DirWatcher() = default;
