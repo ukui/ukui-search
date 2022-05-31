@@ -10,6 +10,7 @@
 
 #define CURRENT_INDEXABLE_DIR_SETTINGS QDir::homePath() + "/.config/org.ukui/ukui-search/ukui-search-current-indexable-dir.conf"
 #define INDEXABLE_DIR_VALUE "IndexableDir"
+#define DEFAULT_INDEXABLE_DIR QDir::homePath()
 
 static std::once_flag flag;
 static DirWatcher *global_intance = nullptr;
@@ -18,6 +19,14 @@ QMutex DirWatcher::s_mutex;
 DirWatcher::DirWatcher(QObject *parent) : QObject(parent)
 {
     m_qSettings = new QSettings(CURRENT_INDEXABLE_DIR_SETTINGS, QSettings::IniFormat);
+    this->currentIndexableDir();
+    if (m_indexableDirList.isEmpty()) {
+        qDebug() << QString("use the path: %1 as default indexable dir.").arg(DEFAULT_INDEXABLE_DIR);
+        m_qSettings->beginGroup(INDEXABLE_DIR_VALUE);
+        m_qSettings->setValue(INDEXABLE_DIR_VALUE, DEFAULT_INDEXABLE_DIR);
+        m_qSettings->endGroup();
+    }
+
     initDiskWatcher();
     initData();
     m_adaptor = new DirWatcherAdaptor(this);
@@ -94,6 +103,12 @@ void DirWatcher::handleIndexItemAppend(const QString &path, QStringList &blackLi
 
 void DirWatcher::handleIndexItemRemove(const QString &path)
 {
+    this->currentIndexableDir();
+    QMutexLocker locker(&s_mutex);
+    if (!m_indexableDirList.contains(path)) {
+        qWarning() << QString("The path: %1 is not indexed").arg(path);
+        return;
+    }
     m_indexableDirList.removeAll(path);
     m_qSettings->beginGroup(INDEXABLE_DIR_VALUE);
     m_qSettings->setValue(INDEXABLE_DIR_VALUE, m_indexableDirList);
@@ -264,14 +279,14 @@ void DirWatcher::appendIndexableListItem(const QString &path)
     this->currentIndexableDir();
     qDebug() << "current indexable dirs:" << m_indexableDirList;
 
+    QStringList blackList;
+    QMutexLocker locker(&s_mutex);
+
     //根目录特殊处理
     if (path == "/") {
         this->handleIndexItemAppend(path, m_blackListOfIndex);
         return;
     }
-
-    QStringList blackList;
-    QMutexLocker locker(&s_mutex);
 
     //处理要添加索引的路径与索引黑名单中路径为父子关系的情况
     for (const QString& blackListPath : m_blackListOfIndex) {
@@ -389,7 +404,6 @@ void DirWatcher::appendIndexableListItem(const QString &path)
 
 void DirWatcher::removeIndexableListItem(const QString &path)
 {
-    this->currentIndexableDir();
     this->handleIndexItemRemove(path);
     Q_EMIT this->removeIndexItem(path);
 }
@@ -442,7 +456,8 @@ void DirWatcher::initData()
 
     GList *list = g_volume_monitor_get_volumes(m_volumeMonitor);
     if (!list) {
-        qDebug() << "Error in glist!!!";
+        qDebug() << "Fail to init glist of volume monitor!";
+        handleDisk();
         return;
     }
     for (guint i = 0; i < g_list_length(list); i++) {
@@ -480,6 +495,7 @@ void DirWatcher::initDiskWatcher()
 
     m_volumeMonitor = g_volume_monitor_get();
     if (!m_volumeMonitor) {
+        qDebug() << "Fail to init volume monitor";
         return;
     }
     m_mountAddHandle = g_signal_connect(m_volumeMonitor, "mount-added", G_CALLBACK(mountAddCallback), this);
