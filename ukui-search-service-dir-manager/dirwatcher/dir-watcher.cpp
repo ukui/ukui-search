@@ -247,10 +247,18 @@ void DirWatcher::mountRemoveCallback(GVolumeMonitor *monitor, GMount *gmount, Di
     if (removedUri.isEmpty()) {
         return;
     }
-    //处理uri转码,处理子卷情况
+    //处理uri转码
     if (removedUri.startsWith("file:///")) {
         QString removedMountPoint = g_filename_from_uri(removedUri.toUtf8().constData(), nullptr, nullptr);
         pThis->m_blackListOfIndex.removeAll(removedMountPoint);
+        QStringList indexableDirList = pThis->currentIndexableDir();
+        //卸载目录下存在已索引目录时，通知索引服务删除对应目录
+        for (const QString &indexableDir : indexableDirList) {
+            if (indexableDir.startsWith(removedMountPoint + "/") or !indexableDir.compare(removedMountPoint)) {
+                Q_EMIT pThis->removeIndexItem(indexableDir);
+            }
+        }
+        //处理子卷情况
         for (auto t = pThis->m_infoOfSubvolume.constBegin(); t != pThis->m_infoOfSubvolume.constEnd(); t++) {
             if (removedMountPoint.startsWith(t.value() + "/")) {
                 pThis->m_blackListOfIndex.removeAll(removedMountPoint.replace(t.value(), t.key()));
