@@ -32,7 +32,7 @@ public:
     void firstTraverse(QStringList pathList = {}, QStringList blockList = {});
     void stopWatch();
     void addIndexPath(const QString path, const QStringList blockList);
-    void removeIndexPath(QString &path);
+    void removeIndexPath(const QString &path, bool fileIndexEnable);
 protected:
     void run() override;
 
@@ -49,7 +49,7 @@ private:
     QSocketNotifier* m_notifier = nullptr;
     QSharedMemory *m_sharedMemory = nullptr;
     QMap<int, QString> m_pathMap;
-    QMutex m_mutex;
+    QMutex m_pathMapLock;
     QSystemSemaphore m_semaphore;
 
 };

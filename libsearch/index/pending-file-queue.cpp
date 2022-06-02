@@ -66,6 +66,7 @@ PendingFileQueue::~PendingFileQueue()
         delete m_minProcessTimer;
         m_minProcessTimer = nullptr;
     }
+    global_instance_pending_file_queue = nullptr;
 
     IndexGenerator::getInstance()->~IndexGenerator();
 }

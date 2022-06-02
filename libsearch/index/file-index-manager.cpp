@@ -53,26 +53,30 @@ void FileIndexManager::initIndexPathSetFunction()
         return;
     }
 
-    QDBusInterface *interface = new QDBusInterface("com.ukui.search.fileindex.service",
-                                                   "/org/ukui/search/privateDirWatcher",
-                                                   "org.ukui.search.fileindex");
+    connect(DirWatcher::getDirWatcher(), &DirWatcher::appendIndexItem, this, &FileIndexManager::handleIndexPathAppend, Qt::QueuedConnection);
+    connect(DirWatcher::getDirWatcher(), &DirWatcher::removeIndexItem, this, &FileIndexManager::handleRemovePathAppend, Qt::QueuedConnection);
 
-    if (interface->isValid()) {
-        connect(interface, SIGNAL(appendIndexItem(QString, QStringList)), this, SLOT(handleIndexPathAppend(QString, QStringList)), Qt::QueuedConnection);
-    }
-//    connect(DirWatcher::getDirWatcher(), &DirWatcher::appendIndexItem, this, &FileIndexManager::handleIndexPathAppend, Qt::QueuedConnection);
 
     DirWatcher::getDirWatcher()->initDbusService();
 }
 
 void FileIndexManager::handleIndexPathAppend(const QString path, const QStringList blockList)
 {
-    qDebug() << "I'm in handleIndexPathAppend";
-    qDebug() << "path" << path << "blockList" << blockList;
+    qDebug() << "Add Index path:" << path << " blockList:" << blockList;
     if(!m_searchSettings->get(SEARCH_METHOD_KEY).toBool()) {
         m_searchSettings->set(SEARCH_METHOD_KEY, true);
     } else {
         m_fi->addIndexPath(path, blockList);
         m_iw->addIndexPath(path, blockList);
+    }
+}
+
+void FileIndexManager::handleRemovePathAppend(const QString path)
+{
+    qDebug() << "Remove index path:" << path;
+    if(m_searchSettings->get(SEARCH_METHOD_KEY).toBool()) {
+        m_iw->removeIndexPath(path, true);
+    } else {
+        m_iw->removeIndexPath(path, false);
     }
 }

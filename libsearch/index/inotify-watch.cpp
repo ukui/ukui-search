@@ -1,8 +1,9 @@
-#include "inotify-watch.h"
-#include "dir-watcher.h"
+﻿#include "inotify-watch.h"
+#include <QMutexLocker>
 #include <sys/ioctl.h>
 #include <malloc.h>
 #include <errno.h>
+#include "dir-watcher.h"
 using namespace UkuiSearch;
 static InotifyWatch* global_instance_InotifyWatch = nullptr;
 
@@ -98,6 +99,7 @@ void InotifyWatch::work(const QFileInfo &info)
 
 void InotifyWatch::firstTraverse(QStringList pathList, QStringList blockList)
 {
+    QMutexLocker locker(&m_pathMapLock);
     if(pathList.isEmpty()) {
         pathList = m_pathList;
     }
@@ -151,9 +153,27 @@ void InotifyWatch::addIndexPath(const QString path, const QStringList blockList)
     this->firstTraverse(QStringList() << path, blockList);
 }
 
-void InotifyWatch::removeIndexPath(QString &path)
+void InotifyWatch::removeIndexPath(const QString &path, bool fileIndexEnable)
 {
-
+    QMutexLocker locker(&m_pathMapLock);
+    if(fileIndexEnable) {
+        removeWatch(path, true);
+    }else {
+        for(QMap<int, QString>::Iterator i = m_pathMap.begin(); i != m_pathMap.end();) {
+            if(FileUtils::isOrUnder(i.value(), path)) {
+                qDebug() << "remove path: " << i.value();
+                PendingFile f(i.value());
+                f.setDeleted();
+                f.setIsDir();
+                PendingFileQueue::getInstance()->enqueue(f);
+                m_pathMap.erase(i++);
+            } else {
+                i++;
+            }
+        }
+    }
+    PendingFileQueue::getInstance()->forceFinish();
+    PendingFileQueue::getInstance()->~PendingFileQueue();
 }
 
 void InotifyWatch::stopWatch()
@@ -323,7 +343,9 @@ void InotifyWatch::slotEvent(char *buf, ssize_t len)
                 in >> pathMap;
                 m_sharedMemory->unlock();
                 m_sharedMemory->detach();
+                m_pathMapLock.lock();
                 m_pathMap = pathMap;
+                m_pathMapLock.unlock();
             }
         } else {
             assert(false);
