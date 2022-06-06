@@ -374,6 +374,7 @@ void ResultArea::initUi()
     pal.setColor(QPalette::Window, RESULT_BACKGROUND_COLOR);
     scroll_bar_pal.setColor(QPalette::Base, RESULT_BACKGROUND_COLOR);
     this->verticalScrollBar()->setPalette(scroll_bar_pal);
+    this->verticalScrollBar()->setProperty("drawScrollBarGroove", false);
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
