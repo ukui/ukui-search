@@ -16,6 +16,7 @@ public:
     void initIndexPathSetFunction();
 private Q_SLOTS:
     void handleIndexPathAppend(const QString path, const QStringList blockList);
+    void handleRemovePathAppend(const QString path);
 private:
     FileIndexManager(QObject *parent = nullptr);
     FirstIndex *m_fi;
