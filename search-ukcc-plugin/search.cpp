@@ -213,7 +213,8 @@ void Search::initUi()
 //                                       border-radius: 4px;}").arg(stringColor));
 
     m_addBlockDirWidget->setProperty("useButtonPalette", true);
-    m_addBlockDirWidget->setStyleSheet("QPushButton:!checked{background: palette(base);}");
+//    m_addBlockDirWidget->setStyleSheet("QPushButton:!checked{background: palette(base);}");
+    m_addBlockDirWidget->setFlat(true);
 
     m_addBlockDirIcon = new QLabel(m_addBlockDirWidget);
     m_addBlockDirIcon->setPixmap(QIcon("/usr/share/ukui-search/search-ukcc-plugin/image/add.svg").pixmap(12, 12));
