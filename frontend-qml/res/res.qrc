@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/ukui-down-symbolic.svg</file>
+        <file>icons/ukui-up-symbolic.svg</file>
+        <file>icons/desktop.png</file>
+        <file>qml/LineEdit.qml</file>
+        <file>qml/ResultView.qml</file>
+        <file>qml/Plugin.qml</file>
+        <file>qml/PluginInfo.qml</file>
+        <file>qml/ResultItem.qml</file>
+        <file>qml/Details.qml</file>
+    </qresource>
+</RCC>

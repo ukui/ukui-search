@@ -17,20 +17,15 @@ LIBS += -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
 include(../libsearch/libukui-search-headers.pri)
 include(../xatom/xatom.pri)
 include(model/model.pri)
+include(main/main.pri)
+include(items/items.pri)
 
-
-HEADERS += \
-    main-view.h \
-    search-line-edit-view.h \
-    search-result-page-view.h
+HEADERS +=
 
 SOURCES += \
-        main-view.cpp \
-        main.cpp \
-        search-line-edit-view.cpp \
-        search-result-page-view.cpp
+        main.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += res/res.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

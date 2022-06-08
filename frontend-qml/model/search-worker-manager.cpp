@@ -76,9 +76,12 @@ void SearchWorker::run()
     }
 }
 
-SearchWorkerManager::SearchWorkerManager(QObject *parent) : QObject(parent)
+SearchWorkerManager::SearchWorkerManager(QObject *parent) : QObject(parent), ModelDataProvider(parent)
 {
-    for(QString id : SearchPluginManager::getInstance()->getPluginIds()) {
+    //注册元类型用于信号与槽传递自定义类型数据
+    qRegisterMetaType<SearchPluginIface::ResultInfo>("SearchPluginIface::ResultInfo");
+
+    for(const QString& id : SearchPluginManager::getInstance()->getPluginIds()) {
         registerWorker(id);
     }
 }
@@ -86,7 +89,8 @@ SearchWorkerManager::SearchWorkerManager(QObject *parent) : QObject(parent)
 void SearchWorkerManager::registerWorker(QString pluginId)
 {
     m_searchWorkers[pluginId] = new SearchWorker(pluginId);
-    connect(m_searchWorkers.value(pluginId), &SearchWorker::gotResultInfo, this, &SearchWorkerManager::gotResultInfo);
+    connect(m_searchWorkers.value(pluginId), &SearchWorker::gotResultInfo,
+            this, &SearchWorkerManager::processData, Qt::QueuedConnection);
     Q_EMIT newSearchWorkerEnable(pluginId);
 }
 
@@ -108,9 +112,17 @@ QStringList SearchWorkerManager::getPluginIds()
 
 void SearchWorkerManager::startSearch(const QString &keyword)
 {
+    if (keyword.isEmpty()) {
+        return;
+    }
 
-    for(auto i : m_searchWorkers.values()) {
-       i->startSearch(keyword);
+    stopSearch();
+    resetKeywords();
+
+    QMap<QString, SearchWorker*>::const_iterator iterator = m_searchWorkers.constBegin();
+    while (iterator != m_searchWorkers.constEnd()) {
+        (*iterator)->startSearch(keyword);
+        ++iterator;
     }
 }
 
@@ -119,8 +131,29 @@ void SearchWorkerManager::startSearch(const QString &keyword)
  */
 void SearchWorkerManager::stopSearch()
 {
-    for(auto i : m_searchWorkers.values()) {
-       i->stop();
+    QMap<QString, SearchWorker*>::const_iterator iterator = m_searchWorkers.constBegin();
+    while (iterator != m_searchWorkers.constEnd()) {
+        (*iterator)->stop();
+        ++iterator;
+    }
+}
+
+const QString SearchWorkerManager::id()
+{
+    return "plugin_data";
+}
+
+void SearchWorkerManager::processData(const SearchPluginIface::ResultInfo& data, const QString& pluginId)
+{
+    sendData(data, pluginId);
+}
+
+SearchWorkerManager::~SearchWorkerManager()
+{
+    QMap<QString, SearchWorker*>::const_iterator iterator = m_searchWorkers.constBegin();
+    while (iterator != m_searchWorkers.constEnd()) {
+        (*iterator)->deleteLater();
+        ++iterator;
     }
 }
 
