@@ -26,14 +26,15 @@
 #include <QTimer>
 #include <QDebug>
 #include "search-plugin-manager.h"
+#include "model-data-provider.h"
 
 namespace UkuiSearch {
 
 class SearchWorker : public QThread {
     Q_OBJECT
 public:
-    SearchWorker(const QString &pluginId);
-    ~SearchWorker();
+    explicit SearchWorker(const QString &pluginId);
+    ~SearchWorker() override;
     void operator=(SearchWorker&) = delete;
     void startSearch(QString keyWord = QString());
     void stop();
@@ -50,27 +51,28 @@ Q_SIGNALS:
 
 };
 
-class SearchWorkerManager : public QObject
+class SearchWorkerManager : public QObject, public ModelDataProvider
 {
     Q_OBJECT
 public:
     explicit SearchWorkerManager(QObject *parent = nullptr);
-    ~SearchWorkerManager() = default;
+    ~SearchWorkerManager() override;
 
-public:
+    const QString id() override;
+
     void registerWorker(QString pluginId);
     bool unregisterWorker(const QString &pluginId);
     QStringList getPluginIds();
+
 public Q_SLOTS:
-    void startSearch(const QString &keyword);
-    void stopSearch();
+    void processData(const SearchPluginIface::ResultInfo&, const QString&);
+    void startSearch(const QString &keyword) override;
+    void stopSearch() override;
 
 private:
-    void initConnections();
     QMap<QString, SearchWorker*> m_searchWorkers;
 
 Q_SIGNALS:
-    void gotResultInfo(const SearchPluginIface::ResultInfo&, const QString&);
     void newSearchWorkerEnable(QString &pluginId);
 };
 }

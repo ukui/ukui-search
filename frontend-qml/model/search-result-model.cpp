@@ -1,199 +1,130 @@
-/*
- *
- * Copyright (C) 2020, KylinSoft Co., Ltd.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Authors: zhangjiaping <zhangjiaping@kylinos.cn>
- *
- */
+//
+// Created by hxf on 22-5-26.
+//
+
 #include "search-result-model.h"
+
+#include <QDebug>
+#include <QtMath>
+
 using namespace UkuiSearch;
 
-SearchResultModel::SearchResultModel(QObject *parent) : QAbstractItemModel(parent)
+SearchResultModel::SearchResultModel(QObject *parent) : QAbstractListModel(parent)
 {
-    m_searchWokerManager = new SearchWorkerManager(this);
-    for(QString id : m_searchWokerManager->getPluginIds()) {
-        m_cache.insert(id, new SearchResultCache(id));
-    }
-    m_timer = new QTimer(this);
-    m_timer->setInterval(500);
-    connect(this, &SearchResultModel::stopSearch, m_searchWokerManager, &SearchWorkerManager::stopSearch);
-    connect(m_searchWokerManager, &SearchWorkerManager::gotResultInfo, this, &SearchResultModel::appendInfo);
+    m_roleNamesHash[SearchResultModel::NameRole] = "name";
+    m_roleNamesHash[SearchResultModel::IconRole] = "icon";
+    m_roleNamesHash[SearchResultModel::IconNameRole] = "iconName";
+    m_roleNamesHash[SearchResultModel::DescriptionRole] = "description";
+    m_roleNamesHash[Qt::ToolTipRole] = "tooltip";
 }
 
-QModelIndex SearchResultModel::index(int row, int column, const QModelIndex &parent) const
+int SearchResultModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent);
-    return createIndex(row, column);
-}
+    int rowCount = virtualRowCount();
+    qDebug() << "SearchResultModel::rowCount" << rowCount;
 
-QModelIndex SearchResultModel::parent(const QModelIndex &child) const
-{
-    return QModelIndex();
-}
-
-int SearchResultModel::rowCount(const QModelIndex &index) const
-{
-//    return index.isValid() ? 0 : (m_isExpanded ? m_item->m_resultInfoVector.length() : NUM_LIMIT_SHOWN_DEFAULT);
-    return 0;
-}
-
-int SearchResultModel::columnCount(const QModelIndex &index) const
-{
-    return index.isValid() ? 0 : 1;
+    return rowCount;
 }
 
 QHash<int, QByteArray> SearchResultModel::roleNames() const
 {
-    QHash<int, QByteArray> roles;
-    roles[IconRole] = "icon";
-    roles[DisplayNameRole] = "displayName";
-    return roles;
+    return m_roleNamesHash;
 }
 
 QVariant SearchResultModel::data(const QModelIndex &index, int role) const
 {
-    switch(role) {
-//    case IconRole: {
-//        return m_item ? QVariant() : m_item->m_resultInfoVector.at(index.row()).icon;
-//    }
-//    case DisplayNameRole: {
-//        qDebug() << m_item->m_resultInfoVector.at(index.row()).name;
-//        return m_item ? QVariant() : m_item->m_resultInfoVector.at(index.row()).name;
-//    }
-    default:
-        return QVariant();
+    int row = index.row();
+    int count = virtualRowCount();
+    if (row < 0 || row >= count) {
+        return {};
     }
-    return QVariant();
+
+    switch (role) {
+        case SearchResultModel::NameRole:
+            return m_list.at(row).name;
+
+        case Qt::ToolTipRole:
+            return m_list.at(row).name;
+
+        case SearchResultModel::IconRole:
+            return m_list.at(row).icon;
+
+        case SearchResultModel::IconNameRole:
+            qDebug() << "==============SearchResultModel::IconNameRol=" << m_list.at(row).name << m_list.at(row).icon.name();
+            return m_list.at(row).icon.name();
+
+        case SearchResultModel::DescriptionRole:
+            if (m_list.at(row).description.isEmpty()) {
+                return {""};
+            }
+            return m_list.at(row).description.first().value;
+
+        default:
+            return {};
+    }
 }
 
-void SearchResultModel::appendInfo( SearchPluginIface::ResultInfo resultInfo, QString pluginId)//TODO 代码逻辑可尝试梳理优化
+SearchResultModel::~SearchResultModel()
 {
-//    if (m_item->m_resultInfoVector.length() > 5 //搜索结果大于5个并且搜索结果处于收起状态时只存储数据无需刷新UI
-//            and !m_isExpanded) {
-//        m_item->m_resultInfoVector.append(resultInfo);
-//        return;
-//    }
-//    if (m_item->m_resultInfoVector.length() > 50
-//            and m_isExpanded) {//搜索结果大于50个并且搜索结果处于展开状态时只存储数据并启动定时，500ms刷新一次UI
-//        m_item->m_resultInfoVector.append(resultInfo);
-//        if (!m_timer->isActive()) {
-//            m_timer->start();
-//        }
-//        return;
-//    }
 
-    this->beginResetModel();
-//    m_cache.value(pluginId).m_resultInfoVector.append(resultInfo);
-    this->endResetModel();
 }
 
-void SearchResultModel::startSearch(const QString &keyword, const QStringList &pluginIds)
+void SearchResultModel::insertData(const SearchPluginIface::ResultInfo &data)
 {
-    m_searchWokerManager->startSearch(keyword);
+    int begin = m_list.count();
+    int limit = m_expanded ? m_maxRowCount : m_minRowCount;
+    //如果数据已经超过当前界面允许显示的最大条数后，不再给view发送数据添加信号
+    if (begin < limit) {
+        beginInsertRows(QModelIndex(), begin, begin);
+        m_list.push_back(data);
+        endInsertRows();
+        return;
+    }
+    m_list.push_back(data);
 }
 
-void SearchResultModel::initConnections()
+void SearchResultModel::clear()
 {
+    if (m_list.empty()) {
+        return;
+    }
 
-//    connect(m_timer, &QTimer::timeout, [ = ] () {//500ms刷新一次UI,防止搜索结果数据量过大导致的UI卡顿
-//        Q_EMIT this->itemListChanged(m_item->m_resultInfoVector.length());
-//        m_timer->stop();
-//    });
+    int count = virtualRowCount();
+    qDebug() << "是否展开:" << m_expanded << "删除数量:" << count;
+    //让view以为只删除了他显示的行数
+    beginRemoveRows(QModelIndex(), 0, count);
+    m_list.clear();
+    endRemoveRows();
 }
 
-const SearchPluginIface::ResultInfo &SearchResultModel::getInfo(const QModelIndex &index)
+void SearchResultModel::expand()
 {
-    return SearchPluginIface::ResultInfo{};
+    m_expanded = true;
+    if (m_list.count() <= m_minRowCount) {
+        return;
+    }
+    int insertRows = qMin(m_list.count(), m_maxRowCount);
+    qDebug() << "insert count:" << insertRows;
+
+    beginInsertRows(QModelIndex(), m_minRowCount, insertRows - 1);
+    endInsertRows();
 }
 
-//void SearchResultModel::setExpanded(const bool &is_expanded)
-//{
-//    this->beginResetModel();
-//    m_isExpanded = is_expanded;
-//    this->endResetModel();
-//    Q_EMIT this->itemListChanged(m_item->m_resultInfoVector.length());
-//}
-
-//const bool &SearchResultModel::isExpanded()
-//{
-//    return m_isExpanded;
-//}
-
-/**
- * @brief SearchResultModel::getActions 获取操作列表
- * @param index
- * @return
- */
-QStringList SearchResultModel::getActions(const QModelIndex &index)
+void SearchResultModel::collapse()
 {
-//    if (m_cache.length() > index.row() && index.row() >= 0)
-//        return m_item->m_result_info_list.at(index.row()).actionList;
-    return QStringList();
+    m_expanded = false;
+    if (m_list.count() <= m_minRowCount) {
+        return;
+    }
+
+    int removeRows = qMin(m_list.count(), m_maxRowCount);
+    qDebug() << "removeRows :" << m_minRowCount << removeRows;
+
+    beginRemoveRows(QModelIndex(), m_minRowCount, removeRows - 1);
+    endRemoveRows();
 }
 
-QString SearchResultModel::getKey(const QModelIndex &index)
+int SearchResultModel::virtualRowCount() const
 {
-//    if (m_cache.length() > index.row() && index.row() >= 0)
-//        return m_item->m_result_info_list.at(index.row()).key;
-        return QString();
-}
-
-//void SearchResultModel::setPluginId(QString pluginId)
-//{
-//    m_pluginId = pluginId;
-//    qDebug() << pluginId << "11111";
-//    m_searchWokerManager = new SearchWorkerManager(pluginId);
-//    initConnections();
-//}
-
-//QString SearchResultModel::getPluginId()
-//{
-//    return m_pluginId;
-//}
-
-void SearchResultModel::refresh()
-{
-    this->beginResetModel();
-    this->endResetModel();
-}
-
-SearchResultCache::SearchResultCache()
-{
-}
-
-SearchResultCache::SearchResultCache(QString pluginId) : m_pluginId(pluginId)
-{
-}
-
-int SearchResultCache::length()
-{
-    return m_resultInfoVector.length();
-}
-
-void SearchResultCache::clear()
-{
-    m_resultInfoVector.clear();
-}
-
-void SearchResultCache::setPluginId(const QString &pluginId)
-{
-    m_pluginId = pluginId;
-}
-
-void SearchResultCache::setSectionDisplayName(const QString &sectionDisplayName)
-{
-    m_sectionDisplayName = sectionDisplayName;
+    return m_expanded ? qMin(m_list.count(), m_maxRowCount) : qMin(m_list.count(), m_minRowCount);
 }

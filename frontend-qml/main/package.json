@@ -1,0 +1,32 @@
+
+
+
+"
+{
+  name: ukui-search-plugin,
+  version: 1.0.0,
+  components: {
+    image: {
+      enable: true
+
+    },
+    info: {
+      enable: true,
+      keys: [
+        name
+      ]
+    },
+    data: {
+      enable: true,
+      keys: [
+        path,
+        name
+      ]
+    },
+    action: {
+      enable: true
+    }
+  }
+}
+"
+
