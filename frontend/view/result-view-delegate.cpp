@@ -196,7 +196,8 @@ void ResultItemStyle::drawPrimitive(QStyle::PrimitiveElement element, const QSty
             break;
         }
         default:
-            return QProxyStyle::drawPrimitive(element, option, painter, widget);
+            break;
+//            return QProxyStyle::drawPrimitive(element, option, painter, widget);
         }
 
 }
