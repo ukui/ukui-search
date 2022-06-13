@@ -5,9 +5,12 @@
 #include <QThreadPool>
 #include <QMutex>
 #include <memory>
+#include <QUuid>
 
 #include "data-queue.h"
 #include "search-controller.h"
+#include "search-task-plugin-iface.h"
+
 namespace UkuiSearch {
 class UkuiSearchTaskPrivate : public QObject
 {
@@ -23,23 +26,25 @@ public:
     void setOnlySearchFile(bool onlySearchFile);
     void setOnlySearchDir(bool onlySearchDir);
     void setSearchOnlineApps(bool searchOnlineApps);
-    void initSearchPlugin(SearchType searchType);
+    void initSearchPlugin(SearchType searchType, const QString& customSearchType = QString());
     void clearAllConditions();
     void clearKeyWords();
     void clearSearchDir();
     void clearFileLabel();
     void setPagination(unsigned int first, unsigned int maxResults);
 
-    size_t startSearch(SearchType searchtype, QString customSearchType = QString());
+    size_t startSearch(SearchType searchtype, const QString& customSearchType = QString());
     void stop();
 
 private:
     std::shared_ptr<SearchController> m_searchCotroller = nullptr;
     size_t m_searchId = 0;
     UkuiSearchTask* q = nullptr;
+    QUuid m_uuid;
 
 Q_SIGNALS:
     void searchFinished(size_t searchId);
+    void searchError(size_t searchId, QString msg);
 };
 }
 

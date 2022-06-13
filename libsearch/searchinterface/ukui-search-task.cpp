@@ -7,14 +7,14 @@ UkuiSearchTaskPrivate::UkuiSearchTaskPrivate(UkuiSearchTask *parent)
     : QObject(parent),
       q(parent)
 {
-    m_searchCotroller = std::shared_ptr<SearchController>(new SearchController());
-    connect(SearchTaskPluginManager::getInstance(), &SearchTaskPluginManager::searchFinished, this, &UkuiSearchTaskPrivate::searchFinished);
-    connect(SearchTaskPluginManager::getInstance(), &SearchTaskPluginManager::searchError, q, &UkuiSearchTask::searchError);
+    m_searchCotroller = std::make_shared<SearchController>();
+    m_uuid = QUuid::createUuid();
 }
 
 UkuiSearchTaskPrivate::~UkuiSearchTaskPrivate()
 {
     this->stop();
+    SearchTaskPluginManager::getInstance()->destroyPlugins(m_uuid);
 }
 
 DataQueue<ResultItem> *UkuiSearchTaskPrivate::init()
@@ -56,25 +56,27 @@ void UkuiSearchTaskPrivate::setSearchOnlineApps(bool searchOnlineApps)
 {
 }
 
-void UkuiSearchTaskPrivate::initSearchPlugin(SearchType searchType)
+void UkuiSearchTaskPrivate::initSearchPlugin(SearchType searchType, const QString& customSearchType)
 {
-    SearchTaskPluginManager::getInstance()->initPlugins(searchType);
+    SearchTaskPluginIface *plugin = SearchTaskPluginManager::getInstance()->initPlugins(m_uuid, searchType, customSearchType);
+    if (plugin) {
+        connect(plugin, &SearchTaskPluginIface::searchFinished,this, &UkuiSearchTaskPrivate::searchFinished);
+        connect(plugin, &SearchTaskPluginIface::searchError,this, &UkuiSearchTaskPrivate::searchError);
+    } else {
+        qWarning() << "The plugin has been initialized or the plugin failed to load.";
+    }
 }
 
-size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype, QString customSearchType)
+size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype, const QString& customSearchType)
 {
-
     m_searchId = m_searchCotroller->refreshSearchId();
     if(m_searchCotroller->getDataQueue() == nullptr) {
         qWarning() << "the date queue has not been initialized, you need run init first!";
     }
 
     //plugin manager do async search here
-    if(SearchType::Custom != searchtype) {
-        SearchTaskPluginManager::getInstance()->pluginSearch(searchtype, m_searchCotroller);
-    } else {
-        SearchTaskPluginManager::getInstance()->pluginSearch(customSearchType, m_searchCotroller);
-
+    if (!SearchTaskPluginManager::getInstance()->startSearch(m_uuid, m_searchCotroller, searchtype, customSearchType)) {
+        Q_EMIT searchError(m_searchCotroller->getCurrentSearchId(), tr("Current task uuid error or an unregistered plugin is used!"));
     }
 
     return m_searchId;
@@ -113,6 +115,7 @@ void UkuiSearchTaskPrivate::setPagination(unsigned int first, unsigned int maxRe
 UkuiSearchTask::UkuiSearchTask(QObject *parent) : QObject(parent), d(new UkuiSearchTaskPrivate(this))
 {
     connect(d, &UkuiSearchTaskPrivate::searchFinished, this, &UkuiSearchTask::searchFinished);
+    connect(d, &UkuiSearchTaskPrivate::searchError, this, &UkuiSearchTask::searchError);
 }
 
 UkuiSearchTask::~UkuiSearchTask()

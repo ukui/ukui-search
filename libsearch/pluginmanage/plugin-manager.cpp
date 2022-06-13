@@ -64,6 +64,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
         case PluginInterface::PluginType::SearchTaskPlugin: {
             auto p = dynamic_cast<SearchTaskPluginIface*>(plugin);
             SearchTaskPluginManager::getInstance()->registerPlugin(p);
+            SearchTaskPluginManager::getInstance()->registerPluginPath(p->getCustomSearchType(), pluginsDir.absoluteFilePath(fileName));
             break;
         }
         default:

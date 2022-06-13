@@ -112,7 +112,7 @@ void SearchControllerPrivate::finishSearchIdCheck()
 void SearchControllerPrivate::stop()
 {
     m_searchIdMutex.lock();
-    m_searchId = 0;
+    m_searchId += 1;
     m_searchIdMutex.unlock();
 }
 
