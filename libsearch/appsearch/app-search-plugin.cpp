@@ -6,7 +6,7 @@
 using namespace UkuiSearch;
 size_t AppSearchPlugin::uniqueSymbol = 0;
 QMutex  AppSearchPlugin::m_mutex;
-AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent)
+AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent), m_appSearchTask(new UkuiSearchTask(this))
 {
     SearchPluginIface::Actioninfo open { 0, tr("Open")};
     SearchPluginIface::Actioninfo addtoDesktop { 1, tr("Add Shortcut to Desktop")};
@@ -14,10 +14,18 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent)
     SearchPluginIface::Actioninfo install { 0, tr("Install")};
     m_actionInfo_installed << open << addtoDesktop << addtoPanel;
     m_actionInfo_not_installed << install;
-    AppMatch::getAppMatch()->start();
     m_pool.setMaxThreadCount(1);
     m_pool.setExpiryTimeout(1000);
     initDetailPage();
+
+    m_appSearchResults = m_appSearchTask->init();
+    m_appSearchTask->initSearchPlugin(SearchType::Application);
+    m_appSearchTask->setSearchOnlineApps(true);
+    m_appSearchTask->setResultDataType(SearchType::Application, UkuiSearch::ApplicationDesktopPath |
+                                                              UkuiSearch::ApplicationLocalName |
+                                                              UkuiSearch::ApplicationIconName |
+                                                              UkuiSearch::ApplicationDescription |
+                                                              UkuiSearch::IsOnlineApplication);
 }
 
 const QString AppSearchPlugin::name()
@@ -40,7 +48,7 @@ void AppSearchPlugin::KeywordSearch(QString keyword, DataQueue<SearchPluginIface
     m_mutex.lock();
     ++uniqueSymbol;
     m_mutex.unlock();
-    AppSearch *appsearch = new AppSearch(searchResult, keyword, uniqueSymbol);
+    AppSearch *appsearch = new AppSearch(searchResult, m_appSearchResults, m_appSearchTask, keyword, uniqueSymbol);
     m_pool.start(appsearch);
 }
 
@@ -103,7 +111,7 @@ void AppSearchPlugin::openAction(int actionkey, QString key, int type)
 QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
 {
     m_currentActionKey = ri.actionKey;
-    m_iconLabel->setPixmap(ri.icon.pixmap(120, 120));
+    m_iconLabel->setPixmap(ri.icon.isNull() ? QIcon(":/res/icons/desktop.png").pixmap(120, 120) : ri.icon.pixmap(120, 120));
     QFontMetrics fontMetrics = m_nameLabel->fontMetrics();
     QString showname = fontMetrics.elidedText(ri.name, Qt::ElideRight, 215); //当字体长度超过215时显示为省略号
     m_nameLabel->setText(FileUtils::setAllTextBold(showname));
@@ -206,16 +214,6 @@ void AppSearchPlugin::initDetailPage()
     });
 }
 
-//bool AppSearchPlugin::isPreviewEnable(QString key, int type)
-//{
-//    return false;
-//}
-
-//QWidget *AppSearchPlugin::previewPage(QString key, int type, QWidget *parent = nullptr)
-//{
-//    return nullptr;
-//}
-
 bool AppSearchPlugin::launch(const QString &path)
 {
     GDesktopAppInfo * desktopAppInfo = g_desktop_app_info_new_from_filename(path.toLocal8Bit().data());
@@ -275,11 +273,14 @@ bool AppSearchPlugin::installAppAction(const QString & name) {
     }
 }
 
-AppSearch::AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, const QString &keyword, size_t uniqueSymbol)
+AppSearch::AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, DataQueue<ResultItem>* appSearchResults, UkuiSearchTask *appSearchTask, QString keyword, size_t uniqueSymbol)
 {
     this->setAutoDelete(true);
     m_search_result = searchResult;
-    m_keyword = keyword;
+    m_appSearchResults = appSearchResults;
+    m_appSearchTask = appSearchTask;
+    m_appSearchTask->clearKeyWords();
+    m_appSearchTask->addKeyword(keyword);
     m_uniqueSymbol = uniqueSymbol;
 }
 
@@ -289,5 +290,55 @@ AppSearch::~AppSearch()
 
 void AppSearch::run()
 {
-    AppMatch::getAppMatch()->startMatchApp(m_keyword, m_uniqueSymbol, m_search_result);
+    m_appSearchTask->startSearch(SearchType::Application);
+    QTimer timer;
+    timer.setInterval(3000);
+    bool is_empty;
+    while(1) {
+        is_empty = false;
+        if(!m_appSearchResults->isEmpty()) {
+            ResultItem oneResult = m_appSearchResults->dequeue();
+            SearchPluginIface::ResultInfo ri;
+            ri.actionKey = oneResult.getExtral().at(0).toString();
+            ri.name = oneResult.getExtral().at(1).toString();
+            ri.icon = oneResult.getExtral().at(2).value<QIcon>();
+            SearchPluginIface::DescriptionInfo description;
+            description.key = QString(tr("Application Description:"));
+            description.value = oneResult.getExtral().at(3).toString();
+            ri.description.append(description);
+            ri.type = oneResult.getExtral().at(4).toInt();
+            if (isUniqueSymbolChanged()) {
+                m_appSearchResults->clear();
+                break;
+            }
+            m_search_result->enqueue(ri);
+        } else {
+            is_empty = true;
+        }
+        if (isUniqueSymbolChanged()) {
+            break;
+        }
+        if(timer.isActive() && timer.remainingTime() < 0.01) {
+            qWarning()<<"-------------->stopped by itself";
+            break;
+        }
+        if(is_empty && !timer.isActive()) {
+            timer.start();
+        } else if(!is_empty) {
+            timer.stop();
+        } else {
+            QThread::msleep(100);
+        }
+    }
+}
+
+bool AppSearch::isUniqueSymbolChanged()
+{
+    QMutexLocker locker(&AppSearchPlugin::m_mutex);
+    if (m_uniqueSymbol != AppSearchPlugin::uniqueSymbol) {
+        qDebug() << "uniqueSymbol changged, app search finished!";
+        return true;
+    } else {
+        return false;
+    }
 }

@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=ukui-search-app-data-service
+Name[zh_CN]=应用数据搜索服务
+GenericName=ukui-search-app-data-service
+GenericName[zh_CN]=应用数据搜索服务
+Comment=ukui-search-app-data-service
+Comment[zh_CN]=应用数据搜索服务
+Exec=/usr/bin/ukui-search-app-data-service %U
+Type=Application
+Icon=kylin-search
+X-UKUI-AutoRestart=true
+OnlyShowIn=UKUI
+NoDisplay=true
+X-UKUI-Autostart-Phase=Application
+Terminal=false
+

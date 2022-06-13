@@ -38,7 +38,7 @@ public:
 
 private:
     QThreadPool *m_pool = nullptr;
-    bool e_enable = true;
+    bool m_enable = true;
 };
 
 class FileContentSearchWorker : public QRunnable

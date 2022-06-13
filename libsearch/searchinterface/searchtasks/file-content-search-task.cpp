@@ -52,12 +52,12 @@ const QIcon FileContentSearchTask::icon()
 
 void FileContentSearchTask::setEnable(bool enable)
 {
-    e_enable = enable;
+    m_enable = enable;
 }
 
 bool FileContentSearchTask::isEnable()
 {
-    return e_enable && IndexStatusRecorder::getInstance()->contentIndexDatabaseEnable();
+    return m_enable && IndexStatusRecorder::getInstance()->contentIndexDatabaseEnable();
 }
 
 QString FileContentSearchTask::getCustomSearchType()

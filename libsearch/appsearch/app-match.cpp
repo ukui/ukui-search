@@ -21,9 +21,10 @@
 #include <glib.h>
 #include <qt5xdg/XdgIcon>
 #include <qt5xdg/XdgDesktopFile>
+#include <QMap>
 #include "file-utils.h"
 #include "app-search-plugin.h"
-#define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
+
 using namespace UkuiSearch;
 static AppMatch *app_match_Class = nullptr;
 
@@ -36,13 +37,6 @@ AppMatch *AppMatch::getAppMatch() {
 AppMatch::AppMatch(QObject *parent) : QThread(parent)
 //    m_versionCommand(new QProcess(this))
 {
-    m_watchAppDir = new QFileSystemWatcher(this);
-    m_watchAppDir->addPath("/usr/share/applications/");
-    QDir androidPath(ANDROID_APP_DESKTOP_PATH);
-    if(!androidPath.exists()) {
-        androidPath.mkpath(ANDROID_APP_DESKTOP_PATH);
-    }
-    m_watchAppDir->addPath(ANDROID_APP_DESKTOP_PATH);
     qDBusRegisterMetaType<QMap<QString, QString>>();
     qDBusRegisterMetaType<QList<QMap<QString, QString>>>();
     m_interFace = new QDBusInterface("com.kylin.softwarecenter.getsearchresults", "/com/kylin/softwarecenter/getsearchresults",
@@ -52,6 +46,7 @@ AppMatch::AppMatch(QObject *parent) : QThread(parent)
         qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
     }
     m_interFace->setTimeout(1500);
+    m_appInfoTable = new AppInfoTable;
     qDebug() << "AppMatch init finished.";
 }
 
@@ -60,10 +55,10 @@ AppMatch::~AppMatch() {
         delete m_interFace;
     }
     m_interFace = NULL;
-    if(m_watchAppDir) {
-        delete m_watchAppDir;
+    if(m_appInfoTable) {
+        delete m_appInfoTable;
     }
-    m_watchAppDir = NULL;
+    m_appInfoTable = NULL;
 }
 
 void AppMatch::startMatchApp(QString input, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
@@ -73,80 +68,42 @@ void AppMatch::startMatchApp(QString input, size_t uniqueSymbol, DataQueue<Searc
 }
 
 /**
- * @brief AppMatch::getAllDesktopFilePath 遍历所有desktop文件
- * @param path 存放desktop文件夹
- */
-void AppMatch::getAllDesktopFilePath(QString path) {
-
-    QDir dir(path);
-    if(!dir.exists()) {
-        return;
-    }
-    dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
-    dir.setSorting(QDir::DirsFirst);
-    QFileInfoList list = dir.entryInfoList();
-    list.removeAll(QFileInfo("/usr/share/applications/screensavers"));
-    if(list.size() < 1) {
-        return;
-    }
-    XdgDesktopFile desktopfile;
-    int i = 0;
-    while(i < list.size()) {
-        QFileInfo fileInfo = list.at(i);
-        //如果是文件夹，递归
-        bool isDir = fileInfo.isDir();
-        if(isDir) {
-            getAllDesktopFilePath(fileInfo.filePath());
-            qDebug() << fileInfo.filePath();
-            ++i;
-        } else {
-            QString filePathStr = fileInfo.filePath();
-            if(m_ExcludedDesktopfiles.contains(filePathStr)) {
-                ++i;
-                continue;
-            }
-
-            //过滤后缀不是.desktop的文件
-            if(!filePathStr.endsWith(".desktop")) {
-                ++i;
-                continue;
-            }
-
-            desktopfile.load(filePathStr);
-            if(desktopfile.value("NoDisplay").toString().contains("true") || desktopfile.value("NotShowIn").toString().contains("UKUI")) {
-                ++i;
-                continue;
-            }
-
-            QString name = desktopfile.localizedValue("Name").toString();
-            if(name.isEmpty()) {
-                ++i;
-                qDebug() << filePathStr << "name!!";
-                continue;
-            }
-
-            QString icon = desktopfile.iconName();
-            NameString appname;
-            QStringList appInfolist;
-
-            appname.app_name = name;
-            appInfolist << filePathStr << icon;
-            appInfolist.append(desktopfile.value("Name").toString());
-            appInfolist.append(desktopfile.value("Name[zh_CN]").toString());
-            m_installAppMap.insert(appname, appInfolist);
-            ++i;
-        }
-    }
-}
-
-/**
  * @brief AppMatch::appNameMatch
  * 进行匹配
  * @param appname
  * 应用名字
  */
 void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
-    QMapIterator<NameString, QStringList> iter(m_installAppMap);
+    QStringList results;
+    //m_appInfoTable->searchInstallAppOrderByFavoritesDesc(keyWord, results);
+    for (int i = 0; i < results.size() / 3; i++) {
+        {
+            QMutexLocker locker(&AppSearchPlugin::m_mutex);
+            if (uniqueSymbol != AppSearchPlugin::uniqueSymbol) {
+                return;
+            }
+        }
+
+        SearchPluginIface::ResultInfo ri;
+        ri.actionKey = results.at(i*3);
+        ri.name = results.at(i*3 + 1);
+        ri.icon = XdgIcon::fromTheme(results.at(i*3 + 2), QIcon(":/res/icons/desktop.png"));
+        ri.type = 0;
+
+        searchResult->enqueue(ri);
+    }
+
+/*    QMultiMap<QString, QStringList> installAppMap;
+    m_appInfoTable->getInstallAppMap(installAppMap);
+    QMap<NameString, QStringList> resultAppMap;
+    for (auto i = installAppMap.begin(); i != installAppMap.end(); ++i) {
+        NameString name;
+        name.app_name = i.key();
+        QStringList infoList;
+        infoList = i.value();
+        resultAppMap.insert(name, infoList);
+    }
+    QMapIterator<NameString, QStringList> iter(resultAppMap);
     while(iter.hasNext()) {
         iter.next();
         if(iter.key().app_name.contains(keyWord, Qt::CaseInsensitive)) {
@@ -224,27 +181,16 @@ void AppMatch::appNameMatch(QString keyWord, size_t uniqueSymbol, DataQueue<Sear
                 }
             }
         }
-    }
-}
-
-void AppMatch::softWareCenterSearch(QMap<NameString, QStringList> &softwarereturn) {
-//    if(m_interFace->timeout() != -1) {
-//        qWarning() << "softWareCente Dbus is timeout !";
-//        return;
-//    }
-//    slotDBusCallFinished(softwarereturn);
-    qDebug() << "softWareCenter match app is successful!";
+    }*/
 }
 
 void AppMatch::slotDBusCallFinished(QString keyWord, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
     QDBusReply<QList<QMap<QString, QString>>> reply = m_interFace->call("get_search_result", keyWord); //阻塞，直到远程方法调用完成。
-//    QDBusPendingReply<QList<QMap<QString,QString>>> reply = *call;
     if(reply.isValid()) {
         parseSoftWareCenterReturn(reply.value(), uniqueSymbol, searchResult);
     } else {
         qWarning() << "SoftWareCenter dbus called failed!";
     }
-//     call->deleteLater();
 }
 
 void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, size_t uniqueSymbol, DataQueue<SearchPluginIface::ResultInfo> *searchResult) {
@@ -275,24 +221,17 @@ void AppMatch::parseSoftWareCenterReturn(QList<QMap<QString, QString>> list, siz
     }
 }
 
-void AppMatch::creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<NameString, QStringList> &iter, bool isInstalled)
-{
-//    ri.icon = QIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
-    ri.icon = XdgIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
-    ri.name = iter.key().app_name;
-    ri.actionKey = iter.value().at(0);
-    ri.type = 0; //0 means installed apps.
-}
+//void AppMatch::creatResultInfo(SearchPluginIface::ResultInfo &ri, QMapIterator<NameString, QStringList> &iter, bool isInstalled)
+//{
+////    ri.icon = QIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
+//    ri.icon = XdgIcon::fromTheme(iter.value().at(1), QIcon(":/res/icons/desktop.png"));
+//    ri.name = iter.key().app_name;
+//    ri.actionKey = iter.value().at(0);
+//    ri.type = 0; //0 means installed apps.
+//}
 
 void AppMatch::run() {
     qDebug() << "App map init..";
-    this->getAllDesktopFilePath("/usr/share/applications/");
-    this->getAllDesktopFilePath(ANDROID_APP_DESKTOP_PATH);
-    connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
-            m_installAppMap.clear();
-            this->getAllDesktopFilePath("/usr/share/applications/");
-            this->getAllDesktopFilePath(ANDROID_APP_DESKTOP_PATH);
-            qDebug() << "App map update " << m_installAppMap.size();
-    });
-    qDebug() << "App map init finished.." << m_installAppMap.size();
+
+    qDebug() << "App map init finished..";
 }

@@ -32,7 +32,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QTimer>
-#include <libsearch.h>
+#include "libsearch.h"
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include "xatom-helper.h"
 #endif
