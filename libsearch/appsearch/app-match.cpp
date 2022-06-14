@@ -83,6 +83,7 @@ void AppMatch::getAllDesktopFilePath(QString path) {
 
     QDir dir(path);
     if(!dir.exists()) {
+        qDebug() << QString("dir:%1 is not exists!").arg(path);
         return;
     }
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
@@ -90,6 +91,7 @@ void AppMatch::getAllDesktopFilePath(QString path) {
     QFileInfoList list = dir.entryInfoList();
     list.removeAll(QFileInfo("/usr/share/applications/screensavers"));
     if(list.size() < 1) {
+        qDebug() << "there's no legal files in dir: " << path;
         return;
     }
     int i = 0;
@@ -384,13 +386,9 @@ void AppMatch::run() {
         this->getAllDesktopFilePath(QDir::homePath() + "/.local/share/applications/");
     connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
         this->getDesktopFilePath();
-        if(path == "/usr/share/applications/") {
-            this->getAllDesktopFilePath("/usr/share/applications/");
-        }
+        this->getAllDesktopFilePath("/usr/share/applications/");
         if(androidPath.exists()) {
-            if(path == QDir::homePath() + "/.local/share/applications/") {
-                this->getAllDesktopFilePath(QDir::homePath() + "/.local/share/applications/");
-            }
+            this->getAllDesktopFilePath(QDir::homePath() + "/.local/share/applications/");
         }
     });
 }
