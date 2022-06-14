@@ -36,6 +36,7 @@ public:
 
 private:
     inline int virtualRowCount() const;
+    static QString generateDesc(const SearchPluginIface::ResultInfo& data) ;
 
 public Q_SLOTS:
     void clear();

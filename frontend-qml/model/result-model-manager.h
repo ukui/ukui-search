@@ -20,7 +20,7 @@ class ResultModelManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ResultModelManager(QObject *parent = nullptr);
+    static ResultModelManager *getInstance(QObject *parent = nullptr);
 
     //函数体放到头文件中是为了解决Q_INVOKABLE引起的找不到函数定义问题
     Q_INVOKABLE inline UkuiSearch::SearchResultModel *getModel(const QString &pluginId) {
@@ -36,6 +36,9 @@ public:
 
     //安装数据提供器
     void installDataProvider(ModelDataProvider *provider);
+
+private:
+    explicit ResultModelManager(QObject *parent = nullptr);
 
 private Q_SLOTS:
     void receiveData(const SearchPluginIface::ResultInfo& data, const QString &pluginId);

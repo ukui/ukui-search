@@ -134,37 +134,6 @@ QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
     return m_detailPage;
 }
 
-QString AppSearchPlugin::detailPageDesc()
-{
-    QString desc = "{"
-                   "  name: ukui-search-plugin,"
-                   "  version: 1.0.0,"
-                   "  components: {"
-                   "    image: {"
-                   "      enable: true"
-                   "    },"
-                   "    info: {"
-                   "      enable: true,"
-                   "      keys: ["
-                   "        name"
-                   "      ]"
-                   "    },"
-                   "    data: {"
-                   "      enable: true,"
-                   "      keys: ["
-                   "        path,"
-                   "        name"
-                   "      ]"
-                   "    },"
-                   "    action: {"
-                   "      enable: true"
-                   "    }"
-                   "  }"
-                   "}";
-
-    return desc;
-}
-
 void AppSearchPlugin::initDetailPage()
 {
     m_detailPage = new QWidget();

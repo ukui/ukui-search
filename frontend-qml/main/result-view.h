@@ -11,12 +11,16 @@ namespace UkuiSearch {
 
 class SearchPluginModel;
 class ResultModelManager;
+class ModelDataProvider;
 
 class ResultView : public QQuickView
 {
     Q_OBJECT
 public:
-    explicit ResultView(ResultModelManager *resultModelManager);
+    explicit ResultView();
+
+    //安装数据提供器
+    void installDataProvider(ModelDataProvider *provider);
 
 private:
     void initUI();

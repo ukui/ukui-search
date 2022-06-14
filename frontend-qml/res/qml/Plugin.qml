@@ -17,16 +17,16 @@ Item {
     Column {
         id: layout;
         anchors.fill: parent;
-        spacing: 5;
+//        spacing: 5;
 
         PluginInfo {
             id: pluginInfo;
             width: parent.width;
-            height: 50;
+            height: 30;
 
             img: "qrc:/icons/ukui-down-symbolic.svg";
-            color: "#7CF0CD";
-            radius: 8;
+            color: "#E3E3E3";
+            radius: 5;
 
             index: root.index;
             name: root.pluginName;
@@ -41,24 +41,22 @@ Item {
             width: parent.width;
             height: childrenRect.height; //跟随内容的数量调整视图高度
 
-            spacing: 5;
+//            spacing: 1;
             clip: true;
             interactive: false; //禁用子级滚动
 
             model: root.resultModel;
             delegate: ResultItem {
                 id: delegate;
-                width: listView.width;
-                height: 50;
+                width: ListView.view ? ListView.view.width : 0;
+                height: 40;
 
-                color: "#F1A2E5";
-                radius: 8;
+                color: "#F1F1F1";
+                radius: 5;
 
-                index : model.index;
-                name : model.name;
-                iconName: model.iconName;
-                pluginIconName: root.pluginIconName;
-                description : model.description;
+                index: model.index;
+                name: model.name;
+                icon: model.icon;
 
                 onItemClicked: (index) => {
                     root.itemClicked(root.pluginId, index);
@@ -77,10 +75,10 @@ Item {
         if (root.isExpand) {
             pluginInfo.img = "qrc:/icons/ukui-up-symbolic.svg";
             //展开数据
-            models.expand(root.pluginId);
+            resultModelManager.expand(root.pluginId);
         } else {
             pluginInfo.img = "qrc:/icons/ukui-down-symbolic.svg";
-            models.collapse(root.pluginId);
+            resultModelManager.collapse(root.pluginId);
         }
     }
 

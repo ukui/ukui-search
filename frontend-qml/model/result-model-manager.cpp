@@ -10,6 +10,16 @@
 
 using namespace UkuiSearch;
 
+static ResultModelManager *instance = nullptr;
+
+ResultModelManager *ResultModelManager::getInstance(QObject *parent)
+{
+    if (!instance) {
+        instance = new ResultModelManager(parent);
+    }
+    return instance;
+}
+
 ResultModelManager::ResultModelManager(QObject *parent) : QObject(parent)
 {
     //注册元类型使得qml可以识别
@@ -72,6 +82,7 @@ void ResultModelManager::clearModelData(const QString &pluginId)
 
 void ResultModelManager::clearAllModelData()
 {
+    QMutexLocker locker(&mutex);
     for (const auto &model: m_models) {
         model->clear();
     }

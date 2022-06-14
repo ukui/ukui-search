@@ -45,7 +45,6 @@ public:
 //    virtual bool isPreviewEnable(QString key, int type) = 0;
 //    virtual QWidget *previewPage(QString key, int type, QWidget *parent = nullptr) = 0;
     virtual QWidget *detailPage(const ResultInfo &ri) = 0;
-    virtual QString detailPageDesc() {return {};};
 };
 }
 

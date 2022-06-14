@@ -1,4 +1,4 @@
-QT += quick KWindowSystem x11extras widgets
+QT += quick KWindowSystem x11extras widgets quickcontrols2
 
 VERSION = 1.0.0
 DEFINES += VERSION='\\"$${VERSION}\\"'

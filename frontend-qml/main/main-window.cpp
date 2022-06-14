@@ -6,8 +6,8 @@
 #include "line-edit.h"
 #include "result-view.h"
 #include "search-worker-manager.h"
-#include "result-model-manager.h"
 #include "icon-item.h"
+#include "details-utils.h"
 
 //
 #include "xatom-helper.h"
@@ -15,6 +15,7 @@
 #include <QCursor>
 #include <QScreen>
 #include <QApplication>
+#include <QQuickStyle>
 
 //test
 #include <QPushButton>
@@ -33,7 +34,8 @@ void MainWindow::initUI()
     m_lineEdit = new LineEdit();
     m_lineEdit->installDataProvider(m_workManager);
 
-    m_resultView = new ResultView(m_modelManager);
+    m_resultView = new ResultView();
+    m_resultView->installDataProvider(m_workManager);
 
     m_button = new QPushButton("button");
     m_button->resize(100, 50);
@@ -82,9 +84,10 @@ void MainWindow::showWindow()
 void MainWindow::initManager()
 {
     qmlRegisterType<IconItem>("org.ukui.search.items", 1, 0, "IconItem");
+    qmlRegisterType<DetailsUtils>("org.ukui.search.utils", 1, 0, "DetailsUtils");
+
+    QQuickStyle::setStyle("org.kylin.style");
 
     m_workManager = new SearchWorkerManager(this);
-    m_modelManager = new ResultModelManager(this);
-    m_modelManager->installDataProvider(m_workManager);
 }
 

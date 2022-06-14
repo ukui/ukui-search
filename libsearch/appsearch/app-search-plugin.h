@@ -37,8 +37,6 @@ public:
 //    QWidget *previewPage(QString key, int type, QWidget *parent);
     QWidget *detailPage(const ResultInfo &ri);
 
-    QString detailPageDesc() override;
-
 private:
     void initDetailPage();
     bool launch(const QString &path);

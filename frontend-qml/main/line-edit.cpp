@@ -38,7 +38,7 @@ void LineEdit::initConnections()
 void LineEdit::onTextChanged(const QString &keyword)
 {
     qDebug() << "qt received" << keyword;
-    QHash<QString, ModelDataProvider*>::const_iterator iterator = m_providers.cbegin();
+    QHash<QString, ModelDataProvider*>::const_iterator iterator = m_providers.constBegin();
     while (iterator != m_providers.constEnd()) {
         (*iterator)->startSearch(keyword);
         ++iterator;
