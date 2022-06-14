@@ -2,6 +2,7 @@
 #define SEARCHCONTROLLERPRIVATE_H
 
 #include <QMutex>
+#include <QMap>
 #include "search-controller.h"
 namespace UkuiSearch {
 
