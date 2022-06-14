@@ -163,7 +163,7 @@ void Search::initUi()
     //设置网页搜索引擎部分的ui
      //~ contents_path /Search/Default web searching engine
     m_webEngineFrame = new ComboxFrame(tr("Default web searching engine"), m_searchMethodFrame);
-    m_webEngineFrame->setContentsMargins(8, 0, 16, 0);
+    m_webEngineFrame->setContentsMargins(8, 0, 8, 0);// ComboxFrame右侧自带8的边距，左右边距各是16所以分别设为8
     m_webEngineFrame->setFixedHeight(56);
     m_webEngineFrame->setMinimumWidth(550);
     m_webEngineFrame->mCombox->insertItem(0, QIcon("/usr/share/ukui-search/search-ukcc-plugin/image/baidu.svg"), tr("baidu"), "baidu");
