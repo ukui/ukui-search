@@ -54,6 +54,7 @@ void UkuiSearchTaskPrivate::setOnlySearchDir(bool onlySearchDir)
 
 void UkuiSearchTaskPrivate::setSearchOnlineApps(bool searchOnlineApps)
 {
+    m_searchCotroller->setSearchOnlineApps(searchOnlineApps);
 }
 
 void UkuiSearchTaskPrivate::initSearchPlugin(SearchType searchType, const QString& customSearchType)
@@ -65,6 +66,17 @@ void UkuiSearchTaskPrivate::initSearchPlugin(SearchType searchType, const QStrin
     } else {
         qWarning() << "The plugin has been initialized or the plugin failed to load.";
     }
+}
+
+
+bool UkuiSearchTaskPrivate::setCustomResultDataType(QString customSearchType, QStringList dataType)
+{
+    return m_searchCotroller->setCustomResultDataType(customSearchType, dataType);
+}
+
+bool UkuiSearchTaskPrivate::setResultDataType(SearchType searchType, ResultDataTypes dataType)
+{
+    return m_searchCotroller->setResultDataType(searchType, dataType);
 }
 
 size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype, const QString& customSearchType)
@@ -165,6 +177,16 @@ void UkuiSearchTask::setSearchOnlineApps(bool searchOnlineApps)
 void UkuiSearchTask::initSearchPlugin(SearchType searchType)
 {
     d->initSearchPlugin(searchType);
+}
+
+bool UkuiSearchTask::setResultDataType(SearchType searchType, ResultDataTypes dataType)
+{
+    return d->setResultDataType(searchType, dataType);
+}
+
+bool UkuiSearchTask::setCustomResultDataType(QString customSearchType, QStringList dataType)
+{
+    return d->setCustomResultDataType(customSearchType, dataType);
 }
 
 size_t UkuiSearchTask::startSearch(SearchType searchtype, QString customSearchType)

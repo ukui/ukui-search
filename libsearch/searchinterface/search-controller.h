@@ -4,6 +4,7 @@
 #include <QStringList>
 #include <memory>
 #include "data-queue.h"
+#include "common-defines.h"
 //todo: url parser?
 namespace UkuiSearch {
 class UkuiSearchTask;
@@ -34,11 +35,14 @@ public:
     void addFileLabel(QString &label);
     void setOnlySearchFile(bool onlySearchFile);
     void setOnlySearchDir(bool onlySearchDir);
+    void setSearchOnlineApps(bool searchOnlineApps);
     //以上方法插件请不要调用
 
     //以下方法插件可以调用
     size_t getCurrentSearchId();
     DataQueue<ResultItem>* getDataQueue();
+    ResultDataTypes getResultDataType(SearchType searchType);
+    QStringList getCustomResultDataType(QString customSearchType);
     bool beginSearchIdCheck(size_t searchId);
     void finishSearchIdCheck();
 
@@ -49,6 +53,7 @@ public:
     QStringList getFileLabel();
     bool isSearchFileOnly();
     bool isSearchDirOnly();
+    bool isSearchOnlineApps();
     void clearAllConditions();
     void clearKeyWords();
     void clearSearchDir();
@@ -58,6 +63,8 @@ public:
     unsigned int first() const;
     unsigned int maxResults() const;
 
+    bool setResultDataType(SearchType searchType, ResultDataTypes dataType);
+    bool setCustomResultDataType(QString customSearchType, QStringList dataType);
 private:
     std::shared_ptr<SearchController> m_parent = nullptr;
     SearchControllerPrivate *d = nullptr;

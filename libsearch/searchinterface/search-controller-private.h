@@ -21,9 +21,12 @@ public:
     void addFileLabel(QString &label);
     void setOnlySearchFile(bool onlySearchFile);
     void setOnlySearchDir(bool onlySearchDir);
+    void setSearchOnlineApps(bool searchOnlineApps);
 
     size_t getCurrentSearchId();
     DataQueue<ResultItem>* getDataQueue();
+    ResultDataTypes getResultDataType(SearchType searchType);
+    QStringList getCustomResultDataType(QString customSearchType);
     bool beginSearchIdCheck(size_t searchId);
     void finishSearchIdCheck();
     void stop();
@@ -34,10 +37,14 @@ public:
     QStringList getFileLabel();
     bool isSearchFileOnly();
     bool isSearchDirOnly();
+    bool isSearchOnlineApps();
     void clearAllConditions();
     void clearKeyWords();
     void clearSearchDir();
     void clearFileLabel();
+
+    bool setResultDataType(SearchType searchType, ResultDataTypes dataType);
+    bool setCustomResultDataType(QString customSearchType, QStringList dataType);
 
     /**
      * @brief 分页选项
@@ -52,7 +59,7 @@ private:
     void copyData();
     //TODO: 这里是否可以改为字节对齐的写法？
 //    DataQueue<ResultItem>* m_dataQueue = nullptr ;
-    std::shared_ptr<DataQueue<ResultItem>> m_sharedDataueue = nullptr;
+    std::shared_ptr<DataQueue<ResultItem>> m_sharedDataQueue = nullptr;
     size_t m_searchId = 0;
     QMutex m_searchIdMutex;
     SearchController *q = nullptr;
@@ -65,9 +72,13 @@ private:
     bool m_activeKeywordSegmentation = false;
     bool m_onlySearchFile = false;
     bool m_onlySearchDir = false;
+    bool m_searchOnlineApps = false;
 
     unsigned int m_first = 0;
     unsigned int m_maxResults = 100;        //默认取100条结果
+
+    QMap<SearchType, ResultDataTypes> m_searchType2ResultDataType;
+    QMap<QString, QStringList> m_customSearchType2ResultDataType;
 };
 }
 

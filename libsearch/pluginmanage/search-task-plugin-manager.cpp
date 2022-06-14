@@ -4,6 +4,7 @@
 
 #include "file-search-task.h"
 #include "file-content-search-task.h"
+#include "app-search-task.h"
 
 using namespace UkuiSearch;
 static SearchTaskPluginManager *global_instance = nullptr;
@@ -24,6 +25,8 @@ void SearchTaskPluginManager::initPlugins(SearchType searchType)
         case SearchType::FileContent:
             registerBuildinPlugin(new FileContentSearchTask(this));
             break;
+        case SearchType::Application:
+            registerBuildinPlugin(new AppSearchTask(this));
         default:
             break;
     }
@@ -126,6 +129,9 @@ SearchTaskPluginIface *SearchTaskPluginManager::getPlugin(SearchType searchType,
                 break;
             case SearchType::FileContent:
                 searchPlugin = new FileContentSearchTask(this);
+                break;
+            case SearchType::Application:
+                searchPlugin = new AppSearchTask(this);
                 break;
             default:
                 break;

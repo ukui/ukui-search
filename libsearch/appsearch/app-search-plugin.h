@@ -8,11 +8,14 @@
 #include <QFrame>
 #include <QLabel>
 #include <QAction>
+#include <QDBusInterface>
+#include <QDBusReply>
+#include <QtDBus>
 #include "search-plugin-iface.h"
-#include "app-match.h"
 #include "action-label.h"
 #include "separation-line.h"
 #include "libsearch_global.h"
+#include "ukui-search-task.h"
 namespace UkuiSearch {
 class LIBSEARCH_EXPORT AppSearchPlugin : public QObject, public SearchPluginIface
 {
@@ -49,6 +52,9 @@ private:
     static size_t uniqueSymbol;
     static QMutex m_mutex;
 
+    UkuiSearchTask *m_appSearchTask = nullptr;
+    DataQueue<ResultItem>* m_appSearchResults = nullptr;
+
     QString m_currentActionKey;
     QWidget *m_detailPage;
     QVBoxLayout *m_detailLyt = nullptr;
@@ -75,16 +81,19 @@ private:
 class AppSearch : public QObject, public QRunnable {
     Q_OBJECT
 public:
-    AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, const QString& keyword, size_t uniqueSymbol);
+    AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, DataQueue<ResultItem>* appSearchResults, UkuiSearchTask *appSearchTask, QString keyword, size_t uniqueSymbol);
     ~AppSearch();
 protected:
     void run() override;
 private:
-    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
+
+    bool isUniqueSymbolChanged();
+
     size_t m_uniqueSymbol;
-    QString m_keyword;
-    QMap<NameString, QStringList> m_installed_apps;
-    QMap<NameString, QStringList> m_not_installed_apps;
+    UkuiSearchTask *m_appSearchTask = nullptr;
+    DataQueue<ResultItem>* m_appSearchResults = nullptr;
+    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
+
 };
 }
 

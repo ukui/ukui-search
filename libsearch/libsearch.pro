@@ -1,5 +1,5 @@
-QT += core xml widgets dbus concurrent sql
-VERSION = 2.2.3
+QT += core xml widgets dbus concurrent sql KWindowSystem
+VERSION = 2.3.0
 DEFINES += VERSION='\\"$${VERSION}\\"'
 
 TARGET = ukui-search
@@ -55,7 +55,8 @@ HEADERS += \
     global-settings.h \
     gobject-template.h \
     libsearch_global.h \
-    libsearch.h
+    libsearch.h \
+    ../ukui-search-app-data-service/app-db-common-defines.h
 
 RESOURCES += \
     resource1.qrc \
@@ -86,6 +87,7 @@ unix {
     header.path = /usr/include/ukui-search
     header.files += *.h index/*.h appsearch/*.h settingsearch/*.h plugininterface/*.h websearch/*.h \
                      searchinterface/ukui-search-task.h \
+                     appdata/app-info-table.h \
                      searchinterface/search-controller.h \
                      searchinterface/result-item.h
     header.files += development-files/header-files/*

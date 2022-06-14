@@ -4,29 +4,77 @@
 #include <QObject>
 namespace UkuiSearch {
 class AppInfoTablePrivate;
-/**
- * @brief The AppInfoTable class
- * TODO:提供查询接口（待定），包括：
- * 1.查询全部已安装应用信息（图标，名称，分类等），并且根据系统语言切换
- * 2.查询收藏应用信息
- * 3.查询置顶顺序信息
- * 4.收藏顺序修改
- * 5.置顶顺序修改
- * 6.添加到桌面快捷方式
- * 7.固定到任务栏快捷方式
- * 8.应用启动
- * 9.应用卸载
- * 注意事项：修改接口实现时注意事务操作
- */
 class AppInfoTable : public QObject
 {
     Q_OBJECT
+
+public:
+    typedef struct appInfoResult
+    {
+        appInfoResult() {
+            top = 0;
+            favorate = 0;
+            launchTimes = 0;
+            lock = 0;
+        }
+
+        QString desktopPath;
+        QString iconName;
+        QString appLocalName;
+        QString firstLetter;
+        QString category;
+        size_t top;
+        size_t favorate;
+        size_t launchTimes;
+        size_t lock;
+
+    } AppInfoResult;
+
 public:
     explicit AppInfoTable(QObject *parent = nullptr);
     AppInfoTable(AppInfoTable &) = delete;
     AppInfoTable &operator =(const AppInfoTable &) = delete;
 
+    bool setAppFavoritesState(QString &desktopfp, size_t num);
+    bool setAppTopState(QString &desktopfp, size_t num);
+
+    bool getAllAppDesktopList(QStringList &list);
+    bool getFavoritesAppList(QStringList &list);
+    bool getTopAppList(QStringList &list);
+    bool getLaunchTimesAppList(QStringList &list);
+    bool getAppCategory(QString &desktopfp, QString &category);
+
+    /**
+     * @brief getAppInfoResults
+     * @param appInfoResults
+     * @return
+     */
+    bool getAppInfoResults(QVector<AppInfoTable::AppInfoResult> &appInfoResults);
+
+    bool getAppLockState(QString &desktopfp, size_t &num);
+    bool getAppTopState(QString &desktopfp, size_t &num);
+    bool getAppLaunchedState(QString &desktopfp, size_t &num);
+    bool getAppFavoriteState(QString &desktopfp, size_t &num);
+
+    bool addAppShortcut2Desktop(QString &desktopfp);
+    bool addAppShortcut2Panel(QString &desktopfp);
+
+    bool searchInstallApp(QString &keyWord, QStringList &installAppInfoRes);
+    bool searchInstallApp(QStringList &keyWord, QStringList &installAppInfoRes);
+
+    bool uninstallApp(QString &desktopfp);
+
+    /**
+     * @brief lastError
+     * @return
+     */
+    QString lastError(void) const;
+
 private:
+    bool setAppLaunchTimes(QString &desktopfp, size_t num);
+    bool setAppLockState(QString &desktopfp, size_t num);
+    bool updateAppLaunchTimes(QString &desktopfp);
+
     AppInfoTablePrivate *d;
 
 };

@@ -24,22 +24,22 @@ size_t SearchControllerPrivate::refreshSearchId()
 
 DataQueue<ResultItem> *SearchControllerPrivate::refreshDataqueue()
 {
-    if(!m_sharedDataueue.get()) {
+    if(!m_sharedDataQueue.get()) {
 //        m_dataQueue = new DataQueue<ResultItem>;
-        m_sharedDataueue = std::make_shared<DataQueue<ResultItem>>();
-        return m_sharedDataueue.get();
+        m_sharedDataQueue = std::make_shared<DataQueue<ResultItem>>();
+        return m_sharedDataQueue.get();
     }
-    m_sharedDataueue.get()->clear();
-    return m_sharedDataueue.get();
+    m_sharedDataQueue.get()->clear();
+    return m_sharedDataQueue.get();
 }
 
 DataQueue<ResultItem> *SearchControllerPrivate::initDataQueue()
 {
-    if(!m_sharedDataueue.get()) {
-        m_sharedDataueue = std::make_shared<DataQueue<ResultItem>>();
-        return m_sharedDataueue.get();
+    if(!m_sharedDataQueue.get()) {
+        m_sharedDataQueue = std::make_shared<DataQueue<ResultItem>>();
+        return m_sharedDataQueue.get();
     }
-    return m_sharedDataueue.get();
+    return m_sharedDataQueue.get();
 }
 
 void SearchControllerPrivate::addSearchDir(QString &path)
@@ -77,6 +77,11 @@ void SearchControllerPrivate::setOnlySearchDir(bool onlySearchDir)
     m_onlySearchDir = onlySearchDir;
 }
 
+void SearchControllerPrivate::setSearchOnlineApps(bool searchOnlineApps)
+{
+    m_searchOnlineApps = searchOnlineApps;
+}
+
 size_t SearchControllerPrivate::getCurrentSearchId()
 {
     m_searchIdMutex.lock();
@@ -88,7 +93,17 @@ size_t SearchControllerPrivate::getCurrentSearchId()
 
 DataQueue<ResultItem> *SearchControllerPrivate::getDataQueue()
 {
-    return m_sharedDataueue.get();
+    return m_sharedDataQueue.get();
+}
+
+ResultDataTypes SearchControllerPrivate::getResultDataType(SearchType searchType)
+{
+    return m_searchType2ResultDataType[searchType];
+}
+
+QStringList SearchControllerPrivate::getCustomResultDataType(QString customSearchType)
+{
+    return m_customSearchType2ResultDataType[customSearchType];
 }
 
 bool SearchControllerPrivate::beginSearchIdCheck(size_t searchId)
@@ -151,13 +166,17 @@ bool SearchControllerPrivate::isSearchDirOnly()
     return m_onlySearchDir;
 }
 
+bool SearchControllerPrivate::isSearchOnlineApps()
+{
+    return m_searchOnlineApps;
+}
+
 void SearchControllerPrivate::copyData()
 {
-
     if(m_formerController.get()) {
         m_searchId = m_formerController.get()->getCurrentSearchId();
         //所有子节点都有一个指向根节点的队列的智能指针
-        m_sharedDataueue = m_formerController.get()->d->m_sharedDataueue;
+        m_sharedDataQueue = m_formerController.get()->d->m_sharedDataQueue;
         m_keywords = m_formerController.get()->getKeyword();
         m_searchDirs = m_formerController.get()->getSearchDir();
         m_FileLabels = m_formerController.get()->getFileLabel();
@@ -188,6 +207,20 @@ void SearchControllerPrivate::clearSearchDir()
 void SearchControllerPrivate::clearFileLabel()
 {
     m_FileLabels.clear();
+}
+
+bool SearchControllerPrivate::setResultDataType(SearchType searchType, ResultDataTypes dataType)
+{
+    bool res(true);
+    m_searchType2ResultDataType[searchType] = dataType;
+    return res;
+}
+
+bool SearchControllerPrivate::setCustomResultDataType(QString customSearchType, QStringList dataType)
+{
+    bool res(true);
+    m_customSearchType2ResultDataType[customSearchType] = dataType;
+    return res;
 }
 
 void SearchControllerPrivate::setPagination(unsigned int first, unsigned int maxResults)
@@ -258,6 +291,16 @@ DataQueue<ResultItem> *SearchController::getDataQueue()
     return d->getDataQueue();
 }
 
+ResultDataTypes SearchController::getResultDataType(SearchType searchType)
+{
+    return d->getResultDataType(searchType);
+}
+
+QStringList SearchController::getCustomResultDataType(QString customSearchType)
+{
+    return d->getCustomResultDataType(customSearchType);
+}
+
 void SearchController::setActiveKeywordSegmentation(bool active)
 {
     d->setActiveKeywordSegmentation(active);
@@ -276,6 +319,11 @@ void SearchController::setOnlySearchFile(bool onlySearchFile)
 void SearchController::setOnlySearchDir(bool onlySearchDir)
 {
     d->setOnlySearchDir(onlySearchDir);
+}
+
+void SearchController::setSearchOnlineApps(bool searchOnlineApps)
+{
+    d->setSearchOnlineApps(searchOnlineApps);
 }
 
 bool SearchController::beginSearchIdCheck(size_t searchId)
@@ -323,6 +371,11 @@ bool SearchController::isSearchDirOnly()
     return d->isSearchDirOnly();
 }
 
+bool SearchController::isSearchOnlineApps()
+{
+    return d->isSearchOnlineApps();
+}
+
 void SearchController::stop()
 {
     d->stop();
@@ -361,4 +414,14 @@ unsigned int SearchController::first() const
 unsigned int SearchController::maxResults() const
 {
     return d->maxResults();
+}
+
+bool SearchController::setResultDataType(SearchType searchType, ResultDataTypes dataType)
+{
+    return d->setResultDataType(searchType, dataType);
+}
+
+bool SearchController::setCustomResultDataType(QString customSearchType, QStringList dataType)
+{
+    return d->setCustomResultDataType(customSearchType, dataType);
 }

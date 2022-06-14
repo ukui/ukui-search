@@ -27,6 +27,8 @@ public:
     void setOnlySearchDir(bool onlySearchDir);
     void setSearchOnlineApps(bool searchOnlineApps);
     void initSearchPlugin(SearchType searchType, const QString& customSearchType = QString());
+    bool setResultDataType(SearchType searchType, ResultDataTypes dataType);
+    bool setCustomResultDataType(QString customSearchType, QStringList dataType);
     void clearAllConditions();
     void clearKeyWords();
     void clearSearchDir();
