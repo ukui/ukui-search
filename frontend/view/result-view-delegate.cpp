@@ -23,16 +23,14 @@ QSize ResultViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
 void ResultViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
-
-    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
+    QStyle *style = opt.widget->style();
 
     QString text = opt.text;
     if(text.isEmpty()) {
         return;
     }
     opt.text = QString();
-    style->drawControl(QStyle::CE_ItemViewItem, &opt, painter); //绘制非文本区域内容
-//    style->drawPrimitive(QStyle::PE_PanelItemViewItem, qstyleoption_cast<QStyleOption *>(&opt), painter, opt.widget);
+    style->proxy()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget); //绘制非文本区域内容
 
     opt.text = text;
     QTextDocument doc;
@@ -43,7 +41,7 @@ void ResultViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
     //使图标和文本间隔与原来保持一致，故文本区域右移4
-    textRect.adjust(4, 0, 0, 0);
+//    textRect.adjust(4, 0, 0, 0);
     double y = textRect.y();
     y += (textRect.height() - height) / 2;
 
@@ -63,6 +61,7 @@ void ResultViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     painter->translate(QPointF(textRect.x(), y));
     layout->draw(painter, context); //绘制文本区域内容
     painter->restore();
+
 }
 
 QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionViewItem &itemOption, const QModelIndex &index) const

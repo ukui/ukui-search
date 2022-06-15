@@ -166,7 +166,7 @@ void ResultWidget::initConnections()
 
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
 {
-    setStyle(ResultItemStyle::getStyle());
+//    setStyle(ResultItemStyle::getStyle());
     this->setFrameShape(QFrame::NoFrame);
     this->setIconSize(QSize(24, 24));
     this->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
@@ -180,8 +180,8 @@ ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(pa
     this->setModel(m_model);
     initConnections();
     m_plugin_id = plugin_id;
-    m_style_delegate = new ResultViewDelegate(this);
-    this->setItemDelegate(m_style_delegate);
+    m_styleDelegate = new ResultViewDelegate(this);
+    this->setItemDelegate(m_styleDelegate);
     m_touchTimer = new QTimer(this);
     m_touchTimer->setSingleShot(true);
     m_touchTimer->setInterval(100);
@@ -394,7 +394,7 @@ void ResultView::initConnections()
     connect(this, &ResultView::startSearch, [ = ](const QString &keyword) {
         setExpanded(false);
         Q_EMIT this->lableReset();
-        m_style_delegate->setSearchKeyword(keyword);
+        m_styleDelegate->setSearchKeyword(keyword);
         m_model->startSearch(keyword);
     });
     connect(this, &ResultView::stopSearch, m_model, &SearchResultModel::stopSearch);

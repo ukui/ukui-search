@@ -33,7 +33,7 @@ private:
 
     WebSearchModel * m_model = nullptr;
     bool m_is_selected = false;
-    WebSearchViewDelegate * m_style_delegate = nullptr;
+    WebSearchViewDelegate * m_styleDelegate = nullptr;
     QString m_keyWord;
 };
 
