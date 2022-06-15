@@ -166,7 +166,7 @@ void ResultWidget::initConnections()
 
 ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(parent)
 {
-    setStyle(ResultItemStyle::getStyle());
+//    setStyle(ResultItemStyle::getStyle());
     this->setFrameShape(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
     this->setIconSize(QSize(VIEW_ICON_SIZE, VIEW_ICON_SIZE));
@@ -179,8 +179,8 @@ ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(pa
     this->setModel(m_model);
     initConnections();
     m_plugin_id = plugin_id;
-    m_style_delegate = new ResultViewDelegate(this);
-    this->setItemDelegate(m_style_delegate);
+    m_styleDelegate = new ResultViewDelegate(this);
+    this->setItemDelegate(m_styleDelegate);
 }
 
 bool ResultView::isSelected()
@@ -339,7 +339,7 @@ void ResultView::initConnections()
     connect(this, &ResultView::startSearch, [ = ](const QString &keyword) {
         setExpanded(false);
         Q_EMIT this->lableReset();
-        m_style_delegate->setSearchKeyword(keyword);
+        m_styleDelegate->setSearchKeyword(keyword);
         m_model->startSearch(keyword);
     });
     connect(this, &ResultView::stopSearch, m_model, &SearchResultModel::stopSearch);

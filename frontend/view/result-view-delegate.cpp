@@ -23,47 +23,45 @@ QSize ResultViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
 
 void ResultViewDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const {
     QStyleOptionViewItem opt = option;
-       initStyleOption(&opt, index);
+    initStyleOption(&opt, index);
+    QStyle *style = opt.widget->style();
 
-       QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
+    QString text = opt.text;
+    if(text.isEmpty()) {
+        return;
+    }
+    opt.text = QString();
+    style->proxy()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget); //绘制非文本区域内容
 
-       QString text = opt.text;
-       if(text.isEmpty()) {
-           return;
-       }
-       opt.text = QString();
-       style->drawControl(QStyle::CE_ItemViewItem, &opt, painter); //绘制非文本区域内容
-   //    style->drawPrimitive(QStyle::PE_PanelItemViewItem, qstyleoption_cast<QStyleOption *>(&opt), painter, opt.widget);
-
-       opt.text = text;
-       QTextDocument doc;
-       doc.setHtml(getHtmlText(painter, opt, index)); //提取富文本
-       QAbstractTextDocumentLayout* layout = doc.documentLayout();
-       const double height = layout->documentSize().height();
+    opt.text = text;
+    QTextDocument doc;
+    doc.setHtml(getHtmlText(painter, opt, index)); //提取富文本
+    QAbstractTextDocumentLayout* layout = doc.documentLayout();
+    const double height = layout->documentSize().height();
 
 
-       QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-       //使图标和文本间隔与原来保持一致，故文本区域右移4
-       textRect.adjust(4, 0, 0, 0);
-       double y = textRect.y();
-       y += (textRect.height() - height) / 2;
+    QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+    //使图标和文本间隔与原来保持一致，故文本区域右移4
+//    textRect.adjust(4, 0, 0, 0);
+    double y = textRect.y();
+    y += (textRect.height() - height) / 2;
 
-       QAbstractTextDocumentLayout::PaintContext context;
+    QAbstractTextDocumentLayout::PaintContext context;
 
-       QPalette::ColorGroup cg = opt.state & QStyle::State_Enabled
-               ? QPalette::Normal : QPalette::Disabled;
-       if (cg == QPalette::Normal && !(opt.state & QStyle::State_Active))
-           cg = QPalette::Inactive;
+    QPalette::ColorGroup cg = opt.state & QStyle::State_Enabled
+            ? QPalette::Normal : QPalette::Disabled;
+    if (cg == QPalette::Normal && !(opt.state & QStyle::State_Active))
+        cg = QPalette::Inactive;
 
-       if(opt.state & QStyle::State_Selected) {
-           painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
-       } else {
-           painter->setPen(opt.palette.color(cg, QPalette::Text));
-       }
-       painter->save();
-       painter->translate(QPointF(textRect.x(), y));
-       layout->draw(painter, context); //绘制文本区域内容
-       painter->restore();
+    if(opt.state & QStyle::State_Selected) {
+        painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
+    } else {
+        painter->setPen(opt.palette.color(cg, QPalette::Text));
+    }
+    painter->save();
+    painter->translate(QPointF(textRect.x(), y));
+    layout->draw(painter, context); //绘制文本区域内容
+    painter->restore();
 
 }
 

@@ -43,7 +43,7 @@ private:
     SearchResultModel * m_model = nullptr;
     QString m_plugin_id;
     bool m_is_selected = false;
-    ResultViewDelegate * m_style_delegate = nullptr;
+    ResultViewDelegate * m_styleDelegate = nullptr;
     int m_count = 0;
     QModelIndex m_tmpCurrentIndex;
     QModelIndex m_tmpMousePressIndex;
