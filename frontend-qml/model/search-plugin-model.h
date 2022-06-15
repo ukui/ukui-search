@@ -20,16 +20,21 @@ public:
         IconRole,
         IconNameRole,
         DescriptionRole,
-        DetailsDescRole
     };
 
-    explicit SearchPluginModel(QObject *parent = nullptr);
+    static SearchPluginModel* getInstance(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent) const override;
 
     QVariant data(const QModelIndex &index, int role) const override;
 
     QHash<int, QByteArray> roleNames() const override;
+
+    //Utils
+    const QVector<QString>& getPlugins();
+
+private:
+    explicit SearchPluginModel(QObject *parent = nullptr);
 
 private:
     SearchPluginManager *m_searchPluginManager = nullptr;

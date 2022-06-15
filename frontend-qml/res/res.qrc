@@ -9,5 +9,10 @@
         <file>qml/PluginInfo.qml</file>
         <file>qml/ResultItem.qml</file>
         <file>qml/Details.qml</file>
+        <file>qml/DetailsAction.qml</file>
+        <file>qml/DetailsData.qml</file>
+        <file>qml/DetailsInfo.qml</file>
+        <file>qml/DetailsImage.qml</file>
+        <file>qml/ResultList.qml</file>
     </qresource>
 </RCC>

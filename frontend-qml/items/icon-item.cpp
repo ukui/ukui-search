@@ -4,8 +4,6 @@
 
 #include "icon-item.h"
 
-#include <utility>
-
 using namespace UkuiSearch;
 
 IconItem::IconItem()
@@ -26,11 +24,12 @@ IconItem::~IconItem()
 void IconItem::setIcon(const QIcon& icon)
 {
     m_icon = icon;
+    update();
 }
 
 QIcon IconItem::getIcon()
 {
-    return QIcon();
+    return m_icon;
 }
 
 QString IconItem::getName()
@@ -48,10 +47,12 @@ void IconItem::setName(const QString &name)
         } else {
             m_icon = QIcon::fromTheme(m_backup, QIcon("qrc:/icons/desktop.png"));
         }
+        update();
         return;
     }
     //FIXME QIcon::fromTheme,主题框架，XDGIconLoader会出现找不到图标的情况
     m_icon = QIcon::fromTheme(name, QIcon(":/icons/desktop.png"));
+    update();
 }
 
 QString IconItem::getBackup()

@@ -6,42 +6,25 @@ Rectangle {
     id: root;
     property int index;
     property string name;
-    property string iconName;
-    property string pluginIconName;
-    property string description;
+    property var icon;
 
     signal itemClicked(int index);
 
     RowLayout {
         id: layout;
         anchors.fill: parent;
+        anchors.leftMargin: 5;
+
         spacing: 5;
-
-//        Image {
-//            id: itemIcon;
-
-//            Layout.alignment: Qt.AlignCenter;
-//            Layout.minimumHeight: 24;
-//            Layout.maximumHeight: 24;
-//            Layout.minimumWidth: 24;
-//            Layout.maximumWidth: 24;
-
-//            fillMode: Image.PreserveAspectFit;
-//            source: "qrc:/icons/desktop.png";
-//        }
 
         IconItem {
             id: itemIcon;
 
-            backup: root.pluginIconName;
-            name: root.iconName;
+            icon: root.icon;
 
             Layout.alignment: Qt.AlignCenter;
-            Layout.minimumHeight: 24;
-            Layout.maximumHeight: 24;
-            Layout.minimumWidth: 24;
-            Layout.maximumWidth: 24;
-
+            Layout.preferredHeight: 24;
+            Layout.preferredWidth: 24;
         }
 
         Text {
@@ -54,21 +37,19 @@ Rectangle {
             elide: Text.ElideRight;
             wrapMode: Text.NoWrap;
 
-            text: root.index + " : " + root.name;
+            text: root.name;
         }
     }
 
     MouseArea {
         anchors.fill: parent;
         onClicked: (mouseEvent) => {
-            console.log("点击：", root.index, root.name);
             root.itemClicked(index);
         }
     }
 
     Component.onCompleted: {
         //组件加载完成后执行
-        console.log("===qml icon:", root.iconName, root.pluginIconName);
     }
 }
 

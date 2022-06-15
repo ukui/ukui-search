@@ -13,7 +13,6 @@ namespace UkuiSearch {
 class LineEdit;
 class ResultView;
 class SearchWorkerManager;
-class ResultModelManager;
 
 class MainWindow : public QObject
 {
@@ -39,7 +38,6 @@ private:
     QPushButton *m_button = nullptr;
 
     SearchWorkerManager *m_workManager = nullptr;
-    ResultModelManager *m_modelManager = nullptr;
 };
 
 } // UkuiSearch

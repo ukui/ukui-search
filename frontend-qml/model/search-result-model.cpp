@@ -50,18 +50,32 @@ QVariant SearchResultModel::data(const QModelIndex &index, int role) const
             return m_list.at(row).icon;
 
         case SearchResultModel::IconNameRole:
-            qDebug() << "==============SearchResultModel::IconNameRol=" << m_list.at(row).name << m_list.at(row).icon.name();
             return m_list.at(row).icon.name();
 
         case SearchResultModel::DescriptionRole:
-            if (m_list.at(row).description.isEmpty()) {
-                return {""};
-            }
-            return m_list.at(row).description.first().value;
+            return generateDesc(m_list.at(row));
 
         default:
             return {};
     }
+}
+
+QString SearchResultModel::generateDesc(const SearchPluginIface::ResultInfo& data)
+{
+    QVector<SearchPluginIface::DescriptionInfo> description = data.description;
+
+    QStringList objs;
+    for (const auto &item: description) {
+        objs.append(R"({"k":")" + item.key + R"(","v":")" + item.value.split("\n").first() + R"("})");
+    }
+
+    QString keys = QString(R"("keys":[%1])").arg(objs.join(","));
+    QString desc = QString(R"({"type":%1,"actionKey":"%2",)").arg(data.type).arg(data.actionKey);
+
+    desc.push_back(keys);
+    desc.push_back("}");
+
+    return desc;
 }
 
 SearchResultModel::~SearchResultModel()

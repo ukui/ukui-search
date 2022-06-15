@@ -12,7 +12,7 @@ Item {
         id: container;
         anchors.fill: parent;
         anchors.margins: 5;
-        color: "#99FFFF";
+        color: "transparent";
 
         TextInput {
             id: keywordInput;

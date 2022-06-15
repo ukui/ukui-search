@@ -1,149 +1,145 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.5
+import org.ukui.search.utils 1.0
 
 Rectangle {
     id: root;
 
-    radius: 8;
-    color: "#74F3F1";
+    color: "#FBFBFB";
+    clip: true;
 
     property string pluginId;
     property int dataIndex : -1;
 
-    ColumnLayout {
-        id: layot;
+    DetailsUtils {
+        id: detailsUtils;
+    }
+
+    Column {
+        id: layout;
 
         anchors.fill: parent;
+        anchors.margins: 10;
 
-        spacing: 5;
+        spacing: 10;
 
-        Rectangle {
-            Layout.fillWidth: true;
-            Layout.preferredHeight: 200;
+        DetailsImage {
+            id: image;
+
+            width: layout.width;
+            height: 150;
+
+            icon: null;
+            imageWidth: 150;
+            imageHeight: 150;
         }
 
-        Rectangle {
-            Layout.fillWidth: true;
-            Layout.preferredHeight: 1;
-            Layout.leftMargin: 25;
-            Layout.rightMargin: 25;
+        DetailsInfo {
+            id: info;
 
-            color: "#DDDDDD";
-        }
-
-        Rectangle {
-            Layout.fillWidth: true;
-            Layout.preferredHeight: 100;
-        }
-
-        Rectangle {
-            Layout.fillWidth: true;
-            Layout.preferredHeight: 1;
-            Layout.leftMargin: 25;
-            Layout.rightMargin: 25;
-
-            color: "#DDDDDD";
-        }
-
-        Rectangle {
-            Layout.fillWidth: true;
-            Layout.preferredHeight: 100;
-        }
-    }
-
-    //预览图
-    Component {
-        id: image
-        Rectangle {
+            width: layout.width;
             height: 50;
-            width: 50;
         }
-    }
 
-    //数据名称
-    Component {
-        id: info
         Rectangle {
-            height: 50;
-            width: 50;
-        }
-    }
+            id: dividingA;
 
-    //详细数据
-    Component {
-        id: data
+            width: layout.width;
+            height: 1;
+
+            color: "#dbdbdb";
+        }
+
+        DetailsData {
+            id: data;
+
+            width: layout.width;
+
+            spacing: layout.spacing;
+        }
+
         Rectangle {
-            height: 50;
-            width: 50;
+            id: dividingB;
+
+            width: layout.width;
+            height: 1;
+
+            color: "#dbdbdb";
+        }
+
+        DetailsAction {
+            id: actions;
+
+            width: layout.width;
+
+            spacing: layout.spacing;
         }
     }
 
-    //动作
-    Component {
-        id: action
-        Rectangle {
-            height: 50;
-            width: 50;
+    function getJsonObj(jsonStr) {
+        console.log("处理Json字符串:", jsonStr);
+        if (jsonStr === undefined || jsonStr === "") {
+            return undefined;
         }
-    }
 
-    //分割线
-    Component {
-        id: dividingLine
-        Rectangle {
-            height: 50;
-            width: 50;
+        try {
+            var obj = JSON.parse(jsonStr);
+            return obj;
+        } catch (e) {
+            console.log("处理json字符串失败，请检查数据");
         }
+
+        return undefined;
     }
 
-    onPluginIdChanged: {
-        console.log("插件内容变化!");
-    }
+    function parseUI() {
+        var item = detailsUtils.getResultData(pluginId, dataIndex, "description");
+        var itemObj = getJsonObj(item);
+        if (itemObj === undefined) {
+            return;
+        }
 
-    onDataIndexChanged: {
-        console.log("加载数据:", dataIndex);
-        if ((dataIndex % 2) === 0) {
-            color = "#CCFFFF";
+        var action = detailsUtils.getPluginActions(pluginId, itemObj.type);
+        var actionObj = getJsonObj(action);
+        if (actionObj === undefined) {
+            return;
+        }
+
+        image.icon = detailsUtils.getResultData(pluginId, dataIndex, "icon");
+
+        info.name = detailsUtils.getResultData(pluginId, dataIndex, "name");
+        info.type = detailsUtils.getPluginData(pluginId, "name");
+
+        data.dataModel = itemObj.keys;
+        if (itemObj.keys.length > 0) {
+            dividingA.visible = true;
+
         } else {
-            color = "#CC99FF";
+            dividingA.visible = false;
         }
+
+
+        actions.actionModel = actionObj.keys;
+        if (actionObj.keys.length > 0) {
+            dividingB.visible = true;
+
+        } else {
+            dividingB.visible = false;
+        }
+
+        console.log("load action data:", itemObj.keys);
+        console.log("load action data:", actionObj.keys);
     }
 
-    function loadUI() {
-        var ui = '{
-            "name": "ukui-search-plugin",
-            "version": "1.0.0",
-            "components": {
-              "image": {
-                "enable": true
+    function loadUI(pluginId, dataIndex) {
+        root.pluginId = pluginId;
+        root.dataIndex = dataIndex;
 
-              },
-              "info": {
-                "enable": true,
-                "keys": [
-                  "name"
-                ]
-              },
-              "data": {
-                "enable": true,
-                "keys": [
-                  "path",
-                  "name"
-                ]
-              },
-              "action": {
-                "enable": true
-              }
-            }
-          }';
-
-        var uiObj = JSON.parse(ui);
-
-        console.log(uiObj, "=", uiObj.components.info.enable, uiObj.components.data.keys)
-
+        parseUI();
     }
 
     Component.onCompleted: {
-        loadUI();
+
     }
 }

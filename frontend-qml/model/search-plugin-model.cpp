@@ -7,6 +7,17 @@
 
 using namespace UkuiSearch;
 
+static SearchPluginModel *instance = nullptr;
+
+SearchPluginModel *SearchPluginModel::getInstance(QObject *parent)
+{
+    if (!instance) {
+        instance = new SearchPluginModel(parent);
+    }
+
+    return instance;
+}
+
 SearchPluginModel::SearchPluginModel(QObject *parent) : QAbstractListModel(parent)
 {
     m_searchPluginManager = SearchPluginManager::getInstance();
@@ -19,7 +30,6 @@ SearchPluginModel::SearchPluginModel(QObject *parent) : QAbstractListModel(paren
     m_roleNames[SearchPluginModel::IconRole] = "icon";
     m_roleNames[SearchPluginModel::IconNameRole] = "iconName";
     m_roleNames[SearchPluginModel::DescriptionRole] = "description";
-    m_roleNames[SearchPluginModel::DetailsDescRole] = "details";
 }
 
 int SearchPluginModel::rowCount(const QModelIndex &parent) const
@@ -51,9 +61,6 @@ QVariant SearchPluginModel::data(const QModelIndex &index, int role) const
         case SearchPluginModel::DescriptionRole:
             return m_searchPluginManager->getPlugin(pluginId)->description();
 
-        case SearchPluginModel::DetailsDescRole:
-            return m_searchPluginManager->getPlugin(pluginId)->detailPageDesc();
-
         default:
             return {};
     }
@@ -62,4 +69,9 @@ QVariant SearchPluginModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> SearchPluginModel::roleNames() const
 {
     return m_roleNames;
+}
+
+const QVector<QString> &SearchPluginModel::getPlugins()
+{
+    return m_plugins;
 }

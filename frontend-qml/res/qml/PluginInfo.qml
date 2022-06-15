@@ -4,14 +4,16 @@ import QtQuick.Layouts 1.12
 Rectangle {
     id: root;
 
-    property string img;
     property int index;
+    property string img;
     property string name;
 
     signal expandButtonClicked;
 
     RowLayout {
         anchors.fill: parent;
+        anchors.leftMargin: 5;
+
         spacing: 5;
 
         Text {
@@ -22,16 +24,15 @@ Rectangle {
 
             verticalAlignment: Qt.AlignVCenter;
             elide: Text.ElideRight;
-            font.family: "Ubuntu";
             font.pixelSize: 18;
-            text:  root.index + " : " + root.name;
+            text: root.name;
         }
 
         Image {
             id: actionIcon;
 
-            Layout.minimumWidth: 24;
-            Layout.minimumHeight: 24;
+            Layout.preferredWidth: 24;
+            Layout.preferredHeight: 24;
             Layout.alignment: Qt.AlignCenter;
 
             source: root.img;
