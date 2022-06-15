@@ -8,7 +8,7 @@
 using namespace UkuiSearch;
 BestListView::BestListView(QWidget *parent) : QTreeView(parent)
 {
-    setStyle(ResultItemStyle::getStyle());
+//    setStyle(ResultItemStyle::getStyle());
     this->setFrameShape(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
     this->setIconSize(QSize(VIEW_ICON_SIZE, VIEW_ICON_SIZE));
@@ -20,8 +20,8 @@ BestListView::BestListView(QWidget *parent) : QTreeView(parent)
     m_model = new BestListModel(this);
     this->setModel(m_model);
     initConnections();
-    m_style_delegate = new ResultViewDelegate(this);
-    this->setItemDelegate(m_style_delegate);
+    m_styleDelegate = new ResultViewDelegate(this);
+    this->setItemDelegate(m_styleDelegate);
 }
 
 bool BestListView::isSelected()
@@ -184,7 +184,7 @@ void BestListView::initConnections()
 {
     connect(this, &BestListView::startSearch, [ = ](const QString &keyword) {
         qDebug() << "==========start search!";
-        m_style_delegate->setSearchKeyword(keyword);
+        m_styleDelegate->setSearchKeyword(keyword);
         m_model->startSearch(keyword);
     });
     connect(this, &BestListView::startSearch, m_model, &BestListModel::startSearch);

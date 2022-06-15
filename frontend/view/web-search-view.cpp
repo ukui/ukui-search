@@ -37,8 +37,8 @@ WebSearchView::WebSearchView(QWidget *parent) : QTreeView(parent)
     this->setHeaderHidden(true);
     m_model = new WebSearchModel(this);
     this->setModel(m_model);
-    m_style_delegate = new ResultViewDelegate(this);
-    this->setItemDelegate(m_style_delegate);
+    m_styleDelegate = new ResultViewDelegate(this);
+    this->setItemDelegate(m_styleDelegate);
 }
 
 bool WebSearchView::isSelected()
@@ -68,7 +68,7 @@ void WebSearchView::clearSelectedRow()
 
 void WebSearchView::startSearch(const QString & keyword)
 {
-    this->m_style_delegate->setSearchKeyword(keyword);
+    this->m_styleDelegate->setSearchKeyword(keyword);
     this->m_model->startSearch(keyword);
     m_keyWord = keyword;
 }
