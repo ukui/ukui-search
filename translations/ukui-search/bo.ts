@@ -17,27 +17,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="68"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="70"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="93"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="94"/>
         <source>Creating index can help you getting results quickly, whether to create or not?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="104"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="105"/>
         <source>Don&apos;t remind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="115"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="116"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="117"/>
+        <location filename="../../frontend/control/create-index-ask-dialog.cpp" line="118"/>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>

@@ -2,54 +2,67 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>UkuiSearch::AppMatch</name>
+    <name>QObject</name>
     <message>
-        <location filename="../../libsearch/appsearch/app-match.cpp" line="262"/>
-        <source>Application Description:</source>
-        <translation>应用描述：</translation>
+        <location filename="../../libsearch/searchinterface/searchtasks/file-content-search-task.cpp" line="112"/>
+        <source>Content index incomplete.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/file-search-task.cpp" line="96"/>
+        <source>Warning, Can not find home path.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>UkuiSearch::AppSearch</name>
+    <name>UkuiSearch::AppMatch</name>
     <message>
         <source>Application Description:</source>
         <translation type="vanished">应用描述：</translation>
     </message>
 </context>
 <context>
+    <name>UkuiSearch::AppSearch</name>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="306"/>
+        <source>Application Description:</source>
+        <translation>应用描述：</translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::AppSearchPlugin</name>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="174"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="182"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="12"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="175"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="183"/>
         <source>Add Shortcut to Desktop</source>
         <translation>添加到桌面快捷方式</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="13"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="176"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="184"/>
         <source>Add Shortcut to Panel</source>
         <translation>添加到任务栏快捷方式</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="14"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="177"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="185"/>
         <source>Install</source>
         <translation>安装</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="30"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="35"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="38"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="43"/>
         <source>Applications Search</source>
-        <translation>应用搜索</translation>
+        <translation>应用</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="115"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="123"/>
         <source>Application</source>
         <translation>应用</translation>
     </message>
@@ -59,36 +72,49 @@
     </message>
 </context>
 <context>
+    <name>UkuiSearch::AppSearchTask</name>
+    <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/app-search-task.cpp" line="21"/>
+        <source>Application</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/app-search-task.cpp" line="26"/>
+        <source>Application search.</source>
+        <translation>应用搜索</translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::DirSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="221"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="361"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="224"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="364"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="222"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="362"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="225"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="365"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="223"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="226"/>
         <source>Copy Path</source>
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="242"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="245"/>
         <source>Dir Search</source>
-        <translation>目录搜索</translation>
+        <translation>目录</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="302"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="305"/>
         <source>Directory</source>
         <translation>目录</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="237"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="240"/>
         <source>Dir search.</source>
         <translation>目录搜索。</translation>
     </message>
@@ -97,17 +123,17 @@
         <translation type="vanished">目录</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="339"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="342"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="351"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="354"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="363"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="366"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -115,19 +141,19 @@
 <context>
     <name>UkuiSearch::FileContengSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="404"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="605"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="407"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="624"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="405"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="606"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="408"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="625"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="406"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="409"/>
         <source>Copy Path</source>
         <translation>复制文件路径</translation>
     </message>
@@ -136,94 +162,113 @@
         <translation type="vanished">文本内容搜索</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="420"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="423"/>
         <source>File content search.</source>
         <translation>文本内容搜索。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="425"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="428"/>
         <source>File content search</source>
-        <translation>文本内容搜索</translation>
+        <translation>文本内容</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="477"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="486"/>
+        <source>OCR</source>
+        <translation>OCR</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="491"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="583"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="602"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="595"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="614"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="607"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="626"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
 </context>
 <context>
+    <name>UkuiSearch::FileContentSearchTask</name>
+    <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/file-content-search-task.cpp" line="40"/>
+        <location filename="../../libsearch/searchinterface/searchtasks/file-content-search-task.cpp" line="65"/>
+        <source>File Content</source>
+        <translation>文本内容</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/file-content-search-task.cpp" line="45"/>
+        <source>File Content Search</source>
+        <translation>文本内容搜索</translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::FileSearchPlugin</name>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="161"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="14"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="164"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="12"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="162"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="15"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="165"/>
         <source>Open path</source>
         <translation>打开文件所在路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="13"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="16"/>
         <source>Copy Path</source>
         <translation>复制文件路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="32"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="35"/>
         <source>File Search</source>
-        <translation>文件搜索</translation>
+        <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="27"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="30"/>
         <source>File search.</source>
         <translation>文件搜索。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="74"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="186"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="77"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="189"/>
         <source>Yes</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="76"/>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="188"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="79"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="191"/>
         <source>Can not get a default application for opening %1.</source>
         <translation>没有找到默认打开%1的应用。</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="102"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="105"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="139"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="142"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="151"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="154"/>
         <source>Last time modified</source>
         <translation>上次修改时间</translation>
     </message>
     <message>
-        <location filename="../../libsearch/index/file-search-plugin.cpp" line="163"/>
+        <location filename="../../libsearch/index/file-search-plugin.cpp" line="166"/>
         <source>Copy path</source>
         <translation>复制路径</translation>
     </message>
@@ -328,6 +373,21 @@
     </message>
 </context>
 <context>
+    <name>UkuiSearch::SearchTaskPluginManager</name>
+    <message>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="68"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="82"/>
+        <source>plugin type: %1, is disabled!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="74"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="87"/>
+        <source>plugin type: %1, is not registered!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::SettingsSearchPlugin</name>
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="15"/>
@@ -338,17 +398,25 @@
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="35"/>
         <source>Settings Search</source>
-        <translation>设置</translation>
+        <translation>配置项</translation>
     </message>
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="30"/>
         <source>Settings search.</source>
-        <translation>设置。</translation>
+        <translation>配置项搜索。</translation>
     </message>
     <message>
         <location filename="../../libsearch/settingsearch/settings-search-plugin.cpp" line="117"/>
         <source>Settings</source>
         <translation>设置项</translation>
+    </message>
+</context>
+<context>
+    <name>UkuiSearch::UkuiSearchTaskPrivate</name>
+    <message>
+        <location filename="../../libsearch/searchinterface/ukui-search-task.cpp" line="91"/>
+        <source>Current task uuid error or an unregistered plugin is used!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
