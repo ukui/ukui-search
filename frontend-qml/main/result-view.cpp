@@ -16,6 +16,7 @@ using namespace UkuiSearch;
 
 ResultView::ResultView() : QQuickView()
 {
+    setFlag(Qt::Tool); //show出来时，不抢占焦点
     initProperty();
     initUI();
     initConnections();

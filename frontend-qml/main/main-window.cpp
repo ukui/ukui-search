@@ -17,9 +17,6 @@
 #include <QApplication>
 #include <QQuickStyle>
 
-//test
-#include <QPushButton>
-
 using namespace UkuiSearch;
 
 MainWindow::MainWindow() : QObject()
@@ -37,11 +34,6 @@ void MainWindow::initUI()
     m_resultView = new ResultView();
     m_resultView->installDataProvider(m_workManager);
 
-    m_button = new QPushButton("button");
-    m_button->resize(100, 50);
-    connect(m_button, &QPushButton::clicked, this, &MainWindow::showWindow);
-    m_button->show();
-
     MotifWmHints hints;
     hints.flags = MWM_HINTS_FUNCTIONS|MWM_HINTS_DECORATIONS;
     hints.functions = MWM_FUNC_ALL;
@@ -49,22 +41,26 @@ void MainWindow::initUI()
 
     XAtomHelper::getInstance()->setWindowMotifHint(m_lineEdit->winId(), hints);
     XAtomHelper::getInstance()->setWindowMotifHint(m_resultView->winId(), hints);
-    XAtomHelper::getInstance()->setWindowMotifHint(m_button->winId(), hints);
 }
 
 void MainWindow::initConnections()
 {
-
+    connect(m_lineEdit, &LineEdit::keywordChanged, this, &MainWindow::showResultView);
+    connect(qApp, &QApplication::focusWindowChanged, this, &MainWindow::checkFocus);
 }
 
 void MainWindow::showWindow()
+{
+    showLineEdit();
+}
+
+void MainWindow::showLineEdit()
 {
     if (!m_lineEdit) {
         return;
     }
 
     if (m_lineEdit->isVisible()) {
-        m_lineEdit->hide();
         return;
     }
 
@@ -72,13 +68,28 @@ void MainWindow::showWindow()
     int x = screen->geometry().x() + (screen->geometry().width() - m_lineEdit->width()) / 2;
     int y = screen->geometry().y() + screen->geometry().height() / 3;
 
-    qDebug() << "screen:" << screen->geometry() << x << y << m_lineEdit->width();
-    qDebug() << "screen:" << screen->geometry() << m_resultView->height() << m_resultView->width();
-
     m_lineEdit->setPosition(x, y);
-    m_resultView->setPosition( x, m_lineEdit->geometry().bottom() + 20);
     m_lineEdit->show();
+}
+
+void MainWindow::showResultView()
+{
+    if (!m_resultView) {
+        return;
+    }
+
+    if (m_resultView->isVisible()) {
+        return;
+    }
+
+    m_resultView->setPosition(m_lineEdit->x(), m_lineEdit->geometry().bottom() + 20);
     m_resultView->show();
+}
+
+void MainWindow::hideWindow()
+{
+    m_lineEdit->hide();
+    m_resultView->hide();
 }
 
 void MainWindow::initManager()
@@ -91,3 +102,12 @@ void MainWindow::initManager()
     m_workManager = new SearchWorkerManager(this);
 }
 
+void MainWindow::checkFocus(QWindow *focusWindow)
+{
+    bool lineEditFocus = (focusWindow == m_lineEdit);
+    bool resultViewFocus = (focusWindow == m_resultView);
+
+    if (!lineEditFocus && !resultViewFocus) {
+        hideWindow();
+    }
+}

@@ -27,6 +27,9 @@ private:
 private Q_SLOTS:
     void onTextChanged(const QString &keyword);
 
+Q_SIGNALS:
+    void keywordChanged();
+
 private:
     QHash<QString, ModelDataProvider*> m_providers;
 };

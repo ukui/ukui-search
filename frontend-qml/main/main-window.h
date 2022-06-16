@@ -22,6 +22,9 @@ public:
 
 public Q_SLOTS:
     void showWindow();
+    void hideWindow();
+    void showLineEdit();
+    void showResultView();
 
 protected:
 
@@ -31,11 +34,11 @@ private:
     void initConnections();
 
 private Q_SLOTS:
+    void checkFocus(QWindow *focusWindow);
 
 private:
     LineEdit *m_lineEdit = nullptr;
     ResultView *m_resultView = nullptr;
-    QPushButton *m_button = nullptr;
 
     SearchWorkerManager *m_workManager = nullptr;
 };

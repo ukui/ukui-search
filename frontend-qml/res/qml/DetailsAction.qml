@@ -8,6 +8,8 @@ Item {
 
     height: listView.height;
 
+    signal actionClicked(int actionKey);
+
     ListView {
         id: listView;
 
@@ -48,7 +50,7 @@ Item {
                     anchors.fill: parent;
 
                     onClicked: {
-                        console.log("点击事件:", actionDelegate.modelData.v);
+                        root.actionClicked(actionDelegate.modelData.k);
                     }
                 }
             }

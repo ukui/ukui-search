@@ -61,3 +61,12 @@ QString DetailsUtils::getPluginActions(const QString &pluginId, int type)
 
     return desc;
 }
+
+void DetailsUtils::openAction(const QString &pluginId, int actionKey, const QString& key, int type)
+{
+    SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(pluginId);
+
+    if (plugin) {
+        plugin->openAction(actionKey, key, type);
+    }
+}

@@ -25,6 +25,7 @@ public:
     //插件的action
     Q_INVOKABLE QString getPluginActions(const QString& pluginId, int type);
 
+    Q_INVOKABLE void openAction(const QString& pluginId, int actionKey, const QString& key, int type);
 
 };
 
