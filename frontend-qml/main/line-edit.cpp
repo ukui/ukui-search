@@ -43,6 +43,8 @@ void LineEdit::onTextChanged(const QString &keyword)
         (*iterator)->startSearch(keyword);
         ++iterator;
     }
+
+    Q_EMIT keywordChanged();
 }
 
 void LineEdit::installDataProvider(ModelDataProvider *provider)

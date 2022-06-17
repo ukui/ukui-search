@@ -12,6 +12,9 @@ Rectangle {
     property string pluginId;
     property int dataIndex : -1;
 
+    property var itemObjSave: null;
+    property var actionObjSave: null;
+
     DetailsUtils {
         id: detailsUtils;
     }
@@ -74,6 +77,8 @@ Rectangle {
             width: layout.width;
 
             spacing: layout.spacing;
+
+            onActionClicked: (actionKey) => {root.openAction(actionKey)};
         }
     }
 
@@ -112,21 +117,13 @@ Rectangle {
         info.type = detailsUtils.getPluginData(pluginId, "name");
 
         data.dataModel = itemObj.keys;
-        if (itemObj.keys.length > 0) {
-            dividingA.visible = true;
-
-        } else {
-            dividingA.visible = false;
-        }
-
+        dividingA.visible = (itemObj.keys.length > 0);
 
         actions.actionModel = actionObj.keys;
-        if (actionObj.keys.length > 0) {
-            dividingB.visible = true;
+        dividingB.visible = (actionObj.keys.length > 0);
 
-        } else {
-            dividingB.visible = false;
-        }
+        root.itemObjSave = itemObj;
+        root.actionObjSave = actionObj;
 
         console.log("load action data:", itemObj.keys);
         console.log("load action data:", actionObj.keys);
@@ -137,6 +134,10 @@ Rectangle {
         root.dataIndex = dataIndex;
 
         parseUI();
+    }
+
+    function openAction(actionKey) {
+        detailsUtils.openAction(root.pluginId, actionKey, root.itemObjSave.actionKey, root.itemObjSave.type);
     }
 
     Component.onCompleted: {
