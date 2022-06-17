@@ -27,10 +27,29 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 #include <QProxyStyle>
+#include <QSyntaxHighlighter>
+#include <QTextCharFormat>
+#include <QRegExp>
 #include "global-settings.h"
 
 namespace UkuiSearch {
-class ResultViewDelegate : public QStyledItemDelegate {
+class HightLightEffectHelper : public QSyntaxHighlighter
+{
+public:
+    explicit HightLightEffectHelper(QObject *parent = nullptr);
+    void setExpression(const QString &text);
+    void setTextColor(const QBrush &brush);
+
+protected:
+    void highlightBlock(const QString &text);
+
+private:
+    QRegExp m_expression;
+    QTextCharFormat m_textCharFormat;
+};
+
+class ResultViewDelegate : public QStyledItemDelegate
+{
     Q_OBJECT
 public:
     explicit ResultViewDelegate(QObject *parent = nullptr);
@@ -38,11 +57,12 @@ public:
     void setSearchKeyword(const QString &);
 protected:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-private:
-    QString m_regFindKeyWords = 0;
     void paint(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const override;
-    QString getHtmlText(QPainter *, const QStyleOptionViewItem &, const QModelIndex &) const;
-    QString escapeHtml(const QString&) const;
+
+private:
+    QTextDocument *m_textDoc = nullptr;
+    HightLightEffectHelper *m_hightLightEffectHelper = nullptr;
+
 };
 
 class ResultItemStyle : public QProxyStyle
