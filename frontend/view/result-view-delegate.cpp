@@ -2,15 +2,15 @@
 using namespace Zeeker;
 static ResultItemStyle *global_instance_of_item_style = nullptr;
 
-ResultViewDelegate::ResultViewDelegate(QObject *parent) : QStyledItemDelegate(parent)
+ResultViewDelegate::ResultViewDelegate(QObject *parent) : QStyledItemDelegate(parent),
+    m_textDoc(new QTextDocument(this)),
+    m_hightLightEffectHelper(new HightLightEffectHelper(this))
 {
-
 }
 
 void ResultViewDelegate::setSearchKeyword(const QString &regFindKeyWords)
 {
-    m_regFindKeyWords.clear();
-    m_regFindKeyWords = regFindKeyWords;
+    m_hightLightEffectHelper->setExpression(regFindKeyWords);
 }
 
 QSize ResultViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -20,92 +20,33 @@ QSize ResultViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
     return size;
 }
 
-void ResultViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void ResultViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
-    QStyle *style = opt.widget->style();
+    opt.displayAlignment = Qt::Alignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     QString text = opt.text;
-    if(text.isEmpty()) {
-        return;
-    }
     opt.text = QString();
+
+    QStyle *style = opt.widget->style();
     style->proxy()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget); //绘制非文本区域内容
 
     opt.text = text;
-    QTextDocument doc;
-    doc.setHtml(getHtmlText(painter, opt, index)); //提取富文本
-    QAbstractTextDocumentLayout* layout = doc.documentLayout();
-    const double height = layout->documentSize().height();
-
-
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
-    //使图标和文本间隔与原来保持一致，故文本区域右移4
-//    textRect.adjust(4, 0, 0, 0);
-    double y = textRect.y();
-    y += (textRect.height() - height) / 2;
-
-    QAbstractTextDocumentLayout::PaintContext context;
-
-    QPalette::ColorGroup cg = opt.state & QStyle::State_Enabled
-            ? QPalette::Normal : QPalette::Disabled;
-    if (cg == QPalette::Normal && !(opt.state & QStyle::State_Active))
-        cg = QPalette::Inactive;
-
-    if(opt.state & QStyle::State_Selected) {
-        painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
-    } else {
-        painter->setPen(opt.palette.color(cg, QPalette::Text));
-    }
     painter->save();
-    painter->translate(QPointF(textRect.x(), y));
-    layout->draw(painter, context); //绘制文本区域内容
-    painter->restore();
-
-}
-
-QString ResultViewDelegate::getHtmlText(QPainter *painter, const QStyleOptionViewItem &itemOption, const QModelIndex &index) const
-{
-    int indexFindLeft = 0;
-
-//    QString indexString = index.model()->data(index, Qt::DisplayRole).toString();
-    QString indexString = itemOption.text;
-    QFont ft(painter->font().family(), GlobalSettings::getInstance()->getValue(FONT_SIZE_KEY).toInt());
-    QFontMetrics fm(ft);
-    QString indexColString = fm.elidedText(indexString, Qt::ElideRight, itemOption.rect.width() - 30 - 10); //当字体超过Item的长度时显示为省略号
-    QString htmlString;
-    if ((indexColString.toUpper()).contains((m_regFindKeyWords.toUpper()))) {
-        indexFindLeft = indexColString.toUpper().indexOf(m_regFindKeyWords.toUpper()); //得到查找字体在当前整个Item字体中的位置
-        htmlString = escapeHtml(indexColString.left(indexFindLeft)) + "<b>" + escapeHtml(indexColString.mid(indexFindLeft, m_regFindKeyWords.length())) + "</b>" + escapeHtml(indexColString.right(indexColString.length() - indexFindLeft - m_regFindKeyWords.length()));
+    if(opt.state & QStyle::State_Selected) {
+        m_hightLightEffectHelper->setTextColor(QBrush(opt.palette.highlightedText().color()));
     } else {
-        bool boldOpenned = false;
-        for(int i = 0; i < indexColString.length(); i++) {
-            if ((m_regFindKeyWords.toUpper()).contains(QString(indexColString.at(i)).toUpper())) {
-                if (! boldOpenned) {
-                    boldOpenned = true;
-                    htmlString.append(QString("<b>"));
-                }
-                htmlString.append(escapeHtml(QString(indexColString.at(i))));
-            } else {
-                if (boldOpenned) {
-                    boldOpenned = false;
-                    htmlString.append(QString("</b>"));
-                }
-                htmlString.append(escapeHtml(QString(indexColString.at(i))));
-
-            }
-        }
+        m_hightLightEffectHelper->setTextColor(QBrush(opt.palette.text().color()));
     }
-//    qDebug()<<indexColString<<"---->"<<htmlString;
-    return "<pre>" + htmlString + "</pre>";
-}
+    painter->translate(textRect.topLeft());
 
-QString ResultViewDelegate::escapeHtml(const QString &str) const
-{
-    QString temp = str;
-    temp.replace("<", "&lt;");
-    temp.replace(">", "&gt;");
-    return temp;
+    m_textDoc->setHtml("<pre>" + text + "</pre>");
+    m_hightLightEffectHelper->setDocument(m_textDoc);
+    m_hightLightEffectHelper->rehighlight();
+    m_textDoc->drawContents(painter);
+    painter->restore();
 }
 
 ResultItemStyle *ResultItemStyle::getStyle()
@@ -257,4 +198,33 @@ void ResultItemStyle::drawControl(QStyle::ControlElement element, const QStyleOp
     default:
         return QProxyStyle::drawControl(element, option, painter, widget);
     }
+}
+
+HightLightEffectHelper::HightLightEffectHelper(QObject *parent) : QSyntaxHighlighter(parent)
+{
+    m_expression.setCaseSensitivity(Qt::CaseInsensitive);
+}
+
+void HightLightEffectHelper::setExpression(const QString &text)
+{
+    m_expression.setPattern(text);
+}
+
+void HightLightEffectHelper::setTextColor(const QBrush &brush)
+{
+    m_textCharFormat.setForeground(brush);
+}
+
+void HightLightEffectHelper::highlightBlock(const QString &text)
+{
+    setFormat(0, text.length(), m_textCharFormat);
+
+    m_textCharFormat.setFontWeight(QFont::Bold);
+    int index = text.indexOf(m_expression);
+    while(index >= 0){
+        int length = m_expression.matchedLength();
+        setFormat(index, length, m_textCharFormat);
+        index = text.indexOf(m_expression, index+length);
+    }
+    m_textCharFormat.setFontWeight(QFont::Normal);
 }
