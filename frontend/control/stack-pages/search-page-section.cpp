@@ -510,8 +510,9 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
     });
     connect(widget, &ResultWidget::retractClicked, this, [=] () {//点击收起搜索结果后
         if (!m_titleLabel->isHidden()) {
-            m_titleLabel->hide();
             this->setViewportMargins(0,0,0,0);
+            this->verticalScrollBar()->setValue(widget->pos().ry());
+            m_titleLabel->hide();
         }
     });
     connect(widget, &ResultWidget::sendBestListData, m_bestListWidget, &BestListWidget::sendBestListData);
