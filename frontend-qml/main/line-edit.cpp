@@ -4,9 +4,11 @@
 
 #include "line-edit.h"
 #include "model-data-provider.h"
+#include "ui-config.h"
 
 #include <QQmlError>
 #include <QQuickItem>
+#include <QQmlContext>
 
 using namespace UkuiSearch;
 
@@ -27,6 +29,11 @@ void LineEdit::initUI()
 
     setResizeMode(ResizeMode::SizeRootObjectToView);
     setSource(QUrl("qrc:/qml/LineEdit.qml"));
+}
+
+void LineEdit::initProperty()
+{
+    rootContext()->setContextProperty("uiConfig", UIConfig::getInstance(this));
 }
 
 void LineEdit::initConnections()

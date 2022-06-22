@@ -22,6 +22,7 @@ public:
 
 private:
     void initUI();
+    void initProperty();
     void initConnections();
 
 private Q_SLOTS:

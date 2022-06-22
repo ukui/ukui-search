@@ -21,7 +21,6 @@ SearchResultModel::SearchResultModel(QObject *parent) : QAbstractListModel(paren
 int SearchResultModel::rowCount(const QModelIndex &parent) const
 {
     int rowCount = virtualRowCount();
-    qDebug() << "SearchResultModel::rowCount" << rowCount;
 
     return rowCount;
 }

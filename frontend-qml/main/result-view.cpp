@@ -7,6 +7,7 @@
 #include "result-model-manager.h"
 #include "search-worker-manager.h"
 #include "model-data-provider.h"
+#include "ui-config.h"
 
 #include <QQmlEngine>
 #include <QQmlContext>
@@ -48,6 +49,8 @@ void ResultView::initProperty()
 
     m_resultModelManager = ResultModelManager::getInstance(this);
     rootContext()->setContextProperty("resultModelManager", m_resultModelManager);
+
+    rootContext()->setContextProperty("uiConfig", UIConfig::getInstance(this));
 }
 
 void ResultView::installDataProvider(ModelDataProvider *provider)

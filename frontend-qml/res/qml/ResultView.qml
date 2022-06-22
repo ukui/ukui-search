@@ -2,21 +2,25 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.5
 
-Item {
+Rectangle {
     id: root;
-    focus: false;
+
     property bool showDetails : false;
+
+    clip: true;
+    color: uiConfig.color("resultView");
 
     RowLayout {
         id: mainLayout;
+
         anchors.fill: parent;
-        anchors.margins: 5;
-        spacing: 5;
+        anchors.margins: uiConfig.margin("resultView", 0);
+        spacing: uiConfig.spacing("resultView");
 
-        ResultList {
-            id: resultList;
+        PluginView {
+            id: pluginView;
 
-            Layout.preferredWidth: showDetails ? Math.round(parent.width * 0.382) : parent.width;
+            Layout.preferredWidth: showDetails ? Math.round(parent.width * 0.45) : parent.width;
             Layout.fillHeight: true;
 
             onShowItemDetails: (pluginId, index) => {
@@ -30,8 +34,6 @@ Item {
 
             Layout.fillWidth: true;
             Layout.fillHeight: true;
-
-            radius: 5;
         }
     }
 

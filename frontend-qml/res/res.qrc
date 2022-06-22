@@ -13,6 +13,6 @@
         <file>qml/DetailsData.qml</file>
         <file>qml/DetailsInfo.qml</file>
         <file>qml/DetailsImage.qml</file>
-        <file>qml/ResultList.qml</file>
+        <file>qml/PluginView.qml</file>
     </qresource>
 </RCC>
