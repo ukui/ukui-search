@@ -19,6 +19,7 @@ include(../xatom/xatom.pri)
 include(model/model.pri)
 include(main/main.pri)
 include(items/items.pri)
+include(settings/settings.pri)
 
 HEADERS +=
 

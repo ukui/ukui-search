@@ -4,18 +4,24 @@ import org.ukui.search.items 1.0
 
 Rectangle {
     id: root;
+
     property int index;
     property string name;
     property var icon;
+    property bool selected: false;
 
     signal itemClicked(int index);
+    signal itemSelected(int index);
+
+    height: uiConfig.height("resultItem");
+    radius: uiConfig.radius("resultItem");
 
     RowLayout {
-        id: layout;
+        id: resultItemLayout;
         anchors.fill: parent;
-        anchors.leftMargin: 5;
+        anchors.leftMargin: uiConfig.margin("resultItem", 0);
 
-        spacing: 5;
+        spacing: uiConfig.spacing("resultItem");
 
         IconItem {
             id: itemIcon;
@@ -23,8 +29,8 @@ Rectangle {
             icon: root.icon;
 
             Layout.alignment: Qt.AlignCenter;
-            Layout.preferredHeight: 24;
-            Layout.preferredWidth: 24;
+            Layout.preferredHeight: uiConfig.width("itemIcon");
+            Layout.preferredWidth: uiConfig.height("itemIcon");
         }
 
         Text {
@@ -43,8 +49,30 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent;
-        onClicked: (mouseEvent) => {
-            root.itemClicked(index);
+
+        hoverEnabled: true;
+        onClicked: {
+            root.itemClicked(root.index);
+        }
+        onEntered: {
+            if (!root.selected) {
+                root.color = uiConfig.color("hover");
+            }
+        }
+        onExited: {
+            if (!root.selected) {
+                root.color = "transparent";
+            }
+        }
+    }
+
+    function selectItem(selected) {
+        if (root.selected !== selected) {
+            root.selected = selected;
+            root.color = root.selected ? uiConfig.color("select") : "transparent";
+            if (root.selected) {
+                root.itemSelected(root.index);
+            }
         }
     }
 

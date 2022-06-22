@@ -8,6 +8,7 @@
 #include "search-worker-manager.h"
 #include "icon-item.h"
 #include "details-utils.h"
+#include "ui-config.h"
 
 //
 #include "xatom-helper.h"
@@ -96,6 +97,7 @@ void MainWindow::initManager()
 {
     qmlRegisterType<IconItem>("org.ukui.search.items", 1, 0, "IconItem");
     qmlRegisterType<DetailsUtils>("org.ukui.search.utils", 1, 0, "DetailsUtils");
+    qRegisterMetaType<UIConfig*>("UIConfig*");
 
     QQuickStyle::setStyle("org.kylin.style");
 

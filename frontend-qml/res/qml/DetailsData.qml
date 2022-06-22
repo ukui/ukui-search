@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.12
 
 Item {
     id: root;
+
     property var dataModel;
     property int spacing: 10;
 
@@ -21,6 +22,7 @@ Item {
         model: root.dataModel;
         delegate: Rectangle {
             id: infoDelegate;
+
             property int index: model.index;
             property var modelData: model.modelData;
 

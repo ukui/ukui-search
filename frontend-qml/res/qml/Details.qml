@@ -6,49 +6,52 @@ import org.ukui.search.utils 1.0
 Rectangle {
     id: root;
 
-    color: "#FBFBFB";
-    clip: true;
-
     property string pluginId;
-    property int dataIndex : -1;
-
+    property int dataIndex: -1;
     property var itemObjSave: null;
     property var actionObjSave: null;
 
+    clip: true;
+    color: uiConfig.color("details");
+    radius: uiConfig.radius("details");
+    
     DetailsUtils {
         id: detailsUtils;
     }
 
     Column {
-        id: layout;
+        id: detailsLayout;
 
         anchors.fill: parent;
-        anchors.margins: 10;
+        anchors.leftMargin: uiConfig.margin("details", 0);
+        anchors.topMargin: uiConfig.margin("details", 1);
+        anchors.rightMargin: uiConfig.margin("details", 2);
+        anchors.bottomMargin: uiConfig.margin("details", 3);
 
-        spacing: 10;
+        spacing: uiConfig.spacing("details");
 
         DetailsImage {
             id: image;
 
-            width: layout.width;
-            height: 150;
+            width: detailsLayout.width;
+            height: uiConfig.height("detailsImage");
 
             icon: null;
-            imageWidth: 150;
-            imageHeight: 150;
+            imageWidth: image.height;
+            imageHeight: image.height;
         }
 
         DetailsInfo {
             id: info;
 
-            width: layout.width;
+            width: detailsLayout.width;
             height: 50;
         }
 
         Rectangle {
             id: dividingA;
 
-            width: layout.width;
+            width: detailsLayout.width;
             height: 1;
 
             color: "#dbdbdb";
@@ -57,15 +60,15 @@ Rectangle {
         DetailsData {
             id: data;
 
-            width: layout.width;
+            width: detailsLayout.width;
 
-            spacing: layout.spacing;
+            spacing: detailsLayout.spacing;
         }
 
         Rectangle {
             id: dividingB;
 
-            width: layout.width;
+            width: detailsLayout.width;
             height: 1;
 
             color: "#dbdbdb";
@@ -74,16 +77,15 @@ Rectangle {
         DetailsAction {
             id: actions;
 
-            width: layout.width;
+            width: detailsLayout.width;
 
-            spacing: layout.spacing;
+            spacing: detailsLayout.spacing;
 
             onActionClicked: (actionKey) => {root.openAction(actionKey)};
         }
     }
 
     function getJsonObj(jsonStr) {
-        console.log("处理Json字符串:", jsonStr);
         if (jsonStr === undefined || jsonStr === "") {
             return undefined;
         }

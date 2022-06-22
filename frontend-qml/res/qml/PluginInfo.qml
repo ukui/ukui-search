@@ -10,9 +10,15 @@ Rectangle {
 
     signal expandButtonClicked;
 
+    height: uiConfig.height("pluginInfo");
+    color: uiConfig.color("pluginInfo");
+    radius: uiConfig.radius("pluginInfo");
+
     RowLayout {
+        id: pluginInfoLayout;
+
         anchors.fill: parent;
-        anchors.leftMargin: 5;
+        anchors.leftMargin: uiConfig.margin("pluginInfo", 0);
 
         spacing: 5;
 
