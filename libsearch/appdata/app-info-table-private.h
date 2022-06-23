@@ -45,8 +45,8 @@ public:
 
 private:
     ~AppInfoTablePrivate();
-    void initDateBaseConnection();
-    void openDataBase();
+    bool initDateBaseConnection();
+    bool openDataBase();
     void closeDataBase();
 
     AppInfoTable *q = nullptr;

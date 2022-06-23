@@ -76,6 +76,8 @@ private:
     bool updateAppLaunchTimes(QString &desktopfp);
 
     AppInfoTablePrivate *d;
+Q_SIGNALS:
+    void DBOpenFailed();
 
 };
 }
