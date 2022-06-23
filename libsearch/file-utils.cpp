@@ -26,6 +26,8 @@
 #include <QDBusMessage>
 #include <QDBusConnection>
 #include <QDomDocument>
+#include <QDBusInterface>
+#include <QDBusReply>
 #include "gobject-template.h"
 #include "hanzi-to-pinyin.h"
 
@@ -829,7 +831,31 @@ int FileUtils::openFile(QString &path, bool openInDir)
         if(!G_IS_APP_INFO(info)) {
             res = -1;
         } else {
-            QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+            bool isSuccess(false);
+            QDBusInterface * appLaunchInterface = new QDBusInterface("com.kylin.AppManager",
+                                                                     "/com/kylin/AppManager",
+                                                                     "com.kylin.AppManager",
+                                                                     QDBusConnection::sessionBus());
+            if(!appLaunchInterface->isValid()) {
+                qWarning() << qPrintable(QDBusConnection::sessionBus().lastError().message());
+                isSuccess = false;
+            } else {
+                appLaunchInterface->setTimeout(10000);
+                QDBusReply<bool> reply = appLaunchInterface->call("LaunchDefaultAppWithUrl", "file:"+(path));
+                if(reply.isValid()) {
+                    isSuccess = reply;
+                } else {
+                    qWarning() << "SoftWareCenter dbus called failed!";
+                    isSuccess = false;
+                }
+            }
+            if(appLaunchInterface) {
+                delete appLaunchInterface;
+            }
+            appLaunchInterface = NULL;
+            if (!isSuccess){
+                QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+            }
             res = 0;
         }
         g_object_unref(info);
