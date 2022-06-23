@@ -458,12 +458,13 @@ void ResultArea::initConnections()
     connect(this->m_titleLabel, &TitleLabel::retractClicked, this, [=] () {
         Q_FOREACH(auto widget, m_widget_list) {
             if (widget->pluginName() == m_titleLabel->text()) {
-                widget->reduceListSlot();
-                widget->resetTitleLabel();
                 if (!m_titleLabel->isHidden()) {
                     m_titleLabel->hide();
                     this->setViewportMargins(0,0,0,0);
                 }
+                widget->reduceListSlot();
+                this->verticalScrollBar()->setValue(widget->pos().ry());
+                widget->resetTitleLabel();
             }
         }
     });
@@ -511,7 +512,6 @@ void ResultArea::setupConnectionsForWidget(ResultWidget *widget)
     connect(widget, &ResultWidget::retractClicked, this, [=] () {//点击收起搜索结果后
         if (!m_titleLabel->isHidden()) {
             this->setViewportMargins(0,0,0,0);
-            this->verticalScrollBar()->setValue(widget->pos().ry());
             m_titleLabel->hide();
         }
     });
