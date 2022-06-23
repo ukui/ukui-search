@@ -47,12 +47,16 @@ class ConvertWinidToDesktop : public QObject
 {
     Q_OBJECT
 public:
-    explicit ConvertWinidToDesktop(QObject *parent = nullptr);
-    ~ConvertWinidToDesktop();
+    static ConvertWinidToDesktop &getConverter();
 
     QString tranIdToDesktop(WId id);
 
 private:
+    explicit ConvertWinidToDesktop(QObject *parent = nullptr);
+    ConvertWinidToDesktop(const ConvertWinidToDesktop&) = delete;
+    ConvertWinidToDesktop& operator =(const ConvertWinidToDesktop&) = delete;
+    ~ConvertWinidToDesktop();
+
     QString m_classClass = nullptr;
     QString m_className = nullptr;
     QString m_statusName = nullptr;

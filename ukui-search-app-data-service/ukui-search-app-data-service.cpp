@@ -1,35 +1,30 @@
 #include <QDebug>
 #include "ukui-search-app-data-service.h"
 #include "app-db-manager.h"
-#include "convert-winid-to-desktop.h"
 
 using namespace UkuiSearch;
+
 UkuiSearchAppDataService::UkuiSearchAppDataService(int &argc, char *argv[], const QString &applicationName):
     QtSingleApplication (applicationName, argc, argv)
 {
-    qDebug()<<"ukui search app data service constructor start";
+    qDebug() << "ukui search app data service constructor start";
     setApplicationVersion(QString("v%1").arg(VERSION));
     setQuitOnLastWindowClosed(false);
 
     if (!this->isRunning()) {
-        connect(this, &QtSingleApplication::messageReceived, [=](QString msg) {
+        qDebug() << "First running";
+        AppDBManager::getInstance();
+
+        connect(this, &QtSingleApplication::messageReceived, [ & ](QString msg) {
             this->parseCmd(msg, true);
-        });
-        //监控应用进程开启
-        connect(KWindowSystem::self(), &KWindowSystem::windowAdded, [ = ](WId id) {
-            ConvertWinidToDesktop reply;
-            QString desktopfp = reply.tranIdToDesktop(id);
-            if (!desktopfp.isEmpty()) {
-                AppDBManager::getInstance()->updateAppLaunchTimes(desktopfp);
-            }
         });
     }
 
     //parse cmd
-    qDebug()<<"parse cmd";
+    qDebug() << "parse cmd";
     auto message = this->arguments().join(' ').toUtf8();
     parseCmd(message, !isRunning());
-    qDebug()<<"ukui search app data service constructor end";
+    qDebug() << "ukui search app data service constructor end";
 }
 
 void UkuiSearchAppDataService::parseCmd(QString msg, bool isPrimary)

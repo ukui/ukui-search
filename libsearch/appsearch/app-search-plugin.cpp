@@ -24,7 +24,7 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QThread(parent), m_appSearch
     connect(this, SIGNAL(startTimer), m_timer, SLOT(start()));
     connect(this, &AppSearchPlugin::stopTimer, m_timer, &QTimer::stop);
     connect(m_timer, &QTimer::timeout, this, [ & ]{
-        qWarning()<<"-------------->stopped by itself";
+        qWarning() << "The app-search thread stopped because of timeout.";
         this->quit();
     });
 

@@ -26,6 +26,12 @@ ConvertWinidToDesktop::ConvertWinidToDesktop(QObject *parent) : QObject(parent)
 {
 }
 
+ConvertWinidToDesktop &ConvertWinidToDesktop::getConverter()
+{
+    static ConvertWinidToDesktop instance;
+    return instance;
+}
+
 QString ConvertWinidToDesktop::tranIdToDesktop(WId id)
 {
     KWindowInfo info(id, 0, NET::WM2AllProperties);

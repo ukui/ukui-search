@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
-    UkuiSearchAppDataService ukss(argc, argv, "ukui-search-app-data-service");
-    if (ukss.isRunning())
+    UkuiSearchAppDataService appDB(argc, argv, "ukui-search-app-data-service");
+    if (appDB.isRunning()) {
         return 0;
-
-    return ukss.exec();
+    }
+    return appDB.exec();
 }
