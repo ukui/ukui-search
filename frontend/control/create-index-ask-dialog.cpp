@@ -21,7 +21,7 @@
 
 #include "create-index-ask-dialog.h"
 #include <QPainterPath>
-#include "kwindowsystem.h"
+#include <KWindowSystem>
 
 #define MAIN_SIZE QSize(380, 202)
 #define MAIN_SPACING 0

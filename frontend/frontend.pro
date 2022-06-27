@@ -7,7 +7,7 @@ DEFINES += VERSION='\\"$${VERSION}\\"'
 TARGET = ukui-search
 TEMPLATE = app
 
-PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0
+PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 kysdk-waylandhelper
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 LIBS += -lxapian -lgsettings-qt -lquazip5 -lX11
 #LIBS += -lukui-log4qt
