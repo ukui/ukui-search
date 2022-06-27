@@ -31,10 +31,12 @@
 #include <QPixmap>
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 #include <KWindowEffects>
-#include "kwindowsystem.h"
+#include <KWindowSystem>
 #endif
-#include "global-settings.h"
 #include <QtX11Extras/QX11Info>
+#include "ukuistylehelper/ukuistylehelper.h"
+#include "windowmanager/windowmanager.h"
+#include "global-settings.h"
 
 #define MAIN_MARGINS 0, 0, 0, 0
 #define TITLE_MARGINS 0,0,0,0
@@ -150,11 +152,11 @@ void MainWindow::initUi() {
     //创建索引询问弹窗
     m_askDialog = new CreateIndexAskDialog(this);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-    MotifWmHints ask_dialog_hints;
-    ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-    ask_dialog_hints.functions = MWM_FUNC_ALL;
-    ask_dialog_hints.decorations = MWM_DECOR_BORDER;
-    XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
+//    MotifWmHints ask_dialog_hints;
+//    ask_dialog_hints.flags = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
+//    ask_dialog_hints.functions = MWM_FUNC_ALL;
+//    ask_dialog_hints.decorations = MWM_DECOR_BORDER;
+//    XAtomHelper::getInstance()->setWindowMotifHint(m_askDialog->winId(), ask_dialog_hints);
 #endif
 }
 
@@ -192,7 +194,6 @@ void MainWindow::bootOptionsFilter(QString opt) {
         if (this->isHidden()) {
             clearSearchResult();
             centerToScreen(this);
-            this->show();
             this->m_searchBarWidget->setFocus();
             this->activateWindow();
         }
@@ -217,7 +218,6 @@ void MainWindow::trayIconActivatedSlot(QSystemTrayIcon::ActivationReason reason)
         if(!this->isVisible()) {
             clearSearchResult();
             centerToScreen(this);
-            this->show();
 //            this->m_searchLineEdit->focusIn(); //打开主界面时输入框夺焦，可直接输入
             this->raise();
             this->activateWindow();
@@ -421,7 +421,12 @@ void MainWindow::centerToScreen(QWidget* widget) {
 //        desk_x = width;
 //        desk_y = height;
 //    }
-    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 3 + desk_rect.top());
+    widget->show();
+    kdk::WindowManager::setGeometry(this->windowHandle(),QRect(desk_x / 2 - x / 2 + desk_rect.left(),
+                                               desk_y / 3 + desk_rect.top(),
+                                               this->width(),
+                                               this->height()));
+//    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 3 + desk_rect.top());
 }
 
 void MainWindow::initGsettings() {
@@ -460,6 +465,7 @@ void MainWindow::initTimer() {
     connect(m_askTimer, &QTimer::timeout, this, [ = ]() {
         if(this->isVisible()) {
             m_isAskDialogVisible = true;
+            kdk::UkuiStyleHelper::self()->removeHeader(m_askDialog);
             m_askDialog->show();
             m_currentSearchAsked = true;
         }
