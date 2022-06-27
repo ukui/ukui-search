@@ -58,8 +58,6 @@ private:
     void initDiskWatcher();
 
     void handleDisk();
-    void handleAddedUDiskDevice(QDBusMessage msg);
-    void handleRemovedUDiskDevice(QDBusMessage msg);
 
     void handleIndexItemAppend(const QString &path, QStringList &blackList);
     void handleIndexItemRemove(const QString &path);
@@ -86,6 +84,11 @@ private:
     QStringList m_currentUDiskDeviceList;
     QString m_removedUDiskDevice;
     QMap<QString, QStringList> m_currentUDiskDeviceInfo;
+
+private Q_SLOTS:
+    void handleAddedUDiskDevice(QDBusMessage msg);
+    void handleRemovedUDiskDevice(QDBusMessage msg);
+
 Q_SIGNALS:
     void udiskRemoved();
     void appendIndexItem(const QString&, const QStringList&);

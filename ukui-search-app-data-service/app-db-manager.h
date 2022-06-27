@@ -11,6 +11,7 @@
 #include <QDateTime>
 #include <QFileSystemWatcher>
 #include <QMutex>
+#include <QSettings>
 #include "app-db-common-defines.h"
 
 #define CONNECTION_NAME QLatin1String("ukss-appdb-connection")
@@ -51,25 +52,31 @@ public:
     void getInstallAppMap(QMap<QString, QStringList> &installAppMap);
 
     bool addAppDesktopFile2DB(QString &desktopfd);
-    bool deleteAppDesktopFile2DB(QString &desktopfd);
+    bool deleteAppDesktopFile2DB(const QString &desktopfd);
     bool updateAppDesktopFile2DB(QString &desktopfd);
     bool updateAppLaunchTimes(QString &desktopfp);
+    void updateAllData2DB();
+    bool updateLocaleData2DB(QString desktopPath);
 
 private:
     explicit AppDBManager(QObject *parent = nullptr);
     ~AppDBManager();
 
-    void getAllDesktopFilePath(QString path);
+    void loadDesktopFilePaths(QString path, QFileInfoList &infolist);
 
-    void initDateBaseConnection();
-    void openDataBase();
+    void initDataBase();
+    bool openDataBase();
     void closeDataBase();
 
     void buildAppInfoDB();
     void updateAppInfoDB();
+    void getAllDesktopFilePath(QString path);
     void getFilePathList(QStringList &pathList);
 
-    QSqlDatabase *m_database = nullptr;
+    QSettings *m_qSettings = nullptr;
+    bool m_localeChanged;
+
+    QSqlDatabase m_database;
 
     QFileSystemWatcher *m_watchAppDir = nullptr;
 
@@ -119,6 +126,9 @@ private:
         "/usr/share/applications/openjdk-8-policytool.desktop",
         "/usr/share/applications/kylin-io-monitor.desktop",
         "/usr/share/applications/wps-office-uninstall.desktop",
+
+        //原本额外排除的目录，不知道额外的原因，有可能之后有问题--bjj20220621
+        "/usr/share/applications/screensavers"
     };
 
 };

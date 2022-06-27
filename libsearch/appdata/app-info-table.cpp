@@ -25,7 +25,10 @@ AppInfoTablePrivate::AppInfoTablePrivate(AppInfoTable *parent) : QObject(parent)
             break;
     }
     qDebug() << "App info database currunt connection name:" << m_ConnectionName;
-    this->openDataBase();
+    if (!this->openDataBase()) {
+        Q_EMIT q->DBOpenFailed();
+        qWarning() << "Fail to open App DataBase, because:" << m_database->lastError();
+    }
 }
 
 bool AppInfoTablePrivate::setAppFavoritesState(QString &desktopfp, size_t num)
@@ -653,24 +656,26 @@ AppInfoTablePrivate::~AppInfoTablePrivate()
     this->closeDataBase();
 }
 
-void AppInfoTablePrivate::initDateBaseConnection()
+bool AppInfoTablePrivate::initDateBaseConnection()
 {
     m_database->setDatabaseName(APP_DATABASE_PATH + APP_DATABASE_NAME);
     if(!m_database->open()) {
         qWarning() << m_database->lastError();
-        QApplication::quit();
+        return false;
+//        QApplication::quit();
     }
+    return true;
 }
 
-void AppInfoTablePrivate::openDataBase()
+bool AppInfoTablePrivate::openDataBase()
 {
     *m_database = QSqlDatabase::addDatabase("QSQLITE", m_ConnectionName);
     m_database->setDatabaseName(APP_DATABASE_PATH + APP_DATABASE_NAME);
 
     if(!m_database->open()) {
-        qWarning() << m_database->lastError();
-        QApplication::quit();
+        return false;
     }
+    return true;
 }
 
 void AppInfoTablePrivate::closeDataBase()

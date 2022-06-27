@@ -1,4 +1,4 @@
-QT += core gui dbus sql xml KWindowSystem
+QT += core gui dbus sql KWindowSystem
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -6,8 +6,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ukui-search-app-data-service
 VERSION = 1.0.0
 DEFINES += VERSION='\\"$${VERSION}\\"'
-CONFIG += c++11 link_pkgconfig no_keywords lrelease
-PKGCONFIG += glib-2.0 gio-unix-2.0 gio-2.0 poppler-qt5
+CONFIG += c++11 no_keywords
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -24,23 +23,19 @@ QMAKE_CXXFLAGS += -Werror=return-type -Werror=return-local-addr -Werror=uninitia
 #include(../libsearch/appdata/appdata.pri)
 include(../3rd-parties/qtsingleapplication/qtsingleapplication.pri)
 
-LIBS += -lQt5Xdg -lquazip5 -luchardet -ltesseract
+LIBS += -lQt5Xdg
 
 SOURCES += \
         main.cpp \
         convert-winid-to-desktop.cpp \
         app-db-manager.cpp \
         ukui-search-app-data-service.cpp \
-        ../libsearch/file-utils.cpp \
-        ../libsearch/gobject-template.cpp
 
 HEADERS += \
         convert-winid-to-desktop.h \
         app-db-manager.h \
         ukui-search-app-data-service.h \
         app-db-common-defines.h \
-        ../libsearch/file-utils.h \
-        ../libsearch/gobject-template.h
 
 target.path = /usr/bin
 INSTALLS += target
@@ -52,3 +47,7 @@ INSTALLS += desktop
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
+
+LIBS += -L$$OUT_PWD/../libsearch/ -lukui-search
+INCLUDEPATH += $$PWD/../libsearch
+DEPENDPATH += $$PWD/../libsearch

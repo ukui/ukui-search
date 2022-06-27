@@ -6,7 +6,7 @@
 using namespace UkuiSearch;
 size_t AppSearchPlugin::uniqueSymbol = 0;
 QMutex  AppSearchPlugin::m_mutex;
-AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent), m_appSearchTask(new UkuiSearchTask(this))
+AppSearchPlugin::AppSearchPlugin(QObject *parent) : QThread(parent), m_appSearchTask(new UkuiSearchTask(this))
 {
     SearchPluginIface::Actioninfo open { 0, tr("Open")};
     SearchPluginIface::Actioninfo addtoDesktop { 1, tr("Add Shortcut to Desktop")};
@@ -14,9 +14,19 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent), m_appSearch
     SearchPluginIface::Actioninfo install { 0, tr("Install")};
     m_actionInfo_installed << open << addtoDesktop << addtoPanel;
     m_actionInfo_not_installed << install;
-    m_pool.setMaxThreadCount(1);
-    m_pool.setExpiryTimeout(1000);
+//    m_pool.setMaxThreadCount(1);
+//    m_pool.setExpiryTimeout(1000);
     initDetailPage();
+
+    m_timer = new QTimer(this);
+    m_timer->setInterval(3000);
+    m_timer->moveToThread(this);
+    connect(this, SIGNAL(startTimer), m_timer, SLOT(start()));
+    connect(this, &AppSearchPlugin::stopTimer, m_timer, &QTimer::stop);
+    connect(m_timer, &QTimer::timeout, this, [ & ]{
+        qWarning() << "The app-search thread stopped because of timeout.";
+        this->quit();
+    });
 
     m_appSearchResults = m_appSearchTask->init();
     m_appSearchTask->initSearchPlugin(SearchType::Application);
@@ -26,6 +36,31 @@ AppSearchPlugin::AppSearchPlugin(QObject *parent) : QObject(parent), m_appSearch
                                                               UkuiSearch::ApplicationIconName |
                                                               UkuiSearch::ApplicationDescription |
                                                               UkuiSearch::IsOnlineApplication);
+
+    connect(m_appSearchTask, &UkuiSearchTask::searchFinished, this, [ & ] {
+            if (m_timer->isActive()) {
+                Q_EMIT this->stopTimer();
+                m_timer->setInterval(3000);
+            }
+
+            while(!m_appSearchResults->isEmpty()) {
+                ResultItem oneResult = m_appSearchResults->dequeue();
+                SearchPluginIface::ResultInfo ri;
+                ri.actionKey = oneResult.getExtral().at(0).toString();
+                ri.name = oneResult.getExtral().at(1).toString();
+                ri.icon = oneResult.getExtral().at(2).value<QIcon>();
+                SearchPluginIface::DescriptionInfo description;
+                description.key = QString(tr("Application Description:"));
+                description.value = oneResult.getExtral().at(3).toString();
+                ri.description.append(description);
+                ri.type = oneResult.getExtral().at(4).toInt();
+                m_searchResult->enqueue(ri);
+            }
+
+            if(!m_timer->isActive()) {
+                Q_EMIT this->startTimer();
+            }
+    });
 }
 
 const QString AppSearchPlugin::name()
@@ -48,8 +83,17 @@ void AppSearchPlugin::KeywordSearch(QString keyword, DataQueue<SearchPluginIface
     m_mutex.lock();
     ++uniqueSymbol;
     m_mutex.unlock();
-    AppSearch *appsearch = new AppSearch(searchResult, m_appSearchResults, m_appSearchTask, keyword, uniqueSymbol);
-    m_pool.start(appsearch);
+
+    if (!this->isRunning()) {
+        this->start();
+    }
+    m_searchResult = searchResult;
+    m_appSearchTask->clearKeyWords();
+    m_appSearchTask->addKeyword(keyword);
+    m_appSearchTask->startSearch(SearchType::Application);
+
+//    AppSearch *appsearch = new AppSearch(searchResult, m_appSearchResults, m_appSearchTask, keyword, uniqueSymbol);
+//    m_pool.start(appsearch);
 }
 
 void AppSearchPlugin::stopSearch()
@@ -140,6 +184,11 @@ QWidget *AppSearchPlugin::detailPage(const ResultInfo &ri)
         m_actionLabel4->hide();
     }
     return m_detailPage;
+}
+
+void AppSearchPlugin::run()
+{
+    exec();
 }
 
 void AppSearchPlugin::initDetailPage()
@@ -322,72 +371,75 @@ bool AppSearchPlugin::installAppAction(const QString & name) {
     }
 }
 
-AppSearch::AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, DataQueue<ResultItem>* appSearchResults, UkuiSearchTask *appSearchTask, QString keyword, size_t uniqueSymbol)
-{
-    this->setAutoDelete(true);
-    m_search_result = searchResult;
-    m_appSearchResults = appSearchResults;
-    m_appSearchTask = appSearchTask;
-    m_appSearchTask->clearKeyWords();
-    m_appSearchTask->addKeyword(keyword);
-    m_uniqueSymbol = uniqueSymbol;
-}
+//AppSearch::AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, DataQueue<ResultItem>* appSearchResults, UkuiSearchTask *appSearchTask, QString keyword, size_t uniqueSymbol)
+//{
+//    this->setAutoDelete(true);
+//    m_search_result = searchResult;
+//    m_appSearchResults = appSearchResults;
+//    m_appSearchTask = appSearchTask;
+//    m_appSearchTask->clearKeyWords();
+//    m_appSearchTask->addKeyword(keyword);
+//    m_uniqueSymbol = uniqueSymbol;
+//}
 
-AppSearch::~AppSearch()
-{
-}
+//AppSearch::~AppSearch()
+//{
+//}
 
-void AppSearch::run()
-{
-    m_appSearchTask->startSearch(SearchType::Application);
-    QTimer timer;
-    timer.setInterval(3000);
-    bool is_empty;
-    while(1) {
-        is_empty = false;
-        if(!m_appSearchResults->isEmpty()) {
-            ResultItem oneResult = m_appSearchResults->dequeue();
-            SearchPluginIface::ResultInfo ri;
-            ri.actionKey = oneResult.getExtral().at(0).toString();
-            ri.name = oneResult.getExtral().at(1).toString();
-            ri.icon = oneResult.getExtral().at(2).value<QIcon>();
-            SearchPluginIface::DescriptionInfo description;
-            description.key = QString(tr("Application Description:"));
-            description.value = oneResult.getExtral().at(3).toString();
-            ri.description.append(description);
-            ri.type = oneResult.getExtral().at(4).toInt();
-            if (isUniqueSymbolChanged()) {
-                m_appSearchResults->clear();
-                break;
-            }
-            m_search_result->enqueue(ri);
-        } else {
-            is_empty = true;
-        }
-        if (isUniqueSymbolChanged()) {
-            break;
-        }
-        if(timer.isActive() && timer.remainingTime() < 0.01) {
-            qWarning()<<"-------------->stopped by itself";
-            break;
-        }
-        if(is_empty && !timer.isActive()) {
-            timer.start();
-        } else if(!is_empty) {
-            timer.stop();
-        } else {
-            QThread::msleep(100);
-        }
-    }
-}
+//void AppSearch::run()
+//{
+////    m_appSearchTask->startSearch(SearchType::Application);
+//    QTimer timer;
+//    timer.setInterval(3000);
+//    bool is_empty;
+//    while(1) {
+//        is_empty = false;
+//        if(!m_appSearchResults->isEmpty()) {
 
-bool AppSearch::isUniqueSymbolChanged()
-{
-    QMutexLocker locker(&AppSearchPlugin::m_mutex);
-    if (m_uniqueSymbol != AppSearchPlugin::uniqueSymbol) {
-        qDebug() << "uniqueSymbol changged, app search finished!";
-        return true;
-    } else {
-        return false;
-    }
-}
+//            ResultItem oneResult = m_appSearchResults->dequeue();
+
+//            SearchPluginIface::ResultInfo ri;
+//            ri.actionKey = oneResult.getExtral().at(0).toString();
+//            ri.name = oneResult.getExtral().at(1).toString();
+//            ri.icon = oneResult.getExtral().at(2).value<QIcon>();
+//            SearchPluginIface::DescriptionInfo description;
+//            description.key = QString(tr("Application Description:"));
+//            description.value = oneResult.getExtral().at(3).toString();
+//            ri.description.append(description);
+//            ri.type = oneResult.getExtral().at(4).toInt();
+////            if (isUniqueSymbolChanged()) {
+////                m_appSearchResults->clear();
+////                break;
+////            }
+//            m_search_result->enqueue(ri);
+//        } else {
+//            is_empty = true;
+//        }
+//        if (isUniqueSymbolChanged()) {
+//            break;
+//        }
+//        if(timer.isActive() && timer.remainingTime() < 0.01) {
+//            qWarning()<<"-------------->stopped by itself";
+//            break;
+//        }
+//        if(is_empty && !timer.isActive()) {
+//            timer.start();
+//        } else if(!is_empty) {
+//            timer.stop();
+
+//        } else {
+//            QThread::msleep(100);
+//        }
+//    }
+//}
+
+//bool AppSearch::isUniqueSymbolChanged()
+//{
+//    QMutexLocker locker(&AppSearchPlugin::m_mutex);
+//    if (m_uniqueSymbol != AppSearchPlugin::uniqueSymbol) {
+//        qDebug() << "uniqueSymbol changged, app search finished!";
+//        return true;
+//    } else {
+//        return false;
+//    }
+//}

@@ -86,6 +86,7 @@ size_t UkuiSearchTaskPrivate::startSearch(SearchType searchtype, const QString& 
         qWarning() << "the date queue has not been initialized, you need run init first!";
     }
 
+    m_searchCotroller->refreshDataqueue();
     //plugin manager do async search here
     if (!SearchTaskPluginManager::getInstance()->startSearch(m_uuid, m_searchCotroller, searchtype, customSearchType)) {
         Q_EMIT searchError(m_searchCotroller->getCurrentSearchId(), tr("Current task uuid error or an unregistered plugin is used!"));

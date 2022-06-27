@@ -17,7 +17,7 @@
 #include "libsearch_global.h"
 #include "ukui-search-task.h"
 namespace UkuiSearch {
-class LIBSEARCH_EXPORT AppSearchPlugin : public QObject, public SearchPluginIface
+class LIBSEARCH_EXPORT AppSearchPlugin : public QThread, public SearchPluginIface
 {
     friend class AppSearch;
     friend class AppMatch;
@@ -39,6 +39,7 @@ public:
 //    bool isPreviewEnable(QString key, int type);
 //    QWidget *previewPage(QString key, int type, QWidget *parent);
     QWidget *detailPage(const ResultInfo &ri);
+    void run() override;
 private:
     void initDetailPage();
     bool launch(const QString &path);
@@ -48,12 +49,14 @@ private:
     bool m_enable = true;
     QList<SearchPluginIface::Actioninfo> m_actionInfo_installed;
     QList<SearchPluginIface::Actioninfo> m_actionInfo_not_installed;
-    QThreadPool m_pool;
+//    QThreadPool m_pool;
+    QTimer *m_timer;
     static size_t uniqueSymbol;
     static QMutex m_mutex;
 
     UkuiSearchTask *m_appSearchTask = nullptr;
     DataQueue<ResultItem>* m_appSearchResults = nullptr;
+    DataQueue<SearchPluginIface::ResultInfo> *m_searchResult = nullptr;
 
     QString m_currentActionKey;
     QWidget *m_detailPage;
@@ -76,25 +79,28 @@ private:
     ActionLabel *m_actionLabel4 = nullptr;
 
     QVBoxLayout * m_actionLyt = nullptr;
+Q_SIGNALS:
+    void startTimer();
+    void stopTimer();
 };
 
-class AppSearch : public QObject, public QRunnable {
-    Q_OBJECT
-public:
-    AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, DataQueue<ResultItem>* appSearchResults, UkuiSearchTask *appSearchTask, QString keyword, size_t uniqueSymbol);
-    ~AppSearch();
-protected:
-    void run() override;
-private:
+//class AppSearch : public QObject, public QRunnable {
+//    Q_OBJECT
+//public:
+//    AppSearch(DataQueue<SearchPluginIface::ResultInfo> *searchResult, DataQueue<ResultItem>* appSearchResults, UkuiSearchTask *appSearchTask, QString keyword, size_t uniqueSymbol);
+//    ~AppSearch();
+//protected:
+//    void run() override;
+//private:
 
-    bool isUniqueSymbolChanged();
+//    bool isUniqueSymbolChanged();
 
-    size_t m_uniqueSymbol;
-    UkuiSearchTask *m_appSearchTask = nullptr;
-    DataQueue<ResultItem>* m_appSearchResults = nullptr;
-    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
+//    size_t m_uniqueSymbol;
+//    UkuiSearchTask *m_appSearchTask = nullptr;
+//    DataQueue<ResultItem>* m_appSearchResults = nullptr;
+//    DataQueue<SearchPluginIface::ResultInfo> *m_search_result = nullptr;
 
-};
+//};
 }
 
 #endif // APPSEARCHPLUGIN_H
