@@ -34,33 +34,6 @@ public:
     bool setAppTopState(QString &desktopfp, size_t num);
 
     /**
-     * @brief AppInfoTable::getAllAppDesktopList
-     * get the desktop file paths of all apps
-     * @param list: a stringlist include all paths
-     * @return bool: true if success, else false
-     */
-    bool getAllAppDesktopList(QStringList &list);
-
-    /**
-     * @brief AppInfoTable::getFavoritesAppList
-     * get all favorites apps
-     * @param list: a stringlist include all apps' paths
-     * @return bool: true if success, else false
-     */
-    bool getFavoritesAppList(QStringList &list);
-
-    /**
-     * @brief AppInfoTable::getTopAppList
-     * get all top apps
-     * @param list: a stringlist include all apps' paths
-     * @return bool: true if success, else false
-     */
-    bool getTopAppList(QStringList &list);
-
-    bool getLaunchTimesAppList(QStringList &list);
-    bool getAppCategory(QString &desktopfp, QString &category);
-
-    /**
      * @brief AppInfoTable::changeFavoriteAppPos
      * change the position of the app which is one of the Favorites Apps
      * @param desktopfp: desktop file path of app
@@ -90,6 +63,7 @@ public:
     bool getAppTopState(QString &desktopfp, size_t &num);
     bool getAppLaunchedState(QString &desktopfp, size_t &num);
     bool getAppFavoriteState(QString &desktopfp, size_t &num);
+    bool getAppCategory(QString &desktopfp, QString &category);
 
     bool addAppShortcut2Desktop(QString &desktopfp);
     bool addAppShortcut2Panel(QString &desktopfp);
@@ -107,10 +81,16 @@ public:
     QString lastError(void) const;
 
 private:
+    //暂不外放的接口
     bool setAppLaunchTimes(QString &desktopfp, size_t num);
     bool setAppLockState(QString &desktopfp, size_t num);
     bool updateAppLaunchTimes(QString &desktopfp);
+    bool getAllAppDesktopList(QStringList &list);
+    bool getFavoritesAppList(QStringList &list);
+    bool getTopAppList(QStringList &list);
+    bool getLaunchTimesAppList(QStringList &list);
 
+private:
     AppInfoTablePrivate *d;
 
 Q_SIGNALS:

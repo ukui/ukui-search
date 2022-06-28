@@ -29,13 +29,13 @@ SOURCES += \
         main.cpp \
         convert-winid-to-desktop.cpp \
         app-db-manager.cpp \
-    signal-transformer.cpp \
+        signal-transformer.cpp \
         ukui-search-app-data-service.cpp \
 
 HEADERS += \
         convert-winid-to-desktop.h \
         app-db-manager.h \
-    signal-transformer.h \
+        signal-transformer.h \
         ukui-search-app-data-service.h \
 
 target.path = /usr/bin

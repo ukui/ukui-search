@@ -19,20 +19,9 @@ public:
     bool setAppFavoritesState(QString &desktopfp, size_t num);
     bool setAppTopState(QString &desktopfp, size_t num);
 
-    //下面三个暂时未封装
-    bool setAppLaunchTimes(QString &desktopfp, size_t num);
-    bool updateAppLaunchTimes(QString &desktopfp);
-    bool setAppLockState(QString &desktopfp, size_t num);
-
     //拖动改变置顶和收藏应用位置
     bool changeFavoriteAppPos(const QString &desktopfp, size_t pos);
     bool changeTopAppPos(const QString &desktopfp, size_t pos);
-
-    bool getAllAppDesktopList(QStringList &list);
-    bool getFavoritesAppList(QStringList &list);
-    bool getTopAppList(QStringList &list);
-    bool getLaunchTimesAppList(QStringList &list);
-    bool getAppCategory(QString &desktopfp, QString &category);
 
     //获取所有应用信息并存到一个结构体中
     bool getAppInfoResults(QVector<AppInfoResult> &appInfoResults);
@@ -42,6 +31,7 @@ public:
     bool getAppTopState(QString &desktopfp, size_t &num);
     bool getAppLaunchedState(QString &desktopfp, size_t &num);
     bool getAppFavoriteState(QString &desktopfp, size_t &num);
+    bool getAppCategory(QString &desktopfp, QString &category);
 
     //添加快捷方式
     bool addAppShortcut2Desktop(QString &desktopfp);
@@ -51,9 +41,20 @@ public:
     bool searchInstallApp(QString &keyWord, QStringList &installAppInfoRes);
     bool searchInstallApp(QStringList &keyWord, QStringList &installAppInfoRes);
 
+    //卸载应用
     bool uninstallApp(QString &desktopfp);
 
+    //数据库错误信息
     QString lastError(void) const;
+
+    //下面的接口都不外放，暂时没啥用
+    bool setAppLaunchTimes(QString &desktopfp, size_t num);
+    bool updateAppLaunchTimes(QString &desktopfp);
+    bool setAppLockState(QString &desktopfp, size_t num);
+    bool getAllAppDesktopList(QStringList &list);
+    bool getFavoritesAppList(QStringList &list);
+    bool getTopAppList(QStringList &list);
+    bool getLaunchTimesAppList(QStringList &list);
 
 private:
     ~AppInfoTablePrivate();

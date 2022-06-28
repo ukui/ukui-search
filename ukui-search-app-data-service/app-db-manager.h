@@ -14,6 +14,8 @@
 #include <QFileSystemWatcher>
 #include <QMutex>
 #include <QSettings>
+#include <QTimer>
+#include <QThread>
 
 #define CONNECTION_NAME QLatin1String("ukss-appdb-connection")
 
@@ -36,7 +38,7 @@ public:
     }
 };
 
-class AppDBManager : public QObject
+class AppDBManager : public QThread
 {
     Q_OBJECT
 
@@ -58,6 +60,8 @@ public:
     bool updateAppLaunchTimes(QString &desktopfp);
     void updateAllData2DB();
     bool updateLocaleData2DB(QString desktopPath);
+protected:
+    void run() override;
 
 private:
     explicit AppDBManager(QObject *parent = nullptr);
@@ -65,7 +69,7 @@ private:
 
     void loadDesktopFilePaths(QString path, QFileInfoList &infolist);
 
-    void initDataBase();
+    void refreshDataBase();
     bool openDataBase();
     void closeDataBase();
 
@@ -75,7 +79,12 @@ private:
     void getFilePathList(QStringList &pathList);
 
     QSettings *m_qSettings = nullptr;
+
     bool m_localeChanged;
+    bool m_dbChanged;
+
+    QTimer *m_timer = nullptr;
+    QTimer *m_maxProcessTimer = nullptr;
 
     QSqlDatabase m_database;
 
@@ -131,11 +140,16 @@ private:
         //原本额外排除的目录，不知道额外的原因，有可能之后有问题--bjj20220621
         "/usr/share/applications/screensavers"
     };
+
 Q_SIGNALS:
     void appDBItemUpdate(const AppInfoResult&);
     void appDBItemAdd(const AppInfoResult&);
     void appDBItemDelete(const QString&);
     void finishHandleAppDB();
+
+    void startTimer();
+    void maxProcessTimerStart();
+    void stopTimer();
 };
 }
 

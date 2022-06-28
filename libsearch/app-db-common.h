@@ -18,16 +18,16 @@ struct AppInfoResult
     QString firstLetter;
     QString category;
     int top;
-    int favorate;
+    int favorite;
     int launchTimes;
     int lock;
 
-    AppInfoResult() : top(0), favorate(0), launchTimes(0), lock(0) {}
+    AppInfoResult() : top(0), favorite(0), launchTimes(0), lock(0) {}
     friend QDBusArgument &operator << (QDBusArgument &argument, const AppInfoResult &infoResult)
     {
         argument.beginStructure();
         argument << infoResult.desktopPath << infoResult.iconName << infoResult.appLocalName << infoResult.firstLetter
-                 << infoResult.category << infoResult.top << infoResult.favorate << infoResult.launchTimes << infoResult.lock;
+                 << infoResult.category << infoResult.top << infoResult.favorite << infoResult.launchTimes << infoResult.lock;
         argument.endStructure();
         return argument;
     }
@@ -36,7 +36,7 @@ struct AppInfoResult
     {
         argument.beginStructure();
         argument >> infoResult.desktopPath >> infoResult.iconName >> infoResult.appLocalName >> infoResult.firstLetter
-                 >> infoResult.category >> infoResult.top >> infoResult.favorate >> infoResult.launchTimes >> infoResult.lock;
+                 >> infoResult.category >> infoResult.top >> infoResult.favorite >> infoResult.launchTimes >> infoResult.lock;
 
         argument.endStructure();
         return argument;
