@@ -1,10 +1,13 @@
 #ifndef APPINFOTABLEPRIVATE_H
 #define APPINFOTABLEPRIVATE_H
+
+#include "app-info-table.h"
 #include <QObject>
+#include <QDBusInterface>
 #include <QSqlDatabase>
-#include <app-info-table.h>
 
 namespace UkuiSearch {
+
 class AppInfoTablePrivate : public QObject
 {
     Q_OBJECT
@@ -15,9 +18,15 @@ public:
 
     bool setAppFavoritesState(QString &desktopfp, size_t num);
     bool setAppTopState(QString &desktopfp, size_t num);
+
+    //下面三个暂时未封装
     bool setAppLaunchTimes(QString &desktopfp, size_t num);
     bool updateAppLaunchTimes(QString &desktopfp);
     bool setAppLockState(QString &desktopfp, size_t num);
+
+    //拖动改变置顶和收藏应用位置
+    bool changeFavoriteAppPos(const QString &desktopfp, size_t pos);
+    bool changeTopAppPos(const QString &desktopfp, size_t pos);
 
     bool getAllAppDesktopList(QStringList &list);
     bool getFavoritesAppList(QStringList &list);
@@ -25,17 +34,20 @@ public:
     bool getLaunchTimesAppList(QStringList &list);
     bool getAppCategory(QString &desktopfp, QString &category);
 
-    bool getAppInfoResults(QVector<AppInfoTable::AppInfoResult> &appInfoResults);
+    //获取所有应用信息并存到一个结构体中
+    bool getAppInfoResults(QVector<AppInfoResult> &appInfoResults);
 
+    //获取单个应用的某个状态（锁定，置顶，打开状态，收藏）
     bool getAppLockState(QString &desktopfp, size_t &num);
     bool getAppTopState(QString &desktopfp, size_t &num);
     bool getAppLaunchedState(QString &desktopfp, size_t &num);
     bool getAppFavoriteState(QString &desktopfp, size_t &num);
 
+    //添加快捷方式
     bool addAppShortcut2Desktop(QString &desktopfp);
     bool addAppShortcut2Panel(QString &desktopfp);
 
-    bool getInstallAppMap(QMultiMap<QString, QStringList> &installAppMap);
+    //搜索接口
     bool searchInstallApp(QString &keyWord, QStringList &installAppInfoRes);
     bool searchInstallApp(QStringList &keyWord, QStringList &installAppInfoRes);
 
@@ -49,9 +61,16 @@ private:
     bool openDataBase();
     void closeDataBase();
 
+    QDBusInterface *m_interface = nullptr;
+
     AppInfoTable *q = nullptr;
-    QSqlDatabase *m_database = nullptr;
+    QSqlDatabase m_database;
     QString m_ConnectionName;
+
+public Q_SLOTS:
+    void sendAppDBItemsUpdate(QVector<AppInfoResult> results);
+    void sendAppDBItemsAdd(QVector<AppInfoResult> results);
+    void sendAppDBItemsDelete(QStringList desktopfps);
 
 };
 

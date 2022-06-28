@@ -1,6 +1,8 @@
 #ifndef APPDBMANAGER_H
 #define APPDBMANAGER_H
 
+#include "app-db-common.h"
+
 #include <QDir>
 #include <QObject>
 #include <QSqlDatabase>
@@ -12,7 +14,6 @@
 #include <QFileSystemWatcher>
 #include <QMutex>
 #include <QSettings>
-#include "app-db-common-defines.h"
 
 #define CONNECTION_NAME QLatin1String("ukss-appdb-connection")
 
@@ -130,7 +131,11 @@ private:
         //原本额外排除的目录，不知道额外的原因，有可能之后有问题--bjj20220621
         "/usr/share/applications/screensavers"
     };
-
+Q_SIGNALS:
+    void appDBItemUpdate(const AppInfoResult&);
+    void appDBItemAdd(const AppInfoResult&);
+    void appDBItemDelete(const QString&);
+    void finishHandleAppDB();
 };
 }
 
