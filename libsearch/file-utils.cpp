@@ -841,7 +841,7 @@ int FileUtils::openFile(QString &path, bool openInDir)
                 isSuccess = false;
             } else {
                 appLaunchInterface->setTimeout(10000);
-                QDBusReply<bool> reply = appLaunchInterface->call("LaunchDefaultAppWithUrl", QUrl::fromLocalFile(path));
+                QDBusReply<bool> reply = appLaunchInterface->call("LaunchDefaultAppWithUrl", QUrl::fromLocalFile(path).toString());
                 if(reply.isValid()) {
                     isSuccess = reply;
                 } else {
