@@ -3,6 +3,7 @@
         <file>icons/ukui-down-symbolic.svg</file>
         <file>icons/ukui-up-symbolic.svg</file>
         <file>icons/desktop.png</file>
+        <file>icons/search.svg</file>
         <file>qml/LineEdit.qml</file>
         <file>qml/ResultView.qml</file>
         <file>qml/Plugin.qml</file>
@@ -14,5 +15,6 @@
         <file>qml/DetailsInfo.qml</file>
         <file>qml/DetailsImage.qml</file>
         <file>qml/PluginView.qml</file>
+        <file>qml/PluginList.qml</file>
     </qresource>
 </RCC>

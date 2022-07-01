@@ -10,11 +10,20 @@ Item {
     property bool isExpand : false; //控制该插件的数据区域 展开或收起
     property var resultModel : resultModelManager.getModel(root.pluginId);
     property string pluginIconName;
-    property int selectItem: -1;
 
     signal itemSelected(int pluginIndex, string pluginId, int index);
 
     height: pluginLayout.childrenRect.height;
+
+    function getPluginInfo() {
+        var ret = {
+            height: visible ? height : 0,
+            resultIndex: resultList.currentIndex,
+            resultCount: resultList.count,
+        }
+
+        return ret;
+    }
 
     Column {
         id: pluginLayout;
@@ -73,7 +82,6 @@ Item {
                     resultList.currentItem.selectItem(false);
                 }
 
-                console.log("==index==", index);
                 if (index < 0 || index >= resultList.count) {
                     resultList.currentIndex = -1;
                     return false;
@@ -87,7 +95,15 @@ Item {
         }
     }
 
-    function selectResultItem(up) {
+    /**
+      *
+      * msg {
+      *  up: false, //按键方向 上: true, 下:false
+      *  border: false, //是上边界或者下边界: true, 不是边界:false
+      *  top: false //上边界:true,下边界:false
+      * }
+      */
+    function selectResultItem(msg) {
         if (!root.visible || resultList.count <= 0) {
             return false;
         }
@@ -96,10 +112,18 @@ Item {
         //处于未选中状态
         if (resultList.currentIndex < 0 || resultList.currentIndex >= resultList.count) {
             //重置起始位置
-            index = up ? (resultList.count - 1) : 0;
+            index = msg.up ? (resultList.count - 1) : 0;
 
         } else {
-            index = resultList.currentIndex + (up ? -1 : 1);
+            if (msg.up && msg.top && resultList.currentIndex === 0) {
+                return true;
+            }
+
+            if (!msg.up && msg.bottom && resultList.currentIndex === (resultList.count - 1)) {
+                return true;
+            }
+
+            index = resultList.currentIndex + (msg.up ? -1 : 1);
         }
 
         return resultList.updateCurrentIndex(index);
@@ -129,7 +153,22 @@ Item {
         root.visible = visible;
     }
 
+    function dataChanged(id) {
+        if (id === pluginId) {
+            visible = (resultModel.rowCount() > 0);
+        }
+    }
+
+    function dataCleared(id) {
+        if (id === pluginId) {
+            resultList.updateCurrentIndex(-1);
+        }
+    }
+
     Component.onCompleted: {
         resultList.currentIndex = -1;
+        resultModelManager.modelDataChanged.connect(dataChanged);
+        resultModelManager.modelDataCleared.connect(dataCleared);
+        visible = false;
     }
 }
