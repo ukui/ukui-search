@@ -43,7 +43,7 @@ protected:
 
 private:
     QString m_pluginId;
-    QTimer m_timer;
+    QTimer *m_timer = nullptr;
     DataQueue<SearchPluginIface::ResultInfo> * m_resultQueue = nullptr;
 
 Q_SIGNALS:
