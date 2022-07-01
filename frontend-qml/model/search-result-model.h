@@ -15,7 +15,6 @@ namespace UkuiSearch {
 class SearchResultModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(NOTIFY dataLoaded)
 public:
     enum DataRoles {
         IconRole = Qt::UserRole + 1,
@@ -45,7 +44,7 @@ public Q_SLOTS:
     void insertData(const SearchPluginIface::ResultInfo &data);
 
 Q_SIGNALS:
-    void dataLoaded();
+    void dataChanged(SearchResultModel*);
 
 private:
     QVector<SearchPluginIface::ResultInfo> m_list;

@@ -91,6 +91,7 @@ void SearchResultModel::insertData(const SearchPluginIface::ResultInfo &data)
         beginInsertRows(QModelIndex(), begin, begin);
         m_list.push_back(data);
         endInsertRows();
+        Q_EMIT dataChanged(this);
         return;
     }
     m_list.push_back(data);
@@ -108,6 +109,7 @@ void SearchResultModel::clear()
     beginRemoveRows(QModelIndex(), 0, count);
     m_list.clear();
     endRemoveRows();
+    Q_EMIT dataChanged(this);
 }
 
 void SearchResultModel::expand()
