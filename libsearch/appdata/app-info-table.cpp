@@ -1,3 +1,6 @@
+#include "app-info-table.h"
+#include "app-info-table-private.h"
+
 #include <QDebug>
 #include <QtGlobal>
 #include <string>
@@ -11,13 +14,23 @@
 #include <QSqlError>
 #include <QApplication>
 #include <qt5xdg/XdgDesktopFile>
-#include "app-info-table.h"
-#include "app-info-table-private.h"
-#include "../ukui-search-app-data-service/app-db-common-defines.h"
 
 using namespace UkuiSearch;
-AppInfoTablePrivate::AppInfoTablePrivate(AppInfoTable *parent) : QObject(parent), q(parent), m_database(new QSqlDatabase)
+
+AppInfoTablePrivate::AppInfoTablePrivate(AppInfoTable *parent) : QObject(parent), q(parent), m_database(QSqlDatabase())
 {
+    m_interface = new QDBusInterface("com.ukui.search.appdb.service",
+                                     "/org/ukui/search/appDataBase",
+                                     "org.ukui.search.appdb");
+
+    if (!m_interface->isValid()) {
+        qCritical() << "Create privateDirWatcher Interface Failed Because: " << QDBusConnection::sessionBus().lastError();
+        return;
+    } else {
+        connect(m_interface, SIGNAL(appDBItemsAdd(QVector<AppInfoResult>)), this, SLOT(sendAppDBItemsAdd(QVector<AppInfoResult>)));
+        connect(m_interface, SIGNAL(appDBItemsUpdate(QVector<AppInfoResult>)), this, SLOT(sendAppDBItemsUpdate(QVector<AppInfoResult>)));
+        connect(m_interface, SIGNAL(appDBItemsDelete(QStringList)), this, SLOT(sendAppDBItemsDelete(QStringList)));
+    }
     while(1) {
         srand(QTime(0,0,0).secsTo(QTime::currentTime()));
         m_ConnectionName = QString::fromStdString(std::to_string(rand()));//随机生产链接
@@ -27,27 +40,34 @@ AppInfoTablePrivate::AppInfoTablePrivate(AppInfoTable *parent) : QObject(parent)
     qDebug() << "App info database currunt connection name:" << m_ConnectionName;
     if (!this->openDataBase()) {
         Q_EMIT q->DBOpenFailed();
-        qWarning() << "Fail to open App DataBase, because:" << m_database->lastError();
+        qWarning() << "Fail to open App DataBase, because:" << m_database.lastError();
     }
 }
 
 bool AppInfoTablePrivate::setAppFavoritesState(QString &desktopfp, size_t num)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', FAVORITES=%1 WHERE DESKTOP_FILE_PATH='%2'")
                 .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
                 .arg(num)
                 .arg(desktopfp);
         if (!sql.exec(cmd)) {
-            qWarning() << "Set app favorites state failed!" << m_database->lastError();
+            qWarning() << "Set app favorites state failed!" << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
+        } else {
+            QVector<AppInfoResult> results;
+            AppInfoResult info;
+            info.desktopPath = desktopfp;
+            info.favorite = num;
+            results.append(std::move(info));
+            Q_EMIT q->appDBItems2BUpdate(results);
         }
     } else {
         qWarning() << "Failed to start transaction mode!!!";
@@ -59,20 +79,27 @@ bool AppInfoTablePrivate::setAppFavoritesState(QString &desktopfp, size_t num)
 bool AppInfoTablePrivate::setAppTopState(QString &desktopfp, size_t num)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', TOP=%1 WHERE DESKTOP_FILE_PATH='%2'")
                 .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
                 .arg(num)
                 .arg(desktopfp);
         if (!sql.exec(cmd)) {
-            qWarning() << "Set app favorites state failed!" << m_database->lastError();
+            qWarning() << "Set app favorites state failed!" << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
+        } else {
+            QVector<AppInfoResult> results;
+            AppInfoResult info;
+            info.desktopPath = desktopfp;
+            info.top = num;
+            results.append(std::move(info));
+            Q_EMIT q->appDBItems2BUpdate(results);
         }
     } else {
         qWarning() << "Failed to start transaction mode!!!";
@@ -81,249 +108,161 @@ bool AppInfoTablePrivate::setAppTopState(QString &desktopfp, size_t num)
     return res;
 }
 
-bool AppInfoTablePrivate::setAppLaunchTimes(QString &desktopfp, size_t num)
+bool AppInfoTablePrivate::changeFavoriteAppPos(const QString &desktopfp, size_t pos)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QString cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
-                .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
-                .arg(num)
-                .arg(1)
-                .arg(desktopfp);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
+        QString cmd = QString("SELECT FAVORITES FROM appInfo WHERE DESKTOP_FILE_PATH = %0").arg(desktopfp);
+        int previousPos = 0;
+
+        //记录应用原位置
         if (!sql.exec(cmd)) {
-            qWarning() << "Set app favorites state failed!" << m_database->lastError();
+            qWarning() << "Fail to change favorite-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
             res = false;
-        }
-        if (!m_database->commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
-            res = false;
-        }
-    } else {
-        qWarning() << "Failed to start transaction mode!!!";
-        res = false;
-    }
-    return res;
-}
-
-bool AppInfoTablePrivate::updateAppLaunchTimes(QString &desktopfp)
-{
-    bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QString cmd = QString("SELECT LAUNCH_TIMES FROM appInfo WHERE DESKTOP_FILE_PATH='%1'").arg(desktopfp);
-        if (sql.exec(cmd)) {
+        } else {
             if (sql.next()) {
-                cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
-                        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
-                        .arg(sql.value(0).toInt() + 1)
-                        .arg(1)
-                        .arg(desktopfp);
-                if (!sql.exec(cmd)) {
-                    qWarning() << "Set app favorites state failed!" << m_database->lastError();
-                    res = false;
-                }
+                previousPos = sql.value(0).toInt();
+                cmd = QString("UPDATE appInfo SET FAVORITES = FAVORITES + 1 WHRER FAVORITES > %1 AND FAVORITES < %2")
+                              .arg(previousPos)
+                              .arg(pos);
             } else {
-                qWarning() << "Failed to exec next!" << cmd;
-                res = false;
+                qWarning() << "Fail to change favorite-app pos when exec next, because: " << m_database.lastError();
             }
-        } else {
-            qWarning() << "Failed to exec:" << cmd;
-            res = false;
         }
-        if (!m_database->commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
-            res = false;
-        }
-    } else {
-        qWarning() << "Failed to start transaction mode!!!";
-        res = false;
-    }
-    return res;
-}
-
-bool AppInfoTablePrivate::setAppLockState(QString &desktopfp, size_t num)
-{
-    bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QString cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LOCK=%1 WHERE DESKTOP_FILE_PATH='%2'")
-                .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
-                .arg(num)
-                .arg(desktopfp);
+        //更新范围内的应用的位置(原位置和新位置之间）
         if (!sql.exec(cmd)) {
-            qWarning() << "Set app favorites state failed!" << m_database->lastError();
+            qWarning() << "Fail to change favorite-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
             res = false;
-        }
-        if (!m_database->commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
-            res = false;
-        }
-    } else {
-        qWarning() << "Failed to start transaction mode!!!";
-        res = false;
-    }
-    return res;
-}
-
-bool AppInfoTablePrivate::getAllAppDesktopList(QStringList &list)
-{
-    bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo");
-        if (sql.exec(cmd)) {
-            while (sql.next()) {
-                list.append(sql.value(0).toString());
-            }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            cmd = QString("UPDATE appInfo SET FAVORITES = %1 WHERE DESKTOP_FILE_PATH = %2")
+                          .arg(pos)
+                          .arg(desktopfp);
+        }
+        //更新应用位置
+        if (!sql.exec(cmd)) {
+            qWarning() << "Fail to change favorite-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
             res = false;
         }
-        if (!m_database->commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
-            res = false;
-        }
-    } else {
-        qWarning() << "Failed to start transaction mode!!!";
-        res = false;
-    }
-    return res;
-}
 
-bool AppInfoTablePrivate::getFavoritesAppList(QStringList &list)
-{
-    bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QSqlQuery sqlque(*m_database);
-        QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo WHERE FAVORITES!=0 ORDER BY FAVORITES");
-        int count = 0;
-        if (sql.exec(cmd)) {
-            while (sql.next()) {
-                list.append(sql.value(0).toString());
-                cmd = QString("UPDATE appInfo SET FAVORITES=%1 WHERE DESKTOP_FILE_PATH='%2'")
-                        .arg(++count)
-                        .arg(sql.value(0).toString());
-                if (!sqlque.exec(cmd)) {
-                    qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
-                    res = false;
-                    break;
+        if (!m_database.commit()) {
+            qWarning() << "Failed to commit when exec: " << cmd;
+            m_database.rollback();
+            res = false;
+        } else {
+            cmd = QString("SELECT DESKTOP_FILE_PATH, FAVORITES FROM appInfo WHERE FAVORITES > %1 AND FAVORITES < %2")
+                    .arg(previousPos)
+                    .arg(pos);
+            if (!sql.exec(cmd)) {
+                qWarning() << "I'm going to send update favorites signal but fail to exec" << cmd;
+            } else {
+                QVector<AppInfoResult> results;
+                while (sql.next()) {
+                    AppInfoResult info;
+                    info.desktopPath = sql.value("DESKTOP_FILE_PATH").toString();
+                    info.favorite = sql.value("FAVORITES").toInt();
+                    results.append(std::move(info));
                 }
+                Q_EMIT q->appDBItems2BUpdate(results);
             }
-        } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
-            res = false;
         }
-        if (!m_database->commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
-            res = false;
-        }
+
     } else {
         qWarning() << "Failed to start transaction mode!!!";
         res = false;
     }
+
     return res;
 }
 
-bool AppInfoTablePrivate::getTopAppList(QStringList &list)
+bool AppInfoTablePrivate::changeTopAppPos(const QString &desktopfp, size_t pos)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QSqlQuery sqlque(*m_database);
-        QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo WHERE TOP!=0 ORDER BY TOP");
-        int count = 0;
-        if (sql.exec(cmd)) {
-            while (sql.next()) {
-                list.append(sql.value(0).toString());
-                cmd = QString("UPDATE appInfo SET TOP=%1 WHERE DESKTOP_FILE_PATH='%2'")
-                        .arg(++count)
-                        .arg(sql.value(0).toString());
-                if (!sqlque.exec(cmd)) {
-                    qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
-                    res = false;
-                    break;
-                }
-            }
-        } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
-            res = false;
-        }
-        if (!m_database->commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
-            res = false;
-        }
-    } else {
-        qWarning() << "Failed to start transaction mode!!!";
-        res = false;
-    }
-    return res;
-}
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
+        QString cmd = QString("SELECT TOP FROM appInfo WHERE DESKTOP_FILE_PATH = %0").arg(desktopfp);
+        int previousPos = 0;
 
-bool AppInfoTablePrivate::getLaunchTimesAppList(QStringList &list)
-{
-    bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QSqlQuery sqlque(*m_database);
-        QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo ORDER BY LAUNCH_TIMES");
-        int count = 0;
-        if (sql.exec(cmd)) {
-            while (sql.next()) {
-                list.append(sql.value(0).toString());
-                cmd = QString("UPDATE appInfo SET TOP=%1 WHERE DESKTOP_FILE_PATH='%2'")
-                        .arg(++count)
-                        .arg(sql.value(0).toString());
-                if (!sqlque.exec(cmd)) {
-                    qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
-                    res = false;
-                    break;
-                }
-            }
+        //记录应用原位置
+        if (!sql.exec(cmd)) {
+            qWarning() << "Fail to change top-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
+            res = false;
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            if (sql.next()) {
+                previousPos = sql.value(0).toInt();
+                cmd = QString("UPDATE appInfo SET TOP = TOP + 1 WHRER TOP > %1 AND TOP < %2")
+                              .arg(previousPos)
+                              .arg(pos);
+            } else {
+                qWarning() << "Fail to change top-app pos when exec next, because: " << m_database.lastError();
+            }
+        }
+        //更新范围内的应用的位置(原位置和新位置之间）
+        if (!sql.exec(cmd)) {
+            qWarning() << "Fail to change top-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
+            res = false;
+        } else {
+            cmd = QString("UPDATE appInfo SET TOP = %1 WHERE DESKTOP_FILE_PATH = %2")
+                          .arg(pos)
+                          .arg(desktopfp);
+        }
+        //更新应用位置
+        if (!sql.exec(cmd)) {
+            qWarning() << "Fail to change top-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
             res = false;
         }
-        if (!m_database->commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+
+        if (!m_database.commit()) {
+            qWarning() << "Failed to commit when exec: " << cmd;
+            m_database.rollback();
             res = false;
+        } else {
+            cmd = QString("SELECT DESKTOP_FILE_PATH, TOP FROM appInfo WHERE TOP > %1 AND TOP < %2")
+                    .arg(previousPos)
+                    .arg(pos);
+            if (!sql.exec(cmd)) {
+                qWarning() << "I'm going to send update top signal but fail to exec" << cmd;
+            } else {
+                QVector<AppInfoResult> results;
+                while (sql.next()) {
+                    AppInfoResult info;
+                    info.desktopPath = sql.value("DESKTOP_FILE_PATH").toString();
+                    info.favorite = sql.value("TOP").toInt();
+                    results.append(std::move(info));
+                }
+                Q_EMIT q->appDBItems2BUpdate(results);
+            }
         }
+
     } else {
         qWarning() << "Failed to start transaction mode!!!";
         res = false;
     }
+
     return res;
 }
 
 bool AppInfoTablePrivate::getAppCategory(QString &desktopfp, QString &category)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd = QString("SELECT CATEGORY FROM appInfo WHERE DESKTOP_FILE_PATH='%0'")
                 .arg(desktopfp);
         if (sql.exec(cmd)) {
             if (sql.next()) {
                 category = sql.value(0).toString();
             } else {
-                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
                 res = false;
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -333,32 +272,33 @@ bool AppInfoTablePrivate::getAppCategory(QString &desktopfp, QString &category)
     return res;
 }
 
-bool AppInfoTablePrivate::getAppInfoResults(QVector<AppInfoTable::AppInfoResult> &appInfoResults)
+bool AppInfoTablePrivate::getAppInfoResults(QVector<AppInfoResult> &appInfoResults)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
-        QString cmd = QString("SELECT DESKTOP_FILE_PATH,LOCAL_NAME,ICON,CATEGORY,TOP,FAVORITES,LAUNCH_TIMES,LOCK FROM appInfo");
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
+        QString cmd = QString("SELECT DESKTOP_FILE_PATH,LOCAL_NAME,ICON,CATEGORY,TOP,FAVORITES,LAUNCH_TIMES,LOCK,FIRST_LETTER_ALL FROM appInfo");
         if (sql.exec(cmd)) {
             while (sql.next()) {
-                AppInfoTable::AppInfoResult result;
+                AppInfoResult result;
                 result.desktopPath = sql.value(0).toString();
                 result.appLocalName = sql.value(1).toString();
                 result.iconName = sql.value(2).toString();
                 result.category = sql.value(3).toString();
                 result.top = sql.value(4).toInt();
-                result.favorate = sql.value(5).toInt();
+                result.favorite = sql.value(5).toInt();
                 result.launchTimes = sql.value(6).toInt();
                 result.lock = sql.value(7).toInt();
+                result.firstLetter = sql.value(8).toString();
                 appInfoResults.append(std::move(result));
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -371,24 +311,24 @@ bool AppInfoTablePrivate::getAppInfoResults(QVector<AppInfoTable::AppInfoResult>
 bool AppInfoTablePrivate::getAppLockState(QString &desktopfp, size_t &num)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd = QString("SELECT LOCK FROM appInfo WHERE DESKTOP_FILE_PATH='%0'")
                 .arg(desktopfp);
         if (sql.exec(cmd)) {
             if (sql.next()) {
                 num = sql.value(0).toInt();
             } else {
-                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
                 res = false;
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -401,24 +341,24 @@ bool AppInfoTablePrivate::getAppLockState(QString &desktopfp, size_t &num)
 bool AppInfoTablePrivate::getAppTopState(QString &desktopfp, size_t &num)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd = QString("SELECT TOP FROM appInfo WHERE DESKTOP_FILE_PATH='%0'")
                 .arg(desktopfp);
         if (sql.exec(cmd)) {
             if (sql.next()) {
                 num = sql.value(0).toInt();
             } else {
-                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
                 res = false;
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -431,24 +371,24 @@ bool AppInfoTablePrivate::getAppTopState(QString &desktopfp, size_t &num)
 bool AppInfoTablePrivate::getAppLaunchedState(QString &desktopfp, size_t &num)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd = QString("SELECT LAUNCHED FROM appInfo WHERE DESKTOP_FILE_PATH='%0'")
                 .arg(desktopfp);
         if (sql.exec(cmd)) {
             if (sql.next()) {
                 num = sql.value(0).toInt();
             } else {
-                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
                 res = false;
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -461,24 +401,24 @@ bool AppInfoTablePrivate::getAppLaunchedState(QString &desktopfp, size_t &num)
 bool AppInfoTablePrivate::getAppFavoriteState(QString &desktopfp, size_t &num)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd = QString("SELECT FAVORITES FROM appInfo WHERE DESKTOP_FILE_PATH='%0'")
                 .arg(desktopfp);
         if (sql.exec(cmd)) {
             if (sql.next()) {
                 num = sql.value(0).toInt();
             } else {
-                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+                qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
                 res = false;
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -534,8 +474,8 @@ bool AppInfoTablePrivate::addAppShortcut2Panel(QString &desktopfp)
 bool AppInfoTablePrivate::searchInstallApp(QString &keyWord, QStringList &installAppInfoRes)
 {
     bool res(true);
-    if (m_database->transaction()) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
         QString cmd;
         if (keyWord.size() < 2) {
             cmd = QString("SELECT DESKTOP_FILE_PATH,LOCAL_NAME,ICON FROM appInfo WHERE LOCAL_NAME OR NAME_EN OR NAME_ZH OR FIRST_LETTER_OF_PINYIN LIKE '%%0%' ORDER BY FAVORITES DESC")
@@ -550,12 +490,12 @@ bool AppInfoTablePrivate::searchInstallApp(QString &keyWord, QStringList &instal
                 installAppInfoRes << sql.value(0).toString() << sql.value(1).toString() << sql.value(2).toString();
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -568,8 +508,8 @@ bool AppInfoTablePrivate::searchInstallApp(QString &keyWord, QStringList &instal
 bool AppInfoTablePrivate::searchInstallApp(QStringList &keyWord, QStringList &installAppInfoRes)
 {
     bool res(true);
-    if (m_database->transaction() or keyWord.size() != 0) {
-        QSqlQuery sql(*m_database);
+    if (m_database.transaction() or keyWord.size() != 0) {
+        QSqlQuery sql(m_database);
         QString cmd;
         if (keyWord.at(0).size() < 2) {
             cmd = QString("SELECT DESKTOP_FILE_PATH,LOCAL_NAME,ICON,NAME_EN,NAME_ZH,FIRST_LETTER_OF_PINYIN FROM appInfo"
@@ -595,12 +535,12 @@ bool AppInfoTablePrivate::searchInstallApp(QStringList &keyWord, QStringList &in
                 installAppInfoRes << sql.value(0).toString() << sql.value(1).toString() << sql.value(2).toString();
             }
         } else {
-            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database->lastError();
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
             res = false;
         }
-        if (!m_database->commit()) {
+        if (!m_database.commit()) {
             qWarning() << "Failed to commit !" << cmd;
-            m_database->rollback();
+            m_database.rollback();
             res = false;
         }
     } else {
@@ -613,7 +553,13 @@ bool AppInfoTablePrivate::searchInstallApp(QStringList &keyWord, QStringList &in
 bool AppInfoTablePrivate::uninstallApp(QString &desktopfp)
 {
     bool res(false);
+    QString cmd = QString("kylin-uninstaller %1")
+                          .arg(desktopfp.toLocal8Bit().data());
+    res = QProcess::startDetached(cmd);
+    qDebug() << "kylin-uninstaller uninstall：" << cmd << res;
+    return res;
 
+    /*
     bool isOsReleaseUbuntu(false);
     QFile file("/etc/os-release");
     if (file.open(QFile::ReadOnly)) {
@@ -642,13 +588,189 @@ bool AppInfoTablePrivate::uninstallApp(QString &desktopfp)
         res = QProcess::startDetached(cmd);
         qDebug() << "dpkg -S uninstall：" << cmd << res;
     }
-
     return res;
+    */
 }
 
 QString AppInfoTablePrivate::lastError() const
 {
-    return m_database->lastError().text();
+    return m_database.lastError().text();
+}
+
+bool AppInfoTablePrivate::setAppLaunchTimes(QString &desktopfp, size_t num)
+{
+    bool res(true);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
+        QString cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
+                .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                .arg(num)
+                .arg(1)
+                .arg(desktopfp);
+        if (!sql.exec(cmd)) {
+            qWarning() << "Set app favorites state failed!" << m_database.lastError();
+            res = false;
+        }
+        if (!m_database.commit()) {
+            qWarning() << "Failed to commit !" << cmd;
+            m_database.rollback();
+            res = false;
+        }
+    } else {
+        qWarning() << "Failed to start transaction mode!!!";
+        res = false;
+    }
+    return res;
+}
+
+bool AppInfoTablePrivate::updateAppLaunchTimes(QString &desktopfp)
+{
+    bool res(true);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
+        QString cmd = QString("SELECT LAUNCH_TIMES FROM appInfo WHERE DESKTOP_FILE_PATH='%1'").arg(desktopfp);
+        if (sql.exec(cmd)) {
+            if (sql.next()) {
+                cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
+                        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                        .arg(sql.value(0).toInt() + 1)
+                        .arg(1)
+                        .arg(desktopfp);
+                if (!sql.exec(cmd)) {
+                    qWarning() << "Set app favorites state failed!" << m_database.lastError();
+                    res = false;
+                }
+            } else {
+                qWarning() << "Failed to exec next!" << cmd;
+                res = false;
+            }
+        } else {
+            qWarning() << "Failed to exec:" << cmd;
+            res = false;
+        }
+        if (!m_database.commit()) {
+            qWarning() << "Failed to commit !" << cmd;
+            m_database.rollback();
+            res = false;
+        }
+    } else {
+        qWarning() << "Failed to start transaction mode!!!";
+        res = false;
+    }
+    return res;
+}
+
+bool AppInfoTablePrivate::setAppLockState(QString &desktopfp, size_t num)
+{
+    bool res(true);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
+        QString cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LOCK=%1 WHERE DESKTOP_FILE_PATH='%2'")
+                .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                .arg(num)
+                .arg(desktopfp);
+        if (!sql.exec(cmd)) {
+            qWarning() << "Set app favorites state failed!" << m_database.lastError();
+            res = false;
+        }
+        if (!m_database.commit()) {
+            qWarning() << "Failed to commit !" << cmd;
+            m_database.rollback();
+            res = false;
+        }
+    } else {
+        qWarning() << "Failed to start transaction mode!!!";
+        res = false;
+    }
+    return res;
+}
+
+bool AppInfoTablePrivate::getAllAppDesktopList(QStringList &list)
+{
+    bool res(true);
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo");
+
+    if (sql.exec(cmd)) {
+        while (sql.next()) {
+            list.append(sql.value(0).toString());
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        res = false;
+    }
+
+    return res;
+}
+
+bool AppInfoTablePrivate::getFavoritesAppList(QStringList &list)
+{
+    bool res(true);
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo WHERE FAVORITES!=0 ORDER BY FAVORITES");
+    if (sql.exec(cmd)) {
+        while (sql.next()) {
+            list.append(sql.value(0).toString());
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        res = false;
+    }
+    return res;
+}
+
+bool AppInfoTablePrivate::getTopAppList(QStringList &list)
+{
+    bool res(true);
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo WHERE TOP!=0 ORDER BY TOP");
+
+    if (sql.exec(cmd)) {
+        while (sql.next()) {
+            list.append(sql.value(0).toString());
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        res = false;
+    }
+
+    return res;
+}
+
+bool AppInfoTablePrivate::getLaunchTimesAppList(QStringList &list)
+{
+    bool res(true);
+    if (m_database.transaction()) {
+        QSqlQuery sql(m_database);
+        QSqlQuery sqlque(m_database);
+        QString cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo ORDER BY LAUNCH_TIMES");
+        int count = 0;
+        if (sql.exec(cmd)) {
+            while (sql.next()) {
+                list.append(sql.value(0).toString());
+                cmd = QString("UPDATE appInfo SET TOP=%1 WHERE DESKTOP_FILE_PATH='%2'")
+                        .arg(++count)
+                        .arg(sql.value(0).toString());
+                if (!sqlque.exec(cmd)) {
+                    qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+                    res = false;
+                    break;
+                }
+            }
+        } else {
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+            res = false;
+        }
+        if (!m_database.commit()) {
+            qWarning() << "Failed to commit !" << cmd;
+            m_database.rollback();
+            res = false;
+        }
+    } else {
+        qWarning() << "Failed to start transaction mode!!!";
+        res = false;
+    }
+    return res;
 }
 
 AppInfoTablePrivate::~AppInfoTablePrivate()
@@ -658,9 +780,9 @@ AppInfoTablePrivate::~AppInfoTablePrivate()
 
 bool AppInfoTablePrivate::initDateBaseConnection()
 {
-    m_database->setDatabaseName(APP_DATABASE_PATH + APP_DATABASE_NAME);
-    if(!m_database->open()) {
-        qWarning() << m_database->lastError();
+    m_database.setDatabaseName(APP_DATABASE_PATH + APP_DATABASE_NAME);
+    if(!m_database.open()) {
+        qWarning() << m_database.lastError();
         return false;
 //        QApplication::quit();
     }
@@ -669,10 +791,10 @@ bool AppInfoTablePrivate::initDateBaseConnection()
 
 bool AppInfoTablePrivate::openDataBase()
 {
-    *m_database = QSqlDatabase::addDatabase("QSQLITE", m_ConnectionName);
-    m_database->setDatabaseName(APP_DATABASE_PATH + APP_DATABASE_NAME);
+    m_database = QSqlDatabase::addDatabase("QSQLITE", m_ConnectionName);
+    m_database.setDatabaseName(APP_DATABASE_PATH + APP_DATABASE_NAME);
 
-    if(!m_database->open()) {
+    if(!m_database.open()) {
         return false;
     }
     return true;
@@ -680,9 +802,24 @@ bool AppInfoTablePrivate::openDataBase()
 
 void AppInfoTablePrivate::closeDataBase()
 {
-    m_database->close();
-    delete m_database;
+    m_database.close();
+//    delete m_database;
     QSqlDatabase::removeDatabase(m_ConnectionName);
+}
+
+void AppInfoTablePrivate::sendAppDBItemsUpdate(QVector<AppInfoResult> results)
+{
+    Q_EMIT q->appDBItems2BUpdate(results);
+}
+
+void AppInfoTablePrivate::sendAppDBItemsAdd(QVector<AppInfoResult> results)
+{
+    Q_EMIT q->appDBItems2BAdd(results);
+}
+
+void AppInfoTablePrivate::sendAppDBItemsDelete(QStringList desktopfps)
+{
+    Q_EMIT q->appDBItems2BDelete(desktopfps);
 }
 
 AppInfoTable::AppInfoTable(QObject *parent) : QObject(parent), d(new AppInfoTablePrivate(this))
@@ -699,47 +836,22 @@ bool AppInfoTable::setAppTopState(QString &desktopfp, size_t num)
     return d->setAppTopState(desktopfp, num);
 }
 
-bool AppInfoTable::setAppLaunchTimes(QString &desktopfp, size_t num)
-{
-    return d->setAppLaunchTimes(desktopfp, num);
-}
-
-bool AppInfoTable::updateAppLaunchTimes(QString &desktopfp)
-{
-    return d->updateAppLaunchTimes(desktopfp);
-}
-
-bool AppInfoTable::setAppLockState(QString &desktopfp, size_t num)
-{
-    return d->setAppLockState(desktopfp, num);
-}
-
-bool AppInfoTable::getAllAppDesktopList(QStringList &list)
-{
-    return d->getAllAppDesktopList(list);
-}
-
-bool AppInfoTable::getFavoritesAppList(QStringList &list)
-{
-    return d->getFavoritesAppList(list);
-}
-
-bool AppInfoTable::getTopAppList(QStringList &list)
-{
-    return d->getTopAppList(list);
-}
-
-bool AppInfoTable::getLaunchTimesAppList(QStringList &list)
-{
-    return d->getLaunchTimesAppList(list);
-}
-
 bool AppInfoTable::getAppCategory(QString &desktopfp, QString &category)
 {
     return d->getAppCategory(desktopfp, category);
 }
 
-bool AppInfoTable::getAppInfoResults(QVector<AppInfoTable::AppInfoResult> &appInfoResults)
+bool AppInfoTable::changeFavoriteAppPos(const QString &desktopfp, size_t pos)
+{
+    return d->changeFavoriteAppPos(desktopfp, pos);
+}
+
+bool AppInfoTable::changeTopAppPos(const QString &desktopfp, size_t pos)
+{
+    return d->changeTopAppPos(desktopfp, pos);
+}
+
+bool AppInfoTable::getAppInfoResults(QVector<AppInfoResult> &appInfoResults)
 {
     return d->getAppInfoResults(appInfoResults);
 }
@@ -792,4 +904,40 @@ bool AppInfoTable::uninstallApp(QString &desktopfp)
 QString AppInfoTable::lastError() const
 {
     return d->lastError();
+}
+
+//下面接口暂时没啥用，不外放。
+bool AppInfoTable::setAppLaunchTimes(QString &desktopfp, size_t num)
+{
+    return d->setAppLaunchTimes(desktopfp, num);
+}
+
+bool AppInfoTable::updateAppLaunchTimes(QString &desktopfp)
+{
+    return d->updateAppLaunchTimes(desktopfp);
+}
+
+bool AppInfoTable::setAppLockState(QString &desktopfp, size_t num)
+{
+    return d->setAppLockState(desktopfp, num);
+}
+
+bool AppInfoTable::getAllAppDesktopList(QStringList &list)
+{
+    return d->getAllAppDesktopList(list);
+}
+
+bool AppInfoTable::getFavoritesAppList(QStringList &list)
+{
+    return d->getFavoritesAppList(list);
+}
+
+bool AppInfoTable::getTopAppList(QStringList &list)
+{
+    return d->getTopAppList(list);
+}
+
+bool AppInfoTable::getLaunchTimesAppList(QStringList &list)
+{
+    return d->getLaunchTimesAppList(list);
 }

@@ -1,6 +1,8 @@
 #ifndef APPDBMANAGER_H
 #define APPDBMANAGER_H
 
+#include "app-db-common.h"
+
 #include <QDir>
 #include <QObject>
 #include <QSqlDatabase>
@@ -12,7 +14,8 @@
 #include <QFileSystemWatcher>
 #include <QMutex>
 #include <QSettings>
-#include "app-db-common-defines.h"
+#include <QTimer>
+#include <QThread>
 
 #define CONNECTION_NAME QLatin1String("ukss-appdb-connection")
 
@@ -35,7 +38,7 @@ public:
     }
 };
 
-class AppDBManager : public QObject
+class AppDBManager : public QThread
 {
     Q_OBJECT
 
@@ -57,6 +60,8 @@ public:
     bool updateAppLaunchTimes(QString &desktopfp);
     void updateAllData2DB();
     bool updateLocaleData2DB(QString desktopPath);
+protected:
+    void run() override;
 
 private:
     explicit AppDBManager(QObject *parent = nullptr);
@@ -64,7 +69,7 @@ private:
 
     void loadDesktopFilePaths(QString path, QFileInfoList &infolist);
 
-    void initDataBase();
+    void refreshDataBase();
     bool openDataBase();
     void closeDataBase();
 
@@ -74,7 +79,12 @@ private:
     void getFilePathList(QStringList &pathList);
 
     QSettings *m_qSettings = nullptr;
+
     bool m_localeChanged;
+    bool m_dbChanged;
+
+    QTimer *m_timer = nullptr;
+    QTimer *m_maxProcessTimer = nullptr;
 
     QSqlDatabase m_database;
 
@@ -131,6 +141,15 @@ private:
         "/usr/share/applications/screensavers"
     };
 
+Q_SIGNALS:
+    void appDBItemUpdate(const AppInfoResult&);
+    void appDBItemAdd(const AppInfoResult&);
+    void appDBItemDelete(const QString&);
+    void finishHandleAppDB();
+
+    void startTimer();
+    void maxProcessTimerStart();
+    void stopTimer();
 };
 }
 

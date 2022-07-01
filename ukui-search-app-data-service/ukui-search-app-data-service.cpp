@@ -1,6 +1,11 @@
-#include <QDebug>
 #include "ukui-search-app-data-service.h"
 #include "app-db-manager.h"
+#include "signal-transformer.h"
+
+#include <QDBusConnection>
+#include <QDBusMetaType>
+#include <QDBusError>
+#include <QDebug>
 
 using namespace UkuiSearch;
 
@@ -12,8 +17,23 @@ UkuiSearchAppDataService::UkuiSearchAppDataService(int &argc, char *argv[], cons
     setQuitOnLastWindowClosed(false);
 
     if (!this->isRunning()) {
-        qDebug() << "First running";
+        qDebug() << "First running, I'm in app-db manager dbus rigister.";
+
+        qRegisterMetaType<AppInfoResult>("AppInfoResult");
+        qRegisterMetaType<QVector<AppInfoResult>>("QVector<AppInfoResult>");
+
+        qDBusRegisterMetaType<AppInfoResult>();
+        qDBusRegisterMetaType<QVector<AppInfoResult>>();
+
         AppDBManager::getInstance();
+
+        QDBusConnection sessionBus = QDBusConnection::sessionBus();
+        if (!sessionBus.registerService("com.ukui.search.appdb.service")) {
+            qCritical() << "QDbus register service failed reason:" << sessionBus.lastError();
+        }
+        if(!sessionBus.registerObject("/org/ukui/search/appDataBase", SignalTransformer::getTransformer(), QDBusConnection::ExportAllSignals)) {
+            qCritical() << "ukui-search-fileindex dbus register object failed reason:" << sessionBus.lastError();
+        }
 
         connect(this, &QtSingleApplication::messageReceived, [ & ](QString msg) {
             this->parseCmd(msg, true);

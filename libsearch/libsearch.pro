@@ -50,6 +50,7 @@ SOURCES += \
     libsearch.cpp
 
 HEADERS += \
+    app-db-common.h \
     common.h \
     file-utils.h \
     global-settings.h \

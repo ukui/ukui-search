@@ -1,10 +1,11 @@
+#include "app-db-manager.h"
+#include "file-utils.h"
+#include "convert-winid-to-desktop.h"
+
 #include <qt5xdg/XdgDesktopFile>
 #include <QMutexLocker>
 #include <QCryptographicHash>
 #include <QFile>
-#include "app-db-manager.h"
-#include "file-utils.h"
-#include "convert-winid-to-desktop.h"
 
 #define GENERAL_APP_DESKTOP_PATH "/usr/share/applications/"
 #define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
@@ -26,7 +27,7 @@ AppDBManager *AppDBManager::getInstance()
     return global_instance;
 }
 
-AppDBManager::AppDBManager(QObject *parent) : QObject(parent), m_database(QSqlDatabase())
+AppDBManager::AppDBManager(QObject *parent) : QThread(parent), m_database(QSqlDatabase())
 {
     //链接数据库
     if (openDataBase()) {
@@ -45,7 +46,7 @@ AppDBManager::AppDBManager(QObject *parent) : QObject(parent), m_database(QSqlDa
         m_qSettings->endGroup();
 
         //初始化数据库
-        initDataBase();
+        refreshDataBase();
 
         //初始化FileSystemWatcher
         m_watchAppDir = new QFileSystemWatcher(this);
@@ -62,20 +63,45 @@ AppDBManager::AppDBManager(QObject *parent) : QObject(parent), m_database(QSqlDa
         }
         m_watchAppDir->addPath(SNAPD_APP_DESKTOP_PATH);
 
-        //监听desktop文件所在目录,TODO:directoryChange会发多次信号，需要计时器阻塞
+        //初始化timer
+        this->start();
+        m_timer = new QTimer();
+        m_maxProcessTimer = new QTimer();
+
+        m_timer->setInterval(2*1000);
+        m_maxProcessTimer->setInterval(5*1000);
+
+        m_timer->setSingleShot(true);
+        m_maxProcessTimer->setSingleShot(true);
+
+        m_timer->moveToThread(this);
+        m_maxProcessTimer->moveToThread(this);
+
+        connect(this, SIGNAL(startTimer()), m_timer, SLOT(start()));
+        connect(this, SIGNAL(maxProcessTimerStart()), m_maxProcessTimer, SLOT(start()));
+        connect(this, &AppDBManager::stopTimer, m_timer, &QTimer::stop);
+        connect(this, &AppDBManager::stopTimer, m_maxProcessTimer, &QTimer::stop);
+
+        //监听desktop文件所在目录，由于directoryChange会发多次信号，使用计时器阻塞
         connect(m_watchAppDir, &QFileSystemWatcher::directoryChanged, this, [ = ](const QString & path) {
             qDebug() << "m_watchAppDir directoryChanged:" << path;
-            if (m_database.transaction()) {
-//                this->updateAppInfoDB();
-                this->updateAllData2DB();
-                if (!m_database.commit()) {
-                    qWarning() << "Failed to commit !";
-                    m_database.rollback();
-                }
-            } else {
-                qWarning() << "Failed to start transaction mode!!!";
+            Q_EMIT this->startTimer();
+            if (!m_maxProcessTimer->isActive()) {
+                Q_EMIT this->maxProcessTimerStart();
             }
         });
+
+        //计时器超时统一进行更新操作
+        connect(m_timer, &QTimer::timeout, this, [ & ] {
+            qDebug() << "Time out! Now I can update the database!";
+            Q_EMIT this->stopTimer();
+            this->refreshDataBase();
+        }, Qt::DirectConnection);
+        connect(m_maxProcessTimer, &QTimer::timeout, this, [ & ] {
+            qDebug() << "I've waited too lang, I have to update  the database now!";
+            Q_EMIT this->stopTimer();
+            this->refreshDataBase();
+        }, Qt::DirectConnection);
 
         //监控应用进程开启
         connect(KWindowSystem::self(), &KWindowSystem::windowAdded, [ = ](WId id) {
@@ -111,7 +137,7 @@ void AppDBManager::buildAppInfoDB()
                          .arg("NAME_ZH TEXT")//应用中文名称
                          .arg("PINYIN_NAME TEXT")//中文拼音
                          .arg("FIRST_LETTER_OF_PINYIN TEXT")//中文拼音首字母
-                         .arg("FIRST_LETTER_ALL")//中英文首字母（只包含一个，目前方案取拼音首字母的第一项，由于模糊拼音算法可能出问题）
+                         .arg("FIRST_LETTER_ALL")//拼音和英文全拼
                          .arg("ICON TEXT")//图标名称（或路径）
                          .arg("TYPE TEXT")//应用类型
                          .arg("CATEGORY TEXT")//应用分类
@@ -296,6 +322,7 @@ void AppDBManager::loadDesktopFilePaths(QString path, QFileInfoList &infolist)
 
 void AppDBManager::updateAllData2DB()
 {
+    m_dbChanged = false;
     bool firstExec = false;
     QSqlQuery sql(m_database);
     QString cmd = "SELECT DESKTOP_FILE_PATH,MD5 FROM appInfo";
@@ -348,24 +375,28 @@ void AppDBManager::updateAllData2DB()
                     //判断系统语言是否改变
                     if (m_localeChanged) {
                         this->updateLocaleData2DB(path);
+                        m_dbChanged = true;
                     }
                     dataMap.remove(path);
                     continue;
                 } else {
                     //数据库有记录但md5值改变则update
                     this->updateAppDesktopFile2DB(path);
+                    m_dbChanged = true;
                     dataMap.remove(path);
                     continue;
                 }
             } else {
                 //数据库中没有记录则insert
                 this->addAppDesktopFile2DB(path);
+                m_dbChanged = true;
                 dataMap.remove(path);
                 continue;
             }
         }
         //数据库为空则全部insert
         this->addAppDesktopFile2DB(path);
+        m_dbChanged = true;
         dataMap.remove(path);
     }
 
@@ -376,6 +407,7 @@ void AppDBManager::updateAllData2DB()
     if (!dataMap.isEmpty()) {
         for (auto i = dataMap.constBegin(); i != dataMap.constEnd(); i++) {
             this->deleteAppDesktopFile2DB(i.key());
+            m_dbChanged = true;
         }
     }
 }
@@ -406,6 +438,10 @@ bool AppDBManager::updateLocaleData2DB(QString desktopPath)
         res = false;
     }
     if (res) {
+        AppInfoResult result;
+        result.appLocalName = localName;
+        result.firstLetter = firstLetter2All;
+        Q_EMIT this->appDBItemUpdate(result);
         qDebug() << "Already to update the locale app-data of " << desktopPath;
     } else {
         qDebug() << "Fail to update the locale app-data of " << desktopPath;
@@ -413,7 +449,12 @@ bool AppDBManager::updateLocaleData2DB(QString desktopPath)
     return res;
 }
 
-void AppDBManager::initDataBase()
+void AppDBManager::run()
+{
+    exec();
+}
+
+void AppDBManager::refreshDataBase()
 {
     if (m_database.transaction()) {
 //        this->updateAppInfoDB();
@@ -421,6 +462,10 @@ void AppDBManager::initDataBase()
         if (!m_database.commit()) {
             qWarning() << "Failed to commit !";
             m_database.rollback();
+        } else if (!m_dbChanged) {
+            qDebug() << "app DataBase has no changes!";
+        } else {
+            Q_EMIT this->finishHandleAppDB();
         }
     } else {
         qWarning() << "Failed to start transaction mode!!!";
@@ -482,11 +527,11 @@ bool AppDBManager::addAppDesktopFile2DB(QString &desktopfd)
     desktopfile.load(desktopfd);
     QString hanzi, pinyin, firstLetterOfPinyin;
     QString localName = desktopfile.localizedValue("Name", "NULL").toString();
-    QString firstLtter2All = localName;
+    QString firstLetter2All = localName;
     bool isHanzi = true;
 
     if (localName.contains(QRegExp("[\\x4e00-\\x9fa5]+"))) {
-        firstLtter2All = FileUtils::findMultiToneWords(localName).at(0);
+        firstLetter2All = FileUtils::findMultiToneWords(localName).at(0);
     }
 
     if (desktopfile.contains("Name[zh_CN]")) {
@@ -524,7 +569,7 @@ bool AppDBManager::addAppDesktopFile2DB(QString &desktopfd)
             .arg(hanzi)
             .arg(pinyin)
             .arg(firstLetterOfPinyin)
-            .arg(firstLtter2All)
+            .arg(firstLetter2All)
             .arg(desktopfile.value("Icon").toString())
             .arg(desktopfile.value("Type").toString())
             .arg(desktopfile.value("Categories").toString())
@@ -541,6 +586,13 @@ bool AppDBManager::addAppDesktopFile2DB(QString &desktopfd)
         res = false;
     }
     if (res) {
+        AppInfoResult result;
+        result.desktopPath = desktopfd;
+        result.iconName = desktopfile.value("Icon").toString();
+        result.appLocalName = localName;
+        result.firstLetter = firstLetter2All;
+        result.category = desktopfile.value("Categories").toString();
+        Q_EMIT this->appDBItemAdd(result);
         qDebug() << "app database add " << desktopfd << "success!";
     } else {
         qDebug() << "app database add " << desktopfd << "failed!";
@@ -552,12 +604,39 @@ bool AppDBManager::deleteAppDesktopFile2DB(const QString &desktopfd)
 {
     bool res(true);
     QSqlQuery sql(m_database);
-    QString cmd = QString("DELETE FROM appInfo WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfd);
+    QString cmd = QString("SELECT FAVORITES, TOP FROM appInfo WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfd);
+
+    //查询要删除信息的应用是否被收藏或顶置过
+    if (!sql.exec(cmd)) {
+        qWarning() << m_database.lastError() << cmd;
+    } else if (sql.next()) {
+        int favorites = sql.value("FAVORITES").toInt();
+        int top = sql.value("TOP").toInt();
+        if (favorites) {
+            cmd = QString("UPDATE appInfo SET FAVORITES = FAVORITES -1 WHERE FAVORITES > %1").arg(favorites);
+            if (!sql.exec(cmd)) {
+                qWarning() << "I'm going to delete item in db, fail to update the FAVORITES because:" <<  m_database.lastError() << cmd;
+            }
+        }
+        if (top) {
+            cmd = QString("UPDATE appInfo SET TOP = TOP -1 WHERE TOP > %1").arg(top);
+            if (!sql.exec(cmd)) {
+                qWarning() << "I'm going to delete item in db, fail to update the TOP because:" << m_database.lastError() << cmd;
+            }
+        }
+    } else {
+        qWarning() << "Fail to exec next, because" << m_database.lastError() << "while executing " << cmd;
+    }
+
+    //执行删除操作
+    cmd = QString("DELETE FROM appInfo WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfd);
     if (!sql.exec(cmd)) {
         qWarning() << m_database.lastError() << cmd;
         res = false;
     }
+
     if (res) {
+        Q_EMIT this->appDBItemDelete(desktopfd);
         qDebug() << "app database delete " << desktopfd << "success!";
     } else {
         qDebug() << "app database delete " << desktopfd << "failed!";
@@ -612,7 +691,7 @@ bool AppDBManager::updateAppDesktopFile2DB(QString &desktopfd)
                           "NAME_ZH='%3'"
                           ",PINYIN_NAME='%4',"
                           "FIRST_LETTER_OF_PINYIN='%5',"
-                          "FIRST_LETTER_ALL='%6'"
+                          "FIRST_LETTER_ALL='%6',"
                           "ICON='%7',"
                           "TYPE='%8',"
                           "CATEGORY='%9',"
@@ -639,6 +718,13 @@ bool AppDBManager::updateAppDesktopFile2DB(QString &desktopfd)
         res = false;
     }
     if (res) {
+        AppInfoResult result;
+        result.desktopPath = desktopfd;
+        result.iconName = desktopfile.value("Icon").toString();
+        result.appLocalName = localName;
+        result.firstLetter = firstLetter2All;
+        result.category = desktopfile.value("Categories").toString();
+        Q_EMIT this->appDBItemUpdate(result);
         qDebug() << "app database update " << desktopfd << "success!";
     } else {
         qDebug() << "app database update " << desktopfd << "failed!";
@@ -654,14 +740,20 @@ bool AppDBManager::updateAppLaunchTimes(QString &desktopfp)
         QString cmd = QString("SELECT LAUNCH_TIMES FROM appInfo WHERE DESKTOP_FILE_PATH='%1'").arg(desktopfp);
         if (sql.exec(cmd)) {
             if (sql.next()) {
+                int launchTimes = sql.value(0).toInt() + 1;
                 cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
                         .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
-                        .arg(sql.value(0).toInt() + 1)
+                        .arg(launchTimes)
                         .arg(1)
                         .arg(desktopfp);
                 if (!sql.exec(cmd)) {
                     qWarning() << "Set app favorites state failed!" << m_database.lastError();
                     res = false;
+                } else {
+                    AppInfoResult result;
+                    result.desktopPath = desktopfp;
+                    result.launchTimes = launchTimes;
+                    Q_EMIT this->appDBItemUpdate(result);
                 }
             } else {
                 qWarning() << "Failed to exec next!" << cmd;
@@ -675,6 +767,8 @@ bool AppDBManager::updateAppLaunchTimes(QString &desktopfp)
             qWarning() << "Failed to commit !" << cmd;
             m_database.rollback();
             res = false;
+        } else {
+            Q_EMIT this->finishHandleAppDB();
         }
     } else {
         qWarning() << "Failed to start transaction mode!!!";
