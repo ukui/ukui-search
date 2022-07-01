@@ -35,7 +35,8 @@ public:
 
 private:
     inline int virtualRowCount() const;
-    static QString generateDesc(const SearchPluginIface::ResultInfo& data) ;
+    static QString generateDesc(const SearchPluginIface::ResultInfo& data);
+    inline void setCanExpand(bool);
 
 public Q_SLOTS:
     void clear();
@@ -44,13 +45,14 @@ public Q_SLOTS:
     void insertData(const SearchPluginIface::ResultInfo &data);
 
 Q_SIGNALS:
-    void dataChanged(SearchResultModel*);
+    void canExpand(SearchResultModel*, bool);
 
 private:
     QVector<SearchPluginIface::ResultInfo> m_list;
     QHash<int, QByteArray> m_roleNamesHash;
 
     bool m_expanded = false;
+    bool m_canExpand = true;
     const int m_minRowCount = 5; //不展开状态最多只显示5个结果
     const int m_maxRowCount = 100; //最多展示100条记录
 };

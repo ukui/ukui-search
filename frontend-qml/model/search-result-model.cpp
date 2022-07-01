@@ -86,15 +86,15 @@ void SearchResultModel::insertData(const SearchPluginIface::ResultInfo &data)
 {
     int begin = m_list.count();
     int limit = m_expanded ? m_maxRowCount : m_minRowCount;
+
+    m_list.push_back(data);
     //如果数据已经超过当前界面允许显示的最大条数后，不再给view发送数据添加信号
     if (begin < limit) {
         beginInsertRows(QModelIndex(), begin, begin);
-        m_list.push_back(data);
         endInsertRows();
-        Q_EMIT dataChanged(this);
-        return;
     }
-    m_list.push_back(data);
+
+    setCanExpand(m_list.count() > m_minRowCount);
 }
 
 void SearchResultModel::clear()
@@ -109,7 +109,8 @@ void SearchResultModel::clear()
     beginRemoveRows(QModelIndex(), 0, count);
     m_list.clear();
     endRemoveRows();
-    Q_EMIT dataChanged(this);
+
+    setCanExpand(false);
 }
 
 void SearchResultModel::expand()
@@ -142,4 +143,12 @@ void SearchResultModel::collapse()
 int SearchResultModel::virtualRowCount() const
 {
     return m_expanded ? qMin(m_list.count(), m_maxRowCount) : qMin(m_list.count(), m_minRowCount);
+}
+
+void SearchResultModel::setCanExpand(bool status)
+{
+    if (m_canExpand != status) {
+        m_canExpand = status;
+        Q_EMIT canExpand(this, m_canExpand);
+    }
 }

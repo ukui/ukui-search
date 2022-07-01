@@ -29,8 +29,8 @@ ResultModelManager::ResultModelManager(QObject *parent) : QObject(parent)
     for (const QString &item: list) {
         SearchResultModel *model = new SearchResultModel(this);
         m_models.insert(item, model);
-        connect(model, &SearchResultModel::dataChanged,
-                this, &ResultModelManager::onModelDataChanged, Qt::QueuedConnection);
+        connect(model, &SearchResultModel::canExpand,
+                this, &ResultModelManager::onModelCanExpand, Qt::QueuedConnection);
     }
 }
 
@@ -93,8 +93,8 @@ void ResultModelManager::clearAllModelData()
     }
 }
 
-void ResultModelManager::onModelDataChanged(SearchResultModel *model) {
-    if (model && m_models.values().contains(model)) {
-        Q_EMIT modelDataChanged(m_models.key(model));
+void ResultModelManager::onModelCanExpand(SearchResultModel *model, bool canExpand) {
+    if (model) {
+        Q_EMIT modelCanExpand(m_models.key(model), canExpand);
     }
 }

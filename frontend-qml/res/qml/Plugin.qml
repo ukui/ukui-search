@@ -92,6 +92,11 @@ Item {
                     return true;
                 }
             }
+
+            onCountChanged: {
+                //当model中没有数据后，隐藏当前插件视图
+                root.visible = (count > 0);
+            }
         }
     }
 
@@ -153,9 +158,10 @@ Item {
         root.visible = visible;
     }
 
-    function dataChanged(id) {
+    function changeIconVisible(id, canExpand) {
         if (id === pluginId) {
-            visible = (resultModel.rowCount() > 0);
+            //控制展开按钮是否显示
+            pluginInfo.actionIconVisable(canExpand);
         }
     }
 
@@ -167,7 +173,7 @@ Item {
 
     Component.onCompleted: {
         resultList.currentIndex = -1;
-        resultModelManager.modelDataChanged.connect(dataChanged);
+        resultModelManager.modelCanExpand.connect(changeIconVisible);
         resultModelManager.modelDataCleared.connect(dataCleared);
         visible = false;
     }

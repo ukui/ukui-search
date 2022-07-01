@@ -38,7 +38,7 @@ public:
     void installDataProvider(ModelDataProvider *provider);
 
 Q_SIGNALS:
-    void modelDataChanged(const QString &pluginId);
+    void modelCanExpand(const QString &pluginId, bool);
     void modelDataCleared(const QString &pluginId);
 
 private:
@@ -48,7 +48,7 @@ private Q_SLOTS:
     void receiveData(const SearchPluginIface::ResultInfo& data, const QString &pluginId);
     void clearModelData(const QString &pluginId);
     void clearAllModelData();
-    void onModelDataChanged(SearchResultModel*);
+    void onModelCanExpand(SearchResultModel*, bool);
 
 private:
     QMutex mutex;
