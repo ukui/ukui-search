@@ -14,6 +14,7 @@ using namespace UkuiSearch;
 
 LineEdit::LineEdit() : QQuickView()
 {
+    initProperty();
     initUI();
     initConnections();
 }

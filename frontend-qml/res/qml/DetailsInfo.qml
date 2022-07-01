@@ -11,7 +11,7 @@ Rectangle {
     color: "transparent";
 
     RowLayout {
-        id: layout;
+        id: infoLayout;
 
         anchors.fill: parent;
         spacing: 10;

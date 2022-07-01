@@ -27,7 +27,10 @@ ResultModelManager::ResultModelManager(QObject *parent) : QObject(parent)
 
     QStringList list = SearchPluginManager::getInstance()->getPluginIds();
     for (const QString &item: list) {
-        m_models.insert(item, new SearchResultModel(this));
+        SearchResultModel *model = new SearchResultModel(this);
+        m_models.insert(item, model);
+        connect(model, &SearchResultModel::dataChanged,
+                this, &ResultModelManager::onModelDataChanged, Qt::QueuedConnection);
     }
 }
 
@@ -77,6 +80,7 @@ void ResultModelManager::clearModelData(const QString &pluginId)
     SearchResultModel *model = getModel(pluginId);
     if (model) {
         model->clear();
+        Q_EMIT modelDataCleared(m_models.key(model));
     }
 }
 
@@ -85,5 +89,12 @@ void ResultModelManager::clearAllModelData()
     QMutexLocker locker(&mutex);
     for (const auto &model: m_models) {
         model->clear();
+        Q_EMIT modelDataCleared(m_models.key(model));
+    }
+}
+
+void ResultModelManager::onModelDataChanged(SearchResultModel *model) {
+    if (model && m_models.values().contains(model)) {
+        Q_EMIT modelDataChanged(m_models.key(model));
     }
 }

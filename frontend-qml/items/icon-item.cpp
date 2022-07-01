@@ -4,6 +4,9 @@
 
 #include "icon-item.h"
 
+#include <QUrl>
+#include <QPainter>
+
 using namespace UkuiSearch;
 
 IconItem::IconItem()
@@ -13,7 +16,7 @@ IconItem::IconItem()
 
 void IconItem::paint(QPainter *painter)
 {
-    m_icon.paint(painter, QRect(0, 0, width(), height()));
+    painter->drawPixmap(QRect(0, 0, width(), height()), m_icon.pixmap(width(), height()));
 }
 
 IconItem::~IconItem()
@@ -39,20 +42,20 @@ QString IconItem::getName()
 
 void IconItem::setName(const QString &name)
 {
+    QIcon icon;
     if (name.isEmpty()) {
         if (m_backup.isEmpty()) {
             qDebug() << "IconItem: name is empty, backup is empty!";
-            m_icon = QIcon(":/icons/desktop.png");
+            icon = QIcon(":/icons/desktop.png");
 
         } else {
-            m_icon = QIcon::fromTheme(m_backup, QIcon("qrc:/icons/desktop.png"));
+            icon = QIcon::fromTheme(m_backup, QIcon("qrc:/icons/desktop.png"));
         }
-        update();
-        return;
+    } else {
+        icon = QIcon::fromTheme(name, QIcon(":/icons/desktop.png"));
     }
     //FIXME QIcon::fromTheme,主题框架，XDGIconLoader会出现找不到图标的情况
-    m_icon = QIcon::fromTheme(name, QIcon(":/icons/desktop.png"));
-    update();
+    setIcon(icon);
 }
 
 QString IconItem::getBackup()

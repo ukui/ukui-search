@@ -1,29 +1,54 @@
-import QtQuick 2.0
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
+import org.ukui.search.items 1.0
 
-Item {
+Rectangle {
     id: root;
+
     signal textChanged(string keyword);
 
     onTextChanged: (keyword) => {
         console.log("received signal:", keyword);
     }
 
-    Rectangle {
-        id: container;
+    color: uiConfig.color("keywordBody");
+
+    RowLayout {
+        id: lineditLayout;
+
         anchors.fill: parent;
-        anchors.margins: 5;
-        color: "transparent";
+        anchors.leftMargin: uiConfig.margin("keywordBody", 0);
+        anchors.topMargin: uiConfig.margin("keywordBody", 1);
+        anchors.rightMargin: uiConfig.margin("keywordBody", 2);
+        anchors.bottomMargin: uiConfig.margin("keywordBody", 3);
+
+        spacing: uiConfig.spacing("keywordBody");
+
+        IconItem {
+            id: keywordIcon;
+
+            Layout.preferredWidth: uiConfig.width("keywordIcon");
+            Layout.preferredHeight: uiConfig.height("keywordIcon");
+            Layout.alignment: Qt.AlignVCenter;
+
+            name: "system-search-symbolic";
+        }
 
         TextInput {
             id: keywordInput;
-            font.pixelSize: 22;
-            anchors.fill: parent;
-            verticalAlignment: TextInput.AlignVCenter;
-            //text: "";
+
+            Layout.fillWidth: true;
+            Layout.fillHeight: true;
+            Layout.alignment: Qt.AlignVCenter;
+
             clip: true;
-            selectByMouse: true;
             focus: true;
             maximumLength: 100;
+            selectByMouse: true;
+            verticalAlignment: Qt.AlignVCenter;
+
+            selectionColor: uiConfig.color("select");
+            font.pointSize: uiConfig.height("keywordFont");
 
             onTextChanged: {
                 console.log(keywordInput.text);

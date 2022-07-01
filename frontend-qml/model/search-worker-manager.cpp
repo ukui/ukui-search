@@ -52,7 +52,10 @@ void SearchWorker::stop()
 
 void SearchWorker::run()
 {
-    m_timer.setInterval(3000);
+    if (!m_timer) {
+        m_timer = new QTimer(this);
+    }
+    m_timer->setInterval(3000);
     bool is_empty;
     while(!isInterruptionRequested()) {
         is_empty = false;
@@ -62,14 +65,15 @@ void SearchWorker::run()
         } else {
             is_empty = true;
         }
-        if(m_timer.isActive() && m_timer.remainingTime() < 0.01) {
+        if(m_timer->isActive() && m_timer->remainingTime() < 0.01) {
             this->requestInterruption();
             qWarning()<<"Search worker for " << m_pluginId << "done.";
         }
-        if(is_empty && !m_timer.isActive()) {
-            m_timer.start();
+
+        if(is_empty && !m_timer->isActive()) {
+            m_timer->start();
         } else if(!is_empty) {
-            m_timer.stop();
+            m_timer->stop();
         } else {
             msleep(100);
         }
@@ -112,12 +116,11 @@ QStringList SearchWorkerManager::getPluginIds()
 
 void SearchWorkerManager::startSearch(const QString &keyword)
 {
+    resetKeywords();
+
     if (keyword.isEmpty()) {
         return;
     }
-
-    stopSearch();
-    resetKeywords();
 
     QMap<QString, SearchWorker*>::const_iterator iterator = m_searchWorkers.constBegin();
     while (iterator != m_searchWorkers.constEnd()) {
@@ -156,5 +159,3 @@ SearchWorkerManager::~SearchWorkerManager()
         ++iterator;
     }
 }
-
-

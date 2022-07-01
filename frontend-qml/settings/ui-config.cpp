@@ -21,7 +21,10 @@ static UIConfig *instance = nullptr;
 #define BASE                 "base"
 
 //keyword input
+#define KEYWORD_BODY         "keywordBody"
+#define KEYWORD_ICON         "keywordIcon"
 #define KEYWORD_INPUT        "keywordInput"
+#define KEYWORD_FONT         "keywordFont"
 
 //new
 #define RESULT_VIEW          "resultView"
@@ -74,7 +77,7 @@ void UIConfig::loadConfig()
 {
     //color
     m_colors.insert(BASE, {"#FFFFFF"});
-    m_colors.insert(KEYWORD_INPUT, {"#FFFFFF"});
+    m_colors.insert(KEYWORD_BODY, {TRANSPARENT});
 
     m_colors.insert(RESULT_VIEW, {"#FFFFFF"});
     m_colors.insert(DETAILS, {"#F0F0F0"});
@@ -93,6 +96,8 @@ void UIConfig::loadConfig()
     m_colors.insert(LEAVE, {TRANSPARENT});
 
     //size
+    m_size.insert(KEYWORD_ICON, {24, 24});
+    m_size.insert(KEYWORD_FONT, {16, 16});
     m_size.insert(PLUGIN_INFO, {0, 30});
     m_size.insert(RESULT_ITEM, {0, 36});
     m_size.insert(ITEM_ICON, {24, 24});
@@ -109,6 +114,7 @@ void UIConfig::loadConfig()
 
     //margins
     m_margins.insert(BASE, {8, 8, 8, 8});
+    m_margins.insert(KEYWORD_BODY, {16, 0, 16, 0});
     m_margins.insert(RESULT_VIEW, {8, 8, 8, 8});
     m_margins.insert(DETAILS, {8, 50, 8, 0});
     m_margins.insert(PLUGIN_VIEW, {0, 0, 0, 0});
@@ -119,6 +125,7 @@ void UIConfig::loadConfig()
 
     //spacing
     m_spacing.insert(BASE, 5);
+    m_spacing.insert(KEYWORD_BODY, 4);
     m_spacing.insert(RESULT_VIEW, 5);
     m_spacing.insert(DETAILS, 8);
     m_spacing.insert(PLUGIN_VIEW, 5);

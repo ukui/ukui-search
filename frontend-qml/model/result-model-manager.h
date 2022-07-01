@@ -37,6 +37,10 @@ public:
     //安装数据提供器
     void installDataProvider(ModelDataProvider *provider);
 
+Q_SIGNALS:
+    void modelDataChanged(const QString &pluginId);
+    void modelDataCleared(const QString &pluginId);
+
 private:
     explicit ResultModelManager(QObject *parent = nullptr);
 
@@ -44,6 +48,7 @@ private Q_SLOTS:
     void receiveData(const SearchPluginIface::ResultInfo& data, const QString &pluginId);
     void clearModelData(const QString &pluginId);
     void clearAllModelData();
+    void onModelDataChanged(SearchResultModel*);
 
 private:
     QMutex mutex;
