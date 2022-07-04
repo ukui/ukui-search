@@ -2,8 +2,6 @@
 #define APPDBCOMMON_H
 
 #include <QDir>
-#include <QMetaType>
-#include <QDBusArgument>
 
 namespace UkuiSearch {
 
@@ -12,6 +10,7 @@ namespace UkuiSearch {
 
 struct AppInfoResult
 {
+public:
     QString desktopPath;
     QString iconName;
     QString appLocalName;
@@ -23,27 +22,7 @@ struct AppInfoResult
     int lock;
 
     AppInfoResult() : top(0), favorite(0), launchTimes(0), lock(0) {}
-    friend QDBusArgument &operator << (QDBusArgument &argument, const AppInfoResult &infoResult)
-    {
-        argument.beginStructure();
-        argument << infoResult.desktopPath << infoResult.iconName << infoResult.appLocalName << infoResult.firstLetter
-                 << infoResult.category << infoResult.top << infoResult.favorite << infoResult.launchTimes << infoResult.lock;
-        argument.endStructure();
-        return argument;
-    }
-
-    friend const QDBusArgument &operator >> (const QDBusArgument &argument, AppInfoResult &infoResult)
-    {
-        argument.beginStructure();
-        argument >> infoResult.desktopPath >> infoResult.iconName >> infoResult.appLocalName >> infoResult.firstLetter
-                 >> infoResult.category >> infoResult.top >> infoResult.favorite >> infoResult.launchTimes >> infoResult.lock;
-
-        argument.endStructure();
-        return argument;
-    }
-
 };
-
 }
 
 Q_DECLARE_METATYPE(UkuiSearch::AppInfoResult)
