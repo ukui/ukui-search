@@ -51,6 +51,7 @@ SOURCES += \
 
 HEADERS += \
     app-db-common.h \
+    app-info-dbus-argument.h \
     common.h \
     file-utils.h \
     global-settings.h \

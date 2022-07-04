@@ -1,6 +1,7 @@
 #include "ukui-search-app-data-service.h"
 #include "app-db-manager.h"
 #include "signal-transformer.h"
+#include "app-info-dbus-argument.h"
 
 #include <QDBusConnection>
 #include <QDBusMetaType>
