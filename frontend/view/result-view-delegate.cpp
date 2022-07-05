@@ -32,8 +32,11 @@ void ResultViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     QStyle *style = opt.widget->style();
     style->proxy()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget); //绘制非文本区域内容
 
-    opt.text = text;
     QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &opt, opt.widget);
+    QFontMetrics fontMetrics(opt.font);
+    text = fontMetrics.elidedText(text, Qt::ElideRight, textRect.width() - 5); //富余5px的宽度
+    opt.text = text;
+
     painter->save();
     if(opt.state & QStyle::State_Selected) {
         m_hightLightEffectHelper->setTextColor(QBrush(opt.palette.highlightedText().color()));
@@ -42,7 +45,7 @@ void ResultViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     }
     painter->translate(textRect.topLeft());
 
-    m_textDoc->setHtml("<pre>" + text + "</pre>");
+    m_textDoc->setPlainText(text);
     m_hightLightEffectHelper->setDocument(m_textDoc);
     m_hightLightEffectHelper->rehighlight();
     m_textDoc->drawContents(painter);
