@@ -12,6 +12,15 @@ void UkuiSearchDbusServices::searchKeyword(QString keyword)
     m_mainWindow->setText(keyword);
 }
 
+void UkuiSearchDbusServices::mainWindowSwitch()
+{
+    if (m_mainWindow->isActiveWindow()) {
+        m_mainWindow->tryHide();
+    } else {
+        m_mainWindow->bootOptionsFilter("-s");
+    }
+}
+
 UkuiSearchDbusServices::UkuiSearchDbusServices(MainWindow *m)
 {
     m_mainWindow = m;

@@ -327,6 +327,11 @@ void MainWindow::resizeHeight(int height)
     this->setFixedHeight(height);
 }
 
+void MainWindow::tryHide()
+{
+    this->tryHideMainwindow();
+}
+
 /**
  * @brief monitorResolutionChange  监听屏幕改变
  * @param rect

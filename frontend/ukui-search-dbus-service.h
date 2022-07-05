@@ -20,9 +20,10 @@ public:
 public Q_SLOTS:
     void showWindow();
     void searchKeyword(QString keyword);
+    void mainWindowSwitch();
 
 private:
-    MainWindow *m_mainWindow;
+    MainWindow *m_mainWindow = nullptr;
 };
 }
 
