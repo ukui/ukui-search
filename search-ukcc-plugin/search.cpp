@@ -65,7 +65,7 @@ QWidget *Search::pluginUi()
                 m_webEngineFrame->mCombox->blockSignals(false);
             }
         });
-        connect(m_searchMethodBtn, &SwitchButton::checkedChanged, this, [ = ](bool checked) {
+        connect(m_searchMethodBtn, &kdk::KSwitchButton::stateChanged, this, [ = ](bool checked) {
             if (m_gsettings && m_gsettings->keys().contains(SEARCH_METHOD_KEY)) {
                 m_gsettings->set(SEARCH_METHOD_KEY, checked);
             }
@@ -147,7 +147,7 @@ void Search::initUi()
     m_descLabel2->setEnabled(false);
     m_descFrameLyt->addWidget(m_descLabel1);
     m_descFrameLyt->addWidget(m_descLabel2);
-    m_searchMethodBtn = new SwitchButton(m_searchMethodFrame);
+    m_searchMethodBtn = new kdk::KSwitchButton(m_searchMethodFrame);
     m_searchMethodLyt->addWidget(m_descFrame);
     m_searchMethodLyt->addStretch();
     m_searchMethodLyt->addWidget(m_searchMethodBtn);
