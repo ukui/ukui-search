@@ -23,8 +23,9 @@
 #include <QObject>
 #include <QLabel>
 #include <QEvent>
+#include <kborderlessbutton.h>
 namespace UkuiSearch {
-class ActionLabel : public QLabel
+class ActionLabel : public kdk::KBorderlessButton
 {
     Q_OBJECT
 public:
