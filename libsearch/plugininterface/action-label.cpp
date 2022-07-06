@@ -22,7 +22,7 @@
 #define ACTION_HOVER_COLOR QColor(64, 169, 251, 255)
 #define ACTION_PRESS_COLOR QColor(41, 108, 217, 255)
 using namespace UkuiSearch;
-ActionLabel::ActionLabel(const QString &action, const QString &key, QWidget *parent) : QLabel(parent)
+ActionLabel::ActionLabel(const QString &action, const QString &key, QWidget *parent) : KBorderlessButton(parent)
 {
     m_action = action;
     m_key = key;
@@ -33,32 +33,40 @@ ActionLabel::ActionLabel(const QString &action, const QString &key, QWidget *par
 void ActionLabel::initUi()
 {
     this->setText(m_action);
-    QPalette pal = palette();
-    pal.setColor(QPalette::WindowText, ACTION_NORMAL_COLOR);
-    pal.setColor(QPalette::Light, ACTION_HOVER_COLOR);
-    pal.setColor(QPalette::Dark, ACTION_PRESS_COLOR);
-    this->setPalette(pal);
-    this->setForegroundRole(QPalette::WindowText);
+//    QPalette pal = palette();
+//    pal.setColor(QPalette::WindowText, ACTION_NORMAL_COLOR);
+//    pal.setColor(QPalette::Light, ACTION_HOVER_COLOR);
+//    pal.setColor(QPalette::Dark, ACTION_PRESS_COLOR);
+//    this->setPalette(pal);
+//    this->setForegroundRole(QPalette::WindowText);
     this->setCursor(QCursor(Qt::PointingHandCursor));
 }
 
 bool ActionLabel::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched == this) {
-        if(event->type() == QEvent::MouseButtonPress) {
-            this->setForegroundRole(QPalette::Dark);
-            return true;
-        } else if(event->type() == QEvent::MouseButtonRelease) {
+        if (event->type() == QEvent::MouseButtonRelease) {
             Q_EMIT this->actionTriggered(m_action);
-            this->setForegroundRole(QPalette::Light);
-            return true;
-        } else if(event->type() == QEvent::Enter) {
-            this->setForegroundRole(QPalette::Light);
-            return true;
-        } else if(event->type() == QEvent::Leave) {
-            this->setForegroundRole(QPalette::WindowText);
-            return true;
+            return false;
         }
     }
-    return false;
+
+
+//    if (watched == this) {
+//        if(event->type() == QEvent::MouseButtonPress) {
+//            this->setForegroundRole(QPalette::Dark);
+//            return true;
+//        } else if(event->type() == QEvent::MouseButtonRelease) {
+//            Q_EMIT this->actionTriggered(m_action);
+//            this->setForegroundRole(QPalette::Light);
+//            return true;
+//        } else if(event->type() == QEvent::Enter) {
+//            this->setForegroundRole(QPalette::Light);
+//            return true;
+//        } else if(event->type() == QEvent::Leave) {
+//            this->setForegroundRole(QPalette::WindowText);
+//            return true;
+//        }
+//    }
+    return KBorderlessButton::eventFilter(watched, event);
 }
