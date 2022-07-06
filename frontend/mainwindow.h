@@ -110,6 +110,7 @@ public Q_SLOTS:
     void settingsBtnClickedSlot();
     void searchKeywordSlot(const QString&);
     void resizeHeight(int height);
+    void tryHide();
 
 private:
 
