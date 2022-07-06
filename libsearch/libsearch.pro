@@ -7,7 +7,7 @@ TEMPLATE = lib
 DEFINES += LIBSEARCH_LIBRARY
 CONFIG += create_pc create_prl no_install_prl
 
-PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt poppler-qt5
+PKGCONFIG += gio-2.0 glib-2.0 gio-unix-2.0 gsettings-qt poppler-qt5 kysdk-qtwidgets
 
 CONFIG += c++11 link_pkgconfig no_keywords lrelease
 QMAKE_CXXFLAGS += -Werror=return-type -Werror=return-local-addr -Werror=uninitialized
