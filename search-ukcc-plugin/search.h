@@ -13,6 +13,8 @@
 #include <QPushButton>
 #include <QMessageBox>
 
+#include <kswitchbutton.h>
+
 #include <ukcc/interface/interface.h>
 #include <ukcc/widgets/comboboxitem.h>
 #include <ukcc/widgets/switchbutton.h>
@@ -75,7 +77,7 @@ private:
     QFrame *m_searchMethodFrame = nullptr;
     QHBoxLayout *m_searchMethodLyt = nullptr;
 //    QLabel *m_searchMethodLabel = nullptr;
-    SwitchButton * m_searchMethodBtn = nullptr;
+    kdk::KSwitchButton *m_searchMethodBtn = nullptr;
     //设置搜索引擎
     TitleLabel * m_webEngineLabel = nullptr;
     ComboxFrame * m_webEngineFrame = nullptr;

@@ -6,7 +6,7 @@ target.path = $$[QT_INSTALL_LIBS]/ukui-control-center/
 
 CONFIG += plugin link_pkgconfig c++11 lrelease
 
-PKGCONFIG += gio-2.0 gio-unix-2.0 gsettings-qt
+PKGCONFIG += gio-2.0 gio-unix-2.0 gsettings-qt kysdk-qtwidgets
 
 LIBS +=  -L$$[QT_INSTALL_LIBS] -lgsettings-qt
 LIBS += -lukcc
