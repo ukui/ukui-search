@@ -4,6 +4,7 @@
         <file>icons/ukui-up-symbolic.svg</file>
         <file>icons/desktop.png</file>
         <file>icons/search.svg</file>
+        <file>qt-translations/qt_zh_CN.qm</file>
         <file>qml/LineEdit.qml</file>
         <file>qml/ResultView.qml</file>
         <file>qml/Plugin.qml</file>
