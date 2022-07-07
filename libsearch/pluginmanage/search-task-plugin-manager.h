@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QUuid>
+#include <QMap>
 #include "search-task-plugin-iface.h"
 
 namespace UkuiSearch {

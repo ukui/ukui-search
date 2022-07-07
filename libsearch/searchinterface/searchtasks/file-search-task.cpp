@@ -4,6 +4,7 @@
 #include "common.h"
 
 #include <QDir>
+#include <QUrl>
 #include <QFile>
 #include <QQueue>
 #include <QDebug>
