@@ -3,4 +3,4 @@
 	url = http://gitlab2.kylin.com/kylin-desktop/ukui-search-debian.git
 [submodule "libchinese-segmentation"]
 	path = libchinese-segmentation
-	url = http://gitlab2.kylin.com/iaom/chinese-segmentation.git
+	url = https://gitlab2.kylin.com/kylin-desktop/chinese-segmentation.git
