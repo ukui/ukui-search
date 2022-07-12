@@ -17,7 +17,7 @@
 using namespace UkuiSearch;
 
 static AppDBManager *global_instance;
-QMutex AppDBManager::s_installAppMapMutex;
+QMutex AppDBManager::s_mutex;
 
 AppDBManager *AppDBManager::getInstance()
 {
@@ -46,7 +46,8 @@ AppDBManager::AppDBManager(QObject *parent) : QThread(parent), m_database(QSqlDa
         m_qSettings->endGroup();
 
         //初始化数据库
-        refreshDataBase();
+        refreshAllData2DB();
+//        refreshDataBase();
 
         //初始化FileSystemWatcher
         m_watchAppDir = new QFileSystemWatcher(this);
@@ -95,19 +96,19 @@ AppDBManager::AppDBManager(QObject *parent) : QThread(parent), m_database(QSqlDa
         connect(m_timer, &QTimer::timeout, this, [ & ] {
             qDebug() << "Time out! Now I can update the database!";
             Q_EMIT this->stopTimer();
-            this->refreshDataBase();
+            this->refreshAllData2DB();
         }, Qt::DirectConnection);
         connect(m_maxProcessTimer, &QTimer::timeout, this, [ & ] {
             qDebug() << "I've waited too lang, I have to update  the database now!";
             Q_EMIT this->stopTimer();
-            this->refreshDataBase();
+            this->refreshAllData2DB();
         }, Qt::DirectConnection);
 
         //监控应用进程开启
         connect(KWindowSystem::self(), &KWindowSystem::windowAdded, [ = ](WId id) {
             QString desktopfp = ConvertWinidToDesktop::getConverter().tranIdToDesktop(id);
             if (!desktopfp.isEmpty()) {
-                AppDBManager::getInstance()->updateAppLaunchTimes(desktopfp);
+                this->updateLaunchTimes(desktopfp);
             }
         });
     } else {
@@ -126,6 +127,7 @@ AppDBManager::~AppDBManager()
 
 void AppDBManager::buildAppInfoDB()
 {
+    qDebug() << "I'm going to build app info database.";
     QSqlQuery sql(m_database);
     QString cmd = QString("CREATE TABLE IF NOT EXISTS appInfo(%1, %2, %3, %4, %5, %6, %7, %8,%9, %10, %11, %12, %13, %14, %15, %16, %17, %18, %19, %20, %21)")
 //                         .arg("ID INT")//自增id
@@ -159,7 +161,8 @@ void AppDBManager::buildAppInfoDB()
 
 void AppDBManager::updateAppInfoDB()
 {
-    QMutexLocker locker(&s_installAppMapMutex);
+    /*
+    QMutexLocker locker(&s_mutex);
     m_installAppMap.clear();
     this->getAllDesktopFilePath(GENERAL_APP_DESKTOP_PATH);
     this->getAllDesktopFilePath(ANDROID_APP_DESKTOP_PATH);
@@ -167,7 +170,7 @@ void AppDBManager::updateAppInfoDB()
     QStringList filePathList;
     this->getFilePathList(filePathList);
     QSqlQuery sql(m_database);
-    QString cmd = "SELECT COUNT(*) FROM appInfo";
+    QString cmd = "SELECT COUNT(*) FROM APPINFO";
     if (!sql.exec(cmd)) {
         this->buildAppInfoDB();
         for (auto &filePath : filePathList) {
@@ -179,7 +182,7 @@ void AppDBManager::updateAppInfoDB()
                 //删除多余项
                 if (sql.value(0).toInt() > filePathList.size()) {
                     int size = sql.value(0).toInt();
-                    cmd = QString("SELECT DESKTOP_FILE_PATH FROM appInfo");
+                    cmd = QString("SELECT DESKTOP_FILE_PATH FROM APPINFO");
                     if (!sql.exec(cmd)) {
                         qWarning() << m_database.lastError() << cmd;
                         return;
@@ -199,13 +202,13 @@ void AppDBManager::updateAppInfoDB()
                 }
                 //添加新增项，根据md5判断desktop文件是否改变以更新对应项
                 for (QString &filePath : filePathList) {
-                    cmd = QString("SELECT COUNT(*) FROM appInfo WHERE DESKTOP_FILE_PATH = '%0'").arg(filePath);
+                    cmd = QString("SELECT COUNT(*) FROM APPINFO WHERE DESKTOP_FILE_PATH = '%0'").arg(filePath);
                     if (sql.exec(cmd)) {
                         if (sql.next()) {
                             if (sql.value(0).toInt() == 0) {
                                 this->addAppDesktopFile2DB(filePath);
                             } else {
-                                cmd = QString("SELECT MD5 FROM appInfo WHERE DESKTOP_FILE_PATH = '%0'").arg(filePath);
+                                cmd = QString("SELECT MD5 FROM APPINFO WHERE DESKTOP_FILE_PATH = '%0'").arg(filePath);
                                 if (!sql.exec(cmd)) {
                                     qWarning() << m_database.lastError() << cmd;
                                     return;
@@ -236,21 +239,23 @@ void AppDBManager::updateAppInfoDB()
             return;
         }
     }
+    */
 }
 
 void AppDBManager::getFilePathList(QStringList &pathList)
 {
-    for (auto i=m_installAppMap.begin(); i!=m_installAppMap.end(); ++i) {
-        pathList.append(i.value().at(0));
-    }
+//    for (auto i=m_installAppMap.begin(); i!=m_installAppMap.end(); ++i) {
+//        pathList.append(i.value().at(0));
+//    }
 }
 
 /**
  * @brief AppMatch::getAllDesktopFilePath 遍历所有desktop文件
  * @param path 存放desktop文件夹
  */
-void AppDBManager::getAllDesktopFilePath(QString path) {
-
+void AppDBManager::getAllDesktopFilePath(QString path)
+{
+    /*
     QDir dir(path);
     if(!dir.exists()) {
         return;
@@ -310,6 +315,7 @@ void AppDBManager::getAllDesktopFilePath(QString path) {
             ++i;
         }
     }
+    */
 }
 
 void AppDBManager::loadDesktopFilePaths(QString path, QFileInfoList &infolist)
@@ -320,12 +326,12 @@ void AppDBManager::loadDesktopFilePaths(QString path, QFileInfoList &infolist)
     infolist.append(dir.entryInfoList());
 }
 
-void AppDBManager::updateAllData2DB()
+void AppDBManager::refreshAllData2DB()
 {
     m_dbChanged = false;
     bool firstExec = false;
     QSqlQuery sql(m_database);
-    QString cmd = "SELECT DESKTOP_FILE_PATH,MD5 FROM appInfo";
+    QString cmd = "SELECT DESKTOP_FILE_PATH,MD5 FROM APPINFO";
     QMap<QString, QString> dataMap;
     if (!sql.exec(cmd)) {
         qDebug() << "Fail to read database, because: " << m_database.lastError();
@@ -374,29 +380,25 @@ void AppDBManager::updateAllData2DB()
                 if (!QString::compare(dataMap.value(path), getAppDesktopMd5(path))) {
                     //判断系统语言是否改变
                     if (m_localeChanged) {
-                        this->updateLocaleData2DB(path);
-                        m_dbChanged = true;
+                        this->updateLocaleData(path);
                     }
                     dataMap.remove(path);
                     continue;
                 } else {
                     //数据库有记录但md5值改变则update
-                    this->updateAppDesktopFile2DB(path);
-                    m_dbChanged = true;
+                    this->updateDBItem(path);
                     dataMap.remove(path);
                     continue;
                 }
             } else {
                 //数据库中没有记录则insert
-                this->addAppDesktopFile2DB(path);
-                m_dbChanged = true;
+                this->insertDBItem(path);
                 dataMap.remove(path);
                 continue;
             }
         }
         //数据库为空则全部insert
-        this->addAppDesktopFile2DB(path);
-        m_dbChanged = true;
+        this->insertDBItem(path);
         dataMap.remove(path);
     }
 
@@ -406,13 +408,12 @@ void AppDBManager::updateAllData2DB()
     //数据库冗余项直接delete
     if (!dataMap.isEmpty()) {
         for (auto i = dataMap.constBegin(); i != dataMap.constEnd(); i++) {
-            this->deleteAppDesktopFile2DB(i.key());
-            m_dbChanged = true;
+            this->deleteDBItem(i.key());
         }
     }
 }
 
-bool AppDBManager::updateLocaleData2DB(QString desktopPath)
+bool AppDBManager::handleLocaleDataUpdate(const QString &desktopPath)
 {
     bool res(true);
     XdgDesktopFile desktopFile;
@@ -456,20 +457,19 @@ void AppDBManager::run()
 
 void AppDBManager::refreshDataBase()
 {
-    if (m_database.transaction()) {
-//        this->updateAppInfoDB();
-        this->updateAllData2DB();
-        if (!m_database.commit()) {
-            qWarning() << "Failed to commit !";
-            m_database.rollback();
-        } else if (!m_dbChanged) {
-            qDebug() << "app DataBase has no changes!";
-        } else {
-            Q_EMIT this->finishHandleAppDB();
-        }
-    } else {
-        qWarning() << "Failed to start transaction mode!!!";
-    }
+//    if (m_database.transaction()) {
+//        this->updateAllData2DB();
+//        if (!m_database.commit()) {
+//            qWarning() << "Failed to commit !";
+//            m_database.rollback();
+//        } else if (!m_dbChanged) {
+//            qDebug() << "app DataBase has no changes!";
+//        } else {
+//            Q_EMIT this->finishHandleAppDB();
+//        }
+//    } else {
+//        qWarning() << "Failed to start transaction mode!!!";
+//    }
 }
 
 bool AppDBManager::openDataBase()
@@ -500,7 +500,7 @@ void AppDBManager::closeDataBase()
     QSqlDatabase::removeDatabase(CONNECTION_NAME);
 }
 
-QString AppDBManager::getAppDesktopMd5(QString &desktopfd)
+QString AppDBManager::getAppDesktopMd5(const QString &desktopfd)
 {
     QString res;
     QFile file(desktopfd);
@@ -510,16 +510,37 @@ QString AppDBManager::getAppDesktopMd5(QString &desktopfd)
     return res;
 }
 
-void AppDBManager::getInstallAppMap(QMap<QString, QStringList> &installAppMap)
+bool AppDBManager::startTransaction()
 {
-    QMutexLocker locker(&s_installAppMapMutex);
-    for (auto i=m_installAppMap.begin(); i!=m_installAppMap.end(); ++i) {
-        installAppMap[i.key().app_name] = i.value();
+    if (m_database.transaction()) {
+        return true;
+    } else {
+        qWarning() << "Failed to start transaction mode!!!";
+        return false;
     }
-    installAppMap.detach();
 }
 
-bool AppDBManager::addAppDesktopFile2DB(QString &desktopfd)
+bool AppDBManager::startCommit()
+{
+    if (!m_database.commit()) {
+        qWarning() << "Failed to commit !";
+        m_database.rollback();
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void AppDBManager::getInstallAppMap(QMap<QString, QStringList> &installAppMap)
+{
+//    QMutexLocker locker(&s_mutex);
+//    for (auto i=m_installAppMap.begin(); i!=m_installAppMap.end(); ++i) {
+//        installAppMap[i.key().app_name] = i.value();
+//    }
+//    installAppMap.detach();
+}
+
+bool AppDBManager::handleDBItemInsert(const QString &desktopfd)
 {
     bool res(true);
     QSqlQuery sql(m_database);
@@ -600,11 +621,11 @@ bool AppDBManager::addAppDesktopFile2DB(QString &desktopfd)
     return res;
 }
 
-bool AppDBManager::deleteAppDesktopFile2DB(const QString &desktopfd)
+bool AppDBManager::handleDBItemDelete(const QString &desktopfd)
 {
     bool res(true);
     QSqlQuery sql(m_database);
-    QString cmd = QString("SELECT FAVORITES, TOP FROM appInfo WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfd);
+    QString cmd = QString("SELECT FAVORITES, TOP FROM APPINFO WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfd);
 
     //查询要删除信息的应用是否被收藏或顶置过
     if (!sql.exec(cmd)) {
@@ -629,7 +650,7 @@ bool AppDBManager::deleteAppDesktopFile2DB(const QString &desktopfd)
     }
 
     //执行删除操作
-    cmd = QString("DELETE FROM appInfo WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfd);
+    cmd = QString("DELETE FROM APPINFO WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfd);
     if (!sql.exec(cmd)) {
         qWarning() << m_database.lastError() << cmd;
         res = false;
@@ -644,14 +665,14 @@ bool AppDBManager::deleteAppDesktopFile2DB(const QString &desktopfd)
     return res;
 }
 
-bool AppDBManager::updateAppDesktopFile2DB(QString &desktopfd)
+bool AppDBManager::handleDBItemUpdate(const QString &desktopfd)
 {
     bool res(true);
     XdgDesktopFile desktopfile;
     desktopfile.load(desktopfd);
-    if(desktopfile.value("NoDisplay").toString().contains("true") || desktopfile.value("NotShowIn").toString().contains("UKUI")) {
-        qDebug() << "app" << desktopfd << "is changed, NoDisplay or NotShowIn is working!";
-        return this->deleteAppDesktopFile2DB(desktopfd);
+    if (desktopfile.value("NoDisplay").toString().contains("true") || desktopfile.value("NotShowIn").toString().contains("UKUI")) {
+        qDebug() << "app" << desktopfd << "is changed, but NoDisplay or NotShowIn is working!";
+        return this->handleDBItemDelete(desktopfd);
     }
     QString hanzi, pinyin, firstLetterOfPinyin;
     QString localName = desktopfile.localizedValue("Name", "NULL").toString();
@@ -732,49 +753,449 @@ bool AppDBManager::updateAppDesktopFile2DB(QString &desktopfd)
     return res;
 }
 
-bool AppDBManager::updateAppLaunchTimes(QString &desktopfp)
+bool AppDBManager::handleLaunchTimesUpdate(const QString &desktopfp)
 {
     bool res(true);
-    if (m_database.transaction()) {
-        QSqlQuery sql(m_database);
-        QString cmd = QString("SELECT LAUNCH_TIMES FROM appInfo WHERE DESKTOP_FILE_PATH='%1'").arg(desktopfp);
-        if (sql.exec(cmd)) {
-            if (sql.next()) {
-                int launchTimes = sql.value(0).toInt() + 1;
-                cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
-                        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
-                        .arg(launchTimes)
-                        .arg(1)
-                        .arg(desktopfp);
-                if (!sql.exec(cmd)) {
-                    qWarning() << "Set app favorites state failed!" << m_database.lastError();
-                    res = false;
-                } else {
-                    AppInfoResult result;
-                    result.desktopPath = desktopfp;
-                    result.launchTimes = launchTimes;
-                    Q_EMIT this->appDBItemUpdate(result);
-                }
-            } else {
-                qWarning() << "Failed to exec next!" << cmd;
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT LAUNCH_TIMES FROM APPINFO WHERE DESKTOP_FILE_PATH='%1'").arg(desktopfp);
+    if (sql.exec(cmd)) {
+        if (sql.next()) {
+            int launchTimes = sql.value(0).toInt() + 1;
+            cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
+                    .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                    .arg(launchTimes)
+                    .arg(1)
+                    .arg(desktopfp);
+            if (!sql.exec(cmd)) {
+                qWarning() << "Set app favorites state failed!" << m_database.lastError();
                 res = false;
+            } else {
+                AppInfoResult result;
+                result.desktopPath = desktopfp;
+                result.launchTimes = launchTimes;
+                Q_EMIT this->appDBItemUpdate(result);
+                qDebug() << "app database update " << desktopfp << "launch times success!";
             }
         } else {
-            qWarning() << "Failed to exec:" << cmd;
+            qWarning() << "Failed to exec next!" << cmd;
             res = false;
-        }
-        if (!m_database.commit()) {
-            qWarning() << "Failed to commit !" << cmd;
-            m_database.rollback();
-            res = false;
-        } else {
-            Q_EMIT this->finishHandleAppDB();
         }
     } else {
-        qWarning() << "Failed to start transaction mode!!!";
+        qWarning() << "Failed to exec:" << cmd;
         res = false;
     }
     return res;
 }
 
+bool AppDBManager::handleFavoritesStateUpdate(const QString &desktopfp, int num)
+{
+    if (num < 0) {
+        qWarning() << "Invalid favorite num, I quit!!!";
+        return false;
+    }
 
+    bool res(true);
+    QSqlQuery sql(m_database);
+
+    //查询要设置的favorites标志位是否被占用
+    QString cmd = QString("SELECT DESKTOP_FILE_PATH, FAVORITES FROM APPINFO WHERE FAVORITES = %1").arg(num);
+    if (!sql.exec(cmd)) {
+        qWarning() << "Fail to exec:" << cmd << "because:" << m_database.lastError();
+    } else {
+        while (sql.next()) {
+            if (sql.value("FAVORITES").toInt() == num) {
+                res = false;
+                if (sql.value("DESKTOP_FILE_PATH").toString() == desktopfp) {
+                    qWarning() << "favorites state has no changes, I quit!";
+                    return res;
+                } else {
+                    qWarning() << "the favorites num:" << num << "has been used, fail to update favorites state of" << desktopfp;
+                    return res;
+                }
+            }
+        }
+    }
+
+    //更新favorites状态
+    cmd = QString("UPDATE APPINFO SET MODIFYED_TIME='%0', FAVORITES=%1 WHERE DESKTOP_FILE_PATH='%2'")
+                  .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                  .arg(num)
+                  .arg(desktopfp);
+    if (!sql.exec(cmd)) {
+        qWarning() << "Set app favorites state failed!" << m_database.lastError();
+        res = false;
+    } else {
+        AppInfoResult info;
+        info.desktopPath = desktopfp;
+        info.favorite = num;
+        Q_EMIT this->appDBItemUpdate(info);
+        qDebug() << "app database update " << desktopfp << "favorites state: " << num << "success!";
+    }
+    return res;
+}
+
+bool AppDBManager::handleTopStateUpdate(const QString &desktopfp, int num)
+{
+    if (num < 0) {
+        qWarning() << "Invalid top num, I quit!!!";
+        return false;
+    }
+
+    bool res(true);
+    QSqlQuery sql(m_database);
+
+    //查询要设置的top标志位是否被占用
+    QString cmd = QString("SELECT DESKTOP_FILE_PATH, TOP FROM APPINFO WHERE TOP = %1").arg(num);
+    if (!sql.exec(cmd)) {
+        qWarning() << "Fail to exec:" << cmd << "because:" << m_database.lastError();
+    } else {
+        while (sql.next()) {
+            if (sql.value("TOP").toInt() == num) {
+                res = false;
+                if (sql.value("DESKTOP_FILE_PATH").toString() == desktopfp) {
+                    qWarning() << "top state has no changes, I quit!";
+                    return res;
+                } else {
+                    qWarning() << "the top num:" << num << "has been used, fail to update top state of" << desktopfp;
+                    return res;
+                }
+            }
+        }
+    }
+
+    //更新top状态
+    cmd = QString("UPDATE APPINFO SET MODIFYED_TIME='%0', TOP=%1 WHERE DESKTOP_FILE_PATH='%2'")
+                  .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+                  .arg(num)
+                  .arg(desktopfp);
+    if (!sql.exec(cmd)) {
+        qWarning() << "Set app favorites state failed!" << m_database.lastError();
+        res = false;
+    } else {
+        AppInfoResult info;
+        info.desktopPath = desktopfp;
+        info.top = num;
+        Q_EMIT this->appDBItemUpdate(info);
+        qDebug() << "app database update " << desktopfp << "top state: " << num << "success!";
+    }
+    return res;
+}
+
+bool AppDBManager::handleLockStateUpdate(const QString &desktopfp, int num)
+{
+    bool res(true);
+    QSqlQuery sql(m_database);
+    QString cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LOCK=%1 WHERE DESKTOP_FILE_PATH='%2'")
+            .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
+            .arg(num)
+            .arg(desktopfp);
+    if (!sql.exec(cmd)) {
+        qWarning() << "Set app favorites state failed!" << m_database.lastError();
+        res = false;
+    } else {
+        AppInfoResult info;
+        info.desktopPath = desktopfp;
+        info.lock = num;
+        Q_EMIT this->appDBItemUpdate(info);
+        qDebug() << "app database update " << desktopfp << "lock state: " << num << "success!";
+    }
+    return res;
+}
+
+void AppDBManager::insertDBItem(const QString &desktopfd)
+{
+    PendingAppInfo item(desktopfd, PendingAppInfo::HandleType::Insert);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+void AppDBManager::updateDBItem(const QString &desktopfd)
+{
+    PendingAppInfo item(desktopfd, PendingAppInfo::HandleType::UpdateAll);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+void AppDBManager::deleteDBItem(const QString &desktopfd)
+{
+    PendingAppInfo item(desktopfd, PendingAppInfo::HandleType::Delete);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+void AppDBManager::updateLocaleData(const QString &desktopfp)
+{
+    PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateLocaleData);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+void AppDBManager::updateLaunchTimes(const QString &desktopfp)
+{
+    PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateLaunchTimes);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+void AppDBManager::updateFavoritesState(const QString &desktopfp, int num)
+{
+    PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateFavorites, num);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+void AppDBManager::updateTopState(const QString &desktopfp, int num)
+{
+    PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateTop);
+    item.setTop(num);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+void AppDBManager::udpateLockState(const QString &desktopfp, int num)
+{
+    PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateTop);
+    item.setLock(num);
+    PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
+}
+
+bool AppDBManager::changeFavoriteAppPos(const QString &desktopfp, int pos)
+{
+    if (pos < 1) {
+        qWarning() << "To be moved to a invalid favorites pos , I quit!!";
+        return false;
+    }
+
+    bool res(true);
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT FAVORITES FROM APPINFO WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfp);
+    int previousPos = 0;
+
+    //记录应用原位置
+    if (!sql.exec(cmd)) {
+        qWarning() << "Fail to change favorite-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
+        res = false;
+    } else {
+        if (sql.next()) {
+            previousPos = sql.value(0).toInt();
+
+            if (previousPos < 1) {
+                qWarning() << QString("app: %1 is not a favorites app, I quit!!").arg(desktopfp);
+            }
+
+            if (previousPos == pos) {
+                qDebug() << "favorite app's pos has no changes!";
+                return res;
+            }
+
+            cmd = QString("SELECT DESKTOP_FILE_PATH, FAVORITES FROM APPINFO WHERE FAVORITES BETWEEN MIN(%1, %2) AND MAX(%1, %2)")
+                    .arg(previousPos)
+                    .arg(pos);
+        } else {
+            qWarning() << "Fail to change favorite-app pos when exec next, because: " << m_database.lastError();
+        }
+    }
+
+    //更新原位置和新位置之间的应用的位置
+    if (!sql.exec(cmd)) {
+        qWarning() << "Fail to change favorite-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
+        res = false;
+    } else {
+        while (sql.next()) {
+            if (sql.value("FAVORITES").toInt() == previousPos) {
+                this->updateFavoritesState(desktopfp, pos);
+                continue;
+            }
+            if (previousPos > pos) {
+                this->updateFavoritesState(sql.value("DESKTOP_FILE_PATH").toString(), sql.value("FAVORITES").toInt() + 1);
+            } else {
+                this->updateFavoritesState(sql.value("DESKTOP_FILE_PATH").toString(), sql.value("FAVORITES").toInt() - 1);
+            }
+
+        }
+    }
+
+    return res;
+}
+
+bool AppDBManager::changeTopAppPos(const QString &desktopfp, int pos)
+{
+    if (pos < 1) {
+        qWarning() << "To be moved to a invalid top pos, I quit!!";
+        return false;
+    }
+
+    bool res(true);
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT TOP FROM APPINFO WHERE DESKTOP_FILE_PATH = '%0'").arg(desktopfp);
+    int previousPos = 0;
+
+    //记录应用原位置
+    if (!sql.exec(cmd)) {
+        qWarning() << "Fail to change top-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
+        res = false;
+    } else {
+        if (sql.next()) {
+            previousPos = sql.value(0).toInt();
+
+            if (previousPos < 1) {
+                qWarning() << QString("app: %1 is not a favorites app, I quit!!").arg(desktopfp);
+                res = false;
+                return res;
+            }
+
+            if (previousPos == pos) {
+                qDebug() << "top app's pos has no changes!";
+                res = false;
+                return res;
+            }
+
+            cmd = QString("SELECT DESKTOP_FILE_PATH, TOP FROM APPINFO WHERE TOP BETWEEN MIN(%1, %2) AND MAX(%1, %2)")
+                    .arg(previousPos)
+                    .arg(pos);
+        } else {
+            qWarning() << "Fail to change top-app pos when exec next, because: " << m_database.lastError();
+        }
+    }
+
+    //更新原位置和新位置之间的应用的位置
+    if (!sql.exec(cmd)) {
+        qWarning() << "Fail to change top-app pos, because: " << m_database.lastError() << " when exec :" << cmd;
+        res = false;
+    } else {
+        while (sql.next()) {
+            if (sql.value("TOP").toInt() == previousPos) {
+                this->updateTopState(desktopfp, pos);
+                continue;
+            }
+            if (previousPos > pos) {
+                this->updateTopState(sql.value("DESKTOP_FILE_PATH").toString(), sql.value("TOP").toInt() + 1);
+            } else {
+                this->updateTopState(sql.value("DESKTOP_FILE_PATH").toString(), sql.value("TOP").toInt() - 1);
+            }
+
+        }
+    }
+
+    return res;
+}
+
+QVector<AppInfoResult> AppDBManager::getAppInfoResults()
+{
+    QVector<AppInfoResult> appInfoResults;
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT DESKTOP_FILE_PATH,LOCAL_NAME,ICON,CATEGORY,TOP,FAVORITES,LAUNCH_TIMES,LOCK,FIRST_LETTER_ALL FROM APPINFO");
+
+    if (sql.exec(cmd)) {
+        while (sql.next()) {
+            AppInfoResult result;
+            result.desktopPath = sql.value("DESKTOP_FILE_PATH").toString();
+            result.appLocalName = sql.value("LOCAL_NAME").toString();
+            result.iconName = sql.value("ICON").toString();
+            result.category = sql.value("CATEGORY").toString();
+            result.top = sql.value("TOP").toInt();
+            result.favorite = sql.value("FAVORITES").toInt();
+            result.launchTimes = sql.value("LAUNCH_TIMES").toInt();
+            result.lock = sql.value("LOCK").toInt();
+            result.firstLetter = sql.value("FIRST_LETTER_ALL").toString();
+            appInfoResults.append(std::move(result));
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+    }
+
+    return appInfoResults;
+}
+
+int AppDBManager::getAppLockState(const QString &desktopfp)
+{
+    int lockState = -1;
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT LOCK FROM APPINFO WHERE DESKTOP_FILE_PATH='%0'")
+                          .arg(desktopfp);
+
+    if (sql.exec(cmd)) {
+        if (sql.next()) {
+            lockState = sql.value(0).toInt();
+        } else {
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+    }
+
+    return lockState;
+}
+
+int AppDBManager::getAppTopState(const QString &desktopfp)
+{
+    int topState = -1;
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT TOP FROM APPINFO WHERE DESKTOP_FILE_PATH='%0'")
+                          .arg(desktopfp);
+
+    if (sql.exec(cmd)) {
+        if (sql.next()) {
+            topState = sql.value(0).toInt();
+        } else {
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+    }
+
+    return topState;
+}
+
+int AppDBManager::getAppLaunchedState(const QString &desktopfp)
+{
+    int launchedState = -1;
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT LAUNCHED FROM APPINFO WHERE DESKTOP_FILE_PATH='%0'")
+                          .arg(desktopfp);
+
+    if (sql.exec(cmd)) {
+        if (sql.next()) {
+            launchedState = sql.value(0).toInt();
+        } else {
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+    }
+
+    return launchedState;
+}
+
+int AppDBManager::getAppFavoriteState(const QString &desktopfp)
+{
+    int favoriteState = -1;
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT FAVORITES FROM APPINFO WHERE DESKTOP_FILE_PATH='%0'")
+                          .arg(desktopfp);
+
+    if (sql.exec(cmd)) {
+        if (sql.next()) {
+            favoriteState = sql.value(0).toInt();
+        } else {
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+    }
+
+    return favoriteState;
+}
+
+QString AppDBManager::getAppCategory(const QString &desktopfp)
+{
+    QString category;
+    QSqlQuery sql(m_database);
+    QString cmd = QString("SELECT CATEGORY FROM APPINFO WHERE DESKTOP_FILE_PATH='%0'")
+                         .arg(desktopfp);
+
+    if (sql.exec(cmd)) {
+        if (sql.next()) {
+            category = sql.value(0).toString();
+        } else {
+            qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+        }
+    } else {
+        qWarning() << QString("cmd %0 failed!").arg(cmd) << m_database.lastError();
+    }
+
+    return category;
+}

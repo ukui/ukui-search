@@ -10,7 +10,7 @@ using namespace UkuiSearch;
 
 class SignalTransformer : public QObject
 {
-    Q_CLASSINFO("D-Bus Interface","org.ukui.search.appdb")
+    Q_CLASSINFO("D-Bus Interface","org.ukui.search.signalTransformer")
 
     Q_OBJECT
 

@@ -20,25 +20,22 @@ public:
      * set the favorites state of the app
      * @param desktopfp: the desktop file path of app
      * @param num: the favorites app's order(from 1)
-     * @return bool: true if success, else false
      */
-    bool setAppFavoritesState(QString &desktopfp, size_t num);
+    void setAppFavoritesState(QString &desktopfp, size_t num);
 
     /**
      * @brief AppInfoTable::setAppTopState
      * set the top state of the app
      * @param desktopfp: the desktop file path of app
      * @param num: the top app's order(from 1)
-     * @return bool: true if success, else false
      */
-    bool setAppTopState(QString &desktopfp, size_t num);
+    void setAppTopState(QString &desktopfp, size_t num);
 
     /**
      * @brief AppInfoTable::changeFavoriteAppPos
      * change the position of the app which is one of the Favorites Apps
      * @param desktopfp: desktop file path of app
      * @param pos: the position which the app will be changed into
-     * @return bool: true if success, else false
      */
     bool changeFavoriteAppPos(const QString &desktopfp, size_t pos);
 
