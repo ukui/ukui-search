@@ -29,12 +29,15 @@ SOURCES += \
         main.cpp \
         convert-winid-to-desktop.cpp \
         app-db-manager.cpp \
+    pending-app-info-queue.cpp \
         signal-transformer.cpp \
         ukui-search-app-data-service.cpp \
 
 HEADERS += \
         convert-winid-to-desktop.h \
         app-db-manager.h \
+    pending-app-info-queue.h \
+    pending-app-info.h \
         signal-transformer.h \
         ukui-search-app-data-service.h \
 

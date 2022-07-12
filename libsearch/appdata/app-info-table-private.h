@@ -16,14 +16,15 @@ public:
     AppInfoTablePrivate(AppInfoTablePrivate &) = delete;
     AppInfoTablePrivate &operator =(const AppInfoTablePrivate &) = delete;
 
-    bool setAppFavoritesState(QString &desktopfp, size_t num);
-    bool setAppTopState(QString &desktopfp, size_t num);
+    //设置应用的置顶和收藏
+    void setAppFavoritesState(QString &desktopfp, int num);
+    void setAppTopState(QString &desktopfp, int num);
 
-    //拖动改变置顶和收藏应用位置
-    bool changeFavoriteAppPos(const QString &desktopfp, size_t pos);
-    bool changeTopAppPos(const QString &desktopfp, size_t pos);
+    //改变置顶和收藏应用位置
+    bool changeFavoriteAppPos(const QString &desktopfp, int pos);
+    bool changeTopAppPos(const QString &desktopfp, int pos);
 
-    //获取所有应用信息并存到一个结构体中
+    //获取所有应用信息
     bool getAppInfoResults(QVector<AppInfoResult> &appInfoResults);
 
     //获取单个应用的某个状态（锁定，置顶，打开状态，收藏）
@@ -62,7 +63,8 @@ private:
     bool openDataBase();
     void closeDataBase();
 
-    QDBusInterface *m_interface = nullptr;
+    QDBusInterface *m_signalTransInterface = nullptr;
+    QDBusInterface *m_appDBInterface = nullptr;
 
     AppInfoTable *q = nullptr;
     QSqlDatabase m_database;

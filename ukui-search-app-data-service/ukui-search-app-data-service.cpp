@@ -32,8 +32,13 @@ UkuiSearchAppDataService::UkuiSearchAppDataService(int &argc, char *argv[], cons
         if (!sessionBus.registerService("com.ukui.search.appdb.service")) {
             qCritical() << "QDbus register service failed reason:" << sessionBus.lastError();
         }
-        if(!sessionBus.registerObject("/org/ukui/search/appDataBase", SignalTransformer::getTransformer(), QDBusConnection::ExportAllSignals)) {
-            qCritical() << "ukui-search-fileindex dbus register object failed reason:" << sessionBus.lastError();
+
+        if(!sessionBus.registerObject("/org/ukui/search/appDataBase/dbManager", AppDBManager::getInstance(), QDBusConnection::ExportAllSlots)) {
+            qCritical() << "ukui-search-app-db-manager dbus register object failed reason:" << sessionBus.lastError();
+        }
+
+        if(!sessionBus.registerObject("/org/ukui/search/appDataBase/signalTransformer", SignalTransformer::getTransformer(), QDBusConnection::ExportAllSignals)) {
+            qCritical() << "ukui-search-signal-transformer dbus register object failed reason:" << sessionBus.lastError();
         }
 
         connect(this, &QtSingleApplication::messageReceived, [ & ](QString msg) {
