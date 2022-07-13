@@ -75,6 +75,11 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
             m_timer->start(0.1 * 1000);
         }
     });
+
+    //跟随主题透明度变化
+    connect(qApp, &QApplication::paletteChanged, this, [=]() {
+        update();
+    });
 }
 
 SearchLineEdit::~SearchLineEdit() {
