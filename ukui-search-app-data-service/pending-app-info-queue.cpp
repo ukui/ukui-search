@@ -19,18 +19,20 @@ void PendingAppInfoQueue::enqueue(const PendingAppInfo &appInfo)
     if (index == -1) {
         m_cache << appInfo;
     } else {
-        //已插入项操作类型为对某字段更新
-        if (m_cache[index].handleType() > PendingAppInfo::HandleType::UpdateAll) {
-            if (appInfo.handleType() > PendingAppInfo::HandleType::UpdateAll) {
-                m_cache[index].merge(appInfo);
-            } else {
-                m_cache[index].setHandleType(appInfo);
-            }
-        } else {
-            //已插入项操作类型为对全部字段进行增删改时，设置为优先级高的操作类型
+        //只要操作类型为delete，直接覆盖
+        if (m_cache[index].handleType() == PendingAppInfo::HandleType::Delete
+                or appInfo.handleType() == PendingAppInfo::HandleType::Delete) {
+            m_cache[index].setHandleType(PendingAppInfo::HandleType::Delete);
+
+        //已插入项操作类型为对所有desktop文件相关数据进行操作
+        } else if (m_cache[index].handleType() < PendingAppInfo::HandleType::UpdateLocaleData
+                   and appInfo.handleType() < PendingAppInfo::HandleType::UpdateLocaleData) {
+            //设置为优先级高的操作类型
             if (m_cache[index].handleType() > appInfo.handleType()) {
                 m_cache[index].setHandleType(appInfo);
             }
+        } else {
+            m_cache[index].merge(appInfo);
         }
     }
 
@@ -116,11 +118,17 @@ void PendingAppInfoQueue::processCache()
                     break;
                 }
             } else {
+                if (handleTypes & PendingAppInfo::HandleType::Insert) {
+                    AppDBManager::getInstance()->handleDBItemInsert(info.path());
+                }
+                if (handleTypes & PendingAppInfo::HandleType::UpdateAll) {
+                    AppDBManager::getInstance()->handleDBItemUpdate(info.path());
+                }
                 if (handleTypes & PendingAppInfo::HandleType::UpdateLocaleData) {
                     AppDBManager::getInstance()->handleLocaleDataUpdate(info.path());
                 }
                 if (handleTypes & PendingAppInfo::HandleType::UpdateLaunchTimes) {
-                    AppDBManager::getInstance()->handleLaunchTimesUpdate(info.path());
+                    AppDBManager::getInstance()->handleLaunchTimesUpdate(info.path(), info.launchTimes());
                 }
                 if (handleTypes & PendingAppInfo::HandleType::UpdateFavorites) {
                     AppDBManager::getInstance()->handleFavoritesStateUpdate(info.path(), info.favoritesState());

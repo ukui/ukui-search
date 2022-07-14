@@ -709,8 +709,8 @@ bool AppDBManager::handleDBItemUpdate(const QString &desktopfd)
                           "MODIFYED_TIME='%0',"
                           "LOCAL_NAME='%1',"
                           "NAME_EN='%2',"
-                          "NAME_ZH='%3'"
-                          ",PINYIN_NAME='%4',"
+                          "NAME_ZH='%3',"
+                          "PINYIN_NAME='%4',"
                           "FIRST_LETTER_OF_PINYIN='%5',"
                           "FIRST_LETTER_ALL='%6',"
                           "ICON='%7',"
@@ -753,14 +753,15 @@ bool AppDBManager::handleDBItemUpdate(const QString &desktopfd)
     return res;
 }
 
-bool AppDBManager::handleLaunchTimesUpdate(const QString &desktopfp)
+bool AppDBManager::handleLaunchTimesUpdate(const QString &desktopfp, int num)
 {
+    qDebug() << "launch times will add:" << num;
     bool res(true);
     QSqlQuery sql(m_database);
     QString cmd = QString("SELECT LAUNCH_TIMES FROM APPINFO WHERE DESKTOP_FILE_PATH='%1'").arg(desktopfp);
     if (sql.exec(cmd)) {
         if (sql.next()) {
-            int launchTimes = sql.value(0).toInt() + 1;
+            int launchTimes = sql.value(0).toInt() + num;
             cmd = QString("UPDATE appInfo SET MODIFYED_TIME='%0', LAUNCH_TIMES=%1, LAUNCHED=%2 WHERE DESKTOP_FILE_PATH='%3'")
                     .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
                     .arg(launchTimes)
@@ -774,7 +775,7 @@ bool AppDBManager::handleLaunchTimesUpdate(const QString &desktopfp)
                 result.desktopPath = desktopfp;
                 result.launchTimes = launchTimes;
                 Q_EMIT this->appDBItemUpdate(result);
-                qDebug() << "app database update " << desktopfp << "launch times success!";
+                qDebug() << "app database update:" << desktopfp << "launch times:" << launchTimes << "success!";
             }
         } else {
             qWarning() << "Failed to exec next!" << cmd;
@@ -929,12 +930,15 @@ void AppDBManager::updateLocaleData(const QString &desktopfp)
 void AppDBManager::updateLaunchTimes(const QString &desktopfp)
 {
     PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateLaunchTimes);
+    item.setLaunchWillAdd(true);
+    item.setLaunchTimes(1);
     PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
 }
 
 void AppDBManager::updateFavoritesState(const QString &desktopfp, int num)
 {
-    PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateFavorites, num);
+    PendingAppInfo item(desktopfp, PendingAppInfo::HandleType::UpdateFavorites);
+    item.setFavorites(num);
     PendingAppInfoQueue::getAppInfoQueue().enqueue(item);
 }
 
