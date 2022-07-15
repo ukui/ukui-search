@@ -16,7 +16,7 @@ void ResultViewDelegate::setSearchKeyword(const QString &regFindKeyWords)
 QSize ResultViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QSize size =  QStyledItemDelegate::sizeHint(option,index);
-//    size.setHeight(size.height() + 10);
+    size.setHeight(size.height() + 10);
     return size;
 }
 
