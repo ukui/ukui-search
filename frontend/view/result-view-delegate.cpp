@@ -209,6 +209,7 @@ void ResultItemStyle::drawControl(QStyle::ControlElement element, const QStyleOp
 HightLightEffectHelper::HightLightEffectHelper(QObject *parent) : QSyntaxHighlighter(parent)
 {
     m_expression.setCaseSensitivity(Qt::CaseInsensitive);
+    m_expression.setPatternSyntax(QRegExp::FixedString);
 }
 
 void HightLightEffectHelper::setExpression(const QString &text)
@@ -224,7 +225,6 @@ void HightLightEffectHelper::setTextColor(const QBrush &brush)
 void HightLightEffectHelper::highlightBlock(const QString &text)
 {
     setFormat(0, text.length(), m_textCharFormat);
-
     m_textCharFormat.setFontWeight(QFont::Bold);
     int index = text.indexOf(m_expression);
     while(index >= 0){
