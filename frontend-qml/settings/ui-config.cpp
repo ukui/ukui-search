@@ -116,7 +116,7 @@ void UIConfig::loadConfig()
     m_margins.insert(BASE, {8, 8, 8, 8});
     m_margins.insert(KEYWORD_BODY, {16, 0, 16, 0});
     m_margins.insert(RESULT_VIEW, {8, 8, 8, 8});
-    m_margins.insert(DETAILS, {8, 50, 8, 0});
+    m_margins.insert(DETAILS, {8, 8, 8, 0});
     m_margins.insert(PLUGIN_VIEW, {0, 0, 0, 0});
     m_margins.insert(PLUGIN_LIST, {0, 0, 0, 0});
     m_margins.insert(PLUGIN_INFO, {16, 0, 0, 0});

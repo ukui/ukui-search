@@ -9,6 +9,7 @@
 #include "search-plugin-manager.h"
 
 #include <QDebug>
+#include <QFile>
 
 using namespace UkuiSearch;
 
@@ -53,7 +54,7 @@ QString DetailsUtils::getPluginActions(const QString &pluginId, int type)
         QList<SearchPluginIface::Actioninfo> actions = plugin->getActioninfo(type);
 
         for (const auto &item: actions) {
-            objs.append(QString(R"({"k":%1,"v":"%2"})").arg(item.actionkey).arg(item.displayName));
+            objs.append(QString(R"(["%1","%2"])").arg(item.actionkey).arg(item.displayName));
         }
     }
 
@@ -69,4 +70,24 @@ void DetailsUtils::openAction(const QString &pluginId, int actionKey, const QStr
     if (plugin) {
         plugin->openAction(actionKey, key, type);
     }
+}
+
+QString DetailsUtils::getPluginDesc(const QString &pluginId) {
+    SearchPluginIface *plugin = SearchPluginManager::getInstance()->getPlugin(pluginId);
+
+    QString desc("");
+
+    if (plugin) {
+        QString path = plugin->detailDesc();
+        QFile file(path);
+
+        bool open = file.open(QFile::ReadOnly);
+
+        if (open) {
+            desc = file.read(file.size());
+        }
+        file.close();
+    }
+
+    return desc;
 }

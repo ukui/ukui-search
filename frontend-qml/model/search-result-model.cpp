@@ -65,7 +65,7 @@ QString SearchResultModel::generateDesc(const SearchPluginIface::ResultInfo& dat
 
     QStringList objs;
     for (const auto &item: description) {
-        objs.append(R"({"k":")" + item.key + R"(","v":")" + item.value.split("\n").first() + R"("})");
+        objs.append(R"([")" + item.key + R"(",")" + item.value.split("\n").first() + R"("])");
     }
 
     QString keys = QString(R"("keys":[%1])").arg(objs.join(","));

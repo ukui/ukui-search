@@ -45,6 +45,8 @@ public:
 //    virtual bool isPreviewEnable(QString key, int type) = 0;
 //    virtual QWidget *previewPage(QString key, int type, QWidget *parent = nullptr) = 0;
     virtual QWidget *detailPage(const ResultInfo &ri) = 0;
+    // 返回插件自定义详情页描述信息的path
+    virtual QString detailDesc() {return {};};
 };
 }
 

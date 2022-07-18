@@ -8,8 +8,9 @@ Rectangle {
 
     property string pluginId;
     property int dataIndex: -1;
-    property var itemObjSave: null;
-    property var actionObjSave: null;
+    property var currentData: null; //当前显示内容的数据备份
+    property var currentType: null; //当前显示的搜索结果的类型
+    property var currentActionKey: null; //当前显示的搜索结果的名称关键字
 
     clip: true;
     color: uiConfig.color("details");
@@ -19,8 +20,8 @@ Rectangle {
         id: detailsUtils;
     }
 
-    Column {
-        id: detailsLayout;
+    Flickable {
+        id: scrollerArea; //主体滚动区域
 
         anchors.fill: parent;
         anchors.leftMargin: uiConfig.margin("details", 0);
@@ -28,60 +29,17 @@ Rectangle {
         anchors.rightMargin: uiConfig.margin("details", 2);
         anchors.bottomMargin: uiConfig.margin("details", 3);
 
-        spacing: uiConfig.spacing("details");
+        contentHeight: loader.height;
 
-        DetailsImage {
-            id: image;
+        Loader {
+            id: loader;
 
-            width: detailsLayout.width;
-            height: uiConfig.height("detailsImage");
+            width: parent.width;
+            height: loader.item.height;
 
-            icon: null;
-            imageWidth: image.height;
-            imageHeight: image.height;
-        }
-
-        DetailsInfo {
-            id: info;
-
-            width: detailsLayout.width;
-            height: 50;
-        }
-
-        Rectangle {
-            id: dividingA;
-
-            width: detailsLayout.width;
-            height: 1;
-
-            color: "#dbdbdb";
-        }
-
-        DetailsData {
-            id: data;
-
-            width: detailsLayout.width;
-
-            spacing: detailsLayout.spacing;
-        }
-
-        Rectangle {
-            id: dividingB;
-
-            width: detailsLayout.width;
-            height: 1;
-
-            color: "#dbdbdb";
-        }
-
-        DetailsAction {
-            id: actions;
-
-            width: detailsLayout.width;
-
-            spacing: detailsLayout.spacing;
-
-            onActionClicked: (actionKey) => {root.openAction(actionKey)};
+            onLoaded: {
+                loader.item.update(root.currentData);
+            }
         }
     }
 
@@ -101,45 +59,112 @@ Rectangle {
     }
 
     function parseUI() {
+        var source = "";
+        var pluginObj = getJsonObj(detailsUtils.getPluginDesc(pluginId)); //获取每个插件的详情页描述文件
+
+        if (pluginObj === undefined) {
+            console.log("use defaule page; ", pluginId);
+            source = "qrc:/qml/DefaultDetailsPage.qml";
+
+        } else {
+            var mode = pluginObj.mode;
+
+            if (mode.includes("all")) {
+                // TODO 修改plugin.json,简单判断从写的类型
+                source = pluginObj.modules["all"];
+
+            } else {
+                //部分重写
+                source = undefined;
+            }
+        }
+
+        console.log("==初始化界面==", loader.source, source);
+        //
+        if (source !== undefined) {
+            if (source === loader.source) {
+                //直接加载数据
+                loader.item.update(root.currentData);
+
+            } else {
+                loader.setSource(source);
+            }
+
+        } else {
+            //部分加载
+            if (loader.source === "qrc:/qml/DefaultDetailsPage.qml") {
+                //手动加载数据
+                loader.item.update(root.currentData);
+
+            } else {
+                loader.setSource("qrc:/qml/DefaultDetailsPage.qml");
+            }
+        }
+    }
+
+    function loadData(pluginId, dataIndex) {
+        if (!loader.visible) {
+            return false;
+        }
+
         var item = detailsUtils.getResultData(pluginId, dataIndex, "description");
         var itemObj = getJsonObj(item);
         if (itemObj === undefined) {
-            return;
+            return false;
         }
 
         var action = detailsUtils.getPluginActions(pluginId, itemObj.type);
         var actionObj = getJsonObj(action);
         if (actionObj === undefined) {
-            return;
+            return false;
         }
 
-        image.icon = detailsUtils.getResultData(pluginId, dataIndex, "icon");
+        /*
+         * 详情页数据对象(datails)的结构如下：
+            {
+                icon: null,
+                name: "",
+                type: "",
+                descriptions: [],
+                actions: []
+            }
+        */
 
-        info.name = detailsUtils.getResultData(pluginId, dataIndex, "name");
-        info.type = detailsUtils.getPluginData(pluginId, "name");
+        var detailedData = {}; //发送给详情页的详细信息数据
 
-        data.dataModel = itemObj.keys;
-        dividingA.visible = (itemObj.keys.length > 0);
+        detailedData.icon = detailsUtils.getResultData(pluginId, dataIndex, "icon");
+        detailedData.name = detailsUtils.getResultData(pluginId, dataIndex, "name");
+        detailedData.type = detailsUtils.getPluginData(pluginId, "name");
 
-        actions.actionModel = actionObj.keys;
-        dividingB.visible = (actionObj.keys.length > 0);
+        detailedData.descriptions = [...itemObj.keys]; //深拷贝数组(ES6)
+        detailedData.actions = [...actionObj.keys];
 
-        root.itemObjSave = itemObj;
-        root.actionObjSave = actionObj;
+        root.currentData = detailedData;
+        root.currentType = itemObj.type;
+        root.currentActionKey = itemObj.actionKey;
 
-        console.log("load action data:", itemObj.keys);
-        console.log("load action data:", actionObj.keys);
+        return true;
     }
 
     function loadUI(pluginId, dataIndex) {
-        root.pluginId = pluginId;
-        root.dataIndex = dataIndex;
+        //先加载数据，再刷新界面
+        if (loadData(pluginId, dataIndex)) {
+            root.pluginId = pluginId;
+            root.dataIndex = dataIndex;
 
-        parseUI();
+            parseUI();
+        }
     }
 
-    function openAction(actionKey) {
-        detailsUtils.openAction(root.pluginId, actionKey, root.itemObjSave.actionKey, root.itemObjSave.type);
+    // actionId: action的id号
+    function openAction(actionId) {
+        if (root.currentActionKey === null || root.currentType === null) {
+            console.log("error: actionkey is null or type is null");
+            return;
+        }
+        console.log("requestOpenAction:", actionId, root.currentActionKey, root.currentType);
+
+        detailsUtils.openAction(root.pluginId, actionId, root.currentActionKey, root.currentType);
     }
 
     Component.onCompleted: {

@@ -17,5 +17,6 @@
         <file>qml/DetailsImage.qml</file>
         <file>qml/PluginView.qml</file>
         <file>qml/PluginList.qml</file>
+        <file>qml/DefaultDetailsPage.qml</file>
     </qresource>
 </RCC>

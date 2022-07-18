@@ -4,6 +4,7 @@
 
 #include "search-application.h"
 #include "main-window.h"
+#include "plugin-manager.h"
 
 #include <QCommandLineParser>
 #include <QTranslator>
@@ -13,6 +14,7 @@ SearchApplication::SearchApplication(int &argc, char **argv, int i) : QtSingleAp
 {
     if (!isRunning()) {
         SearchApplication::loadTranslation();
+        UkuiSearch::PluginManager::getInstance();
         initMainWindow();
 
         connect(this, &QtSingleApplication::messageReceived, [=](const QString &msg) {

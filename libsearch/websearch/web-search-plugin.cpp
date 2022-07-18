@@ -141,3 +141,7 @@ QString WebSearchPlugin::getDefaultAppId(const char *contentType)
         return QString("");
     }
 }
+
+QString WebSearchPlugin::detailDesc() {
+    return ":/plugin/websearch/plugin.json";
+}

@@ -35,6 +35,8 @@ public:
     void openAction(int actionkey, QString key, int type);
     QWidget *detailPage(const ResultInfo &ri);
 
+    QString detailDesc() override;
+
 private:
     void initDetailPage();
     QString m_keyWord;
