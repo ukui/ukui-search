@@ -61,7 +61,8 @@ RESOURCES += \
     resource1.qrc \
 
 TRANSLATIONS += \
-    ../translations/libukui-search/libukui-search_zh_CN.ts
+    ../translations/libukui-search/libukui-search_zh_CN.ts \
+    ../translations/libukui-search/libukui-search_bo_CN.ts
 
 qm_files.path = /usr/share/ukui-search/translations/
 qm_files.files = $$OUT_PWD/.qm/*.qm
