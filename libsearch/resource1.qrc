@@ -1,4 +1,8 @@
 <RCC>
+    <qresource prefix="/plugin">
+        <file>websearch/plugin.json</file>
+        <file>websearch/WebSearch.qml</file>
+    </qresource>
     <qresource prefix="/">
         <file>res/icons/desktop.png</file>
         <file>res/icons/close.svg</file>

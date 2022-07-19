@@ -1,0 +1,9 @@
+{
+    "name": "app-search",
+    "version": "1.0.0",
+    "author": "",
+    "mode": ["all"],
+    "modules": {
+        "all": "qrc:/plugin/websearch/WebSearch.qml"
+    }
+}

@@ -20,24 +20,18 @@ Item {
         spacing: root.spacing;
 
         model: root.dataModel;
-        delegate: Rectangle {
+        delegate: Item {
             id: infoDelegate;
-
-            property int index: model.index;
-            property var modelData: model.modelData;
 
             width: ListView.view ? ListView.view.width : 0;
             height: 25;
-
-            color: "transparent";
 
             RowLayout {
                 anchors.fill: parent;
                 Text {
                     id: key;
-                    text: infoDelegate.modelData.k;
+                    text: modelData[0];
 
-//                    font.family: "Ubuntu";
                     font.pixelSize: 16;
                     verticalAlignment: Qt.AlignVCenter;
                     elide: Text.ElideRight;
@@ -51,10 +45,10 @@ Item {
 
                 Text {
                     id: value;
-                    text: infoDelegate.modelData.v;
+                    text: modelData[1];
 
                     color: "gray";
-//                    font.family: "Ubuntu";
+
                     font.pixelSize: 16;
                     verticalAlignment: Qt.AlignVCenter;
                     horizontalAlignment: Qt.AlignRight;

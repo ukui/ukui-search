@@ -55,6 +55,10 @@ Item {
                         console.log("展开信号", isExpand);
                     }
 
+                    onVisibleChanged: {
+                        pluginList.forceLayout();
+                    }
+
                     onItemSelected: function(pluginIndex, pluginId, index) {
                         pluginList.updateSelectedPlugin(pluginIndex);
                         pluginList.updateContentY(pluginIndex);
@@ -98,7 +102,7 @@ Item {
         }
 
         function scrollToY(indexY) {
-           var border = indexY;
+            var border = indexY;
             if (indexY <= (contentY + stepHeight)) {
                 //contentY + stepHeight 滚动区域的上边界
                 border = contentY + stepHeight;

@@ -16,6 +16,7 @@ LIBS += -L$$OUT_PWD/../libchinese-segmentation -lchinese-segmentation \
 
 include(../libsearch/libukui-search-headers.pri)
 include(../xatom/xatom.pri)
+include(../3rd-parties/qtsingleapplication/qtsingleapplication.pri)
 include(model/model.pri)
 include(main/main.pri)
 include(items/items.pri)

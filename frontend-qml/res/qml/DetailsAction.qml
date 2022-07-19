@@ -8,7 +8,7 @@ Item {
 
     height: listView.height;
 
-    signal actionClicked(int actionKey);
+    signal actionClicked(int actionId);
 
     ListView {
         id: listView;
@@ -24,8 +24,6 @@ Item {
         model: root.actionModel;
         delegate: Rectangle {
             id: actionDelegate
-            property int index: model.index;
-            property var modelData: model.modelData;
 
             width: ListView.view ? ListView.view.width : 0;
             height: 25;
@@ -38,8 +36,7 @@ Item {
 
                 color: "#008DFF";
 
-                text: actionDelegate.modelData.v;
-//                font.family: "Ubuntu";
+                text: modelData[1];
                 font.pixelSize: 16
                 verticalAlignment: Qt.AlignVCenter;
                 horizontalAlignment: Qt.AlignLeft;
@@ -50,7 +47,7 @@ Item {
                     anchors.fill: parent;
 
                     onClicked: {
-                        root.actionClicked(actionDelegate.modelData.k);
+                        root.actionClicked(modelData[0]);
                     }
                 }
             }

@@ -14,6 +14,10 @@ Rectangle {
     color: uiConfig.color("pluginInfo");
     radius: uiConfig.radius("pluginInfo");
 
+    function actionIconVisable(visible) {
+        actionIcon.visible = visible;
+    }
+
     RowLayout {
         id: pluginInfoLayout;
 
