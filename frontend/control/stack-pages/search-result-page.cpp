@@ -173,6 +173,10 @@ void SearchResultPage::initConnections()
         sendResizeWidthSignal(280);
     });
     connect(this, &SearchResultPage::setSelectionInfo, m_resultArea, &ResultArea::setSelectionInfo);
+    //跟随主题透明度变化
+    connect(qApp, &QApplication::paletteChanged, this, [=]() {
+        update();
+    });
 }
 
 void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
