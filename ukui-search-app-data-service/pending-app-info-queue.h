@@ -15,7 +15,7 @@ class PendingAppInfoQueue : public QThread
     Q_OBJECT
 public:
     static PendingAppInfoQueue &getAppInfoQueue();
-    void enqueue(const PendingAppInfo& appInfo);
+    void enqueue(const PendingAppInfo &appInfo);
 
 protected:
     void run() override;

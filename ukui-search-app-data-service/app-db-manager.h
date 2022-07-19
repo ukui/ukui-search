@@ -67,7 +67,7 @@ public:
     bool handleDBItemDelete(const QString &desktopfd);
 
     bool handleLocaleDataUpdate(const QString &desktopPath);
-    bool handleLaunchTimesUpdate(const QString &desktopfp);
+    bool handleLaunchTimesUpdate(const QString &desktopfp, int num);
     bool handleFavoritesStateUpdate(const QString &desktopfp, int num);
     bool handleTopStateUpdate(const QString &desktopfp, int num);
     bool handleLockStateUpdate(const QString &desktopfp, int num);
