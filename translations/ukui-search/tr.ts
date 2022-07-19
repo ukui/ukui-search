@@ -246,7 +246,7 @@
 <context>
     <name>UkuiSearch::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="312"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="323"/>
         <source>Best Matches</source>
         <translation type="unfinished">En İyi Eşleşen</translation>
     </message>
@@ -353,12 +353,12 @@
 <context>
     <name>UkuiSearch::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="69"/>
+        <location filename="../../frontend/mainwindow.cpp" line="71"/>
         <source>ukui-search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="76"/>
+        <location filename="../../frontend/mainwindow.cpp" line="78"/>
         <source>Global Search</source>
         <translation type="unfinished">Genel Arama</translation>
     </message>
@@ -628,7 +628,7 @@
 <context>
     <name>UkuiSearch::WebSearchWidget</name>
     <message>
-        <location filename="../../frontend/view/web-search-view.cpp" line="152"/>
+        <location filename="../../frontend/view/web-search-view.cpp" line="177"/>
         <source>Web Page</source>
         <translation type="unfinished"></translation>
     </message>

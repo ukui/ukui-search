@@ -4,7 +4,7 @@
 <context>
     <name>UkuiSearch::BestListWidget</name>
     <message>
-        <location filename="../../frontend/view/best-list-view.cpp" line="312"/>
+        <location filename="../../frontend/view/best-list-view.cpp" line="323"/>
         <source>Best Matches</source>
         <translation>最佳匹配</translation>
     </message>
@@ -115,12 +115,12 @@
 <context>
     <name>UkuiSearch::MainWindow</name>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="69"/>
+        <location filename="../../frontend/mainwindow.cpp" line="71"/>
         <source>ukui-search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../frontend/mainwindow.cpp" line="76"/>
+        <location filename="../../frontend/mainwindow.cpp" line="78"/>
         <source>Global Search</source>
         <translation>搜索</translation>
     </message>
@@ -402,7 +402,7 @@
 <context>
     <name>UkuiSearch::WebSearchWidget</name>
     <message>
-        <location filename="../../frontend/view/web-search-view.cpp" line="152"/>
+        <location filename="../../frontend/view/web-search-view.cpp" line="177"/>
         <source>Web Page</source>
         <translation>网页搜索</translation>
     </message>

@@ -35,7 +35,7 @@ UkuiSearchGui::UkuiSearchGui(int &argc, char *argv[], const QString &application
 
         QTranslator *qt_translator = new QTranslator(this);
         try {
-            if(! qt_translator->load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
+            if(! qt_translator->load("/usr/share/qt5/translations/qt_" + QLocale::system().name())) throw - 1;
             this->installTranslator(qt_translator);
         } catch(...) {
             qDebug() << "Load translations file" << QLocale() << "failed!";
