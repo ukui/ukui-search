@@ -431,6 +431,10 @@ void MainWindow::centerToScreen(QWidget* widget) {
                                                desk_y / 3 + desk_rect.top(),
                                                this->width(),
                                                this->height()));
+    //设置跳过多任务视图
+    kdk::WindowManager::setSkipSwitcher(this->windowHandle(),true);
+    //设置跳过任务栏
+    kdk::WindowManager::setSkipTaskBar(this->windowHandle(),true);
 //    widget->move(desk_x / 2 - x / 2 + desk_rect.left(), desk_y / 3 + desk_rect.top());
 }
 
@@ -472,6 +476,10 @@ void MainWindow::initTimer() {
             m_isAskDialogVisible = true;
             kdk::UkuiStyleHelper::self()->removeHeader(m_askDialog);
             m_askDialog->show();
+            //设置跳过多任务视图
+            kdk::WindowManager::setSkipSwitcher(m_askDialog->windowHandle(),true);
+            //设置跳过任务栏
+            kdk::WindowManager::setSkipTaskBar(m_askDialog->windowHandle(),true);
             m_currentSearchAsked = true;
         }
         m_askTimer->stop();
