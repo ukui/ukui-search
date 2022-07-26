@@ -23,6 +23,7 @@
 
 #include <QSplitter>
 #include "search-page-section.h"
+#include "separation-line.h"
 
 namespace Zeeker {
 class SearchResultPage : public QWidget
@@ -52,6 +53,7 @@ private:
     QHBoxLayout * m_hlayout = nullptr;
     ResultArea * m_resultArea = nullptr;
     DetailArea * m_detailArea = nullptr;
+    SeparationLine * m_line = nullptr;
 
 Q_SIGNALS:
     void startSearch(const QString &);

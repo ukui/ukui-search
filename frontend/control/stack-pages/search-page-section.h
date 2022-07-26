@@ -100,7 +100,7 @@ protected:
 private:
     void initUi();
     void clearLayout(QLayout *);
-    QVBoxLayout * m_mainLyt = nullptr;
+    QVBoxLayout *m_mainLyt = nullptr;
     QString m_currentPluginId;
     QWidget *m_detailPage = nullptr;
 //    QLabel * m_iconLabel = nullptr;

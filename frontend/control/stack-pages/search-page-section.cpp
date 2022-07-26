@@ -23,12 +23,12 @@
 #include <QScrollBar>
 using namespace Zeeker;
 
-#define RESULT_LAYOUT_MARGINS 0,0,0,0
+#define RESULT_LAYOUT_MARGINS 0, 18, 0, 0
 #define RESULT_BACKGROUND_COLOR QColor(0, 0, 0, 0)
 #define DETAIL_BACKGROUND_COLOR QColor(0, 0, 0, 0)
 #define DETAIL_WIDGET_TRANSPARENT 0.04
 #define DETAIL_WIDGET_BORDER_RADIUS 4
-#define DETAIL_WIDGET_MARGINS 0, 0, 0, 0
+#define DETAIL_WIDGET_MARGINS 0, 18, 0, 0
 // 插件内部边距为8， 0， 16， 0，这里左边距加8以达到detailpage左右边距16的效果
 #define DETAIL_FRAME_MARGINS 8, 0, 0, 0
 #define DETAIL_ICON_HEIGHT 120
@@ -344,12 +344,11 @@ void ResultArea::initUi()
     this->setWidgetResizable(true);
     this->setFrameShape(QFrame::Shape::NoFrame);
     m_widget = new QWidget(this);
+    m_widget->setContentsMargins(0,0,0,0);
     this->setWidget(m_widget);
     m_mainLyt = new QVBoxLayout(m_widget);
     m_widget->setLayout(m_mainLyt);
-
-    m_mainLyt->setContentsMargins(RESULT_LAYOUT_MARGINS);
-    this->widget()->setContentsMargins(0,0,0,0);
+    m_mainLyt->setContentsMargins(0,0,0,0);
     m_mainLyt->setSpacing(0);
 
     m_titleLable = new TitleLabel(this);
@@ -445,7 +444,7 @@ void DetailArea::initUi()
     this->setWidgetResizable(true);
     this->setFixedSize(DETAIL_FRAME_WIDTH, FRAME_HEIGHT);
 //    this->setStyleSheet("QScrollArea{border:2px solid red;}");
-    this->setContentsMargins(0,0,0,0);
+    this->setContentsMargins(RESULT_LAYOUT_MARGINS);
     m_detailWidget = new DetailWidget(this);
     this->setWidget(m_detailWidget);
     this->hide();
