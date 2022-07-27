@@ -194,13 +194,23 @@ bool ResultView::isSelected()
 
 int ResultView::showHeight()
 {
-    int height;
-    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+    int height(0);
+//    int rowheight = this->rowHeight(this->model()->index(0, 0, QModelIndex()));
+//    if (this->isExpanded()) {
+//        height = m_count * rowheight;
+//    } else {
+//        int show_count = m_count > NUM_LIMIT_SHOWN_DEFAULT ? NUM_LIMIT_SHOWN_DEFAULT : m_count;
+//        height = show_count * rowheight;
+//    }
     if (this->isExpanded()) {
-        height = m_count * rowheight;
+        for (int i = 0; i<m_count; ++i) {
+            height += this->rowHeight(this->model()->index(i, 0, QModelIndex()));
+        }
     } else {
         int show_count = m_count > NUM_LIMIT_SHOWN_DEFAULT ? NUM_LIMIT_SHOWN_DEFAULT : m_count;
-        height = show_count * rowheight;
+        for (int i = 0; i<show_count; ++i) {
+            height += this->rowHeight(this->model()->index(i, 0, QModelIndex()));
+        }
     }
     return height;
 }

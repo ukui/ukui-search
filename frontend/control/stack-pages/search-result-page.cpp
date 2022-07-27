@@ -26,6 +26,7 @@ using namespace Zeeker;
 
 #define RESULT_WIDTH 266
 #define DETAIL_WIDTH 374
+#define SEPRATION_LINE_HEIGHT 688
 
 SearchResultPage::SearchResultPage(QWidget *parent) : QWidget(parent)
 {
@@ -94,7 +95,7 @@ void SearchResultPage::initUi()
 {
     this->setFixedSize(720,688);
     m_hlayout = new QHBoxLayout(this);
-    m_hlayout->setContentsMargins(16 ,18, 0, 18);  //右滚动条不需要边距；
+    m_hlayout->setContentsMargins(16 , 0, 0, 18);  //右滚动条不需要边距；
 
 //    m_splitter = new QSplitter(this);
 //    m_splitter->setContentsMargins(0, 0, 0, 0);
@@ -102,8 +103,17 @@ void SearchResultPage::initUi()
 //    m_splitter->move(this->rect().topLeft().x() + 18, this->rect().topLeft().y() + 18);
     m_resultArea = new ResultArea(this);
     m_detailArea = new DetailArea(this);
+    m_line = new SeparationLine(this);
+    m_line->setFixedWidth(1);
+    m_line->setFixedHeight(SEPRATION_LINE_HEIGHT);
 
-    m_hlayout->addWidget(m_resultArea);
+    QHBoxLayout * resultAreaLyt = new QHBoxLayout(this);//规避scrollarea无法设置滚动条上边距问题
+    resultAreaLyt->setContentsMargins(0, 18, 0, 0);
+    resultAreaLyt->addWidget(m_resultArea);
+    m_hlayout->addLayout(resultAreaLyt);
+
+    //m_hlayout->addWidget(m_resultArea);
+    m_hlayout->addWidget(m_line);
     m_hlayout->addWidget(m_detailArea);
     m_hlayout->setSpacing(0);
     this->setLayout(m_hlayout);
@@ -121,12 +131,15 @@ void SearchResultPage::initConnections()
     connect(this, &SearchResultPage::startSearch, m_resultArea, &ResultArea::startSearch);
     connect(this, &SearchResultPage::stopSearch, m_resultArea, &ResultArea::stopSearch);
     connect(this, &SearchResultPage::startSearch, m_detailArea, &DetailArea::hide);
+    connect(this, &SearchResultPage::startSearch, m_line, &SeparationLine::hide);
     connect(this, &SearchResultPage::stopSearch, m_detailArea, &DetailArea::hide);
+    connect(this, &SearchResultPage::stopSearch, m_line, &SeparationLine::hide);
     connect(this, &SearchResultPage::startSearch, this, [=] () {
         //页面长720 - 左边距16
         sendResizeWidthSignal(704);
     });
     connect(m_resultArea, &ResultArea::keyPressChanged, m_detailArea, &DetailArea::setWidgetInfo);
+    connect(m_detailArea, &DetailArea::setWidgetInfo, m_line, &SeparationLine::show);
     connect(m_resultArea, &ResultArea::keyPressChanged, this, [=] () {
         //结果区域长度298 - 左边距16，下同
         sendResizeWidthSignal(282);
@@ -141,6 +154,7 @@ void SearchResultPage::initConnections()
 void SearchResultPage::setupConnectionsForWidget(ResultWidget *widget)
 {
     connect(widget, &ResultWidget::currentRowChanged, m_detailArea, &DetailArea::setWidgetInfo);
+    connect(m_detailArea, &DetailArea::setWidgetInfo, m_line, &SeparationLine::show);
     connect(widget, &ResultWidget::currentRowChanged, m_resultArea, &ResultArea::setSelectionInfo);
     connect(widget, &ResultWidget::rowClicked, this, [=] () {
         sendResizeWidthSignal(282);
