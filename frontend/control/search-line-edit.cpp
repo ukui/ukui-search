@@ -45,7 +45,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent) {
         pixmap =  QPixmap(QIcon(":/res/icons/system-search.symbolic.png").pixmap(QSize(18, 18)));
     }
     m_queryIcon->setProperty("useIconHighlightEffect", 0x10);
-    m_queryIcon->setFixedSize(pixmap.size());
+    m_queryIcon->setFixedSize(pixmap.size() / pixmap.devicePixelRatio());
     m_queryIcon->setPixmap(pixmap);
 
     m_ly = new QHBoxLayout(this);
