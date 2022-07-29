@@ -36,13 +36,13 @@
 #include <sys/wait.h>
 #include <sys/prctl.h>
 #include <syslog.h>
-#include "traverse_bfs.h"
+#include "traverse-bfs.h"
 #include "index-status-recorder.h"
 #include "index-generator.h"
 #include "file-utils.h"
 #include "common.h"
 namespace UkuiSearch {
-class FirstIndex : public QThread, public Traverse_BFS
+class FirstIndex : public QThread, public TraverseBFS
 {
     Q_OBJECT
 public:

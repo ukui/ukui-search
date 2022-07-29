@@ -27,6 +27,7 @@ QMAKE_CXXFLAGS += -execution-charset:utf-8
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+include(filesystemwatcher/file-system-watcher.pri)
 include(pluginmanage/plugin-manager.pri)
 include(plugininterface/plugin-interface.pri)
 include(index/index.pri)
@@ -57,8 +58,7 @@ HEADERS += \
     global-settings.h \
     gobject-template.h \
     libsearch_global.h \
-    libsearch.h \
-    ../ukui-search-app-data-service/app-db-common-defines.h
+    libsearch.h
 
 RESOURCES += \
     resource1.qrc \

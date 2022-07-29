@@ -13,14 +13,14 @@
 #include <sys/inotify.h>
 #include <unistd.h>
 
-#include "traverse_bfs.h"
+#include "traverse-bfs.h"
 #include "ukui-search-qdbus.h"
 #include "index-status-recorder.h"
 #include "file-utils.h"
 #include "pending-file-queue.h"
 #include "common.h"
 namespace UkuiSearch {
-class InotifyWatch : public QThread, public Traverse_BFS
+class InotifyWatch : public QThread, public TraverseBFS
 {
     Q_OBJECT
 public:

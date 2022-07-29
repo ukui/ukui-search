@@ -7,4 +7,5 @@ INCLUDEPATH += $$PWD/settingsearch
 INCLUDEPATH += $$PWD/appsearch
 INCLUDEPATH += $$PWD/searchinterface
 INCLUDEPATH += $$PWD/dirwatcher
+INCLUDEPATH += $$PWD/filesystemwatcher
 
