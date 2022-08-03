@@ -25,21 +25,21 @@
 #include <QDir>
 #include <QQueue>
 namespace UkuiSearch {
-class Traverse_BFS {
+class TraverseBFS {
 public:
-    Traverse_BFS() = default;
+    TraverseBFS() = default;
     void Traverse();
-    virtual ~Traverse_BFS() = default;
+    virtual ~TraverseBFS() = default;
     virtual void work(const QFileInfo&) = 0;
     void setPath(const QStringList&);
     void setBlockPath(const QStringList &pathList);
 protected:
-    Traverse_BFS(const QStringList&);
+    TraverseBFS(const QStringList&);
     QStringList m_pathList;
     QStringList m_blockList;
 private:
-    Traverse_BFS(const Traverse_BFS&) = delete;
-    void operator=(const Traverse_BFS&) = delete;
+    TraverseBFS(const TraverseBFS&) = delete;
+    void operator=(const TraverseBFS&) = delete;
 };
 }
 

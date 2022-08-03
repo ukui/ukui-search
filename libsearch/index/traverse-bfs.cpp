@@ -17,15 +17,15 @@
  * Authors: zhangzihao <zhangzihao@kylinos.cn>
  *
  */
-#include "traverse_bfs.h"
+#include "traverse-bfs.h"
 #include "file-utils.h"
 using namespace UkuiSearch;
-Traverse_BFS::Traverse_BFS(const QStringList &path) {
+TraverseBFS::TraverseBFS(const QStringList &path) {
     Q_ASSERT('/' == path.at(0));
     m_pathList = path;
 }
 
-void Traverse_BFS::Traverse() {
+void TraverseBFS::Traverse() {
     QQueue<QString> bfs;
     for(QString blockPath : m_blockList) {
         for(QString path : m_pathList) {
@@ -68,11 +68,11 @@ void Traverse_BFS::Traverse() {
     }
 }
 
-void Traverse_BFS::setPath(const QStringList &pathList) {
+void TraverseBFS::setPath(const QStringList &pathList) {
     m_pathList = pathList;
 }
 
-void Traverse_BFS::setBlockPath(const QStringList &pathList)
+void TraverseBFS::setBlockPath(const QStringList &pathList)
 {
     m_blockList =pathList;
 }

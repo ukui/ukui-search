@@ -14,7 +14,7 @@ HEADERS += \
     $$PWD/pending-file.h \
     $$PWD/search-manager.h \
     $$PWD/file-index-manager.h \
-    $$PWD/traverse_bfs.h \
+    $$PWD/traverse-bfs.h \
     $$PWD/ukui-search-qdbus.h
 
 SOURCES += \
@@ -31,6 +31,6 @@ SOURCES += \
     $$PWD/pending-file-queue.cpp \
     $$PWD/pending-file.cpp \
     $$PWD/search-manager.cpp \
-    $$PWD/traverse_bfs.cpp \
+    $$PWD/traverse-bfs.cpp \
     $$PWD/ukui-search-qdbus.cpp
 

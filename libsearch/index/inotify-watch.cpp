@@ -15,7 +15,7 @@ UkuiSearch::InotifyWatch *UkuiSearch::InotifyWatch::getInstance()
     return global_instance_InotifyWatch;
 }
 
-UkuiSearch::InotifyWatch::InotifyWatch(): Traverse_BFS(), m_semaphore(INDEX_SEM, 0, QSystemSemaphore::AccessMode::Open)
+UkuiSearch::InotifyWatch::InotifyWatch(): TraverseBFS(), m_semaphore(INDEX_SEM, 0, QSystemSemaphore::AccessMode::Open)
 {
     qDebug() << "setInotifyMaxUserWatches start";
     UkuiSearchQDBus usQDBus;

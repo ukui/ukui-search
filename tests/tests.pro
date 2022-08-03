@@ -1,14 +1,7 @@
-TEMPLATE = subdirs
-SUBDIRS += $$PWD/libchinese-segmentation \
-           $$PWD/libsearch \
-           $$PWD/frontend \
-           $$PWD/ukuisearch-systemdbus \
-           $$PWD/search-ukcc-plugin \
-           $$PWD/ukui-search-service \
-           $$PWD/ukui-search-app-data-service \
-           $$PWD/ukui-search-service-dir-manager
+QT -= gui
 
-#SUBDIRS += tests
+CONFIG += c++11
+CONFIG -= app_bundle
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -21,13 +14,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-libsearch.depends += libchinese-segmentation
-ukui-search-service.depends += libsearch
-#src.depends = libsearch
-frontend.depends = libsearch
+include(../libsearch/libukui-search-headers.pri)
 
-CONFIG += ordered
+HEADERS += \
+        file-system-watcher-test.h
 
-QT += widgets
+SOURCES += \
+        main.cpp \
+        file-system-watcher-test.cpp
 
+LIBS += -L$$OUT_PWD/../libsearch/ -lukui-search
 
+INCLUDEPATH += $$PWD/../libsearch
+DEPENDPATH += $$PWD/../libsearch
