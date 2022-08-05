@@ -42,6 +42,8 @@ public:
     QStringList removeWatch(const QString &path);
     QString removeWatch(int wd);
 
+
+
 private:
     void init();
     void traverse(QStringList pathList);
@@ -57,6 +59,8 @@ private:
 
     QThreadPool *m_pool = nullptr;
     FileSystemWatcher *q = nullptr;
+    bool m_recursive = true;
+
 };
 
 

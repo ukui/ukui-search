@@ -61,6 +61,9 @@ void FileSystemWatcherPrivate::traverse(QStringList pathList)
         addWatch(path);
         queue.enqueue(path);
     }
+    if(!m_recursive) {
+        return;
+    }
     QFileInfoList list;
     QDir dir;
     dir.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);
@@ -146,12 +149,13 @@ void FileSystemWatcherPrivate::init()
     }
 }
 
-FileSystemWatcher::FileSystemWatcher(WatchEvents events, WatchFlags flags, QObject *parent)
+FileSystemWatcher::FileSystemWatcher(bool recursive, WatchEvents events, WatchFlags flags, QObject *parent)
                   : QObject(parent)
                   , d(new FileSystemWatcherPrivate(this))
 {
     d->m_watchEvents = events;
     d->m_watchFlags = flags;
+    d->m_recursive = recursive;
 }
 
 FileSystemWatcher::~FileSystemWatcher()
@@ -220,7 +224,7 @@ void FileSystemWatcher::eventProcess(int socket)
         if(event->mask & EventCreate) {
             qDebug() << path << "--EventCreate";
             Q_EMIT created(path, event->mask & IN_ISDIR);
-            if(event->mask & IN_ISDIR) {
+            if(event->mask & IN_ISDIR && d->m_recursive) {
                 if(!QFileInfo(path).isSymLink()){
                     addWatch(QStringList(path));
                 }
@@ -256,8 +260,10 @@ void FileSystemWatcher::eventProcess(int socket)
         if (event->mask & EventMoveTo) {
             qDebug() << path << "--EventMoveTo";
             Q_EMIT created(path, event->mask & IN_ISDIR);
-            if (event->mask & IN_ISDIR) {
-                addWatch(QStringList(path));
+            if (event->mask & IN_ISDIR && d->m_recursive) {
+                if(!QFileInfo(path).isSymLink()){
+                    addWatch(QStringList(path));
+                }
             }
         }
         if (event->mask & EventOpen) {

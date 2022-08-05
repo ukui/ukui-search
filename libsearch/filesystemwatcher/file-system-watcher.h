@@ -75,6 +75,7 @@ public:
 
     /**
      * @brief FileSystemWatcher
+     * @param recursive if the watcher should watch the paths recursively. .
      * @param events Events that shoude be concerned,default: FileSystemWatcher::EventMove | FileSystemWatcher::EventMoveSelf |
                                                               FileSystemWatcher::EventCreate | FileSystemWatcher::EventDelete |
                                                               FileSystemWatcher::EventDeleteSelf | FileSystemWatcher::EventUnmount |
@@ -82,7 +83,8 @@ public:
      * @param flags Watch flags.
      * @param parent
      */
-    explicit FileSystemWatcher(WatchEvents events = WatchEvents(FileSystemWatcher::EventMove | FileSystemWatcher::EventMoveSelf |
+    explicit FileSystemWatcher(bool recursive = true,
+                               WatchEvents events = WatchEvents(FileSystemWatcher::EventMove | FileSystemWatcher::EventMoveSelf |
                                                                 FileSystemWatcher::EventCreate | FileSystemWatcher::EventDelete |
                                                                 FileSystemWatcher::EventDeleteSelf | FileSystemWatcher::EventUnmount |
                                                                 FileSystemWatcher::EventModify),
@@ -94,7 +96,7 @@ public:
     FileSystemWatcher(FileSystemWatcher &) = delete;
     FileSystemWatcher &operator =(const FileSystemWatcher &) = delete;
 
-    bool isWatchingPath(const QString& path) const;
+//    bool isWatchingPath(const QString& path) const;
 
 public Q_SLOTS:
     void addWatch(const QStringList &pathList);
