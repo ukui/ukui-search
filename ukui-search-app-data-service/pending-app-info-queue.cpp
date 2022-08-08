@@ -15,18 +15,39 @@ void PendingAppInfoQueue::enqueue(const PendingAppInfo &appInfo)
 {
     QMutexLocker locker(&s_mutex);
     m_handleTimes++;
-    int index = m_cache.indexOf(appInfo);
+    int index = m_cache.lastIndexOf(appInfo);
     if (index == -1) {
         m_cache << appInfo;
     } else {
+        //要插入项操作类型为删除，清除之前所有操作，替换为删除
+        if (appInfo.handleType() == PendingAppInfo::Delete) {
+            m_cache.removeAll(appInfo);
+            m_cache << appInfo;
+        } else if (m_cache[index].handleType() == PendingAppInfo::Delete) {
+            //先删后建，分别处理
+            if (appInfo.handleType() == PendingAppInfo::Insert) {
+                m_cache << appInfo;
+            }
+        } else if (m_cache[index].handleType() <= PendingAppInfo::UpdateLocaleData
+                   and appInfo.handleType() <= PendingAppInfo::UpdateLocaleData) {
+            //类型为insert, updateall, updatelocaledata时，设置为优先级高的操作类型
+            if (m_cache[index].handleType() > appInfo.handleType()) {
+                m_cache.remove(index);
+                m_cache << appInfo;
+            }
+        } else {
+            m_cache[index].merge(appInfo);
+        }
+
+        /*
         //只要操作类型为delete，直接覆盖
-        if (m_cache[index].handleType() == PendingAppInfo::HandleType::Delete
-                or appInfo.handleType() == PendingAppInfo::HandleType::Delete) {
-            m_cache[index].setHandleType(PendingAppInfo::HandleType::Delete);
+        if (m_cache[index].handleType() == PendingAppInfo::Delete
+                or appInfo.handleType() == PendingAppInfo::Delete) {
+            m_cache[index].setHandleType(PendingAppInfo::Delete);
 
         //已插入项操作类型为对所有desktop文件相关数据进行操作
-        } else if (m_cache[index].handleType() < PendingAppInfo::HandleType::UpdateLocaleData
-                   and appInfo.handleType() < PendingAppInfo::HandleType::UpdateLocaleData) {
+        } else if (m_cache[index].handleType() < PendingAppInfo::UpdateLocaleData
+                   and appInfo.handleType() < PendingAppInfo::UpdateLocaleData) {
             //设置为优先级高的操作类型
             if (m_cache[index].handleType() > appInfo.handleType()) {
                 m_cache[index].setHandleType(appInfo);
@@ -34,6 +55,7 @@ void PendingAppInfoQueue::enqueue(const PendingAppInfo &appInfo)
         } else {
             m_cache[index].merge(appInfo);
         }
+        */
     }
 
     //启动定时器
@@ -103,40 +125,43 @@ void PendingAppInfoQueue::processCache()
     if (AppDBManager::getInstance()->startTransaction()) {
         for (const PendingAppInfo &info : m_pendingAppInfos) {
             PendingAppInfo::HandleTypes handleTypes = info.handleType();
-            if (handleTypes < PendingAppInfo::HandleType::UpdateAll) {
+            if (handleTypes <= PendingAppInfo::UpdateLocaleData) {
                 switch (handleTypes) {
-                case PendingAppInfo::HandleType::Delete:
+                case PendingAppInfo::Delete:
                     AppDBManager::getInstance()->handleDBItemDelete(info.path());
                     break;
-                case PendingAppInfo::HandleType::Insert:
+                case PendingAppInfo::Insert:
                     AppDBManager::getInstance()->handleDBItemInsert(info.path());
                     break;
-                case PendingAppInfo::HandleType::UpdateAll:
+                case PendingAppInfo::UpdateAll:
                     AppDBManager::getInstance()->handleDBItemUpdate(info.path());
+                    break;
+                case PendingAppInfo::UpdateLocaleData:
+                    AppDBManager::getInstance()->handleLocaleDataUpdate(info.path());
                     break;
                 default:
                     break;
                 }
             } else {
-                if (handleTypes & PendingAppInfo::HandleType::Insert) {
+                if (handleTypes & PendingAppInfo::Insert) {
                     AppDBManager::getInstance()->handleDBItemInsert(info.path());
                 }
-                if (handleTypes & PendingAppInfo::HandleType::UpdateAll) {
+                if (handleTypes & PendingAppInfo::UpdateAll) {
                     AppDBManager::getInstance()->handleDBItemUpdate(info.path());
                 }
-                if (handleTypes & PendingAppInfo::HandleType::UpdateLocaleData) {
+                if (handleTypes & PendingAppInfo::UpdateLocaleData) {
                     AppDBManager::getInstance()->handleLocaleDataUpdate(info.path());
                 }
-                if (handleTypes & PendingAppInfo::HandleType::UpdateLaunchTimes) {
+                if (handleTypes & PendingAppInfo::UpdateLaunchTimes) {
                     AppDBManager::getInstance()->handleLaunchTimesUpdate(info.path(), info.launchTimes());
                 }
-                if (handleTypes & PendingAppInfo::HandleType::UpdateFavorites) {
+                if (handleTypes & PendingAppInfo::UpdateFavorites) {
                     AppDBManager::getInstance()->handleFavoritesStateUpdate(info.path(), info.favoritesState());
                 }
-                if (handleTypes & PendingAppInfo::HandleType::UpdateTop) {
+                if (handleTypes & PendingAppInfo::UpdateTop) {
                     AppDBManager::getInstance()->handleTopStateUpdate(info.path(), info.topState());
                 }
-                if (handleTypes & PendingAppInfo::HandleType::UpdateLock) {
+                if (handleTypes & PendingAppInfo::UpdateLock) {
                     AppDBManager::getInstance()->handleLockStateUpdate(info.path(), info.lockState());
                 }
             }
