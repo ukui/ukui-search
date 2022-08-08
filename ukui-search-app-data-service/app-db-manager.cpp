@@ -7,9 +7,9 @@
 #include <QCryptographicHash>
 #include <QFile>
 
-#define GENERAL_APP_DESKTOP_PATH "/usr/share/applications/"
-#define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications/"
-#define SNAPD_APP_DESKTOP_PATH "/var/lib/snapd/desktop/applications/"
+#define GENERAL_APP_DESKTOP_PATH "/usr/share/applications"
+#define ANDROID_APP_DESKTOP_PATH QDir::homePath() + "/.local/share/applications"
+#define SNAPD_APP_DESKTOP_PATH "/var/lib/snapd/desktop/applications"
 
 #define LAST_LOCALE_NAME QDir::homePath() + "/.config/org.ukui/ukui-search/appdata/last-locale-name.conf"
 #define LOCALE_NAME_VALUE "CurrentLocaleName"
@@ -49,6 +49,100 @@ AppDBManager::AppDBManager(QObject *parent) : QThread(parent), m_database(QSqlDa
         refreshAllData2DB();
 //        refreshDataBase();
 
+        //初始化FileSystemWatcher
+        m_watcher = new FileSystemWatcher;
+        m_watcher->addWatch(GENERAL_APP_DESKTOP_PATH);
+        QDir androidDir(ANDROID_APP_DESKTOP_PATH);
+        if(!androidDir.exists()) {
+            androidDir.mkpath(ANDROID_APP_DESKTOP_PATH);
+        }
+        m_watcher->addWatch(ANDROID_APP_DESKTOP_PATH);
+
+        m_snapdDir = new QDir(SNAPD_APP_DESKTOP_PATH);
+        if(!m_snapdDir->exists()) {
+            m_snapdWatcher = new FileSystemWatcher(false);
+            QDir dir("/var/lib/snapd");
+            if (!dir.exists()) {
+                dir.setPath("/var/lib");
+            }
+            m_snapdPath = dir.absolutePath();
+            m_snapdWatcher->addWatch(m_snapdPath);
+        } else {
+            m_watcher->addWatch(SNAPD_APP_DESKTOP_PATH);
+        }
+
+        connect(m_snapdWatcher, &FileSystemWatcher::created, this, [ = ] (const QString &path, bool isDir) {
+            if (isDir) {
+                //监测新增目录为/var/lib/snapd时，将其替换为snapdWatcher的watchpath
+                if (path == "/var/lib/snapd") {
+                    m_snapdWatcher->removeWatch(m_snapdPath);
+                    m_snapdWatcher->addWatch(path);
+                    qDebug() << "~~~~~~~add watch" << path << "~~~~~remove watch" << m_snapdPath;
+                    m_snapdPath = path;
+                    //snapd下的desktop目录可能在还没替换监听目录为/var/lib/snapd时就已经被创建，因此需要特别判断
+                    QDir dir("/var/lib/snapd/desktop");
+                    if (dir.exists()) {
+                        if (m_snapdDir->exists()) {
+                            m_watcher->addWatch(SNAPD_APP_DESKTOP_PATH);
+                            m_snapdWatcher->removeWatch(m_snapdPath);
+                            qDebug() << "======add watch" << SNAPD_APP_DESKTOP_PATH << "======remove watch" << m_snapdPath;
+                        }
+                    }
+                }
+                //检测到/var/lib/snapd/desktop被创建，则将监听目录替换为/var/lib/snapd/desktop/applications
+                if (path == "/var/lib/snapd/desktop" and m_snapdDir->exists()) {
+                    m_watcher->addWatch(SNAPD_APP_DESKTOP_PATH);
+                    m_snapdWatcher->removeWatch(m_snapdPath);
+                    qDebug() << "======add watch" << SNAPD_APP_DESKTOP_PATH << "======remove watch" << m_snapdPath;
+                }
+
+            }
+        });
+
+        connect(m_watcher, &FileSystemWatcher::created, this, [ = ] (const QString &desktopfp, bool isDir) {
+            //event is IN_CREATE or IN_MOVED_TO
+            if (!isDir and desktopfp.endsWith(".desktop")) {
+                this->insertDBItem(desktopfp);
+            }
+        });
+
+        connect(m_watcher, &FileSystemWatcher::modified, this, [ = ] (const QString &desktopfp) {
+            //event is IN_MODIFY
+            if (desktopfp.endsWith(".desktop")) {
+                this->updateDBItem(desktopfp);
+            }
+        });
+
+        connect(m_watcher, &FileSystemWatcher::moved, this, [ = ] (const QString &desktopfp, bool isDir) {
+            //event is IN_MOVED_FROM
+            if (!isDir) {
+                if (desktopfp.endsWith(".desktop")) {
+                    this->deleteDBItem(desktopfp);
+                }
+            } else {
+                //event is IN_MOVE_SELF
+                qWarning() << "Dir:" << desktopfp << "has been moved to other place! Stop the watching of the desktop files in it!";
+            }
+        });
+
+        connect(m_watcher, &FileSystemWatcher::deleted, this, [ = ] (const QString &desktopfp, bool isDir) {
+            //event is IN_DELETE
+            if (!isDir) {
+                if (desktopfp.endsWith(".desktop")) {
+                    this->deleteDBItem(desktopfp);
+                }
+            } else {
+                //event is IN_DELETE_SELF
+                qWarning() << "Dir:" << desktopfp << "has been deleted! Stop the watching of the desktop files in it!";
+            }
+        });
+
+        connect(m_watcher, &FileSystemWatcher::unmounted, this, [ = ] (const QString &desktopfp) {
+            //event is IN_UNMOUNT
+            qWarning() << "Dir:" << desktopfp << "has been unmounted! Stop the watching of the desktop files in it!";
+        });
+
+        /*
         //初始化FileSystemWatcher
         m_watchAppDir = new QFileSystemWatcher(this);
         m_watchAppDir->addPath(GENERAL_APP_DESKTOP_PATH);
@@ -103,6 +197,7 @@ AppDBManager::AppDBManager(QObject *parent) : QThread(parent), m_database(QSqlDa
             Q_EMIT this->stopTimer();
             this->refreshAllData2DB();
         }, Qt::DirectConnection);
+        */
 
         //监控应用进程开启
         connect(KWindowSystem::self(), &KWindowSystem::windowAdded, [ = ](WId id) {
@@ -118,10 +213,20 @@ AppDBManager::AppDBManager(QObject *parent) : QThread(parent), m_database(QSqlDa
 
 AppDBManager::~AppDBManager()
 {
-    if(m_watchAppDir) {
-        delete m_watchAppDir;
+    if (m_watcher) {
+        delete m_watcher;
     }
-    m_watchAppDir = NULL;
+    m_watcher = NULL;
+
+    if (m_snapdWatcher) {
+        delete m_snapdWatcher;
+    }
+    m_snapdWatcher = NULL;
+
+//    if(m_watchAppDir) {
+//        delete m_watchAppDir;
+//    }
+//    m_watchAppDir = NULL;
     closeDataBase();
 }
 

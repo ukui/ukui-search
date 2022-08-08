@@ -3,6 +3,7 @@
 
 #include "app-db-common.h"
 #include "pending-app-info-queue.h"
+#include "file-system-watcher.h"
 
 #include <QDir>
 #include <QObject>
@@ -12,11 +13,11 @@
 #include <QDebug>
 #include <QApplication>
 #include <QDateTime>
-#include <QFileSystemWatcher>
 #include <QMutex>
 #include <QSettings>
-#include <QTimer>
 #include <QThread>
+//#include <QTimer>
+//#include <QFileSystemWatcher>
 
 #define CONNECTION_NAME QLatin1String("ukss-appdb-connection")
 
@@ -132,11 +133,16 @@ private:
 
     QSettings *m_qSettings = nullptr;
 
-    QTimer *m_timer = nullptr;
-    QTimer *m_maxProcessTimer = nullptr;
+//    QTimer *m_timer = nullptr;
+//    QTimer *m_maxProcessTimer = nullptr;
+//    QFileSystemWatcher *m_watchAppDir = nullptr;
 
     QSqlDatabase m_database;
-    QFileSystemWatcher *m_watchAppDir = nullptr;
+    FileSystemWatcher *m_watcher = nullptr;
+
+    QDir *m_snapdDir = nullptr;
+    QString m_snapdPath;
+    FileSystemWatcher *m_snapdWatcher = nullptr;
 
     //应用黑名单
     QStringList m_excludedDesktopfiles = {

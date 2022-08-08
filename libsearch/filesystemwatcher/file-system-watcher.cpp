@@ -205,6 +205,7 @@ void FileSystemWatcher::eventProcess(int socket)
         const struct inotify_event* event = (struct inotify_event*)&buf[i];
 
         if(event->name[0] == '.') {
+            i += sizeof(struct inotify_event) + event->len;
             continue;
         }
         if (event->wd < 0 && (event->mask & EventQueueOverflow)) {

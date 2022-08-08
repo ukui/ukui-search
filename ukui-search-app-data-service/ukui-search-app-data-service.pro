@@ -58,5 +58,6 @@ INCLUDEPATH += $$PWD/../libchinese-segmentation
 DEPENDPATH += $$PWD/../libchinese-segmentation
 
 LIBS += -L$$OUT_PWD/../libsearch/ -lukui-search
-INCLUDEPATH += $$PWD/../libsearch
+INCLUDEPATH += $$PWD/../libsearch \
+               $$PWD/../libsearch/filesystemwatcher
 DEPENDPATH += $$PWD/../libsearch
