@@ -29,20 +29,25 @@ SOURCES += \
         main.cpp \
         convert-winid-to-desktop.cpp \
         app-db-manager.cpp \
-    pending-app-info-queue.cpp \
+        pending-app-info-queue.cpp \
         signal-transformer.cpp \
         ukui-search-app-data-service.cpp \
 
 HEADERS += \
         convert-winid-to-desktop.h \
         app-db-manager.h \
-    pending-app-info-queue.h \
-    pending-app-info.h \
+        pending-app-info-queue.h \
+        pending-app-info.h \
         signal-transformer.h \
         ukui-search-app-data-service.h \
 
+inst1.files += conf/com.ukui.search.appdb.service
+inst1.path = /usr/share/dbus-1/services/
+
 target.path = /usr/bin
-INSTALLS += target
+INSTALLS += \
+    target \
+    inst1
 
 desktop.path = /etc/xdg/autostart
 desktop.files += ../data/ukui-search-app-data-service.desktop
