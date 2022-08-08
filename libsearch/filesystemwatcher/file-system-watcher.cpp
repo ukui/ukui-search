@@ -104,15 +104,16 @@ QStringList FileSystemWatcherPrivate::removeWatch(const QString &path)
 {
     m_pool->waitForDone();
     QStringList paths;
-    for(QHash<int, QString>::Iterator i = m_watchPathHash.begin(); i != m_watchPathHash.end();) {
-        if(i.value().length() > path.length()) {
-            if(FileUtils::isOrUnder(i.value(), path)) {
+    for(int wd : m_watchPathHash.keys()) {
+        QString tmpPath = m_watchPathHash.value(wd);
+        if(tmpPath.length() >= path.length()) {
+            if(FileUtils::isOrUnder(tmpPath, path)) {
                 //fix me:This function can be slow (O(n))
                 paths.append(removeWatch(m_watchPathHash.key(path)));
             }
         }
-        i++;
     }
+
     return paths;
 }
 
