@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.ukui.search.appdb.service
+Exec=/usr/bin/ukui-search-app-data-service
