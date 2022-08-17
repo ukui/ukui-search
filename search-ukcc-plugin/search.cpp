@@ -195,8 +195,9 @@ void Search::initUi()
     m_addBlockDirFrame->setFrameShape(QFrame::Shape::NoFrame);
     m_addBlockDirFrame->setFixedHeight(60);
 
-    m_addBlockDirWidget = new QPushButton(m_addBlockDirFrame);
-    m_addBlockDirWidget->setFixedHeight(60);
+//    m_addBlockDirWidget = new QPushButton(m_addBlockDirFrame);
+    m_addBlockDirWidget = new AddBtn(m_addBlockDirFrame);
+//    m_addBlockDirWidget->setFixedHeight(60);
 
 //        m_addBlockDirWidget->setObjectName("addBlockDirWidget");
 //        QPalette pal;
@@ -212,27 +213,28 @@ void Search::initUi()
 //                                       HoverWidget:hover:!pressed#addBlockDirWidget{background: %1;  \
 //                                       border-radius: 4px;}").arg(stringColor));
 
-    m_addBlockDirWidget->setProperty("useButtonPalette", true);
-//    m_addBlockDirWidget->setStyleSheet("QPushButton:!checked{background: palette(base);}");
-    m_addBlockDirWidget->setFlat(true);
+    //之前自己写的添加按钮，目前方案用控制面板提供的AddBtn，后面有变动再放出来(属性全都注掉了，有问题找ukcc寻求帮助）
+//    m_addBlockDirWidget->setProperty("useButtonPalette", true);
+////    m_addBlockDirWidget->setStyleSheet("QPushButton:!checked{background: palette(base);}");
+//    m_addBlockDirWidget->setFlat(true);
 
-    m_addBlockDirIcon = new QLabel(m_addBlockDirWidget);
-    m_addBlockDirIcon->setPixmap(QIcon("/usr/share/ukui-search/search-ukcc-plugin/image/add.svg").pixmap(12, 12));
-    m_addBlockDirIcon->setProperty("useIconHighlightEffect", true);
-    m_addBlockDirIcon->setProperty("iconHighlightEffectMode", 1);
+//    m_addBlockDirIcon = new QLabel(m_addBlockDirWidget);
+//    m_addBlockDirIcon->setPixmap(QIcon("/usr/share/ukui-search/search-ukcc-plugin/image/add.svg").pixmap(12, 12));
+//    m_addBlockDirIcon->setProperty("useIconHighlightEffect", true);
+//    m_addBlockDirIcon->setProperty("iconHighlightEffectMode", 1);
 
-    m_addBlockDirLabel = new QLabel(m_addBlockDirWidget);
-    m_addBlockDirLabel->setText(tr("Choose folder"));
+//    m_addBlockDirLabel = new QLabel(m_addBlockDirWidget);
+//    m_addBlockDirLabel->setText(tr("Choose folder"));
 
-    m_addBlockDirLyt = new QHBoxLayout(m_addBlockDirWidget);
-    m_addBlockDirWidget->setLayout(m_addBlockDirLyt);
+//    m_addBlockDirLyt = new QHBoxLayout(m_addBlockDirWidget);
+//    m_addBlockDirWidget->setLayout(m_addBlockDirLyt);
 
     m_blockDirsLyt->addWidget(m_addBlockDirWidget);
 
-    m_addBlockDirLyt->addStretch();
-    m_addBlockDirLyt->addWidget(m_addBlockDirIcon);
-    m_addBlockDirLyt->addWidget(m_addBlockDirLabel);
-    m_addBlockDirLyt->addStretch();
+//    m_addBlockDirLyt->addStretch();
+//    m_addBlockDirLyt->addWidget(m_addBlockDirIcon);
+//    m_addBlockDirLyt->addWidget(m_addBlockDirLabel);
+//    m_addBlockDirLyt->addStretch();
     m_mainLyt->addSpacing(32);
     m_mainLyt->addWidget(m_blockDirTitleLabel);
     m_mainLyt->addWidget(m_blockDirDescLabel);
