@@ -22,6 +22,7 @@
 #include <ukcc/widgets/switchbutton.h>
 #include <ukcc/widgets/comboxframe.h>
 #include <ukcc/widgets/titlelabel.h>
+#include <ukcc/widgets/addbtn.h>
 
 #define UKUI_SEARCH_SCHEMAS "org.ukui.search.settings"
 #define SEARCH_METHOD_KEY "fileIndexEnable"
@@ -88,7 +89,8 @@ private:
     QLabel * m_blockDirDescLabel = nullptr;
     QFrame * m_blockDirsFrame = nullptr;
     QVBoxLayout * m_blockDirsLyt = nullptr;
-    QPushButton * m_addBlockDirWidget = nullptr;
+//    QPushButton * m_addBlockDirWidget = nullptr;
+    AddBtn * m_addBlockDirWidget = nullptr;
     QLabel * m_addBlockDirIcon = nullptr;
     QLabel * m_addBlockDirLabel = nullptr;
     QHBoxLayout * m_addBlockDirLyt = nullptr;
