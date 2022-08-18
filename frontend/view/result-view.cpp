@@ -168,6 +168,7 @@ ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(pa
 {
 //    setStyle(ResultItemStyle::getStyle());
     this->setFrameShape(QFrame::NoFrame);
+    this->viewport()->setAttribute(Qt::WA_AcceptTouchEvents);
     this->viewport()->setAutoFillBackground(false);
     this->setIconSize(QSize(VIEW_ICON_SIZE, VIEW_ICON_SIZE));
     this->setRootIsDecorated(false);
@@ -181,6 +182,9 @@ ResultView::ResultView(const QString &plugin_id, QWidget *parent) : QTreeView(pa
     m_plugin_id = plugin_id;
     m_styleDelegate = new ResultViewDelegate(this);
     this->setItemDelegate(m_styleDelegate);
+    m_touchTimer = new QTimer(this);
+    m_touchTimer->setSingleShot(true);
+    m_touchTimer->setInterval(100);
 }
 
 bool ResultView::isSelected()
@@ -342,6 +346,53 @@ void ResultView::mouseMoveEvent(QMouseEvent *event)
        Q_EMIT this->clicked(m_tmpMousePressIndex);
    }
     return QTreeView::mouseMoveEvent(event);
+}
+
+bool ResultView::viewportEvent(QEvent *event)
+{
+     if (event->type() == QEvent::TouchBegin) {
+         qDebug() << "TouchBegin==============";
+         QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+         QMouseEvent me(QEvent::MouseButtonPress,
+                        e->touchPoints().at(0).pos(),
+                        this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                        this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                        Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+         QApplication::sendEvent(parent(), &me);
+         m_touchTimer->start();
+         event->accept();
+         return true;
+     } else if (event->type() == QEvent::TouchEnd) {
+         qDebug() << "touchend==============" << m_touchTimer->remainingTime();
+         if (m_touchTimer->remainingTime() > 0.001) {
+             QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+             QMouseEvent me(QEvent::MouseButtonPress,
+                            e->touchPoints().at(0).pos(),
+                            this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                            this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                            Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+             QApplication::sendEvent(this->viewport(),&me);
+
+             QMouseEvent mer(QEvent::MouseButtonRelease,
+                             e->touchPoints().at(0).pos(),
+                             this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                             this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                             Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+             QApplication::sendEvent(this->viewport(),&mer);
+         }
+         return true;
+     } else if (event->type() == QEvent::TouchUpdate) {
+         qDebug() << "touchupdate==============";
+         QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
+         QMouseEvent me(QEvent::MouseMove,
+                        e->touchPoints().at(0).pos(),
+                        this->mapTo(this->window(),e->touchPoints().at(0).pos().toPoint()),
+                        this->mapToGlobal(e->touchPoints().at(0).pos().toPoint()),
+                        Qt::LeftButton,Qt::LeftButton,Qt::NoModifier,Qt::MouseEventSynthesizedByApplication);
+         QApplication::sendEvent(parent(), &me);
+         return true;
+     }
+    return QTreeView::viewportEvent(event);
 }
 
 void ResultView::initConnections()
