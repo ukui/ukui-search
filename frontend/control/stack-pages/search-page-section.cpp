@@ -341,24 +341,25 @@ void ResultArea::mouseReleaseEvent(QMouseEvent *event)
 
 bool ResultArea::viewportEvent(QEvent *event)
 {
-    if(event->type() == QEvent::TouchBegin) {
-        QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
-        if(e->touchPoints().size() == 1) {
-            m_pressPoint = m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint());
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
+        if (e->source() == Qt::MouseEventSynthesizedByApplication) {
+            qDebug() << "MouseButtonPress MouseEventSynthesizedByApplication";
+            m_pressPoint = m_widget->mapFrom(this, e->pos());
             event->accept();
             return true;
         }
-    } else if (event->type() == QEvent::TouchUpdate) {
-        QTouchEvent *e = dynamic_cast<QTouchEvent *>(event);
-//        qDebug() << "touchpoint===========" << e->touchPoints().size();
-        if(e->touchPoints().size() == 1) {
-            int delta = m_pressPoint.y() - m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint()).y();
-//            qDebug() << "last pos:" << m_pressPoint.y();
-//            qDebug() << "new pos:" << m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint()).y();
-//            qDebug() << "delta" << delta;
-//            qDebug() << "height" << m_widget->height() << "--" << verticalScrollBar()->maximum();
+    } else if (event->type() == QEvent::MouseMove) {
+        QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
+        if (e->source() == Qt::MouseEventSynthesizedByApplication) {
+            qDebug() << "MouseMove MouseEventSynthesizedByApplication";
+            int delta = m_pressPoint.y() - m_widget->mapFrom(this, e->pos()).y();
+            //            qDebug() << "last pos:" << m_pressPoint.y();
+            //            qDebug() << "new pos:" << m_widget->mapFrom(this, e->touchPoints().at(0).pos().toPoint()).y();
+            //            qDebug() << "delta" << delta;
+            //            qDebug() << "value" << verticalScrollBar()->value() << "--" << verticalScrollBar()->value() + delta;
             this->verticalScrollBar()->setValue(verticalScrollBar()->value() + delta);
-            m_pressPoint = m_widget->mapFrom(this,e->touchPoints().at(0).pos().toPoint());
+            m_pressPoint = m_widget->mapFrom(this,e->pos());
             return true;
         }
     }
