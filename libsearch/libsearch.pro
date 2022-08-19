@@ -92,7 +92,8 @@ unix {
                      searchinterface/ukui-search-task.h \
                      appdata/app-info-table.h \
                      searchinterface/search-controller.h \
-                     searchinterface/result-item.h
+                     searchinterface/result-item.h \
+                     filesystemwatcher/file-system-watcher.h
     header.files += development-files/header-files/*
 
     INSTALLS += header
