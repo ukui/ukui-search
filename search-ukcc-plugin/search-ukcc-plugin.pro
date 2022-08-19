@@ -17,7 +17,8 @@ SOURCES += search.cpp
 
 HEADERS += search.h
 
-TRANSLATIONS += translations/zh_CN.ts
+TRANSLATIONS += translations/zh_CN.ts \
+                translations/bo_CN.ts
 
 images.files = image/*
 images.path = /usr/share/ukui-search/search-ukcc-plugin/image/
