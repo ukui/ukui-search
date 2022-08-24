@@ -67,6 +67,7 @@ ReceiveResultThread::ReceiveResultThread(DataQueue<SearchPluginIface::ResultInfo
 void ReceiveResultThread::stop()
 {
     this->requestInterruption();
+    this->wait();
     this->quit();
 }
 

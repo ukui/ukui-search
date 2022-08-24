@@ -303,7 +303,7 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
 //        m_stackedWidget->setPage(int(StackedPage::HomePage));
         QTimer::singleShot(10, this, [ = ]() {
             m_askTimer->stop();
-            Q_EMIT m_searchResultPage->stopSearch();
+//            Q_EMIT m_searchResultPage->stopSearch();
             m_searchResultPage->hide();
             this->resizeHeight(68);
         });
