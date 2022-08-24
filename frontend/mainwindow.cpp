@@ -301,10 +301,12 @@ void MainWindow::searchKeywordSlot(const QString &keyword)
     //NEW_TODO
     if(keyword == "") {
 //        m_stackedWidget->setPage(int(StackedPage::HomePage));
-        m_askTimer->stop();
-        Q_EMIT m_searchResultPage->stopSearch();
-        m_searchResultPage->hide();
-        this->resizeHeight(68);
+        QTimer::singleShot(10, this, [ = ]() {
+            m_askTimer->stop();
+            Q_EMIT m_searchResultPage->stopSearch();
+            m_searchResultPage->hide();
+            this->resizeHeight(68);
+        });
 
     } else {
 //        m_stackedWidget->setPage(int(StackedPage::SearchPage));
