@@ -272,7 +272,8 @@ int main(int argc, char *argv[]) {
 
     QTranslator qt_translator;
     try {
-        if(! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
+        //if(! qt_translator.load(":/res/qt-translations/qt_zh_CN.qm")) throw - 1;
+        if(! qt_translator.load("/usr/share/qt5/translations/qt_" + QLocale::system().name())) throw - 1;
         app.installTranslator(&qt_translator);
     } catch(...) {
         qDebug() << "Load translations file" << QLocale() << "failed!";
