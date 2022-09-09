@@ -68,6 +68,7 @@ public:
 Q_SIGNALS:
     void valueChanged(const QString&);
     void transparencyChanged(const double&);
+    void styleChanged(const QString&);
 
 public Q_SLOTS:
     void setValue(const QString&, const QVariant&);

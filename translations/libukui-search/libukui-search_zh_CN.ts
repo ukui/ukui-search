@@ -9,7 +9,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libsearch/searchinterface/searchtasks/file-search-task.cpp" line="96"/>
+        <location filename="../../libsearch/searchinterface/searchtasks/file-search-task.cpp" line="97"/>
         <source>Warning, Can not find home path.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17,9 +17,8 @@
 <context>
     <name>UkuiSearch::AppMatch</name>
     <message>
-        <location filename="../../libsearch/appsearch/app-match.cpp" line="262"/>
         <source>Application Description:</source>
-        <translation>应用描述：</translation>
+        <translation type="vanished">应用描述：</translation>
     </message>
 </context>
 <context>
@@ -33,53 +32,56 @@
     <name>UkuiSearch::AppSearchPlugin</name>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="174"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="231"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="12"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="175"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="232"/>
         <source>Add Shortcut to Desktop</source>
         <translation>添加到桌面快捷方式</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="13"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="176"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="233"/>
         <source>Add Shortcut to Panel</source>
         <translation>添加到任务栏快捷方式</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="14"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="177"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="234"/>
         <source>Install</source>
         <translation>安装</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="30"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="35"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="73"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="78"/>
         <source>Applications Search</source>
         <translation>应用</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="115"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="167"/>
         <source>Application</source>
         <translation>应用</translation>
     </message>
     <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="53"/>
         <source>Application Description:</source>
-        <translation type="vanished">应用描述：</translation>
+        <translation>应用描述：</translation>
     </message>
 </context>
 <context>
     <name>UkuiSearch::AppSearchTask</name>
     <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/app-search-task.cpp" line="21"/>
         <source>Application</source>
-        <translation type="vanished">应用</translation>
+        <translation>应用</translation>
     </message>
     <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/app-search-task.cpp" line="26"/>
         <source>Application search.</source>
-        <translation type="vanished">应用搜索</translation>
+        <translation>应用搜索</translation>
     </message>
 </context>
 <context>
@@ -373,14 +375,14 @@
 <context>
     <name>UkuiSearch::SearchTaskPluginManager</name>
     <message>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="64"/>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="78"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="68"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="82"/>
         <source>plugin type: %1, is disabled!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="70"/>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="83"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="74"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="87"/>
         <source>plugin type: %1, is not registered!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -410,6 +412,14 @@
     </message>
 </context>
 <context>
+    <name>UkuiSearch::UkuiSearchTaskPrivate</name>
+    <message>
+        <location filename="../../libsearch/searchinterface/ukui-search-task.cpp" line="92"/>
+        <source>Current task uuid error or an unregistered plugin is used!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::WebSearchPlugin</name>
     <message>
         <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="11"/>
@@ -422,6 +432,15 @@
         <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="28"/>
         <source>Web Page</source>
         <translation>网页</translation>
+    </message>
+</context>
+<context>
+    <name>search</name>
+    <message>
+        <location filename="../../libsearch/search-app-widget-plugin/provider/data/search.qml" line="89"/>
+        <source>search</source>
+        <translatorcomment>全局搜索</translatorcomment>
+        <translation>全局搜索</translation>
     </message>
 </context>
 </TS>

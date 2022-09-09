@@ -53,75 +53,74 @@
         <translation>གཤམ་གྱི་ཡིག་སྣོད་འཚོལ་བཤེར་མི་བྱེད། ཡིག་སྣོད་གསར་སྣོན་དང་གསུབ་འཕྲི་བྱས་ཚེ་ཡིག་ཆའི་དཀར་ཆག་སྒྲིག་འགོད་བྱ་ཐུབ།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="225"/>
         <source>Choose folder</source>
-        <translation>བསལ་འདེམས་ཀྱི་དཀར་ཆག།</translation>
+        <translation type="vanished">བསལ་འདེམས་ཀྱི་དཀར་ཆག།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="338"/>
+        <location filename="../search.cpp" line="340"/>
         <source>delete</source>
         <translation>བསུབ་པ།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="393"/>
+        <location filename="../search.cpp" line="395"/>
         <source>Directories</source>
         <translation>དཀར་ཆག</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="394"/>
+        <location filename="../search.cpp" line="396"/>
         <source>select blocked folder</source>
         <translation>བཀག་སྡོམ་བྱས་པའི་ཡིག་སྣོད་གདམ་གསེས</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="395"/>
+        <location filename="../search.cpp" line="397"/>
         <source>Select</source>
         <translation>བདམས་ཐོན་བྱུང་བ།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="396"/>
+        <location filename="../search.cpp" line="398"/>
         <source>Position: </source>
         <translation>གོ་གནས་ནི། </translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="397"/>
+        <location filename="../search.cpp" line="399"/>
         <source>FileName: </source>
         <translation>ཡིག་ཆའི་མིང་ནི། </translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="398"/>
+        <location filename="../search.cpp" line="400"/>
         <source>FileType: </source>
         <translation>ཡིག་ཆའི་རིགས་དབྱིབས་ནི། </translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="399"/>
+        <location filename="../search.cpp" line="401"/>
         <source>Cancel</source>
         <translation>ཕྱིར་འཐེན།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="415"/>
-        <location filename="../search.cpp" line="419"/>
-        <location filename="../search.cpp" line="423"/>
-        <location filename="../search.cpp" line="427"/>
+        <location filename="../search.cpp" line="417"/>
+        <location filename="../search.cpp" line="421"/>
+        <location filename="../search.cpp" line="425"/>
+        <location filename="../search.cpp" line="429"/>
         <source>Warning</source>
         <translation>ཐ་ཚིག་སྒྲོག་པ།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="415"/>
+        <location filename="../search.cpp" line="417"/>
         <source>Add blocked folder failed, choosen path is empty!</source>
         <translation>སྦྱོར་རྟ་ལྐོག་བཀོད་མིང་ཐོ་ཕམ་ཁ་བསལ་འདེམས་ཀྱི་ཐབས་ལམ་སྟོང་བ་རེད།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="419"/>
+        <location filename="../search.cpp" line="421"/>
         <source>Add blocked folder failed, it is not in home path!</source>
         <translation>སྦྱོར་རྟ་ལྐོག་བཀོད་མིང་ཐོ་ཕམ་ཁ་བསལ་འདེམས་ཀྱི་དཀར་ཆག་མི་ཁྱིམ་དཀར་ཆག་འོག།</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="423"/>
+        <location filename="../search.cpp" line="425"/>
         <source>Add blocked folder failed, its parent dir is exist!</source>
         <translation>སྦྱོར་རྟ་ལྐོག་བཀོད་མིང་ཐོ་ཕམ་ཁ་བསལ་འདེམས་ཀྱི་དཀར་ཆག་ནི་ལྐོག་བཀོད་མིང་ཐོ་འི་ཁྲོད་ཀྱི་དཀར་ཆག་འོག</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="427"/>
+        <location filename="../search.cpp" line="429"/>
         <source>Add blocked folder failed, it has been already blocked!</source>
         <translation>སྦྱོར་རྟ་ལྐོག་བཀོད་མིང་ཐོ་ཕམ་ཁ་བསལ་འདེམས་ཀྱི་དཀར་ཆག་ནི་ལྐོག་བཀོད་མིང་ཐོ་འི་ཁྲོད་ཀྱི་དཀར་ཆག་འོག</translation>
     </message>

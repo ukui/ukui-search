@@ -53,75 +53,74 @@
         <translation>搜索将不查看以下文件夹，通过添加和删除可以设置排除的文件夹位置</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="225"/>
         <source>Choose folder</source>
-        <translation>添加</translation>
+        <translation type="vanished">添加</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="338"/>
+        <location filename="../search.cpp" line="340"/>
         <source>delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="393"/>
+        <location filename="../search.cpp" line="395"/>
         <source>Directories</source>
         <translation>文件夹</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="394"/>
+        <location filename="../search.cpp" line="396"/>
         <source>select blocked folder</source>
         <translation>选择排除的文件夹</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="395"/>
+        <location filename="../search.cpp" line="397"/>
         <source>Select</source>
         <translation>选择</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="396"/>
+        <location filename="../search.cpp" line="398"/>
         <source>Position: </source>
         <translation>位置</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="397"/>
+        <location filename="../search.cpp" line="399"/>
         <source>FileName: </source>
         <translation>文件名</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="398"/>
+        <location filename="../search.cpp" line="400"/>
         <source>FileType: </source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="399"/>
+        <location filename="../search.cpp" line="401"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="415"/>
-        <location filename="../search.cpp" line="419"/>
-        <location filename="../search.cpp" line="423"/>
-        <location filename="../search.cpp" line="427"/>
+        <location filename="../search.cpp" line="417"/>
+        <location filename="../search.cpp" line="421"/>
+        <location filename="../search.cpp" line="425"/>
+        <location filename="../search.cpp" line="429"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="415"/>
+        <location filename="../search.cpp" line="417"/>
         <source>Add blocked folder failed, choosen path is empty!</source>
         <translation>添加失败，选择的路径为空！</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="419"/>
+        <location filename="../search.cpp" line="421"/>
         <source>Add blocked folder failed, it is not in home path!</source>
         <translation>添加失败，添加的路径不在家目录下！</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="423"/>
+        <location filename="../search.cpp" line="425"/>
         <source>Add blocked folder failed, its parent dir is exist!</source>
         <translation>添加失败，父目录已被添加！</translation>
     </message>
     <message>
-        <location filename="../search.cpp" line="427"/>
+        <location filename="../search.cpp" line="429"/>
         <source>Add blocked folder failed, it has been already blocked!</source>
         <translation>添加失败，这个文件夹已经被添加过了！</translation>
     </message>

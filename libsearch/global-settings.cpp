@@ -70,6 +70,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
                 m_cache.remove(TRANSPARENCY_KEY);
                 m_cache.insert(TRANSPARENCY_KEY, m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
                 qApp->paletteChanged(qApp->palette());
+                Q_EMIT this->transparencyChanged(m_trans_gsettings->get(TRANSPARENCY_KEY).toDouble());
             }
         });
         m_cache.remove(TRANSPARENCY_KEY);
@@ -86,6 +87,7 @@ GlobalSettings::GlobalSettings(QObject *parent) : QObject(parent) {
                 m_cache.remove(STYLE_NAME_KEY);
                 m_cache.insert(STYLE_NAME_KEY, m_theme_gsettings->get(STYLE_NAME_KEY).toString());
                 qApp->paletteChanged(qApp->palette());
+                Q_EMIT this->styleChanged(m_theme_gsettings->get(STYLE_NAME_KEY).toString());
             } else if(key == FONT_SIZE_KEY) {
                 m_cache.remove(FONT_SIZE_KEY);
                 m_cache.insert(FONT_SIZE_KEY, m_theme_gsettings->get(FONT_SIZE_KEY).toDouble());
