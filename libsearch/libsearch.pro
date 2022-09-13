@@ -40,9 +40,11 @@ include(websearch/websearch.pri)
 include(searchinterface/search-interface.pri)
 include(dirwatcher/dirwatcher.pri)
 include(mailsearch/mailsearch.pri)
+include(search-app-widget-plugin/search-app-widget-plugin.pri)
 
 LIBS += -L$$OUT_PWD/../libchinese-segmentation/ -lchinese-segmentation
 LIBS += -lxapian -luchardet -lQt5Xdg -lquazip5 -ltesseract #-L/usr/local/lib/libjemalloc -ljemalloc
+LIBS += -lukui-appwidget-manager -lukui-appwidget-provider
 
 SOURCES += \
     file-utils.cpp \
@@ -62,6 +64,7 @@ HEADERS += \
 
 RESOURCES += \
     resource1.qrc \
+    search-app-widget-plugin/provider/src.qrc
 
 TRANSLATIONS += \
     ../translations/libukui-search/libukui-search_zh_CN.ts \
@@ -70,7 +73,22 @@ TRANSLATIONS += \
 qm_files.path = /usr/share/ukui-search/translations/
 qm_files.files = $$OUT_PWD/.qm/*.qm
 
-INSTALLS += qm_files
+qml.files += search-app-widget-plugin/provider/data/search.qml
+qml.path = /usr/share/appwidget/qml/
+
+appwidgetconf.files  += search-app-widget-plugin/provider/data/search.conf
+appwidgetconf.path = /usr/share/appwidget/config/
+
+service.files += search-app-widget-plugin/provider/org.ukui.appwidget.provider.search.service
+service.path += /usr/share/dbus-1/services/
+
+preview.files += search-app-widget-plugin/provider/data/search.png
+preview.path = /usr/share/appwidget/search/
+
+svg.files += search-app-widget-plugin/provider/data/ukui-search.svg
+svg.path = /usr/share/appwidget/search/
+
+INSTALLS += target qml qm_files appwidgetconf service preview svg
 
 
 # Default rules for deployment.
@@ -88,7 +106,7 @@ unix {
     INSTALLS += target
 
     header.path = /usr/include/ukui-search
-    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h plugininterface/*.h websearch/*.h \
+    header.files += *.h index/*.h appsearch/*.h settingsearch/*.h plugininterface/*.h websearch/*.h search-app-widget-plugin/*.h \
                      searchinterface/ukui-search-task.h \
                      appdata/app-info-table.h \
                      searchinterface/search-controller.h \

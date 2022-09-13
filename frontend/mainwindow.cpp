@@ -87,6 +87,12 @@ MainWindow::MainWindow(QWidget *parent) :
             }
         });
 
+    m_appWidgetPlugin = new AppWidgetPlugin;
+
+    connect(m_appWidgetPlugin, &AppWidgetPlugin::startSearch, this, [ & ] (QString keyword){
+        this->bootOptionsFilter("-s");
+        this->setText(keyword);
+    });
     //NEW_TODO, register plugins
 //    SearchPluginManager::getInstance()->registerPlugin(\\);
 //    m_stackedWidget->setPlugins(SearchPluginManager::getInstance()->getPluginIds());

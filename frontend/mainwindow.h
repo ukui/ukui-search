@@ -46,6 +46,7 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 
+#include "search-app-widget-plugin/search.h"
 #include "index-generator.h"
 #include "libsearch.h"
 #include "create-index-ask-dialog.h"
@@ -143,6 +144,7 @@ private:
     QTimer * m_researchTimer = nullptr; //创建索引后重新执行一次搜索的计时器
     bool m_currentSearchAsked = false; //本次搜索是否已经询问过是否创建索引了
     QGSettings * m_search_gsettings = nullptr;
+    AppWidgetPlugin *m_appWidgetPlugin = nullptr;
 
     void setSearchMethod(const bool&);
     double getTransparentData();

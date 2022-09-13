@@ -9,7 +9,7 @@
         <translation>ནང་དོན་གྱི་སྟོན་གྲངས་ཆ་མི་ཚང་བ།</translation>
     </message>
     <message>
-        <location filename="../../libsearch/searchinterface/searchtasks/file-search-task.cpp" line="96"/>
+        <location filename="../../libsearch/searchinterface/searchtasks/file-search-task.cpp" line="97"/>
         <source>Warning, Can not find home path.</source>
         <translation>ཁྱིམ་གྱི་དཀར་ཆག་རྙེད་ཐབས་མེད།</translation>
     </message>
@@ -17,47 +17,64 @@
 <context>
     <name>UkuiSearch::AppMatch</name>
     <message>
-        <location filename="../../libsearch/appsearch/app-match.cpp" line="262"/>
         <source>Application Description:</source>
-        <translation>ཉེར་སྤྱོད་གོ་རིམ་གྱི་གསལ་བཤད།</translation>
+        <translation type="vanished">ཉེར་སྤྱོད་གོ་རིམ་གྱི་གསལ་བཤད།</translation>
     </message>
 </context>
 <context>
     <name>UkuiSearch::AppSearchPlugin</name>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="11"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="174"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="231"/>
         <source>Open</source>
         <translation>སྒོ་ཕྱེ་བ།</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="12"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="175"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="232"/>
         <source>Add Shortcut to Desktop</source>
         <translation>ཅོག་ངོས་སུ་མྱུར་འཐེབ་སྣོན་པ།</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="13"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="176"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="233"/>
         <source>Add Shortcut to Panel</source>
         <translation>ལས་འགན་གྱི་སྒྲོམ་ཐོག་མགྱོགས་མྱུར་གྱི་བྱེད་ཐབས་གསར་སྣོན་བྱ་དགོས</translation>
     </message>
     <message>
         <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="14"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="177"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="234"/>
         <source>Install</source>
         <translation>སྒྲིག་སྦྱོར་བྱེད་པ</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="30"/>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="35"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="53"/>
+        <source>Application Description:</source>
+        <translation type="unfinished">ཉེར་སྤྱོད་གོ་རིམ་གྱི་གསལ་བཤད།</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="73"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="78"/>
         <source>Applications Search</source>
         <translation>ཉེར་སྤྱོད་གོ་རིམ་འཚོལ་བཤེར།</translation>
     </message>
     <message>
-        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="115"/>
+        <location filename="../../libsearch/appsearch/app-search-plugin.cpp" line="167"/>
         <source>Application</source>
         <translation>ཉེར་སྤྱོད་བྱ་རིམ།</translation>
+    </message>
+</context>
+<context>
+    <name>UkuiSearch::AppSearchTask</name>
+    <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/app-search-task.cpp" line="21"/>
+        <source>Application</source>
+        <translation type="unfinished">ཉེར་སྤྱོད་བྱ་རིམ།</translation>
+    </message>
+    <message>
+        <location filename="../../libsearch/searchinterface/searchtasks/app-search-task.cpp" line="26"/>
+        <source>Application search.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -338,14 +355,14 @@
 <context>
     <name>UkuiSearch::SearchTaskPluginManager</name>
     <message>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="64"/>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="78"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="68"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="82"/>
         <source>plugin type: %1, is disabled!</source>
         <translation>ནུས་པ་སྒོ་བརྒྱབ་ཡོད།</translation>
     </message>
     <message>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="70"/>
-        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="83"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="74"/>
+        <location filename="../../libsearch/pluginmanage/search-task-plugin-manager.cpp" line="87"/>
         <source>plugin type: %1, is not registered!</source>
         <translation>ནུས་པ་ཐོ་འགོད་བྱས་མེད་པ།</translation>
     </message>
@@ -375,6 +392,14 @@
     </message>
 </context>
 <context>
+    <name>UkuiSearch::UkuiSearchTaskPrivate</name>
+    <message>
+        <location filename="../../libsearch/searchinterface/ukui-search-task.cpp" line="92"/>
+        <source>Current task uuid error or an unregistered plugin is used!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UkuiSearch::WebSearchPlugin</name>
     <message>
         <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="11"/>
@@ -387,6 +412,14 @@
         <location filename="../../libsearch/websearch/web-search-plugin.cpp" line="28"/>
         <source>Web Page</source>
         <translation>དྲ་ངོས།</translation>
+    </message>
+</context>
+<context>
+    <name>search</name>
+    <message>
+        <location filename="../../libsearch/search-app-widget-plugin/provider/data/search.qml" line="89"/>
+        <source>search</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.ukui.appwidget.provider.search
+Exec=/usr/bin/ukui-search

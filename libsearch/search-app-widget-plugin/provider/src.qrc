@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>org.ukui.appwidget.provider.search.service</file>
+        <file>data/search.conf</file>
+        <file>data/search.qml</file>
+        <file>data/search.png</file>
+        <file>data/ukui-search.svg</file>
+    </qresource>
+</RCC>
